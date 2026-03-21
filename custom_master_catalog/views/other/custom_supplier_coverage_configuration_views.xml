@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View custom.supplier.coverage.configuration search -->
+    <record id="custom_supplier_coverage_configuration_view_search" model="ir.ui.view">
+        <field name="name">custom.supplier.coverage.configuration.view.search</field>
+        <field name="model">custom.supplier.coverage.configuration</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="supplier_id"/>
+                <field name="accept_cancellations"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="disabled"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Accept cancellations" name="group_by_accept_cancellations" domain="[]" context="{'group_by':'accept_cancellations'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- View custom.supplier.coverage.configuration View List -->
+    <record id="custom_supplier_coverage_configuration_view_list" model="ir.ui.view">
+        <field name="name">custom.supplier.coverage.configuration.view.list</field>
+        <field name="model">custom.supplier.coverage.configuration</field>
+        <field name="arch" type="xml">
+            <list delete="0" edit="0" duplicate="0">
+                <field name="supplier_id"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="accept_cancellations"/>
+                <field name="active" column_invisible="1"/>
+                <field name="disabled" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View custom.supplier.coverage.configuration form -->
+    <record id="custom_supplier_coverage_configuration_view_form" model="ir.ui.view">
+        <field name="name">custom.supplier.coverage.configuration.view.form</field>
+        <field name="model">custom.supplier.coverage.configuration</field>
+        <field name="arch" type="xml">
+            <form delete="0" duplicate="0">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <group>
+                        <group>
+                            <field name="supplier_id" readonly="disabled == True" required="1" options='{"no_open": True, "no_create": True}'
+                                domain="[('x_is_supplier', '=', True), ('disabled', '=', False)]"
+                                context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list', 'search_view_ref': 'custom_master_catalog.res_partner_supplier_view_search'}"/>
+                            <span class="o_form_label o_td_label o_address_type" name="address_name">
+                                <span>Address</span>
+                            </span>
+                            <div class="o_address_format">
+                                <field name="street" placeholder="Street..." class="o_address_street"
+                                    readonly="1" force_save="1"/>
+                                <field name="street2" placeholder="Street 2..." class="o_address_street"
+                                    readonly="1" force_save="1"/>
+                                <field name="city" placeholder="City" class="o_address_city"
+                                    readonly="1" force_save="1"/>
+                                <field name="state_id" class="o_address_state" placeholder="State" options="{'no_open': True, 'no_quick_create': True}"
+                                    readonly="1" force_save="1" context="{'country_id': country_id, 'default_country_id': country_id, 'zip': zip}"/>
+                                <field name="zip" placeholder="ZIP" class="o_address_zip"
+                                    readonly="1" force_save="1"/>
+                                <div name="partner_address_country" class="d-flex justify-content-between">
+                                    <field name="country_id" placeholder="Country" class="o_address_country" options='{"no_open": True, "no_create": True}'
+                                        readonly="1" force_save="1"/>
+                                </div>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="phone" readonly="1" force_save="1"/>
+                            <field name="mobile" readonly="1" force_save="1"/>
+                            <field name="email" readonly="1" force_save="1"/>
+                            <field name="waiting_time" readonly="disabled == True" invisible="accept_cancellations == False" force_save="1"/>
+                            <field name="accept_cancellations" readonly="disabled == True" force_save="1"/>
+                            <field name="disabled" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="supplier_coverage_config_line_ids" string="Services and subservices">
+                            <group>
+                                <field name="supplier_coverage_config_line_ids" nolabel="1" mode="list" readonly="disabled == True">
+                                    <list string="Productos" editable="bottom" limit="20" no_open="1">
+                                        <field name="service_id" options='{"no_open": True, "no_create": True}' required="1"
+                                            domain="[('disabled', '=', False)]"
+                                            context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list'}"/>
+                                        <field name="product_id" options='{"no_open": True, "no_create": True}' required="1"
+                                            domain="[('categ_id', '=', service_id),('type', '=', 'service'),('disabled', '=', False)]"
+                                            context="{'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list'}"/>
+                                        <button type="object" name="action_open_geographic_subservice_wizard" title="Forecast Report" icon="fa-pencil-square-o"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- Action custom.supplier.coverage.configuration.type -->
+    <record id="custom_supplier_coverage_configuration_action" model="ir.actions.act_window">
+        <field name="name">Configuration of Services and Subservices</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">custom.supplier.coverage.configuration</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+    </record>
+
+</odoo>

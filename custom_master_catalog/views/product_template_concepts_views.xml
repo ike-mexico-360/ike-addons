@@ -1,0 +1,105 @@
+<odoo>
+    <record id="custom_ike_concept_product_template_filter" model="ir.ui.view">
+        <field name="name">custom_ike_concept.product.product.search</field>
+        <field name="model">product.product</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="categ_id"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="custom_ike_concepts_product_template_list" model="ir.ui.view">
+        <field name="name">custom_ike_concepts_product.view.list</field>
+        <field name="model">product.product</field>
+        <field name="priority" eval="70"/>
+        <field name="arch" type="xml">
+            <list delete="0" edit="0" duplicate="0">
+                <field name="name" required="1"/>
+                <field name="x_categ_id" string="Service" required="1"/>
+                <field name="x_product_id" string="Subservice" required="1"/>
+                <field name="disabled" column_invisible="1" />
+            </list>
+        </field>
+    </record>
+
+    <record id="custom_ike_concepts_product_template_form" model="ir.ui.view">
+        <field name="name">custom_ike_concepts_product.view_form</field>
+        <field name="model">product.product</field>
+        <field name="priority" eval="70"/>
+        <field name="arch" type="xml">
+            <form delete="0" duplicate="0">
+                <sheet>
+                    <field name="create_date" invisible="1"/>
+                    <field name="disabled" invisible="1" />
+                    <field name="active" invisible="1" />
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <field name="image_128" widget='image' class="oe_avatar" readonly="disabled"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" class="w-100" readonly="disabled" required="1"/>
+                        </h1>
+                    </div>
+                    <group class="mt-3">
+                        <group>
+                            <field name="x_apply_all_services_subservices" readonly="disabled == True"/>
+                            <field name="x_concepts_categ_domain" invisible="1"/>
+                            <field name="x_categ_id" string="Service" options="{'no_open': True, 'no_create': True}" readonly="disabled == True"
+                                domain="x_concepts_categ_domain" invisible="x_apply_all_services_subservices == True" required="x_apply_all_services_subservices == False"
+                                context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list', 'search_view_ref': 'custom_master_catalog.product_category_service_view_search', 'hide_disabled_enabled_filters': 1}" />
+                            <field name="x_is_cancelation" string="Is cancelation?" readonly="disabled == True"/>
+                            <field name="x_concepts_uom_domain" invisible="1"/>
+                            <field name="uom_id" string="UoM" required="1" options="{'no_open': True, 'no_create': True}" readonly="disabled == True" domain="x_concepts_uom_domain"
+                                context="{'list_view_ref': 'custom_master_catalog.custom_ike_product_uom_tree_view'}"/>
+                            <field name="x_concept_description" readonly="disabled == True"/>
+                        </group>
+                        <group>
+                            <separator/>
+                            <field name="x_product_concept_domain" invisible="1"/>
+                            <field name="x_product_id" string="Subservice" options="{'no_open': True, 'no_create': True}" readonly="disabled == True" invisible="x_apply_all_services_subservices == True"
+                                context="{'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list', 'form_view_ref': 'custom_master_catalog.view_x_subservice_product_template_form', 'search_view_ref': 'custom_master_catalog.view_x_subservice_product_template_filter', 'hide_disabled_enabled_filters': 1}"
+                                domain="x_product_concept_domain"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="custom_ike_concepts_product_view_action" model="ir.actions.act_window">
+        <field name="name">Concepts</field>
+        <field name="res_model">product.product</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('custom_ike_concepts_product_template_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('custom_ike_concepts_product_template_form')})]"/>
+        <field name="search_view_id" ref="custom_ike_concept_product_template_filter"/>
+        <field name="domain">[]</field> <!-- To be set in action.server -->
+        <field name="context">{
+            'default_sale_ok': False,
+            'default_purchase_ok': True,
+            'default_x_accessory_ok': False,
+            'default_type': 'service',
+            'default_list_price': 0,
+            'default_standard_price': 0,
+            'search_default_filter_enabled': 1,
+            'x_concepts_view': True
+        }</field>
+    </record>
+
+    <record id="custom_ike_concepts_product_action_server" model="ir.actions.server">
+        <field name="name">Concepts</field>
+        <field name="model_id" ref="model_product_product"/>
+        <field name="state">code</field>
+        <field name="code">
+action = model.get_concepts_view_action()
+        </field>
+    </record>
+</odoo>

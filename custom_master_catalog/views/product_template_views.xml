@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_template_only_form_view_inherit_master" model="ir.ui.view">
+        <field name="name">product_template_only_form_view.inherit.master</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='default_code']" position="before">
+                <field name="x_cl_sub_service" widget="custom_numeric_account"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Checkbox de Accesorio -->
+    <record id="product_template_form_view_inherit_master" model="ir.ui.view">
+            <field name="name">product_template_form_view.inherit.master</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='options']//span" position="after">
+                    <span class="d-inline-block">
+                        <field name="x_accessory_ok" invisible="product_variant_count > 1"/>
+                        <label for="x_accessory_ok" invisible="product_variant_count > 1"/>
+                    </span>
+                </xpath>
+            </field>
+        </record>
+</odoo>

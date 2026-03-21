@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View custom.payment.type search -->
+    <record id="custom_payment_type_view_search" model="ir.ui.view">
+        <field name="name">custom.payment.type.view.search</field>
+        <field name="model">custom.payment.type</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="disabled"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- View custom.payment.type View List -->
+    <record id="custom_payment_type_view_list" model="ir.ui.view">
+        <field name="name">custom.payment.type.view.list</field>
+        <field name="model">custom.payment.type</field>
+        <field name="arch" type="xml">
+            <list delete="0" edit="0">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View custom.payment.type form -->
+    <record id="custom_payment_type_view_form" model="ir.ui.view">
+        <field name="name">custom.payment.type.view.form</field>
+        <field name="model">custom.payment.type</field>
+        <field name="arch" type="xml">
+            <form delete="0">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Name..." readonly="disabled == True"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                        </group>
+                        <group>
+                            <field name="disabled" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                            <field name="create_date" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- Action custom.payment.type.type -->
+    <record id="custom_payment_type_action" model="ir.actions.act_window">
+        <field name="name">Payment Type</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">custom.payment.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+    </record>
+
+</odoo>

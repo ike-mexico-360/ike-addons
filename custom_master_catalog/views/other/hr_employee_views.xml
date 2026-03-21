@@ -1,0 +1,30 @@
+<odoo>
+    <data>
+        <record id="custom_ike_view_employee_tree" model="ir.ui.view">
+            <field name="name">custom_ike_hr.employee.list</field>
+            <field name="model">hr.employee</field>
+            <field name="priority" eval="60"/>
+            <field name="arch" type="xml">
+                <list string="Employees" edit="0">
+                    <field name="name" readonly="1"/>
+                    <field name="work_phone" class="o_force_ltr" readonly="1" optional="show"/>
+                    <field name="work_email"/>
+                    <field name="activity_ids" widget="list_activity" optional="show"/>
+                    <field name="activity_user_id" optional="hide" string="Activity by" widget="many2one_avatar_user"/>
+                    <field name="activity_date_deadline" widget="remaining_days" optional="show"/>
+                    <field name="company_id" groups="base.group_multi_company" readonly="1" optional="show"/>
+                    <field name="department_id"/>
+                    <field name="job_id" context="{'default_no_of_recruitment': 0, 'default_is_favorite': False}"/>
+                    <field name="parent_id" widget="many2one_avatar_user" optional="show"/>
+                    <field name="address_id" column_invisible="True"/>
+                    <field name="company_id" column_invisible="True"/>
+                    <field name="work_location_id" optional="hide"/>
+                    <field name="coach_id" widget="many2one_avatar_user" optional="hide"/>
+                    <field name="active" column_invisible="True"/>
+                    <field name="category_ids" widget="many2many_tags" options="{'color_field': 'color'}" optional="hide"/>
+                    <field name="country_id" optional="hide"/>
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mail_message_view_form" model="ir.ui.view">
+        <field name="name">mail.message.view.form.o2m.tracking</field>
+        <field name="model">mail.message</field>
+        <field name="inherit_id" ref="mail.mail_message_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='page_tracking']" position="after">
+                <page string="One2many Messages">
+                    <field name="o2m_tracking_command_ids" context="{'default_mail_message_id': id}">
+                        <list editable="bottom">
+                            <field name="mail_message_id" column_invisible="1" />
+                            <field name="o2m_field_id"/>
+                            <field name="o2m_record_id"/>
+                            <field name="o2m_record_name"/>
+                            <field name="o2m_command"/>
+                            <field name="o2m_tracking_value_ids" widget="many2many_tags" domain="[('mail_message_id', '=', parent.id)]"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_mail_tracking_value_tree" model="ir.ui.view">
+        <field name="name">mail.tracking.value.list.o2m.tracking</field>
+        <field name="model">mail.tracking.value</field>
+        <field name="inherit_id" ref="mail.view_mail_tracking_value_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='field_id']" position="before">
+                <field name="o2m_record_id" column_invisible="1"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_mail_tracking_value_form" model="ir.ui.view">
+        <field name="name">mail.tracking.value.form.o2m.tracking</field>
+            <field name="model">mail.tracking.value</field>
+        <field name="inherit_id" ref="mail.view_mail_tracking_value_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='field_id']" position="before">
+                <field name="o2m_mail_tracking_command_id"/>
+                <field name="o2m_record_id" invisible="1"/>
+            </xpath>
+            <xpath expr="//field[@name='field_id']" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

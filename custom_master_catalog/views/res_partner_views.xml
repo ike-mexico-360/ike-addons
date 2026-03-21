@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- List -->
+    <!-- Vista nativa, para quitar la edicion y usar en referencias de vista lista -->
+    <record id="custom_ike_view_partner_tree" model="ir.ui.view">
+        <field name="name">custom_ike_res.partner.list</field>
+        <field name="model">res.partner</field>
+        <field eval="50" name="priority"/>
+        <field name="arch" type="xml">
+            <list string="Contacts" edit="0">
+                <field name="complete_name" string="Name"/>
+                <field name="phone" class="o_force_ltr" optional="show"/>
+                <field name="mobile" optional="hide"/>
+                <field name="email" optional="show"/>
+                <field name="user_id" optional="show" widget="many2one_avatar_user" domain="[('share', '=', False)]"/>
+                <field name="street" optional="hide"/>
+                <field name="city" optional="show"/>
+                <field name="state_id" optional="hide" readonly="1"/>
+                <field name="country_id" optional="show" readonly="1"/>
+                <field name="vat" optional="hide" readonly="1"/>
+                <field name="category_id" optional="hide" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                <field name="company_id" groups="base.group_multi_company" readonly="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form -->
+    <record id="view_partner_form" model="ir.ui.view">
+        <field name="name">view.partner.form.inherit.master.catalog</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_type']" position="after">
+                <separator class="my-1"/>
+                <div name="options" invisible="is_company == False"
+                     groups="custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account">
+                    <span class="d-inline-flex" groups="custom_master_catalog.custom_group_contact_admin_client">
+                        <field name="x_is_client" readonly="id"/>
+                        <label for="x_is_client"/>
+                    </span>
+                    <span class="d-inline-flex" groups="!custom_master_catalog.custom_group_contact_admin_client">
+                        <field name="x_is_client" readonly="1"/>
+                        <label for="x_is_client"/>
+                    </span>
+
+                    <span class="d-inline-flex"
+                          groups="custom_master_catalog.custom_group_contact_admin_supplier">
+                        <field name="x_is_supplier" readonly="id"/>
+                        <label for="x_is_supplier"/>
+                    </span>
+                    <span class="d-inline-flex"
+                          groups="!custom_master_catalog.custom_group_contact_admin_supplier">
+                        <field name="x_is_supplier" readonly="1"/>
+                        <label for="x_is_supplier"/>
+                    </span>
+
+                    <span class="d-inline-flex"
+                          groups="custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_contact_admin_client">
+                        <field name="x_is_account" readonly="id"/>
+                        <label for="x_is_account"/>
+                    </span>
+                    <span class="d-inline-flex"
+                          groups="!custom_master_catalog.custom_group_contact_admin_account,!custom_master_catalog.custom_group_contact_admin_client">
+                        <field name="x_is_account" readonly="1"/>
+                        <label for="x_is_account"/>
+                    </span>
+
+                    <span class="d-inline-flex">
+                        <field name="x_is_ike"/>
+                        <label for="x_is_ike"/>
+                    </span>
+                </div>
+                <div name="options" invisible="is_company == False"
+                     groups="!custom_master_catalog.custom_group_contact_admin_client,!custom_master_catalog.custom_group_contact_admin_supplier,!custom_master_catalog.custom_group_contact_admin_account">
+                    <span class="d-inline-flex">
+                        <field name="x_is_client"/>
+                        <label for="x_is_client"/>
+                    </span>
+                    <span class="d-inline-flex">
+                        <field name="x_is_supplier"/>
+                        <label for="x_is_supplier"/>
+                    </span>
+
+                    <span class="d-inline-flex">
+                        <field name="x_is_account"/>
+                        <label for="x_is_account"/>
+                    </span>
+
+                    <span class="d-inline-flex">
+                        <field name="x_is_ike"/>
+                        <label for="x_is_ike"/>
+                    </span>
+                </div>
+            </xpath>
+            <!-- ACCOUNT INFO -->
+            <xpath expr="//span[@name='address_name']" position="before">
+                <!-- <field name="type" required="1" widget="radio" options="{'horizontal': true}" invisible="is_company == False or not parent_id"/> -->
+                <field name="ref" string="CL Account" widget="custom_numeric_account" invisible="not x_is_account"/>
+                <field name="ref" string="CL Supplier" widget="custom_numeric_account" invisible="not x_is_supplier"/>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']//form//field[@name='type']/following-sibling::div[1]" position="after">
+                <hr/>
+                <div name="sub_options"
+                     groups="custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account">
+                    <span class="d-inline-flex"
+                          groups="custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_contact_admin_client">
+                        <field name="x_is_account"/>
+                        <label for="x_is_account"/>
+                    </span>
+                </div>
+                 <div name="sub_options"
+                      groups="!custom_master_catalog.custom_group_contact_admin_client,!custom_master_catalog.custom_group_contact_admin_supplier,!custom_master_catalog.custom_group_contact_admin_account">
+                    <span class="d-inline-flex">
+                        <field name="x_is_account"/>
+                        <label for="x_is_account"/>
+                    </span>
+                </div>
+            </xpath>
+            <!-- ACCOUNT INFO END -->
+            <xpath expr="//sheet/div[hasclass('oe_title') and hasclass('mb24')]/div[hasclass('o_row')]" position="replace">
+                <div class="o_row">
+                    <field name="parent_id" widget="res_partner_many2one" placeholder="Nombre empresa..."
+                        domain="[('is_company', '=', True)]"
+                        context="{'default_is_company': True, 'show_vat': True, 'default_user_id': user_id}" />
+                    <field name="company_name" invisible="not company_name or company_name == '' or is_company" />
+                    <button name="create_company" string="Crear empresa"
+                            type="object" icon="fa-plus-square" class="oe_edit_only btn-link"
+                            invisible="is_company or company_name == '' or not company_name" />
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="before">
+                <field name="x_is_ike" invisible="1"/>
+                <field name="x_invoice_company_id"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Kanban -->
+    <record id="res_partner_kanban_view" model="ir.ui.view">
+        <field name="name">res.partner.kanban.view.inherit.master.catalog</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+        <field name="arch" type="xml">
+            <field name="email" position="after">
+                <div class="d-flex flex-wrap gap-1">
+                    <span class="badge rounded-pill text-bg-info" invisible="not x_is_client">Client</span>
+                    <span class="badge rounded-pill text-bg-info" invisible="not x_is_supplier">Supplier</span>
+                    <span class="badge rounded-pill text-bg-info" invisible="not x_is_account">Account</span>
+                </div>
+            </field>
+        </field>
+    </record>
+
+    <!-- SEARCH -->
+    <record id="view_res_partner_filter_inherit_x_client" model="ir.ui.view">
+        <field name="name">view.res.partner.filter.inherit.x_client</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_res_partner_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='type_company']" position="after">
+                <filter string="Clients" name="filter_x_is_client" domain="[('x_is_client', '=', True)]"/>
+                <filter string="Suppliers" name="filter_x_is_supplier" domain="[('x_is_supplier', '=', True)]"/>
+            </xpath>
+            <xpath expr="//filter[@name='group_country']" position="after">
+                <filter string="Clients" name="group_x_is_client" context="{'group_by': 'x_is_client'}"/>
+                <filter string="Suppliers" name="group_x_is_supplier" context="{'group_by': 'x_is_supplier'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Ike Kanban View -->
+    <record id="custom_res_partner_view_kanban" model="ir.ui.view">
+        <field name="name">res.partner.account.view.kanban</field>
+        <field name="model">res.partner</field>
+        <field name="priority" eval="50"/>
+        <field name="arch" type="xml">
+            <kanban delete="0" archivable="0"
+                    group_create="0"
+                    group_delete="0"
+                    group_edit="0"
+                    groups_draggable="1"
+                    records_draggable="0"
+                    quick_create="0">
+                <field name="avatar_128"/>
+                <field name="is_company"/>
+                <field name="active"/>
+                <templates>
+                    <t t-name="card" class="flex-row">
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                        <aside class="o_kanban_aside_full">
+                            <t t-if="!record.is_company.raw_value">
+                                <div class="o_kanban_image_fill position-relative w-100">
+                                    <field name="avatar_128" alt="Contact image" class="h-100" widget="image" options="{'img_class': 'object-fit-cover'}"/>
+                                    <field t-if="record.parent_id.raw_value" name="parent_id" class="position-absolute bottom-0 end-0 w-25 bg-light" widget="image" options="{'preview_image': 'image_128', 'img_class': 'object-fit-contain'}"/>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <field name="avatar_128" class="w-100" widget="image" options="{'img_class': 'object-fit-contain w-100 h-100'}"/>
+                            </t>
+                        </aside>
+                        <main class="ps-2 ps-md-0">
+                            <div class="mb-1">
+                                <field name="display_name" class="mb-0 fw-bold fs-5"/>
+                                <br/>
+                                <field name="parent_id" class="text-muted" />
+                            </div>
+                            <div t-if="record.city.raw_value or record.country_id.raw_value">
+                                <field name="city"/>
+                                <span t-if="record.city.raw_value and record.country_id.raw_value">, </span>
+                                <field name="country_id"/>
+                            </div>
+                            <field name="email" class="text-truncate"/>
+                            <footer><div/></footer>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+</odoo>

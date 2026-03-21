@@ -1,0 +1,17 @@
+<odoo>
+    <data>
+        <record id="custom_ike_view_company_tree" model="ir.ui.view">
+            <field name="name">custom_ike_res.company.list</field>
+            <field name="model">res.company</field>
+            <field name="priority" eval="50"/>
+            <field name="arch" type="xml">
+                <list string="Companies" edit="0">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="partner_id" required="0"/>
+                    <field name="child_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                </list>
+            </field>
+        </record>
+    </data>
+</odoo>

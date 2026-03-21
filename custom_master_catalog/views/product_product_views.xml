@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_product_inherit_period" model="ir.ui.view">
+        <field name="name">product.product.inherit.period</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_product_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="///field[@name='uom_id']" position="after">
+                <field name="x_qty_period"/>
+                <field name="x_unit_period"/>
+                <field name="x_qty_reset_period"/>
+                <field name="x_unit_reset_period"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

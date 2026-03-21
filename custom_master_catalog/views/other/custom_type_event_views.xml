@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View custom.type.event search -->
+    <record id="custom_type_event_view_search" model="ir.ui.view">
+        <field name="name">custom.type.event.view.search</field>
+        <field name="model">custom.type.event</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="disabled"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- View custom.type.event View List -->
+    <record id="custom_type_event_view_list" model="ir.ui.view">
+        <field name="name">custom.type.event.view.list</field>
+        <field name="model">custom.type.event</field>
+        <field name="arch" type="xml">
+            <list delete="0" edit="0">
+                <field name="name"/>
+                <field name="description"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View custom.type.event form -->
+    <record id="custom_type_event_view_form" model="ir.ui.view">
+        <field name="name">custom.type.event.view.form</field>
+        <field name="model">custom.type.event</field>
+        <field name="arch" type="xml">
+            <form delete="0">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Name..." readonly="disabled == True"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="description" readonly="disabled == True"/>
+                        </group>
+                        <group>
+                            <field name="disabled" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                            <field name="create_date" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- Action custom.type.event.type -->
+    <record id="custom_type_event_action" model="ir.actions.act_window">
+        <field name="name">Types Events</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">custom.type.event</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+    </record>
+
+</odoo>

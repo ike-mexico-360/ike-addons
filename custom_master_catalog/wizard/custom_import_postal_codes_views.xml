@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="custom_import_postal_codes_log_action" model="ir.actions.act_window">
+        <field name="name">Custom Import Postal Codes Log</field>
+        <field name="res_model">custom.import.postal_codes.log</field>
+        <field name="view_mode">list</field>
+        <field name="target">new</field>
+        <field name="context">{'dialog_size': 'large'}</field>
+    </record>
+
+    <!-- Wizard de importación de códigos postales -->
+    <record id="custom_import_postal_codes_view_form" model="ir.ui.view">
+        <field name="name">custom.import.postal_codes.view.form</field>
+        <field name="model">custom.import.postal_codes</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="file" widget="binary"
+                                    filename="file_name"
+                                    options="{'accepted_file_extensions': '.csv'}"/>
+                            <field name="file_name" invisible="1"/>
+                            <field name="file_type" invisible="1"/>
+                        </group>
+                        <group>
+                            <button string="View Logs" type="action" name="%(custom_import_postal_codes_log_action)d" class="btn btn-info"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="import_postal_codes" string="Import" type="object" class="oe_highlight"/>
+                    <button special="cancel" string="Cancel" class="oe_link"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="custom_import_postal_codes_action" model="ir.actions.act_window">
+        <field name="name">Custom Import Postal Codes</field>
+        <field name="res_model">custom.import.postal_codes</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'dialog_size': 'medium'}</field>
+    </record>
+
+
+    <!-- Vista de logs de importación de códigos postales -->
+    <record id="custom_import_postal_codes_log_view_tree" model="ir.ui.view">
+        <field name="name">custom_import_postal_codes_log.view.tree</field>
+        <field name="model">custom.import.postal_codes.log</field>
+        <field name="arch" type="xml">
+            <list string="" edit="0" create="0">
+                <field name="file" widget="binary"
+                        filename="file_name"
+                        options="{'accepted_file_extensions': '.csv'}"/>
+                <field name="file_name" column_invisible="1"/>
+                <field name="file_type" column_invisible="1"/>
+                <field name="file_size"/>
+                <field name="import_date"/>
+                <field name="imported_records"/>
+                <field name="updated_records"/>
+                <field name="deleted_records"/>
+                <field name="user_id" widget="many2one_avatar"/>
+            </list>
+        </field>
+    </record>
+
+</odoo>

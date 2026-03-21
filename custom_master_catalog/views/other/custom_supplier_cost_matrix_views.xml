@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View custom.supplier.cost.matrix search -->
+    <record id="custom_supplier_cost_matrix_view_search" model="ir.ui.view">
+        <field name="name">custom.supplier.cost.matrix.view.search</field>
+        <field name="model">custom.supplier.cost.matrix</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="supplier_id"/>
+                <field name="disabled"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Center of attention" name="group_by_supplier_center_id" domain="[]" context="{'group_by':'supplier_center_id'}"/>
+                    <filter string="Supplier" name="group_by_supplier_id" domain="[]" context="{'group_by':'supplier_id'}"/>
+                    <filter string="State" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
+                    <filter string="Date Init" name="group_by_date_init" domain="[]" context="{'group_by':'date_init'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- View custom.supplier.cost.matrix View List -->
+    <record id="custom_supplier_cost_matrix_view_list" model="ir.ui.view">
+        <field name="name">custom.supplier.cost.matrix.view.list</field>
+        <field name="model">custom.supplier.cost.matrix</field>
+        <field name="arch" type="xml">
+            <list delete="0" edit="0">
+                <field name="supplier_center_id"/>
+                <field name="supplier_id"/>
+                <field name="service_id"/>
+                <field name="date_init"/>
+                <field name="date_end"/>
+                <field name="state"/>
+                <field name="active" column_invisible="1"/>
+                <field name="disabled" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View custom.supplier.cost.matrix form -->
+    <record id="custom_supplier_cost_matrix_view_form" model="ir.ui.view">
+        <field name="name">custom.supplier.cost.matrix.view.form</field>
+        <field name="model">custom.supplier.cost.matrix</field>
+        <field name="arch" type="xml">
+            <form delete="0">
+                <header>
+                    <button string="Confirm" invisible="state != 'draft' or disabled == True" class="btn-primary"
+                                type="object" name="action_confirm"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,closed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <group>
+                        <group>
+                            <field name="supplier_center_id" readonly="context.get('from_supplier_center', False) or disabled == True" required="1"
+                                options='{"no_open": True, "no_create": True}'/>
+                            <field name="supplier_id" readonly="context.get('from_supplier_center', False) or disabled == True" required="1"
+                                options='{"no_open": True, "no_create": True}'/>
+                            <field name="service_id" readonly="disabled == True" required="1" options='{"no_open": True, "no_create": True}'/>
+                        </group>
+                        <group>
+                            <field name="date_init" readonly="disabled == True"/>
+                            <field name="date_end" readonly="disabled == True"/>
+                            <field name="x_state" readonly="disabled == True"/>
+                            <field name="disabled" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="cost_product_ids" string="Subservices">
+                            <group>
+                                <field name="cost_product_ids" nolabel="1" mode="list" readonly="disabled == True">
+                                    <list string="Products" editable="bottom" limit="20" no_open="1">
+                                        <field name="service_id" column_invisible="1"/>
+                                        <field name="product_id" options='{"no_open": True, "no_create": True}' required="1"
+                                            domain="[('categ_id', '=', service_id),('type', '=', 'service'),('disabled', '=', False)]"
+                                            context="{'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list'}"/>
+                                        <field name="state_id" options='{"no_open": True, "no_create": True}'
+                                            domain="[('disabled', '=', False)]"
+                                            context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_country_state_tree'}"/>
+                                        <field name="geographical_area_id" options='{"no_open": True, "no_create": True}'
+                                            domain="[('disabled', '=', False)]"/>
+                                        <field name="type_event_id" options='{"no_open": True, "no_create": True}'
+                                            domain="[('disabled', '=', False)]"/>
+                                        <field name="vehicle_category_id" options='{"no_open": True, "no_create": True}'
+                                            domain="[('disabled', '=', False)]"/>
+                                        <field name="cost"/>
+                                        <field name="account_id" options='{"no_open": True, "no_create": True}'
+                                            domain="[('disabled', '=', False)]"
+                                            context="{'list_view_ref': 'custom_master_catalog.res_partner_account_view_list'}"/>
+                                        <field name="holiday_date_applies"/>
+                                        <field name="high_risk_area"/>
+                                        <field name="active_agreement"/>
+                                        <field name="supplier_status_id" options='{"no_open": True, "no_create": True}'
+                                            domain="[('disabled', '=', False)]"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action custom.supplier.cost.matrix.type -->
+    <record id="custom_supplier_cost_matrix_configuration_action" model="ir.actions.act_window">
+        <field name="name">Supplier Cost Matrix</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">custom.supplier.cost.matrix</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+    </record>
+
+</odoo>

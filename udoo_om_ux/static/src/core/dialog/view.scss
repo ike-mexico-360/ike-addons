@@ -1,0 +1,21 @@
+.modal-fs {
+    .modal-body .o_form_sheet_bg {
+        max-width: unset !important;
+    }
+}
+
+.modal-body {
+    .o_attachment_preview {
+        width: 50%;
+    }
+}
+
+.modal-header .z-buttons {
+    .btn {
+        padding-block: 1px;
+
+        &:hover {
+            color: $o-brand-primary;
+        }
+    }
+}

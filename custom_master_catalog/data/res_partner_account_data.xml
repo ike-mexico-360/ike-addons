@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Account Type -->
+        <record id="account_type_bank" model="custom.account.type">
+            <field name="name">Bank</field>
+            <field name="code">bank</field>
+        </record>
+        <record id="account_type_insurance" model="custom.account.type">
+            <field name="name">Insurance</field>
+            <field name="code">insurance</field>
+        </record>
+        <record id="account_type_manufacturer" model="custom.account.type">
+            <field name="name">Manufacturer</field>
+            <field name="code">manufacturer</field>
+        </record>
+
+        <!-- Account Identification -->
+        <record id="account_identification_credit" model="custom.account.identification">
+            <field name="name">Credit</field>
+            <field name="code">credit</field>
+            <field name="regex">//gm</field>
+            <field name="label">TC</field>
+        </record>
+        <record id="account_identification_debit" model="custom.account.identification">
+            <field name="name">Debit</field>
+            <field name="code">debit</field>
+            <field name="regex">//gm</field>
+            <field name="label">TC</field>
+        </record>
+        <record id="account_identification_vin" model="custom.account.identification">
+            <field name="name">VIN</field>
+            <field name="code">vin</field>
+            <field name="regex">//gm</field>
+            <field name="label">TC</field>
+        </record>
+        <record id="account_identification_policy" model="custom.account.identification">
+            <field name="name">Policy</field>
+            <field name="code">policy</field>
+            <field name="regex">//gm</field>
+            <field name="label">TC</field>
+        </record>
+    </data>
+</odoo>

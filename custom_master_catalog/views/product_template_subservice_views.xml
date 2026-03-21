@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_x_subservice_product_template_filter" model="ir.ui.view">
+        <field name="name">x_subservice.product.product.search</field>
+        <field name="model">product.product</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Subservice" filter_domain="['|', ('default_code', 'ilike', self), ('name', 'ilike', self)]"/>
+                <field name="categ_id" string="Service" filter_domain="[('categ_id.name', 'ilike', self)]"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group expand="0" string="Group By">
+                    <filter name="groupby_categ_id" string="Service" context="{'group_by': 'categ_id'}" />
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="view_x_subservice_product_template_form" model="ir.ui.view">
+        <field name="name">x_subservice.view_form</field>
+        <field name="model">product.product</field>
+        <field name="arch" type="xml">
+            <form delete="0" duplicate="0">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <group>
+                        <group>
+                            <field name="name" required="1" readonly="disabled == True"/>
+                            <field name="categ_id" options='{"no_open": True, "no_create": True}' required="1"
+                                            domain="[('disabled', '=', False)]"
+                                            context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list'}"/>
+                            <field name="x_description" readonly="disabled == True"/>
+                            <field name="create_date" invisible="1"/>
+                            <field name="disabled" invisible="1" />
+                            <field name="active" invisible="1" />
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="view_x_subservice_product_template_list" model="ir.ui.view">
+        <field name="name">x_subservice.view.list</field>
+        <field name="model">product.product</field>
+        <field name="arch" type="xml">
+            <list delete="0" edit="0" duplicate="0">
+                <field name="categ_id" string="Service" required="1"/>
+                <field name="name" string="Subservice" required="1"/>
+                <field name="create_date" column_invisible="1"/>
+                <field name="disabled" column_invisible="1" />
+            </list>
+        </field>
+    </record>
+    <record id="action_x_subservice_product_template_view" model="ir.actions.act_window">
+        <field name="name">Subservices</field>
+        <field name="res_model">product.product</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('view_x_subservice_product_template_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_x_subservice_product_template_form')})]"/>
+        <field name="search_view_id" ref="view_x_subservice_product_template_filter"/>
+        <field name="domain">[]</field> <!-- To be set in action.server -->
+        <field name="context">{
+            'default_sale_ok': True,
+            'default_sh_product_subscribe': True,
+            'default_purchase_ok': False,
+            'default_x_accessory_ok': False,
+            'default_type': 'service',
+            'default_list_price': 1,
+            'default_standard_price': 0,
+            'search_default_filter_enabled': 1,
+        }</field>
+        <field name="target">current</field>
+    </record>
+
+    <record id="x_subservice_product_template_view_action_server" model="ir.actions.server">
+        <field name="name">Subservices</field>
+        <field name="model_id" ref="model_product_product"/>
+        <field name="state">code</field>
+        <field name="code">
+action = model.get_subservices_view_action()
+        </field>
+    </record>
+
+    <!-- Menus Subservice-->
+    <menuitem id="product_category_subservices_menu_subservices"
+        name="Subservices"
+        parent="product_category_services_menu"
+        action="x_subservice_product_template_view_action_server"
+        sequence="2"/>
+</odoo>

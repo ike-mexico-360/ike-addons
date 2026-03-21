@@ -1,0 +1,91 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* custom_disable_records
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-18 14:39+0000\n"
+"PO-Revision-Date: 2025-08-18 14:39+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: custom_disable_records
+#. odoo-javascript
+#: code:addons/custom_disable_records/static/src/list/list_controller.js:0
+msgid "Are you sure that you want to disable all the selected records?"
+msgstr ""
+"¿Está seguro de que desea deshabilitar todos los registros seleccionados?"
+
+#. module: custom_disable_records
+#. odoo-javascript
+#: code:addons/custom_disable_records/static/src/fields/disable_field.js:0
+#: code:addons/custom_disable_records/static/src/form/form_controller.js:0
+msgid "Are you sure that you want to disable this record?"
+msgstr "¿Estás seguro de que desea deshabilitar este registro?"
+
+#. module: custom_disable_records
+#: model:ir.model,name:custom_disable_records.model_base
+msgid "Base"
+msgstr ""
+
+#. module: custom_disable_records
+#. odoo-javascript
+#: code:addons/custom_disable_records/static/src/fields/disable_field.js:0
+#: code:addons/custom_disable_records/static/src/form/form_controller.js:0
+#: code:addons/custom_disable_records/static/src/list/list_controller.js:0
+msgid "Disable"
+msgstr "Deshabilitar"
+
+#. module: custom_disable_records
+#. odoo-javascript
+#: code:addons/custom_disable_records/static/src/fields/disable_field.js:0
+msgid "Disable Reason Action"
+msgstr "Acción Razón de desactivación"
+
+#. module: custom_disable_records
+#. odoo-javascript
+#: code:addons/custom_disable_records/static/src/fields/disable_field.js:0
+msgid "Disabled Reason Field"
+msgstr "Campo de razón de desactivación"
+
+#. module: custom_disable_records
+#. odoo-javascript
+#: code:addons/custom_disable_records/static/src/form/form_controller.js:0
+#: code:addons/custom_disable_records/static/src/list/list_controller.js:0
+msgid "Enable"
+msgstr "Habilitar"
+
+#. module: custom_disable_records
+#. odoo-javascript
+#: code:addons/custom_disable_records/static/src/fields/disable_field.js:0
+msgid "If checked, execute action_disable global function."
+msgstr "Si está activado, ejecuta la función global action_disable."
+
+#. module: custom_disable_records
+#. odoo-javascript
+#: code:addons/custom_disable_records/static/src/fields/disable_field.js:0
+msgid ""
+"If is not null or empty, write this field name with the disabled reason."
+msgstr "Si no es nulo o vacío, actualiza este nombre de campo con la razón de desactivación."
+
+#. module: custom_disable_records
+#. odoo-javascript
+#: code:addons/custom_disable_records/static/src/relational_model/dynamic_list.js:0
+msgid ""
+"Of the %(selectedRecord)s selected records, only the first %(firstRecords)s "
+"have been disabled/enabled."
+msgstr ""
+"De los %(selectedRecord)s registros seleccionados, solo los primeros "
+"%(firstRecords)s se deshabilitaron o habilitaron."
+
+#. module: custom_disable_records
+#. odoo-javascript
+#: code:addons/custom_disable_records/static/src/relational_model/dynamic_list.js:0
+msgid "Warning"
+msgstr "Advertencia"

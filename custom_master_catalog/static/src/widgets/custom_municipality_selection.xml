@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="custom_master_catalog.CustomMunicipalitySelection">
+        <div class="d-flex mb-2 gap-2">
+            <span class="d-none d-sm-block" style="flex: 1">Select Municipalities</span>
+            <t t-if="!props.readonly">
+                <div style="flex: 1">
+                    <Many2XAutocomplete t-props="countryMany2XAutocompleteProps"/>
+                </div>
+                <div style="flex: 1">
+                    <Many2XAutocomplete t-props="stateMany2XAutocompleteProps"/>
+                </div>
+            </t>
+            <button type="button" class="btn btn-link" style="flex: 1"
+                    t-on-click="onSelectMunicipalities" t-att-disabled="!productIds.length or props.readonly">
+                Add
+            </button>
+        </div>
+    </t>
+
+</templates>
