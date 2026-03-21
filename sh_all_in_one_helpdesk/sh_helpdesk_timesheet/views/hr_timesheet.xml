@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sh_timeheet_tree_view" model="ir.ui.view">
+        <field name="name">account.analytic.line</field>
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_tree" />
+        <field name="arch" type="xml">
+            <field name="unit_amount" position="after">
+                <field name="ticket_id" />
+                <field name="domain_str" column_invisible='True'/>
+                <field name="sh_customer_hour_package_id" domain="domain_str" options="{'no_create': True, 'no_open': True}" />
+            </field>
+            <field name="date" position="after">
+                <field name="start_date" readonly="1" />
+                <field name="end_date" readonly="1" />
+            </field>
+        </field>
+    </record>
+
+    <record id="sh_timeheet_tree_view2" model="ir.ui.view">
+        <field name="name">account.analytic.line2</field>
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_tree" />
+        <field name="arch" type="xml">
+            <field name="start_date" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </field>
+            <field name="end_date" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="sh_timeheet_form_view" model="ir.ui.view">
+        <field name="name">account.analytic.line</field>
+        <field name="model">account.analytic.line</field>
+        <field name="inherit_id" ref="hr_timesheet.hr_timesheet_line_form" />
+        <field name="arch" type="xml">
+            <field name="unit_amount" position="after">
+                <field name="ticket_id" />
+            </field>
+        </field>
+    </record>
+
+</odoo>

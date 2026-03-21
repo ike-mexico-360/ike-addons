@@ -1,0 +1,14 @@
+[flake8]
+max-line-length = 125
+# max-complexity = 16
+select = C,E,F,W,B,B9,D,I,T,N,S
+# B036: Don't except `BaseException` unless you plan to re-raise it. (we use a lot)
+# B907: '...' is manually surrounded by quotes, consider using the `!r` conversion flag. (I don't care)
+# E203: whitespace before ':' (black behavior)
+# E501: flake8 line length (covered by bugbear B950)
+# F401: imported but unused
+# F841: local variable assigned but never used (we use a lot)
+# W503: line break occurred before a binary operator (black behavior)
+ignore = B036,B907,F401,F841,W503
+per-file-ignores=
+    __init__.py:F401

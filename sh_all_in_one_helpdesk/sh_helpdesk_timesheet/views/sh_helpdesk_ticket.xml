@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sh_helpdesk_ticket_time_account_line_form_view" model="ir.ui.view">
+        <field name="name">ticket.time.account.line</field>
+        <field name="model">ticket.time.account.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" />
+                            <field name="project_id" />
+                            <field name="company_id" invisible="1" />
+                            <field name="start_date" />
+                        </group>
+                        <group>
+                            <field name="duration" widget="float_time" />
+                            <field name="end_date" />
+                            <field name="sh_helpdesk_ticket_id" invisible="1" />
+                            <!-- <field name="domain_str" invisible="1" /> -->
+                            <field name="sh_customer_hour_package_id" options="{'no_create': True, 'no_open': True}" readonly="1" />
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="End Ticket" name="end_ticket" type="object" default_focus="1" class="btn-primary" />
+                    <button string="Cancel" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="sh_helpdesk_ticket_timesheet_view" model="ir.ui.view">
+        <field name="name">sh.helpdesk.ticket</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//page[3]" position="after">
+
+                <page string="Timesheets" groups="sh_all_in_one_helpdesk.group_helpdesk_timesheet">
+                    <field name="timehseet_ids" readonly="enable_manual_add_timesheet == False" />
+                    <!-- attrs="{'readonly': [('enable_manual_add_timesheet', '=', False)]}"-->
+                </page>
+            </xpath>
+            <field name="priority" position="after">
+                <field name="start_time" invisible="1" />
+                <field name="ticket_run" invisible="1"/>
+                <label for="duration" />
+                <div>
+                    <button style="pointer-events: none;background: none;border: none;color: black;" class="oe_inline badge badge-secondary" groups="sh_all_in_one_helpdesk.group_helpdesk_timesheet">
+                        <field name="duration" widget="task_time_counter" />
+                    </button>
+                </div>
+            </field>
+            <xpath expr="//header" position="inside">
+                <button name="action_ticket_start" string="Start Ticket" invisible="ticket_run != False" type="object" class="oe_highlight" groups="sh_all_in_one_helpdesk.group_helpdesk_timesheet" />
+                <!-- attrs="{'invisible': [('ticket_run','!=',False)]}" -->
+                <button name="action_ticket_end" string="End Ticket" invisible="ticket_run == False" type="object" class="oe_highlight" groups="sh_all_in_one_helpdesk.group_helpdesk_timesheet" />
+                <!-- attrs="{'invisible': [('ticket_run','=', False)]}"-->
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_helpdesk_ticket_time_inherit_search_view" model="ir.ui.view">
+        <field name="name">sh.helpdesk.ticket.search</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_search_view" />
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="start_time" invisible="1" />
+                <field name="ticket_running" />
+            </field>
+            <xpath expr="//filter[@name='assigned_to_me']" position="after">
+                <filter name="group_start_ticket" string="Running Ticket" domain="[('ticket_running','=',True)]" />
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_helpdesk_ticket_time_inherit_kanban_view" model="ir.ui.view">
+        <field name="name">sh.helpdesk.ticket.time.kanban</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_kanban" />
+        <field name="arch" type="xml">
+            <field name="user_id" position="after">
+                <field name="start_time" />
+                <field name="ticket_running" />
+            </field>
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <t t-if="record.start_time.raw_value">
+                    <br />
+                    <span>Start Time: </span><field name="start_time" />
+                </t>
+            </xpath>
+            <xpath expr="//div[hasclass('oe_kanban_bottom_right')]" position="before">
+                <t t-if="record.start_time.raw_value">
+                    <label for="duration" />
+                    <div>
+                        <button style="pointer-events: none;background: none;border: none;color: black;" class="oe_inline badge badge-secondary" id="timer_kanban_button" groups="sh_all_in_one_helpdesk.group_helpdesk_timesheet">
+                            <field name="duration" widget="task_time_counter" style="font-size: 18px;" />
+                        </button>
+                    </div>
+                </t>
+                <field name="ticket_run" invisible="1"/>
+                <div style="padding-right: 20px;">
+                    <button
+                        name="action_ticket_start"
+                        string="Start Ticket"
+                        invisible="ticket_run != False"
+                        type="object"
+                        class="o_follow_btn o_following btn btn-xs btn-primary"
+                        groups="sh_all_in_one_helpdesk.group_helpdesk_timesheet" >
+                        <span class="o_unfollow">Start</span>
+                    </button>
+                    <button
+                        name="action_ticket_end"
+                        string="End Ticket"
+                        invisible="ticket_run == False"
+                        type="object"
+                        class="o_follow_btn o_following btn btn-xs btn-primary"
+                        groups="sh_all_in_one_helpdesk.group_helpdesk_timesheet">
+                        <span class="o_unfollow">End</span>
+                    </button>
+                </div>
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_helpdesk_ticket_action" model="ir.actions.act_window">
+        <field name="name">Helpdesk Tickets</field>
+        <field name="res_model">sh.helpdesk.ticket</field>
+        <field name="view_mode">kanban,list,form,pivot,graph,calendar,activity</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">Create a New Ticket</p>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sh_helpdesk_timesheet_config_setting_view" model="ir.ui.view">
+        <field name="name">res.config.settings</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.helpdesk_config_setting_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//block[@name='manage_product_helpdesk_setting_container']" position="after">
+                <block title="Ticket Timesheet Configuration" name="ticket_timesheet_setting" groups="sh_all_in_one_helpdesk.group_helpdesk_timesheet">
+                    <setting>
+                        <field name="sh_default_description" />
+                    </setting>
+                    <setting>
+                        <field name="sh_multiple_ticket_allowed" />
+                    </setting>
+                    <setting>
+                        <field name="project_id" class="oe_inline" />
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

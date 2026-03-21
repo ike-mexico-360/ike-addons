@@ -1,0 +1,7 @@
+<odoo noupdate="1">
+    <record id="group_helpdesk_ticket_custom_field" model="res.groups">
+        <field name="name">Helpdesk Custom Field And Tab</field>
+        <field name="users" eval="[(4, ref('base.user_root')), (4, ref('base.user_admin'))]" />
+        <field name="comment">This user will be able to create custom field for helpdesk ticket</field>
+    </record>
+</odoo>

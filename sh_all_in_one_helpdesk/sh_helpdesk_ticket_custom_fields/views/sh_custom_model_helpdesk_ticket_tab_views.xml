@@ -1,0 +1,93 @@
+<?xml version ="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 	 Button Click -->
+    <record id="sh_helpdesk_ticket_custom_tab_wizrd_view" model="ir.ui.view">
+        <field name="name">sh.dynamic.tab.helpdesk.ticket.form</field>
+        <field name="model">sh.custom.tab.helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Custom Tab">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" required="1" />
+                            <field name="label" required="1" />
+                        </group>
+                        <group>
+                            <field name="groups" widget="many2many_tags" /> <field name="invisible_tab" invisible="1" />
+                            <field name="tab_list" invisible="invisible_tab" />
+                            <field name="sh_position" invisible="invisible_tab" />
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="create_tab" string="Create Tab" type="object" class="oe_highlight" />
+                    <button string="Cancel" class="oe_link" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="sh_action_helpdesk_ticket_custom_tab">
+        <field name="name">Helpdesk Ticket Custom Tab</field>
+        <field name="res_model">sh.custom.tab.helpdesk.ticket</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="sh_helpdesk_ticket_custom_tab_wizrd_view" />
+        <field name="type">ir.actions.act_window</field>
+        <field name="target">new</field>
+    </record>
+
+    <record id="sh_helpdesk_ticket_dynamic_tab_form_view_inherit" model="ir.ui.view">
+        <field name="name">helpdesk.ticket.tab.fields.form.inherit</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_form_view" />
+        <field name="arch" type="xml">
+            <xpath expr="//form//header" position="inside">
+                <button name="%(sh_action_helpdesk_ticket_custom_tab)d" groups="sh_all_in_one_helpdesk.group_helpdesk_ticket_custom_field" string="Add Custom Tab" type="action" class="oe_highlight" />
+            </xpath>
+        </field>
+    </record>
+
+    <!--   	Menu Action   -->
+
+    <record id="sh_helpdesk_ticket_form_custom_tab_form_view" model="ir.ui.view">
+        <field name="name">sh.custom.tab.helpdesk.ticket.order.form.view</field>
+        <field name="model">sh.custom.tab.helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Custom Tabs" create="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name" readonly="1" />
+                            <field name="label" required="1" />
+                        </group>
+                        <group>
+                            <field name="groups" widget="many2many_tags" /><field name="invisible_tab" invisible="1" /> <field name="tab_list" invisible="invisible_tab"/>
+                            <field name="sh_position" invisible="invisible_tab" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="sh_helpdesk_ticket_custom_tab_tree_view" model="ir.ui.view">
+        <field name="name">sh.custom.tab.helpdesk.ticket.list.view</field>
+        <field name="model">sh.custom.tab.helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <list create="false">
+                <field name="name" />
+                <field name="label" />
+            </list>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="sh_action_helpdesk_ticket_custom_tab_form">
+        <field name="name">Helpdesk Ticket Custom Tab</field>
+        <field name="res_model">sh.custom.tab.helpdesk.ticket</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_id" ref="sh_helpdesk_ticket_custom_tab_tree_view" />
+        <field name="type">ir.actions.act_window</field>
+    </record>
+
+    <menuitem id="sh_helpdesk_ticket_custom_tab_action_menu" name="Helpdesk Ticket Custom Tabs" parent="sh_all_in_one_helpdesk.helpdesk_config_menu" groups="sh_all_in_one_helpdesk.group_helpdesk_ticket_custom_field" sequence="15" action="sh_action_helpdesk_ticket_custom_tab_form" />
+</odoo>

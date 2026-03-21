@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sh_helpdesk_ticket_repair_inherited_view_form" model="ir.ui.view">
+        <field name="name">sh.helpdesk.repair.inherited.view.form</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form" />
+        <field name="arch" type="xml">
+            <field name="state" position="before">
+                <button class="btn btn-primary" name="action_create_repair_ticket" type="object" string="Create Ticket" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_repair" />
+            </field>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_repair_tickets" type="object" class="oe_stat_button" icon="fa-ticket" context="{'partner_id': partner_id}" invisible="repair_ticket_count == 0" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_repair">
+                    <div class="o_stat_info">
+                        <field name="repair_ticket_count" class="o_stat_value" />
+                        <span class="o_stat_text">Tickets</span>
+                    </div>
+                </button>
+            </xpath>
+            <field name="tag_ids" position="after">
+                <field name="sh_repair_ticket_ids" widget="many2many_tags" />
+            </field>
+        </field>
+    </record>
+    <record id="sh_helpdesk_tickets_repair_inherited_view_form" model="ir.ui.view">
+        <field name="name">sh.helpdesk.tickets.repair.view.form</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_form_view" />
+        <field name="arch" type="xml">
+            <field name="stage_id" position="before">
+                <button class="btn btn-primary" name="action_repair_create_order" icon="fa-wrench" type="object" string="Create Repair Order" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_repair" />
+            </field>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_repair_orders" type="object" class="oe_stat_button" icon="fa-wrench" context="{'partner_id': partner_id}" invisible="repair_order_count == 0" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_repair">
+                    <div class="o_stat_info">
+                        <field name="repair_order_count" class="o_stat_value" />
+                        <span class="o_stat_text">Repair</span>
+                    </div>
+                </button>
+            </xpath>
+            <field name="product_ids" position="before">
+                <field name="sh_repair_product_id" string="Repair Product" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_repair" />
+            </field>
+            <field name="product_ids" position="after">
+                <field name="sh_repair_order_ids" string="Repair Orders" widget="many2many_tags" />
+            </field>
+        </field>
+    </record>
+    <record id="sh_helpdesk_tickets_inherited_view_repair_search" model="ir.ui.view">
+        <field name="name">sh.helpdesk.tickets.ro.view.search</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_search_view" />
+        <field name="arch" type="xml">
+            <field name="stage_id" position="after">
+                <field name="sh_repair_order_ids" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_repair" />
+            </field>
+            <xpath expr="//filter[last()]" position="after">
+                <filter string="Repair Order" name="helpdesk_repair" domain="[('sh_repair_order_ids','!=',False)]" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_repair" />
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_helpdesk_repair_inherited_view_search" model="ir.ui.view">
+        <field name="name">sh.helpdesk.ro.view.search</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_form_filter" />
+        <field name="arch" type="xml">
+            <field name="sale_order_id" position="after">
+                <field name="sh_repair_ticket_ids" />
+            </field>
+            <xpath expr="//filter[1]" position="before">
+                <filter string="Helpdesk Ticket" name="sh_helpdesk_ticket" domain="[('sh_repair_ticket_ids','!=',False)]" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sh_helpdesk_repair_order_inherited_view_tree" model="ir.ui.view">
+        <field name="name">sh.helpdesk.repair.order.view.list</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_order_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sale_order_id']" position="after">
+                <field name="sh_repair_ticket_ids" widget="ticket_popover_widget"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_helpdesk_repair_order_inherited_view_kanban" model="ir.ui.view">
+        <field name="name">sh.helpdesk.repair.order.view.kanban</field>
+        <field name="model">repair.order</field>
+        <field name="inherit_id" ref="repair.view_repair_kanban" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="sh_repair_ticket_ids" widget="ticket_popover_widget"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>
