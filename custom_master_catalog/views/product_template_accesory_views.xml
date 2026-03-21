@@ -37,7 +37,7 @@
                     <field name="x_accessory_ok" invisible="1"/>
                     <field name="image_128" widget='image' class="oe_avatar" readonly="disabled"/>
                     <div class="oe_title">
-                        <label for="name"/>
+                        <label for="name" class="o_form_label_required"/>
                         <h1>
                             <field name="name" class="w-100" readonly="disabled"/>
                         </h1>
@@ -61,16 +61,29 @@
         <field name="view_ids" eval="[(5, 0, 0),
                 (0, 0, {'view_mode': 'list', 'view_id': ref('custom_ike_accessories_view_tree')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('custom_ike_accessories_view_form')})]"/>
-        <field name="domain">[]</field> <!-- To be set in action.server -->
-        <field name="context">{
+        <field name="domain" eval="[
+            ('sale_ok', '=', False),
+            ('sh_product_subscribe', '=', False),
+            ('purchase_ok', '=', True),
+            ('x_accessory_ok', '=', True),
+            ('type', '=', 'service'),
+            ('list_price', '=', 0),
+            ('standard_price', '=', 0),
+            ('categ_id', '=', ref('product.product_category_all')),
+            ('uom_id', '=', ref('l10n_mx.product_uom_service_unit')),
+        ]"/> <!-- To be set in action.server -->
+        <field name="context" eval="{
             'default_sale_ok': False,
             'default_purchase_ok': True,
             'default_x_accessory_ok': True,
             'default_type': 'service',
             'default_list_price': 0,
             'default_standard_price': 0,
-            'search_default_filter_enabled': 1
-        }</field>
+            'default_categ_id': ref('product.product_category_all'),
+            'default_uom_id': ref('l10n_mx.product_uom_service_unit'),
+            'search_default_filter_enabled': 1,
+            'x_accessories_view': True,
+        }"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Create your first accessory!

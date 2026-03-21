@@ -1,0 +1,105 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: white;
+    color: #022b53;
+}
+
+/* Contenedor general */
+.page-container {
+    padding: 40px 60px;
+}
+
+.title-header {
+    color: #002A4F;
+}
+
+/* Header */
+.header-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+    flex-wrap: wrap;
+}
+
+.header-icon {
+    width: 30px;
+}
+
+.title {
+    font-size: 34px;
+    font-weight: 800;
+    margin: 0;
+}
+
+
+.photo-box {
+    width: 120px;
+    height: 120px;
+    border: 2px solid #cfd8e2;
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: auto;
+}
+
+.photo-icon {
+    font-size: 40px;
+    color: #7c8a9a;
+}
+
+/* Contenedor del formulario */
+.form-wrapper {
+    margin-top: 35px;
+    background: #e9f2fb; /* Fondo azul */
+    padding: 40px;
+    border-radius: 20px;
+}
+
+/* Formulario en grid */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 35px 50px;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* Color del placeholder para inputs */
+input::placeholder {
+    color: black; /* azul oscuro */
+    font-weight: 500;
+}
+
+/* Color del placeholder para selects simulando placeholder */
+select {
+    color: black;
+}
+
+/* Cambiar color de la opción placeholder en select */
+select option:first-child {
+    color: black;
+    font-weight: 500;
+}
+
+/* Botón Guardar personalizado */
+.btn-guardar {
+    background-color: #022b53 !important; /* azul oscuro */
+    color: white !important;
+    border-radius: 10px;
+    padding: 12px 35px;
+    font-weight: bold;
+    font-size: 17px;
+    border: none;
+}
+
+.btn-guardar:hover {
+    background-color: #011d3a !important; /* más oscuro al pasar mouse */
+}

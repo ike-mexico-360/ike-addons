@@ -7,7 +7,7 @@
         <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='default_code']" position="before">
-                <field name="x_cl_sub_service" widget="custom_numeric_account"/>
+                <field name="x_cl_sub_service"/>
             </xpath>
         </field>
     </record>

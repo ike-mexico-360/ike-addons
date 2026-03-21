@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ike_event_evidence_kanban" model="ir.ui.view">
+        <field name="name">ike.event.evidence.form.view</field>
+        <field name="model">ike.event.evidence</field>
+        <field name="arch" type="xml">
+            <kanban>
+                <field name="detail_images" />
+                <templates>
+                    <div t-name="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <field name="evidence_type" />
+                            </h5>
+                            <field name="nu_user_code" />
+                            <p class="card-text">
+                                <field name="comments" />
+                            </p>
+                        </div>
+                        <div class="card-body" t-if="record.detail_images.raw_value">
+                            <div class="row">
+                                <div class="col" t-foreach="record.detail_images.raw_value" t-as="detail" t-key="detail['id']">
+                                    <img t-attf-src="data:image/png;base64,#{detail['image']}"
+                                        class="o_image_64_cover border-rounded p-2" t-att-alt="detail['name']" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <field name="nu_user_sign" widget="signature" />
+                        </div>
+                    </div>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    <record id="view_ike_event_evidece_form" model="ir.ui.view">
+        <field name="name">ike.event.evidence.form.view</field>
+        <field name="model">ike.event.evidence</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="event_id" readonly="1"/>
+                        <field name="event_supplier_id" readonly="context.get('ike_event_screen')"
+                            domain="[('event_id', '=', event_id), ('selected', '=', True)]"/>
+                        <field name="evidence_type" readonly="context.get('ike_event_screen')"/>
+                        <field name="nu_user_code" readonly="context.get('ike_event_screen')"/>
+                    </group>
+                    <notebook>
+                        <page name="comments" string="Comments">
+                            <field name="comments" nolabel="1" colspan="2" readonly="context.get('ike_event_screen')"/>
+                        </page>
+                        <page name="images" string="Images">
+                            <field name="detail_ids" nolabel="1" colspan="2" readonly="context.get('ike_event_screen')">
+                                <list editable="bottom">
+                                    <field name="file_name"/>
+                                    <field name="file_image" widget="image"
+                                        options='{"size": [0, 60], "convert_to_webp": True}'/>
+                                </list>
+                            </field>
+                        </page>
+                        <page name="signature" string="Signature">
+                            <field name="nu_user_sign" widget="signature" nolabel="1" colspan="2" readonly="context.get('ike_event_screen')"
+                                options="{'size': [0, 200]}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

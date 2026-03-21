@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkeMany2oneField">
+        <t>
+            <t t-if="props.readonly">
+                <input
+                    class="o_input"
+                    t-att-value="displayName"
+                    t-ref="input"
+                    t-att-id="props.id"
+                    type="text"
+                    t-att-placeholder="' '"
+                    t-att-readonly="1"
+                />
+                <label t-att-for="props.id" t-out="label" class="ike_input_label"/>
+            </t>
+            <t t-else="">
+                <div class="o_field_many2one_selection">
+                    <Many2XAutocomplete t-props="Many2XAutocompleteProps"/>
+                </div>
+                <label t-att-for="props.id" t-out="label" class="ike_input_label"/>
+            </t>
+        </t>
+    </t>
+
+</templates>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="product_category_service_view_form_inherit_ike_event" model="ir.ui.view">
+        <field name="name">product_category_service_view_form.inherit.ike_event</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="custom_master_catalog.product_category_service_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='x_color']" position="attributes">
+                <attribute name="groups">base.group_no_one</attribute>
+            </xpath>
+            <xpath expr="//field[@name='x_color']" position="before">
+                <field name="x_survey_id" readonly="disabled" groups="base.group_no_one"/>
+                <field name="x_input_res_model" readonly="disabled" groups="base.group_no_one"/>
+                <field name="x_icon" widget="icon_picker" readonly="disabled" groups="base.group_no_one"/>
+                <field name="x_ref" readonly="disabled" groups="base.group_no_one"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

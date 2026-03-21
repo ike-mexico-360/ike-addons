@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View ike.service.input.vial.truck search -->
+    <record id="view_ike_service_input_vial_truck_search" model="ir.ui.view">
+        <field name="name">view.ike.service.input.vial.truck.search</field>
+        <field name="model">ike.service.input.vial.truck</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="event_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- View ike.service.input.vial.truck View List -->
+    <record id="view_ike_service_input_vial_truck_list" model="ir.ui.view">
+        <field name="name">view.ike.service.input.vial.truck.list</field>
+        <field name="model">ike.service.input.vial.truck</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="event_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ike_service_input_vial_truck_form" model="ir.ui.view">
+        <field name="name">view.ike.service.input.vial.truck.form</field>
+        <field name="model">ike.service.input.vial.truck</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Service Input Vial">
+                <header>
+                </header>
+                <sheet class="ike_sheet">
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Name..."/>
+                        </h1>
+                    </div>
+                    <group invisible="0">
+                        <field name="name"/>
+                        <field name="step_number"/>
+                    </group>
+                    <group string="Service Destination">
+                        <group>
+                            <widget name="google_map_widget"
+                                    latitude="destination_latitude"
+                                    longitude="destination_longitude"
+                                    location_label="destination_label"
+                                    state="state_id"
+                                    country="country_id"
+                                    street="street"
+                                    street_number="street_number"
+                                    city="city"
+                                    colony="colony"
+                                    zip_code="destination_zip_code"/>
+                        </group>
+                        <group>
+                            <field name="destination_latitude"/>
+                            <field name="destination_longitude"/>
+                            <field name="destination_label"/>
+                            <field name="destination_distance"/>
+                            <label for="street" string="Address"/>
+                            <div class="o_address_format">
+                                <field name="street" placeholder="Street..." class="o_address_street" />
+                                <field name="street2" placeholder="Number..." class="o_address_street"/>
+                                <div class="o_address_street">
+                                    <field name="colony" placeholder="Colony..." style="flex: 2 1 auto"/>
+                                </div>
+                                <field name="city" placeholder="City" class="o_address_city"/>
+                                <field name="municipality_id" class="o_address_state" placeholder="Municipality"/>
+                                <field name="state_id" class="o_address_state" placeholder="State"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field name="destination_zip_code" placeholder="ZIP" class="o_address_zip"/>
+                                <field name="country_id" placeholder="Country" class="o_address_country"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                            </div>
+                            <field name="destination_highway" invisible="1"/>
+                        </group>
+                    </group>
+                    <group name="Service Data">
+                        <group></group>
+                        <group>
+                            <field name="service_vehicle_type_domain" invisible="1"/>
+                            <field name="service_vehicle_type_ids"
+                                domain="service_vehicle_type_domain"
+                                widget="many2many_checkboxes"/>
+                            <field name="service_accessories_domain" invisible="1"/>
+                            <field name="service_accessory_ids"
+                                domain="service_accessories_domain"
+                                widget="many2many_checkboxes"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Service Input Screen -->
+    <record id="view_ike_service_input_vial_truck_screen_form" model="ir.ui.view">
+        <field name="name">view.ike.service.input.vial.truck.screen.form</field>
+        <field name="model">ike.service.input.vial.truck</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <form string="Service Input Vial" js_class="ike_service_input_screen_form">
+                <sheet class="ike-sheet">
+                    <group invisible="1">
+                        <field name="name"/>
+                        <field name="stage_ref"/>
+                        <field name="step_number"/>
+                        <field name="event_id"/>
+                    </group>
+                    <group string="Service Destination" class="ike-group mt-0" invisible="not sections.get('destination_data')">
+                        <group>
+                            <widget name="google_map_widget"
+                                    latitude="destination_latitude"
+                                    longitude="destination_longitude"
+                                    location_label="destination_label"
+                                    state="state_id"
+                                    municipality="municipality_id"
+                                    country="country_id"
+                                    street="street"
+                                    street_number="street_number"
+                                    city="city"
+                                    colony="colony"
+                                    zip_code="destination_zip_code"
+                                    options="{'show_on_load': False}"/>
+                        </group>
+                        <group>
+                            <div class="o_row" colspan="2">
+                                <field name="destination_latitude" invisible="0"/>
+                                <field name="destination_longitude" invisible="0"/>
+                            </div>
+                            <field name="destination_label" invisible="1"/>
+                            <div class="o_address_format" colspan="2">
+                                <div class="d-flex gap-2">
+                                    <field name="street" widget="ike_char" required="sections.get('destination_data')"/>
+                                    <field name="street_number" widget="ike_char"/>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <field name="city" widget="ike_char"/>
+                                    <field name="colony" widget="ike_char" required="sections.get('destination_data')"/>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <field name="municipality_id" widget="ike_many2one" required="sections.get('destination_data')"
+                                        options="{'no_open': True, 'no_create': True, 'no_edit': True}"/>
+                                    <field name="state_id" widget="ike_many2one"  context="{'edit': False}"
+                                        options="{'no_open': True, 'no_create': True, 'no_edit': True}" required="sections.get('destination_data')"/>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    <field name="country_id" widget="ike_many2one"  context="{'edit': False}"
+                                           options="{'no_open': True, 'no_create': True}" required="sections.get('destination_data')"/>
+                                    <field name="destination_zip_code" widget="ike_char" required="sections.get('destination_data')"/>
+                                </div>
+                                <field name="street2" widget="ike_char" nolabel="1"/>
+                                <field name="street_ref" widget="ike_char" nolabel="1"/>
+                            </div>
+                            <field name="destination_highway" invisible="1"/>
+                            <field name="ia_suggestion_loading" invisible="1"/>
+                            <div class="d-flex justify-content-end gap-1 mt-2">
+                                <button string="Return" class="btn-secondary o_discard"
+                                        special="cancel" data-hotkey="x" />
+                                <button string="Continue" class="btn-primary o_save"
+                                        special="save" data-hotkey="s"
+                                        invisible="ia_suggestion_loading"/>
+                            </div>
+                        </group>
+                    </group>
+                    <group string="Type of service vehicle" name="user_sub_service_data" invisible="not sections.get('user_sub_service_data')">
+                        <field name="service_vehicle_type_domain" invisible="1"/>
+                        <!-- Mostrar campo filtrado por defecto en el paso 1 -->
+                        <field name="service_vehicle_type_ids"
+                            domain="service_vehicle_type_domain"
+                            widget="ike_many2many_checkboxes"
+                            invisible="stage_ref != 'capturing'"
+                            nolabel="1"/>
+                        <!-- Mostrar el campo sin dominio para otros pasos -->
+                        <field name="service_vehicle_type_ids"
+                            domain="service_vehicle_type_domain"
+                            widget="ike_many2many_checkboxes"
+                            invisible="stage_ref not in ('assigned', 'in_progress')"
+                            nolabel="1"/>
+                    </group>
+                    <group string="Types of accessories" name="user_sub_service_data" invisible="not sections.get('user_sub_service_data')">
+                        <field name="service_accessories_domain" invisible="1"/>
+                        <field name="service_accessory_ids"
+                            domain="service_accessories_domain"
+                            widget="ike_many2many_checkboxes"
+                            invisible="stage_ref != 'capturing'"
+                            nolabel="1"/>
+                        <field name="service_accessory_ids"
+                            domain="service_accessories_domain"
+                            widget="ike_many2many_checkboxes"
+                            invisible="stage_ref not in ('assigned', 'in_progress')"
+                            nolabel="1"/>
+                    </group>
+                    <group>
+                        <group string="Concepts" colspan="2" invisible="not sections.get('product_data')">
+                            <field name="supplier_number" invisible="1"/>
+                            <field name="service_product_ids" widget="ike_section_and_note_field_o2m" nolabel="1" colspan="2"
+                                    context="{
+                                        'list_view_ref': 'ike_event.ike_event_product_list_view',
+                                        'default_supplier_number': supplier_number,
+                                        'default_event_id': event_id,
+                                    }"
+                                    options="{
+                                        'field_columns': ['product_id'],
+                                        'delete_condition_field': 'mandatory',
+                                    }"/>
+                            <!-- <field name="service_product_ids" widget="ike_section_and_note_field_o2m" nolabel="1" colspan="2"
+                                context="{
+                                    'default_supplier_number': supplier_number,
+                                    'default_event_id': event_id
+                                }"
+                                options="{
+                                    'field_columns': ['product_id'],
+                                    'delete_condition_field': 'mandatory',
+                                }">
+                                <list editable="bottom">
+                                    <control>
+                                        <create name="add_line_control" string="Add a Concept" />
+                                    </control>
+                                    <field name="display_type" column_invisible="1" />
+                                    <field name="sequence" widget="handle" column_invisible="1" />
+
+                                    <field name="event_id" column_invisible="1" />
+                                    <field name="event_supplier_number" column_invisible="1" />
+
+                                    <field name="product_id" required="1"
+                                            widget="ike_label_section_and_note_field"
+                                            domain="product_domain"
+                                            context="{
+                                                'edit': 0,
+                                                'display_default_code': 0,
+                                                'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list',
+                                            }"
+                                            options="{'no_create': 1, 'no_open': 1}"
+                                            placeholder="Search a concept"
+                                            readonly="covered or display_type"/>
+                                    <field name="product_domain" column_invisible="1" />
+                                    <field name="name" column_invisible="1" />
+                                    <field name="supplier_number" string="Supplier"/>
+                                    <field name="covered" />
+                                    <field name="mandatory"/>
+                                    <field name="uom_id" options="{'no_create': 1, 'no_open': 1}"/>
+                                    <field name="estimated_quantity" />
+                                </list>
+                            </field> -->
+                        </group>
+                    </group>
+                    <group invisible="not sections.get('user_sub_service_data')">
+                        <group>
+                        </group>
+                        <div class="d-flex justify-content-end gap-1">
+                            <button string="Return" class="btn-secondary o_discard"
+                                    special="cancel" data-hotkey="x" />
+                            <button string="Continue" class="btn-primary o_save"
+                                    special="save" data-hotkey="s"/>
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action ike.service.input.vial.truck -->
+    <record id="action_ike_service_input_vial_truck" model="ir.actions.act_window">
+        <field name="name">Service Input Vial Town Truck</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ike.service.input.vial.truck</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'list', 'view_id': ref('view_ike_service_input_vial_truck_list')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('view_ike_service_input_vial_truck_form')})]" />
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Lista de proveedores -->
+    <template id="portal_ike_event_suppliers" name="Event Suppliers">
+        <t t-call="portal.portal_layout">
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Suppliers</t>
+            </t>
+            <t t-if="not suppliers">
+                <p class="alert alert-warning">There are currently no suppliers to show.</p>
+            </t>
+            <t t-if="suppliers" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th name="name">Name</th>
+                        <th name="email">Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="suppliers" t-as="supplier">
+                        <tr>
+                            <td>
+                                <a t-attf-href="/event/portal/supplier/#{supplier.id}" t-att-title="supplier.name">
+                                    <t t-out="supplier.name"/>
+                                </a>
+                            </td>
+                            <td>
+                                <t t-out="supplier.email"/>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </t>
+        </t>
+    </template>
+    <template id="portal_ike_event_supplier_view" name="Event Supplier">
+        <div class="row">
+            <div class="col-5">
+                <div class="row">
+                    <t t-out="supplier.name"/>
+                </div>
+            </div>
+        </div>
+    </template>
+
+</odoo>

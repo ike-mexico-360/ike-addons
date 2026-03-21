@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View ike.service.input.vial.generic search -->
+    <record id="view_ike_service_input_vial_generic_search" model="ir.ui.view">
+        <field name="name">view.ike.service.input.vial.generic.search</field>
+        <field name="model">ike.service.input.vial.generic</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="event_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- View ike.service.input.vial.generic View List -->
+    <record id="view_ike_service_input_vial_generic_list" model="ir.ui.view">
+        <field name="name">view.ike.service.input.vial.generic.list</field>
+        <field name="model">ike.service.input.vial.generic</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="event_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ike_service_input_vial_generic_form" model="ir.ui.view">
+        <field name="name">view.ike.service.input.vial.generic.form</field>
+        <field name="model">ike.service.input.vial.generic</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Service Input Vial">
+                <header>
+                </header>
+                <sheet class="ike_sheet">
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Name..."/>
+                        </h1>
+                    </div>
+                    <group invisible="0">
+                        <field name="name"/>
+                        <field name="step_number"/>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="tire_size" invisible="1"/>
+                            <field name="is_highway" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Service Input Screen -->
+    <record id="view_ike_service_input_vial_generic_screen_form" model="ir.ui.view">
+        <field name="name">view.ike.service.input.vial.generic.screen.form</field>
+        <field name="model">ike.service.input.vial.generic</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <form string="Service Input Vial" js_class="ike_service_input_screen_form">
+                <sheet class="ike-sheet">
+                    <group invisible="1">
+                        <field name="name"/>
+                        <field name="stage_ref"/>
+                        <field name="step_number"/>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="service_vehicle_type_domain" invisible="1"/>
+                            <field name="service_vehicle_type_ids"
+                                domain="service_vehicle_type_domain"
+                                widget="ike_many2many_checkboxes"
+                                nolabel="1"/>
+                            <field name="tire_size" invisible="1"/>
+                            <field name="is_highway" invisible="1"/>
+                        </group>
+                    </group>
+                     <group>
+                        <group string="Concepts" colspan="2" invisible="not sections.get('product_data')">
+                            <field name="supplier_number" invisible="0"/>
+                            <field name="service_product_ids" widget="ike_section_and_note_field_o2m" nolabel="1" colspan="2"
+                                context="{
+                                    'default_supplier_number': supplier_number,
+                                    'default_event_id': event_id
+                                }"
+                                options="{
+                                    'field_columns': ['product_id'],
+                                    'delete_condition_field': 'covered',
+                                    'autosave': 'true'
+                                }">
+                                <list editable="bottom">
+                                    <control>
+                                        <create name="add_line_control" string="Add a Concept" />
+                                    </control>
+                                    <field name="display_type" column_invisible="1" />
+                                    <field name="sequence" widget="handle" column_invisible="1" />
+
+                                    <field name="event_id" column_invisible="1" />
+                                    <field name="event_supplier_number" column_invisible="1" />
+
+                                    <field name="product_id" required="1"
+                                            widget="ike_label_section_and_note_field"
+                                            domain="product_domain"
+                                            context="{
+                                                'edit': 0,
+                                                'display_default_code': 0,
+                                                'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'
+                                            }"
+                                            options="{'no_create': 1, 'no_open': 1}"
+                                            placeholder="Search a concept"
+                                            readonly="covered or display_type"/>
+                                    <field name="product_domain" column_invisible="1" />
+                                    <field name="name" widget="section_and_note_text"/>
+                                    <field name="supplier_number" string="Supplier"/>
+                                    <field name="covered" />
+                                    <field name="uom_id" options="{'no_create': 1, 'no_open': 1}"/>
+                                    <field name="estimated_quantity" />
+                                </list>
+                            </field>
+                        </group>
+                    </group>
+                    <group invisible="not sections.get('user_sub_service_data')">
+                        <group>
+                            <field name="ia_suggestion_loading" invisible="1"/>
+                        </group>
+                        <div class="d-flex justify-content-end gap-1">
+                            <button string="Return" class="btn-secondary o_discard"
+                                    special="cancel" data-hotkey="x" />
+                            <button string="Continue" class="btn-primary o_save"
+                                    special="save" data-hotkey="s"
+                                    invisible="ia_suggestion_loading" />
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action ike.service.input.vial.generic -->
+    <record id="action_ike_service_input_vial_generic" model="ir.actions.act_window">
+        <field name="name">Service Input Vial Town Truck</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ike.service.input.vial.generic</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'list', 'view_id': ref('view_ike_service_input_vial_generic_list')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('view_ike_service_input_vial_generic_form')})]" />
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

@@ -21,7 +21,7 @@
         <field name="priority" eval="50"/>
         <field name="arch" type="xml">
             <list delete="0" edit="0" duplicate="0">
-                <field name="id" string="Customer number"/>
+                <field name="id" string="Customer number" column_invisible="context.get('from_authorizer_event', 0)"/>
                 <field name="name"/>
                 <field name="vat"/>
                 <field name="disabled" column_invisible="1"/>
@@ -43,36 +43,36 @@
                     <div class="oe_button_box" name="button_box"/>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                     <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
-                    <field name="image_1920" widget='image' class="oe_avatar" options='{"preview_image": "avatar_128"}' readonly="disabled == True"/>
+                    <field name="image_1920" widget='image' class="oe_avatar" options='{"preview_image": "avatar_128"}' readonly="disabled"/>
                     <div class="oe_title">
-                        <label for="name" string="Business Name"/>
+                        <label for="name" string="Business Name" class="o_form_label_required"/>
                         <field name="name" invisible="1"/>
                         <h1>
-                            <field id="company" options="{'line_breaks': False}" widget="text" class="text-break" name="name" default_focus="1" placeholder="e.g. Lumber Inc" required="1" readonly="disabled == True"/>
+                            <field id="company" options="{'line_breaks': False}" widget="text" class="text-break" name="name" default_focus="1" placeholder="e.g. Lumber Inc" required="1" readonly="disabled"/>
                         </h1>
                     </div>
                     <group>
                         <group>
                             <field name="id" string="Customer number" invisible="not id" readonly="1"/>
-                            <field name="vat" readonly="disabled == True"/>
+                            <field name="vat" required="1" readonly="disabled"/>
                             <label for="street" string="Address"/>
                             <div class="o_address_format">
-                                <field name="street" placeholder="Street..." class="o_address_street" readonly="disabled == True"/>
-                                <field name="street2" placeholder="Street 2..." class="o_address_street" readonly="disabled == True"/>
+                                <field name="street" placeholder="Street..." class="o_address_street" readonly="disabled"/>
+                                <field name="street2" placeholder="Street 2..." class="o_address_street" readonly="disabled"/>
                                 <div class="o_address_street">
-                                    <field name="l10n_mx_edi_colony" placeholder="Colony..." style="flex: 2 1 auto" readonly="disabled == True"/>
+                                    <field name="l10n_mx_edi_colony" placeholder="Colony..." style="flex: 2 1 auto" readonly="disabled"/>
                                 </div>
-                                <field name="city" placeholder="City" class="o_address_city" readonly="disabled == True"/>
-                                <field name="state_id" class="o_address_state" placeholder="State" readonly="disabled == True"
-                                       options="{'no_open': True, 'no_create': True}"
-                                       context="{'default_country_id': country_id}"/>
-                                <field name="zip" placeholder="ZIP" class="o_address_zip" readonly="disabled == True"/>
-                                <field name="country_id" placeholder="Country" class="o_address_country" readonly="disabled == True"
+                                <field name="city" placeholder="City" class="o_address_city" readonly="disabled"/>
+                                <field name="state_id" class="o_address_state" placeholder="State" readonly="disabled"
+                                       options="{'no_open': True, 'no_create': True}" domain="[('disabled', '=', False), ('country_id', '=', country_id)]"
+                                       context="{'default_country_id': country_id, 'list_view_ref': 'custom_master_catalog.custom_ike_view_country_state_tree', 'search_view_ref': 'custom_master_catalog.custom_ike_view_country_state_search', 'search_default_filter_by_mexico': 1, 'hide_disabled_enabled_filters': 1}"/>
+                                <field name="zip" placeholder="ZIP" class="o_address_zip" style="margin-right: 2%;width: 23%;" readonly="disabled"/>
+                                <field name="country_id" placeholder="Country" class="o_address_country" readonly="disabled"
                                        options='{"no_open": True, "no_create": True}'/>
                             </div>
                         </group>
                         <group>
-                            <field name="x_ref_sap" readonly="disabled == True"/>
+                            <field name="x_ref_sap" readonly="disabled"/>
                             <field name="disabled" invisible="1"/>
                             <field name="active" invisible="1"/>
                         </group>
@@ -81,7 +81,7 @@
                         <page name="x_accounts" string="Accounts" invisible="disabled == True">
                             <group>
                                 <field name="x_account_child_ids" mode="kanban" nolabel="1" create="0" delete="0"
-                                    readonly="disabled == True"
+                                    readonly="disabled"
                                     context="{
                                         'kanban_view_ref': 'custom_master_catalog.custom_res_partner_view_kanban',
                                         'form_view_ref': 'custom_master_catalog.res_partner_account_view_form',

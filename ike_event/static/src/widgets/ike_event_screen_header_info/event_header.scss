@@ -1,0 +1,26 @@
+.o_ike_event_screen_header_info_widget {
+    $widget-border-color: #9FC7E7;
+    margin-bottom: #{map-get($spacers, 3)};
+
+    // Mover detalles abajo cuando la ventana es muy pequeña
+    div.ike-top-info-container {
+        flex-wrap: wrap;
+
+        @include media-breakpoint-up(lg) {
+            flex-wrap: nowrap;
+        }
+
+        // Comportamiento de ancho del widget de afiliación
+        div.o_ike_affiliations_widget {
+            .phone-info {
+                width: max-content;
+            }
+        }
+    }
+
+    // Separador de informaciónn superior e inferior
+    div.ike-info-separator {
+        border-bottom: 1px solid $widget-border-color;
+        margin-top: #{map-get($spacers, 3)};
+    }
+}

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ike_event_authorization_view_form_inherit" model="ir.ui.view">
+        <field name="name">ike.event.authorization.view.form.inherit</field>
+        <field name="model">ike.event</field>
+        <field name="inherit_id" ref="ike_event.ike_event_authorization_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='authorizations_concepts']" position="inside">
+                <group name="authorization_event" string="Request authorization event" colspan="6"
+                    invisible="
+                            stage_ref in ['searching','assigned', 'in_progress']
+                            or ((membership_authorization_status != 'pending_cabine' or stage_ref == 'cancel') and check_commercial_authorization == False)
+                            and (services_available != 0 or event_coverage_authorizer or required_commercial_authorizer)">
+                    <field name="membership_authorization_status" invisible="1"/>
+                    <field name="stage_ref" invisible="1"/>
+                    <field name="check_commercial_authorization" invisible="1"/>
+                    <button
+                        name="action_view_authorization"
+                        string="Request authorization event"
+                        type="object" class="btn-primary"
+                    />
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ike_event_authorization_view_list_inherit" model="ir.ui.view">
+        <field name="name">ike.event.authorization.view.list.inherit</field>
+        <field name="model">ike.event</field>
+        <field name="inherit_id" ref="ike_event.ike_event_authorization_view_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_request_authorization']" position="after">
+                <button
+                    name="action_view_authorization"
+                    string="Request authorization event"
+                    type="object" class="btn-primary"
+                    context="{'from_authorizer': True}"
+                    invisible="
+                        stage_ref in ['searching','assigned', 'in_progress']
+                        or ((membership_authorization_status != 'pending_cabine' or stage_ref == 'cancel') and check_commercial_authorization == False)
+                        and (services_available != 0 or event_coverage_authorizer or required_commercial_authorizer)"
+                />
+            </xpath>
+        </field>
+    </record>
+</odoo>

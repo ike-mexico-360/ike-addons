@@ -28,11 +28,13 @@
                     <group>
                         <field name="disabled_reason" invisible="not disabled" force_save="1"/>
                         <field name="area_product_ids" widget="one2many" nolabel="1"
-                               context="{'default_geographical_area_id': id}">
+                               context="{'default_geographical_area_id': id, 'display_default_code': 0}">
                             <list editable="bottom">
                                 <field name="geographical_area_id" column_invisible="1"/>
                                 <field name="product_id"
                                        domain="[('id', 'in', context.get('allowed_product_ids', []))]"
+                                       context="{'display_default_code': 0,
+                                       'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list'}"
                                        options="{'no_open': True, 'no_create': True}"/>
                                 <field name="color" widget="color_picker"/>
                                 <field name="disabled" widget="disable_field"
@@ -55,7 +57,7 @@
                 <group>
                     <group>
                         <field name="geographical_area_id" invisible="0"/>
-                        <field name="product_id" domain="[('type', '=', 'service')]"/>
+                        <field name="product_id" domain="[('type', '=', 'service')]" context="{'display_default_code': 0}"/>
                         <field name="color" widget="color_picker"/>
                     </group>
                     <group>

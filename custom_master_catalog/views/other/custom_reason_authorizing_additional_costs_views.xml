@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View search -->
+    <record id="custom_reason_authorizing_additional_costs_view_search" model="ir.ui.view">
+        <field name="name">custom.reason.authorizing.additional.costs.view.search</field>
+        <field name="model">custom.reason.authorizing.additional.costs</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="disabled"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- View Form -->
+    <record id="custom_reason_authorizing_additional_costs_view_form" model="ir.ui.view">
+        <field name="name">custom.reason.authorizing.additional.costs.view.form</field>
+        <field name="model">custom.reason.authorizing.additional.costs</field>
+        <field name="arch" type="xml">
+            <form string="Reasons for authorizing additional costs" delete="0" duplicate="0">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <div class="oe_title">
+                        <label for="name" class="o_form_label_required"/>
+                        <h1>
+                            <field name="name" required="1" placeholder="Name..." readonly="disabled"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="commercial_authorization" />
+                            <field name="disabled" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                            <field name="create_date" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- View List -->
+    <record id="custom_reason_authorizing_additional_costs_view_list" model="ir.ui.view">
+        <field name="name">custom.reason.authorizing.additional.costs.view.list</field>
+        <field name="model">custom.reason.authorizing.additional.costs</field>
+        <field name="arch" type="xml">
+            <list string="Reasons for authorizing additional costs" delete="0" duplicate="0" edit="0">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="custom_reason_authorizing_additional_costs_action" model="ir.actions.act_window">
+        <field name="name">Reasons of authorizing</field>
+        <field name="res_model">custom.reason.authorizing.additional.costs</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('custom_reason_authorizing_additional_costs_view_list')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('custom_reason_authorizing_additional_costs_view_form')})]"/>
+        <field name="context">{'search_default_filter_enabled': 1}</field>
+    </record>
+
+</odoo>

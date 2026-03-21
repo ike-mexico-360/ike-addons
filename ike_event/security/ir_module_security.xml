@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_ike_event" model="ir.module.category">
+        <field name="name">Ike Event</field>
+        <field name="sequence">10</field>
+    </record>
+
+    <record id="group_ike_event_user" model="res.groups">
+        <field name="name">User (Read Only)</field>
+        <field name="category_id" ref="module_category_ike_event"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <record id="group_ike_event_admin" model="res.groups">
+        <field name="name">Administrator (No Delete)</field>
+        <field name="category_id" ref="module_category_ike_event"/>
+        <field name="implied_ids" eval="[(4, ref('group_ike_event_user'))]"/>
+    </record>
+
+    <record id="custom_master_catalog.custom_group_supplier_operational" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_ike_event_user'))]"/>
+    </record>
+    <record id="custom_master_catalog.custom_group_event_cabin_supervisor" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_ike_event_admin'))]"/>
+    </record>
+    <record id="custom_master_catalog.custom_group_event_coordinator" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_ike_event_admin'))]"/>
+    </record>
+</odoo>

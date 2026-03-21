@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<template>
+
+    <t t-name="custom_master_catalog.SourceSampleToTableField">
+        <div class="table-responsive" t-ref="container">
+            <table class="table table-bordered table-hover table-striped table-sm" t-if="data.length">
+                <thead>
+                    <tr class="bg-dark text-light">
+                        <th t-foreach="columns" t-as="col" t-key="col_index">
+                            <span t-out="col" />
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-if="origin_type == 'excel' or origin_type == 'csv'">
+                        <tr t-foreach="data.slice(1)" t-as="row" t-key="row_index">
+                            <td t-foreach="row" t-as="col" t-key="col_index">
+                                <span t-out="col" />
+                            </td>
+                        </tr>
+                    </t>
+                    <t t-else="">
+                        <tr t-foreach="data" t-as="row" t-key="row_index">
+                            <td t-foreach="columns" t-as="col" t-key="col_index">
+                                <span t-out="row[col]" />
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+        </div>
+    </t>
+
+</template>

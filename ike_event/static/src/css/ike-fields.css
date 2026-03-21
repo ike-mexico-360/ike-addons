@@ -1,0 +1,78 @@
+/* Global Fields */
+.ike_input_label_indicator::after {
+    content: ":";
+}
+
+.o_field_widget:has(.ike_input_label) {
+    position: relative;
+    padding-top: 16px;
+}
+
+.o_field_widget:has(.ike_input_label) label,
+.o_field_widget:has(.o_field_selection option[value="false"]:checked):has(.ike_input_label) label {
+    position: absolute;
+    left: 0px;
+    top: 10px;
+    color: #0c2d57;
+    font-size: 16px;
+    font-weight: 500;
+    pointer-events: none;
+    transition:
+        top 0.2s ease,
+        font-size 0.2s ease,
+        font-weight 0.2s ease;
+}
+
+.o_field_widget:has(.o_input:not([readonly]):focus)>.ike_input_label,
+.o_field_widget:has(.o_input:not(:placeholder-shown))>.ike_input_label {
+    top: 0px;
+    color: #0c2d57;
+    font-size: 12px;
+}
+
+/* Input Fields */
+.o_field_widget:has(.ike_input_label) .o_input {
+    color: #005691;
+    font-size: 16px;
+    border-bottom-width: 1px !important;
+    border-bottom-color: #adb5bd !important;
+}
+
+.o_field_widget:has(.ike_input_label) .o_input:not(:read-only):focus {
+    border-bottom-width: 1px !important;
+    border-bottom-color: #d8bf5b !important;
+}
+
+.o_field_widget:has(.ike_input_label):has(input[readonly]),
+.o_field_widget:has(.o_field_selection[disabled]) {
+    background-color: #cecece !important;
+}
+
+/* Many2one no label */
+.ike-select .o-autocomplete--input {
+    color: #005691;
+    font-size: 16px;
+    border-bottom-width: 1px !important;
+    border-bottom-color: #adb5bd !important;
+}
+
+.ike-select .o-autocomplete--input:hover {
+    border-bottom-width: 1px !important;
+    border-bottom-color: #d8bf5b !important;
+}
+
+/* Invalid */
+.o_field_widget.o_field_invalid:has(.ike_input_label) {
+    background-color: var(--o-input-background-color, transparent);
+}
+
+.o_field_widget.o_field_invalid:has(.ike_input_label)>label,
+.o_field_widget.o_field_invalid:has(.ike_input_label)>input {
+    color: #db5f5f !important;
+    transition: none;
+}
+
+.o_field_widget.o_field_invalid:has(.ike_input_label)>input {
+    background-color: transparent !important;
+    border-bottom-color: #db5f5f !important;
+}

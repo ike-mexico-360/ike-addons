@@ -13,5 +13,13 @@ from . import custom_payment_type
 from . import custom_vehicle_type
 from . import custom_service_operational_area
 from . import custom_supplier_coverage_configuration
-from . import custom_supplier_cost_matrix
 from . import custom_supplier_types_statuses
+from . import custom_phone_classification
+from . import custom_reason_authorizing_additional_costs
+from . import custom_additional_concept_authorizer_type
+from . import res_partner_supplier_drivers_rel
+from . import res_partner_supplier_users_rel
+from . import custom_data_source
+from . import custom_subservice_specification
+from . import custom_vehicle_weight_category
+from . import custom_holidays

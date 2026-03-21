@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="ike_event.IkeEventScreenFormView" t-inherit="web.FormView" t-inherit-mode="primary">
+        <xpath expr="//t[@archInfo='archInfo']" position="after">
+            <div>
+                <!-- SERVICE -->
+                <t t-if="state.sections['user_service_data'] || state.sections['location_data']">
+                    <View t-props="state.serviceInputViewProps" t-if="state.serviceInputAux"/>
+                    <View t-props="state.serviceInputViewProps" t-else=""/>
+                </t>
+                <!-- SURVEY -->
+                <t t-if="state.sections['survey_data']">
+                    <View t-props="state.subServiceSurveyInputViewProps" t-if="state.subServiceSurveyInputAux"/>
+                    <View t-props="state.subServiceSurveyInputViewProps" t-else=""/>
+                </t>
+                <!--
+                <div t-if="state.sections['survey_data']" class="o_form_sheet_bg ike-sheet d-none2">
+                    <div class="o_form_sheet position-relative">
+                        <div class="o_group row align-items-start">
+                            <div class="o_inner_group grid col-lg-6">
+                            </div>
+                            <div class="o_inner_group grid col-lg-6">
+                                <div class="o_wrap_field d-flex d-sm-contents flex-column mb-3 mb-sm-0">
+                                    <div class="o_cell">
+                                        <div class="d-flex justify-content-end gap-1">
+                                            <button type="button" class="btn btn-secondary" t-on-click="() => this.actionBackward(true)">
+                                                Return
+                                            </button>
+                                            <button type="button" class="btn btn-primary" t-on-click="() => this.actionForward(true)">
+                                                Continue
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                -->
+                <!-- SUBSERVICE -->
+                <t t-if="state.sections['destination_data'] || state.sections['user_sub_service_data']">
+                    <View t-props="state.subServiceInputViewProps" t-if="state.subServiceInputAux"/>
+                    <View t-props="state.subServiceInputViewProps" t-else=""/>
+                </t>
+
+                <!-- SERVICE SUPPLIER-->
+                <!-- <t t-if="state.sections['service_supplier']">
+                    <View t-props="state.serviceSupplierViewProps" t-if="state.serviceSupplierAux"/>
+                    <View t-props="state.serviceSupplierViewProps" t-else=""/>
+                </t> -->
+            </div>
+        </xpath>
+    </t>
+
+</templates>

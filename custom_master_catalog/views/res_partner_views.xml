@@ -96,8 +96,8 @@
             <!-- ACCOUNT INFO -->
             <xpath expr="//span[@name='address_name']" position="before">
                 <!-- <field name="type" required="1" widget="radio" options="{'horizontal': true}" invisible="is_company == False or not parent_id"/> -->
-                <field name="ref" string="CL Account" widget="custom_numeric_account" invisible="not x_is_account"/>
-                <field name="ref" string="CL Supplier" widget="custom_numeric_account" invisible="not x_is_supplier"/>
+                <field name="ref" string="CL Account" invisible="not x_is_account"/>
+                <field name="ref" string="CL Supplier" invisible="not x_is_supplier"/>
             </xpath>
             <xpath expr="//field[@name='child_ids']//form//field[@name='type']/following-sibling::div[1]" position="after">
                 <hr/>
@@ -131,7 +131,7 @@
             </xpath>
             <xpath expr="//field[@name='user_id']" position="before">
                 <field name="x_is_ike" invisible="1"/>
-                <field name="x_invoice_company_id"/>
+                <field name="x_invoice_company_id" widget="many2many_tags"/>
             </xpath>
         </field>
     </record>

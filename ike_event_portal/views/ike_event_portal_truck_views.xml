@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Lista de proveedores -->
+    <template id="portal_ike_event_trucks" name="Event Trucks">
+        <t t-call="portal.portal_layout">
+            <owl-component name="ike_event_portal.TrucksComponent"/>
+        </t>
+    </template>
+</odoo>

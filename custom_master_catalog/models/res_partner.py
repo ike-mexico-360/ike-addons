@@ -5,6 +5,8 @@ import re
 
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
+import phonenumbers
+from phonenumbers.phonenumberutil import NumberParseException
 # from datetime import datetime
 
 
@@ -20,7 +22,21 @@ class ResPartner(models.Model):
     phone = fields.Char(tracking=True)
     mobile = fields.Char(tracking=True)
     email = fields.Char(tracking=True)
+    responsible_name = fields.Char(tracking=True)
     type = fields.Selection(selection_add=[('center', 'Supplier Center')])
+    country_id = fields.Many2one(default=lambda self: self.env.company.country_id)
+    priority = fields.Selection([
+        ('0', 'None'),
+        ('1', 'Low'),
+        ('2', 'Medium'),
+        ('3', 'High'),
+    ], string='Priority', default='0')
+    validation_type = fields.Selection([
+        ('data_base', 'Data base'),
+        ('portal', 'Portal'),
+        ('api', 'API'),
+    ], string='Validation type', default='data_base', tracking=True)
+
     # === FIELDS: NEW === #
     x_is_client = fields.Boolean(string='Client', index=True)
     x_is_supplier = fields.Boolean(string='Supplier', index=True)
@@ -29,11 +45,15 @@ class ResPartner(models.Model):
     x_business_name = fields.Char(string='Business Name', tracking=True)
     x_use_parent_invoice_info = fields.Boolean(string='The account is equal to the client', default=False, tracking=True)
     x_partner_contact = fields.Char(string='Partner Contact', tracking=True)
-    x_invoice_company_id = fields.Many2one(
+    x_invoice_company_id = fields.Many2many(
         'res.partner',
+        'res_partner_invoice_company_rel',
+        'partner_id',
+        'invoice_company_id',
         'Invoice Company',
         domain=[('x_is_ike', '=', True)],
-        tracking=True)
+        tracking=True
+    )
     disabled = fields.Boolean(default=False, index=True, tracking=True)
 
     # === FIELDS: RELATED PARENT === #
@@ -52,15 +72,11 @@ class ResPartner(models.Model):
 
     # === FIELDS: CLIENT === #
     x_ref_sap = fields.Char(string="SAP Reference", tracking=True)
+    x_society_sap = fields.Char(string="SAP Society", tracking=True)
     x_account_child_ids = fields.One2many(
         'res.partner', 'parent_id',
         domain=[('x_is_account', '=', True)],
         string='Accounts')
-
-    # === FIELDS: SUPPLIER CENTER === #
-    x_cost_matrix_ids = fields.One2many(
-        'custom.supplier.cost.matrix', 'supplier_center_id',
-        string='Cost Matrix')
 
     # === ONCHANGE === #
     @api.onchange('is_company')
@@ -74,39 +90,19 @@ class ResPartner(models.Model):
     @api.onchange('x_use_parent_invoice_info')
     def _onchange_x_use_parent_invoice_info(self):
         if self.x_use_parent_invoice_info:
+            self.x_business_name = self.parent_id.x_business_name
             # RFC
-            self.vat = False
+            self.vat = self.x_parent_vat
             # Dirección
-            self.street = False
-            self.street2 = False
-            self.l10n_mx_edi_colony = False
-            self.city = False
-            self.state_id = False
-            self.zip = False
-            self.country_id = False
-
-    @api.onchange('email')
-    def _onchange_email(self):
-        """
-        Shows a warning if the email format is invalid.
-        """
-        if self.email:
-            # Regular expression for email validation
-            regex = r'^[a-zA-Z0-9]+[\._]?[a-zA-Z0-9]+[@]\w+[.]\w{2,3}$'
-            if not re.match(regex, self.email):
-                self.email = ""
-                return {
-                    'warning': {
-                        'title': _("Formato de Correo Inválido"),
-                        'message': _("Por favor, ingresa una dirección de correo electrónico válida."),
-                    }
-                }
-
-    # === COMPUTE === #
-    @api.depends('x_related_partner_ids')
-    def _compute_x_related_partner_count(self):
-        for rec in self:
-            rec.x_related_partner_count = len(rec.x_related_partner_ids)
+            self.street = self.x_parent_street
+            self.street2 = self.x_parent_street2
+            self.l10n_mx_edi_colony = self.parent_id.l10n_mx_edi_colony
+            self.city = self.x_parent_city
+            self.state_id = self.x_parent_state_id and self.x_parent_state_id.id or False
+            self.zip = self.x_parent_zip
+            self.country_id = self.x_parent_country_id and self.x_parent_country_id.id or False
+        else:
+            self.x_business_name = False
 
     # === CONSTRAINS === #
     @api.constrains('name', 'type')
@@ -133,7 +129,6 @@ class ResPartner(models.Model):
             domain = [
                 ('name', '=', rec.name),
                 ('x_is_client', '=', True),
-                ('company_type', '=', 'company'),
                 ('is_company', '=', True),
                 ('id', '<>', rec.id),
             ]
@@ -145,7 +140,7 @@ class ResPartner(models.Model):
     @api.constrains('vat')
     def _constrains_x_check_vat(self):
         for rec in self.filtered(lambda r: r.vat):
-            if rec.x_is_client or rec.x_is_account or rec.x_is_supplier:
+            if rec.x_is_client or rec.x_is_supplier or rec.x_is_ike:
                 contacts = self.env['res.partner'].search_read([
                     ('vat', '=', rec.vat),
                     ('vat', '!=', False),
@@ -187,42 +182,25 @@ class ResPartner(models.Model):
 
     def write(self, vals):
         # Client Logic
-        if self.x_is_client and 'name' in vals:
-            vals['x_business_name'] = vals['name']
-
+        for record in self:
+            if record.x_is_client and 'name' in vals:
+                vals['x_business_name'] = vals['name']
         res = super().write(vals)
 
+        if 'priority' in vals:
+            area = self.env['custom.geographical.area']
+            for partner in self:
+                child_records = area.search([('parent_id', '=', partner.id)])
+                if child_records:
+                    child_records.write({'priority': partner.priority})
         return res
 
     # === ACTIONS === #
     def action_disable(self, reason=None):
         res = super().action_disable(reason)
-        self.notify_disabled(reason)
+        for record in self:
+            record.notify_disabled(reason)
         return res
-
-    def action_cost_matrix_view(self):
-        self.ensure_one()
-        action = {
-            'name': _('Matriz de costos'),
-            'view_mode': 'list,form',
-            'res_model': 'custom.supplier.cost.matrix',
-            'context': {
-                **self.env.context,
-                'create': True,
-                'default_supplier_center_id': self.id,
-                'default_supplier_id': self.parent_id and self.parent_id.id or False,
-                'search_default_filter_enabled': 1,
-                'from_supplier_center': True
-            },
-            'view_id': False,
-            'type': 'ir.actions.act_window',
-            'domain': [('id', 'in', self.x_cost_matrix_ids.ids)],
-            'views': [(False, 'list'), (False, 'form')],
-        }
-        if len(self.x_cost_matrix_ids) < 1:
-            action['views'] = [(False, 'form')]
-            action['res_id'] = self.x_cost_matrix_ids.id
-        return action
 
     # === PUBLIC METHODS === #
     def get_supplier_center_values(self):
@@ -268,3 +246,87 @@ class ResPartner(models.Model):
             return re.match(_rfc_pattern_pm, rfc_str) is not None
         else:
             return False
+
+    @api.onchange('phone', 'country_id', 'company_id')
+    def _onchange_phone_validation(self):
+        return self._phone_number_validation('phone')
+
+    @api.onchange('mobile', 'country_id', 'company_id')
+    def _onchange_mobile_validation(self):
+        return self._phone_number_validation('mobile')
+
+    @api.onchange('x_phone_p1', 'country_id', 'company_id')
+    def _onchange_x_phone_p1_validation(self):
+        return self._phone_number_validation('x_phone_p1')
+
+    @api.onchange('x_phone_p2', 'country_id', 'company_id')
+    def _onchange_x_phone_p2_validation(self):
+        return self._phone_number_validation('x_phone_p2')
+
+    @api.onchange('x_phone_p3', 'country_id', 'company_id')
+    def _onchange_x_phone_p3_validation(self):
+        return self._phone_number_validation('x_phone_p3')
+
+    @api.onchange('x_phone_p4', 'country_id', 'company_id')
+    def _onchange_x_phone_p4_validation(self):
+        return self._phone_number_validation('x_phone_p4')
+
+    @api.onchange('x_phone_p5', 'country_id', 'company_id')
+    def _onchange_x_phone_p5_validation(self):
+        return self._phone_number_validation('x_phone_p5')
+
+    def _phone_number_validation(self, phone_number_field='phone'):
+        """
+        Validates a phone number in any field
+
+        Args:
+            phone_number_field (str): Name of the field to validate (default 'phone')
+
+        Returns:
+            dict or False: Dictionary with warning if invalid, False if valid
+        """
+        phone_number = getattr(self, phone_number_field, False)
+
+        if not phone_number:
+            return False
+
+        # Get country for validation
+        country_id = self.country_id
+        if not country_id:
+            country_id = list(self._phone_get_country())[0] if self._phone_get_country() else False
+        if not country_id:
+            country_id = self.env.company.country_id
+
+        # First, obtain the country code from the phone number
+        phone_code = None
+        try:
+            # Parse the number to extract the country code
+            parsed_number = phonenumbers.parse(phone_number, None)
+            if parsed_number and parsed_number.country_code:
+                phone_code = str(parsed_number.country_code)
+        except:
+            pass
+
+        # Compare with the contact's country code
+        if country_id and phone_code:
+            # Convert the model's country code to a string
+            country_code = country_id.code
+            if country_code:
+                # Compare the codes (formatting may need to be adjusted)
+
+                if country_id.phone_code and str(phone_code) != str(country_id.phone_code):
+                    raise ValidationError(_("The country code in the phone number (+%s) does not match the country (%s).",
+                                    phone_code, country_id.name))
+
+        # Format phone number to international format
+        formatted_phone = self._phone_format(fname=phone_number_field, force_format='INTERNATIONAL')
+
+        # Verify if the international format is valid
+        if not formatted_phone:
+            country_name = country_id.name if country_id else _("unknown")
+            raise ValidationError(_("The entered phone number is not valid for country %s", country_name))
+
+        # Update field with international format
+        setattr(self, phone_number_field, formatted_phone or "")
+
+        return False

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkeServiceRadioField">
+        <div
+            role="radiogroup"
+            t-attf-class="o_{{ props.orientation }}"
+            t-att-aria-label="props.label"
+        >
+            <div class="ike-services-container gap-2">
+                <t t-foreach="items" t-as="item" t-key="item[0]">
+                    <label class="p-3">
+                        <input
+                            type="radio"
+                            t-att-checked="item[0] === value"
+                            t-att-disabled="props.readonly"
+                            t-att-name="id"
+                            t-att-data-value="item[0]"
+                            t-att-data-index="item_index"
+                            t-att-id="`${id}_${item[0]}`"
+                            t-on-change="() => this.onChange(item)"
+                        />
+                        <i t-attf-class="{{item[2]}} fa-3x"/>
+                        <span t-out="item[1]"/>
+                    </label>
+                </t>
+            </div>
+        </div>
+    </t>
+
+</templates>

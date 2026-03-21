@@ -11,9 +11,24 @@
                     <field name="code"/>
                     <field name="currency_id"/>
                     <field name="phone_code"/>
-                    <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]"/>
-                    <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]"/>
+                    <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                    <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 </search>
+            </field>
+        </record>
+
+        <!-- Heredar el formulario del grupo de países -->
+        <record id="view_country_group_form_inherit" model="ir.ui.view">
+            <field name="name">view.country.group.form.inherit</field>
+            <field name="model">res.country.group</field>
+            <field name="inherit_id" ref="base.view_country_group_form"/>
+            <field name="arch" type="xml">
+                <field name="country_ids" position="replace">
+                    <field name="country_ids" 
+                        widget="many2many_tags" 
+                        options="{'no_create': True, 'no_open': True}"
+                        context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_country_tree'}"/>
+                </field>
             </field>
         </record>
 
@@ -69,6 +84,17 @@
             </field>
         </record>
 
+        <record id="custom_view_country_group_tree_inherit" model="ir.ui.view">
+            <field name="name">res.country.group.list.inherit.disable_edit</field>
+            <field name="model">res.country.group</field>
+            <field name="inherit_id" ref="base.view_country_group_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="attributes">
+                    <attribute name="edit">0</attribute>
+                </xpath>
+            </field>
+        </record>
+        
         <record id="custom_ike_action_country" model="ir.actions.act_window">
             <field name="name">Countries</field>
             <field name="res_model">res.country</field>

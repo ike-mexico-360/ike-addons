@@ -8,8 +8,8 @@
         <field name="arch" type="xml">
             <search>
                 <field name="name"/>
-                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]"/>
-                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 <field name="state_id"/>
                 <group expand="1" string="Group By">
                     <filter string="Mexico" name="filter_by_mexico" domain="[('country_id.code', '=', 'MX')]" context="{}"/>
@@ -70,13 +70,26 @@
                             <!-- <field name="zip_code"/> -->
                             <field name="c_estado" readonly="1"/>
                             <field name="c_mnpio" readonly="1"/>
-                            <field name="red_zone" readonly="disabled == True"/>
+                            <field name="red_zone" readonly="disabled"/>
                         </group>
                     </group>
                     <notebook>
                         <page name="codes" string="ZIP Codes">
                             <group>
                                 <field name="code_ids" context="{'default_municipality_id': id}" nolabel="1" readonly="1">
+                                    <list editable="top">
+                                        <field name="municipality_id" column_invisible="1"/>
+                                        <field name="zip_code"/>
+                                        <field name="city"/>
+                                        <field name="disabled" column_invisible="1"/>
+                                        <field name="active" column_invisible="1"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+                        <page string="ZIP Codes (inactive)" invisible="inactive_zip_codes_count == 0">
+                            <group>
+                                <field name="inactive_code_ids" context="{'active_test': False}" nolabel="1" readonly="1">
                                     <list editable="top">
                                         <field name="municipality_id" column_invisible="1"/>
                                         <field name="zip_code"/>

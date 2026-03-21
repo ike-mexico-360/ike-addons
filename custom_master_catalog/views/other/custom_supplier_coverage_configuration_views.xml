@@ -8,15 +8,11 @@
         <field name="arch" type="xml">
             <search>
                 <field name="supplier_id"/>
-                <field name="accept_cancellations"/>
                 <field name="phone"/>
                 <field name="email"/>
                 <field name="disabled"/>
-                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]"/>
-                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]"/>
-                <group expand="1" string="Group By">
-                    <filter string="Accept cancellations" name="group_by_accept_cancellations" domain="[]" context="{'group_by':'accept_cancellations'}"/>
-                </group>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
             </search>
         </field>
     </record>
@@ -30,7 +26,7 @@
                 <field name="supplier_id"/>
                 <field name="phone"/>
                 <field name="email"/>
-                <field name="accept_cancellations"/>
+                <field name="accept_cancellations" column_invisible="1"/>
                 <field name="active" column_invisible="1"/>
                 <field name="disabled" column_invisible="1"/>
             </list>
@@ -49,12 +45,10 @@
                     <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
                     <group>
                         <group>
-                            <field name="supplier_id" readonly="disabled == True" required="1" options='{"no_open": True, "no_create": True}'
+                            <field name="supplier_id" readonly="disabled" required="1" options='{"no_open": True, "no_create": True}'
                                 domain="[('x_is_supplier', '=', True), ('disabled', '=', False)]"
-                                context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list', 'search_view_ref': 'custom_master_catalog.res_partner_supplier_view_search'}"/>
-                            <span class="o_form_label o_td_label o_address_type" name="address_name">
-                                <span>Address</span>
-                            </span>
+                                context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list', 'search_view_ref': 'custom_master_catalog.res_partner_supplier_view_search', 'hide_disabled_enabled_filters': 1}"/>
+                            <label for="street" string="Address"/>
                             <div class="o_address_format">
                                 <field name="street" placeholder="Street..." class="o_address_street"
                                     readonly="1" force_save="1"/>
@@ -76,8 +70,11 @@
                             <field name="phone" readonly="1" force_save="1"/>
                             <field name="mobile" readonly="1" force_save="1"/>
                             <field name="email" readonly="1" force_save="1"/>
-                            <field name="waiting_time" readonly="disabled == True" invisible="accept_cancellations == False" force_save="1"/>
-                            <field name="accept_cancellations" readonly="disabled == True" force_save="1"/>
+                            <field name="accept_cancellations" invisible="1"/>
+                            <label for="waiting_time"/>
+                            <div>
+                                <field name="waiting_time" readonly="disabled" force_save="1" class="oe_inline"/> min
+                            </div>
                             <field name="disabled" invisible="1"/>
                             <field name="active" invisible="1"/>
                         </group>
@@ -85,14 +82,15 @@
                     <notebook>
                         <page name="supplier_coverage_config_line_ids" string="Services and subservices">
                             <group>
-                                <field name="supplier_coverage_config_line_ids" nolabel="1" mode="list" readonly="disabled == True">
-                                    <list string="Productos" editable="bottom" limit="20" no_open="1">
+                                <field name="supplier_coverage_config_line_ids" nolabel="1" mode="list" readonly="disabled">
+                                    <list string="Productos" editable="bottom" limit="20" no_open="1" delete="0">
+                                        <field name="x_service_domain" column_invisible="1"/>
                                         <field name="service_id" options='{"no_open": True, "no_create": True}' required="1"
-                                            domain="[('disabled', '=', False)]"
+                                            domain="x_service_domain"
                                             context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list'}"/>
                                         <field name="product_id" options='{"no_open": True, "no_create": True}' required="1"
                                             domain="[('categ_id', '=', service_id),('type', '=', 'service'),('disabled', '=', False)]"
-                                            context="{'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list'}"/>
+                                            context="{'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list', 'display_default_code': 0}"/>
                                         <button type="object" name="action_open_geographic_subservice_wizard" title="Forecast Report" icon="fa-pencil-square-o"/>
                                     </list>
                                 </field>

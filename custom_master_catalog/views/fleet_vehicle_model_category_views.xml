@@ -44,15 +44,16 @@
                     <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
                     <div class="oe_title mb24">
                         <h1>
-                            <label for="name"/>
+                            <label for="name" class="o_form_label_required"/>
                             <field name="name" options="{'line_breaks': False}" widget="text" class="text-break"
                                 default_focus="1" placeholder="Category name" required="1"
-                                readonly="disabled == True"/>
+                                readonly="disabled"/>
                         </h1>
                     </div>
                     <group>
                         <group>
-                            <field name="x_service_id" readonly="disabled == True"
+                            <field name="x_categ_domain" invisible="1"/>
+                            <field name="x_service_id" readonly="disabled" domain="x_categ_domain"
                                 options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
                                 context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list'}"/>
                         </group>
@@ -82,7 +83,8 @@
             <field name="context">
                 {
                     'x_custom_fleet_vehicle_model_category_view': True,
-                    'search_default_filter_enabled': 1
+                    'search_default_filter_enabled': 1,
+                    'x_subservice_view': True
                 }
             </field>
         </record>

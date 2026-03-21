@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View Search -->
+    <record id="custom_data_source_view_search" model="ir.ui.view">
+        <field name="name">custom.data.source.view.search</field>
+        <field name="model">custom.data.source</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="origin_type"/>
+                <separator/>
+                <filter string="Excel" name="filter_by_excel" domain="[('origin_type', '=', 'excel')]" context="{}"/>
+                <filter string="Web API" name="filter_by_web_api" domain="[('origin_type', '=', 'web_api')]" context="{}"/>
+                <separator/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- View Tree -->
+    <record id="custom_data_source_view_list" model="ir.ui.view">
+        <field name="name">custom.data.source.view.list</field>
+        <field name="model">custom.data.source</field>
+        <field name="arch" type="xml">
+            <list delete="0" duplicate="0">
+                <field name="name"/>
+                <field name="origin_type"/>
+                <field name="disabled" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View Form -->
+    <record id="custom_data_source_view_form" model="ir.ui.view">
+        <field name="name">custom.data.source.view.form</field>
+        <field name="model">custom.data.source</field>
+        <field name="arch" type="xml">
+            <form string="Data Source" delete="0" duplicate="0">
+                <header>
+                    <button name="send_config_to_server" type="object" string="Send config" class="btn-primary" icon="fa-rocket" groups="base.group_system"/>
+                    <field name="disabled" invisible="1"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Name..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="account_id" options="{'no_create': True, 'no_open': True}"
+                                domain="[('x_is_account', '=', True), ('disabled', '=', False)]"/>
+                            <field name="client_id" options="{'no_create': True, 'no_open': True}" domain="[('child_ids', 'in', account_id)]"/>
+                        </group>
+                    </group>
+                    <group string="Source file configuration" name="source_file_configuration">
+                        <group>
+                            <field name="origin_type"/>
+                            <field name="separator"/>
+                            <field name="quote"/>
+                            <field name="filename_pattern"/>
+                            <field name="filename_encoding"/>
+                            <field name="filename_has_header"/>
+                            <field name="behavior"/>
+                        </group>
+                        <group>
+                            <field name="file_subdirectory"/>
+                            <field name="sftp_route"/>
+                            <field name="template_file" widget="binary" invisible="origin_type not in ('excel', 'csv')"
+                                filename="template_file_name"
+                                options="{'accepted_file_extensions': '.xls,.xlsx,.csv,.txt'}"/>
+                            <field name="template_file_name" invisible="1"/>
+                            <field name="template_file_type" invisible="1"/>
+                            <field name="no_metadata" invisible="1"/>
+                            <button name="action_load_metadata" string="Load metadata"
+                                type="object" class="btn-secondary" colspan="2"
+                                invisible="not template_file"/>
+                        </group>
+                    </group>
+                    <group>
+                        <!-- <group string="Security" name="security">
+                            <field name="encryption_required"/>
+                        </group> -->
+                        <group string="Job" name="job">
+                            <field name="job_enabled"/>
+                            <field name="job_timezone"/>
+                            <field name="job_max_files_per_run"/>
+                        </group>
+                    </group>
+                    <notebook colspan="4">
+                        <page name="fields" string="Fields">
+                            <field name="field_ids" widget="one2many">
+                                <list editable="bottom" limit="200">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="source_field_name"/>
+                                    <field name="field_name"/>
+                                    <field name="field_type"/>
+                                    <field name="precision" invisible="field_type != 'float'"/>
+                                    <field name="scale" invisible="field_type != 'float'"/>
+                                    <field name="field_longitude"/>
+                                    <field name="field_required"/>
+                                    <field name="field_clue"/>
+                                    <field name="field_un_search"/>
+                                    <field name="field_rule"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page name="Sampling" string="Sampling" invisible="not template_data_sampling">
+                            <field name="template_data_sampling" widget="source_sample_to_table" no_label="1"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="custom_data_source_action" model="ir.actions.act_window">
+        <field name="name">Data Source</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">custom.data.source</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_enabled': 1}</field>
+    </record>
+
+</odoo>

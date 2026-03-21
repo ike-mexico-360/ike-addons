@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ike_event_portal.TrucksComponent" owl="1">
+        <div class="portal-main-container">
+            <!-- Loading Indicator -->
+            <div t-if="state.isLoading" class="text-center my-5">
+                <i class="fa fa-spinner fa-spin fa-3x"/>
+                <p>Loading...</p>
+            </div>
+            <t t-if="state.notification">
+                <div t-attf-class="alert alert-{{state.notification.type}} alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                    <strong t-esc="state.notification.message"/>
+                    <button type="button" class="btn-close" aria-label="Close" t-on-click="closeNotification"></button>
+                </div>
+            </t>
+            <!-- VIEW 1: TRUCK LIST -->
+            <div class="trucks-view-container" t-if="!state.isLoading and state.view === 'list' and !state.selectedTruckId">
+                <div class="trucks-header">
+                    <div class="trucks-title">
+                        <span>Grúas</span>
+                    </div>
+                    <div  class="search-container">
+                         <a t-if="state.canAddDriver" t-on-click="showCreateForm" class="btn-nuevo">Nueva Grúa</a>
+                    </div>
+                </div>
+                <div class="trucks-filters">
+                    <form class="o_portal_search_form w-100" role="search">
+                        <div class="row g-3 align-items-center">
+                            <div class="filters col-lg-auto">
+                                <label>Filtrar por:</label>
+                                <input t-on-input="(ev) => this.updateFilter('model', ev.target.value)" t-att-value="state.filters.model" type="text" name="model_search" class="filter-input" placeholder="Modelo..." />
+                                <input t-on-input="(ev) => this.updateFilter('license_plate', ev.target.value)" t-att-value="state.filters.license_plate" type="text" name="plate_search" class="filter-input" placeholder="Licencia" />
+                                <input t-on-input="(ev) => this.updateFilter('driver', ev.target.value)" t-att-value="state.filters.driver" type="text" name="driver_search" class="filter-input" placeholder="Conductor..." />
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <PaginationComponent pagination="pagination">
+                    <table class="usuarios-table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Modelo</th>
+                                <th>Matricula</th>
+                                <th>Conductor</th>
+                                <th>Tipo de vehículo</th>
+                                <th>Estado del vehículo</th>
+                                <th/>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="pagination.paginatedItems" t-as="truck" t-key="truck.id">
+                                <tr>
+                                    <td>
+                                        <t t-esc="truck.model_id ? truck.model_id[1] : 'N/A'"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="truck.license_plate or 'N/A'"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="truck.driver_id ? truck.driver_id[1] : 'N/A'"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="truck.x_vehicle_type ? truck.x_vehicle_type[1] : 'N/A'"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="truck.x_vehicle_service_state ? truck.x_vehicle_service_state : 'N/A'"/>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-primary" t-on-click.prevent="() => this.showDetails(truck.id)">Ver detalles</button>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr t-if="!state.trucks.length">
+                                <td colspan="6" class="text-center">No trucks found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </PaginationComponent>
+            </div>
+            <!-- VIEW 2: TRUCK DETAILS -->
+            <div t-if="!state.isLoading and state.view === 'list' and state.selectedTruckId">
+                <TruckReadComponent
+                    truckId="state.selectedTruckId"
+                    onCancel="() => this.showList()"
+                />
+            </div>
+            <div t-if="!state.isLoading and state.view === 'create'">
+                <TruckCreateComponent
+                    onTruckCreated="() => this.onTruckCreated()"
+                    onCancel="() => this.showList()"
+                />
+            </div>
+        </div>
+    </t>
+</templates>

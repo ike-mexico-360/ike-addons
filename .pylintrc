@@ -1,0 +1,37 @@
+[MASTER]
+load-plugins = pylint_odoo
+ignored-modules=odoo
+enable = odoolint
+ignore = __init__.py
+jobs=1
+recursive=yes
+
+[MESSAGES CONTROL]
+disable=
+    C8112,  # missing-readme
+    C0114,  # missing-module-docstring
+    C0115,  # missing-class-docstring
+    C0116,  # missing-function-docstring
+    C8101,  # manifest-required-author
+    C8107,  # translation-required
+    R0903,  # too-few-public-methods
+    R0904,  # too-many-public-methods
+
+    W0611,  # unused-import
+    W8113,  # attribute-string-redundant
+
+[FORMAT]
+max-args=10
+max-locals=25
+max-returns=6
+max-branches=15
+max-statements=50
+max-line-length=135
+max-nested-blocks=7
+
+[ODOOLINT]
+valid-odoo-versions = 18.0
+
+[REPORTS]
+output-format = colorized
+reports = no

@@ -41,15 +41,19 @@
                     <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
                     <field name="image_128" widget='image' class="oe_avatar" readonly="disabled"/>
                     <div class="oe_title">
-                        <label for="name"/>
+                        <label for="name" class="o_form_label_required"/>
                         <h1>
                             <field name="name" placeholder="e.g. Model S" readonly="disabled"/>
                         </h1>
-                        <label for="brand_id"/>
+                        <label for="brand_id" class="o_form_label_required"/>
                         <h2>
                             <field name="brand_id" placeholder="e.g. Tesla" readonly="disabled" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
                                 context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_brand_view_tree', 'form_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_brand_view_form'}"/>
                         </h2>
+                        <label for="x_vehicle_weight_category_id"/>
+                        <h3>
+                            <field name="x_vehicle_weight_category_id" readonly="disabled" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        </h3>
                     </div>
                     <group invisible="1">
                         <field name="create_date" invisible="1"/>
@@ -59,6 +63,17 @@
                 </sheet>
                 <chatter/>
             </form>
+        </field>
+    </record>
+
+    <record id="view_fleet_vehicle_model_form_inherit_weight_category_form" model="ir.ui.view">
+        <field name="name">view.fleet.vehicle.model.inherit.weight.category.form</field>
+        <field name="model">fleet.vehicle.model</field>
+        <field name="inherit_id" ref="fleet.fleet_vehicle_model_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='category_id']" position="after">
+                <field name="x_vehicle_weight_category_id" readonly="disabled" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+            </xpath>
         </field>
     </record>
 

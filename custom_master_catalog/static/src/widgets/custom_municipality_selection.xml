@@ -2,7 +2,7 @@
 <templates id="template" xml:space="preserve">
 
     <t t-name="custom_master_catalog.CustomMunicipalitySelection">
-        <div class="d-flex mb-2 gap-2">
+        <div class="d-flex gap-2">
             <span class="d-none d-sm-block" style="flex: 1">Select Municipalities</span>
             <t t-if="!props.readonly">
                 <div style="flex: 1">
@@ -12,10 +12,15 @@
                     <Many2XAutocomplete t-props="stateMany2XAutocompleteProps"/>
                 </div>
             </t>
-            <button type="button" class="btn btn-link" style="flex: 1"
-                    t-on-click="onSelectMunicipalities" t-att-disabled="!productIds.length or props.readonly">
-                Add
-            </button>
+            <t t-if="productIds.length">
+                <button type="button" class="btn btn-link" style="flex: 1"
+                        t-on-click="onSelectMunicipalities" t-att-disabled="props.readonly">
+                    Add
+                </button>
+            </t>
+            <t t-else="">
+                <span class="text-warning">No sub-services configured</span>
+            </t>
         </div>
     </t>
 

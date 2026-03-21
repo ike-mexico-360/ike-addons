@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkeEventScreenHeaderInfo">
+        <div class="ike-top-info-container d-flex flex-row gap-3">
+            <IkeAffiliations t-props="{
+                record: record,
+                user_field: 'user_id',
+                phone_field: 'user_phone',
+                additional_phone_field: 'user_additional_phone',
+                subscription_field: 'user_membership_id'
+            }"/>
+            <div class="d-flex flex-row w-100 gap-3 flex-nowrap text-nowrap" style="overflow-x: auto; scrollbar-width: auto;">
+                <t t-foreach="topFields" t-as="field" t-key="'top_' + field_index">
+                    <IkeComponentInfo t-props="{fieldName: field, record: record, maxHeight: 128}"/>
+                </t>
+            </div>
+        </div>
+        <div class="ike-info-separator"/>
+        <div class="ike-bottom-info-container d-flex flex-row gap-4 flex-wrap">
+            <t t-foreach="bottomFields" t-as="field" t-key="'bottom_' + field_index">
+                <IkeComponentInfo t-props="{fieldName: field, record: record, orientation: 'horizontal'}"/>
+            </t>
+        </div>
+    </t>
+
+</templates>

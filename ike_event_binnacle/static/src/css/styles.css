@@ -1,0 +1,7 @@
+.binnacle-cell-html div, .binnacle-cell-html p {
+    margin-bottom: 0px !important;
+}
+.binnacle-cell-html ul {
+    padding-left: 20px;
+    margin-bottom: 0px;
+}

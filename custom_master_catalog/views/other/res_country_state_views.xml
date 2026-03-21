@@ -8,8 +8,9 @@
                 <field name="name"/>
                 <field name="code"/>
                 <field name="country_id"/>
-                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]"/>
-                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]"/>
+                <filter string="México" name="filter_by_mexico" domain="[('country_id.code', '=', 'MX')]"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 <group string="Group By">
                     <filter name="groupby_country" string="Country" context="{'group_by': 'country_id'}"/>
                 </group>
@@ -22,11 +23,11 @@
         <field name="model">res.country.state</field>
         <field name="priority" eval="50"/>
         <field name="arch" type="xml">
-            <list string="State" edit="false" delete="0" duplicate="0">
+            <list string="State" edit="false" delete="0" duplicate="0" create="0">
                 <field name="name"/>
                 <field name="code"/>
                 <field name="country_id" options="{'no_create': True, 'no_open': True}"
-                    context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_country_tree', 'form_view_ref': 'custom_master_catalog.custom_ike_view_country_form', 'search_view_ref': 'custom_master_catalog.custom_ike_res_country_view_search', 'search_default_filter_enabled': 1}"/>
+                    context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_country_tree', 'form_view_ref': 'custom_master_catalog.custom_ike_view_country_form', 'search_view_ref': 'custom_master_catalog.custom_ike_res_country_view_search', 'hide_disabled_enabled_filters': 1}"/>
                 <field name="disabled" column_invisible="1"/>
             </list>
         </field>
@@ -46,7 +47,7 @@
                         <field name="name"/>
                         <field name="code"/>
                         <field name="country_id" options='{"no_open": True, "no_create": True}'
-                            context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_country_tree', 'form_view_ref': 'custom_master_catalog.custom_ike_view_country_form', 'search_view_ref': 'custom_master_catalog.custom_ike_res_country_view_search', 'search_default_filter_enabled': 1}"/>
+                            context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_country_tree', 'form_view_ref': 'custom_master_catalog.custom_ike_view_country_form', 'search_view_ref': 'custom_master_catalog.custom_ike_res_country_view_search', 'hide_disabled_enabled_filters': 1}"/>
                     </group>
                 </sheet>
                 <chatter/>

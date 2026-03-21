@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <!-- Demo API Connection - JSONPlaceholder -->
+        <record id="demo_api_jsonplaceholder" model="api.connector">
+            <field name="name">JSONPlaceholder Demo</field>
+            <field name="base_url">https://jsonplaceholder.typicode.com</field>
+            <field name="endpoint_path">/posts</field>
+            <field name="api_type">rest</field>
+            <field name="method">GET</field>
+            <field name="auth_type">none</field>
+            <field name="expected_response_type">json</field>
+            <field name="custom_headers">{"Accept": "application/json"}</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Demo API Connection - HTTPBin -->
+        <record id="demo_api_httpbin" model="api.connector">
+            <field name="name">HTTPBin Test API</field>
+            <field name="base_url">https://httpbin.org</field>
+            <field name="endpoint_path">/get</field>
+            <field name="api_type">rest</field>
+            <field name="method">GET</field>
+            <field name="auth_type">none</field>
+            <field name="expected_response_type">json</field>
+            <field name="custom_headers">{"User-Agent": "Odoo API Connector"}</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- Demo API Connection - POST Example -->
+        <record id="demo_api_post" model="api.connector">
+            <field name="name">HTTPBin POST Demo</field>
+            <field name="base_url">https://httpbin.org</field>
+            <field name="endpoint_path">/post</field>
+            <field name="api_type">rest</field>
+            <field name="method">POST</field>
+            <field name="auth_type">none</field>
+            <field name="request_body_type">json</field>
+            <field name="request_body">{"message": "Hello from Odoo", "timestamp": "{current_time}"}</field>
+            <field name="expected_response_type">json</field>
+            <field name="custom_headers">{"Content-Type": "application/json"}</field>
+            <field name="active" eval="False"/>
+        </record>
+
+        <!-- Server Action for Cleanup -->
+        <record id="action_server_cleanup_api_logs" model="ir.actions.server">
+            <field name="name">API Connector: Cleanup Old Logs</field>
+            <field name="model_id" ref="model_api_call_log"/>
+            <field name="state">code</field>
+            <field name="code">model.cleanup_old_logs(days=30)</field>
+        </record>
+
+        <!-- Cron Job for Cleanup -->
+        <record id="cron_cleanup_api_logs" model="ir.cron">
+            <field name="ir_actions_server_id" ref="action_server_cleanup_api_logs"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">days</field>
+            <field name="active" eval="True"/>
+        </record>
+
+
+</odoo>

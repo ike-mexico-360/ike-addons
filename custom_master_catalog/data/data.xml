@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Services -->
+        <record id="ike_product_category_vial" model="product.category">
+            <field name="name">Vial</field>
+        </record>
+        <record id="ike_product_category_medical" model="product.category">
+            <field name="name">Médico</field>
+        </record>
+        <record id="ike_product_category_home" model="product.category">
+            <field name="name">Hogar</field>
+        </record>
+        <record id="ike_product_category_legal" model="product.category">
+            <field name="name">Legal</field>
+        </record>
+        <record id="ike_product_category_pets" model="product.category">
+            <field name="name">Mascotas</field>
+        </record>
+        <!-- Subservices -->
+        <record id="ike_product_product_vial_truck" model="product.product">
+            <field name="name">Arrastre de grúa</field>
+            <field name="default_code">town_truck</field>
+            <field name="categ_id" ref="ike_product_category_vial" />
+            <field name="sale_ok">True</field>
+            <field name="sh_product_subscribe">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="x_accessory_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">1</field>
+            <field name="standard_price">0</field>
+            <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+        </record>
+        <record id="ike_product_product_vial_tire" model="product.product">
+            <field name="name">Cambio de llanta</field>
+            <field name="default_code">tire_change</field>
+            <field name="categ_id" ref="ike_product_category_vial" />
+            <field name="sale_ok">True</field>
+            <field name="sh_product_subscribe">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="x_accessory_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">1</field>
+            <field name="standard_price">0</field>
+            <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+        </record>
+        <record id="ike_product_product_vial_fuel" model="product.product">
+            <field name="name">Suministro de gasolina</field>
+            <field name="default_code">fuel_supply</field>
+            <field name="categ_id" ref="ike_product_category_vial" />
+            <field name="sale_ok">True</field>
+            <field name="sh_product_subscribe">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="x_accessory_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">1</field>
+            <field name="standard_price">0</field>
+            <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+        </record>
+        <record id="ike_product_product_vial_fluid" model="product.product">
+            <field name="name">Otros líquidos</field>
+            <field name="default_code">other_fluid</field>
+            <field name="categ_id" ref="ike_product_category_vial" />
+            <field name="sale_ok">True</field>
+            <field name="sh_product_subscribe">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="x_accessory_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">1</field>
+            <field name="standard_price">0</field>
+            <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+        </record>
+        <record id="ike_product_product_vial_battery" model="product.product">
+            <field name="name">Paso de corriente</field>
+            <field name="default_code">battery_jump</field>
+            <field name="categ_id" ref="ike_product_category_vial" />
+            <field name="sale_ok">True</field>
+            <field name="sh_product_subscribe">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="x_accessory_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">1</field>
+            <field name="standard_price">0</field>
+            <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+        </record>
+        <record id="ike_product_product_medical_consultation" model="product.product">
+            <field name="name">Consulta Médica</field>
+            <field name="default_code">medical_consultation</field>
+            <field name="categ_id" ref="ike_product_category_medical" />
+            <field name="sale_ok">True</field>
+            <field name="sh_product_subscribe">True</field>
+            <field name="purchase_ok">False</field>
+            <field name="x_accessory_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">1</field>
+            <field name="standard_price">0</field>
+            <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ike_event_portal.TruckCreateComponent" owl="1">
+        <div class="o_portal_details">
+            <div t-if="state.error" class="alert alert-danger" role="alert">
+                <t t-esc="state.error"/>
+            </div>
+            <t t-if="state.notification">
+                <div t-attf-class="alert alert-{{state.notification.type}} alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                    <strong t-esc="state.notification.message"/>
+                    <button type="button" class="btn-close" aria-label="Close" t-on-click="closeNotification"></button>
+                </div>
+            </t>
+            <div class="container py-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="d-flex align-items-center">
+                        <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="icono grúa" class="me-3" style="width:30px;" />
+                        <h1 class="fw-bold mb-0">Detalles de la grúa</h1>
+                    </div>
+                    <a href="/provider/portal/trucks" class="btn btn-secondary">
+                        <i class="fa fa-arrow-left me-1"/> Volver a la lista
+                    </a>
+                </div>
+                <div class="card shadow-sm">
+                    <div class="card-body p-4">
+                        <form t-on-submit.prevent="saveTruck">
+                            <div class="row g-3">
+                                <!-- 2. License Plate -->
+                                <div class="col-md-6">
+                                    <label for="licensePlate" class="form-label fw-bold">Matrícula (Placa)</label>
+                                    <input type="text"
+                               class="form-control"
+                               id="licensePlate"
+                               t-model="state.formData.license_plate"
+                               required="required"
+                               placeholder="Ej. ABC-123"/>
+                                </div>
+                                <!-- 3. Model (Many2one) -->
+                                <div class="col-md-6">
+                                    <label for="modelSelect" class="form-label fw-bold">Modelo del vehículo</label>
+                                    <select class="form-select" id="modelSelect" t-model="state.formData.model_id" required="required">
+                                        <option value="">Seleccionar modelo...</option>
+                                        <t t-foreach="state.models" t-as="model" t-key="model.id">
+                                            <option t-att-value="model.id">
+                                                <t t-esc="model.display_name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Proveedor</label>
+                                    <input type="text"
+                                        class="form-control"
+                                        t-att-value="supplier_name"
+                                        readonly="readonly"
+                                        style="background-color: #e9ecef;"/>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label fw-bold">Centro de atención</label>
+                                    <select t-on-change="onCenterOfAttentionChange" class="form-select" t-model="state.formData.center_of_attention_id">
+                                        <option value="">Seleccionar...</option>
+                                        <t t-foreach="state.supplierCenters" t-as="center" t-key="center.id">
+                                            <option t-att-value="center.id" t-att-selected="state.formData.center_of_attention_id == center.id">
+                                                <t t-esc="center.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <!-- 6. Vehicle Type (Selection/Many2one) -->
+                                <div class="col-md-6">
+                                    <label for="typeSelect" class="form-label fw-bold">Tipo de vehículo</label>
+                                    <select class="form-select" id="typeSelect" t-model="state.formData.x_vehicle_type">
+                                        <option value="">Seleccionar tipo...</option>
+                                        <t t-foreach="state.vehicle_types" t-as="vtype" t-key="vtype.id">
+                                            <option t-att-value="vtype.id">
+                                                <t t-esc="vtype.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="driverSelect" class="form-label fw-bold">Chofer asignado</label>
+                                    <select class="form-select" id="driverSelect" t-model="state.formData.driver_id">
+                                        <option value="">Sin chofer asignado</option>
+                                        <t t-foreach="state.drivers" t-as="driver" t-key="driver.id">
+                                            <option t-att-value="driver.id">
+                                                <t t-esc="driver.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <!-- 7. Service State (Selection) -->
+                                <div class="col-md-6">
+                                    <label for="stateSelect" class="form-label fw-bold">Estado del servicio</label>
+                                    <select class="form-select" id="stateSelect" t-model="state.formData.x_vehicle_service_state">
+                                        <option value="">Seleccionar estado...</option>
+                                        <!-- Assuming service_states is a list of [key, label] pairs -->
+                                        <t t-foreach="state.service_states" t-as="sstate" t-key="sstate[0]">
+                                            <option t-att-value="sstate[0]">
+                                                <t t-esc="sstate[1]"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="vehicleAxes" class="form-label fw-bold">Ejes</label>
+                                    <input type="number"
+                                        class="form-control"
+                                        id="vehicleAxes"
+                                        t-model="state.formData.x_vehicles_axes"
+                                        min="0"
+                                        placeholder="Número de ejes"
+                                    />
+                                </div>
+                                <!-- 8. Checkboxes -->
+                                <div class="col-12 mt-3">
+                                <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="tireConditioning" t-model="state.formData.x_manages_tire_conditioning"/>
+                                        <label class="form-check-label" for="tireConditioning">Gestiona acondicionamiento de llantas</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="federalPlates" t-model="state.formData.x_federal_license_plates"/>
+                                        <label class="form-check-label" for="federalPlates">Placas federales</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="checkbox" id="maneuvers" t-model="state.formData.x_maneuvers"/>
+                                        <label class="form-check-label" for="maneuvers">Maniobras</label>
+                                    </div>
+                                </div>
+                                <div class="col-12" id="accessoriesSection" t-if="state.formData.x_maneuvers">
+                                    <label class="form-label fw-bold">Accesorios</label>
+                                    <div class="row">
+                                        <t t-foreach="state.accessories" t-as="acc" t-key="acc.id">
+                                            <div class="col-md-4">
+                                                <div class="form-check">
+                                                    <input class="form-check-input"
+                                                        type="checkbox"
+                                                        t-att-id="'acc_' + acc.id"
+                                                        t-att-value="acc.id"
+                                                        t-att-checked="state.formData.accessories.includes(acc.id)"
+                                                        t-on-change="(ev) => this.toggleAccessory(acc.id, ev.target.checked)"
+                                                    />
+                                                    <label class="form-check-label" t-att-for="'acc_' + acc.id">
+                                                        <t t-esc="acc.name"/>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-end gap-2 mt-5 pt-3 border-top">
+                                <button type="button"
+                            class="btn btn-outline-secondary"
+                            t-on-click="props.onCancel"
+                            t-att-disabled="state.isSubmitting">
+                        Cancelar
+                    </button>
+                                <button type="submit"
+                            class="btn btn-primary px-4"
+                            t-att-disabled="state.isSubmitting">
+                                    <t t-if="state.isSubmitting">
+                                        <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                            Guardando...
+                                    </t>
+                                    <t t-else="">
+                                        <i class="fa fa-save me-2"/> Guardar Grúa
+                                    </t>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

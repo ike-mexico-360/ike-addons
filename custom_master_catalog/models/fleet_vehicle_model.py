@@ -9,7 +9,11 @@ class FleetVehicleModel(models.Model):
     active = fields.Boolean('Active', default=True, tracking=True)
     disabled = fields.Boolean('Disabled', default=False, tracking=True)
 
-    x_vehicle_type = fields.Many2one('custom.vehicle.type', 'Vehicle Type', tracking=True)
+    x_vehicle_weight_category_id = fields.Many2one(
+        'custom.vehicle.weight.category',
+        'Weight Category',
+        domain="[('disabled', '=', False)]",
+        tracking=True)
 
     @api.constrains('name', 'brand_id')
     def _check_unique_vehicle_model(self):
@@ -21,19 +25,20 @@ class FleetVehicleModel(models.Model):
                 raise ValidationError(_('A vehicle model with the same name already exists. It is disabled.'))
 
     def action_disable(self, reason=None):
-        if reason:
-            body = Markup("""
-                <ul class="mb-0 ps-4">
-                    <li>
-                        <b>{}: </b><span class="">{}</span>
-                    </li>
-                </ul>
-            """).format(
-                _('Disabled'),
-                reason,
-            )
-            self.message_post(
-                body=body,
-                message_type='notification',
-                body_is_html=True)
+        for rec in self:
+            if reason:
+                body = Markup("""
+                    <ul class="mb-0 ps-4">
+                        <li>
+                            <b>{}: </b><span class="">{}</span>
+                        </li>
+                    </ul>
+                """).format(
+                    _('Disabled'),
+                    reason,
+                )
+                rec.message_post(
+                    body=body,
+                    message_type='notification',
+                    body_is_html=True)
         return super().action_disable(reason)

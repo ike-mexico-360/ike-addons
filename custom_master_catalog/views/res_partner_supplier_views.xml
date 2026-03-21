@@ -24,6 +24,7 @@
                 <field name="id" string="Supplier number" readonly="1"/>
                 <field name="name" string="Nombre comercial"/>
                 <field name="vat"/>
+                <field name="priority" widget="priority"/>
                 <field name="disabled" column_invisible="1"/>
             </list>
         </field>
@@ -45,58 +46,66 @@
                     <field name="create_date" invisible="1"/>
                 </header>
                 <sheet>
-                    <div class="oe_button_box" name="button_box"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_configuration_service_and_subservice_view"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-cogs">
+                            <field name="x_coverage_count" widget="statinfo"
+                                    string="Configuration service and subservice"/>
+                        </button>
+                    </div>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                     <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
                     <field name="image_1920" widget='image' class="oe_avatar" options='{"preview_image": "avatar_128"}'/>
                     <div class="oe_title mb24">
-                        <label for="name" string="Nombre comercial"/>
+                        <label for="name" string="Nombre comercial" class="o_form_label_required"/>
                         <h2 class="row">
-                            <field name="name" required="1" string="Nombre comercial" readonly="disabled == True"/>
+                            <field name="name" required="1" string="Nombre comercial" readonly="disabled"/>
                         </h2>
-                        <label for="x_business_name"/>
+                        <label for="x_business_name" class="o_form_label_required"/>
                         <div class="row">
-                            <field name="x_business_name" required="1" readonly="disabled == True"/>
+                            <field name="x_business_name" required="1" readonly="disabled"/>
                         </div>
                     </div>
                     <group>
                         <group>
                             <field name="id" string="Supplier number" invisible="not id" readonly="1"/>
-                            <field name="vat" required="1" readonly="disabled == True"/>
+                            <field name="vat" required="1" readonly="disabled"/>
                             <label for="street" string="Address"/>
                             <div class="o_address_format">
-                                <field name="street" placeholder="Street..." class="o_address_street" readonly="disabled == True"/>
-                                <field name="street2" placeholder="Street 2..." class="o_address_street" readonly="disabled == True"/>
+                                <field name="street" required="1" placeholder="Street..." class="o_address_street" readonly="disabled"/>
+                                <field name="street2" placeholder="Street 2..." class="o_address_street" readonly="disabled"/>
                                 <div class="o_address_street">
-                                    <field name="l10n_mx_edi_colony" placeholder="Colony..." style="flex: 2 1 auto" readonly="disabled == True"/>
+                                    <field name="l10n_mx_edi_colony" required="1" placeholder="Colony..." style="flex: 2 1 auto" readonly="disabled"/>
                                 </div>
-                                <field name="city" placeholder="City" class="o_address_city" readonly="disabled == True"/>
-                                <field name="state_id" class="o_address_state" placeholder="State" readonly="disabled == True"
-                                       options="{'no_open': True, 'no_create': True}"
-                                       context="{'default_country_id': country_id}"/>
-                                <field name="zip" placeholder="ZIP" class="o_address_zip" readonly="disabled == True"/>
-                                <field name="country_id" placeholder="Country" class="o_address_country" readonly="disabled == True"
+                                <field name="city" placeholder="City" class="o_address_city" readonly="disabled" required="1"/>
+                                <field name="state_id" class="o_address_state" placeholder="State" required="1" readonly="disabled"
+                                       options="{'no_open': True, 'no_create': True}"  domain="[('disabled', '=', False), ('country_id', '=', country_id)]"
+                                       context="{'default_country_id': country_id, 'list_view_ref': 'custom_master_catalog.custom_ike_view_country_state_tree', 'search_view_ref': 'custom_master_catalog.custom_ike_view_country_state_search', 'search_default_filter_by_mexico': 1, 'hide_disabled_enabled_filters': 1}"/>
+                                <field name="zip" placeholder="ZIP" class="o_address_zip" style="margin-right: 2%;width: 23%;" required="1" readonly="disabled"/>
+                                <field name="country_id" placeholder="Country" class="o_address_country" readonly="disabled" required="1"
                                        options='{"no_open": True, "no_create": True}'/>
                             </div>
+                            <field name="x_has_portal"/>
                         </group>
                         <group>
-                            <field name="phone" readonly="disabled == True"/>
-                            <field name="mobile" readonly="disabled == True"/>
-                            <field name="email" readonly="disabled == True"/>
+                            <field name="phone" widget="phone" options="{'enable_sms': False, 'enable_call': False}" readonly="disabled" required="1"/>
+                            <field name="mobile" widget="phone" options="{'enable_sms': False, 'enable_call': False}" readonly="disabled" required="1"/>
+                            <field name="email" required="1" options="{'regex': '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'}" readonly="disabled"/>
                             <field name="x_supplier_type_id"
                                 domain="[('disabled', '=', False)]"
-                                options='{"no_open": True, "no_create": True}' readonly="disabled == True"/>
+                                options='{"no_open": True, "no_create": True}' readonly="disabled"/>
                             <field name="x_payment_type_id"
                                 domain="[('disabled', '=', False)]"
-                                options='{"no_open": True, "no_create": True}' readonly="disabled == True"/>
-                            <field name="x_ref_sap" readonly="disabled == True"/>
-
+                                options='{"no_open": True, "no_create": True}' readonly="disabled"/>
+                            <field name="x_ref_sap" readonly="disabled" required="1"/>
+                            <field name="priority" widget="priority" />
                         </group>
                     </group>
                     <notebook>
                         <page name="x_centers" string="Supplier Centers">
-                            <field name="x_supplier_center_ids" mode="kanban" nolabel="1" delete="0"
-                                readonly="disabled == True"
+                            <field name="x_supplier_center_ids" mode="kanban" nolabel="1" delete="0" readonly="1"
                                 context="{
                                     'kanban_view_ref': 'custom_master_catalog.custom_res_partner_view_kanban',
                                     'form_view_ref': 'custom_master_catalog.res_partner_supplier_center_view_form',
@@ -116,31 +125,212 @@
                         </page>
                         <page name="x_geographical_areas" string="Geographical Coverage Areas">
                             <group>
-                                <field name="x_allowed_product_ids" invisible="1"/>
-                                <widget name="custom_municipality_selection" field_name="x_geographical_area_ids" readonly="disabled == True" colspan="2"/>
-                                <field name="x_geographical_area_ids" nolabel="1" readonly="not x_allowed_product_ids or disabled == True">
-                                    <list editable="bottom" decoration-muted="disabled == True"
+                                <field name="x_allowed_product_ids" widget="many2many_tags" context="{'display_default_code': 0}" invisible="1"/>
+                                <field name="x_geographical_area_supplier_ids" nolabel="1" readonly="1">
+                                    <list editable="bottom" decoration-muted="disabled == True" create="0"
                                           context="{'form_view_ref': 'custom_master_catalog.custom_geographical_area_product_view_form'}">
-                                        <field name="partner_id" column_invisible="1"/>
+                                        <field name="partner_id" string="Supplier center"/>
                                         <field name="country_id" options="{'no_create': 1}"/>
-                                        <field name="state_id" domain="['|', ('country_id', '=', country_id), ('disabled', '=', country_id)]" options="{'no_create': 1}"/>
+                                        <field name="state_id"
+                                            context="{'default_country_id': country_id, 'list_view_ref': 'custom_master_catalog.custom_ike_view_country_state_tree', 'search_view_ref': 'custom_master_catalog.custom_ike_view_country_state_search', 'search_default_filter_by_mexico': 1, 'hide_disabled_enabled_filters': 1}"
+                                            domain="['|', ('country_id', '=', country_id), ('disabled', '=', country_id)]"
+                                            options="{'no_create': 1}"/>
                                         <field name="municipality_id" domain="['|', ('state_id', '=', state_id), ('disabled', '=', state_id)]" options="{'no_create': 1}"/>
                                         <field name="area_product_ids" widget="many2many_tags"
                                                domain="[('geographical_area_id', '=', id)]"
+                                               context="{'display_default_code': 0}"
                                                options="{'color_field': 'color_computed'}"
                                                readonly="1" force_save="1">
                                             <list>
-                                                <field name="product_id"/>
+                                                <field name="product_id" context="{'display_default_code': 0}"/>
                                                 <field name="color"/>
                                                 <field name="color_computed"/>
                                                 <field name="disabled"/>
                                             </list>
                                         </field>
-                                        <button name="action_edit" string="Edit Sub-Services" type="object" class="btn-secondary" icon="fa-edit"/>
                                         <field name="disabled" optional="hide"/>
                                     </list>
                                 </field>
                             </group>
+                        </page>
+                        <page name="attention_specification" string="Attention Specification">
+                            <group>
+                                <group style="width:33%">
+                                    <field
+                                        name="x_is_electronic"
+                                        widget="radio_boolean"
+                                        options="{'horizontal': True}"
+                                        readonly="disabled"
+                                    />
+                                </group>
+                                <group style="width:33%">
+                                    <field
+                                        name="x_is_manual"
+                                        widget="radio_boolean"
+                                        options="{'horizontal': True}"
+                                        readonly="disabled"
+                                    />
+                                </group>
+                                <group style="width:33%">
+                                    <field
+                                        name="x_is_extraordinary"
+                                        widget="radio_boolean"
+                                        options="{'horizontal': True}"
+                                        readonly="disabled"
+                                    />
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field
+                                        name="x_is_special_accounts"
+                                        widget="radio_boolean"
+                                        options="{'horizontal': True}"
+                                        readonly="disabled"
+                                    />
+                                </group>
+                                <group>
+                                    <field
+                                        name="x_is_exclusive_accounts"
+                                        widget="radio_boolean"
+                                        options="{'horizontal': True}"
+                                        readonly="disabled"
+                                    />
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <field name="x_allowed_account_ids" invisible="1"/>
+                                    <field
+                                        name="x_special_account_ids" nolabel="1"
+                                        domain="[('id', 'in', x_allowed_account_ids)]"
+                                        mode="list" invisible="not x_is_special_accounts"
+                                        readonly="disabled"
+                                        context="{
+                                            'list_view_ref': 'custom_master_catalog.res_partner_account_view_list',
+                                            'form_view_ref': 'custom_master_catalog.res_partner_account_view_form',
+                                        }"
+                                    >
+                                        <list limit="20" create="0">
+                                            <field name="name" string="Account special"/>
+                                        </list>
+                                    </field>
+                                </group>
+                                <group>
+                                    <field name="x_allowed_account_ids" invisible="1"/>
+                                    <field
+                                        name="x_exclusive_account_ids" nolabel="1"
+                                        domain="[('id', 'in', x_allowed_account_ids)]"
+                                        mode="list" invisible="not x_is_exclusive_accounts"
+                                        readonly="disabled"
+                                        context="{
+                                            'list_view_ref': 'custom_master_catalog.res_partner_account_view_list',
+                                            'form_view_ref': 'custom_master_catalog.res_partner_account_view_form',
+                                        }"
+                                    >
+                                        <list limit="20" create="0">
+                                            <field name="name" string="Account exclusive"/>
+                                        </list>
+                                    </field>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="" string="Other phones">
+                            <group>
+                                <group>
+                                    <label for="x_phone_p1"/>
+                                    <div class="o_row">
+                                        <field name="x_phone_p1" widget="phone"
+                                            options="{'enable_sms': False, 'enable_call': False}"
+                                            readonly="disabled"
+                                        />
+                                        <field name="x_phone_p1_classification_id"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="Classification of telephone"
+                                            required="x_phone_p1 != False"
+                                            domain="[('disabled', '=', False)]"
+                                            readonly="disabled"
+                                        />
+                                    </div>
+                                    <label for="x_phone_p2"/>
+                                    <div class="o_row">
+                                        <field name="x_phone_p2" widget="phone"
+                                            options="{'enable_sms': False, 'enable_call': False}"
+                                            readonly="disabled"
+                                        />
+                                        <field name="x_phone_p2_classification_id"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="Classification of telephone"
+                                            required="x_phone_p2 != False"
+                                            domain="[('disabled', '=', False)]"
+                                            readonly="disabled"
+                                        />
+                                    </div>
+                                    <label for="x_phone_p3"/>
+                                    <div class="o_row">
+                                        <field name="x_phone_p3" widget="phone"
+                                            options="{'enable_sms': False, 'enable_call': False}"
+                                            readonly="disabled"
+                                        />
+                                        <field name="x_phone_p3_classification_id"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="Classification of telephone"
+                                            required="x_phone_p3 != False"
+                                            domain="[('disabled', '=', False)]"
+                                            readonly="disabled"
+                                        />
+                                    </div>
+                                    <label for="x_phone_p4"/>
+                                    <div class="o_row">
+                                        <field name="x_phone_p4" widget="phone"
+                                            options="{'enable_sms': False, 'enable_call': False}"
+                                            readonly="disabled"
+                                        />
+                                        <field name="x_phone_p4_classification_id"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="Classification of telephone"
+                                            required="x_phone_p4 != False"
+                                            domain="[('disabled', '=', False)]"
+                                            readonly="disabled"
+                                        />
+                                    </div>
+                                    <label for="x_phone_p5"/>
+                                    <div class="o_row">
+                                        <field name="x_phone_p5" widget="phone"
+                                            options="{'enable_sms': False, 'enable_call': False}"
+                                            readonly="disabled"
+                                        />
+                                        <field name="x_phone_p5_classification_id"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="Classification of telephone"
+                                            required="x_phone_p5 != False"
+                                            domain="[('disabled', '=', False)]"
+                                            readonly="disabled"
+                                        />
+                                    </div>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="x_users_supplier" string="Users" groups="base.group_system">
+                            <field name="x_users_supplier_ids" context="{'default_supplier_id': id}">
+                                <list editable="bottom">
+                                    <control>
+                                        <create string="Add a user" name="add_line_control"/>
+                                    </control>
+                                    <field name="user_id" domain="users_domain" options="{'no_open': True, 'no_create': True , 'no_edit': True}"
+                                        context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list'}"/>
+                                    <field name="partner_id" options="{'no_open': True, 'no_create': True , 'no_edit': True}"
+                                        readonly="1" force_save="1" column_invisible="1" groups="base.group_system"/>
+                                    <field name="user_type"/>
+                                    <field name="supplier_id" readonly="1" options="{'no_open': True, 'no_create': True , 'no_edit': True}"
+                                        context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list'}"
+                                        domain="[('x_is_supplier', '=', True), ('disabled', '=', False)]" force_save="1"/>
+                                    <field name="center_of_attention_id" domain="[('parent_id', '=', supplier_id), ('disabled', '=', False)]"
+                                        options="{'no_create': True, 'no_edit': True, 'no_open': True}" force_save="1"
+                                        context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_center_view_list'}"/>
+                                    <field name="users_domain" column_invisible="1"/>
+                                </list>
+                            </field>
                         </page>
                     </notebook>
                 </sheet>
@@ -148,6 +338,7 @@
             </form>
         </field>
     </record>
+
     <!-- Action -->
     <data>
         <record id="res_partner_supplier_action_window" model="ir.actions.act_window">

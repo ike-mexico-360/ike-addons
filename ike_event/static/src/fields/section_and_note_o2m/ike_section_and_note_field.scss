@@ -1,0 +1,73 @@
+.ike_section_and_note_list_view {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    thead {
+        th {
+            background-color: #D2E4FF !important;
+            color: #2c3e50 !important;
+            font-weight: 600 !important;
+        }
+    }
+
+    tbody {
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid $border-color;
+        }
+
+        tr {
+            @include transition(background-color);
+
+            &.ike-row-cancelled {
+                td {
+                    background-color: #dadada;
+                    color: #6c757d;
+                }
+            }
+
+            &.ike-row-inactive {
+                td {
+                    background-color: #dadada;
+                    color: #6c757d;
+                }
+            }
+
+            &.ike-row-active {
+                td {
+                    background-color: #ffccbc;
+                }
+            }
+
+            &.ike-row-selected {
+                td {
+                    background-color: #63B0EB;
+                }
+            }
+
+            &.ike-row-electronic {
+                td:first-child {
+                    border-left: solid 2px #6666FF;
+                }
+            }
+
+            &.ike-row-publication {
+                td:first-child {
+                    border-left: solid 2px #FF9933;
+                }
+            }
+
+            &.ike-row-manual {
+                td:first-child {
+                    border-left: solid 2px #FFD2A5;
+                }
+            }
+
+            &.ike-row-manual-manual {
+                td:first-child {
+                    border-left: solid 2px #FF66CC;
+                }
+            }
+        }
+    }
+}

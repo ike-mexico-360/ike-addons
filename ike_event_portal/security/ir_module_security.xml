@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_custom_ike_portal" model="ir.module.category">
+        <field name="name">IKE Portal</field>
+        <field name="sequence">100</field>
+    </record>
+    <record id="custom_group_portal_operator" model="res.groups">
+        <field name="name">Ike Operator Portal</field>
+        <field name="category_id" ref="module_category_custom_ike_portal" />
+    </record>
+    <record id="custom_group_portal_supervisor" model="res.groups">
+        <field name="name">Ike Supervisor Portal</field>
+        <field name="category_id" ref="module_category_custom_ike_portal" />
+    </record>
+    <record id="custom_group_portal_admin" model="res.groups">
+        <field name="name">Ike Admin Portal</field>
+        <field name="category_id" ref="module_category_custom_ike_portal" />
+    </record>
+    <record id="rule_res_partner_portal_admin_all" model="ir.rule">
+        <field name="name">Portal admin: all partners</field>
+        <field name="model_id" ref="base.model_res_partner"/>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_admin'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <record id="rule_discuss_channel_portal_admin_all" model="ir.rule">
+        <field name="name">Portal admin: all channels</field>
+        <field name="model_id" ref="mail.model_discuss_channel"/>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_admin'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+    <!-- Rules Operator Portal Group -->
+    <record id="custom_portal_operator_supplier_users_rule" model="ir.rule">
+        <field name="name">Portal Operator: Can Only View Records Where They Are the User</field>
+        <field name="model_id" ref="custom_master_catalog.model_res_partner_supplier_users_rel"/>
+        <field name="global" eval="False"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_operator'))]"/>
+    </record>
+    <record id="custom_fleet_vehicle_assignation_log_user_rule" model="ir.rule">
+        <field name="name">Fleet Assignation Log: Users Can Only View Their Own Driver Records</field>
+        <field name="model_id" ref="fleet.model_fleet_vehicle_assignation_log"/>
+        <field name="global" eval="False"/>
+        <field name="domain_force">[('driver_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_operator'))]"/>
+    </record>
+    <record id="custom_fleet_vehicle_log_services_user_rule" model="ir.rule">
+        <field name="name">Vehicle Log Services: Users Can Only View Records for Their Assigned Vehicles</field>
+        <field name="model_id" ref="fleet.model_fleet_vehicle_log_services"/>
+        <field name="global" eval="False"/>
+        <field name="domain_force">[('vehicle_id.driver_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_operator'))]"/>
+    </record>
+    <record id="custom_fleet_vehicle_log_contract_user_rule" model="ir.rule">
+        <field name="name">Vehicle Contracts: Users Can Only View Records Where They Are the Purchaser</field>
+        <field name="model_id" ref="fleet.model_fleet_vehicle_log_contract"/>
+        <field name="global" eval="False"/>
+        <field name="domain_force">[('purchaser_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_operator'))]"/>
+    </record>
+    <record id="custom_fleet_vehicle_driver_rule" model="ir.rule">
+        <field name="name">Vehicle: Users Can Only View Vehicles Where They Are the Driver</field>
+        <field name="model_id" ref="fleet.model_fleet_vehicle"/>
+        <field name="global" eval="False"/>
+        <field name="domain_force">[('driver_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_operator'))]"/>
+    </record>
+    <record id="ike_event_supplier_public_driver_rule" model="ir.rule">
+        <field name="name">Event Supplier Public: Users Can Only View Their Driver Truck Events</field>
+        <field name="model_id" ref="model_ike_event_supplier_public"/>
+        <field name="global" eval="False"/>
+        <field name="domain_force">[('truck_id.driver_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_operator'))]"/>
+    </record>
+
+    <!-- Rules Admin Portal Group -->
+    <record id="rule_ike_event_supplier_public_portal_admin" model="ir.rule">
+        <field name="name">Portal Admin: See only event their supplier </field>
+        <field name="model_id" ref="ike_event_portal.model_ike_event_supplier_public"/>
+        <field name="domain_force">[
+            ('supplier_id', 'in',
+                user.env['res.partner.supplier_users.rel']
+                .search([('user_id', '=', user.id)])
+                .mapped('supplier_id.id')
+            )
+        ]</field>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_admin'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Rules Supervisor Portal Group -->
+    <record id="rule_ike_event_supplier_public_portal_supervisor" model="ir.rule">
+        <field name="name">Portal Supervisor: See only event their supplier </field>
+        <field name="model_id" ref="ike_event_portal.model_ike_event_supplier_public"/>
+        <field name="domain_force">[
+            ('supplier_id', 'in',
+                user.env['res.partner.supplier_users.rel']
+                .search([('user_id', '=', user.id)])
+                .mapped('supplier_id.id')
+            )
+        ]</field>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_supervisor'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <!-- Rules System Group -->
+    <record id="rule_ike_event_supplier_public_admin_all" model="ir.rule">
+        <field name="name">Admin: ike event supplier public all</field>
+        <field name="model_id" ref="ike_event_portal.model_ike_event_supplier_public"/>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+</odoo>

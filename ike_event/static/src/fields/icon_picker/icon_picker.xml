@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IconPickerField">
+        <t t-if="props.readonly">
+            <span class="d-block">
+                <i
+                    t-if="value"
+                    t-att-class="value + ' fa-lg'"
+                    style="text-align: center;"/>
+            </span>
+        </t>
+        <t t-else="">
+            <div class="o_field_icon_picker" t-ref="dropdown">
+                <div class="d-flex align-items-center gap-1">
+                    <button
+                        class="btn btn-secondary o_icon_picker_button d-flex align-items-center gap-2"
+                        type="button"
+                        t-on-click="toggleDropdown">
+                        <i
+                            t-if="value"
+                            t-att-class="value + ' fa-lg'"
+                            style="text-align: center;"/>
+                        <span t-if="!value" style="text-align: center;">
+                            <i class="fa fa-question-circle fa-lg text-muted"/>
+                        </span>
+                        <span t-if="value &amp;&amp; state.showIconLabel" t-esc="value"/>
+                        <span t-if="!value">Select icon...</span>
+                        <i class="fa fa-caret-down me-1"/>
+                    </button>
+
+                    <button
+                        t-if="value"
+                        class="btn btn-link text-danger p-0 ps-1"
+                        type="button"
+                        t-on-click="clearIcon"
+                        title="Clear icon">
+                        <i class="fa fa-times"/>
+                    </button>
+                </div>
+
+                <div
+                    t-if="state.isOpen"
+                    class="o_icon_picker_dropdown dropdown-menu show p-2"
+                    t-att-style="props.viewType === 'form' ? 'max-height: 400px; overflow-y: auto; width: 100%;max-width:400px;': 'position: relative; max-height: 300px; overflow-y: auto; width: 100%;'">
+
+                    <div class="mb-2 sticky-top bg-light shadow-sm">
+                        <input
+                            type="text"
+                            class="form-control form-control-sm"
+                            placeholder="Search icon..."
+                            t-model="state.searchQuery"
+                            t-on-input="onSearchInput"/>
+                    </div>
+
+                    <div t-if="filteredIcons.length > 0" class="d-flex flex-wrap gap-1 justify-content-center my-3">
+                        <t t-foreach="filteredIcons" t-as="icon" t-key="icon">
+                            <button
+                                type="button"
+                                t-att-class="'fa ' + icon === value ? 'btn btn-primary text-white o_icon_picker_item': 'btn btn-light o_icon_picker_item'"
+                                t-att-title="icon"
+                                t-on-click="() => this.selectIcon('fa ' + icon)"
+                                style="width: 30px; height: 30px; padding: 5px;">
+                                <i t-att-class="'fa ' + icon + ' fa-lg'"/>
+                            </button>
+                        </t>
+                    </div>
+
+                    <div t-if="filteredIcons.length === 0" class="text-center text-muted py-3 text-wrap">
+                        <span>Is your icon missing? Add it.</span>
+                        <div class="mt-2 d-flex flex-column align-items-center gap-1">
+                            <!-- boton para añadir un ícono personalizado -->
+                            <button
+                                type="button"
+                                class="btn btn-light"
+                                t-on-click="addNewIcon"
+                                style="width: fit-content; height: 30px; padding: 5px;">
+                                <i class="fa fa-check fa-lg"/>
+                                Add
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </t>
+
+</templates>

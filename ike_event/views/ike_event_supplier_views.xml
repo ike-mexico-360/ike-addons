@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- SCREEN FORM OBSOLETE? -->
+    <record id="view_ike_event_supplier_screen_form" model="ir.ui.view">
+        <field name="name">ike.event.supplier.screen.form.view</field>
+        <field name="model">ike.event.supplier</field>
+        <field name="arch" type="xml">
+            <form create="0" delete="0" duplicate="0" edit="0" js_class="ike_service_input_screen_form">
+                <header>
+                    <field name="stage_id" widget="statusbar_duration" options="{'clickable': 0, 'fold_field': 'fold'}"/>
+                </header>
+                <sheet class="ike-sheet">
+                    <group invisible="1">
+                        <group>
+                            <field name="event_id"  readonly="1"/>
+                            <field name="supplier_id"  readonly="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="service_evidence_ids" mode="kanban" nolabel="1" colspan="2" readonly="1"
+                            context="{'kanban_view_ref': 'ike_event.view_ike_event_evidence_kanban'}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- EVENT PRODUCT LIST VIEW -->
+    <record id="ike_event_product_list_view" model="ir.ui.view">
+        <field name="name">ike.event.product.list.view</field>
+        <field name="model">ike.event.product</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <control>
+                    <create name="add_line_control" string="Add a Concept" />
+                </control>
+                <field name="display_type" column_invisible="1" />
+                <field name="sequence" widget="handle" column_invisible="1" />
+
+                <field name="event_id" column_invisible="1" />
+                <field name="event_supplier_number" column_invisible="1" />
+
+                <field name="product_id" required="1"
+                        widget="ike_label_section_and_note_field"
+                        domain="product_domain"
+                        context="{
+                            'edit': 0,
+                            'display_default_code': 0,
+                            'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list',
+                        }"
+                        options="{'no_create': 1, 'no_open': 1}"
+                        placeholder="Search a concept"
+                        readonly="covered or display_type"
+                        force_save="1"/>
+                <field name="product_domain" column_invisible="1"/>
+                <field name="name" column_invisible="1"/>
+                <field name="supplier_number" string="Supplier" readonly="1"/>
+                <field name="covered" column_invisible="1"/>
+                <field name="mandatory" column_invisible="1"/>
+                <field name="uom_id" options="{'no_create': 1, 'no_open': 1}"/>
+                <field name="estimated_quantity" />
+            </list>
+        </field>
+    </record>
+
+    <!-- EVENT SUPPLIER PRODUCT DETAIL LIST VIEW -->
+    <record id="ike_event_supplier_product_detail_list_view" model="ir.ui.view">
+        <field name="name">ike.event.supplier.product.detail.list.view</field>
+        <field name="model">ike.event.supplier.product</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <control>
+                    <create name="add_line_control" string="Add a Concept" />
+                </control>
+                <field name="event_supplier_link_id" column_invisible="1" />
+                <field name="product_domain" column_invisible="1" />
+                <field name="display_type" column_invisible="1" />
+                <field name="sequence" widget="handle" column_invisible="1" />
+                <field name="covered" column_invisible="1" />
+                <field name="mandatory" column_invisible="1" />
+                <field name="product_id" required="1" widget="ike_label_section_and_note_field" domain="product_domain"
+                    context="{
+                            'edit': False,
+                            'display_default_code': 0,
+                            'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'
+                        }" options="{'no_create': 1, 'no_open': 1}" readonly="covered or display_type" />
+                <field name="name" column_invisible="1" />
+                <field name="estimated_quantity" optional="hide"/>
+                <field name="quantity" />
+                <field name="uom_id" options="{'no_create': 1, 'no_open': 1}" />
+                <field name="unit_price" />
+                <field name="is_net" column_invisible="1" />
+                <field name="cost_price" readonly="1" />
+                <field name="vat" readonly="1" />
+                <field name="tax_ids" column_invisible="1" widget="many2many_tags"
+                    options="{'no_create': 1, 'no_open': 1}" />
+                <field name="subtotal" readonly="1" />
+                <field name="authorization_pending" optional="hide" />
+                <field name="authorizer_name" optional="hide" />
+                <field name="type_authorization_id" options="{'no_create': 1, 'no_open': 1}" optional="hide" />
+                <field name="is_manual" column_invisible="1"/>
+                <!-- <button name="action_view_matrix_cost_lines" string="View Costs"
+                    type="object" class="btn-secondary" groups="base.group_erp_manager"/> -->
+            </list>
+        </field>
+    </record>
+
+    <!-- EVENT SUPPLIER LINK POPUP -->
+    <record id="ike_event_supplier_link_form_view" model="ir.ui.view">
+        <field name="name">ike.event.supplier.link.form.view</field>
+        <field name="model">ike.event.supplier.link</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group invisible="1">
+                        <field name="supplier_id"/>
+                        <field name="supplier_number"/>
+                        <field name="uncovered_authorization_required"/>
+                    </group>
+                    <field name="supplier_product_ids"
+                        nolabel="1"
+                        colspan="2"
+                        widget="ike_section_and_note_field_o2m"
+                        options="{'field_columns': ['product_id'], 'delete_condition_field': 'mandatory'}"
+                        readonly="not context.get('from_add_concept', False)"
+                        context="{
+                            'list_view_ref': 'ike_event.ike_event_supplier_product_detail_list_view',
+                            'default_authorization_pending': True,
+                            'default_is_manual': True,
+                        }"/>
+                    <group class="oe_subtotal_footer oe_right">
+                        <field name="amount_concept_subtotal"/>
+                        <field name="amount_concept_vat"/>
+                        <field name="amount_concept_total" class="oe_subtotal_footer_separator"/>
+                    </group>
+                    <group>
+                        <group invisible="not context.get('from_event_authorization', False) and not context.get('from_authorizer', False)">
+                            <field name="type_authorization_id"
+                                required="context.get('from_event_authorization', False)"
+                                readonly="not context.get('from_event_authorization', False)"
+                                options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        </group>
+                        <group invisible="not context.get('from_event_authorization', False) and not context.get('from_authorizer', False)">
+                            <field name="authorizer_domain" invisible="1" />
+                            <field name="authorization_by_nu" invisible="1" />
+                            <field
+                                name="authorizer_id"
+                                options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                domain="authorizer_domain"
+                                invisible="authorization_by_nu"
+                                force_save="1"
+                                required="context.get('from_event_authorization', False) and not authorization_by_nu"
+                                readonly="context.get('from_authorizer', False)"
+                                context="{
+                                    'from_authorizer_event': True,
+                                    'list_view_ref': 'custom_master_catalog.res_partner_client_view_list',
+                                    'search_view_ref': 'custom_master_catalog.res_partner_client_view_search'
+                                }"
+                            />
+                            <field
+                                name="nu_user_id"
+                                string="Responsible Name"
+                                readonly="1"
+                                options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                invisible="not authorization_by_nu"
+                                force_save="1"
+                            />
+                        </group>
+                        <group invisible="not context.get('from_event_authorization', False) and not context.get('from_authorizer', False)">
+                            <field
+                                name="reason_authorizer_id"
+                                domain="[('disabled', '=', False), ('commercial_authorization', '=', False)]"
+                                options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                required="context.get('from_event_authorization', False)"
+                                readonly="context.get('from_authorizer', False)"
+                            />
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_request_authorization" string="Save and Request Authorization"
+                            type="object" class="btn-primary"
+                            invisible="not context.get('from_event_authorization', False) and not context.get('from_add_concept', False)"/>
+
+                    <!-- ERP Manager TESTING -->
+                    <button name="action_accept_authorization" string="Authorize"
+                            type="object" class="btn-primary"
+                            invisible="not context.get('from_event_authorization', False)"
+                            groups="base.group_erp_manager,custom_master_catalog.custom_group_supervisor_cds"/>
+                    <button name="action_reject_authorization" string="Reject"
+                            type="object" class="btn-primary"
+                            invisible="not context.get('from_event_authorization', False)"
+                            groups="base.group_erp_manager,custom_master_catalog.custom_group_supervisor_cds"/>
+
+                    <button name="action_accept_authorization" string="Authorize"
+                            type="object" class="btn-primary"
+                            invisible="not context.get('from_authorizer', False)"/>
+                    <button name="action_reject_authorization" string="Reject"
+                            type="object" class="btn-primary"
+                            invisible="not context.get('from_authorizer', False)"/>
+
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <!-- EVENT SUPPLIER POPUP TRACKING -->
+    <record id="view_ike_event_supplier_popup_form" model="ir.ui.view">
+        <field name="name">view_ike_event_supplier_popup_form.view.form</field>
+        <field name="model">ike.event.supplier</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group col="12">
+                        <group colspan="4">
+                            <h3 colspan="2"><field name="subservice_id" nolabel="1" readonly="1" options="{'no_open': True, 'no_create': True}" context="{'display_default_code': 0}"/></h3>
+                        </group>
+                        <group class="text-end" colspan="8">
+                            <button string="Record progress" class="btn btn-primary" type="object" name="open_change_state_supplier_wizard"
+                                invisible="stage_ref in ['cancel', 'preparing'] or event_stage_ref in ['cancel', 'cancel_subsequently', 'close', 'completed'] or cancelled"/>
+                            <button string="Cancel supplier" class="btn btn-danger" type="object" name="open_cancel_wizard" invisible="cancelled"/>
+                        </group>
+                    </group>
+                    <group>
+                        <div class="row">
+                            <div class="col-12 col-lg-5 col-xl-4">
+                                <field name="event_supplier_summary_data" widget="html" nolabel="1" readonly="1"/>
+                                <button
+                                    name="action_view_products"
+                                    string="Additional concepts"
+                                    invisible="stage_ref not in ['contacted', 'arrived_2', 'arrived']"
+                                    context="{'from_event_authorization': True}"
+                                    type="object" class="btn btn-primary rounded-4 py-1"
+                                />
+                            </div>
+                            <div class="col-12 col-lg-7 col-xl-8">
+                                <field name="stage_id" widget="ike_travel_tracking_statusbar"
+                                    options="{'match_visible_field': 'ref'}" statusbar_visible="assigned,on_route,arrived,on_route_2,arrived_2,finalized"/>
+                                <!-- Widget  LineProgress Campos-->
+                                <field name="service_ref" invisible="1"/>
+                                <field name="destination_duration" invisible="1"/>
+                                <field name="estimated_duration" invisible="1"/>
+                                <field name="stage_ref" invisible="1"/>
+                                <field name="on_route_to_user_start_date" invisible="1"/>
+                                <field name="on_route_to_destination_start_date" invisible="1" />
+                                <!-- Widget  LineProgress-->
+                                <field
+                                    name="travel_progress_percent"
+                                    widget="ike_line_progress"
+                                    nolabel="1"
+                                />
+                                <field name="travel_tracking_url" widget="ike_iframe_travel_tracking_map" nolabel="1"/>
+                            </div>
+                        </div>
+                        <!-- <group class="ike_event_supplier_travel_tracking_summary">
+                            <field name="event_supplier_summary_data" widget="html" nolabel="1" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="travel_tracking_url" widget="ike_iframe_travel_tracking_map" nolabel="1"/>
+                        </group> -->
+                    </group>
+                </sheet>
+                <footer>
+                    <button special="cancel" string="Close" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- EVENT SUPPLIER GLOBAL COSTS POPUP -->
+    <record id="ike_event_supplier_product_service_costs_list_view" model="ir.ui.view">
+        <field name="name">ike.event.supplier.product.service.costs.list.view</field>
+        <field name="model">ike.event.supplier.product</field>
+        <field name="arch" type="xml">
+            <list create="false" delete="false"
+                default_order="supplier_id"
+                default_group_by="supplier_id"
+                expand="1">
+                <field name="sequence" widget="handle" column_invisible="1" />
+                <field name="supplier_id"/>
+                <field name="product_id"
+                    options="{'no_create': 1, 'no_open': 1}"/>
+                <field name="covered" string="For coverage"/>
+                <field name="estimated_quantity" optional="hide"/>
+                <field name="quantity"/>
+                <field name="unit_price" optional="show"/>
+                <field name="uom_id"
+                    options="{'no_create': 1, 'no_open': 1}"/>
+                <field name="cost_price" sum="Total Cost" />
+                <field name="vat" sum="Total VAT"/>
+                <field name="subtotal" sum="Total subtotal"/>
+                <field name="authorizer_name"
+                    optional="hide"/>
+                <field name="type_authorization_id"
+                    options="{'no_create': 1, 'no_open': 1}"
+                    optional="hide"/>
+            </list>
+        </field>
+    </record>
+</odoo>

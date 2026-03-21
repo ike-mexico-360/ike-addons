@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="custom_master_catalog.ListRenderer.RecordRow"
+        t-inherit="web.ListRenderer.RecordRow" t-inherit-mode="extension">
+        <xpath expr="//td[contains(@class, 'o_list_record_remove')]" position="attributes">
+            <attribute name="t-if">!isDeleteHidden(record)</attribute>
+        </xpath>
+        <xpath expr="//td[contains(@class, 'o_list_record_remove')]" position="after">
+            <td t-else="" tabindex="-1" class="w-print-0 p-print-0"/>
+        </xpath>
+    </t>
+</templates>

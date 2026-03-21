@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="1">
+
+        <record id="ike_event_purchase_proposal_dispute_ticket" model="mail.template">
+            <field name="name">Proposal dispute: Send by email</field>
+            <field name="model_id" ref="sh_all_in_one_helpdesk.model_sh_helpdesk_ticket" />
+            <!-- <field name="email_from">{{ (object.company_id.partner_id.email_formatted) }}</field> -->
+            <!-- <field name="partner_to">{{(  object.partner_id.id) }}</field> -->
+            <field name="subject">{{object.company_id.name}} Dispute opened (Ref {{object.name or 'n/a' }})</field>
+            <field name="lang">{{ object.partner_id.lang }}</field>
+            <field name="auto_delete" eval="False" />
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px;">
+                <table border="0" width="100%" cellpadding="0" bgcolor="#ededed" style="padding: 20px; background-color: #ededed; border-collapse:separate;">
+                    <tbody>
+                    <!-- HEADER -->
+                    <tr>
+                        <td align="center" style="min-width: 590px;">
+                        <table width="590" border="0" cellpadding="0" bgcolor="#875A7B" style="min-width: 590px; background-color: rgb(135,90,123); padding: 20px; border-collapse:separate;">
+                            <tr>
+                            <td valign="middle">
+                                <span style="font-size:20px; color:white; font-weight: bold;">
+                                <!-- {{object.name}} -->
+                                <t t-out="object.name" />
+                                </span>
+                            </td>
+
+                            <td valign="middle" align="right">
+                                <img t-attf-src="/logo.png?company={{ object.company_id.id }}"
+                                                    style="padding: 0px; margin: 0px; height: auto; width: 80px;"
+                                                    t-att-alt="object.company_id.name" />
+                            </td>
+                            </tr>
+                        </table>
+                        </td>
+                    </tr>
+
+                    <!-- CONTENT -->
+                    <tr>
+                        <td align="center" style="min-width: 590px;">
+                        <table width="590" border="0" cellpadding="0" bgcolor="#ffffff" style="min-width: 590px; background-color: rgb(255, 255, 255); padding: 20px; border-collapse:separate;">
+                            <tbody>
+                            <td valign="top" style="font-family:Arial,Helvetica,sans-serif; color: #555; font-size: 14px;">
+                                <p style="margin: 0px; padding: 0px; font-size: 13px;">
+                                    The supplier
+                                    <t t-out="object.partner_id.name" />
+                                    has opened a dispute.
+                                    <br />
+                                    <br />
+                                    Please review the changes.
+                                    <br />
+                                    <br />
+                                </p>
+                                <br/>
+                                <br/>
+                                <t t-set="orders" t-value="object.sh_purchase_order_ids"/>
+                                <t t-if="env.context.get('actual_order', False)">
+                                    <t t-set="actual_order" t-value="env.context.get('actual_order')"/>
+                                    <t t-set="orders" t-value="orders.filtered(lambda x: x.id == actual_order)"/>
+                                </t>
+                                <t t-foreach="orders" t-as="order">
+                                    <table>
+                                        <tbody>
+                                            <tr><td colspan="5" style="font-weight:bolder;text-align:center;">Order <t t-out="order.name"/></td></tr>
+                                            <tr>
+                                                <td style="font-weight:bolder;min-width:200px;text-align:left;">Concept</td>
+                                                <td style="font-weight:bolder;text-align:right;">Price (Original)</td>
+                                                <td style="font-weight:bolder;text-align:right;">Quantity (Original)</td>
+                                                <td style="font-weight:bolder;text-align:right;">Price (Disputed)</td>
+                                                <td style="font-weight:bolder;text-align:right;">Quantity (Disputed)</td>
+                                            </tr>
+                                            <t t-foreach="order.order_line" t-as="line">
+                                                <tr>
+                                                    <td style="text-align:left;"><t t-out="line.product_id.name" /></td>
+                                                    <td style="text-align:right;"><t t-out="line.price_unit" /></td>
+                                                    <td style="text-align:right;"><t t-out="line.product_uom_qty" /></td>
+                                                    <td style="text-align:right;"><t t-out="line.x_price_unit_dispute" /></td>
+                                                    <td style="text-align:right;"><t t-out="line.x_product_qty_dispute" /></td>
+                                                </tr>
+                                            </t>
+                                            <!-- <tr>
+                                                <td colspan="5">
+                                                    <div style="display:flex;flex-direction:row;justify-content:center;gap:7px;">
+                                                        <a t-att-href="order.x_get_dispute_url(confirm_type='accept')" target="_blank"
+                                                                style="background-color:#B3B2B1; padding:5px 10px; text-decoration:none; color:#ffffff; border-radius:5px; font-size:16px; margin-right:7px;">
+                                                            Approve dispute
+                                                        </a>
+                                                        <a t-att-href="order.x_get_dispute_url(confirm_type='decline')" target="_blank"
+                                                                style="background-color:#ebebef; padding:5px 10px; text-decoration:none; color:#4a5573; border-radius:5px; font-size:16px">
+                                                            Reject dispute
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr> -->
+                                        </tbody>
+                                    </table>
+                                    <br/>
+                                </t>
+                            </td>
+                            </tbody>
+                        </table>
+                        </td>
+                    </tr>
+
+                    <!-- FOOTER -->
+                    <tr>
+                        <td align="center" style="min-width: 590px;">
+                        <table width="590" border="0" cellpadding="0" bgcolor="#875A7B" style="min-width: 590px; background-color: rgb(135,90,123); padding: 20px; border-collapse:separate;">
+                            <tr>
+                            <td valign="middle" align="left" style="color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;">
+                                <t t-out="object.company_id.name" />
+                                <br />
+                                <t t-out="object.company_id.phone or ''" />
+                            </td>
+                            <td valign="middle" align="right" style="color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;">
+                                <t t-if="object.company_id.email">
+                                <a t-attf-href="mailto:{{ object.company_id.email }}" style="text-decoration:none; color: white;">
+                                    <t t-out="object.company_id.email" />
+                                </a>
+                                </t>
+                                <br />
+                                <t t-if="object.company_id.website">
+                                <a t-attf-href="{{ object.company_id.website }}" style="text-decoration:none; color: white;">
+                                    <t t-out="object.company_id.website" />
+                                </a>
+                                </t>
+                            </td>
+                            </tr>
+                        </table>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                </div>
+            </field>
+            </record>
+
+    </data>
+
+</odoo>

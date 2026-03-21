@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="ike_event_purchase_purchase_order_portal_content" name="Purchase Order Portal Content" inherit_id="purchase.purchase_order_portal_content">
+        <xpath expr="//h3[@id='details']" position="after">
+            <owl-component
+                name="ike_event_purchase.purchase_order_details"
+                t-att-props="json.dumps({'order_id': order.id})"
+            />
+        </xpath>
+        <xpath expr="//div[hasclass('table-responsive')]/table" position="attributes">
+            <attribute name="class">d-none</attribute>
+        </xpath>
+
+        <xpath expr="//table/thead/tr/th[4]" position="after">
+            <th class="text-end">Dispute Price</th>
+            <th class="text-end">Dispute Quantity</th>
+            <th class="text-end">Approved Price</th>
+            <th class="text-end">Approved Quantity</th>
+        </xpath>
+
+        <xpath expr="//tbody/t/tr/t/td[4]" position="after">
+            <td class="text-end"><span t-field="line.x_price_unit_dispute"/></td>
+            <td class="text-end"><span t-field="line.x_product_qty_dispute"/></td>
+            <td class="text-end"><span t-field="line.x_price_unit_approved"/></td>
+            <td class="text-end"><span t-field="line.x_product_qty_approved"/></td>
+        </xpath>
+    </template>
+
+    <template id="ike_event_purchase_dispute_view" name="Purchase Order Portal Content Dispute">
+        <t t-call="portal.portal_layout">
+            <owl-component
+                name="ike_event_purchase.purchase_order_dispute"
+                t-att-props="json.dumps({'order_id': order_sudo.id, 'action': dispute})"
+            />
+        </t>
+    </template>
+
+</odoo>

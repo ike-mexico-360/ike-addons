@@ -1,0 +1,1498 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Binnacle -->
+        <record id="ike_binnacle_category_opening_of_the_service" model="ike.event.binnacle.category">
+            <field name="name">Created</field>
+        </record>
+        <record id="ike_binnacle_category_coverage_validation" model="ike.event.binnacle.category">
+            <field name="name">Coverage Validation</field>
+        </record>
+        <record id="ike_binnacle_category_capturanding_data" model="ike.event.binnacle.category">
+            <field name="name">Capturing service details</field>
+        </record>
+        <record id="ike_binnacle_category_searching" model="ike.event.binnacle.category">
+            <field name="name">Service vehicle and concept selection</field>
+        </record>
+        <record id="ike_binnacle_category_searching_supplier" model="ike.event.binnacle.category">
+            <field name="name">Searching supplier</field>
+        </record>
+        <record id="ike_binnacle_category_assigned" model="ike.event.binnacle.category">
+            <field name="name">Supplier assigned</field>
+        </record>
+        <record id="ike_binnacle_category_progress" model="ike.event.binnacle.category">
+            <field name="name">In progress</field>
+        </record>
+        <!--Message to cancel event-->
+        <record id="ike_binnacle_category_cancel" model="ike.event.binnacle.category">
+            <field name="name">Canceled</field>
+        </record>
+        <record id="ike_binnacle_category_cancel_summary" model="ike.event.binnacle.category">
+            <field name="name">Cancel - summary</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_cancel"/>
+        </record>
+        <record id="ike_binnacle_category_opening_of_the_service_summary" model="ike.event.binnacle.category">
+            <field name="name">Summary</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_opening_of_the_service"/>
+        </record>
+        <record id="ike_binnacle_category_coverage_validation_summary" model="ike.event.binnacle.category">
+            <field name="name">Coverage_validation - Summary</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_coverage_validation"/>
+        </record>
+        <record id="ike_binnacle_category_capturanding_data_summary" model="ike.event.binnacle.category">
+            <field name="name">Capturanding data - Summary</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data"/>
+        </record>
+        <record id="ike_binnacle_category_searching_summary" model="ike.event.binnacle.category">
+            <field name="name">searching - Summary</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_searching"/>
+        </record>
+        <record id="ike_binnacle_category_searching_supplier_summary" model="ike.event.binnacle.category">
+            <field name="name">searching supplier - summary</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier"/>
+        </record>
+        <record id="ike_binnacle_category_assigned_summary" model="ike.event.binnacle.category">
+            <field name="name">Assigned supplier</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_assigned"/>
+        </record>
+        <record id="ike_binnacle_category_progress_summary" model="ike.event.binnacle.category">
+            <field name="name">Service in progress</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_assigned"/>
+        </record>
+        <record id="ike_binnacle_category_progress_summary_assigned" model="ike.event.binnacle.category">
+            <field name="name">Assinged</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_assigned"/>
+        </record>
+        <record id="ike_binnacle_category_progress_summary_on_rute" model="ike.event.binnacle.category">
+            <field name="name">On rute</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_assigned"/>
+        </record>
+        <record id="ike_binnacle_category_progress_summary_arrived" model="ike.event.binnacle.category">
+            <field name="name">Arrived</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_assigned"/>
+        </record>
+        <record id="ike_binnacle_category_progress_summary_on_rute_to_destination" model="ike.event.binnacle.category">
+            <field name="name">On rute destination</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_assigned"/>
+        </record>
+        <record id="ike_binnacle_category_progress_summary_arrived_destination" model="ike.event.binnacle.category">
+            <field name="name">Arrived destination</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_assigned"/>
+        </record>
+        <record id="ike_binnacle_category_progress_summary_finalized" model="ike.event.binnacle.category">
+            <field name="name">Finalized</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_assigned"/>
+        </record>
+        <record id="ike_binnacle_category_progress_summary_concepts_additionals" model="ike.event.binnacle.category">
+            <field name="name">Concepts additionals</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_assigned"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_1_1" model="mail.template">
+            <field name="name">Binnacle stage mail template 1 1</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html"><t>Opening of the service</t></field>
+        </record>
+        <record id="ike_binnacle_stage_1_1" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_opening_of_the_service"/>
+            <field name="step_number">1</field>
+            <field name="sequence">1</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_1_1"/>
+            <!-- <field name="text_html">Opening of the service</field> -->
+        </record>
+        <record id="ike_binnacle_stage_mail_template_1_2" model="mail.template">
+            <field name="name">Binnacle stage mail template 1 2</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html"><t>Opening of the service</t></field>
+        </record>
+        <record id="ike_binnacle_stage_1_2" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_opening_of_the_service_summary"/>
+            <field name="step_number">1</field>
+            <field name="sequence">2</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_1_2"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_1_3" model="mail.template">
+            <field name="name">Binnacle stage mail template 1 3</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html"><t>Applicant identification</t></field>
+        </record>
+        <record id="ike_binnacle_stage_1_3" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_opening_of_the_service_summary"/>
+            <field name="step_number">1</field>
+            <field name="sequence">3</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_1_3"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_1_4" model="mail.template">
+            <field name="name">Binnacle stage mail template 1 4</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t><strong>File number registration </strong>/  <t t-out="object.name"/></t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_1_4" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_opening_of_the_service_summary"/>
+            <field name="step_number">1</field>
+            <field name="sequence">4</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_1_4"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_2_1" model="mail.template">
+            <field name="name">Binnacle stage mail template 2 1</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html"><t>Coverage validation</t></field>
+        </record>
+        <record id="ike_binnacle_stage_2_1" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_coverage_validation"/>
+            <field name="step_number">2</field>
+            <field name="sequence">1</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_2_1"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_2_2" model="mail.template">
+            <field name="name">Binnacle stage mail template 2 2</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html"><t>Coverage validation</t></field>
+        </record>|
+        <record id="ike_binnacle_stage_2_2" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_coverage_validation_summary"/>
+            <field name="step_number">2</field>
+            <field name="sequence">2</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_2_2"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_2_3" model="mail.template">
+            <field name="name">Binnacle stage mail template 2 3</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html"><t>Valid term</t></field>
+        </record>
+        <record id="ike_binnacle_stage_2_3" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_coverage_validation_summary"/>
+            <field name="step_number">2</field>
+            <field name="sequence">3</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_2_3"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_2_4" model="mail.template">
+            <field name="name">Binnacle stage mail template 2 4</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html"><t>Number of valid events</t></field>
+        </record>
+        <record id="ike_binnacle_stage_2_4" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_coverage_validation_summary"/>
+            <field name="step_number">2</field>
+            <field name="sequence">4</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_2_4"/>
+        </record>
+
+        <record id="ike_binnacle_stage_mail_template_3_1" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 1</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html"><t>Data capturing</t></field>
+        </record>
+        <record id="ike_binnacle_stage_3_1" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data"/>
+            <field name="step_number">3</field>
+            <field name="sequence">1</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_1"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_2" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 2</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html"><t>Titular user</t></field>
+        </record>
+        <record id="ike_binnacle_stage_3_2" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">2</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_2"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_3" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 3</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                     <strong>Alternative phone: </strong> <t t-out="object.get_user_phone() or 'No provided'"/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_3" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">3</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_3"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_4" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 4</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                     <strong>Contact preference: </strong> <t t-out="dict(object._fields['preference_contact'].get_description(object.env)['selection']).get(object.preference_contact, '')"/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_4" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">4</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_4"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_5" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 5</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                     <strong>Subservice selected: </strong> <t t-out="object.service_id.name or 'No provided'"/> / <t t-out="object.sub_service_id.name or 'No provided'"/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_5" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">5</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_5"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_6" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 6</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                     <strong>Service type: </strong> <t t-out="object.service_type_id.name or 'No provided'"/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_6" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">6</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_6"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_7" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 7</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                     <strong>Scheduled service: </strong>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_7" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">7</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_7"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_8" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 8</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t t-if="object.service_input_ref and object.service_input_ref.identification_type">
+                    <div>
+                        <strong>Identification by: </strong>
+                        <t t-out="dict(object.service_input_ref._fields['identification_type'].selection).get(object.service_input_ref.identification_type)"/>
+                    </div>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_8" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">8</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_8"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_9" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 9</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                     <strong>Vehicle data reception</strong>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_9" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">9</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_9"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_10" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 10</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Vehicle identification:</strong><br/>
+                    <strong>Brand:</strong> <t t-out="object.service_input_ref.vehicle_brand or ''"/><br/>
+                    <strong>Subbrand:</strong> <t t-out="object.service_input_ref.vehicle_model or ''"/><br/>
+                    <strong>Year:</strong> <t t-out="object.service_input_ref.vehicle_year or ''"/><br/>
+                    <strong>Category:</strong> <t t-out="object.service_input_ref.vehicle_category_id.name or ''"/><br/>
+                    <strong>Plate:</strong> <t t-out="object.service_input_ref.vehicle_plate or ''"/><br/>
+                    <strong>Color:</strong> <t t-out="object.service_input_ref.vehicle_color or ''"/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_10" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">10</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_10"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_11" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 11</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Origin geolocation identification</strong><br/>
+                    <strong>Latitude:</strong> <t t-out="object.location_latitude or ''"/><br/>
+                    <strong>Longitude:</strong> <t t-out="object.location_longitude or ''"/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_11" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">11</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_11"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_12" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 12</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Event type: </strong><t t-out="object.event_type_id.name or 'No provided'"/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_12" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">12</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_12"/>
+        </record>
+        <record id="ike_binnacle_stage_3_13" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_capturing"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">13</field>
+            <field name="text_html">{{object.get_required_plates()}}</field>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_13" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 13</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong> 
+                        <t t-if="object.requires_federal_plates"> requires federal plates</t>
+                        <t t-else=""> does not require federal plates</t> 
+                    </strong>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_13" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">13</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_13"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_14" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 14</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Service details:</strong><br/>
+
+                    <t t-if="object.event_summary_id
+                            and object.event_summary_id.survey_data
+                            and object.event_summary_id.survey_data.get('fields')">
+
+                        <ul>
+                            <t t-foreach="object.event_summary_id.survey_data.get('fields')" t-as="f">
+                                <li>
+                                    <strong t-out="f.get('string')"/>:
+                                    <span t-out="f.get('value')"/>
+                                </li>
+                            </t>
+                        </ul>
+                    </t>
+
+                    <t t-else="">
+                        <em>No service details provided.</em>
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_14" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">14</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_14"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_15" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 15</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Origin geolocation identification</strong><br/>
+                    <strong>Latitude:</strong> <t t-out="object.destination_latitude or ''"/><br/>
+                    <strong>Longitude:</strong> <t t-out="object.destination_longitude or ''"/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_15" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">15</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_15"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_3_16" model="mail.template">
+            <field name="name">Binnacle stage mail template 3 16</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Comment:</strong>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_3_16" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">3</field>
+            <field name="sequence">16</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_16"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_4_1" model="mail.template">
+            <field name="name">Binnacle stage mail template 4 1</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+               <t>
+                    <strong>Service vehicle and concept selection</strong>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_4_1" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching"/>
+            <field name="step_number">4</field>
+            <field name="sequence">1</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_4_1"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_4_2" model="mail.template">
+            <field name="name">Binnacle stage mail template 4 2</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <div>
+                    <!-- Guardamos el subservicio en una variable -->
+                    <t t-if="object.sub_service_res_model and object.sub_service_res_id">
+                        <t t-set="sub_service"
+                        t-value="object.env[object.sub_service_res_model].browse(object.sub_service_res_id)"/>
+
+                        <t t-if="sub_service.exists() and sub_service.service_vehicle_type_ids">
+                            <strong>Vehicle selected:</strong>
+                            <ul>
+                                <t t-foreach="sub_service.service_vehicle_type_ids" t-as="vehicle">
+                                    <li>
+                                        <span t-out="vehicle.display_name"/>
+                                    </li>
+                                </t>
+                            </ul>
+                        </t>
+
+                        <t t-else="">
+                            <em>No vehicle selected.</em>
+                        </t>
+                    </t>
+
+                    <t t-else="">
+                        <em>No vehicle selected.</em>
+                    </t>
+                </div>
+            </field>
+        </record>
+
+        <record id="ike_binnacle_stage_4_2" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_summary"/>
+            <field name="step_number">4</field>
+            <field name="sequence">2</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_4_2"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_4_3" model="mail.template">
+            <field name="name">Binnacle stage mail template 4 3</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                    <t>
+                        <strong>Covered concepts:</strong>
+
+                        <t t-set="lines" t-value="object.service_product_ids"/>
+
+                        <t t-if="lines">
+                            <t t-set="printed" t-value="0"/>
+
+                            <t t-foreach="lines" t-as="line" t-index="i">
+                                <t t-if="not line.display_type and line.covered">
+                                    <t t-if="printed &gt; 0"> | </t>
+
+                                    <t t-out="line.product_id.name or line.name"/>
+
+                                    <t t-set="printed" t-value="printed + 1"/>
+                                </t>
+                            </t>
+
+                            <t t-if="printed &gt; 0">.</t>
+                            <t t-else="">
+                                <em>No covered concepts available.</em>
+                            </t>
+                        </t>
+                    </t>
+                </field>
+        </record>
+        <record id="ike_binnacle_stage_4_3" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_summary"/>
+            <field name="step_number">4</field>
+            <field name="sequence">3</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_4_3"/>
+        </record>
+         <record id="ike_binnacle_stage_mail_template_4_4" model="mail.template">
+            <field name="name">Binnacle stage mail template 4 4</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Has beed added:</strong>
+
+                    <t t-set="lines" t-value="object.service_product_ids"/>
+
+                    <t t-if="lines">
+                        <t t-set="printed" t-value="0"/>
+
+                        <t t-foreach="lines" t-as="line">
+                            <t t-if="not line.display_type and not line.covered">
+                                <t t-if="printed &gt; 0"> | </t>
+
+                                <t t-out="line.product_id.name or line.name"/>
+
+                                <t t-set="printed" t-value="printed + 1"/>
+                            </t>
+                        </t>
+
+                        <t t-if="printed &gt; 0">.</t>
+                        <t t-else="">
+                            <em>No out-of-coverage concepts.</em>
+                        </t>
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_4_4" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_summary"/>
+            <field name="step_number">4</field>
+            <field name="sequence">4</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_4_4"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_5_1" model="mail.template">
+            <field name="name">Binnacle stage mail template 5 1</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Searching supplier</strong>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_5_1" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier"/>
+            <field name="step_number">5</field>
+            <field name="sequence">1</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_1"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_5_2" model="mail.template">
+            <field name="name">Binnacle stage mail template 5 2</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Type assignation:</strong>
+                    <t t-set="supplier" t-value="object.service_supplier_ids[:1]"/>
+                    <t t-if="supplier and supplier.assignation_type">
+                        <t t-out="dict(supplier._fields['assignation_type']._description_selection(object.env)).get(supplier.assignation_type, '')"/>
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_5_2" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">5</field>
+            <field name="sequence">2</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_2"/>
+        </record>
+        <record id="ike_binnacle_stage_5_3" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_capturing"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">5</field>
+            <field name="sequence">3</field>
+            <field name="text_html">Best rated suppliers: {{object.get_best_suppliers_summary()}} </field>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_5_3" model="mail.template">
+            <field name="name">Binnacle stage mail template 5 3</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Best suppliers:</strong>
+
+                    <t t-set="suppliers" t-value="object.service_supplier_ids"/>
+
+                    <t t-if="suppliers">
+                        <ul>
+                            <t t-foreach="suppliers" t-as="supplier">
+                                <t t-if="supplier.state == 'accepted' and supplier.selected">
+                                    <li t-out="supplier.supplier_id.name"/>
+                                </t>
+                            </t>
+                        </ul>
+                    </t>
+
+                    <t t-else="">
+                        <em>No accepted suppliers selected.</em>
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_5_3" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">5</field>
+            <field name="sequence">3</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_3"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_5_4" model="mail.template">
+            <field name="name">Binnacle stage mail template 5 4</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Send supplier notification</strong>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_5_4" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">5</field>
+            <field name="sequence">4</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_4"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_5_5" model="mail.template">
+            <field name="name">Binnacle stage mail template 5_5</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Confirmation</strong>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_5_5" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">5</field>
+            <field name="sequence">5</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_5"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_7_1" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_1</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Service in progress</strong>
+                </t>
+            </field>
+        </record>
+         <record id="ike_binnacle_stage_7_1" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress"/>
+            <field name="step_number">7</field>
+            <field name="sequence">1</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_1"/>
+        </record>
+        <!-- Concepts addicionals -->
+        <record id="ike_binnacle_stage_mail_template_7_5" model="mail.template">
+            <field name="name">Binnacle stage mail template 7 5</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+
+                <!-- Obtener el supplier_link desde el contexto -->
+                <t t-set="link"
+                t-value="object.service_supplier_link_ids.filtered(lambda l: l.id == ctx.get('supplier_link_id'))[:1]"/>
+
+                <t t-if="link">
+                <t t-set="link" t-value="link[0]"/>
+
+                    <!-- CONCEPTS ADDITIONALS -->
+                    <strong>Concepts additionals:</strong>
+
+                    <t t-set="new_ids" t-value="link.new_concept_ids or []"/>
+
+                    <t t-set="outside_lines"
+                        t-value="link.supplier_product_ids.filtered(
+                            lambda l: not l.display_type and not l.covered and l.id in new_ids
+                        )"/>
+
+                    <t t-if="outside_lines">
+                        <t t-foreach="outside_lines" t-as="line">
+                            <br/>• <t t-out="line.product_id.display_name"/>
+                        </t>
+                    </t>
+                    <t t-else="">
+                        <br/><em>No additional concepts.</em>
+                    </t>
+
+                    <br/><br/>
+
+                    <!-- AUTHORIZATION TYPE -->
+                    <strong>Authorization type:</strong>
+
+                    <t t-if="link.type_authorization_id">
+                        <t t-out="link.type_authorization_id.name"/>
+                    </t>
+                    <t t-else="">
+                        <em>No authorization type.</em>
+                    </t>
+
+                    <br/><br/>
+
+                    <!-- RESPONSIBLE -->
+                    <strong>Responsible authorizator:</strong>
+
+                    <t t-set="responsible_name"
+                        t-value="link.nu_user_id.display_name if link.authorization_by_nu else link.authorizer_id.display_name"/>
+
+                    <t t-if="responsible_name">
+                        <t t-out="responsible_name"/>
+                    </t>
+                    <t t-else="">
+                        <em>No responsible assigned.</em>
+                    </t>
+
+                    <br/><br/>
+
+                    <!-- MOTIVE -->
+                    <strong>Motive:</strong>
+
+                    <t t-if="link.reason_authorizer_id">
+                        <t t-out="link.reason_authorizer_id.name"/>
+                    </t>
+                    <t t-else="">
+                        <em>No motive assigned.</em>
+                    </t>
+
+                </t>
+
+                <!-- Si por alguna razón no llega el contexto -->
+                <t t-else="">
+                    <em>No supplier information available.</em>
+                </t>
+
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_5" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_concepts_additionals"/>
+            <field name="step_number">7</field>
+            <field name="sequence">5</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_5"/>
+        </record>
+       <record id="ike_binnacle_stage_mail_template_7_9" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_9</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Authorization was requested.</strong>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_9" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_concepts_additionals"/>
+            <field name="step_number">7</field>
+            <field name="sequence">9</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_9"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_7_10" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_10</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t> 
+                    <strong>Notification sent to the supplier.</strong>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_10" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_concepts_additionals"/>
+            <field name="step_number">7</field>
+            <field name="sequence">10</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_10"/>
+        </record>
+         <record id="ike_binnacle_stage_mail_template_7_11" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_11</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t> 
+                    <strong>Responsible authorizator:</strong>
+
+                    <t t-set="printed_resp" t-value="0"/>
+
+                    <t t-foreach="object.service_supplier_link_ids" t-as="link">
+
+                        <t t-set="responsible_name"
+                        t-value="link.nu_user_id.display_name if link.authorization_by_nu else link.authorizer_id.display_name"/>
+
+                        <t t-if="responsible_name">
+
+                            <t t-if="printed_resp &gt; 0"> | </t>
+
+                            <t t-out="responsible_name"/>
+
+                            <t t-set="printed_resp" t-value="printed_resp + 1"/>
+                        </t>
+
+                    </t>
+
+                    <t t-if="printed_resp == 0">
+                        <em>No responsible assigned.</em>
+                    </t>
+                    <t t-else="">.</t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_11" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_concepts_additionals"/>
+            <field name="step_number">7</field>
+            <field name="sequence">11</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_11"/>
+        </record>
+        <!-- Authorizator additional concepts -->
+        <record id="ike_binnacle_stage_mail_template_7_13_1" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_13_1</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <!-- Obtener el supplier_link desde el contexto -->
+                    <t t-set="link"
+                    t-value="object.service_supplier_link_ids.filtered(lambda l: l.id == ctx.get('supplier_link_id'))[:1]"/>
+
+                    <t t-if="link">
+                        <t t-set="link" t-value="link[0]"/>
+
+                        <strong>Approved additional concept</strong>
+                        <br/>
+
+                        <t t-set="new_ids" t-value="link.new_concept_ids or []"/>
+
+                        <t t-set="outside_lines"
+                            t-value="link.supplier_product_ids.filtered(
+                                lambda l: not l.display_type and not l.covered and l.id in new_ids
+                            )"/>
+
+                        <t t-if="outside_lines">
+                            <t t-foreach="outside_lines" t-as="line">
+                                <br/>• <t t-out="line.product_id.display_name"/>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <br/><em>No additional concepts.</em>
+                        </t>
+
+                        <br/><br/>
+                    </t>
+
+                    <!-- fallback por si no llega contexto -->
+                    <t t-else="">
+                        <em>No supplier information available.</em>
+                    </t>
+                </t>
+            </field>
+        </record>        
+        <record id="ike_binnacle_stage_7_13_1" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_concepts_additionals"/>
+            <field name="step_number">7</field>
+            <field name="sequence">13</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_13_1"/>
+        </record>
+
+        <!-- Message to route -->
+        <record id="ike_binnacle_stage_mail_template_7_2" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_2</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+
+                    <t t-set="supplier"
+                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
+
+                    <t t-if="supplier">
+                        <div>
+                            <strong>Supplier:</strong>
+                            <t t-out="supplier.supplier_id.name"/>
+                        </div>
+                    </t>
+
+                    <div>
+                        <strong>State:</strong> Assing
+                    </div>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_2" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_assigned"/>
+            <field name="step_number">7</field>
+            <field name="sequence">2</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_2"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_7_3" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_3</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+
+                    <t t-set="supplier"
+                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
+
+                    <t t-if="supplier">
+                        <div>
+                            <strong>Supplier:</strong>
+                            <t t-out="supplier.supplier_id.name"/>
+                        </div>
+                    </t>
+
+                    <div>
+                        <strong>State:</strong> On route
+                    </div>
+                </t>
+            </field>
+        </record>
+         <record id="ike_binnacle_stage_7_3" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_on_rute"/>
+            <field name="step_number">7</field>
+            <field name="sequence">3</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_3"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_7_4" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_4</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+
+                    <t t-set="supplier"
+                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
+
+                    <t t-if="supplier">
+                        <div>
+                            <strong>Supplier:</strong>
+                            <t t-out="supplier.supplier_id.name"/>
+                        </div>
+                    </t>
+
+                    <div>
+                        <strong>State:</strong> Arrived
+                    </div>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_4" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_arrived"/>
+            <field name="step_number">7</field>
+            <field name="sequence">4</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_4"/>
+        </record>
+       
+        <record id="ike_binnacle_stage_mail_template_7_13" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_13</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+               <t>
+                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+
+                    <t t-set="supplier"
+                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
+
+                    <t t-if="supplier">
+                        <div>
+                            <strong>Supplier:</strong>
+                            <t t-out="supplier.supplier_id.name"/>
+                        </div>
+                    </t>
+
+                    <div>
+                        <strong>State:</strong> On route to destination
+                    </div>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_13" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_on_rute_to_destination"/>
+            <field name="step_number">7</field>
+            <field name="sequence">13</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_13"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_7_14" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_14</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+               <t>
+                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+
+                    <t t-set="supplier"
+                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
+
+                    <t t-if="supplier">
+                        <div>
+                            <strong>Supplier:</strong>
+                            <t t-out="supplier.supplier_id.name"/>
+                        </div>
+                    </t>
+
+                    <div>
+                        <strong>State:</strong> Arrived to destination
+                    </div>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_14" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_arrived_destination"/>
+            <field name="step_number">7</field>
+            <field name="sequence">14</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_14"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_7_22" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_22</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+
+                    <t t-set="supplier"
+                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
+
+                    <t t-if="supplier">
+                        <div>
+                            <strong>Supplier:</strong>
+                            <t t-out="supplier.supplier_id.name"/>
+                        </div>
+                    </t>
+
+                    <div>
+                        <strong>State:</strong> Finalized
+                    </div>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_22" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_finalized"/>
+            <field name="step_number">7</field>
+            <field name="sequence">22</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_22"/>
+        </record>
+        <!--MESSAGE TO AUTHORIZATION-->
+        <record id="ike_binnacle_stage_mail_template_7_23"  model="mail.template">
+            <field name="name">  Binnacle stage mail template 7_23 </field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">  Reference {{ object.name or 'n/a' }} </field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Account:</strong>
+                    <t t-out="object.membership_authorization_id.account"/>
+                    <br/>
+                    <strong><t t-out="object.membership_authorization_id.label_identification_primary or 'Primary key'"/>:</strong>
+                    <t t-out="object.membership_authorization_id.masked_key_identification"/>
+                    <br/>
+                    <t t-if="object.membership_authorization_id.second_key_identification">
+                        <strong><t t-out="object.membership_authorization_id.label_identification_second or 'Second key'"/>:</strong>
+                        <t t-out="object.membership_authorization_id.masked_second_key_identification"/>
+                        <br/>
+                    </t>
+                    <strong>Titular user name:</strong>
+                    <t t-out="object.membership_authorization_id.nus_name"/>
+                    <br/>
+                    <strong>Phone:</strong>
+                    <t t-out="object.membership_authorization_id.phone_nu"/>
+                    <br/>
+                    <strong>Alternative phone:</strong>
+                    <t t-out="object.membership_authorization_id.nu_alternative or '-'"/>
+                    <br/>
+                    <strong>Preference contact:</strong>
+                    <t t-out="dict(object._fields['preference_contact'].get_description(object.env)['selection']).get(object.preference_contact, '')"/>
+                    <br/>
+                    <strong>Responsible authorizer:</strong>
+                    <t t-out="object.membership_authorization_id.authorizer_id.name or '-'"/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_23" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">7</field>
+            <field name="sequence">23</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_23"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_7_24"  model="mail.template">
+            <field name="name">  Binnacle stage mail template 7_24 </field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">  Reference {{ object.name or 'n/a' }} </field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Authorization was requested</strong>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_24" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">7</field>
+            <field name="sequence">24</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_24"/>
+        </record>
+
+    <record id="ike_binnacle_stage_mail_template_7_25"  model="mail.template">
+            <field name="name">  Binnacle stage mail template 7_25 </field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">  Reference {{ object.name or 'n/a' }} </field>
+             <field name="body_html" type="html">
+                <t t-if="object.membership_authorization_id">
+                    <strong>Valid vigency</strong>
+                    <br/>
+
+                    <strong>Date start:</strong>
+                    <t t-out="object.membership_authorization_id.affiliation_date_start or '-'"/>
+                    <br/>
+                    <strong>Date end:</strong>
+                    <t t-out="object.membership_authorization_id.affiliation_date_end or '-'"/>
+                    <br/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_25" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">7</field>
+            <field name="sequence">25</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_25"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_7_26"  model="mail.template">
+            <field name="name">  Binnacle stage mail template 7_26 </field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">  Reference {{ object.name or 'n/a' }} </field>
+             <field name="body_html" type="html">
+                <t t-if="object.membership_authorization_id">
+                    <strong>vehicle weight category:</strong>
+                    <t t-out="object.membership_authorization_id.vehicle_weight_category_id.name or '-'"/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_26" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">7</field>
+            <field name="sequence">26</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_26"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_7_27"  model="mail.template">
+            <field name="name">  Binnacle stage mail template 7_27 </field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">  Reference {{ object.name or 'n/a' }} </field>
+             <field name="body_html" type="html">
+                <t t-if="object.membership_authorization_id">
+                    <strong>Is special:</strong>
+                    <t t-out="'Yes' if object.membership_authorization_id.check_is_special else 'No'"/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_27" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">7</field>
+            <field name="sequence">27</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_27"/>
+        </record>
+        <!-- MESSAGE AUTHORIZATION -->
+        <record id="ike_binnacle_stage_mail_template_7_28" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_28</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-if="object.membership_authorization_id">
+                        <p>
+                            <strong>Authorization Escalated</strong>
+                        </p>
+                        <p>
+                            <strong>Authorizer responsible: </strong><t t-out="object.membership_authorization_id.user_authorization_commercial_affiliation_id.name" ></t>
+                        </p>
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_28" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">7</field>
+            <field name="sequence">28</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_28"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_7_29" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_29</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-if="object.membership_authorization_id">
+                        <p>
+                            <strong>Authorization aproved</strong>
+                        </p>
+                        <!-- <p>
+                           <strong>Motive: </strong> <t t-out="object.membership_authorization_id.authorization_reasons_id.name" ></t>
+                        </p>
+                        <p>
+                            <strong>Comment: </strong> <t t-out="object.membership_authorization_id.comment_authorizer" ></t>
+                        </p> -->
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_29" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">7</field>
+            <field name="sequence">29</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_29"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_7_30" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_30</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-if="object.membership_authorization_id">
+                        <p>
+                            <strong>Approved authorizer</strong>
+                        </p>
+                        <p>
+                           <strong>Motive: </strong> <t t-out="object.membership_authorization_id.authorization_reasons_id.name" ></t>
+                        </p>
+                        <p>
+                            <strong>Comment: </strong> <t t-out="object.membership_authorization_id.comment_authorizer" ></t>
+                        </p>
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_30" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">7</field>
+            <field name="sequence">30</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_30"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_7_31" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_31</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-if="object.membership_authorization_id">
+                        <p>
+                            <strong>Rejected authorization</strong>
+                        </p>
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_31" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">7</field>
+            <field name="sequence">31</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_31"/>
+        </record>
+        <!--MESSAGES TO  EVENT CANCEL-->
+
+        <record id="ike_binnacle_stage_mail_template_8_1" model="mail.template">
+            <field name="name">Binnacle stage mail template 8_1</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <div>
+                        <strong>Event canceled</strong>
+                    </div>
+
+                    <t t-if="object.cancel_user_id">
+                        <div>
+                            <strong>Canceled by:</strong>
+                            <t t-out="object.cancel_user_id.name"/>
+                        </div>
+                    </t>
+
+                    <t t-if="object.cancel_reason_id">
+                        <div>
+                            <strong>Reason:</strong>
+                            <t t-out="object.cancel_reason_id.name"/>
+                        </div>
+                    </t>
+
+                    <t t-if="object.cancel_reason_text">
+                        <div>
+                            <strong>Comment:</strong>
+                            <t t-out="object.cancel_reason_text"/>
+                        </div>
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_8_1" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_cancel"/>
+            <field name="step_number">8</field>
+            <field name="sequence">1</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_8_1"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_8_2" model="mail.template">
+            <field name="name">Binnacle stage mail template 8_2</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Supplier Canceled:</strong>
+                    <br/>
+                    <ul>
+                        <t t-foreach="object.service_supplier_ids.filtered(lambda s: s.cancelled)" t-as="supplier">
+                            <li>
+                                <strong>
+                                    <t t-out="supplier.supplier_id.name"/>
+                                </strong>
+                                <br/>
+
+                                <t t-if="supplier.cancel_reason_id">
+                                    <strong>Reason:</strong>
+                                    <t t-out="supplier.cancel_reason_id.name"/>
+                                    <br/>
+                                </t>
+
+                                <t t-if="supplier.cancel_reason_text">
+                                   <strong>Comment:</strong>
+                                    <t t-out="supplier.cancel_reason_text"/>
+                                    <br/>
+                                </t>
+
+                                <t t-if="supplier.cancel_user_id">
+                                    <strong>Canceled by:</strong>
+                                    <t t-out="supplier.cancel_user_id.name"/>
+                                </t>
+                            </li>
+                        </t>
+                    </ul>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_8_2" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_cancel_summary"/>
+            <field name="step_number">8</field>
+            <field name="sequence">2</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_8_2"/>
+        </record>
+        <!-- Duplicate Event -->
+        <record id="ike_binnacle_stage_mail_template_9_1" model="mail.template">
+            <field name="name">Binnacle stage mail template 9_1</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <strong>Duplicate Event</strong>
+                    <br/>
+                    <strong>Event: </strong><t t-out="object.name"/>
+                    <br/>
+                    <strong>Reason: </strong><t t-out="ctx.get('reason_name')"/>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_9_1" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_cancel_summary"/>
+            <field name="step_number">9</field>
+            <field name="sequence">1</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_9_1"/>
+        </record>
+    </data>
+</odoo>

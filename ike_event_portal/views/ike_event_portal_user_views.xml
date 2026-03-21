@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- CONTENIDO -->
+    <template id="portal_ike_event_users_list" name="Users List">
+        <t t-call="portal.portal_layout">
+            <div class="container">
+                <owl-component name="ike_event_portal.UsersMainComponent"/>
+            </div>
+        </t>
+    </template>
+</odoo>

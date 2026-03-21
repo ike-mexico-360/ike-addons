@@ -20,7 +20,7 @@ class CustomMunicipalitySelection extends Component {
     static components = { Many2XAutocomplete };
 
     setup() {
-        console.log("CustomMunicipalitySelectionWidget", this);
+        // console.log("CustomMunicipalitySelectionWidget", this);
 
         this.orm = useService("orm");
         this.state = useState({
@@ -94,7 +94,10 @@ class CustomMunicipalitySelection extends Component {
     onSelectMunicipalities() {
         const title = _t("Municipalities");
         const context = {};
-        const domain = [['id', 'not in', this.resIds]];
+        const domain = [
+            ['id', 'not in', this.resIds],
+            ['disabled', '=', false],
+        ];
         if (this.state.countryId) {
             domain.push(['country_id', '=', this.state.countryId[0]]);
         }

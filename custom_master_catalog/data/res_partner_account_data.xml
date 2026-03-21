@@ -40,5 +40,11 @@
             <field name="regex">//gm</field>
             <field name="label">TC</field>
         </record>
+
+        <!-- ir.config_parameter -->
+        <record forcecreate="True" id="config_database_encrypt_key" model="ir.config_parameter">
+            <field name="key">database.encrypt.key</field>
+            <field name="value"></field>
+        </record>
     </data>
 </odoo>

@@ -63,6 +63,14 @@ class ProductProduct(models.Model):
     sh_product_subscribe = fields.Boolean(
         string="Is Subscription Type", help="Click false to hide."
     )
+    x_categ_domain = fields.Binary(string="Category domain", compute="_compute_x_categ_domain")
+    x_concepts_ids = fields.Many2many(
+        'product.product',
+        'subservice_concept_rel',
+        'subservice_id',
+        'concept_id',
+        string='Concepts')
+    x_concepts_domain = fields.Binary(string="Concept domain", compute="_compute_x_concepts_domain")
 
     @api.constrains('name', 'sale_ok', 'sh_product_subscribe', 'purchase_ok', 'x_accessory_ok', 'categ_id', 'uom_id')
     def _check_unique_subservice(self):
@@ -73,14 +81,31 @@ class ProductProduct(models.Model):
             elif self.search_count(domain + [('id', '<>', rec.id), ('name', '=', rec.name), ('disabled', '=', True)]) > 0:
                 raise ValidationError(_('A record with the same name already exists. It is disabled.'))
 
+    @api.depends('x_concepts_ids')
+    def _compute_x_concepts_domain(self):
+        for rec in self:
+            domain = self.get_concepts_domain()
+            domain.append(('x_categ_id', 'in', [self.categ_id.id, False]))
+            domain.append(('disabled', '=', False))
+            rec.x_concepts_domain = domain
+
+    @api.depends('name')
+    def _compute_x_categ_domain(self):
+        for rec in self:
+            domain = []
+            if self._context.get('x_subservice_view', False):
+                all_categ_id = self.env.ref('product.product_category_all')
+                saleable_categ_id = self.env.ref('product.product_category_1')
+                expense_categ_id = self.env.ref('product.cat_expense')
+                domain = [('disabled', '=', False), ('id', 'not in', [all_categ_id.id, saleable_categ_id.id, expense_categ_id.id])]
+            rec.x_categ_domain = domain
+
     def get_subservices_view_action(self):
         action = self.env['ir.actions.act_window']._for_xml_id('custom_master_catalog.action_x_subservice_product_template_view')
         service_uom_id = self.env.ref('l10n_mx.product_uom_service_unit')
-        sale_tax_id = self.env.ref('account.1_tax12')
         ctx = eval(action['context'])
         ctx.update({
             'default_uom_id': service_uom_id.id,
-            'default_taxes_id': [sale_tax_id.id],
         })
         action.update({'domain': self.get_subservices_domain(), 'context': ctx})
         return action
@@ -89,7 +114,6 @@ class ProductProduct(models.Model):
     def get_subservices_domain(self, categ_id=None):
         all_categ_id = self.env.ref('product.product_category_all')
         service_uom_id = self.env.ref('l10n_mx.product_uom_service_unit')
-        sale_tax_id = self.env.ref('account.1_tax12')
         domain = [
             ('sale_ok', '=', True),
             ('sh_product_subscribe', '=', True),
@@ -98,7 +122,6 @@ class ProductProduct(models.Model):
             ('type', '=', 'service'),
             ('list_price', '=', 1),
             ('standard_price', '=', 0),
-            ('taxes_id', 'in', [sale_tax_id.id]),
             ('uom_id', '=', service_uom_id.id),
         ]
         if categ_id is None:  # Si no se pasa una categoría, se busca en todas, diferentes de All
@@ -106,3 +129,10 @@ class ProductProduct(models.Model):
         else:  # Si se pasa una categoría, se busca en esa
             domain.append(('categ_id', '=', categ_id.id))
         return domain
+
+    # Heredamos el método _creation_message para modificar el mensaje de creación
+    def _creation_message(self):
+        self.ensure_one()
+        if self.env.context.get('x_subservice_view'):
+            return _("Subservice created")
+        return super()._creation_message()

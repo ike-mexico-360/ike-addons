@@ -1,0 +1,23 @@
+.text-ike-primary {
+    color: #134F82;
+    opacity: 1 !important;
+}
+
+.text-ike-secondary {
+    color: #2c3e50;
+    opacity: 1 !important;
+}
+
+.bg-ike-light {
+    background-color: #f0f4ff;
+}
+
+.fw-ike-bold {
+    font-weight: 600 !important;
+    opacity: 1 !important;
+}
+
+.border-ike-light {
+    border: 1px solid #cce0fc;
+    border-radius: 6px;
+}

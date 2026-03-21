@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View Search -->
+    <record id="custom_nus_pet_view_search" model="ir.ui.view">
+        <field name="name">custom_nus_pet_view.search</field>
+        <field name="model">custom.nus.pet</field>
+        <field name="arch" type="xml">
+            <search string="NUs Pets">
+                <field name="nus_id"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_nus" string="NUs" context="{'group_by': 'nus_id'}"/>
+                    <filter name="group_by_pet_type" string="Type" context="{'group_by': 'pet_type_id'}"/>
+                    <filter name="group_by_breed" string="Breed" context="{'group_by': 'breed_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- View List -->
+    <record id="custom_nus_pet_view_list" model="ir.ui.view">
+        <field name="name">custom.nus.pet.view.list</field>
+        <field name="model">custom.nus.pet</field>
+        <field name="arch" type="xml">
+            <list string="NUs Pets" edit="false" duplicate="false" delete="false">
+                <field name="nus_id"/>
+                <field name="name"/>
+                <field name="pet_type_id"/>
+                <field name="breed_id"/>
+                <field name="birthdate"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View Form -->
+    <record id="custom_nus_pet_view_form" model="ir.ui.view">
+        <field name="name">custom.nus.pet.view.form</field>
+        <field name="model">custom.nus.pet</field>
+        <field name="arch" type="xml">
+            <form string="NUs Pet" duplicate="false" delete="false">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <group>
+                        <field name="nus_id" options='{"no_open": True, "no_create": True}' required="1"/>
+                        <field name="name"/>
+                        <field name="pet_type_id" options='{"no_open": True, "no_create": True}' domain="[('disabled', '=', False)]"/>
+                        <field name="breed_id" options='{"no_open": True, "no_create": True}' domain="[('disabled', '=', False)]"/>
+                        <field name="birthdate"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- View Kanban -->
+    <record id="custom_nus_pet_view_kanban" model="ir.ui.view">
+        <field name="name">custom.nus.pet.view.kanban</field>
+        <field name="model">custom.nus.pet</field>
+        <field name="arch" type="xml">
+            <kanban string="NUs Pets" class="o_kanban_mobile" editable="false" create="false" multiedit="false" delete="false">
+                <field name="nus_id"/>
+                <field name="name"/>
+                <field name="pet_type_id"/>
+                <field name="breed_id"/>
+                <field name="birthdate"/>
+                <templates>
+                    <t t-name="card" class="d-flex flex-row position-relative">
+                        <main class="ps-2 ps-md-0 flex-grow-1">
+                            <div class="o_row ps-1 mb-2">
+                                <field name="name" class="fw-bolder"/>
+                            </div>
+                            <div class="o_row ps-1">
+                                <field name="pet_type_id"/>
+                            </div>
+                            <div class="o_row ps-1">
+                                <field name="breed_id"/>
+                            </div>
+                            <div class="o_row ps-1">
+                                <field name="birthdate"/>
+                            </div>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action Window -->
+    <record id="custom_nus_pet_action" model="ir.actions.act_window">
+        <field name="name">NUs Pets</field>
+        <field name="res_model">custom.nus.pet</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+    </record>
+</odoo>

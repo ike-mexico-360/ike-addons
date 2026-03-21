@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem
+            id="ike_menu_event_membership_authorization"
+            name="NUS Afililiation Authorization"
+            sequence="30"
+            action="ike_event_membership_authorization_action"
+            parent="ike_event.ike_menu_configuration"
+            groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_commercial_supervisor"/>
+    </data>
+
+    <record id="ike_event.ike_menu_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('custom_master_catalog.custom_group_commercial_supervisor'))]"/>
+    </record>
+    <record id="ike_event.ike_menu_configuration" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('custom_master_catalog.custom_group_commercial_supervisor'))]"/>
+    </record>
+</odoo>

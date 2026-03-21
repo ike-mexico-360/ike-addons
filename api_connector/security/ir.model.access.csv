@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_api_collection_user,api.collection.user,model_api_collection,base.group_user,1,1,1,1
+access_api_connector_user,api.connector.user,model_api_connector,base.group_user,1,1,1,1
+access_api_call_log_user,api.call.log.user,model_api_call_log,base.group_user,1,0,0,0
+access_api_collection_system,api.collection.system,model_api_collection,base.group_system,1,1,1,1
+access_api_connector_system,api.connector.system,model_api_connector,base.group_system,1,1,1,1
+access_api_call_log_system,api.call.log.system,model_api_call_log,base.group_system,1,1,1,1
+access_import_config_wizard_user,import.config.wizard.user,model_import_config_wizard,base.group_user,1,1,1,1

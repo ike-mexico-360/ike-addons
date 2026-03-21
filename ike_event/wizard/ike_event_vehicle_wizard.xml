@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ike_event_vehicle_wizard" model="ir.ui.view">
+        <field name="name">ike.event.vehicle.wizard</field>
+        <field name="model">ike.event.vehicle.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="event_id"/>
+                        <field name="latitude"/>
+                        <field name="longitude"/>
+                    </group>
+                    <field name="vehicle_ids" widget="one2many">
+                        <list>
+                            <field name="vehicle_id"/>
+                            <field name="vehicle_type_id" optional="show"/>
+                            <field name="supplier_center_id" optional="show"/>
+                            <field name="latitude" optional="hide"/>
+                            <field name="longitude" optional="hide"/>
+                            <field name="distance_km"/>
+                            <field name="duration_m"/>
+                            <field name="external_latitude" optional="hide"/>
+                            <field name="external_longitude" optional="hide"/>
+                            <field name="external_distance_km"/>
+                            <field name="external_duration_m"/>
+                            <field name="external_location"/>
+                        </list>
+                    </field>
+                </sheet>
+                <footer></footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_partner_supplier_view_form_inherit_supplier_cost_matrix" model="ir.ui.view">
+        <field name="name">res_partner_supplier_view_form.inherit.supplier_cost_matrix</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="custom_master_catalog.res_partner_supplier_view_form"/>
+        <field name="arch" type="xml">
+            <div class="oe_button_box" name="button_box" position="inside">
+                <button name="action_cost_matrix_supplier_from_supplier_center_view"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-dollar"
+                        >
+                    <field name="x_cost_matrix_supplier_count" widget="statinfo"
+                            string="Cost Matrix"/>
+                </button>
+            </div>
+        </field>
+    </record>
+
+</odoo>

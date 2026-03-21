@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ike_event_screen_form_inherit_ike_event_api" model="ir.ui.view">
+        <field name="name">view_ike_event_screen_form.inherit.ike_event_api</field>
+        <field name="model">ike.event</field>
+        <field name="inherit_id" ref="ike_event.view_ike_event_screen_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='suppliers_selected']/group[2]/div/div[1]/h3" position="replace">
+                <h3 class="d-flex flex-direction-row"><div style="min-width: fit-content;">Confirmation code: #</div> <field name="user_code" nolabel="1" readonly="1"/></h3>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

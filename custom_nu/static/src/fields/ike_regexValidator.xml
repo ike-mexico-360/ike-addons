@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="custom_master_catalog.RegexValidatorField">
+        <t t-if="props.readonly">
+            <span t-esc="maskedValue" class="o_masked_field"/>
+        </t>
+        <t t-else="">
+            <input t-ref="input"
+                t-on-keydown="onKeydown"
+                t-on-input="onInput"
+                t-on-blur="onBlur"
+                t-att-value="maskedValue"
+                type="text"
+                class="o_input o_field_char o_field_widget"/>
+        </t>
+    </t>
+</templates>

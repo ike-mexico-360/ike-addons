@@ -9,8 +9,8 @@
             <search>
                 <field name="name"/>
                 <field name="disabled"/>
-                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]"/>
-                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
             </search>
         </field>
     </record>
@@ -37,9 +37,9 @@
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                     <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
                     <div class="oe_title">
-                        <label for="name"/>
+                        <label for="name" class="o_form_label_required"/>
                         <h1>
-                            <field name="name" placeholder="Name..." readonly="disabled == True"/>
+                            <field name="name" placeholder="Name..." readonly="disabled"/>
                         </h1>
                     </div>
                     <group>

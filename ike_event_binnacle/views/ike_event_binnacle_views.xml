@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- View ike.event.binnacle search -->
+    <record id="view_ike_event_binnacle_search" model="ir.ui.view">
+        <field name="name">view.ike.event.binnacle.search</field>
+        <field name="model">ike.event.binnacle</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="event_stage_id"/>
+                <field name="binnacle_category_id"/>
+                <field name="step_number"/>
+                <field name="description"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group expand="1" string="Group By">
+                    <filter string="Stage" name="stage" domain="[]" context="{'group_by':'event_stage_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- View ike.event.binnacle View List -->
+    <record id="view_ike_event_binnacle_list" model="ir.ui.view">
+        <field name="name">view.ike.event.binnacle.list</field>
+        <field name="model">ike.event.binnacle</field>
+        <field name="arch" type="xml">
+            <list delete="0" edit="0" duplicate="0">
+                <field name="sequence" widget="handle" />
+                <field name="name"/>
+                <field name="event_stage_id"/>
+                <field name="binnacle_category_id"/>
+                <field name="step_number"/>
+                <field name="description"/>
+                <field name="text_html"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View ike.event.binnacle form -->
+    <record id="view_ike_event_binnacle_form" model="ir.ui.view">
+        <field name="name">view.ike.event.binnacle.form</field>
+        <field name="model">ike.event.binnacle</field>
+        <field name="arch" type="xml">
+            <form delete="0" duplicate="0">
+               <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Name..." readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="event_stage_id" required="1"/>
+                            <field name="step_number"/>
+                            <field name="binnacle_category_id" required="1" domain="[('disabled', '=', False)]"/>
+                            <field name="binnacle_template_id" required="1"/>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                            <field name="disabled" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="text_html" string="HTML">
+                            <field name="text_html" widget="html_mail" class="oe-bordered-editor" options="{'codeview': true, 'dynamic_placeholder': true, 'disableVideo': true}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action ike.event.binnacle -->
+    <record id="action_ike_event_binnacle" model="ir.actions.act_window">
+        <field name="name">Configuration Event Binnacle</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ike.event.binnacle</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('view_ike_event_binnacle_list')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_ike_event_binnacle_form')})]"/>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+    </record>
+
+</odoo>

@@ -29,20 +29,18 @@ class ProductProduct(models.Model):
         action = self.env['ir.actions.act_window']._for_xml_id('custom_master_catalog.custom_ike_accessories_action')
         all_categ_id = self.env.ref('product.product_category_all')
         service_uom_id = self.env.ref('l10n_mx.product_uom_service_unit')
-        sale_tax_id = self.env.ref('account.1_tax12')
         ctx = eval(action['context'])
         ctx.update({
             'default_categ_id': all_categ_id.id,
             'default_uom_id': service_uom_id.id,
-            'default_taxes_id': [sale_tax_id.id],
         })
         action.update({'domain': self.get_accessories_domain(), 'context': ctx})
         return action
 
+    @api.model
     def get_accessories_domain(self):
         all_categ_id = self.env.ref('product.product_category_all')
         service_uom_id = self.env.ref('l10n_mx.product_uom_service_unit')
-        sale_tax_id = self.env.ref('account.1_tax12')
         return [
             ('sale_ok', '=', False),
             ('sh_product_subscribe', '=', False),
@@ -53,14 +51,12 @@ class ProductProduct(models.Model):
             ('standard_price', '=', 0),
             ('categ_id', '=', all_categ_id.id),
             ('uom_id', '=', service_uom_id.id),
-            ('taxes_id', 'in', [sale_tax_id.id]),
         ]
 
     @api.model
     def repair_missing_values_accessories(self):
         all_categ_id = self.env.ref('product.product_category_all')
         service_uom_id = self.env.ref('l10n_mx.product_uom_service_unit')
-        sale_tax_id = self.env.ref('account.1_tax12')
         product_ids = self.env['product.product'].search([
             ('product_tmpl_id.sale_ok', '=', False),
             ('product_tmpl_id.sh_product_subscribe', '=', False),
@@ -71,7 +67,6 @@ class ProductProduct(models.Model):
             ('product_tmpl_id.standard_price', '=', 0),
             ('product_tmpl_id.categ_id', '=', all_categ_id.id),
             ('product_tmpl_id.uom_id', '=', service_uom_id.id),
-            ('product_tmpl_id.taxes_id', 'in', [sale_tax_id.id]),
         ])
         product_ids.write({
             'sale_ok': False,
@@ -83,5 +78,11 @@ class ProductProduct(models.Model):
             'standard_price': 0,
             'categ_id': all_categ_id.id,
             'uom_id': service_uom_id.id,
-            'taxes_id': [sale_tax_id.id],
         })
+
+    # Heredamos el método _creation_message para modificar el mensaje de creación
+    def _creation_message(self):
+        self.ensure_one()
+        if self.env.context.get('x_accessories_view'):
+            return _("Accessory created")
+        return super()._creation_message()

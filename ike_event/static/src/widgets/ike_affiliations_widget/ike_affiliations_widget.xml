@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkeAffiliations">
+        <div class="o_ike_affiliations_widget d-flex flex-column">
+            <t t-if="props.user_field">
+                <div class="d-flex flex-row" t-ref="divInfoName">
+                    <Field name="'user_id'" record="props.record" readonly="true" canOpen="false" canCreate="false" class="'user-name'"/>
+                </div>
+                <div class="d-flex flex-row gap-2 pt-1 pb-2 flex-wrap" t-ref="devInfoTags">
+                    <!-- Usuario Ike Now -->
+                    <span t-if="state.userInfo &amp;&amp; state.userInfo.ike_now" class="badge rounded-pill text-bg-primary ps-1 pe-2 py-1">
+                        <i class="fa fa-check-circle"/> User Iké Now
+                    </span>
+                    <!-- Cliente VIP -->
+                    <span t-if="state.userInfo &amp;&amp; state.userInfo.vip" class="badge rounded-pill text-bg-primary ps-1 pe-2 py-1">
+                        <i class="fa fa-star"/> VIP Client
+                    </span>
+                    <!-- Validez de Vigencia -->
+                    <t t-if="state.currentAffiliationId !== null">
+                        <t t-if="state.currentAffiliationInfo !== null">
+                            <span class="badge rounded-pill text-bg-success ps-1 pe-2 py-1">
+                                <i class="fa fa-check-circle-o"/> Active Validity
+                            </span>
+                        </t>
+                        <t t-else="">
+                            <span class="badge rounded-pill text-bg-danger ps-1 pe-2 py-1">
+                                <i class="fa fa-minus-circle"/> Expired Validity
+                            </span>
+                        </t>
+                    </t>
+                    <!-- Cliente especial -->
+                    <span t-if="state.currentAffiliationInfo &amp;&amp; state.currentAffiliationInfo.check_is_special" 
+                        class="badge rounded-pill ps-1 pe-2 py-1" 
+                        style="background-color: orange; color: white;">
+                        <i class="fa fa-exclamation-circle"/> Is special
+                    </span>
+                </div>
+                <div class="d-flex flex-column" t-ref="devInfoPhones">
+                    <div class="phone-info me-3">
+                        <span class="fw-bolder ike-text-secondary ike_input_label_indicator text-nowrap">Main Phone</span><span> </span>
+                        <span t-esc="state.userPhone" class="text-nowrap"/>
+                    </div>
+                    <div class="phone-info">
+                        <span class="fw-bolder ike-text-secondary ike_input_label_indicator text-nowrap">User Additional Phone</span><span> </span>
+                        <span t-esc="state.userAdditionalPhone" class="text-nowrap" />
+                    </div>
+                </div>
+                <div class="row mb-0">
+                    <t t-if="state.currentAffiliationId !== null and state.currentAffiliationInfo !== null">
+                        <div class="ike-card-item">
+                            <div class="card shadow-sm rounded-3 px-3 py-2 d-flex flex-row justify-content-between align-items-center">
+                                <div class="ike-affiliation-info">
+                                    <div class="ike-afilliation-row">
+                                        <span class="fw-bolder ike-text-secondary ike_input_label_indicator">Account</span><span> </span>
+                                        <span t-esc="state.currentAffiliationInfo.membership_plan_id[1]" t-if="state.currentAffiliationInfo.membership_plan_id" />
+                                    </div>
+                                    <div class="ike-afilliation-row">
+                                        <span class="fw-bolder ike-text-secondary ike_input_label_indicator">Code</span><span> </span>
+                                        <Field
+                                            name="'key_identification'"
+                                            record="props.record"
+                                            readonly="true"
+                                            type="'masked'"
+                                            maskField="'membership_display_mask'"
+                                        />
+                                        <div class="row">
+                                            <div class="col-12" t-if="state.currentAffiliationId !== null">
+                                                <div class="o_service_history_widget d-flex justify-content-start gap-2">
+
+
+                                                    <!-- Nuevo botón de coberturas -->
+                                                    <button type="button" class="btn btn-link p-0 ike-details-button" t-on-click="openCoverageDetails">
+                                                        <i class="fa fa-shield me-1"/>
+                                                        <span>View Coverage</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+                <div class="row">
+                    <div class="col-12" t-if="state.currentAffiliationId !== null">
+                        <div class="o_service_history_widget d-flex justify-content-start">
+                            <button type="button" class="btn btn-link p-0 ike-details-button" t-on-click="openAffiliationDetails">
+                                <i t-if="props.icon" t-att-class="'me-1 fa ' + props.icon" />
+                                <span t-esc="buttonText" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </t>
+            <t t-else="">
+                <div>
+                    <span>The user field for the widget has not been specified</span>
+                </div>
+                <div>
+                    <code><![CDATA[<widget name="ike_affiliations" user_field="your_user_field" phone_field="your_phone_field" additional_phone_field="your_additional_phone_field" />]]></code>
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

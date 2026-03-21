@@ -4,10 +4,10 @@ from odoo.fields import Command
 
 from odoo.tests import Form, SingleTransactionCase, TransactionCase, tagged
 from odoo.exceptions import AccessError, UserError, ValidationError
-from odoo.addons.custom_master_catalog.tests.res_partner_common import CustomMasterCatalogCommon
+from odoo.addons.custom_master_catalog.tests.res_partner_common import ResPartnerCommon
 
 
-class TestResPartnerForms(CustomMasterCatalogCommon):
+class TestResPartnerForms(ResPartnerCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()

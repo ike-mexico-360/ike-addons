@@ -20,7 +20,7 @@
                         <group>
                             <field name="file" widget="binary"
                                     filename="file_name"
-                                    options="{'accepted_file_extensions': '.csv'}"/>
+                                    options="{'accepted_file_extensions': '.txt'}"/>
                             <field name="file_name" invisible="1"/>
                             <field name="file_type" invisible="1"/>
                         </group>

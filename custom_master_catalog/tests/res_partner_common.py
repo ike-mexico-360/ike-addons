@@ -7,7 +7,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.addons.base.tests.common import BaseCommon
 
 
-class CustomMasterCatalogCommon(BaseCommon):
+class ResPartnerCommon(BaseCommon):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
@@ -47,7 +47,7 @@ class CustomMasterCatalogCommon(BaseCommon):
             'x_account_type_id': cls.bank_account_type_id.id,
             'x_account_identification_id': cls.credit_account_identification_id.id,
             'x_account_responsible_id': cls.employee_id.id,
-            'x_account_vnd_did': '9999999999',
+            'x_account_did': '9999999999',
             'x_invoice_company_id': cls.ike_partner_id.id,
         })
 

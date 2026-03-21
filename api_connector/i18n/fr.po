@@ -1,0 +1,2039 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* api_connector
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-22 20:54+0000\n"
+"PO-Revision-Date: 2025-08-22 20:54+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid ""
+")\n"
+"for connector in collection.connector_ids:\n"
+"    result = connector.execute_call({\n"
+"        'batch_id': batch.id,\n"
+"        'timestamp': datetime.datetime.now().isoformat()\n"
+"    })"
+msgstr ""
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+")\n"
+"result = connector.execute_call({\n"
+"    'order_id': record.id,\n"
+"    'date': datetime.date.today().strftime('%Y-%m-%d'),\n"
+"    'user_name': env.user.name\n"
+"})"
+msgstr ""
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "/api/v1/endpoint or /api/v2/saleorder/read/{id}"
+msgstr ""
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "<i class=\"fa fa-code\"/> Bulk Execution Example"
+msgstr "<i class=\"fa fa-code\"/> Exemple d'exécution en lot"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "<i class=\"fa fa-code\"/> Cron Usage Example"
+msgstr "<i class=\"fa fa-code\"/> Exemple d'utilisation de Cron"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "<i class=\"fa fa-cog\"/> Variable Priority Order"
+msgstr "<i class=\"fa fa-cog\"/> Ordre de priorité des variables"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+"<i class=\"fa fa-info-circle me-2\"/>No API response yet. Click \"Test "
+"Connection\" or \"Execute Call\" to see the response here."
+msgstr "<i class=\"fa fa-info-circle me-2\"/> Aucune réponse API encore. Cliquez sur \"Tester la connexion\" ou \"Exécuter l'appel\" pour voir la réponse ici."
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+"<i class=\"fa fa-info-circle\" title=\"File Upload Information\"/> \n"
+"                                    <strong>File Upload:</strong> Select attachments to upload with multipart form data.\n"
+"                                    Files will be sent using the field name above."
+msgstr ""
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "<i class=\"fa fa-info-circle\"/> API Collection Overview"
+msgstr "<i class=\"fa fa-info-circle\"/> Aperçu de la Collection API"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "<i class=\"fa fa-info-circle\"/> API Connector Overview"
+msgstr "<i class=\"fa fa-info-circle\"/> Aperçu du Connecteur API"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "<i class=\"fa fa-sitemap\"/> Inheritance Model"
+msgstr "<i class=\"fa fa-sitemap\"/> Modèle d'héritage"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_import_config_wizard_form
+msgid "<i class=\"fa fa-upload\"/> Import Configuration"
+msgstr "<i class=\"fa fa-upload\"/> Configuration d'importation"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "<request><data>{variable_name}</data></request>"
+msgstr "<request><data>{variable_name}</data></request>"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "<span class=\"o_stat_text\">Collection</span>"
+msgstr "<span class=\"o_stat_text\">Collection</span>"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "<span class=\"o_stat_text\">Export Config</span>"
+msgstr "<span class=\"o_stat_text\">Configuration d'exportation</span>"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+"<strong>Alternative:</strong> You can also manually paste a token in the "
+"field below:"
+msgstr "<strong>Alternative:</strong> Vous pouvez également coller manuellement un jeton dans le champ ci-dessous:"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+"<strong>Authentication:</strong> None, Basic Auth, Bearer Token, API Key, "
+"OAuth 2.0"
+msgstr "<strong>Authentification:</strong> Aucune, Authentification de Base, Jeton Bearer, Clé API, OAuth 2.0"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "<strong>Authentication:</strong> Set connector auth type to \"Inherit\""
+msgstr "<strong>Authentification:</strong> Définir le type d'authentification du connecteur sur \"Hériter\""
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "<strong>Base URL:</strong> Enable \"Use Collection URL\" in connector"
+msgstr "<strong>URL de base:</strong> Activer \"Utiliser l'URL de la collection\" dans le connecteur"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid ""
+"<strong>Bulk Operations:</strong> Execute multiple endpoints in sequence"
+msgstr "<strong>Opérations en lot:</strong> Exécuter plusieurs points de terminaison en séquence"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid ""
+"<strong>Centralized Statistics:</strong> Monitor success rates across all "
+"endpoints"
+msgstr "<strong>Statistiques centralisées:</strong> Surveiller les taux de succès sur tous les points de terminaison"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "<strong>Collection ID for cron jobs:</strong>"
+msgstr "<strong>ID de collection pour les tâches Cron:</strong>"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+"<strong>Collection Inheritance:</strong> Inherit base URL, auth, and "
+"variables from parent collection"
+msgstr "<strong>Héritage de la collection:</strong> Hériter de l'URL de base, de l'authentification et des variables de la collection parente"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid ""
+"<strong>Collection Variables:</strong> Define reusable values for all "
+"endpoints"
+msgstr "<strong>Variables de collection:</strong> Définir des valeurs réutilisables pour tous les points de terminaison"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "<strong>Collection variables</strong> from the parent collection"
+msgstr "<strong>Variables de collection</strong> de la collection parente"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "<strong>Common Base URL:</strong> Centralized API endpoint management"
+msgstr "<strong>URL de base commune:</strong> Gestion centralisée des points de terminaison API"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "<strong>Connector ID for cron jobs:</strong>"
+msgstr "<strong>ID de connecteur pour les tâches Cron:</strong>"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid ""
+"<strong>Default Headers:</strong> Apply standard headers to all requests"
+msgstr "<strong>En-têtes par défaut:</strong> Appliquer les en-têtes standards à toutes les requêtes"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+"<strong>Dynamic Variables:</strong> Use {variable_name} syntax in URLs, "
+"headers, and body"
+msgstr "<strong>Variables dynamiques:</strong> Utiliser la syntaxe {variable_name} dans les URL, les en-têtes et le corps"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+"<strong>Dynamic variables</strong> passed during execution (cron, manual "
+"call)"
+msgstr "<strong>Variables dynamiques</strong> passées lors de l'exécution (Cron, appel manuel)"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "<strong>Endpoint variables</strong> defined in this connector"
+msgstr "<strong>Variables de point de terminaison</strong> définies dans ce connecteur"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "<strong>HTTP Methods:</strong> GET, POST, PUT, PATCH, DELETE"
+msgstr "<strong>Méthodes HTTP:</strong> GET, POST, PUT, PATCH, DELETE"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid ""
+"<strong>Headers:</strong> Default headers are merged with connector-specific"
+" ones"
+msgstr "<strong>En-têtes:</strong> Les en-têtes par défaut sont fusionnés avec les en-têtes spécifiques au connecteur"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+"<strong>Monitoring:</strong> Automatic logging of all calls with success "
+"rates and response times"
+msgstr "<strong>Surveillance:</strong> Enregistrement automatique de toutes les appels avec les taux de succès et les temps de réponse"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+"<strong>Request Types:</strong> JSON, XML, Form Data, Multipart (with file "
+"upload), Binary, Raw Text"
+msgstr "<strong>Types de requêtes:</strong> JSON, XML, Form Data, Multipart (avec téléchargement de fichiers), Binaire, Texte brut"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid ""
+"<strong>Shared Authentication:</strong> Configure once, use across all "
+"endpoints"
+msgstr "<strong>Authentification partagée:</strong> Configurer une fois, utiliser sur tous les points de terminaison"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid ""
+"<strong>Variables:</strong> Collection variables are automatically available"
+msgstr "<strong>Variables:</strong> Les variables de collection sont automatiquement disponibles"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_call_log.py:0
+msgid "API Call Details"
+msgstr "Détails de l'appel API"
+
+#. module: api_connector
+#: model:ir.model,name:api_connector.model_api_call_log
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_form
+msgid "API Call Log"
+msgstr "Journal des appels API"
+
+#. module: api_connector
+#: model:ir.actions.act_window,name:api_connector.action_api_call_log
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_search
+msgid "API Call Logs"
+msgstr "Journaux des appels API"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__import_config_wizard__config_type__collection
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "API Collection"
+msgstr "Collection API"
+
+#. module: api_connector
+#: model:ir.model,name:api_connector.model_api_collection
+msgid "API Collection - Group related endpoints"
+msgstr "Collection API - Grouper les points de terminaison liés"
+
+#. module: api_connector
+#: model:ir.actions.act_window,name:api_connector.action_api_collection
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_search
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_tree
+msgid "API Collections"
+msgstr "Collections API"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid ""
+"API Collections group multiple endpoints with shared configuration. They "
+"provide centralized authentication, base URLs, default headers, and "
+"variables that can be inherited by all child connectors."
+msgstr "Les Collections API regroupent plusieurs points de terminaison avec une configuration partagée. Elles fournissent une authentification centralisée, des URL de base, des en-têtes par défaut et des variables qui peuvent être héritées par tous les connecteurs enfants."
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__connector_id
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_search
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "API Connection"
+msgstr "Connexion API"
+
+#. module: api_connector
+#: model:ir.actions.act_window,name:api_connector.action_api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "API Connections"
+msgstr "Connexions API"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__import_config_wizard__config_type__connector
+#: model:ir.ui.menu,name:api_connector.menu_api_connector_main
+msgid "API Connector"
+msgstr "Connecteur API"
+
+#. module: api_connector
+#: model:ir.model,name:api_connector.model_api_connector
+msgid "API Connector - Outbound API Configuration"
+msgstr "Connecteur API - Configuration de l'API sortante"
+
+#. module: api_connector
+#: model:res.groups,name:api_connector.group_api_connector_manager
+msgid "API Connector Manager"
+msgstr "Gestionnaire de Connecteur API"
+
+#. module: api_connector
+#: model:res.groups,name:api_connector.group_api_connector_user
+msgid "API Connector User"
+msgstr "Utilisateur de Connecteur API"
+
+#. module: api_connector
+#: model:ir.actions.server,name:api_connector.action_server_cleanup_api_logs
+msgid "API Connector: Cleanup Old Logs"
+msgstr "Connecteur API: Nettoyage des anciens journaux"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+"API Connectors are individual endpoint configurations that can execute HTTP "
+"requests to external APIs. They can inherit settings from Collections for "
+"shared authentication and base URLs."
+msgstr "Les Connecteurs API sont des configurations de points de terminaison individuels qui peuvent exécuter des requêtes HTTP vers des API externes. Ils peuvent hériter des paramètres des Collections pour l'authentification partagée et les URL de base."
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "API Details"
+msgstr "Détails de l'API"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__connector_ids
+msgid "API Endpoints"
+msgstr "Points de terminaison API"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_collection__auth_type__api_key
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__auth_type__api_key
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "API Key"
+msgstr "Clé API"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__auth_header_name
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__auth_header_name
+msgid "API Key Header Name"
+msgstr "Nom de l'en-tête Clé API"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__api_type
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "API Type"
+msgstr "Type d'API"
+
+#. module: api_connector
+#: model_terms:ir.actions.act_window,help:api_connector.action_api_call_log
+msgid ""
+"API call logs will appear here when you start making outbound API calls.\n"
+"                Use the logs to monitor performance, debug issues, and track API usage."
+msgstr "Les journaux d'appel API apparaîtront ici lorsque vous commencerez à effectuer des appels API sortants.\nUtilisez les journaux pour surveiller les performances, déboguer les problèmes et suivre l'utilisation de l'API."
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_call_log.py:0
+msgid "API call retried successfully"
+msgstr "Appel API réessaié avec succès"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "API connection '%s' is not active"
+msgstr "La connexion API '%s' n'est pas active"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__oauth_access_token
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__oauth_access_token
+msgid "Access Token"
+msgstr "Jeton d'accès"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__active
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__active
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_search
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "Active"
+msgstr "Actif"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_tree
+msgid "Add Endpoint"
+msgstr "Ajouter un point de terminaison"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "Authentication"
+msgstr "Authentification"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__auth_type
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_search
+msgid "Authentication Type"
+msgstr "Type d'authentification"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__oauth_authorization_url
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__oauth_authorization_url
+msgid "Authorization URL"
+msgstr "URL d'autorisation"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__import_config_wizard__config_type__auto
+msgid "Auto-detect"
+msgstr "Détection automatique"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__base_url
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__base_url
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_search
+msgid "Base URL"
+msgstr "URL de base"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__base_url
+msgid "Base URL for the API (e.g., https://api.example.com)"
+msgstr "URL de base pour l'API (ex: https://api.example.com)"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Base URL must start with http:// or https://"
+msgstr "L'URL de base doit commencer par http:// ou https://"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_collection__auth_type__basic
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__auth_type__basic
+msgid "Basic Auth"
+msgstr "Authentification de base"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Basic Authentication"
+msgstr "Authentification de base"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Basic Configuration"
+msgstr "Configuration de base"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Basic Information"
+msgstr "Informations de base"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_collection__auth_type__bearer
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__auth_type__bearer
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Bearer Token"
+msgstr "Jeton Bearer"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__auth_token
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__auth_token
+msgid "Bearer Token / API Key"
+msgstr "Jeton Bearer / Clé API"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__expected_response_type__binary
+msgid "Binary"
+msgstr "Binaire"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__request_body_type__binary
+msgid "Binary (base64)"
+msgstr "Binaire (base64)"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Binary Body (Base64)"
+msgstr "Corps Binaire (Base64)"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__call_date
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_search
+msgid "Call Date"
+msgstr "Date d'appel"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_form
+msgid "Call Information"
+msgstr "Informations d'appel"
+
+#. module: api_connector
+#: model:ir.ui.menu,name:api_connector.menu_api_call_logs
+msgid "Call Logs"
+msgstr "Journaux d'appel"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Call Statistics"
+msgstr "Statistiques d'appel"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_import_config_wizard_form
+msgid "Cancel"
+msgstr "Annuler"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/wizard/import_config_wizard.py:0
+msgid "Cannot auto-detect configuration type. Please select manually."
+msgstr "Impossible de détecter automatiquement le type de configuration. Veuillez sélectionner manuellement."
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_call_log.py:0
+msgid "Cannot retry call: API connection '%s' is not active"
+msgstr "Impossible de réessayer l'appel: La connexion API '%s' n'est pas active"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "Child connectors can inherit from collections:"
+msgstr "Les connecteurs enfants peuvent hériter des collections:"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__oauth_client_id
+msgid "Client ID"
+msgstr "ID client"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__oauth_client_secret
+msgid "Client Secret"
+msgstr "Secret client"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__collection_id
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "Collection"
+msgstr "Collection"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Collection Authentication"
+msgstr "Authentification de collection"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "Collection Benefits"
+msgstr "Avantages de la collection"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__name
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_search
+msgid "Collection Name"
+msgstr "Nom de la collection"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "Collection Name..."
+msgstr "Nom de la collection..."
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+msgid "Collection OAuth Error"
+msgstr "Erreur OAuth de collection"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+msgid "Collection OAuth Token Request Failed"
+msgstr "La requête de jeton OAuth de la collection a échoué"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+msgid "Collection OAuth Token Retrieved Successfully"
+msgstr "Jeton OAuth de la collection récupéré avec succès"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "Collection Settings"
+msgstr "Paramètres de collection"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__success_rate
+msgid "Collection Success Rate"
+msgstr "Taux de succès de la collection"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__collection_variables
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "Collection Variables"
+msgstr "Variables de collection"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__collection_id
+msgid "Collection this endpoint belongs to"
+msgstr "Collection à laquelle appartient ce point de terminaison"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_import_config_wizard__collection_id
+msgid "Collection to import connector into (optional)"
+msgstr "Collection dans laquelle importer le connecteur (optionnel)"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+msgid "Collection variables must be a JSON object (dictionary)"
+msgstr "Les variables de collection doivent être un objet JSON (dictionnaire)"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+msgid "Collection variables must be valid JSON format"
+msgstr "Les variables de collection doivent être au format JSON valide"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Collection: %s"
+msgstr "Collection: %s"
+
+#. module: api_connector
+#: model:ir.ui.menu,name:api_connector.menu_api_collections
+msgid "Collections"
+msgstr "Collections"
+
+#. module: api_connector
+#: model:ir.ui.menu,name:api_connector.menu_api_connector_config
+msgid "Configuration"
+msgstr "Configuration"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_import_config_wizard__config_file
+msgid "Configuration File"
+msgstr "Fichier de configuration"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_import_config_wizard__config_type
+msgid "Configuration Type"
+msgstr "Type de configuration"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Configuration must contain a 'name' field"
+msgstr "La configuration doit contenir un champ 'name'"
+
+#. module: api_connector
+#: model_terms:ir.actions.act_window,help:api_connector.action_api_connector
+msgid ""
+"Configure outbound API calls using our Postman-like interface.\n"
+"                Support for REST, JSON-RPC, GraphQL, and SOAP APIs."
+msgstr "Configurez les appels API sortants en utilisant notre interface Postman-like.\nSupport pour REST, JSON-RPC, GraphQL et SOAP APIs."
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__name
+msgid "Connection Name"
+msgstr "Nom de la connexion"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Connection Name..."
+msgstr "Nom de la connexion..."
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Connection error: Unable to connect to %s"
+msgstr "Erreur de connexion: Impossible de se connecter à %s"
+
+#. module: api_connector
+#: model_terms:ir.actions.act_window,help:api_connector.action_api_collection
+msgid "Create your first API collection!"
+msgstr "Créez votre première collection API!"
+
+#. module: api_connector
+#: model_terms:ir.actions.act_window,help:api_connector.action_api_connector
+msgid "Create your first API connection!"
+msgstr "Créez votre première connexion API!"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__create_uid
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__create_uid
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__create_uid
+#: model:ir.model.fields,field_description:api_connector.field_import_config_wizard__create_uid
+msgid "Created by"
+msgstr "Créé par"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__create_date
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__create_date
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__create_date
+#: model:ir.model.fields,field_description:api_connector.field_import_config_wizard__create_date
+msgid "Created on"
+msgstr "Créé le"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__oauth_access_token
+#: model:ir.model.fields,help:api_connector.field_api_connector__oauth_access_token
+msgid "Current OAuth 2.0 Access Token"
+msgstr "Jeton d'accès OAuth 2.0 actuel"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__custom_headers
+msgid "Custom Headers"
+msgstr "En-têtes personnalisés"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Custom headers must be valid JSON format"
+msgstr "Les en-têtes personnalisés doivent être au format JSON valide"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__method__delete
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "DELETE"
+msgstr "DELETE"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__auth_type
+msgid "Default Authentication"
+msgstr "Authentification par défaut"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "Default Configuration"
+msgstr "Configuration par défaut"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__default_headers
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "Default Headers"
+msgstr "En-têtes par défaut"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__base_url
+msgid "Default base URL for all endpoints in this collection"
+msgstr "URL de base par défaut pour tous les points de terminaison dans cette collection"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__auth_header_name
+msgid "Default header name for API Key"
+msgstr "Nom d'en-tête par défaut pour la clé API"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+msgid "Default headers must be valid JSON format"
+msgstr "Les en-têtes par défaut doivent être au format JSON valide"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__auth_password
+msgid "Default password for Basic Auth"
+msgstr "Mot de passe par défaut pour Basic Auth"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__auth_token
+msgid "Default token for Bearer or API Key authentication"
+msgstr "Jeton par défaut pour l'authentification Bearer ou API Key"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__auth_username
+msgid "Default username for Basic Auth"
+msgstr "Nom d'utilisateur par défaut pour Basic Auth"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__description
+msgid "Description"
+msgstr "Description"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__description
+msgid "Description of this API collection"
+msgstr "Description de cette collection API"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "Description of this API collection..."
+msgstr "Description de cette collection API..."
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__display_name
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__display_name
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__display_name
+#: model:ir.model.fields,field_description:api_connector.field_import_config_wizard__display_name
+msgid "Display Name"
+msgstr "Nom affiché"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Documentation"
+msgstr "Documentation"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__import_config_wizard__state__done
+msgid "Done"
+msgstr "Terminé"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__active
+msgid "Enable/disable this API connection"
+msgstr "Activer/désactiver cette connexion API"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__active
+msgid "Enable/disable this collection"
+msgstr "Activer/désactiver cette collection"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__endpoint_path
+msgid "Endpoint Path"
+msgstr "Chemin du point de terminaison"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__endpoint_variables
+msgid "Endpoint Variables"
+msgstr "Variables du point de terminaison"
+
+#. module: api_connector
+#: model:ir.ui.menu,name:api_connector.menu_api_connector_connections
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "Endpoints"
+msgstr "Points de terminaison"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__connector_count
+msgid "Endpoints Count"
+msgstr "Nombre de points de terminaison"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+msgid "Endpoints in %s"
+msgstr "Points de terminaison dans %s"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__connector_ids
+msgid "Endpoints in this collection"
+msgstr "Points de terminaison dans cette collection"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+"Enter custom headers in JSON format. Authentication headers are added "
+"automatically based on the Authentication tab."
+msgstr "Entrez des en-têtes personnalisés au format JSON. Les en-têtes d'authentification sont ajoutés automatiquement en fonction de l'onglet Authentification."
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_search
+msgid "Error"
+msgstr "Erreur"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Error Details"
+msgstr "Détails de l'erreur"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__error_message
+msgid "Error Message"
+msgstr "Message d'erreur"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__last_response_error
+msgid "Error message from the last API call if any"
+msgstr "Message d'erreur de la dernière appel API s'il y en a"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_call_log__error_message
+msgid "Error message if the call failed"
+msgstr "Message d'erreur si l'appel a échoué"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_tree
+msgid "Execute"
+msgstr "Exécuter"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Execute Call"
+msgstr "Exécuter l'appel"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "Execute all endpoints in this collection:"
+msgstr "Exécuter tous les points de terminaison dans cette collection:"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__execution_time
+msgid "Execution Time (s)"
+msgstr "Temps d'exécution (s)"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__last_response_time
+msgid "Execution time of the last API call in milliseconds"
+msgstr "Temps d'exécution de la dernière appel API en millisecondes"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__expected_response_type
+msgid "Expected Response Type"
+msgstr "Type de réponse attendu"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_search
+msgid "Failed"
+msgstr "Échoué"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__file_field_name
+msgid "File Field Name"
+msgstr "Nom du champ de fichier"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_import_config_wizard_form
+msgid "File Selection"
+msgstr "Sélection de fichier"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "File Upload"
+msgstr "Téléchargement de fichier"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_import_config_wizard__filename
+msgid "Filename"
+msgstr "Nom de fichier"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__attachment_ids
+msgid "Files to Upload"
+msgstr "Fichiers à télécharger"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__form_data
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Form Data"
+msgstr "Données de formulaire"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__request_body_type__form
+msgid "Form Data (application/x-www-form-urlencoded)"
+msgstr "Données de formulaire (application/x-www-form-urlencoded)"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__request_body_type__form_multipart
+msgid "Form Data (multipart/form-data)"
+msgstr "Données de formulaire (multipart/form-data)"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__name
+msgid "Friendly name for this API connection"
+msgstr "Nom convivial pour cette connexion API"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__full_url
+msgid "Full URL"
+msgstr "URL complète"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__method__get
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "GET"
+msgstr "GET"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Get New Access Token"
+msgstr "Obtenir un nouveau jeton d'accès"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__api_type__graphql
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "GraphQL"
+msgstr "GraphQL"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_search
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_search
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "Group By"
+msgstr "Grouper par"
+
+#. module: api_connector
+#: model_terms:ir.actions.act_window,help:api_connector.action_api_collection
+msgid ""
+"Group related API endpoints together and share common configuration like "
+"base URL, authentication, and variables."
+msgstr "Grouper les points de terminaison API connexes et partager une configuration commune comme l'URL de base, l'authentification et les variables."
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__method
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "HTTP Method"
+msgstr "Méthode HTTP"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__status_code
+msgid "HTTP Status Code"
+msgstr "Code de statut HTTP"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_call_log__status_code
+msgid "HTTP response status code"
+msgstr "Code de statut de réponse HTTP"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__last_response_status
+msgid "HTTP status code from the last API call"
+msgstr "Code de statut HTTP de la dernière appel API"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__auth_header_name
+msgid "Header name for API Key (e.g., X-API-Key, Authorization)"
+msgstr "Nom d'en-tête pour la clé API (par exemple, X-API-Key, Authorization)"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Headers"
+msgstr "En-têtes"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "Headers and Variables"
+msgstr "En-têtes et variables"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__id
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__id
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__id
+#: model:ir.model.fields,field_description:api_connector.field_import_config_wizard__id
+msgid "ID"
+msgstr "ID"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_import_config_wizard_form
+msgid "Import API Configuration"
+msgstr "Importer la configuration API"
+
+#. module: api_connector
+#: model:ir.model,name:api_connector.model_import_config_wizard
+msgid "Import API Configuration Wizard"
+msgstr "Assistant d'importation de configuration API"
+
+#. module: api_connector
+#: model:ir.actions.act_window,name:api_connector.action_import_collection_config
+msgid "Import Collection Configuration"
+msgstr "Importer la configuration de collection"
+
+#. module: api_connector
+#: model:ir.actions.act_window,name:api_connector.action_import_config_wizard
+#: model:ir.ui.menu,name:api_connector.menu_api_import_config
+#: model_terms:ir.ui.view,arch_db:api_connector.view_import_config_wizard_form
+msgid "Import Configuration"
+msgstr "Importer la configuration"
+
+#. module: api_connector
+#: model:ir.actions.act_window,name:api_connector.action_import_connector_config
+msgid "Import Connector Configuration"
+msgstr "Importer la configuration du connecteur"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+msgid "Import Successful"
+msgstr "Importation réussie"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/wizard/import_config_wizard.py:0
+msgid "Import failed: %s"
+msgstr "Importation échouée: %s"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+msgid "Imported Collection: %s"
+msgstr "Collection importée: %s"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Imported Connector: %s"
+msgstr "Connecteur importé: %s"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_search
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "Inactive"
+msgstr "Inactif"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__auth_type__inherit
+msgid "Inherit from Collection"
+msgstr "Hériter de la collection"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Invalid JSON format: %s"
+msgstr "Format JSON invalide: %s"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Invalid JSON in form data: %s"
+msgstr "JSON invalide dans les données de formulaire: %s"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Invalid JSON in request body: %s"
+msgstr "JSON invalide dans le corps de la requête: %s"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Invalid base64 in binary body: %s"
+msgstr "Base64 invalide dans le corps binaire: %s"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+msgid "Invalid configuration file: not an API collection export"
+msgstr "Fichier de configuration invalide: ce n'est pas une exportation de collection API"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Invalid configuration file: not an API connector export"
+msgstr "Fichier de configuration invalide: ce n'est pas une exportation de connecteur API"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/wizard/import_config_wizard.py:0
+msgid "Invalid configuration type"
+msgstr "Type de configuration invalide"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/wizard/import_config_wizard.py:0
+msgid "Invalid file format: %s"
+msgstr "Format de fichier invalide: %s"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__expected_response_type__json
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__request_body_type__json
+msgid "JSON"
+msgstr "JSON"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "JSON Body"
+msgstr "Corps JSON"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__url_parameters
+msgid ""
+"JSON format for URL variables: {\"id\": \"123\", \"slug\": \"test\"}\n"
+"Replaces :id, :slug in endpoint path"
+msgstr "Format JSON pour les variables d'URL: {\"id\": \"123\", \"slug\": \"test\"}\nRemplace :id, :slug dans le chemin du point de terminaison"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__endpoint_variables
+msgid ""
+"JSON format for endpoint-specific variables: {\"user_id\": \"123\", \"filter\": \"active\"}\n"
+"Overrides collection variables"
+msgstr "Format JSON pour les variables spécifiques au point de terminaison: {\"user_id\": \"123\", \"filter\": \"active\"}\nRemplace les variables de la collection"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__form_data
+msgid "JSON format for form data: {\"key1\": \"value1\", \"key2\": \"value2\"}"
+msgstr "Format JSON pour les données de formulaire: {\"key1\": \"value1\", \"key2\": \"value2\"}"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__custom_headers
+msgid ""
+"JSON format: {\"Content-Type\": \"application/json\", \"Accept\": "
+"\"application/json\"}"
+msgstr "Format JSON: {\"Content-Type\": \"application/json\", \"Accept\": \"application/json\"}"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__default_headers
+msgid ""
+"JSON format: {\"Content-Type\": \"application/json\"}\n"
+"Applied to all endpoints in collection"
+msgstr "Format JSON: {\"Content-Type\": \"application/json\"}\nAppliqué à tous les points de terminaison dans la collection"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__collection_variables
+msgid ""
+"JSON format: {\"api_version\": \"v2\", \"environment\": \"prod\"}\n"
+"Used in endpoint URLs and bodies"
+msgstr "Format JSON: {\"api_version\": \"v2\", \"environment\": \"prod\"}\nUtilisé dans les URL et les corps des points de terminaison"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_call_log__request_data
+msgid "JSON representation of the request data sent"
+msgstr "Représentation JSON des données de requête envoyées"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__api_type__jsonrpc
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "JSON-RPC"
+msgstr "JSON-RPC"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Key Features"
+msgstr "Fonctionnalités clés"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_search
+msgid "Last 30 Days"
+msgstr "Derniers 30 jours"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_search
+msgid "Last 7 Days"
+msgstr "Derniers 7 jours"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__last_call_date
+msgid "Last Call"
+msgstr "Dernier appel"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__last_response_data
+msgid "Last Response Data"
+msgstr "Données de réponse"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__last_response_error
+msgid "Last Response Error"
+msgstr "Erreur de réponse"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__last_response_status
+msgid "Last Response Status"
+msgstr "Statut de réponse"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__last_response_success
+msgid "Last Response Success"
+msgstr "Réussite de la réponse"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__last_response_time
+msgid "Last Response Time (ms)"
+msgstr "Temps de réponse (ms)"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__write_uid
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__write_uid
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__write_uid
+#: model:ir.model.fields,field_description:api_connector.field_import_config_wizard__write_uid
+msgid "Last Updated by"
+msgstr "Dernière mise à jour par"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__write_date
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__write_date
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__write_date
+#: model:ir.model.fields,field_description:api_connector.field_import_config_wizard__write_date
+msgid "Last Updated on"
+msgstr "Dernière mise à jour le"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Manual token (optional if using OAuth flow above)"
+msgstr "Jeton manuel (facultatif si vous utilisez le flux OAuth ci-dessus)"
+
+#. module: api_connector
+#: model:ir.ui.menu,name:api_connector.menu_api_connector_monitoring
+msgid "Monitoring"
+msgstr "Surveillance"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "Name"
+msgstr "Nom"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__name
+msgid "Name for this collection of API endpoints"
+msgstr "Nom pour cette collection de points de terminaison API"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Name of the file field (e.g., 'ufile', 'file', 'attachment')"
+msgstr "Nom du champ de fichier (par exemple, 'ufile', 'file', 'attachment')"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__file_field_name
+msgid "Name of the file field in the form (e.g., \"ufile\", \"file\", \"attachment\")"
+msgstr "Nom du champ de fichier dans le formulaire (par exemple, \"ufile\", \"file\", \"attachment\")"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+msgid "New Endpoint in %s"
+msgstr "Nouveau point de terminaison dans %s"
+
+#. module: api_connector
+#: model_terms:ir.actions.act_window,help:api_connector.action_api_call_log
+msgid "No API calls logged yet!"
+msgstr "Aucun appel API enregistré pour le moment!"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_collection__auth_type__none
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__auth_type__none
+msgid "No Authentication"
+msgstr "Aucune authentification"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__request_body_type__none
+msgid "No Body"
+msgstr "Aucun corps"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "No access token received from OAuth provider"
+msgstr "Aucun jeton d'accès reçu du fournisseur OAuth"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_call_log.py:0
+msgid "No request data"
+msgstr "Aucune donnée de requête"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_call_log.py:0
+msgid "No response data"
+msgstr "Aucune données de réponse"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_collection__auth_type__oauth2
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__auth_type__oauth2
+msgid "OAuth 2.0"
+msgstr "OAuth 2.0"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__oauth_authorization_url
+msgid "OAuth 2.0 Authorization URL"
+msgstr "URL d'autorisation OAuth 2.0"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__oauth_authorization_url
+msgid ""
+"OAuth 2.0 Authorization URL (e.g., https://api.example.com/oauth/authorize)"
+msgstr "URL d'autorisation OAuth 2.0 (par exemple, https://api.example.com/oauth/authorize)"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__oauth_client_id
+msgid "OAuth 2.0 Client ID"
+msgstr "ID client OAuth 2.0"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__oauth_client_id
+msgid "OAuth 2.0 Client ID for this collection"
+msgstr "ID client OAuth 2.0 pour cette collection"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__oauth_client_secret
+msgid "OAuth 2.0 Client Secret"
+msgstr "Secret client OAuth 2.0"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__oauth_client_secret
+msgid "OAuth 2.0 Client Secret for this collection"
+msgstr "Secret client OAuth 2.0 pour cette collection"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "OAuth 2.0 Configuration"
+msgstr "Configuration OAuth 2.0"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__oauth_refresh_token
+#: model:ir.model.fields,help:api_connector.field_api_connector__oauth_refresh_token
+msgid "OAuth 2.0 Refresh Token"
+msgstr "Jeton d'actualisation OAuth 2.0"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__oauth_scope
+msgid "OAuth 2.0 Scope (e.g., read write)"
+msgstr "Portée OAuth 2.0 (par exemple, lecture/écriture)"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__oauth_scope
+msgid "OAuth 2.0 Scope for this collection"
+msgstr "Portée OAuth 2.0 pour cette collection"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__oauth_token_url
+msgid "OAuth 2.0 Token URL (e.g., https://api.example.com/oauth/token)"
+msgstr "URL du jeton OAuth 2.0 (par exemple, https://api.example.com/oauth/token)"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__oauth_token_url
+msgid "OAuth 2.0 Token URL for this collection"
+msgstr "URL du jeton OAuth 2.0 pour cette collection"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "OAuth 2.0 Tokens"
+msgstr "Jetons OAuth 2.0"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+#: code:addons/api_connector/models/api_connector.py:0
+msgid ""
+"OAuth 2.0 configuration incomplete. Please fill Client ID, Client Secret, "
+"and Token URL."
+msgstr "Configuration OAuth 2.0 incomplète. Veuillez remplir l'ID client, le secret client et l'URL du jeton."
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__oauth_client_id
+msgid "OAuth Client ID"
+msgstr "ID client OAuth 2.0"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__oauth_client_secret
+msgid "OAuth Client Secret"
+msgstr "Secret client OAuth 2.0"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "OAuth Error"
+msgstr "Erreur OAuth"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "OAuth Request Error"
+msgstr "Erreur de requête OAuth"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__oauth_scope
+msgid "OAuth Scope"
+msgstr "Portée OAuth"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "OAuth Token Request Failed"
+msgstr "La requête de jeton OAuth a échoué"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "OAuth Token Retrieved Successfully"
+msgstr "Jeton OAuth récupéré avec succès"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__oauth_token_url
+msgid "OAuth Token URL"
+msgstr "URL du jeton OAuth"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__method__patch
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "PATCH"
+msgstr "PATCH"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__method__post
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "POST"
+msgstr "POST"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__method__put
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "PUT"
+msgstr "PUT"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__auth_password
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__auth_password
+msgid "Password"
+msgstr "Mot de passe"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__auth_password
+msgid "Password for Basic Auth"
+msgstr "Mot de passe pour l'authentification de base"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__endpoint_path
+msgid ""
+"Path to append to base URL (e.g., /api/v1/users or "
+"/api/v2/saleorder/read/:id)"
+msgstr "Chemin à ajouter à l'URL de base (par exemple, /api/v1/users ou /api/v2/saleorder/read/:id)"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__expected_response_type__text
+msgid "Plain Text"
+msgstr "Texte brut"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Please select a collection first to inherit authentication."
+msgstr "Veuillez d'abord sélectionner une collection pour hériter de l'authentification."
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/wizard/import_config_wizard.py:0
+msgid "Please select a configuration file"
+msgstr "Veuillez sélectionner un fichier de configuration"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_import_config_wizard__preview_data
+#: model:ir.model.fields.selection,name:api_connector.selection__import_config_wizard__state__preview
+#: model_terms:ir.ui.view,arch_db:api_connector.view_import_config_wizard_form
+msgid "Preview"
+msgstr "Aperçu"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "REST"
+msgstr "REST"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__api_type__rest
+msgid "REST API"
+msgstr "API REST"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__request_body_type__raw
+msgid "Raw Text"
+msgstr "Texte brut"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Raw Text Body"
+msgstr "Corps de texte brut"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Raw text content with {variable_name} substitution"
+msgstr "Contenu de texte brut avec substitution de {variable_name}"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__oauth_refresh_token
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__oauth_refresh_token
+msgid "Refresh Token"
+msgstr "Jeton d'actualisation"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__request_body
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Request Body"
+msgstr "Corps de la requête"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__request_body_type
+msgid "Request Body Type"
+msgstr "Type de corps de la requête"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__request_data
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_form
+msgid "Request Data"
+msgstr "Données de la requête"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__request_body
+msgid "Request body content (JSON, XML, raw text, or base64 for binary)"
+msgstr "Contenu du corps de la requête (JSON, XML, texte brut, ou base64 pour les données binaires)"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Request timeout after %d seconds"
+msgstr "Délai d'expiration de la requête après %d secondes"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__timeout
+msgid "Request timeout in seconds"
+msgstr "Délai d'expiration de la requête en secondes"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Response"
+msgstr "Réponse"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__response_data
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Response Data"
+msgstr "Données de la réponse"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_form
+msgid "Response Information"
+msgstr "Informations de la réponse"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__response_size
+msgid "Response Size (bytes)"
+msgstr "Taille de la réponse (octets)"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Response Summary"
+msgstr "Résumé de la réponse"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Response Time (ms)"
+msgstr "Temps de réponse (ms)"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__last_response_data
+msgid "Response data from the last API call"
+msgstr "Données de la réponse de la dernière appel API"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_call_log__response_data
+msgid "Response data received from the API"
+msgstr "Données de la réponse reçues de l'API"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_tree
+msgid "Retry"
+msgstr "Réessayer"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_form
+msgid "Retry Call"
+msgstr "Réessayer l'appel"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_call_log.py:0
+msgid "Retry Error"
+msgstr "Erreur de réessai"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_call_log.py:0
+msgid "Retry Failed"
+msgstr "Réessai échoué"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_call_log.py:0
+msgid "Retry Successful"
+msgstr "Réessai réussi"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "SOAP"
+msgstr "SOAP"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__api_type__soap
+msgid "SOAP/XML"
+msgstr "SOAP/XML"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__oauth_scope
+msgid "Scope"
+msgstr "Portée"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__import_config_wizard__state__select
+msgid "Select File"
+msgstr "Sélectionner un fichier"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_import_config_wizard_form
+msgid ""
+"Select a JSON configuration file exported from API Connector to import "
+"connectors or collections."
+msgstr "Sélectionnez un fichier de configuration JSON exporté depuis API Connector pour importer des connecteurs ou des collections."
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_import_config_wizard__config_file
+msgid "Select a JSON configuration file to import"
+msgstr "Sélectionnez un fichier de configuration JSON à importer"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__attachment_ids
+msgid "Select files to upload with the request (for multipart form data)"
+msgstr "Sélectionnez les fichiers à télécharger avec la requête (pour les données multipart/form-data)"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Settings"
+msgstr "Paramètres"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_import_config_wizard__state
+msgid "State"
+msgstr "État"
+
+#. module: api_connector
+#: model:ir.ui.menu,name:api_connector.menu_api_connector_stats
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Statistics"
+msgstr "Statistiques"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_search
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "Status"
+msgstr "Statut"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_search
+msgid "Status Code"
+msgstr "Code de statut"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__status_icon
+msgid "Status Icon"
+msgstr "Icône de statut"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_call_log__success
+msgid "Success"
+msgstr "Succès"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__success_rate
+msgid "Success Rate (%)"
+msgstr "Taux de succès (%)"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_search
+msgid "Success Status"
+msgstr "Statut de succès"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_search
+msgid "Successful"
+msgstr "Succès"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__success_calls
+msgid "Successful Calls"
+msgstr "Appels réussis"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_import_config_wizard__collection_id
+msgid "Target Collection"
+msgstr "Collection cible"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "This endpoint is not part of any collection"
+msgstr "Cette endpoint n'est pas partie d'une collection"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid ""
+"This endpoint will use the authentication configured in its collection."
+msgstr "Cette endpoint utilisera l'authentification configurée dans sa collection."
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_collection.py:0
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "This method is only available for OAuth 2.0 authentication"
+msgstr "Cette méthode n'est disponible que pour l'authentification OAuth 2.0"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_call_log__execution_time
+msgid "Time taken to execute the API call in seconds"
+msgstr "Temps pris pour exécuter l'appel API en secondes"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__timeout
+msgid "Timeout (seconds)"
+msgstr "Délai d'expiration (secondes)"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "Timeout must be between 1 and 300 seconds"
+msgstr "Le délai d'expiration doit être compris entre 1 et 300 secondes"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_search
+msgid "Today"
+msgstr "Aujourd'hui"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__oauth_token_expires_at
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__oauth_token_expires_at
+msgid "Token Expires At"
+msgstr "Jeton expirant à"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__oauth_token_url
+msgid "Token URL"
+msgstr "URL du jeton"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__auth_token
+msgid "Token for Bearer or API Key authentication"
+msgstr "Jeton pour l'authentification Bearer ou API Key"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__total_calls
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__total_calls
+msgid "Total Calls"
+msgstr "Total d'appels"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_search
+msgid "URL"
+msgstr "URL"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__url_parameters
+msgid "URL Parameters"
+msgstr "Paramètres de l'URL"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "URL parameters must be a JSON object (dictionary)"
+msgstr "Les paramètres de l'URL doivent être un objet JSON (dictionnaire)"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/models/api_connector.py:0
+msgid "URL parameters must be valid JSON format"
+msgstr "Les paramètres de l'URL doivent être au format JSON valide"
+
+#. module: api_connector
+#. odoo-python
+#: code:addons/api_connector/wizard/import_config_wizard.py:0
+msgid "Unknown configuration type: %s"
+msgstr "Type de configuration inconnu: %s"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__use_collection_url
+msgid "Use Collection URL"
+msgstr "Utiliser l'URL de la collection"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__use_collection_url
+msgid "Use the base URL from the collection"
+msgstr "Utiliser l'URL de base de la collection"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Use this connector in scheduled actions:"
+msgstr "Utiliser ce connecteur dans les actions planifiées:"
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_collection__auth_username
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__auth_username
+msgid "Username"
+msgstr "Nom d'utilisateur"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__auth_username
+msgid "Username for Basic Auth"
+msgstr "Nom d'utilisateur pour l'authentification Basic"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "Variables are resolved in this order (highest to lowest priority):"
+msgstr "Les variables sont résolues dans cet ordre (de la plus haute à la plus basse priorité):"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid ""
+"Variables can be used in endpoint URLs and bodies with {variable_name} "
+"syntax."
+msgstr "Les variables peuvent être utilisées dans les URL des endpoints et les corps avec {variable_name}."
+
+#. module: api_connector
+#: model:ir.model.fields,field_description:api_connector.field_api_connector__verify_ssl
+msgid "Verify SSL Certificate"
+msgstr "Vérifier le certificat SSL"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__verify_ssl
+msgid "Verify SSL certificate for HTTPS requests"
+msgstr "Vérifier le certificat SSL pour les requêtes HTTPS"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_call_log_tree
+msgid "View Details"
+msgstr "Voir les détails"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_tree
+msgid "View Endpoints"
+msgstr "Voir les endpoints"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_collection__oauth_token_expires_at
+#: model:ir.model.fields,help:api_connector.field_api_connector__oauth_token_expires_at
+msgid "When the current access token expires"
+msgstr "Lorsque le jeton d'accès actuel expire"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_call_log__success
+msgid "Whether the API call was successful"
+msgstr "Si l'appel API a été réussi"
+
+#. module: api_connector
+#: model:ir.model.fields,help:api_connector.field_api_connector__last_response_success
+msgid "Whether the last API call was successful"
+msgstr "Si la dernière appel API a été réussi"
+
+#. module: api_connector
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__expected_response_type__xml
+#: model:ir.model.fields.selection,name:api_connector.selection__api_connector__request_body_type__xml
+msgid "XML"
+msgstr "XML"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "XML Body"
+msgstr "Corps XML"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "collection = env['api.collection'].browse("
+msgstr "collection = env['api.collection'].browse("
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "connector = env['api.connector'].browse("
+msgstr "connector = env['api.connector'].browse("
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "https://api.example.com"
+msgstr "https://api.example.com"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "https://api.example.com/oauth/authorize"
+msgstr "https://api.example.com/oauth/authorize"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "https://api.example.com/oauth/token"
+msgstr "https://api.example.com/oauth/token"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "iVBORw0KGgoAAAANSUhEUgAA... (base64 encoded data)"
+msgstr "iVBORw0KGgoAAAANSUhEUgAA... (données base64 encodées)"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "read write"
+msgstr "lecture écriture"
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "ufile"
+msgstr ""
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "{\"Content-Type\": \"application/json\", \"Accept\": \"application/json\"}"
+msgstr ""
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_collection_form
+msgid "{\"api_version\": \"v2\", \"environment\": \"prod\", \"project_id\": \"123\"}"
+msgstr ""
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "{\"id\": \"123\", \"slug\": \"example\"}"
+msgstr ""
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "{\"key\": \"value\", \"dynamic\": \"{variable_name}\"}"
+msgstr ""
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "{\"key1\": \"value1\", \"key2\": \"value2\"}"
+msgstr ""
+
+#. module: api_connector
+#: model_terms:ir.ui.view,arch_db:api_connector.view_api_connector_form
+msgid "{\"user_id\": \"123\", \"filter\": \"active\"}"
+msgstr ""

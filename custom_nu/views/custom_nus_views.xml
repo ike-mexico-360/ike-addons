@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View custom.nus View List -->
+    <record id="view_custom_nus_list" model="ir.ui.view">
+        <field name="name">view.custom.nus.list</field>
+        <field name="model">custom.nus</field>
+        <field name="arch" type="xml">
+            <list edit="false" delete="false" duplicate="false">
+                <header>
+                    <button name="action_reprocess_search_helpers" string="Reprocess Search Helper"
+                        type="object" class="btn-warning" groups="base.group_erp_manager"/>
+                </header>
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="email"/>
+                <field name="display_name" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View custom.nus form -->
+    <record id="view_custom_nus_form" model="ir.ui.view">
+        <field name="name">view.custom.nus.form</field>
+        <field name="model">custom.nus</field>
+        <field name="arch" type="xml">
+            <form delete="false" duplicate="false">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <widget name="web_ribbon" title="VIP" bg_color="text-bg-warning" invisible="not vip_user or disabled"/>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_send_notification_whatsapp" string="Send WhatsApp notification" invisible="disabled == True"
+                            type="object"
+                            class="oe_stat_button me-2"
+                            icon="fa-whatsapp"/>
+                        <button name="action_send_notification_sms" string="Send SMS notification" invisible="disabled == True"
+                            type="object"
+                            class="oe_stat_button me-2"
+                            icon="fa-envelope"/>
+                        <button name="action_send_notification_sms_list" string="Send SMS notification list" invisible="1"
+                            type="object"
+                            class="oe_stat_button me-2"
+                            icon="fa-envelope"/>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" class="o_form_label_required"/>
+                        <h1>
+                            <field name="name" placeholder="Name..." readonly="disabled"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <label for="country_id" string="Phone"/>
+                            <div >
+                                <field name="country_id"
+                                    class="oe_inline" style="max-width:100px"
+                                    required="1"
+                                    options="{'no_create': True, 'no_open': True}"
+                                    context="{'show_country_phone_format': True}"
+                                    placeholder="Country"
+                                    readonly="disabled"
+                                />
+                                <span name="uom_span" >
+                                    <field name="phone"
+                                        class="oe_inline"
+                                        widget="phone"
+                                        options="{'enable_sms': False, 'enable_call': False}"
+                                        required="1"
+                                        readonly="disabled"
+                                        style="max-width:130px"
+                                        placeholder="Phone number"/>
+                                </span>
+                            </div>
+                            <field name="display_complete_phone"
+                                   string="Complete Phone"
+                                   readonly="1" invisible="1"/>
+                            <field name="email" 
+                                options="{'regex': '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'}" 
+                                readonly="disabled"
+                                required="preference_contact == 'email'"
+                                />
+                            <div class="o_row gap-1">
+                                <field name="vip_user" nolabel="1" readonly="disabled"/>
+                                <label for="vip_user" class="fw-bold" />
+                                <field name="visa_user" class="ms-2" nolabel="1" readonly="disabled"/>
+                                <label for="visa_user" class="fw-bold"/>
+                            </div>
+                            <separator string="Preference contact"/>
+                            <field name="preference_contact"
+                                widget="preference_contact_widget"
+                                force_save="1"/>
+                        </group>
+                        <group>
+                            <field name="disabled" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                            <field name="create_date" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="memberships" string="Memberships">
+                            <field name="membership_nus_ids"
+                                mode="kanban"
+                                context="{'default_nus_id': id, 'kanban_view_ref': 'custom_nus.custom_membership_nus_view_kanban'}"
+                                readonly="disabled">
+                                <form string="Membership">
+                                    <sheet>
+                                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                                        <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                                        <div class="oe_title">
+                                            <label for="name"/>
+                                            <h1>
+                                                <field name="name" readonly="1"/>
+                                            </h1>
+                                        </div>
+                                        <group>
+                                            <group>
+                                                <field name="nus_id"
+                                                    options='{"no_open": True, "no_create": True}'
+                                                    domain="[('disabled', '=', False)]"/>
+                                                <field name="membership_plan_id"
+                                                    options='{"no_open": True, "no_create": True}'
+                                                    domain="[('disabled', '=', False)]"/>
+                                                <field name="date"/>
+                                                <field name="key_identification" password="True"/>
+                                            </group>
+                                            <group>
+                                                <field name="disabled" invisible="1"/>
+                                                <field name="active" invisible="1"/>
+                                                <field name="create_date" invisible="1"/>
+                                            </group>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                        <page name="addresses" string="Addresses">
+                            <field name="address_nus_ids"
+                                mode="kanban"
+                                context="{'default_address_nus_id': id, 'kanban_view_ref': 'custom_nus.custom_nus_address_view_kanban'}"
+                                readonly="disabled"
+                            />
+                        </page>
+                        <page name="vehicles" string="Vehicles">
+                            <field name="vehicle_nus_ids"
+                                mode="kanban"
+                                context="{'default_vehicle_nus_id': id, 'kanban_view_ref': 'custom_nus.custom_nus_vehicle_view_kanban'}"
+                                readonly="disabled"
+                            />
+                        </page>
+                        <page name="pets" string="Pets">
+                            <field name="pet_nus_ids"
+                                mode="kanban"
+                                context="{'default_pet_nus_id': id, 'kanban_view_ref': 'custom_nus.custom_nus_pet_view_kanban'}"
+                                readonly="disabled"
+                            />
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- View custom.nus search -->
+    <record id="view_custom_nus_search" model="ir.ui.view">
+        <field name="name">view.custom.nus.search</field>
+        <field name="model">custom.nus</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="phone"/>
+                <field name="disabled"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group expand="1" string="Group By">
+                    <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action custom.nus -->
+    <record id="action_custom_nus" model="ir.actions.act_window">
+        <field name="name">Custom Nus</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">custom.nus</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                There is no examples click here to add new Custom Nus.
+            </p>
+        </field>
+    </record>
+
+</odoo>

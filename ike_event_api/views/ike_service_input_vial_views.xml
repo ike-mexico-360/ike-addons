@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ike_service_input_vial_screen_form_inherit_ike_event_api" model="ir.ui.view">
+        <field name="name">view_ike_service_input_vial_screen_form_inherit_ike_event_api</field>
+        <field name="model">ike.service.input.vial</field>
+        <field name="inherit_id" ref="ike_event.view_ike_service_input_vial_screen_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_identification_whatsapp']" position="after">
+                <div class="oe_inline" colspan="2" invisible="1">
+                    <button name="x_test_template1" string="Test Template 1 (debug, no touch)" type="object" class="btn-danger me-1"/>
+                    <button name="x_test_template2" string="Test Template 2 (debug, no touch)" type="object" class="btn-danger me-1"/>
+                    <button name="x_test_template3" string="Test Template 3 (debug, no touch)" type="object" class="btn-danger me-1"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

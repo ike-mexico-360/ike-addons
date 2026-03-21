@@ -16,8 +16,9 @@ class CustomAccountIdentification(models.Model):
     code = fields.Char(required=True, tracking=True)
     description = fields.Text(tracking=True)
 
-    regex = fields.Char(required=True, tracking=True)
+    regex = fields.Char(tracking=True)
     label = fields.Char(required=True, tracking=True)
+    clause = fields.Boolean(string="Clause")
 
     active = fields.Boolean('Active', default=True, tracking=True)
     disabled = fields.Boolean('Disabled', default=False, tracking=True)
@@ -31,19 +32,20 @@ class CustomAccountIdentification(models.Model):
                 raise ValidationError(_('Label can only contain letters, numbers, and spaces.'))
 
     def action_disable(self, reason=None):
-        if reason:
-            body = Markup("""
-                <ul class="mb-0 ps-4">
-                    <li>
-                        <b>{}: </b><span class="">{}</span>
-                    </li>
-                </ul>
-            """).format(
-                _('Disabled'),
-                reason,
-            )
-            self.message_post(
-                body=body,
-                message_type='notification',
-                body_is_html=True)
+        for rec in self:
+            if reason:
+                body = Markup("""
+                    <ul class="mb-0 ps-4">
+                        <li>
+                            <b>{}: </b><span class="">{}</span>
+                        </li>
+                    </ul>
+                """).format(
+                    _('Disabled'),
+                    reason,
+                )
+                rec.message_post(
+                    body=body,
+                    message_type='notification',
+                    body_is_html=True)
         return super().action_disable(reason)

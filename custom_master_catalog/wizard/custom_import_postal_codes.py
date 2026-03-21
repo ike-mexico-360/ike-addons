@@ -1,4 +1,7 @@
 import logging
+import chardet
+from io import StringIO
+import csv
 import base64
 import json
 import mimetypes
@@ -33,15 +36,75 @@ class CustomImportPostalCodes(models.TransientModel):
     def import_postal_codes(self):
         if not self.file:
             return False
-        if self.file_type != 'text/csv':
-            raise UserError(_("El archivo debe ser tipo CSV"))
+        if self.file_type != 'text/plain':
+            raise UserError(_("El archivo debe ser tipo TXT, tal cual como fué descargado."))
 
         required_columns = self.EXCEL_IMPORT_COLUMNS
+        csv_file = self._convert_txt_to_csv_proper(self.file)
         json_data, file_size = self._convert_excel_data_to_json(
-            self.file, self.file_name, self.file_type, required_columns
+            csv_file, self.file_name, 'text/csv', required_columns
         )
         self._process_json_data(json_data, file_size)
         return True
+
+    def _convert_txt_to_csv_proper(self, file):
+        ''' Convertir TXT a CSV usando csv.writer con validación de encabezado '''
+        try:
+            # Decodificar el archivo
+            file_bytes = base64.b64decode(file)
+
+            # Detectar codificación
+            encoding_info = chardet.detect(file_bytes)
+            encoding = encoding_info.get('encoding', 'utf-8')
+            file_content = file_bytes.decode(encoding)
+
+            # Procesar líneas
+            lines = file_content.splitlines()
+            output = StringIO()
+            csv_writer = csv.writer(output, delimiter='|')
+
+            headers_written = False
+            expected_first_header = "d_codigo"
+
+            for line in lines:
+                line = line.strip()
+                if not line:
+                    continue
+
+                # Saltar línea de descripción si existe
+                if line.startswith('El Catálogo Nacional'):
+                    continue
+
+                if '|' in line:
+                    parts = [part.strip() for part in line.split('|')]
+
+                    # Validar si es el encabezado
+                    if not headers_written:
+                        if len(parts) > 0 and parts[0] == expected_first_header:
+                            # Es el encabezado correcto
+                            csv_writer.writerow(parts)
+                            headers_written = True
+
+                    else:
+                        # Línea de datos normal
+                        csv_writer.writerow(parts)
+
+            # Obtener el contenido CSV
+            csv_content = output.getvalue()
+            output.close()
+
+            # Validar que el CSV no esté vacío
+            if not csv_content.strip():
+                raise UserError(_("El archivo resultante está vacío después del procesamiento."))
+
+            # Codificar a UTF-8
+            csv_bytes = csv_content.encode('utf-8')
+            csv_data = base64.b64encode(csv_bytes)
+
+            return csv_data
+
+        except Exception as e:
+            raise UserError(_(f"Error al convertir TXT a CSV: {str(e)}"))
 
     def _convert_excel_data_to_json(self, file, file_name, file_type, required_columns):
         ''' Convertir excel al estilo JSON esperado '''
@@ -49,10 +112,9 @@ class CustomImportPostalCodes(models.TransientModel):
         if not file:
             raise UserError(_("No se ha cargado ningún archivo."))
         # Decodificar el archivo
-        # Opciones para archivo xlsx
         options = {
             'encoding': '',
-            'separator': '',
+            'separator': '|',
             'quoting': '"',
             'date_format': '',
             'datetime_format': '',
@@ -64,22 +126,6 @@ class CustomImportPostalCodes(models.TransientModel):
             'sheets': [],
             'sheet': ''
         }
-        # Opciones para archivo csv
-        if file_type == 'application/vnd.ms-excel':
-            options = {
-                'encoding': '',
-                'separator': '|',
-                'quoting': '"',
-                'date_format': '',
-                'datetime_format': '',
-                'float_thousand_separator': ',',
-                'float_decimal_separator': '.',
-                'advanced': True,
-                'has_headers': True,
-                'keep_matches': False,
-                'sheets': [],
-                'sheet': ''
-            }
         base_import = self.env['base_import.import'].create({
             'file_name': file_name,
             'file_type': file_type,
@@ -113,9 +159,9 @@ class CustomImportPostalCodes(models.TransientModel):
         self.update_states_like_sepomex()  # Actualizar los datos de los estados en Odoo según los declarados por SEPOMEX
         temporal_mnpios, to_delete_municipalities = self.process_municipalities()
         self.process_postal_codes(temporal_mnpios, file_size)
-        self.delete_municipalities(to_delete_municipalities)
+        self.delete_municipalities(to_delete_municipalities, self.get_models_to_check())
         # --- Limpiar datos actuales
-        self.env.cr.execute("""DELETE FROM custom_import_postal_codes_line;""")
+        # self.env.cr.execute("""DELETE FROM custom_import_postal_codes_line;""")
 
     def save_imported_data(self, json_data):
         # --- Guardar los nuevos registros en la base de datos
@@ -198,7 +244,7 @@ class CustomImportPostalCodes(models.TransientModel):
         # --- Comparar los valores existentes en Odoo vs los importados del Excel, obtener nuevos, obtener a eliminar y obtener
         # existentes a actualizar
         self.env.cr.execute("""SELECT id FROM res_country WHERE name->>'es_MX' ILIKE '%México%' LIMIT 1;""")
-        country_id = self.env.cr.fetchone()
+        country_id = self.env.cr.fetchone()[0]
         odoo_mx_states = self.env['res.country.state'].search_read([('country_id', '=', country_id)], ['name', 'country_id', 'code'])
         odoo_mx_states_dict = {rec['name'].lower(): rec['id'] for rec in odoo_mx_states}
         update_municipality_records = []  # Registros que existen en el Excel pero no en Odoo
@@ -240,10 +286,21 @@ class CustomImportPostalCodes(models.TransientModel):
             for rec in update_municipality_records:
                 municipality_id = self.env['custom.state.municipality'].browse([rec['id']])
                 municipality_id.write(rec['values'])
-                temporal_mnpios.update({municipality_id.name: municipality_id.id})
+                temporal_mnpios.update({municipality_id.c_delta: municipality_id.id})
         if len(new_municipality_records) > 0:
             new_ids = self.env['custom.state.municipality'].create(new_municipality_records)
-            temporal_mnpios.update({x.name: x.id for x in new_ids})
+            temporal_mnpios.update({x.c_delta: x.id for x in new_ids})
+
+        # CARGAR TODOS LOS MUNICIPIOS EXISTENTES (no solo nuevos/actualizados)
+        self.env.cr.execute("""
+            SELECT id, c_delta
+            FROM custom_state_municipality;
+        """)
+        all_municipalities = self.env.cr.dictfetchall()
+        for mun in all_municipalities:
+            if mun['c_delta'] not in temporal_mnpios:  # No sobrescribir los ya procesados
+                temporal_mnpios[mun['c_delta']] = mun['id']
+
         return temporal_mnpios, to_delete_municipalities  # Devolver el diccionario temporal y los que se borrarán
 
     def process_postal_codes(self, temporal_mnpios, file_size):
@@ -263,28 +320,44 @@ class CustomImportPostalCodes(models.TransientModel):
         _logger.info("Procesando códigos postales")
         # Procesar por lineas
         self.env.cr.execute("""
-            SELECT id, zip_code AS d_codigo, city AS d_ciudad, municipality_id FROM custom_state_municipality_code;
+            SELECT id, zip_code AS d_codigo, city AS d_ciudad, municipality_id
+            FROM custom_state_municipality_code
+            WHERE active = True;
         """)
-        odoo_postal_code = self.env.cr.dictfetchall()
-        odoo_postal_code_dict = {f"{x['d_codigo']}&{x['d_ciudad']}": x for x in odoo_postal_code}
+        active_odoo_postal_code = self.env.cr.dictfetchall()
+        active_odoo_postal_code_dict = {f"{x['d_codigo']}&{x['d_ciudad']}": x for x in active_odoo_postal_code}
+
+        self.env.cr.execute("""
+            SELECT id, zip_code AS d_codigo, city AS d_ciudad, municipality_id
+            FROM custom_state_municipality_code
+            WHERE active = False;
+        """)
+        inactive_odoo_postal_code = self.env.cr.dictfetchall()
+        inactive_odoo_postal_code_dict = {f"{x['d_codigo']}&{x['d_ciudad']}": x for x in inactive_odoo_postal_code}
 
         self.env.cr.execute("""SELECT DISTINCT d_codigo, d_ciudad, d_mnpio, c_delta FROM custom_import_postal_codes_line;""")
         excel_postal_codes = self.env.cr.dictfetchall()
         excel_postal_codes_dict = {f"{x['d_codigo']}&{x['d_ciudad']}": x for x in excel_postal_codes}
 
         update_codes_records = []  # Registros que existen en el Excel pero no en Odoo
-        to_delete_postal_codes = []  # Registros que faltan en el Excel
+        to_inactive_postal_codes = []  # Registros que faltan en el Excel
+        to_reactive_postal_codes = []  # Registros que faltan existen en el Excel y en Odoo, pero están inactivos
         new_codes_records = []  # Registros que faltan en Odoo
 
-        # Determinar los registros existentes en Odoo, pero no en el Excel para eliminarlos
-        for key, values in odoo_postal_code_dict.items():
+        # Determinar los registros existentes en Odoo, pero no en el Excel para archivarlos
+        for key, values in active_odoo_postal_code_dict.items():
             if key not in excel_postal_codes_dict:
-                to_delete_postal_codes.append(values)
+                to_inactive_postal_codes.append(values)
+
+        # Registros existentes en Odoo, pero que deben desarchivarse
+        for key, values in inactive_odoo_postal_code_dict.items():
+            if key in excel_postal_codes_dict:
+                to_reactive_postal_codes.append(values)
 
         # Determinar los existentes en Odoo para actualizarlos y los no existentes para añadirlos
         for key, values in excel_postal_codes_dict.items():
-            if key in odoo_postal_code_dict:
-                odoo_record = odoo_postal_code_dict[key]
+            if key in active_odoo_postal_code_dict:
+                odoo_record = active_odoo_postal_code_dict[key]
                 if (odoo_record['d_ciudad'] != values['d_ciudad']):
                     update_codes_records.append({
                         'id': odoo_record['id'],
@@ -292,14 +365,26 @@ class CustomImportPostalCodes(models.TransientModel):
                             'city': values['d_ciudad']
                         }
                     })
+            elif key in inactive_odoo_postal_code_dict:
+                odoo_record = inactive_odoo_postal_code_dict[key]
+                if (odoo_record['d_ciudad'] != values['d_ciudad']):
+                    update_codes_records.append({
+                        'id': odoo_record['id'],
+                        'values': {
+                            'city': values['d_ciudad'],
+                            'active': True
+                        }
+                    })
             else:
-                municipality_id = temporal_mnpios.get(values['d_mnpio'], False)
+                c_delta = values['c_delta']
+                municipality_id = temporal_mnpios.get(c_delta, False)
                 if not municipality_id:
                     continue
                 new_codes_records.append({
                     'zip_code': values['d_codigo'],
                     'city': values['d_ciudad'],
-                    'municipality_id': municipality_id
+                    'municipality_id': municipality_id,
+                    'c_delta': c_delta
                 })
 
         if len(update_codes_records) > 0:
@@ -309,9 +394,15 @@ class CustomImportPostalCodes(models.TransientModel):
         if len(new_codes_records) > 0:
             self.env['custom.state.municipality.code'].create(new_codes_records)
             _logger.info(f"Se añadieron {len(new_codes_records)} códigos postales")
-        if len(to_delete_postal_codes) > 0:
-            self.env['custom.state.municipality.code'].browse([x['id'] for x in to_delete_postal_codes]).unlink()
-            _logger.info(f"Se eliminaron {len(to_delete_postal_codes)} códigos postales")
+        if len(to_inactive_postal_codes) > 0:
+            # Solicitado, no se eliminan, se marcan como activo = False
+            # self.env['custom.state.municipality.code'].browse([x['id'] for x in to_inactive_postal_codes]).unlink()
+            # _logger.info(f"Se eliminaron {len(to_inactive_postal_codes)} códigos postales")
+            self.env['custom.state.municipality.code'].browse([x['id'] for x in to_inactive_postal_codes]).write({'active': False})
+            _logger.info(f"Se marcaron {len(to_inactive_postal_codes)} códigos postales como inactivos")
+        if len(to_reactive_postal_codes) > 0:
+            self.env['custom.state.municipality.code'].browse([x['id'] for x in to_reactive_postal_codes]).write({'active': True})
+            _logger.info(f"Se reactivaron {len(to_reactive_postal_codes)} códigos postales")
         self.env['custom.import.postal_codes.log'].create({
             'file': self.file,
             'file_type': 'csv',
@@ -320,9 +411,14 @@ class CustomImportPostalCodes(models.TransientModel):
             'import_date': fields.Datetime.now(),
             'imported_records': len(new_codes_records),
             'updated_records': len(update_codes_records),
-            'deleted_records': len(to_delete_postal_codes),
+            'deleted_records': len(to_inactive_postal_codes),
             'user_id': self.env.user.id,
         })
+
+    def get_models_to_check(self):
+        return {
+            'custom_geographical_area': 'municipality_id',
+        }
 
     def delete_municipalities(self, to_delete_municipalities, models_to_check=None):
         # Heredar o añadir los a models_to_check, sql_model: field para verificar relación antes de eliminar
@@ -332,15 +428,18 @@ class CustomImportPostalCodes(models.TransientModel):
         delete_records = []
         if len(to_delete_municipalities) > 0:
             for municipality in to_delete_municipalities:
-                for model, field in models_to_check.items():
-                    self.env.cr.execute("""SELECT id FROM %s WHERE %s IS NOT NULL LIMIT 1;""" % (model, field))
-                    exist_record = self.env.cr.dictfetchone()
-                    if exist_record:
-                        _logger.warning(f"No se puede eliminar el municipio {municipality.name} porque existe una relación con {model}: {field}")
-                        continue
+                if models_to_check:
+                    for model, field in models_to_check.items():
+                        self.env.cr.execute("""SELECT id FROM %s WHERE %s IS NOT NULL LIMIT 1;""" % (model, field))
+                        exist_record = self.env.cr.dictfetchone()
+                        if exist_record:
+                            _logger.warning(f"No se puede eliminar el municipio {municipality['d_mnpio']} con c_delta {municipality['c_delta']} porque existe una relación con {model}: {field} => {exist_record}")
+                            continue
+                        delete_records.append(municipality['id'])
+                else:
                     delete_records.append(municipality['id'])
         if len(delete_records) > 0:
-            self.env.cr.execute("""DELETE FROM custom_state_municipality WHERE id IN %s;""" % tuple(delete_records))
+            self.env.cr.execute("""DELETE FROM custom_state_municipality WHERE id IN %s;""", [tuple(delete_records)])
         _logger.info(f"Se eliminaron {len(delete_records)} municipios")
 
 

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkeDashboardEvent">
+        <Layout display="display">
+            <t t-set-slot="control-panel-create-button">
+            </t>
+            <t t-set-slot="layout-buttons">
+            </t>
+            <t t-set-slot="control-panel-additional-actions">
+                <button type="button" class="btn border-0">
+                    <i class="fa fa-cog" />
+                </button>
+            </t>
+            <t t-set-slot="layout-actions">
+            </t>
+            <t t-set-slot="control-panel-navigation-additional">
+            </t>
+            <div class="container-fluid my-2">
+                <div class="row">
+                    <div class="col">
+                        <div t-foreach="state.events" t-as="event" t-key="event.id">
+                            <span t-out="event.name"/>
+                            <ul>
+                                <li t-foreach="event.service_supplier_ids" t-as="supplier_id" t-key="supplier_id.id" t-if="supplier_id.state">
+                                    <span t-out="supplier_id.supplier_id.name"/>,
+                                    <span t-out="supplier_id.state"/>,
+                                    <span t-out="supplier_id.notification_date"/>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Layout>
+    </t>
+
+</templates>

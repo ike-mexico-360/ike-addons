@@ -1,0 +1,11 @@
+.ike_travel_tracking_map_container {
+    .iframe_map_container {
+        border: 2px solid #00375D!important;
+        height: 500px;
+        border-radius: 10px;
+
+        iframe {
+            border-radius: 7px;
+        }
+    }
+}

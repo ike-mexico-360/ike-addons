@@ -1,0 +1,11 @@
+<odoo>
+    <data>
+        <!-- Actions -->
+        <record model="ir.actions.client" id="custom_fleet_dashboard_action">
+            <field name="name">VideoWall</field>
+            <field name="tag">ike_event.custom_fleet_dashboard_view_action</field>
+            <field name="target">current</field>
+            <field name="binding_model_id" ref="ike_event.model_fleet_vehicle"/>
+        </record>
+    </data>
+</odoo>

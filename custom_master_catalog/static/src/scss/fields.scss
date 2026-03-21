@@ -1,0 +1,13 @@
+.o_field_invalid:not(:focus-within)>div>.o_input {
+    color: o-text-color('danger') !important;
+}
+
+// Class for labels required fields without traditional structure
+label.o_form_label_required::after {
+    content: "*";
+    color: #eb9091;
+    position: absolute;
+    font-size: larger;
+    line-height: 1.2;
+    margin-left: 4px;
+}

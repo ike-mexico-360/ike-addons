@@ -15,6 +15,15 @@ class CustomGeographicalArea(models.Model):
         'Municipality must be unique per partner.'
     )]
 
+    def _default_priority_child(self):
+        parent = self._context.get('default_parent_id')
+        if parent:
+            partner_id = self.env['res.partner'].browse(parent)
+            parent_id = partner_id.parent_id if partner_id else None
+            if parent_id:
+                return parent_id.priority or '0'
+        return '0'
+
     partner_id = fields.Many2one('res.partner', string='Partner', required=True)
     parent_id = fields.Many2one('res.partner', related="partner_id.parent_id", string='Parent', store=True)
 
@@ -32,6 +41,13 @@ class CustomGeographicalArea(models.Model):
 
     field_char = fields.Char(sub_tracking=True)
     field_float = fields.Float(sub_tracking=True)
+
+    priority = fields.Selection([
+        ('0', 'None'),
+        ('1', 'Low'),
+        ('2', 'Medium'),
+        ('3', 'High'),
+    ], string='Priority', default=_default_priority_child)
 
     @api.onchange('state_id')
     def _onchange_state_id(self):

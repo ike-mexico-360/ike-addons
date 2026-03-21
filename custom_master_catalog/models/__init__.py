@@ -4,6 +4,7 @@ from . import other
 from . import res_partner
 from . import res_partner_account
 from . import res_partner_supplier
+from . import res_partner_company_ike
 from . import product_category_service
 from . import product_template
 from . import product_template_subservice

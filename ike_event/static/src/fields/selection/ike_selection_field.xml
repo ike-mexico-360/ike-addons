@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkeSelectionField">
+        <t>
+            <t t-if="props.readonly">
+                <input
+                    class="o_input"
+                    t-att-value="string"
+                    t-ref="input"
+                    t-att-id="props.id"
+                    type="text"
+                    t-att-placeholder="' '"
+                    t-att-readonly="1"
+                />
+                <label t-att-for="props.id" t-out="label" class="ike_input_label"/>
+            </t>
+            <t t-else="">
+                <select
+                    class="o_input pe-3 o_field_selection"
+                    t-on-change="onChange"
+                    t-on-click.stop="() =&gt; {}"
+                    t-att-id="props.id"
+                    t-att-readonly="false">
+                    <option
+                        t-att-selected="false === value"
+                        t-att-value="stringify(false)"
+                        t-esc="this.props.placeholder || ''"
+                        t-attf-style="{{ props.required ? 'display:none' : '' }}"
+                    />
+                    <t t-foreach="options" t-as="option" t-key="option[0]">
+                        <option
+                            t-att-selected="option[0] === value"
+                            t-att-value="stringify(option[0])"
+                            t-esc="option[1]"
+                        />
+                    </t>
+                </select>
+                <label t-att-for="props.id" t-out="label" class="ike_input_label"/>
+            </t>
+        </t>
+    </t>
+
+</templates>

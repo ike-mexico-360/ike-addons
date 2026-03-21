@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_purchase_inherit_ike_event_purchase" model="ir.ui.view">
+        <field name="name">res_config_settings_view_form_purchase.inherit.ike_event_purchase</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="purchase.res_config_settings_view_form_purchase"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@name='purchase_setting_container']/setting[@id='auto_receipt_reminder']" position="after">
+                <setting id="x_time_for_automatic_purchase_generation" title="Time for automatic purchase generation" help="Waiting time to automatically approve the quote">
+                    <field name="x_time_for_automatic_purchase_generation" class="oe_inline"/><span> hours</span>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkeComponentInfo">
+        <div class="d-flex flex-column ike-header-info w-100" t-attf-class="ike-info-{{ props.orientation }} {{ props.orientation === 'horizontal' ? 'mt-3 mb-3': 'mt-0 mb-3' }}">
+            <div class="ike-info-title">
+                <t t-out="title"/>
+            </div>
+            <t t-if="hasValidData">
+                <Record
+                    resModel="virtualModel"
+                    t-key="recordKey"
+                    resId="false"
+                    fields="virtualFields"
+                    activeFields="virtualActiveFields"
+                    values="virtualValues"
+                    mode="'readonly'"
+                    t-slot-scope="slot"
+                >
+                    <ul t-ref="fieldsContent" class="ike-fields-content" t-att-class="{ 'collapsed': !state.isExpanded and state.hasMoreLines }">
+                        <li t-foreach="fieldsList" t-as="fieldDef" t-key="'field_' + fieldDef_index" class="align-content-center">
+                            <div class="d-flex flex-row gap-1">
+                                <strong class="text-nowrap">
+                                    <t t-esc="fieldDef.string"/>:
+                                </strong>
+                                <Field
+                                    name="fieldDef.name"
+                                    record="slot.record"
+                                    readonly="true"
+                                    fieldInfo="getFieldInfo(fieldDef)"
+                                    t-props="{type: fieldDef.type}"
+                                    class="`text-nowrap mb-0`"
+                                />
+                            </div>
+                        </li>
+                    </ul>
+                    <button type="button" class="btn btn-link p-0" t-if="state.hasMoreLines" t-on-click="showMore">
+                        <span t-out="buttonText"/>
+                    </button>
+                </Record>
+            </t>
+        </div>
+    </t>
+
+</templates>

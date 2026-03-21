@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- View Search -->
+    <record id="ike_event_membership_authorization_view_search" model="ir.ui.view">
+        <field name="name">ike.event.membership.authorization.view.search</field>
+        <field name="model">ike.event.membership.authorization</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <group expand="0" string="Group By">
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- View Form -->
+    <record id="ike_event_membership_authorization_view_form" model="ir.ui.view">
+        <field name="name">ike.event.membership.authorization.view.form</field>
+        <field name="model">ike.event.membership.authorization</field>
+        <field name="arch" type="xml">
+            <form delete="0">
+                <sheet>
+                    <header>
+                        <button name="action_authorized" 
+                            string="Authorize"
+                            type="object"
+                            class="btn btn-success"/>
+
+                        <button name="action_rejected"
+                            string="Reject"
+                            type="object"
+                            class="btn btn-danger"/>
+
+                        <button name="action_authororizer_wizard"
+                            type="object"
+                            string="Popup"
+                            class="oe_highlight"
+                            invisible="1"/>
+
+                        <button name="action_send_authorization_email"
+                            type="object"
+                            string="Enviar para Aprobación"
+                            class="btn-primary"
+                            invisible="state != 'pending_cabine'"/>
+
+                        <field name="state" widget="statusbar" statusbar_visible="pending_cabine,authorized,rejected"/>
+                    </header>
+                    <div class="oe_title">
+                        <label for="name" class="o_form_label_required"/>
+                        <h1>
+                            <field name="name" placeholder="Name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="User">
+                            <field name="x_display_mask" invisible="1"/>
+                            <field name="x_second_display_mask" invisible="1"/>
+                            <field name="account" options="{'no_create': 1, 'no_open': 1}" readonly="1"/>
+                            <field name="nus_id" options="{'no_create': 1, 'no_open': 1}" readonly="1"/>
+                            <field name="label_identification_primary" readonly="1" nolabel="1"/>
+                            <field name="key_identification" readonly="1" nolabel="1" widget="ike_regex_validator_field" mask_field="x_display_mask"/>
+                            <field name="label_identification_second" readonly="1" nolabel="1" invisible="not check_second_key"/>
+                            <field name="second_key_identification" readonly="1"  nolabel="1" widget="ike_regex_validator_field" mask_field="x_second_display_mask" invisible="not check_second_key"/>
+                            <field name="phone_nu" readonly="state != 'pending_cabine'"/>
+                            <field name="nu_alternative" readonly="state != 'pending_cabine'"/>
+                            <field name="preference_contact" widget="preference_contact_widget" readonly="state != 'pending_cabine'"/>
+                        </group>
+                        <group string="Authorizer">
+                            <field name="authorizer_id" options="{'no_create': 1, 'no_open': 1}" readonly="1"/>
+                            <field name="request_date" readonly="1"/>
+                            <field name="authorization_date" readonly="1"/>
+                            <field name="validity" readonly="state != 'pending_cabine'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="image" widget="image"
+                            options="{'size': [800, 600], 'zoom': true}"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- View List -->
+    <record id="ike_event_membership_authorization_view_list" model="ir.ui.view">
+        <field name="name">ike.event.membership.authorization.view.list</field>
+        <field name="model">ike.event.membership.authorization</field>
+        <field name="arch" type="xml">
+            <list delete="0" edit="false">
+                <field name="event_name"/>
+                <field name="name"/>
+                <field name="nus_id"/>
+                <field name="authorizer_id"/>
+                <field name="authorization_date"/>
+                <field name="state"
+                    decoration-info="state == 'pending'"
+                    decoration-success="state == 'authorized'"
+                    decoration-warning="state == 'rejected'"
+                    widget="badge"
+                    optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="ike_event_membership_authorization_action" model="ir.actions.act_window">
+        <field name="name">NUs Afililiation Authorization</field>
+        <field name="res_model">ike.event.membership.authorization</field>
+        <field name="view_mode">list,form</field>
+        <field name="context"></field>
+    </record>
+
+    <record id="action_membership_commercial_authorization_popup" model="ir.actions.act_window">
+        <field name="name">Authorization</field>
+        <field name="res_model">ike.event.membership.authorization</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="ike_event_membership_authorization_popup_view_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>
