@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_ike_event_service_summary_list" model="ir.ui.view">
+        <field name="name">ike.event.service.summary.list</field>
+        <field name="model">ike.event.service.summary</field>
+        <field name="arch" type="xml">
+            <list js_class="ike_event_screen_list" class="ike-show-table-buttons" edit="false" duplicate="false" delete="false">
+                <header>
+                </header>
+                <field name="user_id"/>
+                <field name="user_membership_id"/>
+                <field name="name"/>
+                <field name="user_membership_plan_id"/>
+                <field name="service_id"/>
+                <field name="sub_service_id" context="{'display_default_code': 0}"/>
+                <field name="event_date"/>
+                <field name="stage_id" widget="badge"/>
+                <field name="suppliers_ids" widget="many2many_tags"/>
+                <field name="stage_ref" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_ike_event_service_summary_search" model="ir.ui.view">
+        <field name="name">ike.event.service.summary.search</field>
+        <field name="model">ike.event.service.summary</field>
+        <field name="arch" type="xml">
+            <search string="Search Event Summary">
+                <field name="name" string="Expedient" filter_domain="[('name', 'ilike', self)]"/>
+                <field name="user_id"/>
+                <field name="service_id"/>
+                <field name="sub_service_id" context="{'display_default_code': 0}"/>
+                <field name="stage_id"/>
+
+                <filter string="Today" name="today"
+                    domain="[('event_date', '&gt;=', datetime.datetime.combine(context_today(), datetime.time(0,0,0))),
+                            ('event_date', '&lt;=', datetime.datetime.combine(context_today(), datetime.time(23,59,59)))]"/>
+                <filter string="This Week" name="this_week"
+                    domain="[('event_date', '&gt;=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%Y-%m-%d')),
+                            ('event_date', '&lt;=', (context_today() + datetime.timedelta(days=6-context_today().weekday())).strftime('%Y-%m-%d'))]"/>
+                <filter string="This Month" name="this_month"
+                    domain="[('event_date', '&gt;=', datetime.datetime.now().strftime('%Y-%m-01'))]"/>
+
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="User" name="group_by_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Service" name="group_by_service" context="{'group_by': 'service_id'}"/>
+                    <filter string="Subservice" name="group_by_subservice" context="{'group_by': 'sub_service_id'}"/>
+                    <filter string="Stage" name="group_by_stage" context="{'group_by': 'stage_id'}"/>
+                    <filter string="Event Date" name="group_by_event_date" context="{'group_by': 'event_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Form View (Read Only) -->
+    <record id="view_ike_event_service_summary_form" model="ir.ui.view">
+        <field name="name">ike.event.service.summary.form</field>
+        <field name="model">ike.event.service.summary</field>
+        <field name="arch" type="xml">
+            <form string="Event Summary" create="false" edit="false" delete="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="user_id" invisible="1"/>
+                            <field name="user_membership_id" invisible="1"/>
+                            <field name="name"/>
+                            <field name="user_membership_plan_id" options="{'no_open': True}"/>
+                        </group>
+                        <group>
+                            <field name="service_id" options="{'no_open': True}"/>
+                            <field name="sub_service_id" options="{'no_open': True}" context="{'display_default_code': 0}"/>
+                            <field name="event_date"/>
+                            <field name="stage_id" widget="badge"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Pivot View -->
+    <record id="view_ike_event_service_summary_pivot" model="ir.ui.view">
+        <field name="name">ike.event.service.summary.pivot</field>
+        <field name="model">ike.event.service.summary</field>
+        <field name="arch" type="xml">
+            <pivot string="Event Summary Analysis">
+                <field name="service_id" type="row"/>
+                <field name="stage_id" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Graph View -->
+    <record id="view_ike_event_service_summary_graph" model="ir.ui.view">
+        <field name="name">ike.event.service.summary.graph</field>
+        <field name="model">ike.event.service.summary</field>
+        <field name="arch" type="xml">
+            <graph string="Event Summary Graph" type="bar">
+                <field name="service_id"/>
+                <field name="stage_id"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ike_event_service_summary" model="ir.actions.act_window">
+        <field name="name">Event Summary</field>
+        <field name="res_model">ike.event.service.summary</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="search_view_id" ref="view_ike_event_service_summary_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No event summaries found
+            </p>
+            <p>
+                This is a summary view of all events in the system.
+            </p>
+        </field>
+    </record>
+
+</odoo>

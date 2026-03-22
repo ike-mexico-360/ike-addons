@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Detalles de proveedor -->
+    <t t-name="ike_event.IkeTravelTrackingMap">
+
+        <!-- Iframe Map -->
+        <div class="iframe_map_container">
+            <iframe t-if="state.url"
+                    t-att-src="state.url"
+                    frameborder="0"
+                    style="width:100%; height: 100%; border:none;"/>
+        </div>
+    </t>
+
+</templates>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkeSectionAndNoteListRenderer" t-inherit="account.sectionAndNoteListRenderer" t-inherit-mode="primary">
+        <xpath expr="//table" position="attributes">
+            <attribute name="class" add="ike_section_and_note_list_view" separator=" "/>
+        </xpath>
+        <xpath expr="//th[@t-att-data-name='column.name']" position="after">
+            <th t-elif="column.type === 'widget'" t-on-keydown="(ev) => this.onCellKeydown(ev)" t-att-class="{'o_list_button w-print-0 p-print-0': column.type === 'button_group'}">
+                <div class="d-flex">
+                    <span class="d-block min-w-0 text-truncate flex-grow-1 flex-shrink-1" t-esc="column.label"/>
+                </div>
+            </th>
+        </xpath>
+
+        <xpath expr="//i[@t-att-class='getSortableIconClass(column)']" position="attributes">
+            <attribute name="class" add="d-none" separator=" "/>
+        </xpath>
+    </t>
+    <t t-name="ike_event.IkeSectionListRenderer.RecordRow" t-inherit="web.ListRenderer.RecordRow">>
+        <xpath expr="//tr[contains(@class, 'o_data_row')]" position="attributes">
+            <attribute name="t-if">!isHiddenRecord(record)</attribute>
+        </xpath>
+    </t>
+</templates>

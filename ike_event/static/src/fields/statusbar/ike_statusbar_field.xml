@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkeStatusBarDurationField">
+        <div class="ike_statusbar d-flex justify-content-end flex-nowrap">
+            <t t-set="previous" t-value="1"/>
+            <t t-set="current" t-value="0"/>
+            <t t-set="next" t-value="0"/>
+            <t t-foreach="items.inlineReverse" t-as="item" t-key="item.value">
+                <t t-if="current">
+                    <t t-set="current" t-value="0"/>
+                    <t t-set="next" t-value="1"/>
+                </t>
+                <t t-if="item.isSelected">
+                    <t t-set="previous" t-value="0"/>
+                    <t t-set="current" t-value="1"/>
+                </t>
+
+                <div class="ike_statusbar_step" t-att-class="{'completed': previous, 'current': item.isSelected, 'pending': next}">
+                    <div class="ike_statusbar_step_content" t-on-click="() => this.selectItem(item)" t-att-style="props.readonly ? '' : 'cursor: pointer;'">
+                        <div class="ike_statusbar_circle"
+                            t-att-style="item.color ? 'background-color: color-mix(in srgb, ' + item.color + ' ' + (current ? '100%' : '50%') + ', white);' : ''">
+                            <span t-if="current or next"
+                                t-out="item_index + 1"/>
+
+                            <span t-elif="previous"
+                                class="ike_statusbar_checkmark">✓</span>
+
+                        </div>
+                        <span t-out="item.label" class="ike_statusbar_step_label"
+                            t-att-style="item.color ? 'color: color-mix(in srgb, ' + item.color + ' ' + (current ? '100%' : '50%') + ', white);' : ''"/>
+                    </div>
+                </div>
+                <div t-if="!item.lastStage" class="ike_statusbar_line" t-att-class="{'completed': previous, 'current': current, 'pending': next}">
+                    <span t-if="item.shortTimeInStage" t-out="item.shortTimeInStage" class="ike_statusbar_line_time mt-2"/>
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

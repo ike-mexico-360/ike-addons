@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ike_event_service_assistview_view_form" model="ir.ui.view">
+        <field name="name">ike_event_service_assistview.view.form</field>
+        <field name="model">ike.event.service.assistview</field>
+        <field name="arch" type="xml">
+            <form string="" js_class="ike_event_service_assistview_form">
+                <sheet>
+                    <group>
+                        <div class="" invisible="1">
+                            Por favor no cierre esta ventana hasta tener los datos completos, de lo contrario, tendrá que iniciar el proceso
+                        </div>
+                    </group>
+                    <group>
+                        <group invisible="1">
+                            <field name="event_id" invisible="0" readonly="1"/>
+                            <field name="service_res_model" invisible="0" readonly="1"/>
+                            <field name="service_res_id" invisible="0" readonly="1"/>
+                            <field name="answers" invisible="0" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="brand"/>
+                            <field name="model"/>
+                            <field name="plate"/>
+                            <field name="color"/>
+                        </group>
+                        <group>
+                            <field name="address"/>
+                            <field name="latitude"/>
+                            <field name="longitude"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_save_info" string="Save" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

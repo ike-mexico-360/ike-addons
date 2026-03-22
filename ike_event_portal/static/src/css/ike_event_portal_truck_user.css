@@ -1,0 +1,57 @@
+body {
+    background: white;
+    color: #002A4F;
+}
+
+/* Títulos */
+.title {
+    font-size: 36px;
+    font-weight: 700;
+}
+
+.section-title {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+/* Inputs */
+.input-custom {
+    background: #F4F4F4;
+    border: none;
+    padding: 12px 14px;
+    border-radius: 6px;
+}
+
+.input-custom::placeholder {
+    color: #005691;
+    font-weight: lighter;
+}
+
+/* Botones tipo usuario */
+.user-btn {
+    background: #005691 !important;
+}
+
+.user-btn:hover {
+    background: #00284a !important;
+}
+
+/* Foto */
+.photo-box {
+    width: 180px;
+    height: 180px;
+    background: #F4F4F4;
+    border-radius: 12px;
+}
+
+/* Botón guardar */
+.btn-save {
+    background: #003866;
+    color: white;
+    border-radius: 8px;
+    font-size: 18px;
+}
+
+.btn-save:hover {
+    background: #00284a;
+}

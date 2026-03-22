@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="custom_master_catalog.FormPhoneField" t-inherit="web.FormPhoneField" t-inherit-mode="extension">
+        <xpath expr="//i/.." position="attributes">
+            <attribute name="t-if">props.record.data[props.name] and props.enableCall</attribute>
+        </xpath>
+    </t>
+
+</templates>

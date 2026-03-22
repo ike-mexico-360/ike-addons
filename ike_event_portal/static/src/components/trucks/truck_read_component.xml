@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ike_event_portal.TruckReadComponent" owl="1">
+        <div class="portal-main-container">
+            <!-- Loading State -->
+            <div t-if="state.isLoading" class="text-center my-5">
+                <i class="fa fa-spinner fa-spin fa-3x"/>
+                <p>Loading Truck Details...</p>
+            </div>
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="icono grúa" class="me-3" style="width:30px;" />
+                    <h1 class="fw-bold mb-0">Detalles de la grúa</h1>
+                </div>
+                <a t-on-click="props.onCancel"  class="btn btn-secondary">
+                    <i class="fa fa-arrow-left me-1"/> Volver a la lista
+                </a>
+            </div>
+            <!-- Success State -->
+            <div t-if="!state.isLoading and state.truck">
+                <h3>Detalles de la grúa:
+                    <t t-esc="state.truck.name"/>
+                </h3>
+                <hr/>
+                <div class="row g-5">
+                    <div class="col-md-6">
+                        <h5 class="text-primary border-bottom pb-2 mb-4">Información del vehículo</h5>
+                        <div class="mb-3">
+                            <label class="fw-bold text-muted small">Modelo</label>
+                            <!-- Relational fields are [id, name], so we use index 1 -->
+                            <div class="fs-5">
+                                <t t-esc="state.truck.name"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="fw-bold text-muted small">Proveedor</label>
+                            <div class="fs-5">
+                                <t t-esc="state.truck.x_partner_id ? state.truck.x_partner_id[1] : 'N/A'"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="fw-bold text-muted small">Tipo de vehículo</label>
+                            <div class="fs-5">
+                                <t t-esc="state.truck.x_vehicle_type ? state.truck.x_vehicle_type[1] : 'N/A'"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="fw-bold text-muted small">Centro de atención</label>
+                            <div class="fs-5">
+                                <t t-esc="state.truck.x_center_id ? state.truck.x_center_id[1] : 'N/A'"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6 mb-3">
+                                <label class="fw-bold text-muted small">Matrícula</label>
+                                <div class="fs-5">
+                                    <t t-esc="state.truck.license_plate"/>
+                                </div>
+                            </div>
+                            <div class="col-6 mb-3">
+                                <label class="fw-bold text-muted small">Ejes</label>
+                                <div class="fs-5">
+                                    <t t-esc="state.truck.x_vehicles_axes"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3 d-flex align-items-center">
+                            <i t-if="state.truck.x_federal_license_plates" class="fa fa-check-circle text-success me-2"/>
+                            <i t-else="" class="fa fa-times-circle text-muted me-2"/>
+                            <span>Placas federales</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="text-primary border-bottom pb-2 mb-4">Servicio y Operación</h5>
+                        <div class="mb-3">
+                            <label class="fw-bold text-muted small">Chofer asignado</label>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="fs-5">
+                                    <t t-esc="state.truck.driver_id ? state.truck.driver_id[1] : 'Sin asignar'"/>
+                                </div>
+                                <button t-if="state.canEditDriver" class="btn btn-sm btn-outline-primary" t-on-click="openEditDriverModal" title="Editar chofer">
+                                    <i class="fa fa-edit"/>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="fw-bold text-muted small">Servicio</label>
+                            <div class="fs-5">
+                                <t t-esc="state.truck.x_product_category_id ? state.truck.x_product_category_id[1] : 'N/A'"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="fw-bold text-muted small">Subservicio</label>
+                            <div class="fs-5">
+                                <t t-esc="state.truck.x_product_id ? state.truck.x_product_id[1] : 'N/A'"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="fw-bold text-muted small">Estado de servicio</label>
+                            <div>
+                                <span class="badge bg-info text-dark fs-6">
+                                    <t t-esc="state.truck.x_vehicle_service_state"/>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mb-3 d-flex align-items-center">
+                            <i t-if="state.truck.x_maneuvers" class="fa fa-check-circle text-success me-2"/>
+                            <i t-else="" class="fa fa-times-circle text-muted me-2"/>
+                            <span>Maniobras</span>
+                        </div>
+                        <div class="mb-3 d-flex align-items-center">
+                            <i t-if="state.truck.x_manages_tire_conditioning" class="fa fa-check-circle text-success me-2"/>
+                            <i t-else="" class="fa fa-times-circle text-muted me-2"/>
+                            <span>Gestiona acondicionamiento de llantas</span>
+                        </div>
+                        <div class="mb-3">
+                            <label class="fw-bold text-muted small">Accesorios</label>
+                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                <t t-if="state.truck.x_accessories and state.truck.x_accessories.length">
+                                    <span class="badge bg-secondary">
+                                        <t t-esc="state.truck.x_accessories.length + ' Accesorios'"/>
+                                    </span>
+                                </t>
+                                <span t-else="" class="text-muted fst-italic">Sin accesorios</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Edit Driver Modal -->
+            <div t-if="state.showEditDriverModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Editar Chofer Asignado</h5>
+                            <button type="button" class="btn-close" t-on-click="closeEditDriverModal" aria-label="Close"/>
+                        </div>
+                        <div class="modal-body">
+                            <div t-if="state.isLoadingDrivers" class="text-center py-3">
+                                <i class="fa fa-spinner fa-spin fa-2x"/>
+                                <p>Cargando choferes disponibles...</p>
+                            </div>
+                            <div t-else="">
+                                <label class="form-label fw-bold">Seleccionar Chofer</label>
+                                <select class="form-select" t-model="state.selectedDriverId">
+                                    <option value="">-- Sin asignar --</option>
+                                    <t t-foreach="state.availableDrivers" t-as="driver" t-key="driver.id">
+                                        <option t-att-value="driver.id">
+                                            <t t-esc="driver.name"/>
+                                        </option>
+                                    </t>
+                                </select>
+                                <div t-if="state.saveError" class="alert alert-danger mt-3" role="alert">
+                                    <t t-esc="state.saveError"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" t-on-click="closeEditDriverModal">Cancelar</button>
+                            <button type="button" class="btn btn-primary" t-on-click="saveDriver" t-att-disabled="state.isSaving">
+                                <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
+                                <t t-if="state.isSaving">Guardando...</t>
+                                <t t-else="">Guardar</t>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

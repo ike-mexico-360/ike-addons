@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View custom.holidays View List -->
+    <record id="view_custom_holidays_list" model="ir.ui.view">
+        <field name="name">view.custom.holidays.list</field>
+        <field name="model">custom.holidays</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="year"/>
+                <field name="date"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View custom.holidays form -->
+    <record id="view_custom_holidays_form" model="ir.ui.view">
+        <field name="name">view.custom.holidays.form</field>
+        <field name="model">custom.holidays</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Holidays..."/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="year"/>
+                            <field name="date"/>
+                        </group>
+                        <group>
+                            <field name="disabled" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                            <field name="create_date" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- View custom.holidays search -->
+    <record id="view_custom_holidays_search" model="ir.ui.view">
+        <field name="name">view.custom.holidays.search</field>
+        <field name="model">custom.holidays</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="year"/>
+                <field name="date"/>
+                <field name="disabled"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group expand="1" string="Group By">
+                    <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/>
+                    <filter string="Year" name="year" domain="[]" context="{'group_by':'year'}"/>
+                    <filter string="Date" name="date" domain="[]" context="{'group_by':'date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action custom.holidays -->
+    <record id="action_custom_holidays" model="ir.actions.act_window">
+        <field name="name">Holidays</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">custom.holidays</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                There is no examples click here to add new Custom Holidays.
+            </p>
+        </field>
+    </record>
+
+</odoo>

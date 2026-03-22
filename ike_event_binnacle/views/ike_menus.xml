@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem
+            id="ike_menu_event_config_binnacle"
+            name="Configuration Binnacle"
+            sequence="15"
+            action="action_ike_event_binnacle"
+            parent="ike_event.ike_menu_configuration"
+            groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+        <menuitem
+            id="ike_menu_event_config_binnacle_category"
+            name="Configuration Binnacle Category"
+            sequence="16"
+            action="action_ike_event_binnacle_category"
+            parent="ike_event.ike_menu_configuration"
+            groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+    </data>
+</odoo>

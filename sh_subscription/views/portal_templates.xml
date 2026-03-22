@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="sh_subsciption_portal_my_home_menu" name="Portal layout : Subscription menu entries" inherit_id="portal.portal_breadcrumbs" priority="20">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'sh_subscription' or sh_subscription" t-attf-class="breadcrumb-item #{'active ' if not tender else ''}">
+                <a t-if="sh_subscription" t-attf-href="/my/sh_subscription?{{ keep_query() }}">Subscriptions</a>
+                <t t-else="">Subscriptions</t>
+            </li>
+            <li t-if="sh_subscription" class="breadcrumb-item active">
+                <span t-out="sh_subscription.name" />
+            </li>
+        </xpath>
+    </template>
+
+    <template id="sh_subscription_my_home" name="Portal My Home : Subscription entries" customize_show="True" inherit_id="portal.portal_my_home"  priority="20">
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-set="portal_client_category_enable" t-value="True"/>
+        </xpath>
+        <div id="portal_client_category" position="inside">
+            <t t-call="portal.portal_docs_entry">
+                <t t-set="icon" t-value="'/sh_subscription/static/src/img/subscription.svg'"/>                
+                <t t-set="title">Subscriptions</t>
+                <t t-set="url" t-value="'/my/sh_subscription'" />
+                <t t-set="text">View your subscription</t>
+                <t t-set="placeholder_count" t-value="'subscription_count'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="sh_portal_my_subscriptions" name="My Subscriptions">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True" />
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Subscriptions</t>
+            </t>
+
+            <div class="sh_subscription_portal">
+                <t t-if="not subscriptions">
+                    <p>There are currently no Subscriptions for your account.</p>
+                </t>
+                <t t-if="subscriptions" t-call="portal.portal_table">
+                    <thead>
+                        <tr class="text-center">
+                            <th>Plan Name</th>
+                            <th>Subscription Plan</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>State</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <div id="cancel_subscription_modal" class="modal fade sh_cancel_subscription_modal_list" role="dialog">
+                        <div class="modal-dialog">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h4 class="modal-title">Cancel Subscription</h4>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"  aria-label="Close"></button>
+
+                                </div>
+                                <div class="modal-body">
+                                    <div class="row">
+                                        <input type="hidden" id="cancel_subscription_id" class="cancel_subscription_id" name="cancel_subscription_id" value="" />
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="sh_reason_id">Reason</label>
+                                                <select id="sh_reason_id" name="sh_reason_id" class="form-control">
+                                                    <option value="reason">--Select Reason--</option>
+                                                    <t t-foreach="request.env['sh.subscription.reason'].sudo().search([])" t-as="reason">
+                                                        <option t-att-value="reason.id"><t t-esc="reason.name" /></option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="sh_description">Description</label>
+                                                <textarea id="sh_description" name="sh_description" class="form-control"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn btn-primary sh_cancel_now_cls" id="sh_cancel_now">Cancel/Close Now</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <t t-foreach="subscriptions" t-as="subscription">
+                        <tr>
+                            <td class="text-center">
+                                <a t-att-href="'/my/sh_subscription/' + str(subscription.id)"><t t-esc="subscription.name" /></a>
+                            </td>
+                            <td class="text-center"><span t-field="subscription.sh_subscription_plan_id" /></td>
+                            <td class="text-center"><span t-field="subscription.sh_start_date" /></td>
+                            <t t-if="subscription.sh_no_of_billing_cycle == -1 and not subscription.sh_end_date">
+                                <td>Your Subscription is in Never Expire Mode.</td>
+                            </t>
+                            <t t-else="">
+                                <td class="text-center"><span style="padding: 10px;" t-field="subscription.sh_end_date" /></td>
+                            </t>
+                            <t t-if="subscription.state == 'draft'">
+                                <td class="text-center">
+                                    <span style="width:100%" class="badge rounded-pill bg-dark py-2">Waiting</span>
+                                </td>
+                            </t>
+                            <t t-if="subscription.state == 'in_progress'">
+                                <td class="text-center">
+                                    <span style="width:100%" class="badge rounded-pill bg-success py-2">Active</span>
+                                </td>
+                            </t>
+                            <t t-if="subscription.state == 'cancel'">
+                                <td class="text-center">
+                                    <span style="width:100%" class="badge rounded-pill bg-danger py-2">Cancelled</span>
+                                </td>
+                            </t>
+                            <t t-if="subscription.state == 'expire'">
+                                <td class="text-center">
+                                    <span style="width:100%" class="badge rounded-pill bg-danger py-2">Expired</span>
+                                </td>
+                            </t>
+                            <t t-if="subscription.state == 'close'">
+                                <td class="text-center">
+                                    <span style="width:100%" class="badge rounded-pill bg-primary py-2">Finished</span>
+                                </td>
+                            </t>
+                            <t t-if="subscription.state == 'renewed'">
+                                <td class="text-center">
+                                    <span style="width:100%" class="badge rounded-pill bg-info text-dark py-2">Renewed</span>
+                                </td>
+                            </t>
+                            <td>
+                                <input type="hidden" id="subscription_id" class="subscription_id" name="subscription_id" t-att-value="subscription.id" />
+                                <t t-if="subscription.state in ['draft']">
+                                    <a style="background:Yellow;color: black;" class="sh_cancel_btn btn btn-primary w-100" >Cancel</a>
+                                </t>
+                                <t t-if="subscription.state in ['in_progress'] and subscription.sh_subscription_plan_id.sh_is_close_by_customer">
+                                    <a style="background:red;" class="sh_close_btn btn btn-primary  w-100"  >Close</a>
+                                </t>
+                                <t t-if="subscription.state in ['cancel','close','expire'] or subscription.sh_renew_stage in ['time_to_renew'] and subscription.state not in ['renewed']">
+                                    <a class="sh_renew_btn btn btn-primary  w-100">Renew</a>
+                                </t>
+                            </td>
+                        </tr>
+                    </t>
+                </t>
+            </div>
+        </t>
+    </template>
+
+    <template id="sh_subscription_portal_content" name="Subscription Portal Content">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True" />
+
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Subscriptions</t>
+            </t>
+
+            <div class="sh_subscription_portal">
+                <input type="hidden"  id="subscription_id" class="subscription_id" name="subscription_id_form" t-att-value="sh_subscription.id" />
+
+                <div id="cancel_subscription_modal" class="modal fade" role="dialog">
+                    <div class="modal-dialog">
+                        <!-- Modal content-->
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title">Cancel Subscription</h4>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"  aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <input type="hidden" id="cancel_subscription_id" class="cancel_subscription_id" name="cancel_subscription_id" value="" />
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="sh_reason_id">Reason</label>
+                                            <select id="sh_reason_id" name="sh_reason_id" class="form-control">
+                                                <option value="reason">--Select Reason--</option>
+                                                <t t-foreach="request.env['sh.subscription.reason'].sudo().search([])" t-as="reason">
+                                                    <option t-att-value="reason.id"><t t-esc="reason.name" /></option>
+                                                </t>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            <label for="sh_description">Description</label>
+                                            <textarea id="sh_description" name="sh_description" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button class="btn btn-primary sh_cancel_now_cls" id="sh_cancel_now">Cancel Now</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="background: white;padding: 50px 50px;width: 100%;box-sizing: border-box;margin: 0;">
+                    <div class="col-9">
+                        <t t-if="sh_subscription.state == 'in_progress'">
+                            <div class="w-100 d-flex justify-content-start">
+                                <h3 class="m-0">Your plan is </h3>
+                                <span style="padding: 13px;margin-left: 10px;" class="badge rounded-pill bg-success">Active</span>
+                            </div>
+                        </t>
+                        <t t-if="sh_subscription.state == 'draft'">
+                            <div class="w-100 d-flex justify-content-start">
+                                <h3 class="m-0">Your will plan active very soon.</h3>
+                            </div>
+                        </t>
+                        <t t-if="sh_subscription.state == 'close'">
+                            <div class="w-100 d-flex justify-content-start">
+                                <h3 class="m-0">Your plan is </h3>
+                                <span style="padding: 13px;margin-left: 10px;" class="badge rounded-pill bg-primary">Closed</span>
+                            </div>
+                        </t>
+                        <t t-if="sh_subscription.state == 'cancel'">
+                            <div class="w-100 d-flex justify-content-start">
+                                <h3 class="m-0">Your plan is </h3>
+                                <span style="padding: 13px;margin-left: 10px;" class="badge rounded-pill bg-danger">Cancelled</span>
+                            </div>
+                        </t>
+                        <t t-if="sh_subscription.state == 'expire'">
+                            <div class="w-100 d-flex justify-content-start">
+                                <h3 class="m-0">Your plan is </h3>
+                                <span style="padding: 13px;margin-left: 10px;" class="badge rounded-pill bg-danger">Expired</span>
+                            </div>
+                        </t>
+                        <t t-if="sh_subscription.state == 'renewed'">
+                            <div class="w-100 d-flex justify-content-start">
+                                <h3 class="m-0">Your plan is </h3>
+                                <span style="padding: 13px;margin-left: 10px;" class="badge rounded-pill bg-info text-dark">Renewed</span>
+                            </div>
+                        </t>
+                    </div>
+                    <div class="col-3">
+                        <t t-if="sh_subscription.state in ['draft']">
+                            <a style="float:right;background:yellow; color:black;" class="sh_cancel_btn btn btn-primary"   >Cancel</a>
+                        </t>
+                        <t t-if="sh_subscription.state in ['in_progress'] and sh_subscription.sh_subscription_plan_id.sh_is_close_by_customer">
+                            <a style="float:right;background:red; color:#fff;" class="sh_close_btn btn btn-primary"  >Close</a>
+                        </t>
+                        <t t-if="sh_subscription.state in ['cancel','close','expire']">
+                            <a style="float:right;" class="sh_renew_btn btn btn-primary">Renew</a>
+                        </t>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:50px;">
+                    <div class="col-6">
+                        <div style="background: white;padding: 10px;border: 1px solid #e2e2e2;width:100%; max-height:195px !important; height:195px;">
+                            <h2 class="pb-2">Plan Information</h2>
+                            <div class="row">
+                                <div class="col-6">
+                                    <b>Subscription Plan :</b>
+                                </div>
+                                <div class="col-6">
+                                    <span t-field="sh_subscription.sh_subscription_plan_id" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <b>Recurrency :</b>
+                                </div>
+                                <div class="col-6">
+                                    <span t-field="sh_subscription.sh_recurrency" />
+                                    <span t-field="sh_subscription.sh_unit" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <b>Plan Price :</b>
+                                </div>
+                                <div class="col-6">
+                                    <span t-field="sh_subscription.sh_plan_price" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <b>Start Date :</b>
+                                </div>
+                                <div class="col-6">
+                                    <span t-field="sh_subscription.sh_start_date" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <b>End Date :</b>
+                                </div>
+                                <div class="col-6">
+                                    <t t-if="sh_subscription.sh_end_date">
+                                        <span t-field="sh_subscription.sh_end_date" />
+                                    </t>
+                                    <t t-else="">
+                                        <span>Your Subscription is in Never Expire Mode.</span>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div style="background: white;padding: 10px;border: 1px solid #e2e2e2;width:100%; max-height:195px !important; height:195px;">
+                            <h2 class="pb-2">Payment Information</h2>
+                            <div class="row">
+                                <div class="col-6">
+                                    <b>Trial Period :</b>
+                                </div>
+                                <div class="col-6">
+                                    <span t-field="sh_subscription.sh_trial_duration" />
+                                    <span t-field="sh_subscription.sh_trial_unit" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <b>No. of Billing cycle :</b>
+                                </div>
+                                <div class="col-6">
+                                    <span t-field="sh_subscription.sh_no_of_billing_cycle" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">
+                                    <b>Date of Next Payment :</b>
+                                </div>
+                                <div class="col-6">
+                                    <span t-field="sh_subscription.sh_date_of_next_payment" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="subscription_communication" class="mt-4">
+                    <h2>Send Message And Attachments</h2>
+                    <t t-call="portal.message_thread">
+                        <t t-set="object" t-value="sh_subscription" />
+                    </t>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_partner_supplier_view_form_inherit_ike_event_purchase" model="ir.ui.view">
+        <field name="name">res_partner_supplier_view_form.inherit.ike_event_purchase</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="custom_master_catalog.res_partner_supplier_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='priority']" position="after">
+                <field name="x_has_consolidation"/>
+                <field name="x_consolidation_frequency" invisible="not x_has_consolidation" required="x_has_consolidation"/>
+                <field name="x_consolidation_day_of_week"
+                    invisible="not x_has_consolidation or x_consolidation_frequency not in ('weekly', 'biweekly', 'triweekly')"/>
+                <field name="x_consolidation_day_of_month"
+                    invisible="not x_has_consolidation or x_consolidation_frequency != 'monthly'"/>
+                <field name="x_consolidation_next_date" readonly="1" invisible="not x_has_consolidation" force_save="1"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

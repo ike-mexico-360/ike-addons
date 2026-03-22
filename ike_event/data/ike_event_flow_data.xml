@@ -1,0 +1,553 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Services -->
+    <data noupdate="0">
+        <!-- Draft -->
+        <record id="ike_event_flow_draft_1" model="ike.event.flow">
+            <field name="name">User Data</field>
+            <field name="note"></field>
+            <field name="sequence">1</field>
+            <field name="stage_id" ref="ike_event_stage_draft"/>
+            <field name="step_number">1</field>
+        </record>
+        <record id="ike_event_flow_draft_1_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">user_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_draft_1"/>
+        </record>
+        <record id="ike_event_flow_draft_1_detail_action_1" model="ike.event.flow.detail">
+            <field name="name">action_set_user_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">action</field>
+            <field name="event_flow_id" ref="ike_event_flow_draft_1"/>
+        </record>
+        <!-- Capturing 1 -->
+        <record id="ike_event_flow_capturing_1" model="ike.event.flow">
+            <field name="name">Service Data</field>
+            <field name="note"></field>
+            <field name="sequence">2</field>
+            <field name="stage_id" ref="ike_event_stage_capturing"/>
+            <field name="step_number">1</field>
+        </record>
+        <record id="ike_event_flow_capturing_1_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_1"/>
+        </record>
+        <record id="ike_event_flow_capturing_1_detail_action_1" model="ike.event.flow.detail">
+            <field name="name">action_set_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">action</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_1"/>
+        </record>
+        <record id="ike_event_flow_capturing_1_detail_summary_bottom_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_bottom</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_1"/>
+        </record>
+
+        <!-- Capturing 2 -->
+        <record id="ike_event_flow_capturing_2" model="ike.event.flow">
+            <field name="name">User Service Data</field>
+            <field name="note"></field>
+            <field name="sequence">3</field>
+            <field name="stage_id" ref="ike_event_stage_capturing"/>
+            <field name="step_number">2</field>
+        </record>
+        <record id="ike_event_flow_capturing_2_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">user_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_2"/>
+        </record>
+        <record id="ike_event_flow_capturing_2_detail_action_1" model="ike.event.flow.detail">
+            <field name="name">action_set_user_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">action</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_2"/>
+        </record>
+        <record id="ike_event_flow_capturing_2_detail_summary_bottom_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_bottom</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_2"/>
+        </record>
+
+        <!-- Capturing 3 -->
+        <record id="ike_event_flow_capturing_3" model="ike.event.flow">
+            <field name="name">Location Data</field>
+            <field name="note"></field>
+            <field name="sequence">4</field>
+            <field name="stage_id" ref="ike_event_stage_capturing"/>
+            <field name="step_number">3</field>
+        </record>
+        <record id="ike_event_flow_capturing_3_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">user_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_3"/>
+        </record>
+        <record id="ike_event_flow_capturing_3_detail_section_2" model="ike.event.flow.detail">
+            <field name="name">location_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_3"/>
+        </record>
+        <record id="ike_event_flow_capturing_3_detail_action_1" model="ike.event.flow.detail">
+            <field name="name">action_set_location_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">action</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_3"/>
+        </record>
+        <record id="ike_event_flow_capturing_3_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_3"/>
+        </record>
+        <record id="ike_event_flow_capturing_3_detail_summary_bottom_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_bottom</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_3"/>
+        </record>
+
+        <!-- Capturing 4 -->
+        <record id="ike_event_flow_capturing_4" model="ike.event.flow">
+            <field name="name">Survey Data</field>
+            <field name="note"></field>
+            <field name="sequence">5</field>
+            <field name="stage_id" ref="ike_event_stage_capturing"/>
+            <field name="step_number">4</field>
+        </record>
+        <record id="ike_event_flow_capturing_4_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">survey_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_4"/>
+        </record>
+        <record id="ike_event_flow_capturing_4_detail_action_1" model="ike.event.flow.detail">
+            <field name="name">action_set_survey_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">action</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_4"/>
+        </record>
+        <record id="ike_event_flow_capturing_4_detail_action_2" model="ike.event.flow.detail">
+            <field name="name">action_set_products_covered</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">action</field>
+            <field name="service_specific"></field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_4"/>
+        </record>
+        <record id="ike_event_flow_capturing_4_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_4"/>
+        </record>
+        <record id="ike_event_flow_capturing_4_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_4"/>
+        </record>
+        <record id="ike_event_flow_capturing_4_detail_summary_bottom_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_bottom</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_4"/>
+        </record>
+
+        <!-- Capturing 5 -->
+        <record id="ike_event_flow_capturing_5" model="ike.event.flow">
+            <field name="name">Destination Data (Vial Truck)</field>
+            <field name="note">Service specific: ike.service.input.vial.truck</field>
+            <field name="sequence">6</field>
+            <field name="stage_id" ref="ike_event_stage_capturing"/>
+            <field name="step_number">5</field>
+            <field name="condition_domain">[('sub_service_ref', '=', 'town_truck')]</field>
+        </record>
+        <record id="ike_event_flow_capturing_5_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">destination_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="service_specific">ike.service.input.vial.truck</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_5"/>
+        </record>
+        <record id="ike_event_flow_capturing_5_detail_action_1" model="ike.event.flow.detail">
+            <field name="name">action_set_destination_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">action</field>
+            <field name="service_specific">ike.service.input.vial.truck</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_5"/>
+        </record>
+        <record id="ike_event_flow_capturing_5_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="service_specific">ike.service.input.vial.truck</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_5"/>
+        </record>
+        <record id="ike_event_flow_capturing_5_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="service_specific">ike.service.input.vial.truck</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_5"/>
+        </record>
+        <record id="ike_event_flow_capturing_5_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="service_specific">ike.service.input.vial.truck</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_5"/>
+        </record>
+        <record id="ike_event_flow_capturing_5_detail_summary_bottom_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="service_specific">ike.service.input.vial.truck</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_5"/>
+        </record>
+
+        <!-- Capturing 6 -->
+        <record id="ike_event_flow_capturing_6" model="ike.event.flow">
+            <field name="name">Product Data</field>
+            <field name="note"></field>
+            <field name="sequence">7</field>
+            <field name="stage_id" ref="ike_event_stage_capturing"/>
+            <field name="step_number">6</field>
+        </record>
+        <record id="ike_event_flow_capturing_6_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">user_sub_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_6"/>
+        </record>
+        <record id="ike_event_flow_capturing_6_detail_section_2" model="ike.event.flow.detail">
+            <field name="name">product_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_6"/>
+        </record>
+        <record id="ike_event_flow_capturing_6_detail_action_1" model="ike.event.flow.detail">
+            <field name="name">action_set_user_sub_service_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">action</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_6"/>
+        </record>
+        <record id="ike_event_flow_capturing_6_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_6"/>
+        </record>
+        <record id="ike_event_flow_capturing_6_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_6"/>
+        </record>
+        <record id="ike_event_flow_capturing_6_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_6"/>
+        </record>
+        <record id="ike_event_flow_capturing_6_detail_summary_bottom_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">7</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_capturing_6"/>
+        </record>
+
+        <!-- Searching 1 -->
+        <record id="ike_event_flow_searching_1" model="ike.event.flow">
+            <field name="name">Supplier Data</field>
+            <field name="note"></field>
+            <field name="sequence">8</field>
+            <field name="stage_id" ref="ike_event_stage_searching"/>
+            <field name="step_number">1</field>
+        </record>
+        <record id="ike_event_flow_searching_1_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">supplier_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_searching_1"/>
+        </record>
+        <record id="ike_event_flow_searching_1_detail_action_1" model="ike.event.flow.detail">
+            <field name="name">action_set_supplier_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">action</field>
+            <field name="event_flow_id" ref="ike_event_flow_searching_1"/>
+        </record>
+        <record id="ike_event_flow_searching_1_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_searching_1"/>
+        </record>
+        <record id="ike_event_flow_searching_1_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_searching_1"/>
+        </record>
+        <record id="ike_event_flow_searching_1_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_searching_1"/>
+        </record>
+        <record id="ike_event_flow_searching_1_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_searching_1"/>
+        </record>
+
+        <!-- Assigned 1 -->
+        <record id="ike_event_flow_assigned_1" model="ike.event.flow">
+            <field name="name">Assigned</field>
+            <field name="note"></field>
+            <field name="sequence">10</field>
+            <field name="stage_id" ref="ike_event_stage_assigned"/>
+            <field name="step_number">1</field>
+        </record>
+        <record id="ike_event_flow_assigned_1_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">service_supplier</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_1"/>
+        </record>
+        <record id="ike_event_flow_assigned_1_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_1"/>
+        </record>
+        <record id="ike_event_flow_assigned_1_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_1"/>
+        </record>
+        <record id="ike_event_flow_assigned_1_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_1"/>
+        </record>
+        <record id="ike_event_flow_assigned_1_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_1"/>
+        </record>
+        <record id="ike_event_flow_assigned_1_detail_summary_top_5" model="ike.event.flow.detail">
+            <field name="name">event_summary_supplier_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_1"/>
+        </record>
+
+        <!-- Assigned 2 Multi-Supplier: Concepts -->
+        <record id="ike_event_flow_assigned_2" model="ike.event.flow">
+            <field name="name">Multiple Supplier: Product Data</field>
+            <field name="note"></field>
+            <field name="sequence">11</field>
+            <field name="stage_id" ref="ike_event_stage_assigned"/>
+            <field name="step_number">2</field>
+            <field name="condition_domain">[('stage_ref', '=', 'assigned'),('step_number', '=', 3)]</field>
+        </record>
+        <record id="ike_event_flow_assigned_2_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">user_sub_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_2"/>
+        </record>
+        <record id="ike_event_flow_assigned_2_detail_section_2" model="ike.event.flow.detail">
+            <field name="name">product_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_2"/>
+        </record>
+        <record id="ike_event_flow_assigned_2_detail_action_1" model="ike.event.flow.detail">
+            <field name="name">action_set_user_sub_service_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">action</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_2"/>
+        </record>
+
+        <!-- Assigned 3 Multi-Supplier: Searching -->
+        <record id="ike_event_flow_assigned_3" model="ike.event.flow">
+            <field name="name">Multiple Supplier: Searching</field>
+            <field name="note"></field>
+            <field name="sequence">12</field>
+            <field name="stage_id" ref="ike_event_stage_assigned"/>
+            <field name="step_number">3</field>
+            <field name="condition_domain">[('stage_ref', '=', 'assigned'),('step_number', '=', 2)]</field>
+        </record>
+        <record id="ike_event_flow_assigned_3_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">supplier_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_3"/>
+        </record>
+        <record id="ike_event_flow_assigned_3_detail_action_1" model="ike.event.flow.detail">
+            <field name="name">action_set_supplier_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">action</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_3"/>
+        </record>
+
+        <!-- In Progress 1 -->
+        <record id="ike_event_flow_in_progress_1" model="ike.event.flow">
+            <field name="name">In Progress</field>
+            <field name="note"></field>
+            <field name="sequence">13</field>
+            <field name="stage_id" ref="ike_event_stage_in_progress"/>
+            <field name="step_number">1</field>
+        </record>
+        <record id="ike_event_flow_in_progress_1_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">service_supplier</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_in_progress_1"/>
+        </record>
+        <record id="ike_event_flow_in_progress_1_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_in_progress_1"/>
+        </record>
+        <record id="ike_event_flow_in_progress_1_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_in_progress_1"/>
+        </record>
+        <record id="ike_event_flow_in_progress_1_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_in_progress_1"/>
+        </record>
+        <record id="ike_event_flow_in_progress_1_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_sub_service_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_in_progress_1"/>
+        </record>
+        <record id="ike_event_flow_in_progress_1_detail_summary_top_5" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_in_progress_1"/>
+        </record>
+        <record id="ike_event_flow_in_progress_1_detail_summary_top_6" model="ike.event.flow.detail">
+            <field name="name">event_summary_supplier_data</field>
+            <field name="sequence">7</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_in_progress_1"/>
+        </record>
+
+        <!-- In Progress 2 Multi-Supplier: Concepts -->
+        <record id="ike_event_flow_in_progress_2" model="ike.event.flow">
+            <field name="name">Multiple Supplier: Product Data</field>
+            <field name="note"></field>
+            <field name="sequence">14</field>
+            <field name="stage_id" ref="ike_event_stage_in_progress"/>
+            <field name="step_number">2</field>
+            <field name="condition_domain">[('stage_ref', '=', 'in_progress'),('step_number', '=', 3)]</field>
+        </record>
+        <record id="ike_event_flow_in_progress_2_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">user_sub_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_in_progress_2"/>
+        </record>
+        <record id="ike_event_flow_in_progress_2_detail_section_2" model="ike.event.flow.detail">
+            <field name="name">product_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_in_progress_2"/>
+        </record>
+        <record id="ike_event_flow_in_progress_2_detail_action_1" model="ike.event.flow.detail">
+            <field name="name">action_set_user_sub_service_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">action</field>
+            <field name="event_flow_id" ref="ike_event_flow_in_progress_2"/>
+        </record>
+
+        <!-- In Progress 3 Multi-Supplier: Searching -->
+        <record id="ike_event_flow_in_progress_3" model="ike.event.flow">
+            <field name="name">Multiple Supplier: Searching</field>
+            <field name="note"></field>
+            <field name="sequence">15</field>
+            <field name="stage_id" ref="ike_event_stage_in_progress"/>
+            <field name="step_number">3</field>
+            <field name="condition_domain">[('stage_ref', '=', 'in_progress'),('step_number', '=', 2)]</field>
+        </record>
+        <record id="ike_event_flow_in_progress_3_detail_section_1" model="ike.event.flow.detail">
+            <field name="name">supplier_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">section</field>
+            <field name="event_flow_id" ref="ike_event_flow_in_progress_3"/>
+        </record>
+        <record id="ike_event_flow_in_progress_3_detail_action_1" model="ike.event.flow.detail">
+            <field name="name">action_set_supplier_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">action</field>
+            <field name="event_flow_id" ref="ike_event_flow_in_progress_3"/>
+        </record>
+
+        <!-- Completed 1 -->
+        <record id="ike_event_flow_completed_1" model="ike.event.flow">
+            <field name="name">Completed</field>
+            <field name="note"></field>
+            <field name="sequence">16</field>
+            <field name="stage_id" ref="ike_event_stage_completed"/>
+            <field name="step_number">1</field>
+        </record>
+        <record id="ike_event_flow_completed_1_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_completed_1"/>
+        </record>
+        <record id="ike_event_flow_completed_1_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_completed_1"/>
+        </record>
+        <record id="ike_event_flow_completed_1_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_completed_1"/>
+        </record>
+        <record id="ike_event_flow_completed_1_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_sub_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_completed_1"/>
+        </record>
+        <record id="ike_event_flow_completed_1_detail_summary_top_5" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_completed_1"/>
+        </record>
+        <record id="ike_event_flow_completed_1_detail_summary_top_6" model="ike.event.flow.detail">
+            <field name="name">event_summary_supplier_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_completed_1"/>
+        </record>
+    </data>
+</odoo>

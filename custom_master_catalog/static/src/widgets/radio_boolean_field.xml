@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="custom_master_catalog.RadioBooleanField" owl="1">
+        <div
+            role="radiogroup"
+            t-attf-class="o_{{ props.orientation }}"
+            class="d-flex flex-wrap gap-5"
+            t-att-aria-label="props.string"
+        >
+            <div class="form-check o_radio_item" aria-atomic="true">
+                <label class="radio-boolean-option d-flex align-items-center gap-2 mb-0">
+                    <input
+                        type="radio"
+                        t-att-name="id"
+                        value="true"
+                        t-att-checked="state.value === true"
+                        t-att-id="`${id}_yes`"
+                        class="form-check-input"
+                        t-att-disabled="props.readonly"
+                        t-on-change="() => this.onChange(true)"
+                    />
+                    <span>Sí</span>
+                </label>
+            </div>
+            <div class="form-check o_radio_item" aria-atomic="true">
+                <label class="radio-boolean-option d-flex align-items-center gap-2 mb-0">
+                    <input
+                        type="radio"
+                        t-att-name="id"
+                        value="false"
+                        t-att-checked="state.value === false"
+                        t-att-id="`${id}_no`"
+                        class="form-check-input"
+                        t-att-disabled="props.readonly"
+                        t-on-change="() => this.onChange(false)"
+                    />
+                    <span>No</span>
+                </label>
+            </div>
+        </div>
+    </t>
+</templates>

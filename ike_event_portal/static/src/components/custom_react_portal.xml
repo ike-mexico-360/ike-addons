@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ike_event_portal.CustomReactApp" owl="1">
+        <div class="o_react_app_wrapper">
+            <div t-ref="root"/>
+        </div>
+    </t>
+</templates>

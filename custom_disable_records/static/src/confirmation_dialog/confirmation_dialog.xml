@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+
+  <t t-name="custom_disable_records.CustomConfirmationDialog" t-inherit="web.ConfirmationDialog" t-inherit-mode="primary">
+    <xpath expr="//p" position="after">
+      <textarea t-model="state.reason" class="form-control" />
+    </xpath>
+  </t>
+
+</templates>

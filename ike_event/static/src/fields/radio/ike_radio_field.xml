@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="ike_event.IkeRadioField">
+        <div class="d-flex flex-row flex-wrap gap-3">
+            <t t-foreach="items" t-as="item" t-key="item[0]">
+                <label class="d-flex flex-row gap-2 align-items-center justify-content-between text-nowrap">
+                    <t t-if="props.icons.length">
+                        <i class="fa fa-light fa-lg" t-att-class="props.icons[item_index % props.icons.length]"/>
+                    </t>
+                    <span t-out="item[1]"/>
+                    <div class="d-flex">
+                        <input
+                            type="radio"
+                            t-att-name="id"
+                            t-att-value="item[0]"
+                            t-att-checked="item[0] === value"
+                            t-att-disabled="props.readonly"
+                            t-att-id="`${id}_${item[0]}`"
+                            t-on-change="() => this.onChange(item)"
+                        />
+                    </div>
+                </label>
+            </t>
+        </div>
+    </t>
+</templates>

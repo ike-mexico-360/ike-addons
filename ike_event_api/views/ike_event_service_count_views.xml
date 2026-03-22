@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_custom_membership_nus_form_inherit_ike_event_ike_event_api" model="ir.ui.view">
+        <field name="name">view_custom_membership_nus_form_inherit_ike_event_ike_event_api</field>
+        <field name="model">custom.membership.nus</field>
+        <field name="inherit_id" ref="ike_event.view_custom_membership_nus_form_inherit_ike_event"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='events_of_period']" position="after">
+                <field name="total_events" readonly="1"/>
+                <!-- ToDo: Campo solo lectura, se deja editable para pruebas -->
+                <field name="x_saved_external_totals" readonly="0" groups="base.group_no_one"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

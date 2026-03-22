@@ -1,0 +1,51 @@
+.o_ike_affiliations_widget{
+    $name-color: #134F82;
+    $badge-blue: #CFE5FF;
+    $badge-green: #AFF1C4;
+    $general-text-color: #0E365A;
+    $card-border-color: #A0C9FF;
+    $detail-color: #166DB3;
+    $widget-border-color: #9FC7E7;
+
+    .user-name {
+        color: $name-color;
+        font-weight: $o-font-weight-medium;
+        font-size: $o-font-size-base-touch * 1.2;
+    }
+
+    .ike-text-secondary {
+        color: $general-text-color;
+    }
+
+    .ike-details-button {
+        color: $detail-color;
+        text-decoration: underline!important;
+    }
+
+    .text-bg-primary {
+        background-color: $badge-blue!important;
+        color: #111111!important;
+    }
+    .text-bg-success {
+        background-color: $badge-green!important;
+        color: #111111!important;
+    }
+
+    .ike-active-affiliations, .ike-inactive-affiliations {
+        padding: 0 var(--formView-sheet-padding-x) 0 var(--formView-sheet-padding-x);
+    }
+
+    .ike-card-item {
+        max-width: 350px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+
+        .card {
+            border-color: $card-border-color;
+        }
+    }
+
+    .ike-border-bottom {
+        border-bottom: 1px solid $widget-border-color;
+    }
+}

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="custom_ike_res_country_view_search" model="ir.ui.view">
+            <field name="name">custom_ike_res_country.view.search</field>
+            <field name="model">res.country</field>
+            <field name="priority" eval="50"/>
+            <field name="arch" type="xml">
+                <search string="">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="currency_id"/>
+                    <field name="phone_code"/>
+                    <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                    <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Heredar el formulario del grupo de países -->
+        <record id="view_country_group_form_inherit" model="ir.ui.view">
+            <field name="name">view.country.group.form.inherit</field>
+            <field name="model">res.country.group</field>
+            <field name="inherit_id" ref="base.view_country_group_form"/>
+            <field name="arch" type="xml">
+                <field name="country_ids" position="replace">
+                    <field name="country_ids" 
+                        widget="many2many_tags" 
+                        options="{'no_create': True, 'no_open': True}"
+                        context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_country_tree'}"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="custom_ike_view_country_tree" model="ir.ui.view">
+            <field name="name">res.country.list</field>
+            <field name="model">res.country</field>
+            <field name="priority" eval="50"/>
+            <field name="arch" type="xml">
+                <list string="Country" create="0" delete="0" edit="0" decoration-muted="disabled == True">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="currency_id"/>
+                    <field name="phone_code"/>
+                    <field name="active" column_invisible="1"/>
+                    <field name="disabled" column_invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="custom_ike_view_country_form" model="ir.ui.view">
+            <field name="name">custom_ike_view.country.form</field>
+            <field name="model">res.country</field>
+            <field name="priority" eval="50"/>
+            <field name="arch" type="xml">
+                <form create="0" delete="0">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box"/>
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                        <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                        <div class="oe_button_box" name="button_box">
+                        </div>
+                        <field name="image_url" widget="image_url" class="oe_avatar" options="{'size': [128,128]}" readonly="disabled"/>
+                        <group name="main_group">
+                            <group name="country_details">
+                                <field name="name" options="{'no_translate': True}" readonly="1"/>
+                                <field name="currency_id" readonly="1" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                    context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_currency_tree', 'form_view_ref': 'custom_master_catalog.custom_ike_view_currency_form'}"/>
+                                <field name="code" readonly="1"/>
+                            </group>
+                            <group name="phone_vat_settings">
+                                <field name="phone_code" options="{'format': false}" readonly="1"/>
+                                <field name="zip_required" readonly="1"/>
+                            </group>
+                        </group>
+                        <group invisible="1">
+                            <field name="create_date" invisible="1"/>
+                            <field name="disabled" invisible="1" />
+                            <field name="active" invisible="1" />
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="custom_view_country_group_tree_inherit" model="ir.ui.view">
+            <field name="name">res.country.group.list.inherit.disable_edit</field>
+            <field name="model">res.country.group</field>
+            <field name="inherit_id" ref="base.view_country_group_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="attributes">
+                    <attribute name="edit">0</attribute>
+                </xpath>
+            </field>
+        </record>
+        
+        <record id="custom_ike_action_country" model="ir.actions.act_window">
+            <field name="name">Countries</field>
+            <field name="res_model">res.country</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="custom_ike_res_country_view_search"/>
+            <field name="domain">[]</field>
+            <field name="context">{'search_default_filter_enabled': 1}</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('custom_ike_view_country_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('custom_ike_view_country_form')})]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No Country Found!
+                </p><p>
+                    Manage the list of countries that can be set on your contacts.
+                </p>
+            </field>
+        </record>
+    </data>
+</odoo>

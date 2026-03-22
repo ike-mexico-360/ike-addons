@@ -1,0 +1,4 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ike_event_binnacle_manager,ike_event_binnacle_manager,model_ike_event_binnacle,,1,1,1,1
+access_ike_event_binnacle_category_manager,ike_event_binnacle_category_manager,model_ike_event_binnacle_category,,1,1,1,1
+access_ike_event_comment_wizard,ike_event_comment_wizard,model_ike_event_comment_wizard,,1,1,1,1

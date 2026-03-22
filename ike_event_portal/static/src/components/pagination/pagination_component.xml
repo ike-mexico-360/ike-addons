@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ike_event_portal.PaginationComponent" owl="1">
+        <div class="pagination-wrapper">
+            <!-- Top Bar: Page Size and Info -->
+            <t t-if="props.showPageSize or props.showInfo">
+                <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+                    <!-- Page Size Selector -->
+                    <t t-if="props.showPageSize">
+                        <div class="d-flex align-items-center">
+                            <span class="text-muted me-2">Mostrar</span>
+                            <select class="form-select form-select-sm"
+                                    style="width: auto;"
+                                    t-on-change="onPageSizeChange">
+                                <t t-foreach="props.pageSizeOptions" t-as="size" t-key="size">
+                                    <option t-att-value="size"
+                                            t-att-selected="props.pagination.info.pageSize === size">
+                                        <t t-esc="size"/>
+                                    </option>
+                                </t>
+                            </select>
+                            <span class="text-muted ms-2">registros</span>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <div/>
+                    </t>
+
+                    <!-- Info Display -->
+                    <t t-if="props.showInfo">
+                        <div class="text-muted small">
+                            Mostrando <strong><t t-esc="props.pagination.info.startItem"/></strong>
+                            a <strong><t t-esc="props.pagination.info.endItem"/></strong>
+                            de <strong><t t-esc="props.pagination.info.totalItems"/></strong> registros
+                        </div>
+                    </t>
+                </div>
+            </t>
+
+            <!-- Slot for table/content -->
+            <t t-slot="default"/>
+
+            <!-- Pagination Controls -->
+            <t t-if="props.pagination.info.totalPages > 1">
+                <div class="d-flex justify-content-between align-items-center p-3 border-top">
+                    <div class="text-muted small">
+                        Página <strong><t t-esc="props.pagination.info.currentPage"/></strong>
+                        de <strong><t t-esc="props.pagination.info.totalPages"/></strong>
+                    </div>
+
+                    <nav aria-label="Paginación">
+                        <ul class="pagination pagination-sm mb-0">
+                            <!-- First Page -->
+                            <li t-attf-class="page-item #{!props.pagination.info.hasPrevPage ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   href="#"
+                                   t-on-click.prevent="onFirstPage"
+                                   title="Primera página">
+                                    <i class="fa fa-angle-double-left"/>
+                                </a>
+                            </li>
+                            <!-- Previous Page -->
+                            <li t-attf-class="page-item #{!props.pagination.info.hasPrevPage ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   href="#"
+                                   t-on-click.prevent="onPrevPage"
+                                   title="Página anterior">
+                                    <i class="fa fa-angle-left"/>
+                                </a>
+                            </li>
+
+                            <!-- Page Numbers -->
+                            <t t-foreach="props.pagination.visiblePageNumbers" t-as="page" t-key="page_index">
+                                <t t-if="page.isEllipsis">
+                                    <li class="page-item disabled">
+                                        <span class="page-link">...</span>
+                                    </li>
+                                </t>
+                                <t t-else="">
+                                    <li t-attf-class="page-item #{page.number === props.pagination.info.currentPage ? 'active' : ''}">
+                                        <a class="page-link"
+                                           href="#"
+                                           t-on-click.prevent="() => this.onPageClick(page.number)">
+                                            <t t-esc="page.number"/>
+                                        </a>
+                                    </li>
+                                </t>
+                            </t>
+
+                            <!-- Next Page -->
+                            <li t-attf-class="page-item #{!props.pagination.info.hasNextPage ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   href="#"
+                                   t-on-click.prevent="onNextPage"
+                                   title="Página siguiente">
+                                    <i class="fa fa-angle-right"/>
+                                </a>
+                            </li>
+                            <!-- Last Page -->
+                            <li t-attf-class="page-item #{!props.pagination.info.hasNextPage ? 'disabled' : ''}">
+                                <a class="page-link"
+                                   href="#"
+                                   t-on-click.prevent="onLastPage"
+                                   title="Última página">
+                                    <i class="fa fa-angle-double-right"/>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="res_partner_inherit_subcription_contact" model="ir.ui.view">
+            <field name="name">res.partner.inherit.subcription.contact</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base_geolocalize.view_crm_partner_geo_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='geo_location']" position="after">
+                    <page string="Afiliaciones" name="subcription" invisible="x_is_account" groups="sh_subscription.group_user_sh_subscription">
+                        <group>
+                            <field name="x_subscription_ids" widget="sol_o2m" nolabel="1" mode="list" readonly="1">
+                                <list string="Afiliación" editable="bottom" limit="200">
+                                    <field name="x_subscription_account_id"/>
+                                    <field name="sh_subscription_plan_id"/>
+                                    <field name="name" string="Afiliación"/>
+                                </list>
+                            </field>
+                        </group>
+                    </page>
+                    <page string="Afiliados" name="subscribers" invisible="not x_is_account" groups="sh_subscription.group_user_sh_subscription">
+                        <group>
+                            <field name="x_subscriber_count" invisible="x_subscriber_count == 0"/>
+                            <field name="x_subscriber_ids" widget="sol_o2m" nolabel="1" mode="list" readonly="1">
+                                <list string="Afiliados" editable="bottom" limit="200">
+                                    <field name="name"/>
+                                    <field name="phone"/>
+                                </list>
+                            </field>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

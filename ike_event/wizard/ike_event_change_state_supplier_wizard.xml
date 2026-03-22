@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ike_event_change_state_supplier_wizard_form" model="ir.ui.view">
+        <field name="name">ike.event.change.state.supplier.wizard.form</field>
+        <field name="model">ike.event.change.state.supplier.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group col="12">
+                        <group colspan="4">
+                            <field name="event_id" readonly="1" options="{'no_open': True}"/>
+                        </group>
+                        <group colspan="4">
+                            <field name="supplier_id" readonly="1" options="{'no_open': True}"/>
+                            <field name="supplier_number" invisible="1"/>
+                        </group>
+                        <group colspan="4">
+                            <field name="stage_id" readonly="1" options="{'no_open': True}"/>
+                        </group>
+                    </group>
+                    <group invisible="0">
+                        <field name="new_stage_domain" invisible="1"/>
+                        <field name="new_stage_id"
+                            widget="statusbar"
+                            domain="new_stage_domain"
+                            options="{'clickable': 1, 'fold_field': 'fold'}"
+                            nolabel="1"/>
+                    </group>
+                    <group>
+                        <field name="user_id" readonly="1" options="{'no_open': True}"/>
+                        <field name="show_assigned" invisible="1"/>
+                        <field name="show_on_route" invisible="1"/>
+                        <field name="show_arrived" invisible="1"/>
+                        <field name="show_contacted" invisible="1"/>
+                        <field name="show_on_route_2" invisible="1"/>
+                        <field name="show_arrived_2" invisible="1"/>
+                        <field name="show_finalized" invisible="1"/>
+                    </group>
+                    <group invisible="not new_stage_id">
+                        <field name="assigned_date"  invisible="not show_assigned"  required="show_assigned"/>
+                        <field name="on_route_date"  invisible="not show_on_route"  required="show_on_route"/>
+                        <field name="arrived_date"   invisible="not show_arrived"   required="show_arrived"/>
+                        <field name="contacted_date" invisible="not show_contacted" required="show_contacted"/>
+                        <field name="on_route_2_date" invisible="not show_on_route_2" required="show_on_route_2"/>
+                        <field name="arrived_2_date"  invisible="not show_arrived_2"  required="show_arrived_2"/>
+                        <field name="finalized_date"  invisible="not show_finalized"  required="show_finalized"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm"
+                            string="Confirm"
+                            type="object"
+                            class="btn-primary" invisible="0"/>
+                    <button string="Cancel"
+                            special="cancel"
+                            class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

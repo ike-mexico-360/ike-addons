@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="ike_event.IkeTimerWidget">
+        <div class="d-flex flex-wrap justify-content-center align-items-center gap-1" t-att-class="getTimerClass()">
+            <!-- Power -->
+            <t t-if="state.current_state == 'notified'">
+                <i class="fa fa-power-off cursor-pointer text-light" t-on-click="onPlay" title="Pause" t-if="state.paused"/>
+                <i class="fa fa-power-off cursor-pointer" t-on-click="onPause" title="Pause" t-else=""/>
+            </t>
+            <!-- Reset -->
+            <t t-if="showReset">
+                <i class="fa fa-undo cursor-pointer" t-on-click="onReset" title="Reset" />
+            </t>
+            <!-- Notification -->
+            <t t-if="showNotification">
+                <i class="fa fa-clock-o fw-bold cursor-pointer"
+                    t-att-class="{'text-muted': state.blocked}" t-on-click="onNotify"
+                    title="Notify" />
+            </t>
+            <t t-else="">
+                <i class="fa fa-clock-o" />
+            </t>
+            <!-- Timer -->
+            <span t-out="formatTime(state.seconds)" />
+            <!-- Accept/Reject -->
+            <t t-if="state.current_state == 'notified' and !state.blocked">
+                <i class="fa fa-check cursor-pointer"
+                    t-on-click="onAccept" title="Accept" />
+                <i class="fa fa-times cursor-pointer"
+                    t-on-click="onReject" title="Reject" />
+            </t>
+        </div>
+    </t>
+
+</templates>

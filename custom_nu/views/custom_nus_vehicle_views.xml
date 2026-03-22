@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View Search -->
+    <record id="custom_nus_vehicle_view_search" model="ir.ui.view">
+        <field name="name">custom.nus.vehicle.view.search</field>
+        <field name="model">custom.nus.vehicle</field>
+        <field name="arch" type="xml">
+            <search string="NUs Vehicles">
+                <field name="nus_id"/>
+                <field name="model_nus_id" string="Subbrand"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_nus" string="NUs" context="{'group_by': 'nus_id'}"/>
+                    <filter name="group_by_model" string="Subbrand" context="{'group_by': 'model_nus_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- View Form -->
+    <record id="custom_nus_vehicle_view_form" model="ir.ui.view">
+        <field name="name">custom.nus.vehicle.view.form</field>
+        <field name="model">custom.nus.vehicle</field>
+        <field name="arch" type="xml">
+            <form string="NUs Vehicles" delete="0" duplicate="0">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <field name="image_128" widget="image" class="oe_avatar"/>
+                    <group>
+                        <group>
+                            <field name="nus_id" required="1"
+                                options='{"no_open": True, "no_create": True}'
+                                domain="[('disabled', '=', False)]"/>
+                            <field name="model_nus_id" string="Subbrand"
+                                options='{"no_open": True, "no_create": True}'
+                                domain="[('disabled', '=', False)]"/>
+                            <field name="vehicle_year"/>
+                            <field name="license_plate_nus"/>
+                            <field name="vin_sn_nus"/>
+                            <field name="vehicle_category_id"
+                                options='{"no_open": True, "no_create": True}'
+                                context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_category_view_list'}"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- View List -->
+    <record id="custom_nus_vehicle_view_list" model="ir.ui.view">
+        <field name="name">custom.nus.vehicle.view.list</field>
+        <field name="model">custom.nus.vehicle</field>
+        <field name="arch" type="xml">
+            <list string="NUs Vehicles" delete="0" edit="0" duplicate="0">
+                <field name="model_nus_id" string="Subbrand"/>
+                <field name="license_plate_nus"/>
+                <field name="vin_sn_nus"/>
+                <field name="nus_id"/>
+                <field name="vehicle_category_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="custom_nus_vehicle_view_kanban" model="ir.ui.view">
+        <field name="name">custom.nus.vehicle.view.kanban</field>
+        <field name="model">custom.nus.vehicle</field>
+        <field name="arch" type="xml">
+            <kanban string="NUs Vehicles" class="o_kanban_mobile" editable="false" multiedit="false" delete="false">
+                <field name="image_128"/>
+                <field name="model_nus_id" string="Subbrand"/>
+                <field name="license_plate_nus"/>
+                <field name="vin_sn_nus"/>
+                <field name="nus_id"/>
+                <templates>
+                    <t t-name="card" class="d-flex flex-row position-relative">
+                        <aside class="me-3">
+                            <field name="image_128" widget="image" class="oe_avatar"/>
+                        </aside>
+                        <main class="ps-2 ps-md-0 flex-grow-1">
+                            <div class="d-flex flex-column">
+                                <div class="o_row ps-1">
+                                    <span class="fw-bolder">Subbrand:</span>
+                                    <field name="model_nus_id" string="Subbrand"/>
+                                </div>
+                                <div class="o_row ps-1">
+                                    <span class="fw-bolder">License Plate:</span>
+                                    <field name="license_plate_nus"/>
+                                </div>
+                            </div>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="custom_nus_vehicle_action" model="ir.actions.act_window">
+        <field name="name">NUs Vehicles</field>
+        <field name="res_model">custom.nus.vehicle</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+</odoo>

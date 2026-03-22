@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="cron_sh_helpdesk_ticket_close" model="ir.cron">
+        <field name="name">Auto Close Helpdesk Ticket</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <!-- <field name="numbercall">-1</field> -->
+        <!-- <field name="doall" eval="False" /> -->
+        <field name="model_id" ref="model_sh_helpdesk_ticket" />
+        <field name="code">model._run_auto_close_ticket()</field>
+        <field name="state">code</field>
+    </record>
+    <record id="cron_sh_helpdesk_ticket_auto_create_customer_hour_package" model="ir.cron">
+        <field name="name">Auto Create Customer Hour Package</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="model_id" ref="model_sh_customer_hour_package" />
+        <field name="code">model._run_auto_create_customer_hour_package()</field>
+        <field name="state">code</field>
+    </record>
+
+    <record id="cron_helpdesk_ticket_followup" model="ir.cron">
+        <field name="name">Ticket Auto Followup</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="model_id" ref="model_sh_helpdesk_ticket"/>
+        <field name="code">model._run_auto_followup()</field>
+        <field name="state">code</field>
+    </record>
+</odoo>

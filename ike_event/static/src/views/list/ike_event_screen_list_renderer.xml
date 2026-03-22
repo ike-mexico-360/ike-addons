@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+    <t t-name="ike_event.IkeEventScreenListRenderer" t-inherit="web.ListRenderer" t-inherit-mode="primary">
+        <xpath expr="//div[hasclass('o_list_renderer')]" position="before">
+            <IkeEventListButtons t-props="{'viewClassName': this.props.archInfo.className || ''}"/>
+        </xpath>
+    </t>
+</templates>

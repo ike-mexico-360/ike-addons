@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkeHtmlField">
+        <t t-if="props.readonly">
+            <div t-ref="content" t-out="props.record.data[props.name] or ''"
+                class="ike-expandable-text-content" t-att-class="{ 'collapsed': !state.isExpanded and state.hasMoreLines }"/>
+            <button type="button" class="btn btn-link p-0" t-if="state.hasMoreLines" t-on-click="toggleExpand">
+                <span t-out="buttonText"/>
+            </button>
+        </t>
+        <t t-else="" t-call="web.TextField" />
+    </t>
+
+</templates>

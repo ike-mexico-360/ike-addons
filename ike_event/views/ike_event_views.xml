@@ -1,0 +1,430 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- View ike.event search -->
+    <record id="view_ike_event_search" model="ir.ui.view">
+        <field name="name">view.ike.event.search</field>
+        <field name="model">ike.event</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="stage_id"/>
+                <filter string="My Events" name="my_events" domain="[('write_uid', '=', uid)]"/>
+                <separator/>
+                <filter string="VIP Users" name="filter_vip_users"
+                    domain="[('vip_user', '=', True)]"/>
+                <separator/>
+                <filter string="Active Events" name="all_active" domain="[('stage_id.ref', 'in', ['capturing', 'searching', 'assigned', 'in_progress', 'completed', 'close'])]"/>
+                <filter string="Draft Events" name="all_draft" domain="[('stage_id.ref', '=', 'draft')]"/>
+                <filter string="Events in capturing details" name="filter_capturing"
+                    domain="[('stage_id.ref', '=', 'capturing')]"/>
+                <filter string="Events searching for supplier" name="filter_searching"
+                    domain="[('stage_id.ref', '=', 'searching')]"/>
+                <filter string="Assigned Events" name="filter_assigned"
+                    domain="[('stage_id.ref', '=', 'assigned')]"/>
+                <filter string="In Progress Events" name="filter_in_progress"
+                    domain="[('stage_id.ref', '=', 'in_progress')]"/>
+                <filter string="Completed Events" name="filter_completed"
+                    domain="[('stage_id.ref', '=', 'completed')]"/>
+                <filter string="Close Events" name="filter_close"
+                    domain="[('stage_id.ref', '=', 'close')]"/>
+                <filter string="Cancelled Events" name="filter_cancelled"
+                    domain="[('stage_id.ref', '=', 'Cancelled')]"/>
+                <separator />
+                <filter string="Electronic search" name="filter_search_electronic"
+                    domain="[('supplier_search_type', '=', 'electronic')]"/>
+                <filter string="Search by publication" name="filter_search_publication"
+                    domain="[('supplier_search_type', '=', 'publication')]"/>
+                <filter string="Manual search" name="filter_search_manual"
+                    domain="[('supplier_search_type', '=', 'manual')]"/>
+                <group expand="1" string="Group By">
+                    <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/>
+                    <filter string="Stage" name="stage" domain="[]" context="{'group_by':'stage_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- View ike.event View List -->
+    <record id="view_ike_event_list" model="ir.ui.view">
+        <field name="name">view.ike.event.list</field>
+        <field name="model">ike.event</field>
+        <field name="arch" type="xml">
+            <!-- class="ike-show-table-buttons" is used to show the buttons in the list view -->
+            <!-- js_class="ike_event_screen_list" is used to use the custom renderer -->
+            <list js_class="ike_event_screen_list" class="ike-show-table-buttons" edit="false" duplicate="false" delete="false">
+                <header>
+                </header>
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="service_id"/>
+                <field name="sub_service_id" context="{'display_default_code': 0}"/>
+                <field name="selected_supplier_ids" widget="many2many_tags" />
+                <field name="stage_id" widget="badge"/>
+                <field name="stage_ref" column_invisible="1"/>
+                <!-- <button name="action_testing_reload" string="Reload" type="object" class="btn-secondary"/> -->
+            </list>
+        </field>
+    </record>
+
+    <!-- View ike.event View List -->
+    <record id="view_ike_event_list_secondary" model="ir.ui.view">
+        <field name="name">view.ike.event.list_secondary</field>
+        <field name="model">ike.event</field>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="ike_event.view_ike_event_list"/>
+        <field name="arch" type="xml">
+            <!-- remove the class attribute from the list view to hide the header table buttons -->
+            <xpath expr="//list" position="attributes">
+                <attribute name="class" remove="ike-show-table-buttons" separator=" "/>
+                <attribute name="create">false</attribute>
+                <attribute name="edit">false</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- View ike.event form -->
+    <record id="view_ike_event_form" model="ir.ui.view">
+        <field name="name">view.ike.event.form</field>
+        <field name="model">ike.event</field>
+        <field name="arch" type="xml">
+            <form string="Event" js_class="ike_event_form" delete="false" duplicate="false">
+                <header>
+                    <button name="action_backward" string="Backward"
+                            type="object" class="btn-secondary"
+                            invisible="stage_ref not in ['draft', 'capturing', 'searching'] or (stage_ref == 'draft' and step_number == 1)"/>
+                    <button name="action_forward" string="Forward"
+                            type="object" class="btn-primary"
+                            invisible="stage_ref not in ['draft', 'capturing', 'searching']"/>
+                    <button name="action_duplicate" string="Duplicate Expedient"
+                            confirm="Are you sure?"
+                            type="object" class="btn-info"/>
+                    <button name="open_cancel_wizard" string="Cancel"
+                            confirm="Are you sure?"
+                            type="object" class="btn-danger"
+                            context="{'ike_event_supplier_cancel': True}"
+                            invisible="not id or stage_ref in ['completed', 'cancel', 'cancel_subsequently']"/>
+                    <field name="stage_id" widget="statusbar_duration" options="{'clickable': 1, 'fold_field': 'fold'}"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box" invisible="not id">
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" class="o_form_label_required"/>
+                        <h1>
+                            <field name="name" placeholder="Name..."/>
+                        </h1>
+                    </div>
+                    <group string="User Info" name="user_data">
+                        <group>
+                            <field name="user_by"/>
+                            <field name="user_id"
+                                   options="{'no_create': 1}"/>
+                            <label for="user_membership_id"/>
+                            <div class="o_row">
+                                <field name="user_membership_id" domain="[('nus_id', '=', user_id)]"
+                                       options="{'no_create': 1}"/>
+                                <button name="action_view_subscription_details" string="View Details"
+                                        type="object" class="btn-secondary"/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="event_date"/>
+                            <field name="service_type_id"/>
+                            <field name="event_type_id"/>
+                            <field name="stage_ref"/>
+                            <field name="step_number"/>
+                            <field name="sections" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Service Data" name="service_data">
+                        <group>
+                            <field name="service_id" widget="radio" options="{'horizontal': 1}"
+                                   domain="service_domain"
+                                   readonly="not (stage_ref == 'capturing' and step_number == 1)"
+                                   required="stage_ref != 'draft'"/>
+                            <field name="service_domain" invisible="1"/>
+                            <field name="service_res_model" invisible="0"/>
+                            <field name="service_res_id" readonly="1"/>
+                            <field name="service_survey_input_id"
+                                   context="{'form_view_ref': 'ike_event.ike_survey_user_input_view_form'}"
+                                   readonly="1" invisible="not service_survey_input_id"/>
+                        </group>
+                        <group>
+                            <field name="sub_service_id"
+                                   readonly="not (stage_ref == 'capturing' and step_number == 1)"
+                                   required="stage_ref != 'draft'"
+                                   context="{
+                                        'display_default_code': 0,
+                                        'search_view_ref': 'custom_master_catalog.view_x_subservice_product_template_filter',
+                                        'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list',
+                                    }"
+                                   options="{'no_open': 1, 'no_create': 1}"/>
+                            <field name="sub_service_res_model" invisible="0"/>
+                            <field name="sub_service_res_id" readonly="1"/>
+                            <field name="sub_service_survey_input_id"
+                                   context="{'form_view_ref': 'ike_event.ike_survey_user_input_view_form'}"
+                                   readonly="1" invisible="not service_survey_input_id"/>
+                            <button name="action_set_service_data" string="Service Data" type="object" class="btn-primary" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="supplier_data" string="Supplier">
+                            <group>
+                                <group>
+                                    <field name="covered_amount" readonly="1"/>
+                                    <label for="authorized_amount"/>
+                                    <div class="o_row">
+                                        <field name="authorized_amount" readonly="1"/>
+                                        <button string="Request Authorization" name="action_request_authorization"
+                                            type="object" class="btn-primary"
+                                            context="{'from_event_authorization': True}"
+                                            invisible="not authorization_required"/>
+                                        <button string="" name="action_request_authorization"
+                                            type="object" class="btn-primary" icon="fa-eye" title="Authorizer View"
+                                            context="{'from_authorizer': True}"
+                                            invisible="not authorization_required"/>
+                                    </div>
+                                    <field name="previous_amount"/>
+                                    <field name="current_amount"/>
+                                    <field name="authorization_required"/>
+                                    <field name="uncovered_authorization_required"/>
+                                    <div class="o_row" colspan="2">
+                                        <button string="Add Supplier" name="action_add_multi_supplier_product_data" type="object" class="btn-primary"/>
+                                        <button string="View Vehicles Data" name="action_view_vehicles_info" type="object" class="btn-info"/>
+                                    </div>
+                                </group>
+                                <group>
+                                    <field name="supplier_number" readonly="0"/>
+                                    <field name="supplier_search_number" readonly="1"/>
+                                    <field name="supplier_search_type" readonly="1"/>
+                                    <div class="o_row" colspan="2">
+                                        <button name="action_search_electronic_suppliers" string="Search Electronic (Suppliers)"
+                                                type="object" class="btn-info"/>
+                                        <button name="action_search_publication_suppliers_3" string="Search Publication 3 (Suppliers)"
+                                                type="object" class="btn-info"/>
+                                        <button name="action_search_manual_suppliers" string="Search Manual (Suppliers)"
+                                                type="object" class="btn-info"/>
+                                        <button name="action_delete_suppliers" string="Delete Searched (Suppliers)"
+                                                type="object" class="btn-danger"/>
+                                    </div>
+                                </group>
+                            </group>
+                            <group>
+                                <field name="service_supplier_ids" nolabel="1" colspan="2"
+                                    widget="ike_supplier_section_and_note_field_o2m"
+                                    options="{'field_columns': ['supplier_id']}"
+                                    context="{'default_search_number': supplier_search_number}"
+                                    readonly="supplier_search_type not in ['manual', 'manual_manual']">
+                                    <list create="0" delete="0">
+                                        <field name="display_type" column_invisible="1" />
+                                        <field name="sequence" column_invisible="1"/>
+
+                                        <field name="event_search_number" column_invisible="1"/>
+
+                                        <field name="search_number" column_invisible="1"/>
+                                        <field name="ranking" string="#" width="25px"
+                                            column_invisible="parent.supplier_search_type in ['manual', 'manual_manual']"
+                                            readonly="1"/>
+                                        <field name="supplier_id"
+                                            widget="ike_label_section_and_note_field"
+                                            options="{'no_create': 1, 'no_open': 1}"
+                                            readonly="assignation_type not in ['manual', 'manual_manual'] or display_type"
+                                            width="200px"/>
+                                        <field name="truck_id" domain="[('x_partner_id', '=', supplier_id)]"
+                                            options="{'no_create': 1, 'no_open': 1}"
+                                            column_invisible="parent.supplier_search_type not in ['manual', 'manual_manual']"
+                                            optional="show"
+                                            readonly="assignation_type not in ['manual', 'manual_manual'] or display_type"/>
+                                        <field name="supplier_phone"
+                                            column_invisible="parent.supplier_search_type not in ['manual', 'manual_manual']"
+                                            readonly="1"/>
+                                        <field name="name" optional="show" readonly="1"/>
+                                        <field name="state" width="100px" readonly="1"/>
+                                        <field name="priority" widget="priority" readonly="1" width="75px"/>
+                                        <field name="estimated_duration" widget="float_time" optional="show" readonly="1" />
+                                        <field name="estimated_cost" optional="show" readonly="1"/>
+
+                                        <field name="assignation_type" optional="hide" readonly="1"/>
+                                        <field name="is_manual" column_invisible="1"/>
+                                        <field name="notification_date" optional="hide" readonly="1"/>
+                                        <field name="acceptance_date" optional="hide" readonly="1"/>
+                                        <field name="rejection_date" optional="hide" readonly="1"/>
+                                        <field name="timer_duration" optional="hide" readonly="1"/>
+                                        <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
+                                        <button name="action_view_products" string="View Details" type="object" class="btn-link"/>
+                                    </list>
+                                </field>
+                                <button string="Add Supplier" name="action_open_add_manual_supplier_wizard" type="object" class="btn-link"
+                                    invisible="supplier_search_type not in ['manual', 'manual_manual']"/>
+                            </group>
+                        </page>
+                        <page name="product_data" string="Concepts">
+                            <group>
+                                <button name="action_set_products_covered" string="Set Products Covered" type="object" invisible="1"/>
+                                <field name="ia_suggestion_done" invisible="1"/>
+                                <field name="supplier_number" readonly="0"/>
+                                <field name="service_product_ids" widget="ike_section_and_note_field_o2m" nolabel="1" colspan="2"
+                                    context="{
+                                        'list_view_ref': 'ike_event.ike_event_product_list_view',
+                                        'default_supplier_number': supplier_number
+                                    }"
+                                    options="{
+                                        'field_columns': ['product_id'],
+                                        'delete_condition_field': 'mandatory',
+                                    }"/>
+                            </group>
+                        </page>
+                        <page name="location_data" string="Location">
+                            <group>
+                                <group>
+                                    <div class="d-flex" colspan="2">
+                                        <field name="location_latitude" readonly="0" />
+                                        <field name="location_longitude" readonly="0" />
+                                        <field name="location_zip_code" readonly="0" />
+                                    </div>
+                                    <field name="location_label"/>
+                                    <widget name="google_map_widget" colspan="2"
+                                        latitude="location_latitude"
+                                        longitude="location_longitude"
+                                        zip_code="location_zip_code"
+                                        options="{'size': '300px'}"/>
+                                </group>
+                                <group>
+                                    <div class="d-flex" colspan="2">
+                                        <field name="destination_latitude" readonly="0" />
+                                        <field name="destination_longitude" readonly="0" />
+                                    </div>
+                                    <field name="destination_label"/>
+                                    <widget name="google_map_widget" colspan="2"
+                                        latitude="destination_latitude"
+                                        longitude="destination_longitude"
+                                        zip_code="destination_zip_code"
+                                        options="{'size': '300px'}"/>
+                                </group>
+                            </group>
+                            <group>
+                                <group>
+                                    <widget name="google_map_route_widget" colspan="2"
+                                        options="{'locations': ['location', 'destination'], 'size': '300px'}" />
+                                </group>
+                                <group>
+                                    <field name="destination_route" invisible="1"/>
+                                    <field name="destination_distance" readonly="1" />
+                                    <field name="destination_duration" readonly="1" />
+                                    <button name="action_set_route_data" string="Route Data" type="object" class="btn-info"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page name="evidence_data" string="Evidence">
+                            <group>
+                                <field name="service_evidence_ids" widget="one2many" nolabel="1">
+                                    <list>
+                                        <field name="event_supplier_id"
+                                            domain="[('event_id', '=', event_id), ('selected', '=', True)]"
+                                            options="{'no_create': 1, 'no_open': 1}"/>
+                                        <field name="evidence_type"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+                        <page name="selected_data" string="Suppliers">
+                            <field name="selected_supplier_ids" widget="one2many" nolabel="1" colspan="2">
+                                <list>
+                                    <field name="folio"/>
+                                    <field name="supplier_id"/>
+                                    <field name="truck_id"/>
+                                    <field name="state"/>
+                                    <field name="stage_id"/>
+                                    <button name="open_cancel_wizard" string="Cancel"
+                                        invisible="stage_ref not in ['accepted', 'assigned']"
+                                        type="object" class="btn-link text-danger"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page name="summary_data" string="Summary">
+                            <!-- <widget name="ike_event_screen_header_info"/> -->
+                            <group>
+                                <!-- Individual widgets -->
+                                <group>
+                                    <widget name="ike_event_screen_header_info_individual_component" fname_info="event_summary_user_data" colspan="2"/>
+                                    <widget name="ike_event_screen_header_info_individual_component" fname_info="event_summary_service_data" colspan="2"/>
+                                    <widget name="ike_event_screen_header_info_individual_component" fname_info="event_summary_user_service_data" colspan="2"/>
+                                    <widget name="ike_event_screen_header_info_individual_component" fname_info="event_summary_location_data" colspan="2"/>
+                                    <widget name="ike_event_screen_header_info_individual_component" fname_info="event_summary_survey_data" colspan="2"/>
+                                    <widget name="ike_event_screen_header_info_individual_component" fname_info="event_summary_user_sub_service_data" colspan="2"/>
+                                    <widget name="ike_event_screen_header_info_individual_component" fname_info="event_summary_supplier_data" colspan="2"/>
+                                    <widget name="ike_event_screen_header_info_individual_component" fname_info="event_summary_event_data" colspan="2"/>
+                                </group>
+                                <!-- Required fields in view to use in widget ike_event_screen_header_info -->
+                                <group invisible="1">
+                                    <!-- affiliations -->
+                                    <field name="user_id" invisible="1"/>
+                                    <field name="vip_user" invisible="1"/>
+                                    <field name="user_phone" invisible="1"/>
+                                    <field name="user_additional_name" invisible="1"/>
+                                    <!-- summary -->
+                                    <field name="event_summary_user_data" widget="code" readonly="1"/>
+                                    <field name="event_summary_service_data" widget="code" readonly="1"/>
+                                    <field name="event_summary_user_service_data" widget="code" readonly="1"/>
+                                    <field name="event_summary_location_data" widget="code" readonly="1"/>
+                                    <field name="event_summary_survey_data" widget="code" readonly="1"/>
+                                    <field name="event_summary_user_sub_service_data" widget="code" readonly="1"/>
+                                    <field name="event_summary_supplier_data" widget="code" readonly="1"/>
+                                    <field name="event_summary_event_data" widget="code" readonly="1"/>
+                                </group>
+                                <group>
+                                    <button name="action_set_user_data" string="User Data" type="object" class="btn-info"/>
+                                    <button name="action_set_service_data" string="Service Data" type="object" class="btn-info"/>
+                                    <button name="action_set_user_service_data" string="User Service Data" type="object" class="btn-info"/>
+                                    <button name="action_set_location_data" string="Location Data" type="object" class="btn-info"/>
+                                    <button name="action_set_survey_data" string="Survey Data" type="object" class="btn-info"/>
+                                    <button name="action_set_destination_data" string="Destination Data" type="object" class="btn-info"/>
+                                    <button name="action_set_user_sub_service_data" string="User Sub-Service Data" type="object" class="btn-info"/>
+                                    <button name="action_set_supplier_data" string="Supplier Data" type="object" class="btn-info"/>
+                                    <button name="action_set_event_data" string="Event Data" type="object" class="btn-info"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Filtros de vista lista histórico de eventos -->
+    <record id="ike_event_history_view_search" model="ir.ui.view">
+        <field name="name">ike_event_history.view.search</field>
+        <field name="model">ike.event</field>
+        <field name="arch" type="xml">
+            <search string="">
+                <field name="name"/>
+                <field name="event_date"/>
+                <field name="service_id"/>
+                <field name="sub_service_id"/>
+                <field name="stage_id"/>
+                <field name="stage_ref"/>
+                <group expand="1" string="Group By">
+                    <filter string="Date" name="groupby_event_date" domain="[]" context="{'group_by':'event_date'}"/>
+                    <filter string="Service" name="groupby_service" domain="[]" context="{'group_by':'service_id'}"/>
+                    <filter string="Sub-Service" name="groupby_sub_service" domain="[]" context="{'group_by':'sub_service_id', 'display_default_code': 0}"/>
+                    <filter string="Stage" name="groupby_stage" domain="[]" context="{'group_by':'stage_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action ike.event -->
+    <record id="action_ike_event" model="ir.actions.act_window">
+        <field name="name">Event</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ike.event</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('view_ike_event_list')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('view_ike_event_form')})]"/>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

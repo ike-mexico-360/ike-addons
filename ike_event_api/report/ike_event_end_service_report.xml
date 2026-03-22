@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_ike_event_end_service_document">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-foreach="docs" t-as="doc">
+                    <div class="page">
+                        <div class="oe_structure"/>
+
+                        <!-- Service -->
+                        <div class="mb-3 pb-3 border-bottom border-secondary">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5>Service</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-6">Date: <span t-out="doc.event_date"/></div>
+                                <div class="col-6">Exp: <span t-out="doc.name"/></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-10">Origin:</div>
+                                <div class="col-2">Hour:</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-10">Destination:</div>
+                                <div class="col-2">Hour:</div>
+                            </div>
+                        </div>
+
+                        <!-- Vehicle -->
+                        <t t-if="doc.service_res_model == 'ike.service.input.vial'">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h5>Assisted</h5>
+                                </div>
+                            </div>
+                        </t>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+    <record id="action_ike_event_end_service_report" model="ir.actions.report">
+        <field name="name">End Service Report</field>
+        <field name="model">ike.event</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ike_event_api.report_ike_event_end_service_document</field>
+        <field name="report_file">ike_event_api.report_ike_event_end_service_document</field>
+        <field name="paperformat_id" ref="base.paperformat_us"/>
+    </record>
+</odoo>

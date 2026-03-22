@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="custom_supplier_cost_matrix_configuration_menu"
+        parent="custom_master_catalog.res_partner_menu_suppliers"
+        action="custom_supplier_upload_cost_matrix_configuration_action"
+        name="Supplier Cost Matrix Configuration"
+        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_supplier_admin_system"
+        sequence="25"/>
+
+    <menuitem id="custom_general_menu_root"
+        name="General"
+        parent="custom_master_catalog.configuration_menu_root"
+        groups="base.group_system,custom_master_catalog.custom_group_supplier_admin_system"
+        sequence="20">
+        <menuitem id="custom_supplier_cost_product_schedule_menu"
+            name="Opening Hours"
+            action="custom_supplier_cost_product_schedule_action"
+            groups="base.group_system,custom_master_catalog.custom_group_supplier_admin_system"
+            sequence="5"/>
+        <menuitem id="custom_supplier_cost_matrix_line_action_menu"
+            name="Matrix Cost Confirmed"
+            action="custom_supplier_cost_matrix_line_action"
+            groups="base.group_system"
+            sequence="15"/>
+        <menuitem id="custom_holidays_action_menu"
+            name="Holidays"
+            action="custom_master_catalog.action_custom_holidays"
+            groups="base.group_system"
+            sequence="25"/>
+    </menuitem>
+
+</odoo>

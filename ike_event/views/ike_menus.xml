@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Actions -->
+        <!-- <record id="ike_dashboard_event_action" model="ir.actions.client">
+            <field name="name">Dashboard</field>
+            <field name="tag">ike_event.ike_dashboard_event_view_action</field>
+            <field name="target">current</field>
+            <field name="binding_view_types">list</field>
+        </record> -->
+        <!-- Menus -->
+        <menuitem id="ike_menu_root" name="Events" web_icon="ike_event,static/description/icon.png"
+            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_supplier_operational">
+            <menuitem id="ike_menu_event" name="Events" sequence="1"
+                groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational">
+                <menuitem id="ike_menu_event_screen" name="Event Screens" sequence="1"
+                    action="action_ike_event_screen"
+                    groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational" />
+                <menuitem id="ike_menu_event_event" name="Events" sequence="2"
+                    action="action_ike_event"
+                    groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+                <menuitem id="ike_menu_event_summary" name="Event Summary" sequence="3"
+                    action="action_ike_event_service_summary"
+                    groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+                <menuitem id="ike_menu_event_event_authorization" name="Events authorization" sequence="4"
+                    action="ike_event_authorization_action"
+                    groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+
+            </menuitem>
+            <!--
+            <menuitem id="ike_menu_subscription" name="Subscriptions" sequence="2"
+                action="action_ike_subscription"  />
+            -->
+            <!-- <menuitem id="ike_menu_dashboard" name="Dashboard" sequence="2"
+                action="ike_dashboard_event_action"
+                groups="base.group_no_one"/> -->
+            <menuitem id="ike_menu_input" name="Inputs" sequence="3">
+                <menuitem id="ike_menu_input_service" name="Service Inputs" sequence="1">
+                    <menuitem id="ike_menu_vial" name="Service Input Vial" sequence="1"
+                        action="action_ike_service_input_vial"
+                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+                    <menuitem id="ike_menu_vial_truck" name="Service Input Vial Town Truck" sequence="1"
+                        action="action_ike_service_input_vial_truck"
+                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+                    <menuitem id="ike_menu_medical" name="Service Input Medical" sequence="2"
+                        action="action_ike_service_input_medical"
+                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+                </menuitem>
+                <menuitem id="ike_menu_survey" name="Surveys" sequence="1"
+                    groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account">
+                    <menuitem id="ike_menu_survey_user_input" name="User Inputs" sequence="1"
+                        action="action_ike_survey_user_input"
+                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+                    <menuitem id="ike_menu_survey_user_input_screen" name="User Inputs Screen" sequence="2"
+                        action="action_ike_survey_user_input_screen"
+                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+                </menuitem>
+            </menuitem>
+            <menuitem id="ike_menu_reports" name="Reports" sequence="3">
+                <menuitem id="ike_menu_event_service_count" name="Event Service Count" sequence="3"
+                    action="action_ike_event_service_count"
+                    groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+            </menuitem>
+            <menuitem id="ike_menu_video_wall" name="VideoWall" sequence="4"
+                action="custom_fleet_dashboard_action"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_manager_cds"/>
+            <menuitem id="ike_menu_configuration" name="Configuration" sequence="5"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_cabin_supervisor">
+                <menuitem id="ike_menu_event_supplier_assignment_type" name="Event Supplier Assignment Type" sequence="10"
+                        action="action_ike_event_supplier_assignment_type"
+                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+                <menuitem id="ike_menu_event_flow" name="Event Flow" sequence="20"
+                        action="action_ike_event_flow"
+                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+                <menuitem id="ike_menu_event_service_type_action" name="Services type" sequence="25"
+                        action="ike_event_service_type_action"
+                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+                <menuitem id="ike_menu_cancellation_reasons_action" name="Cancellation reasons" sequence="30"
+                        action="ike_event_cancellation_reason_action"
+                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+                 <menuitem id="ike_service_duplicate_reason_action" name="Duplication reasons" sequence="35"
+                        action="ike_event_duplicate_reason_action"
+                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+
+            </menuitem>
+        </menuitem>
+    </data>
+
+    <record id="survey.menu_surveys" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
+    <record id="hr.menu_hr_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
+    <record id="base.menu_apps" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
+    <record id="mail.menu_root_discuss" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
+    <record id="utm.menu_link_tracker_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
+    <record id="purchase.menu_purchase_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
+</odoo>

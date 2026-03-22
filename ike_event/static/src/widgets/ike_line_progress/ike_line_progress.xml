@@ -1,0 +1,70 @@
+<t t-name="ike_event.IkeLineProgress">
+  <div class="o_field_widget ike_progress_route" t-if="props.record">
+
+    <!-- Barra de progreso combinada -->
+    <t t-if="shouldShowProgress">
+      <div class="route-bar">
+        
+        <div class="route-track"/>
+
+        <div
+          class="route-progress"
+          t-att-style="'width:' + progressPercent"
+        />
+
+        <div
+          class="stage-marker divider-marker"
+          t-att-style="'left:' + dividerPositionPercent"
+          title="Transición: Ruta al usuario → Ruta al destino"
+        />
+
+        <div
+          class="stage-marker start-marker"
+          style="left: 0%"
+          title="Inicio: Ruta al usuario"
+        />
+
+        <div
+          class="stage-marker end-marker"
+          style="left: 100%"
+          title="Fin: Ruta al destino"
+        />
+
+        <div
+          t-if="shouldShowTruck"
+          class="crane-dot"
+          t-att-style="'left:' + progressPercent"
+        >
+          <img
+            t-att-src="truckIconSrc"
+            class="truck-icon"
+            alt="Service truck"
+          />
+        </div>
+
+      </div>
+    </t>
+    <!-- Etiquetas de tiempo -->
+    <t t-if="shouldShowProgress">
+      <div class="route-labels">
+        <div class="time-section">
+          <span class="time-label">
+            <t t-esc="currentRouteLabel"/>:
+          </span>
+
+          <span class="time-value">
+            <t t-esc="formattedCurrentElapsed"/>
+            /
+            <t t-esc="formattedCurrentDuration"/>
+
+            <t t-if="formattedExceededTime">
+              <span class="text-danger ms-1">
+                <t t-esc="formattedExceededTime"/>
+              </span>
+            </t>
+          </span>
+        </div>
+      </div>
+    </t>
+  </div>
+</t>

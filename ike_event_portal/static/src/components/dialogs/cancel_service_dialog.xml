@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ike_event_portal.CancelServiceDialog" owl="1">
+        <!-- Modal Backdrop -->
+        <div class="modal-backdrop fade show" style="z-index: 1055;"/>
+        
+        <!-- Modal -->
+        <div class="modal fade show d-block" tabindex="-1" role="dialog" style="z-index: 1056;">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <!-- Header -->
+                    <div class="modal-header bg-danger text-white rounded-top-4 border-0">
+                        <h5 class="modal-title">
+                            <i class="fa fa-exclamation-triangle me-2"/>
+                            <t t-esc="props.title"/>
+                        </h5>
+                        <button type="button" 
+                                class="btn-close btn-close-white" 
+                                aria-label="Cerrar" 
+                                t-on-click="onCancelClick"/>
+                    </div>
+                    
+                    <!-- Body -->
+                    <div class="modal-body p-4">
+                        <p class="text-muted mb-4">
+                            Por favor, seleccione el motivo de la cancelación:
+                        </p>
+                        
+                        <!-- Loading State -->
+                        <t t-if="state.isLoading">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <p class="text-muted mt-2">Cargando motivos de cancelación...</p>
+                            </div>
+                        </t>
+                        
+                        <t t-else="">
+                            <!-- Reason Options -->
+                            <div class="mb-4">
+                                <t t-foreach="cancelReasons" t-as="reason" t-key="reason.value">
+                                    <div class="form-check mb-2">
+                                        <input type="radio" 
+                                               class="form-check-input" 
+                                               t-att-id="'reason_' + reason.value"
+                                               name="cancelReason"
+                                               t-att-value="reason.value"
+                                               t-att-checked="state.reasonOption === reason.value"
+                                               t-on-change="onReasonChange"
+                                               style="width: 1.2em; height: 1.2em;"/>
+                                        <label class="form-check-label ms-2" 
+                                               t-att-for="'reason_' + reason.value">
+                                            <t t-esc="reason.label"/>
+                                        </label>
+                                    </div>
+                                </t>
+                            </div>
+                            
+                            <!-- Additional Text -->
+                            <div class="mb-3">
+                                <label class="form-label small text-muted">
+                                    Comentarios adicionales (opcional):
+                                </label>
+                                <textarea class="form-control" 
+                                          rows="3" 
+                                          placeholder="Escriba aquí los detalles de la cancelación..."
+                                          t-att-value="state.reasonText"
+                                          t-on-input="onReasonTextChange"/>
+                            </div>
+                            
+                            <!-- Validation Message -->
+                            <t t-if="!state.reasonOption">
+                                <div class="alert alert-warning py-2 mb-0">
+                                    <i class="fa fa-info-circle me-2"/>
+                                    Debe seleccionar un motivo de cancelación
+                                </div>
+                            </t>
+                        </t>
+                    </div>
+                    
+                    <!-- Footer -->
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button" 
+                                class="btn btn-outline-secondary rounded-pill px-4" 
+                                t-on-click="onCancelClick"
+                                t-att-disabled="state.isSubmitting">
+                            <i class="fa fa-times me-1"/>Volver
+                        </button>
+                        <button type="button" 
+                                class="btn btn-danger rounded-pill px-4" 
+                                t-on-click="onConfirmClick"
+                                t-att-disabled="!isValid or state.isSubmitting">
+                            <t t-if="state.isSubmitting">
+                                <span class="spinner-border spinner-border-sm me-2" role="status"/>
+                                Cancelando...
+                            </t>
+                            <t t-else="">
+                                <i class="fa fa-ban me-1"/>Confirmar Cancelación
+                            </t>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

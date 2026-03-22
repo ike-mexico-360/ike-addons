@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<templates xml:space="preserve">
+    <t t-name="ike_event.IkeEventSystray">
+        <div class="d-flex align-items-center">
+            <span t-if="state.resModel == 'ike.event' and state.resId" class="fa fa-circle text-success"/>
+            <span t-else="" class="fa fa-circle text-info"/>
+        </div>
+    </t>
+</templates>

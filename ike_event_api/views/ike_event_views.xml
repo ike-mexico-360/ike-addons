@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ike_event_form_inherit_event_api" model="ir.ui.view">
+        <field name="name">view_ike_event_form.inherit.event_api</field>
+        <field name="model">ike.event</field>
+        <field name="inherit_id" ref="ike_event.view_ike_event_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='sub_service_survey_input_id']" position="after">
+                <label for="pdf_report_of_finalization" class="o_form_label" invisible="stage_ref != 'completed'"/>
+                <div class="o_row" invisible="stage_ref != 'completed'">
+                    <field name="pdf_report_of_finalization" readonly="1" class="oe_pdf_only oe_inline"
+                        filename="name"/>
+                    <button name="button_regenerate_pdf_of_end_service" string="Regenerate PDF" type="object"
+                        class="btn-secondary oe_inline" invisible="stage_ref != 'completed'"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

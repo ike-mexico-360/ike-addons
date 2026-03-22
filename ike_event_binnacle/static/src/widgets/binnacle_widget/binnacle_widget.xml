@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event_binnacle.IkeBinnacleButton">
+        <button class="btn btn-primary" t-on-click="onClick">
+            <i class="oi oi-view-list me-1"/>
+            <span>Open Binnacle</span>
+        </button>
+    </t>
+
+    <t t-name="ike_event_binnacle.BinnacleDialogTable">
+        <Dialog title="props.title" size="'xl'">
+            <div class="table-responsive">
+                <table class="table table-sm table-bordered mb-0">
+                    <thead class="text-white fw-semibold" style="background-color: #488ECC;">
+                        <tr>
+                            <th style="width: 15%;">Date and Time</th>
+                            <th style="width: 15%;">Category</th>
+                            <th style="width: 15%;">Supplier</th>
+                            <th style="width: 15%;">Author</th>
+                            <th style="width: 40%;">Comments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="processedRecords" t-as="rec" t-key="rec.id">
+                            <tr t-att-class="rec.is_highlight ? 'bg-success bg-opacity-25' : ''">
+                                <td t-esc="rec.date_time"/>
+                                <td t-att-class="rec.is_highlight ? 'fw-bolder' : ''" t-esc="rec.category"/>
+                                <td/>
+                                <td t-esc="rec.author"/>
+                                <td class="binnacle-cell-html">
+                                    <t t-out="rec.comments"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+            <t t-set-slot="footer">
+                <button class="btn btn-secondary" t-on-click="props.close">Close</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View ike.service.stage View List -->
+    <record id="view_ike_service_stage_list" model="ir.ui.view">
+        <field name="name">view.ike.service.stage.list</field>
+        <field name="model">ike.service.stage</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="fold"/>
+                <field name="hide_timer"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View ike.service.stage search -->
+    <record id="view_ike_service_stage_search" model="ir.ui.view">
+        <field name="name">view.ike.service.stage.search</field>
+        <field name="model">ike.service.stage</field>
+        <field name="arch" type="xml">
+            <search>
+                <group expand="1" string="Group By">
+                    <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action ike.service.stage -->
+    <record id="action_ike_service_stage" model="ir.actions.act_window">
+        <field name="name">Service Stage</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ike.service.stage</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

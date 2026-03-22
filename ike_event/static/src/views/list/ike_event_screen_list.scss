@@ -1,0 +1,71 @@
+// Clases CSS para colores personalizados en texto de fila y badges
+.o_list_table {
+    .o_data_row {
+        &.bg-list-ike-event__ {
+            &draft {
+                color: #B66A00!important;
+            }
+
+            &capturing {
+                color: #2E6F91!important;
+            }
+
+            &searching {
+                color: #373CBE!important;
+            }
+
+            &assigned {
+                color: #1E6AA8!important;
+            }
+
+            &in_progress {
+                color: #2B7A71!important;
+            }
+
+            &completed {
+                color: #4E772F!important;
+            }
+
+            &close {
+                color: #4C4B4B!important;
+            }
+        }
+
+        & > .o_data_cell.badge-list-ike-event__ {
+            &draft span.badge {
+                background-color: #F3A93E!important;
+                color: #000000!important;
+            }
+
+            &capturing span.badge {
+                background-color: #A7D3E9!important;
+                color: #000000!important;
+            }
+
+            &searching span.badge {
+                background-color: #A2A5E3!important;
+                color: #000000!important;
+            }
+
+            &assigned span.badge {
+                background-color: #5FA8E0!important;
+                color: #000000!important;
+            }
+
+            &in_progress span.badge {
+                background-color: #80CBC4!important;
+                color: #000000!important;
+            }
+
+            &completed span.badge {
+                background-color: #A9D18E!important;
+                color: #000000!important;
+            }
+
+            &close span.badge {
+                background-color: #B3B2B0!important;
+                color: #000000!important;
+            }
+        }
+    }
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="custom_res_users_session_personal_rule" model="ir.rule">
+            <field name="name">Users can only see their own sessions</field>
+            <field name="model_id" ref="model_custom_res_users_session"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+        </record>
+
+        <record id="custom_res_users_session_admin_rule" model="ir.rule">
+            <field name="name">Admins see everything</field>
+            <field name="model_id" ref="model_custom_res_users_session"/>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="custom_res_users_session_portal_rule" model="ir.rule">
+            <field name="name">Portal users can only see their own sessions</field>
+            <field name="model_id" ref="model_custom_res_users_session"/>
+            <field name="groups" eval="[(4, ref('base.group_portal'))]"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+        </record>
+    </data>
+</odoo>

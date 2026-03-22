@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_custom_master_catalog" model="ir.module.category">
+        <field name="name">IKE</field>
+        <field name="sequence">100</field>
+    </record>
+
+    <record id="custom_group_contact_admin_client" model="res.groups">
+        <field name="name">Clients Admin</field>
+        <field name="category_id" ref="module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('base.group_partner_manager'))]" />
+    </record>
+    <record id="custom_group_contact_admin_supplier" model="res.groups">
+        <field name="name">Suppliers Admin</field>
+        <field name="category_id" ref="module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('base.group_partner_manager'))]" />
+    </record>
+    <record id="custom_group_contact_admin_account" model="res.groups">
+        <field name="name">Accounts Admin</field>
+        <field name="category_id" ref="module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('base.group_partner_manager'))]" />
+    </record>
+    <record id="custom_erp_odoo" model="res.groups">
+        <field name="name">ERP Odoo</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+
+    <!-- New groups -->
+    <record id="custom_group_event_coordinator" model="res.groups">
+        <field name="name">Coordinator</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('base.group_partner_manager')), (4, ref('survey.group_survey_manager'))]" />
+    </record>
+    <record id="custom_group_event_cabin_supervisor" model="res.groups">
+        <field name="name">Cabin Supervisor</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('base.group_partner_manager')), (4, ref('survey.group_survey_manager'))]" />
+    </record>
+    <record id="custom_group_supervisor_cds" model="res.groups">
+        <field name="name">Supervisor CDS</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('custom_master_catalog.custom_group_event_coordinator')), (4, ref('custom_group_event_cabin_supervisor'))]" />
+    </record>
+    <record id="custom_group_manager_cds" model="res.groups">
+        <field name="name">manager CDS</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('custom_master_catalog.custom_group_supervisor_cds'))]" />
+    </record>
+    <record id="custom_group_supplier_admin_system" model="res.groups">
+        <field name="name">Suppliers (Admin System)</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('base.group_partner_manager')), (4, ref('survey.group_survey_manager'))]" />
+    </record>
+    <record id="custom_group_supplier_procurement" model="res.groups">
+        <field name="name">Suppliers (Procurement)</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('base.group_partner_manager'))]" />
+    </record>
+    <record id="custom_group_supplier_operational" model="res.groups">
+        <field name="name">Suppliers (Operational management)</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
+    </record>
+    <record id="custom_group_commercial_supervisor" model="res.groups">
+        <field name="name">Commercial Supervisor</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
+    </record>
+
+    <data noupdate="0">
+        <record id="custom_contact_admin_client_modify_rule" model="ir.rule">
+            <field name="name">Clients Admin Modify Rule</field>
+            <field name="model_id" ref="model_res_partner" />
+            <field name="groups" eval="[(4, ref('custom_group_contact_admin_client'))]" />
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_unlink" eval="True" />
+            <field name="domain_force">['|', ('x_is_client', '=', True), ('x_is_account', '=', True)]</field>
+        </record>
+
+        <record id="custom_contact_admin_supplier_read_rule" model="ir.rule">
+            <field name="name">Suppliers Admin Read Rule</field>
+            <field name="model_id" ref="model_res_partner" />
+            <field name="groups" eval="[(4, ref('custom_group_contact_admin_supplier'))]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_unlink" eval="False" />
+            <field name="domain_force">[('x_is_account', '=', False)]</field>
+        </record>
+        <record id="custom_contact_admin_supplier_modify_rule" model="ir.rule">
+            <field name="name">Suppliers Admin Modify Rule</field>
+            <field name="model_id" ref="model_res_partner" />
+            <field name="groups" eval="[(4, ref('custom_group_contact_admin_supplier'))]" />
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_unlink" eval="True" />
+            <field name="domain_force">[('x_is_supplier', '=', True)]</field>
+        </record>
+
+        <record id="custom_contact_admin_account_modify_rule" model="ir.rule">
+            <field name="name">Accounts Admin Modify Rule</field>
+            <field name="model_id" ref="model_res_partner" />
+            <field name="groups" eval="[(4, ref('custom_group_contact_admin_account'))]" />
+            <field name="perm_read" eval="False" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_unlink" eval="True" />
+            <field name="domain_force">[('x_is_account', '=', True)]</field>
+        </record>
+
+        <record id="custom_contact_erp_manager_rule" model="ir.rule">
+            <field name="name">ERP Manager Rule</field>
+            <field name="model_id" ref="model_res_partner" />
+            <field name="groups" eval="[(4, ref('base.group_erp_manager'))]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_unlink" eval="True" />
+            <field name="domain_force">[]</field>
+        </record>
+    </data>
+</odoo>

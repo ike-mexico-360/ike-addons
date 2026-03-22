@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Vista lista histórico de eventos -->
+    <record id="ike_event_history_view_list" model="ir.ui.view">
+        <field name="name">ike_event_history.view.list</field>
+        <field name="model">ike.event</field>
+        <field name="arch" type="xml">
+            <list string="" create="0" edit="0" expand="1" js_class="ike_event_screen_list">
+                <field name="name"/>
+                <field name="event_date"/>
+                <field name="service_id"/>
+                <field name="sub_service_id" context="{'display_default_code': 0}"/>
+                <field name="stage_id" widget="badge"
+                    decoration-success="stage_ref == 'in_progress'" decoration-info="stage_ref == 'completed'" decoration-warning="stage_ref == 'searching'"
+                    decoration-danger="stage_ref == 'cancel'"/>
+                <field name="stage_ref" column_invisible="1"/>
+                <button name="action_view_event_history_detail" type="object" class="btn-link" string="Open"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="ike_event_history_readonly_view_form" model="ir.ui.view">
+        <field name="name">ike_event_history_readonly.view.form</field>
+        <field name="model">ike.event</field>
+        <field name="mode">primary</field>
+        <field name="priority">700</field>
+        <field name="inherit_id" ref="ike_event.view_ike_event_screen_form"/>
+        <field name="arch" type="xml">
+            <form position="attributes">
+                <attribute name="create">0</attribute>
+                <attribute name="edit">0</attribute>
+                <attribute name="delete">0</attribute>
+            </form>
+            <form position="inside">
+                <footer>
+                    <button special="cancel" string="Close" class="btn btn-secondary" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

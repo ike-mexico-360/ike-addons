@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve" owl="1">
+
+    <t t-name="ike_event.IkeIntegerField">
+        <t>
+            <input
+                class="o_input"
+                t-att-type="props.inputType"
+                t-att-id="props.id"
+                t-att-placeholder="' '"
+                t-att-autocomplete="'off'"
+                t-ref="numpadDecimal"
+                t-att-readonly="props.readonly"
+                t-on-focusin="onFocusIn"
+                t-on-focusout="onFocusOut"
+                inputmode="numeric"
+                t-att-step="props.step"
+            />
+            <label t-att-for="props.id" t-out="label" class="ike_input_label ike_input_label_indicator"/>
+        </t>
+    </t>
+</templates>

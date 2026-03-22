@@ -1,0 +1,68 @@
+.ike-header-info {
+    max-width: min-content;  // Que el ancho del div se ajuste al contenido para aprovehcar el espacio
+
+    ul.ike-fields-content {
+        padding-left: 0!important;
+        margin-bottom: 0!important;
+        list-style: none;
+
+        overflow: hidden;
+        transition: max-height 0.3s ease;
+
+        &.collapsed {  // Ocultar contenido excedente
+            position: relative;
+
+            &::after {  // Agregar efecto de gradiente
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 1.5em;
+                background: linear-gradient(to bottom, transparent, $o-webclient-background-color) !important;
+            }
+        }
+    }
+
+    &.ike-info {
+        // Al ser horizontal
+        &-horizontal {
+
+            // Colocamos en modo horizontal y habilitamos el scroll
+            ul.ike-fields-content {
+                display: flex;
+                flex-direction: row;
+                overflow-x: auto;
+                scrollbar-width: auto;
+                white-space: nowrap;
+
+                // Elementos li, borde entre elmentos y espacio entr ellos
+                li {
+                    margin-bottom: 5px;
+
+                    &:first-child {  // Primer elemento
+                        padding-right: 1rem;
+                    }
+                    &:nth-child(2) {  // Segundo elemento
+                        border-left: 1px solid #999;
+                        border-right: none;
+                    }
+                    &:not(:first-child):not(:last-child) {  // Elementos intermedios
+                        border-left: 1px solid #999;
+                        padding: 0 1rem;
+                    }
+                    &:last-child:not(:first-child):not(:nth-child(2)) {  // Exceptuando primero y segundo, los demás
+                        border-left: 1px solid #999;
+                        border-right: none;
+                        padding-left: 1rem;
+                    }
+                    &:nth-child(2):last-child {  // Último elemento, cuando solo son 2 elementos
+                        border-left: 1px solid #999;
+                        border-right: none;
+                        padding-left: 1rem;
+                    }
+                }
+            }
+        }
+    }
+}

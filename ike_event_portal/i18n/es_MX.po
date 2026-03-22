@@ -1,0 +1,1112 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ike_event_portal
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-26 00:40+0000\n"
+"PO-Revision-Date: 2026-02-26 00:40+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "# de licencia"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "-- Sin asignar --"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Acceso al Sistema"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Accesorios"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Aceptar Servicio"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Administrador"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Agregar Nuevo Usuario"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Apellidos"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__assignation_type
+msgid "Assignation Type"
+msgstr "Tipo de asignación"
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__assigned
+msgid "Assigned"
+msgstr "Asignado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "CP"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Calle"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Calle 2"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Calle y Número"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Calle y número"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Cancelar"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Cancelar Servicio"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Cargando choferes disponibles..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Cargando detalles del usuario..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Centro de Atención"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Centro de atención"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Cerrar"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Chofer asignado"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Ciudad"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Colonia"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Conductor"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Conductor..."
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model,name:ike_event_portal.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__covered_amount
+msgid "Covered Amount"
+msgstr ""
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Cranes"
+msgstr "Grúas"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Cranes Portal"
+msgstr "Portal grúas"
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__create_uid
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__create_date
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Datos del Usuario"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__name
+msgid "Description"
+msgstr "Descripción"
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__destination_label
+msgid "Destination Label"
+msgstr "Etiqueta de destino"
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__destination_latitude
+msgid "Destination Latitude"
+msgstr "Latitud del destino"
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__destination_longitude
+msgid "Destination Longitude"
+msgstr "Longitud del destino"
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__destination_zip_code
+msgid "Destination Zip Code"
+msgstr "Código postal de destino"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Detalles de la grúa"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Detalles de la grúa:"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Detalles del Servicio"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Dirección"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__display_name
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Editar Chofer Asignado"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Editar chofer"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+msgid "Ej. ABC-123"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Ejes"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_ike_event_suppliers
+msgid "Email"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Estado"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Estado de servicio"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+msgid "Estado del servicio"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Estado del vehículo"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Estado evento"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Estado proveedor"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model,name:ike_event_portal.model_ike_event
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__event_id
+msgid "Event"
+msgstr "Evento"
+
+#. module: ike_event_portal
+#: model:ir.model,name:ike_event_portal.model_ike_event_public
+msgid "Event (public)"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__event_type_id
+msgid "Event Type"
+msgstr "Tipo de evento"
+
+#. module: ike_event_portal
+#: model:ir.model,name:ike_event_portal.model_ike_event_supplier_public
+msgid "Event supplier (public)"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.actions.act_window,name:ike_event_portal.ike_event_public_action
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.ike_event_public_view_form
+msgid "Evento"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.ui.menu,name:ike_event_portal.menu_ike_event_public
+msgid "Eventos Publicos"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__name
+msgid "Expedient"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Expediente"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Fecha"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Fecha de Nacimiento"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Filtrar por:"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__folio
+msgid "Folio"
+msgstr ""
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Follow orders you have to fulfill"
+msgstr "Monitoree las órdenes que debe cumplir"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Follow your Requests for Quotation"
+msgstr "Siga sus solicitudes de cotización"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Gestiona acondicionamiento de llantas"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Grupos"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Grupos Asignados"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Grúa"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Grúas"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Guardando..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Guardar"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+msgid "Guardar Grúa"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__id
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__id
+msgid "ID"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.module.category,name:ike_event_portal.module_category_custom_ike_portal
+msgid "IKE Portal"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:res.groups,name:ike_event_portal.custom_group_portal_admin
+msgid "Ike Admin Portal"
+msgstr "Administrador (portal)"
+
+#. module: ike_event_portal
+#: model:res.groups,name:ike_event_portal.custom_group_portal_operator
+msgid "Ike Operator Portal"
+msgstr "Operador (portal)"
+
+#. module: ike_event_portal
+#: model:res.groups,name:ike_event_portal.custom_group_portal_supervisor
+msgid "Ike Supervisor Portal"
+msgstr "Supervisor (portal)"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Información del Contacto"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Información del vehículo"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__write_uid
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__write_date
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Licencia"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__truck_plate
+msgid "License Plate"
+msgstr "Matrícula"
+
+#. module: ike_event_portal
+#: model:ir.model.fields,help:ike_event_portal.field_ike_event_supplier_public__truck_plate
+msgid "License plate number of the vehicle (i = plate number for a car)"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Loading Truck Details..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Loading services..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
+msgid "Loading users..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Loading..."
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__location_label
+msgid "Location Label"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__location_latitude
+msgid "Location Latitude"
+msgstr "Ubicación Latitud"
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__location_longitude
+msgid "Location Longitude"
+msgstr "Ubicación Longitud"
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__location_zip_code
+msgid "Location Zip Code"
+msgstr "Código postal de ubicación"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Login"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Maniobras"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Matricula"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Matrícula"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+msgid "Matrícula (Placa)"
+msgstr ""
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.ike_event_public_view_list
+msgid "Mis Eventos"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Modelo"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+msgid "Modelo del vehículo"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Modelo..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Municipio"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_ike_event_suppliers
+msgid "Name"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "No disponible"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "No registrado"
+msgstr ""
+
+#. module: ike_event_portal
+#: model_terms:ir.actions.act_window,help:ike_event_portal.ike_event_public_action
+msgid "No tienes eventos registrados"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "No trucks found."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Nombre"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Nombre(s)"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Notificar Servicio"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__notification_sent_to_app
+msgid "Notification sent to app"
+msgstr "Notificación enviada a la aplicación"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Nueva Grúa"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
+msgid "Nuevo Usuario"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Número de Licencia"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+msgid "Número de ejes"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__event_date
+msgid "Open Date"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Operador"
+msgstr ""
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Our Orders"
+msgstr "Nuestras órdenes"
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__parent_id
+msgid "Parent"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
+msgid "Partner"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "País"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Placas federales"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/models/ike_event.py:0
+msgid "Portal Extras"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Proveedor"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Rechazar Servicio"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__service_ref
+msgid "Ref"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model,name:ike_event_portal.model_res_partner_supplier_drivers_rel
+msgid "Relation between Suppliers and Drivers"
+msgstr "Relación entre Proveedores y Conductores"
+
+#. module: ike_event_portal
+#: model:ir.model,name:ike_event_portal.model_res_partner_supplier_users_rel
+msgid "Relation between Suppliers and Users"
+msgstr "Relación entre Proveedores y Usuarios"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Requests for Quotation"
+msgstr "Solicitudes de cotización"
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__event_search_type
+msgid "Search Type (Supplier)"
+msgstr "Tipo de búsqueda (Proveedor)"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Seleccionar Chofer"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+msgid "Seleccionar estado..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+msgid "Seleccionar modelo..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+msgid "Seleccionar tipo..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Seleccionar..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Seleccione un usuario para ver los detalles."
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__sequence
+msgid "Sequence"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__service_id
+msgid "Service"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__truck_id
+msgid "Service Vehicle"
+msgstr ""
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Services"
+msgstr "Servicios"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Services Portal"
+msgstr "Portal servicios"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Servicio"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Servicio y Operación"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Servicios"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_res_partner__signup_type
+#: model:ir.model.fields,field_description:ike_event_portal.field_res_users__signup_type
+msgid "Signup Token Type"
+msgstr "Tipo de token de registro"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Sin accesorios"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+msgid "Sin chofer asignado"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Sin grupos"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__stage_id
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__stage_id
+msgid "Stage"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__stage_ref
+msgid "Stage Ref"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__stage_ref
+msgid "Stage Reference"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__state
+msgid "State"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__step_number
+msgid "Step Number"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__sub_service_id
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__subservice_id
+msgid "Sub-Service"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Subservicio"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Supervisor"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__supplier_id
+msgid "Supplier"
+msgstr ""
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_ike_event_suppliers
+msgid "Suppliers"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
+msgid "Teléfono"
+msgstr ""
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.view_ike_event_form_inherit_test_notification
+msgid "Test Notification"
+msgstr ""
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_ike_event_suppliers
+msgid "There are currently no suppliers to show."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Tipo de Licencia"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Tipo de Usuario"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Tipo de licencia"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Tipo de vehículo"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Ubicación"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__user_id
+msgid "User"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__user_code
+msgid "User Code"
+msgstr "Código de usuario"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Users"
+msgstr "Usuarios"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Users portal"
+msgstr "Portal usuarios"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
+msgid "Usuarios"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
+msgid "Ver detalles"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Volver a la lista"
+msgstr ""
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_layout_account_name
+msgid "Welcome"
+msgstr "Bienvenido"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "email@ejemplo.com"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "firstname is required"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "icono grúa"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
+msgid "usuarios"
+msgstr ""

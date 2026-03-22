@@ -1,0 +1,15 @@
+.o_form_renderer:has(.ike-sheet) {
+    height: auto !important;
+}
+
+.ike-sheet .o_form_sheet {
+    border: none;
+}
+
+.ike-group .o_horizontal_separator {
+    font-size: 15px;
+}
+
+.ike-group.mt-0 .o_horizontal_separator {
+    margin-top: 0!important;
+}

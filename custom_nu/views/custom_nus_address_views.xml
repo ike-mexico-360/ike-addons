@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- View Search -->
+    <record id="custom_nus_address_view_search" model="ir.ui.view">
+        <field name="name">custom.nus.address.view.search</field>
+        <field name="model">custom.nus.address</field>
+        <field name="arch" type="xml">
+            <search string="Addresses Nus">
+                <field name="nus_id"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_nus" string="NUs" context="{'group_by': 'nus_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- View Form -->
+    <record id="custom_nus_address_view_form" model="ir.ui.view">
+        <field name="name">custom.nus.address.form</field>
+        <field name="model">custom.nus.address</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="NUs Address" duplicate="false" delete="false">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <group>
+                        <group>
+                            <field name="nus_id" required="1" options='{"no_open": True, "no_create": True}'/>
+                            <label for="street_nus" string="Address"/>
+                            <div class="o_address_format">
+                                <field name="street_nus" placeholder="Street..." class="o_address_street"/>
+                                <field name="street2_nus" placeholder="Street 2..." class="o_address_street"/>
+                                <div class="o_address_street">
+                                    <field name="l10n_mx_edi_colony_nus" placeholder="Colony..." style="flex: 2 1 auto"/>
+                                </div>
+                                <field name="zip_nus" placeholder="ZIP" class="o_address_zip" style="margin-right: 2%;width: 23%;"/>
+                                <field name="city_nus" placeholder="City" class="o_address_city"/>
+                                <field name="state_nus_id" class="o_address_state" placeholder="State"
+                                    options="{'no_open': True, 'no_create': True}"
+                                    context="{'default_country_id': country_nus_id}"/>
+                                <field name="country_nus_id" placeholder="Country" class="o_address_country"
+                                    options="{'no_open': True, 'no_create': True}"/>
+                            </div>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- View List -->
+    <record id="custom_nus_address_view_list" model="ir.ui.view">
+        <field name="name">custom.nus.address.list</field>
+        <field name="model">custom.nus.address</field>
+        <field name="arch" type="xml">
+            <list string="NUs Addresses" edit="false" duplicate="false" delete="false">
+                <field name="nus_id"/>
+                <field name="street_nus"/>
+                <field name="city_nus"/>
+                <field name="zip_nus"/>
+                <field name="state_nus_id"/>
+                <field name="country_nus_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View Kanban -->
+    <record id="custom_nus_address_view_kanban" model="ir.ui.view">
+        <field name="name">custom.nus.address.kanban</field>
+        <field name="model">custom.nus.address</field>
+        <field name="arch" type="xml">
+            <kanban string="NUs Addresses" class="o_kanban_mobile" editable="false" multiedit="false" delete="false">
+                <field name="nus_id"/>
+                <field name="street_nus"/>
+                <field name="city_nus"/>
+                <field name="zip_nus"/>
+                <field name="state_nus_id"/>
+                <field name="country_nus_id"/>
+                <templates>
+                    <t t-name="card" class="d-flex flex-row position-relative">
+                        <main class="ps-2 ps-md-0 flex-grow-1">
+                            <div class="d-flex flex-column">
+                                <div class="o_row ps-1">
+                                    <span class="fw-bolder">Street:</span>
+                                    <field name="street_nus"/>
+                                </div>
+                                <div class="o_row ps-1">
+                                    <span class="fw-bolder">City:</span>
+                                    <field name="city_nus"/>
+                                </div>
+                                <div class="o_row ps-1">
+                                    <span class="fw-bolder">State:</span>
+                                    <field name="state_nus_id"/>
+                                </div>
+                                <div class="o_row ps-1">
+                                    <span class="fw-bolder">Zip code:</span>
+                                    <field name="zip_nus"/>
+                                </div>
+                            </div>
+                        </main>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="custom_nus_address_view_action" model="ir.actions.act_window">
+        <field name="name">NUs Addresses</field>
+        <field name="res_model">custom.nus.address</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+    </record>
+
+</odoo>

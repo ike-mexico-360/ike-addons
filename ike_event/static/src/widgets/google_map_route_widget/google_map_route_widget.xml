@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="ike_event.GoogleMapRouteWidget">
+        <div>
+            <div t-ref="mapContainer" style="width:100%;" t-att-style="'height: ' + props.size + ';' "/>
+        </div>
+    </t>
+
+</templates>

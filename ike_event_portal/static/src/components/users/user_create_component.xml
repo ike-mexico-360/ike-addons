@@ -1,0 +1,153 @@
+<templates xml:space="preserve">
+    <t t-name="ike_event_portal.UserCreateComponent" owl="1">
+        <div class="user-create-container p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center">
+                    <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="usuarios" class="me-3" style="width:30px;" />
+                    <h1 class="fw-bold mb-0">Agregar Nuevo Usuario</h1>
+                </div>
+                <a href="/provider/portal/users" class="btn btn-secondary">
+                    <i class="fa fa-arrow-left me-1"/> Volver a la lista
+                </a>
+            </div>
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <form t-on-submit.prevent="saveUser">
+                        <div class="row g-5">
+                            <div class="col-md-6">
+                                <h5 class="text-primary border-bottom pb-2 mb-4">Datos del Usuario</h5>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Nombre(s)</label>
+                                    <input type="text" class="form-control" t-model="state.formData.firstname" placeholder="Nombre(s)"/>
+                                    <div class="invalid-feedback" t-if="state.errors.firstname">
+                                        <t t-esc="state.errors.firstname"/>
+                                        <label class="form-label small fw-bold text-uppercase text-muted">firstname is required</label>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Apellidos</label>
+                                    <input type="text" class="form-control" t-model="state.formData.lastname" placeholder="Apellidos"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Fecha de Nacimiento</label>
+                                    <input type="date" class="form-control" t-model="state.formData.birthdate"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Email</label>
+                                    <input type="email" class="form-control" t-model="state.formData.email" placeholder="email@ejemplo.com"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Teléfono</label>
+                                    <input type="tel" class="form-control" t-model="state.formData.phone" placeholder="Teléfono"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Tipo de Licencia</label>
+                                    <input type="text" class="form-control" t-model="state.formData.license_type" placeholder="Tipo de licencia"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Número de Licencia</label>
+                                    <input type="text" class="form-control" t-model="state.formData.license_number" placeholder="# de licencia"/>
+                                </div>
+                                <!-- Radio Buttons for User Type -->
+                                <div class="mb-3 mt-4">
+                                    <label class="form-label small fw-bold text-uppercase text-muted mb-2">Tipo de Usuario</label>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="userType" id="typeAdmin"
+                                       value="admin" t-model="state.formData.user_type"/>
+                                        <label class="form-check-label fw-bold" for="typeAdmin">Administrador</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="userType" id="typeSupervisor"
+                                       value="supervisor" t-model="state.formData.user_type"/>
+                                        <label class="form-check-label fw-bold" for="typeSupervisor">Supervisor</label>
+                                    </div>
+                                    <div class="form-check mb-2">
+                                        <input class="form-check-input" type="radio" name="userType" id="typeOperator"
+                                       value="operator" t-model="state.formData.user_type"/>
+                                        <label class="form-check-label fw-bold" for="typeOperator">Operador</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- RIGHT COLUMN: Dirección -->
+                            <div class="col-md-6">
+                                <h5 class="text-primary border-bottom pb-2 mb-4">Dirección</h5>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Calle y Número</label>
+                                    <input type="text" class="form-control" t-model="state.formData.street" placeholder="Calle y número"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Calle 2</label>
+                                    <input type="text" class="form-control" t-model="state.formData.street2" placeholder="Calle 2"/>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Colonia</label>
+                                    <input type="text" class="form-control" t-model="state.formData.colony" placeholder="Colonia"/>
+                                </div>
+                                <!-- Row for CP, Municipio, Estado -->
+                                <div class="row g-2 mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold text-uppercase text-muted">CP</label>
+                                        <input type="text" class="form-control" t-model="state.formData.zip" placeholder="CP"/>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold text-uppercase text-muted">Municipio</label>
+                                        <input type="text" class="form-control" t-model="state.formData.municipality" placeholder="Municipio"/>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label small fw-bold text-uppercase text-muted">Estado</label>
+                                        <select class="form-select" t-model="state.formData.state_id">
+                                            <option value="">Seleccionar...</option>
+                                            <t t-foreach="state.states" t-as="st" t-key="st.id">
+                                                <option t-att-value="st.id">
+                                                    <t t-esc="st.name"/>
+                                                </option>
+                                            </t>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">País</label>
+                                    <select class="form-select" t-on-change="onCountryChange">
+                                        <option value="">Seleccionar...</option>
+                                        <t t-foreach="state.countries" t-as="country" t-key="country.id">
+                                            <option t-att-value="country.id" t-att-selected="state.formData.country_id == country.id">
+                                                <t t-esc="country.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small fw-bold text-uppercase text-muted">Centro de atención</label>
+                                    <select class="form-select" t-model="state.formData.center_of_attention_id">
+                                        <option value="">Seleccionar...</option>
+                                        <t t-foreach="state.supplierCenters" t-as="center" t-key="center.id">
+                                            <option t-att-value="center.id" t-att-selected="state.formData.center_of_attention_id == center.id">
+                                                <t t-esc="center.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="d-flex justify-content-end gap-2 mt-5 pt-3 border-top">
+                                    <button type="button"
+                                    class="btn btn-outline-secondary"
+                                    t-on-click="props.onCancel"
+                                    t-att-disabled="state.isSubmitting">
+                                Cancelar
+                                </button>
+                                    <button type="submit"
+                                    class="btn btn-primary px-5"
+                                    t-att-disabled="state.isSubmitting">
+                                        <t t-if="state.isSubmitting">Guardando...</t>
+                                        <t t-else="">Guardar</t>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

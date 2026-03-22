@@ -1,0 +1,224 @@
+{
+  "examples": {
+    "unsupported_version": {
+      "info": {
+        "name": "Future API Collection",
+        "description": "This collection uses an unsupported version",
+        "schema": "https://schema.getpostman.com/json/collection/v3.0.0/collection.json"
+      },
+      "item": [
+        {
+          "name": "Test Request",
+          "request": {
+            "method": "GET",
+            "url": "https://api.example.com/test"
+          }
+        }
+      ]
+    },
+    
+    "unsupported_auth": {
+      "info": {
+        "name": "NTLM Authentication API",
+        "description": "This collection uses unsupported NTLM authentication",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+      },
+      "auth": {
+        "type": "ntlm",
+        "ntlm": [
+          {
+            "key": "username",
+            "value": "domain\\user"
+          },
+          {
+            "key": "password",
+            "value": "password123"
+          }
+        ]
+      },
+      "item": [
+        {
+          "name": "Protected Resource",
+          "request": {
+            "method": "GET",
+            "url": "https://internal.company.com/api/data"
+          }
+        }
+      ]
+    },
+    
+    "with_scripts": {
+      "info": {
+        "name": "API with Scripts",
+        "description": "This collection contains pre-request and test scripts",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "exec": [
+              "// Pre-request script",
+              "pm.globals.set('timestamp', Date.now());"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Test script",
+              "pm.test('Status code is 200', function () {",
+              "    pm.response.to.have.status(200);",
+              "});"
+            ]
+          }
+        }
+      ],
+      "item": [
+        {
+          "name": "API Call with Scripts",
+          "request": {
+            "method": "GET",
+            "url": "https://api.example.com/data"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Response time is less than 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    
+    "empty_collection": {
+      "info": {
+        "name": "Empty Collection",
+        "description": "This collection has no requests",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+      },
+      "item": []
+    },
+    
+    "malformed_requests": {
+      "info": {
+        "name": "Malformed Requests",
+        "description": "This collection has invalid request structures",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+      },
+      "item": [
+        {
+          "name": "Request without URL",
+          "request": {
+            "method": "GET"
+          }
+        },
+        {
+          "name": "Request without method",
+          "request": {
+            "url": "https://api.example.com/test"
+          }
+        },
+        {
+          "name": "Invalid HTTP method",
+          "request": {
+            "method": "INVALID",
+            "url": "https://api.example.com/test"
+          }
+        }
+      ]
+    },
+    
+    "unsupported_body_types": {
+      "info": {
+        "name": "Unsupported Body Types",
+        "description": "This collection uses unsupported request body types",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+      },
+      "item": [
+        {
+          "name": "File Upload Request",
+          "request": {
+            "method": "POST",
+            "url": "https://api.example.com/upload",
+            "body": {
+              "mode": "file",
+              "file": {
+                "src": "path/to/file.pdf"
+              }
+            }
+          }
+        },
+        {
+          "name": "Binary Data Request",
+          "request": {
+            "method": "POST",
+            "url": "https://api.example.com/binary",
+            "body": {
+              "mode": "binary",
+              "binary": "base64encodeddata"
+            }
+          }
+        }
+      ]
+    },
+    
+    "missing_info": {
+      "item": [
+        {
+          "name": "Request without collection info",
+          "request": {
+            "method": "GET",
+            "url": "https://api.example.com/test"
+          }
+        }
+      ]
+    },
+    
+    "invalid_schema": {
+      "info": {
+        "name": "Non-Postman Collection",
+        "description": "This is not a Postman collection",
+        "schema": "https://swagger.io/specification/v3.0.0"
+      },
+      "item": [
+        {
+          "name": "Test Request",
+          "request": {
+            "method": "GET",
+            "url": "https://api.example.com/test"
+          }
+        }
+      ]
+    }
+  },
+  
+  "error_messages": {
+    "unsupported_version": "Unsupported Postman collection version 'v3.0'. Supported versions: v2.0, v2.1, v2.2",
+    "unsupported_auth": "Collection contains unsupported features: Authentication type 'ntlm'",
+    "with_scripts": "Collection contains unsupported features: Pre-request scripts, Test scripts",
+    "empty_collection": "Collection is empty - no requests found",
+    "malformed_requests": "No valid requests found in collection",
+    "unsupported_body_types": "Collection contains unsupported features: Request body type 'file', Request body type 'binary'",
+    "missing_info": "Missing 'info' section - not a valid Postman collection",
+    "invalid_schema": "Schema indicates this is not a Postman collection"
+  },
+  
+  "usage_instructions": {
+    "description": "These examples demonstrate various unsupported Postman collection formats",
+    "how_to_test": [
+      "1. Copy one of the example collections from the 'examples' object",
+      "2. Save it as a separate JSON file",
+      "3. Try to import it using API Connector → Import Configuration",
+      "4. Observe the specific error message that matches the 'error_messages' object"
+    ],
+    "expected_behavior": "Each example should fail validation with a specific, helpful error message"
+  }
+}

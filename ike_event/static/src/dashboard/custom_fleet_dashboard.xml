@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.CustomFleetDashboard" owl="1">
+        <Layout display="display">
+            <div class="container-fluid my-2">
+                <!--<button type="button" class="btn btn-primary mb-2" t-on-click="onTestBroadcastClick">
+                    Test Broadcast Location Update
+                </button>-->
+                <div class="row">
+                    <div class="col m-1">
+                        <div class="col-12 m-auto" t-ref="mapContainer" style="height:60vh;"/>
+                    </div>
+                </div>
+            </div>
+        </Layout>
+    </t>
+
+</templates>

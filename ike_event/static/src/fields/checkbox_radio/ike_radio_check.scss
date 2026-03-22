@@ -1,0 +1,55 @@
+.o_ike_checkbox_field {
+
+    label {
+        border-radius: 15px;
+        background-color: #F6F8FD;
+        border: 1px solid #D9E7F3;
+        padding: 6px 7px 7px 8px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        span {
+            color: #134F82;
+            font-size: $o-font-size-base-touch;
+            font-weight: $font-weight-medium;
+        }
+
+        div {
+            background-color: #ffffff;
+            padding: 2px;
+            margin: 0;
+            border-radius: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            input[type="checkbox"] {
+                appearance: none;
+                width: 20px;
+                height: 20px;
+                border: 2px solid #134F82;
+                border-radius: 50%;
+                cursor: pointer;
+                position: relative;
+                transition: all 0.2s ease;
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            input[type="checkbox"]:checked::before {
+                content: '';
+                position: absolute;
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                background-color: #134F82;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+        }
+    }
+}

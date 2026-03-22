@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_custom_membership_plan_product_form" model="ir.ui.view">
+        <field name="name">custom.membership.plan.product.form</field>
+        <field name="model">custom.membership.plan.product.line</field>
+        <field name="priority" eval="1"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <form string="Membership Plan Product Line">
+                <sheet>
+                    <header>
+                        <h2 class="">Coverage rules</h2>
+                    </header>
+                    <group>
+                        <group>
+                            <separator string="Coverage"/>
+                            <field name="service_id" options='{"no_open": True, "no_create": True}'
+                                required="1"
+                                domain="x_service_domain"
+                                readonly="0"
+                                context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list'}"/>
+                            <field name="sub_service_ids" options='{"no_open": True, "no_create": True}' required="1"
+                                domain="x_product_domain"
+                                widget="many2many_tags"
+                                readonly="0"
+                                context="{
+                                    'display_default_code': 0,
+                                    'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list'
+                                }"/>
+                            <field name="vehicle_weight_category_id"/>
+                            <field name="sap_id_income"/>
+
+                            <field name="commercial_name"/>
+                            <field name="product_description_po"/>
+                            <field name="sap_id_outgoing"/>
+                            <div class="o_row gap-1">
+                                <label for="local"/>
+                                <field name="local"/>
+
+                                <label for="national"/>
+                                <field name="national"/>
+
+                                <label for="foreigner"/>
+                                <field name="foreigner"/>
+                            </div>
+
+                        </group>
+
+                        <group >
+                            <separator string="Limits"/>
+                            <field name="limit_distance" invisible="1"/>
+                            <field name="limit_amount_per_event"/>
+                            <div class="o_row gap-1">
+                                <label for="period_per_event" class="o_form_label"></label>
+                                <field name="period_per_event"/>
+                                <field name="period" class="oe_inline"/>
+                            </div>
+                        </group>
+                    </group>
+                    <separator string="Conceptos Detallados"/>
+                    <field name="detail_ids" create="false" options="{
+                            'field_columns': ['product_id'],
+                            'delete_condition_field': 'mandatory',
+                        }">
+                        <list editable="bottom">
+                            <field name="mandatory" column_invisible="1"/>
+                            <field name="x_concept_domain" column_invisible="1"/>
+                            <field name="product_id" 
+                            domain="x_concept_domain"
+                                options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                context="{'display_default_code': 0,
+                                'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'}"/>
+                            <field name="coverage_type"/>
+                            <field name="quantity"/>
+                            <!-- <field name="cost"/>
+                            <field name="limit_coverage"/> -->
+                        </list>
+                    </field>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_custom_membership_plan_product_considerations_html_form" model="ir.ui.view">
+        <field name="name">custom.membership.plan.product.considerations.html.form</field>
+        <field name="model">custom.membership.plan.product.line</field>
+        <field name="arch" type="xml">
+            <form string="Membership Plan Product Considerations">
+                <sheet>
+                    <notebook>
+                        <page string="Content">
+                            <field name="considerations_html" type="html" placeholder="Add details..." readonly="context.get('from_event_kanban', False)"/>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button string="Save" type="object" class="btn-primary" name="action_save" data-hotkey="q" invisible="context.get('from_event_kanban', False)"/>
+                        <button string="Discard" class="btn-secondary" special="cancel" data-hotkey="z" invisible="context.get('from_event_kanban', False)"/>
+                        <button string="Return" type="object" class="btn-secondary"
+                                    name="action_back_to_coverage" invisible="not context.get('from_event_kanban', False)"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_custom_membership_plan_product_exclusions_html_form" model="ir.ui.view">
+        <field name="name">custom.membership.plan.product.exclusions.html.form</field>
+        <field name="model">custom.membership.plan.product.line</field>
+        <field name="arch" type="xml">
+            <form string="Membership Plan Product Exclusions">
+                <sheet>
+                    <notebook>
+                        <page string="Content">
+                            <field name="exclusions_html" type="html" placeholder="Add details..." readonly="context.get('from_event_kanban', False)"/>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button string="Save" type="object" class="btn-primary" name="action_save" data-hotkey="q" invisible="context.get('from_event_kanban', False)"/>
+                        <button string="Discard" class="btn-secondary" special="cancel" data-hotkey="z" invisible="context.get('from_event_kanban', False)"/>
+                         <button string="Return" type="object" class="btn-secondary"
+                                    name="action_back_to_coverage" invisible="not context.get('from_event_kanban', False)"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+</odoo>

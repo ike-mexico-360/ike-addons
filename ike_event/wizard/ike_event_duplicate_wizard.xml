@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ike_event_duplicate_wizard_view_form" model="ir.ui.view">
+        <field name="name">ike.event.duplicate.wizard.view.form</field>
+        <field name="model">ike.event.duplicate.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Duplicate">
+                <group string="User data" >
+                    <field name="event_id" readonly="1" options="{'no_open': True}"/>
+                    <field name="duplicate_reason_id" options="{'no_open': True, 'no_create': True, 'no_edit': True}"/>
+                    <field name="duplicate_user_data"/>
+                </group>
+
+                <group string="Service">
+                    <field name="service_domain" invisible="1"/>
+                    <field name="duplicate_service"/>
+
+                    <field name="service_id"
+                        widget="ike_service_radio"
+                        readonly="duplicate_service"
+                        nolabel="1"
+                        domain="service_domain"
+                        invisible="duplicate_service"
+                        options="{'icon_field': 'x_icon'}"/>
+
+                    <field name="duplicate_service_id" 
+                        widget="ike_service_radio" 
+                        nolabel="1"
+                        domain="service_domain" 
+                        options="{'icon_field': 'x_icon'}"
+                        invisible="not duplicate_service"/>
+
+                  
+                    <field name="duplicate_subservice"/>
+                    <field name="sub_service_id"
+                        domain="[('categ_id', '=', service_domain_id),
+                                ('x_input_res_model', '!=', False)]"
+                        class="ike-select"
+                        nolabel="1"
+                        invisible="duplicate_subservice"
+                        placeholder="Sub-Service"/>
+                        
+                    <field name="duplicate_sub_service_id" 
+                        invisible="not duplicate_subservice" 
+                        options="{'no_open': True, 'no_create': True}" 
+                        class="ike-select"
+                        nolabel="1"
+                        />
+                </group>
+
+                <group string="Location">
+                    <field name="duplicate_location"/>
+                    <field name="duplicate_destination"/>
+                </group>
+
+                <footer>
+                    <button string="Confirm"
+                        name="action_duplicate_event"
+                        type="object"
+                        class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

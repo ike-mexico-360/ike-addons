@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sh_helpdesk_ticket_crm_inherited_view_form" model="ir.ui.view">
+        <field name="name">sh.helpdesk.crm.inherited.view.form</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form" />
+        <field name="arch" type="xml">
+            <field name="stage_id" position="before">
+                <button class="btn btn-primary" name="action_create_ticket" type="object" string="Create Ticket" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_crm" />
+            </field>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="ticket_counts" type="object" class="oe_stat_button" icon="fa-ticket" context="{'partner_id': partner_id}" invisible="ticket_count == 0" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_crm">
+                    <!-- attrs="{'invisible': [('ticket_count', '=', 0)]}"-->
+                    <div class="o_stat_info">
+                        <field name="ticket_count" class="o_stat_value" />
+                        <span class="o_stat_text">Tickets</span>
+                    </div>
+                </button>
+            </xpath>
+            <field name="company_id" position="after">
+                <field name="sh_ticket_ids" widget="many2many_tags" />
+            </field>
+        </field>
+    </record>
+    <record id="sh_helpdesk_tickets_crm_inherited_view_form" model="ir.ui.view">
+        <field name="name">sh.helpdesk.tickets.crm.view.form</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_form_view" />
+        <field name="arch" type="xml">
+            <field name="stage_id" position="before">
+                <button class="btn btn-primary" name="action_create_lead" icon="fa-star" type="object" string="Create Lead" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_crm" />
+                <button class="btn btn-primary" name="action_create_opportunity" icon="fa-star" type="object" string="Create Opportunity" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_crm" />
+            </field>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="lead_counts" type="object" class="oe_stat_button" icon="fa-star" context="{'partner_id': partner_id}" invisible="lead_count == 0" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_crm">
+                    <!-- attrs="{'invisible': [('lead_count', '=', 0)]}" -->
+                    <div class="o_stat_info">
+                        <field name="lead_count" class="o_stat_value" />
+                        <span class="o_stat_text">Leads</span>
+                    </div>
+                </button>
+                <button name="opportunity_counts" type="object" class="oe_stat_button" icon="fa-star" context="{'partner_id': partner_id}" invisible="opportunity_count == 0" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_crm">
+                    <!-- attrs="{'invisible': [('opportunity_count', '=', 0)]}" -->
+                    <div class="o_stat_info">
+                        <field name="opportunity_count" class="o_stat_value" />
+                        <span class="o_stat_text">Opportunities</span>
+                    </div>
+                </button>
+            </xpath>
+            <field name="product_ids" position="after">
+                <field name="sh_lead_ids" widget="many2many_tags" />
+            </field>
+        </field>
+    </record>
+    <record id="sh_helpdesk_tickets_inherited_view_crm_search" model="ir.ui.view">
+        <field name="name">sh.helpdesk.tickets.inherited.view.search</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_search_view" />
+        <field name="arch" type="xml">
+            <field name="stage_id" position="after">
+                <field name="sh_lead_ids" />
+            </field>
+            <xpath expr="//filter[last()]" position="after">
+                <filter string="Leads/Opportunities" name="helpdesk_lead" domain="[('sh_lead_ids','!=',False)]" />
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_helpdesk_crm_inherited_view_search" model="ir.ui.view">
+        <field name="name">sh.helpdesk.crm.inherited.view.search</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_opportunities_filter" />
+        <field name="arch" type="xml">
+            <field name="phone_mobile_search" position="after">
+                <field name="sh_ticket_ids" />
+            </field>
+            <xpath expr="//filter[1]" position="after">
+                <filter string="Helpdesk Ticket" name="sh_helpdesk_ticket" domain="[('sh_ticket_ids','!=',False)]" />
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_helpdesk_crm_lead_inherited_view_search" model="ir.ui.view">
+        <field name="name">sh.helpdesk.crm.lead.inherited.view.search</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_case_leads_filter" />
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="sh_ticket_ids" />
+            </field>
+            <xpath expr="//filter[1]" position="after">
+                <filter string="Helpdesk Ticket" name="sh_helpdesk_ticket" domain="[('sh_ticket_ids','!=',False)]" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sh_helpdesk_crm_lead_inherited_view_tree" model="ir.ui.view">
+        <field name="name">sh.helpdesk.crm.lead.view.list</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_leads" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='country_id']" position="after">
+                <field name="sh_ticket_ids" widget="ticket_popover_widget"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_helpdesk_crm_lead_inherited_view_kanban" model="ir.ui.view">
+        <field name="name">sh.helpdesk.crm.lead.view.kanban</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.view_crm_lead_kanban" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='activity_ids']" position="after">
+                <field name="sh_ticket_ids" widget="ticket_popover_widget"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_helpdesk_crm_inherited_view_tree" model="ir.ui.view">
+        <field name="name">sh.helpdesk.crm.view.list</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="sh_ticket_ids" widget="ticket_popover_widget"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_helpdesk_crm_inherited_view_kanban" model="ir.ui.view">
+        <field name="name">sh.helpdesk.crm.view.kanban</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_kanban_view_leads" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='activity_ids']" position="after">
+                <field name="sh_ticket_ids" widget="ticket_popover_widget"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

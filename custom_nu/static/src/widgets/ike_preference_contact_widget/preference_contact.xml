@@ -1,0 +1,13 @@
+<t t-name="ike_event.PreferenceContactWidget">
+    <div class="d-flex gap-3 mt-2">
+        <t t-foreach="options" t-as="opt" t-key="opt.value">
+            <div class="pref-box"
+                t-attf-class="pref-box {{ props.record.data[props.name] === opt.value ? 'selected' : '' }} {{ props.readonly ? 'disabled' : '' }}"
+                t-att-data-value="opt.value"
+                t-on-click="onSelect">
+
+                <i t-att-class="opt.icon"></i>
+            </div>
+        </t>
+    </div>
+</t>

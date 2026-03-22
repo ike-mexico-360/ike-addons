@@ -1,0 +1,513 @@
+<templates xml:space="preserve">
+    <t t-name="ike_event_portal.ServicesMainComponent" owl="1">
+        <div class="portal-main-container">
+            <!-- Service Summary Modal -->
+            <t t-if="state.showServiceSummaryModal">
+                <div class="modal-backdrop fade show" style="z-index:1040;"/>
+                <div class="modal fade show d-block" tabindex="-1" role="dialog" style="z-index:1050;">
+                    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+                        <div class="modal-content border-0 shadow-lg rounded-4">
+                            <div class="modal-header bg-primary text-white rounded-top-4">
+                                <h5 class="modal-title">
+                                    <i class="fa fa-file-text me-2"/>Detalles del Servicio
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" aria-label="Close" t-on-click="closeServiceSummaryModal"/>
+                            </div>
+                            <div class="modal-body">
+                                <div t-if="state.event_supplier_summary_data" t-ref="summaryContainer"/>
+                                <t t-if="state.travel_tracking_url">
+                                    <div class="travel-tracking-container mb-4 rounded-3 overflow-hidden">
+                                        <iframe frameborder="0" style="width:100%; height: 400px; border:none;" t-att-src="state.travel_tracking_url"/>
+                                    </div>
+                                </t>
+                                <hr class="my-4"/>
+                                <!-- Service Costs Section -->
+                                <t t-if="state.serviceCostsData">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="fw-bold text-primary mb-0">
+                                            <i class="fa fa-calculator me-2"/>Costos del Servicio
+                                        </h6>
+                                        <button t-if="!state.isAddingConcept"
+                                            type="button"
+                                            class="btn btn-success btn-sm rounded-pill px-3"
+                                            t-on-click="onAddConceptClick">
+                                            <i class="fa fa-plus me-1"/>Agregar concepto
+                                        </button>
+                                    </div>
+                                    <!-- New concept row (when adding) - ABOVE TABLE -->
+                                    <t t-if="state.isAddingConcept">
+                                        <div class="card bg-success bg-opacity-10 border-success mb-3">
+                                            <div class="card-body py-3">
+                                                <div class="row g-2 align-items-center">
+                                                    <div class="col-md-5">
+                                                        <label class="form-label small text-muted mb-1">Concepto</label>
+                                                        <select class="form-select form-select-sm"
+                                                                t-on-change="onNewConceptProductChange">
+                                                            <option value="">Seleccionar concepto...</option>
+                                                            <t t-foreach="state.availableProducts" t-as="product" t-key="product.id">
+                                                                <option t-att-value="product.id" t-esc="product.name"/>
+                                                            </t>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label class="form-label small text-muted mb-1">Cantidad</label>
+                                                        <input type="number"
+                                                               class="form-control form-control-sm text-center"
+                                                               t-att-value="state.newConcept.quantity"
+                                                               min="1"
+                                                               step="1"
+                                                               t-on-change="(ev) => this.onNewConceptQuantityChange('quantity', ev)"/>
+                                                    </div>
+                                                    <div class="col-md-3 text-end">
+                                                        <label class="form-label small text-muted mb-1 d-block">&amp;nbsp;</label>
+                                                        <button type="button"
+                                                                class="btn btn-success btn-sm me-1"
+                                                                t-on-click="onSaveNewConcept"
+                                                                title="Guardar">
+                                                            <i class="fa fa-check me-1"/>Guardar
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                    <!-- Costs Table -->
+                                    <div class="table-responsive">
+                                        <table class="table align-middle mb-0">
+                                            <thead>
+                                                <tr class="bg-primary text-white">
+                                                    <th class="py-3 px-3 rounded-start">Concepto</th>
+                                                    <th class="py-3 px-3 text-center">Cantidad</th>
+                                                    <th class="py-3 px-3 text-center">UdM</th>
+                                                    <th class="py-3 px-3 text-end">Precio unitario</th>
+                                                    <th class="py-3 px-3 text-end">Costo</th>
+                                                    <th class="py-3 px-3 text-end">IVA</th>
+                                                    <th class="py-3 px-3 text-end rounded-end">Subtotal</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="state.serviceCostsData.items" t-as="item" t-key="item.id">
+                                                    <tr class="border-bottom">
+                                                        <td class="py-3 px-3">
+                                                            <t t-esc="item.concept"/>
+                                                        </td>
+                                                        <td class="py-3 px-3 text-center">
+                                                            <input type="number"
+                                                                   class="form-control form-control-sm text-center"
+                                                                   style="width: 80px; margin: 0 auto;"
+                                                                   t-att-value="item.quantity"
+                                                                   min="0"
+                                                                   step="1"
+                                                                   t-on-change="(ev) => this.onCostItemFieldChange(item.id, 'quantity', ev)"/>
+                                                        </td>
+                                                        <td class="py-3 px-3 text-center">
+                                                            <t t-esc="item.uom"/>
+                                                        </td>
+                                                        <td class="py-3 px-3 text-end">
+                                                            <div class="input-group input-group-sm" style="width: 120px; margin-left: auto;">
+                                                                <span class="input-group-text">$</span>
+                                                                <input type="number"
+                                                                       class="form-control text-end"
+                                                                       t-att-value="item.unit_price"
+                                                                       min="0"
+                                                                       step="0.01"
+                                                                       t-on-change="(ev) => this.onCostItemFieldChange(item.id, 'unit_price', ev)"/>
+                                                            </div>
+                                                        </td>
+                                                        <td class="py-3 px-3 text-end">
+                                                            $<t t-esc="formatCurrency(item.cost)"/>
+                                                        </td>
+                                                        <td class="py-3 px-3 text-end">
+                                                            $<t t-esc="formatCurrency(item.iva)"/>
+                                                        </td>
+                                                        <td class="py-3 px-3 text-end">
+                                                            $<t t-esc="formatCurrency(item.subtotal)"/>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- Send additional concepts request button -->
+                                    <div class="d-flex justify-content-end mt-3">
+                                        <button type="button"
+                                                class="btn btn-primary rounded-pill px-4"
+                                                t-on-click="onSendAdditionalConceptsRequest">
+                                            <i class="fa fa-paper-plane me-2"/>Enviar solicitud de conceptos adicionales
+                                        </button>
+                                    </div>
+                                </t>
+                                <!-- New concept row (when adding) -->
+                                <!-- Loading state for costs -->
+                                <t t-if="state.isLoadingCosts">
+                                    <div class="text-center py-4">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Cargando...</span>
+                                        </div>
+                                        <p class="text-muted mt-2">Cargando costos del servicio...</p>
+                                    </div>
+                                </t>
+                                <!-- No costs message -->
+                                <t t-if="!state.serviceCostsData and !state.isLoadingCosts and !state.isAddingConcept">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="fw-bold text-primary mb-0">
+                                            <i class="fa fa-calculator me-2"/>Costos del Servicio
+                                        </h6>
+                                        <button type="button"
+                                                class="btn btn-success btn-sm rounded-pill px-3"
+                                                t-on-click="onAddConceptClick">
+                                            <i class="fa fa-plus me-1"/>Agregar concepto
+                                        </button>
+                                    </div>
+                                    <div class="alert alert-info mb-0">
+                                        <i class="fa fa-info-circle me-2"/>
+                                        No hay costos registrados para este servicio.
+                                    </div>
+                                </t>
+                                <!-- Adding concept when no costs exist -->
+                                <t t-if="!state.serviceCostsData and !state.isLoadingCosts and state.isAddingConcept">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="fw-bold text-primary mb-0">
+                                            <i class="fa fa-calculator me-2"/>Costos del Servicio
+                                        </h6>
+                                    </div>
+                                    <!-- New concept form -->
+                                    <div class="card bg-success bg-opacity-10 border-success mb-3">
+                                        <div class="card-body py-3">
+                                            <div class="row g-2 align-items-center">
+                                                <div class="col-md-5">
+                                                    <label class="form-label small text-muted mb-1">Concepto</label>
+                                                    <select class="form-select form-select-sm"
+                                                            t-on-change="onNewConceptProductChange">
+                                                        <option value="">Seleccionar concepto...</option>
+                                                        <t t-foreach="state.availableProducts" t-as="product" t-key="product.id">
+                                                            <option t-att-value="product.id" t-esc="product.name"/>
+                                                        </t>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label class="form-label small text-muted mb-1">Cantidad</label>
+                                                    <input type="number"
+                                                           class="form-control form-control-sm text-center"
+                                                           t-att-value="state.newConcept.quantity"
+                                                           min="1"
+                                                           step="1"
+                                                           t-on-change="(ev) => this.onNewConceptQuantityChange('quantity', ev)"/>
+                                                </div>
+                                                <div class="col-md-3 text-end">
+                                                    <label class="form-label small text-muted mb-1 d-block">&amp;nbsp;</label>
+                                                    <button type="button"
+                                                            class="btn btn-success btn-sm me-1"
+                                                            t-on-click="onSaveNewConcept"
+                                                            title="Guardar">
+                                                        <i class="fa fa-check me-1"/>Guardar
+                                                    </button>
+                                                    <button type="button"
+                                                            class="btn btn-outline-secondary btn-sm"
+                                                            t-on-click="onCancelAddConcept"
+                                                            title="Cancelar">
+                                                        <i class="fa fa-times me-1"/>Cancelar
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary rounded-pill px-4" t-on-click="closeServiceSummaryModal">
+                                    <i class="fa fa-times me-1"/>Cerrar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+            <!-- Toast Notification -->
+            <t t-if="state.notification">
+                <div t-attf-class="alert alert-{{state.notification.type}} alert-dismissible fade show shadow-sm border-0 rounded-3"
+                     role="alert"
+                     style="position:fixed; top:20px; right:20px; z-index:9999; max-width:420px; animation: slideInRight 0.3s ease;">
+                    <div class="d-flex align-items-center">
+                        <i t-attf-class="fa fa-{{state.notification.type == 'warning' ? 'exclamation-triangle' : state.notification.type == 'danger' ? 'times-circle' : 'info-circle'}} me-2 fa-lg"/>
+                        <strong t-esc="state.notification.message"/>
+                    </div>
+                    <button type="button" class="btn-close" aria-label="Close" t-on-click="closeNotification"/>
+                </div>
+            </t>
+            <!-- Error Alert -->
+            <div t-if="state.error" class="alert alert-danger border-0 rounded-3 shadow-sm d-flex align-items-center">
+                <i class="fa fa-exclamation-triangle me-2 fa-lg"/>
+                <t t-esc="state.error"/>
+            </div>
+            <!-- Loading State -->
+            <div t-if="state.isLoading" class="d-flex flex-column align-items-center justify-content-center py-5">
+                <div class="spinner-border text-primary mb-3" style="width:3rem; height:3rem;" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="text-muted fs-6">Cargando servicios...</p>
+            </div>
+            <t t-else="">
+                <!-- MODE 1: CREATE -->
+                <t t-if="state.isCreating">
+                    <ServiceCreateComponent
+                        onServiceCreated.bind="onServiceCreated"
+                        onCancel.bind="closeCreateForm"
+                    />
+                </t>
+                <!-- MODE 2: READ (Details) -->
+                <t t-elif="state.selectedServiceId">
+                    <ServiceReadComponent
+                        serviceId="state.selectedServiceId"
+                        onClose.bind="clearSelection"
+                    />
+                </t>
+                <!-- MODE 3: LIST (Default) -->
+                <t t-else="">
+                    <div class="container-fluid">
+                        <!-- Page Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-1 pb-1">
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 rounded-3 p-2 me-3 d-flex align-items-center justify-content-center" style="width:48px; height:48px;">
+                                    <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="servicios" style="width:28px;"/>
+                                </div>
+                                <div>
+                                    <h2 class="fw-bold mb-0 text-dark">Servicios</h2>
+                                    <small class="text-muted">
+                                        <t t-esc="state.services.length"/> servicio(s) encontrado(s)
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Filters Bar -->
+                        <div class="card border-0 shadow-sm rounded-3 mb-4">
+                            <div class="card-body py-3">
+                                <div class="row g-3 align-items-end">
+                                    <!-- Search by Expediente -->
+                                    <div class="col-md-3">
+                                        <label class="form-label small text-muted fw-semibold mb-1">
+                                            <i class="fa fa-search me-1"/>Expediente
+                                        </label>
+                                        <input type="text"
+                                            class="form-control form-control-sm rounded-pill"
+                                            placeholder="Buscar expediente..."
+                                            t-att-value="state.filters.record"
+                                            t-on-input="(ev) => this.onFilterChange('record', ev.target.value)"/>
+                                    </div>
+                                    <!-- Filter by Fecha desde -->
+                                    <div class="col-md-2">
+                                        <label class="form-label small text-muted fw-semibold mb-1">
+                                            <i class="fa fa-calendar me-1"/>Fecha desde
+                                        </label>
+                                        <input type="date"
+                                            class="form-control form-control-sm rounded-pill"
+                                            t-att-value="state.filters.from"
+                                            t-on-input="(ev) => this.onFilterChange('from', ev.target.value)"/>
+                                    </div>
+                                    <!-- Filter by Fecha hasta -->
+                                    <div class="col-md-2">
+                                        <label class="form-label small text-muted fw-semibold mb-1">
+                                            <i class="fa fa-calendar me-1"/>Fecha hasta
+                                        </label>
+                                        <input type="date"
+                                            class="form-control form-control-sm rounded-pill"
+                                            t-att-value="state.filters.to"
+                                            t-on-input="(ev) => this.onFilterChange('to', ev.target.value)"/>
+                                    </div>
+                                    <!-- Filter by Servicio -->
+                                    <div class="col-md-2">
+                                        <label class="form-label small text-muted fw-semibold mb-1">
+                                            <i class="fa fa-cog me-1"/>Servicio
+                                        </label>
+                                        <select class="form-select form-select-sm rounded-pill"
+                                            t-att-value="state.filters.service"
+                                            t-on-change="(ev) => this.onFilterChange('service', ev.target.value)">
+                                            <option value="">Todos</option>
+                                            <t t-foreach="serviceOptions" t-as="option" t-key="option">
+                                                <option t-att-value="option" t-esc="option"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <!-- Filter by Subservicio -->
+                                    <div class="col-md-2">
+                                        <label class="form-label small text-muted fw-semibold mb-1">
+                                            <i class="fa fa-wrench me-1"/>Subservicio
+                                        </label>
+                                        <select class="form-select form-select-sm rounded-pill"
+                                            t-on-change="(ev) => this.onFilterChange('subservice', ev.target.value)">
+                                            <option value="">Todos</option>
+                                            <t t-foreach="subserviceOptions" t-as="option" t-key="option">
+                                                <option t-att-value="option" t-esc="option"/>
+                                            </t>
+                                        </select>
+                                    </div>
+                                    <!-- Clear Filters -->
+                                    <div class="col-md-1 d-flex align-items-end">
+                                        <button class="btn btn-sm btn-outline-secondary rounded-pill w-100"
+                                            title="Limpiar filtros"
+                                            t-on-click="clearFilters">
+                                            <i class="fa fa-times"/>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="o_portal_content">
+                            <!-- Loading inside list -->
+                            <div t-if="state.isLoading and filteredServices.length > 0" class="d-flex flex-column align-items-center justify-content-center py-5">
+                                <div class="spinner-border text-primary mb-3" style="width:3rem; height:3rem;" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <p class="text-muted fs-6">Cargando servicios...</p>
+                            </div>
+                            <!-- Services Table -->
+                            <PaginationComponent pagination="pagination">
+                                <div t-if="!state.isLoading and filteredServices.length > 0" class="table-responsive rounded-3 shadow-sm">
+                                    <table class="table table-hover table table-striped align-middle mb-0" style="border-collapse: separate; border-spacing: 0;">
+                                        <thead>
+                                            <tr class="bg-dark text-white">
+                                                <th class="text-nowrap py-3 px-3 border-0">Expediente</th>
+                                                <th class="text-nowrap py-3 px-3 border-0">Fecha</th>
+                                                <th class="text-nowrap py-3 px-3 border-0">Servicio</th>
+                                                <th class="text-nowrap py-3 px-3 border-0">Grúa</th>
+                                                <th class="text-nowrap py-3 px-3 border-0">Conductor</th>
+                                                <th class="text-nowrap py-3 px-3 border-0">Subservicio</th>
+                                                <th class="py-3 px-3 border-0">Ubicación</th>
+                                                <th class="text-nowrap py-3 px-3 border-0 text-center">Estado evento</th>
+                                                <th class="text-nowrap py-3 px-3 border-0 text-center">Estado proveedor</th>
+                                                <th class="text-nowrap py-3 px-3 border-0 text-center">Estado ruta</th>
+                                                <th class="text-nowrap py-3 px-3 border-0 text-center">Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-foreach="pagination.paginatedItems" t-as="service" t-key="service.event_supplier_id">
+                                                <tr t-att-class="'border-bottom ' + ((service.highlighted || service.event_supplier_state_label == 'Notificado') ? 'bg-warning' : '')">
+                                                    <!-- Expediente -->
+                                                    <td class="text-nowrap py-3 px-3 border-0">
+                                                        <span class="fw-semibold text-primary">
+                                                            <t t-esc="service.name"/>
+                                                        </span>
+                                                    </td>
+                                                    <!-- Fecha -->
+                                                    <td class="text-nowrap py-3 px-3 border-0">
+                                                        <small class="text-muted">
+                                                            <i class="fa fa-calendar me-1"/>
+                                                            <t t-esc="service.event_date"/>
+                                                        </small>
+                                                    </td>
+                                                    <!-- Servicio -->
+                                                    <td class="text-nowrap py-3 px-3 border-0">
+                                                        <t t-esc="service.service_id"/>
+                                                    </td>
+                                                    <!-- Grúa -->
+                                                    <td class="py-3 px-3 border-0">
+                                                        <div class="d-flex align-items-center justify-content-center">
+                                                            <i class="fa fa-truck text-muted me-2"/>
+                                                            <small>
+                                                                <t t-esc="service.truck_name"/>
+                                                            </small>
+                                                        </div>
+                                                    </td>
+                                                    <!-- Conductor -->
+                                                    <td class="py-3 px-3 border-0">
+                                                        <div class="d-flex align-items-center justify-content-center">
+                                                            <i class="fa fa-user text-muted me-2"/>
+                                                            <small>
+                                                                <t t-esc="service.driver_name"/>
+                                                            </small>
+                                                        </div>
+                                                    </td>
+                                                    <!-- Subservicio -->
+                                                    <td class="py-3 px-3 border-0">
+                                                        <t t-esc="service.sub_service_id"/>
+                                                    </td>
+                                                    <!-- Ubicación -->
+                                                    <td class="py-3 px-3 border-0" style="min-width:200px; max-width:280px;">
+                                                        <small class="text-muted">
+                                                            <i class="fa fa-map-marker text-danger me-1"/>
+                                                            <t t-out="service.location_label"/>
+                                                        </small>
+                                                    </td>
+                                                    <!-- Estado evento -->
+                                                    <td class="text-nowrap py-3 px-3 border-0 text-center">
+                                                        <span class="badge rounded-pill bg-info bg-opacity-10 px-3 py-2">
+                                                            <t t-esc="service.stage_id_label"/>
+                                                        </span>
+                                                    </td>
+                                                    <!-- Estado proveedor -->
+                                                    <td class="text-nowrap py-3 px-3 border-0 text-center">
+                                                        <span t-attf-class="badge rounded-pill px-3 py-2
+                                                        #{service.event_supplier_state == 'notified' ? 'bg-primary bg-opacity-10' :
+                                                          service.event_supplier_state == 'accepted' ? 'bg-success bg-opacity-10' :
+                                                          service.event_supplier_state == 'rejected' ? 'bg-danger bg-opacity-10' :
+                                                          service.event_supplier_state == 'assigned' ? 'bg-primary bg-opacity-10' :
+                                                          'bg-secondary bg-opacity-10'}">
+                                                            <i t-attf-class="fa me-1
+                                                            #{service.event_supplier_state == 'notified' ? 'fa-bell' :
+                                                              service.event_supplier_state == 'accepted' ? 'fa-check-circle' :
+                                                              service.event_supplier_state == 'rejected' ? 'fa-times-circle' :
+                                                              service.event_supplier_state == 'assigned' ? 'fa-user-check' :
+                                                              'fa-circle'}"/>
+                                                            <t t-esc="service.event_supplier_state_label"/>
+                                                        </span>
+                                                    </td>
+                                                    <td class="text-nowrap py-3 px-3 border-0 text-center">
+                                                        <span class="badge rounded-pill bg-info bg-opacity-10 px-3 py-2">
+                                                            <t t-esc="service.stage"/>
+                                                        </span>
+                                                    </td>
+                                                    <!-- Acciones -->
+                                                    <td class="text-nowrap py-3 px-3 border-0 text-center">
+                                                        <div class="d-flex gap-2 justify-content-center flex-nowrap">
+                                                            <button t-if="service.event_supplier_state=='notified' and service.stage_id_label != 'Asistencia concluida'"
+                                                            class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm"
+                                                            title="Aceptar Servicio"
+                                                            t-on-click="() => this.onAcceptClick(service.event_supplier_id)">
+                                                                <i class="fa fa-check me-1"/>Aceptar
+                                                            </button>
+                                                            <button t-if="service.event_supplier_state=='notified' and service.stage_id_label != 'Asistencia concluida'"
+                                                            class="btn btn-sm btn-outline-danger rounded-pill px-3"
+                                                            title="Rechazar Servicio"
+                                                            t-on-click="() => this.onRejectClick(service.event_supplier_id)">
+                                                                <i class="fa fa-times me-1"/>Rechazar
+                                                            </button>
+                                                            <button t-if="service.event_supplier_state=='accepted' and service.stage_id_label != 'Asistencia concluida'"
+                                                            class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm"
+                                                            title="Notificar Servicio"
+                                                            t-on-click="() => this.onAcceptNotify(service.event_supplier_id)">
+                                                                <i class="fa fa-bell me-1"/>Notificar
+                                                            </button>
+                                                            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3"
+                                                            title="Ver detalles"
+                                                            t-on-click="() => this.openServiceSummaryModal(service.event_supplier_id)">
+                                                                <i class="fa fa-eye me-1"/>Detalles
+                                                            </button>
+                                                            <button t-if="(service.event_supplier_state=='accepted' or service.event_supplier_state=='assigned') and service.stage_id_label != 'Asistencia concluida'"
+                                                            class="btn btn-sm btn-outline-dark rounded-pill px-3"
+                                                            title="Cancelar Servicio"
+                                                            t-on-click="() => this.onCancelService(service.event_supplier_id)">
+                                                                <i class="fa fa-ban me-1"/>Cancelar
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </PaginationComponent>
+                            <!-- Empty State -->
+                            <div t-if="!state.isLoading and state.services.length === 0" class="text-center py-5">
+                                <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width:80px; height:80px;">
+                                    <i class="fa fa-inbox fa-2x text-muted"/>
+                                </div>
+                                <h5 class="text-muted fw-normal">No hay servicios disponibles</h5>
+                                <p class="text-muted small">Los nuevos servicios aparecerán aquí automáticamente</p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ike_event_confirm_wizard_view_form" model="ir.ui.view">
+        <field name="name">ike.event.confirm.wizard.view.form</field>
+        <field name="model">ike.event.confirm.wizard</field>
+        <field name="inherit_id" ref="custom_master_catalog.custom_model_confirm_wizard_view_form"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <field name="reason" position="replace">
+                <!-- Cancellation -->
+                <field name="cancel_reason_id"
+                    invisible="not context.get('ike_event_supplier_cancel', False) and not context.get('ike_event_cancel', False)"
+                    required="context.get('ike_event_supplier_cancel', False) or context.get('ike_event_cancel', False)"
+                    options="{'no_create': 1, 'no_open': 1}"/>
+                <field name="reason" string="Comment"
+                    invisible="not context.get('ike_event_supplier_cancel', False) and not context.get('ike_event_cancel', False)"
+                    required="context.get('ike_event_supplier_cancel', False) or context.get('ike_event_cancel', False)"/>
+                <!-- Finalization -->
+                <field name="reason" string="Reason"
+                    invisible="not context.get('ike_event_supplier_finalize', False)"
+                    required="context.get('ike_event_supplier_finalize', False)"/>
+            </field>
+            <xpath expr="//button[@name='action_confirm'][2]" position="attributes">
+                <attribute name="string">Cancel service</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,141 @@
+.ike_progress_route {
+  padding: 8px 4px;
+}
+
+/* Contenedor de la barra */
+.ike_progress_route .route-bar {
+  position: relative;
+  height: 6px;
+  width: 33%;
+  background: #e5e7eb;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.ike_progress_route .route-track {
+  position: absolute;
+  inset: 0;
+}
+
+/* Progreso naranja */
+.ike_progress_route .route-progress {
+  position: absolute;
+  height: 100%;
+  background: #ffb158;
+  border-radius: 4px;
+  transition: width 0.8s ease;
+  z-index: 1;
+}
+
+/* Marcadores circulares */
+.ike_progress_route .stage-marker {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid #ffffff;
+  background: #6b7280;
+  z-index: 2;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Marcador de inicio (verde) */
+.ike_progress_route .start-marker {
+  background: #10b981;
+  border-color: #ffffff;
+}
+
+/* Marcador divisorio (naranja/amarillo) */
+.ike_progress_route .divider-marker {
+  background: #f4a73c;
+  border-color: #ffffff;
+  transition: left 0.3s ease;
+}
+
+/* Marcador de fin (rojo) */
+.ike_progress_route .end-marker {
+  background: #ef4444;
+  border-color: #ffffff;
+}
+
+/* Camión (indicador móvil) */
+.ike_progress_route .crane-dot {
+  position: absolute;
+  top: -10px;
+  transform: translateX(-50%);
+  transition: left 0.8s ease;
+  font-size: 18px;
+  z-index: 3;
+  cursor: pointer;
+}
+
+/* Camión en estado "arrived" */
+.ike_progress_route .crane-dot.arrived-state {
+  transition: none;
+}
+
+/* Etiquetas de tiempo */
+.ike_progress_route .route-labels {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ike_progress_route .time-section {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ike_progress_route .time-label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.ike_progress_route .time-value {
+  color: #6b7280;
+}
+
+.ike_progress_route .time-remaining-section {
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.ike_progress_route .time-remaining {
+  color: #059669;
+}
+
+.ike_progress_route .time-overdue {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.ike_progress_route .truck-icon {
+  width: 25px;
+  height: 25px;
+  display: block;
+  opacity: 1;
+  filter: none;
+  mix-blend-mode: normal;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .ike_progress_route .stage-marker {
+    width: 10px;
+    height: 10px;
+  }
+
+  .ike_progress_route .crane-dot {
+    font-size: 16px;
+  }
+
+  .ike_progress_route .route-labels {
+    font-size: 11px;
+  }
+}

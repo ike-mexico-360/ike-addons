@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View sh.customer.hour.package View List -->
+    <record id="view_sh_customer_hour_package_list" model="ir.ui.view">
+        <field name="name">view.sh.customer.hour.package.list</field>
+        <field name="model">sh.customer.hour.package</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View sh.customer.hour.package form -->
+    <record id="view_sh_customer_hour_package_form" model="ir.ui.view">
+        <field name="name">view.sh.customer.hour.package.form</field>
+        <field name="model">sh.customer.hour.package</field>
+        <field name="arch" type="xml">
+            <form string="Customer Hour Package">
+                <header>
+                    <field name="state" widget="statusbar" />
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Name..." readonly="create_uid" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id" required='1' readonly="create_uid" />
+                            <field name="sh_package_date" widget="daterange" options='{"end_date_field": "sh_package_date_end", "always_range": "1"}' required="sh_package_date or sh_package_date_end" readonly="create_uid" />
+                            <field name="sh_package_date_end" invisible="1" required="sh_package_date" readonly="create_uid"/>
+
+                            <field name="sh_initial_allocated_hours" widget="timesheet_uom" readonly="create_uid" />
+                            <field name="sh_rolled_over_hours" widget="timesheet_uom" readonly="1" />
+                        </group>
+                        <group>
+                        	<field name="sh_total_allocated_hours" widget="timesheet_uom" readonly="create_uid" />
+                        	<field name="sh_hours_consumed" widget="timesheet_uom" />
+                        	<field name="sh_remaining_hours_at_month_end" widget="timesheet_uom" />
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action sh.customer.hour.package -->
+    <record id="action_sh_customer_hour_package" model="ir.actions.act_window">
+        <field name="name">Customer Hour Package</field>
+        <field name="res_model">sh.customer.hour.package</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="sh_helpdesk_ticket_sh_customer_hour_package_menu" name="Customer Hour Package" parent="sh_all_in_one_helpdesk.helpdesk_config_menu" action="action_sh_customer_hour_package" />
+
+</odoo>

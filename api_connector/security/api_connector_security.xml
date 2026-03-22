@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <!-- API Connector Security Groups -->
+        <record id="group_api_connector_user" model="res.groups">
+            <field name="name">API Connector User</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_api_connector_manager" model="res.groups">
+            <field name="name">API Connector Manager</field>
+            <field name="implied_ids" eval="[(4, ref('group_api_connector_user'))]"/>
+        </record>
+
+        <!-- Record Rules -->
+        <record id="rule_api_connector_user" model="ir.rule">
+            <field name="name">API Connector: User Access</field>
+            <field name="model_id" ref="model_api_connector"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_api_connector_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="rule_api_call_log_user" model="ir.rule">
+            <field name="name">API Call Log: User Access</field>
+            <field name="model_id" ref="model_api_call_log"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_api_connector_user'))]"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+
+</odoo>

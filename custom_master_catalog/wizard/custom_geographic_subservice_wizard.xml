@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="custom_geographic_subservice_wizard_view_list" model="ir.ui.view">
+        <field name="name">custom.geographic.subservice.wizard.view.list</field>
+        <field name="model">custom.geographic.subservice.wizard</field>
+        <field name="arch" type="xml">
+            <list delete="0" create="0" edit="0">
+                <field name="state_id"/>
+                <field name="municipality_id"/>
+                <field name="partner_id"/>
+                <field name="event_type_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="custom_geographic_subservice_wizard_action" model="ir.actions.act_window">
+        <field name="name">Coverage geographic</field>
+        <field name="res_model">custom.geographic.subservice.wizard</field>
+        <field name="view_mode">list</field>
+        <field name="target">new</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

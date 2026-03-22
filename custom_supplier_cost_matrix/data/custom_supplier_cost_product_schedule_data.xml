@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="custom_supplier_cost_product_schedule_24_hours" model="custom.supplier.cost.product.schedule">
+            <field name="name">24 hours</field>
+        </record>
+
+        <record id="custom_supplier_cost_product_schedule_day" model="custom.supplier.cost.product.schedule">
+            <field name="name">Day</field>
+        </record>
+
+        <record id="custom_supplier_cost_product_schedule_night" model="custom.supplier.cost.product.schedule">
+            <field name="name">Night</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ike_event_service_type_view_list" model="ir.ui.view">
+        <field name="name">ike.event.service.type.view.list</field>
+        <field name="model">ike.event.service.type</field>
+        <field name="arch" type="xml">
+            <list delete="0" edit="0" duplicate="0">
+                <field name="name"/>
+                <field name="service_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="ike_event_service_type_view_form" model="ir.ui.view">
+        <field name="name">ike.event.service.type.view.form</field>
+        <field name="model">ike.event.service.type</field>
+        <field name="arch" type="xml">
+            <form string="Service type" delete="0" duplicate="0">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary"
+                        invisible="not disabled or not active" />
+                    <group>
+                        <field name="x_categ_domain" invisible="1"/>
+                        <field name="name" readonly="disabled"/>
+                        <field name="service_id" 
+                            domain="x_categ_domain"
+                            readonly="disabled" 
+                            options="{'no_create': true, 'no_open': true}" 
+                            context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list'}"
+                        />
+                    </group>
+                </sheet>
+                <chatter />
+            </form>
+        </field>
+    </record>
+
+    <record id="ike_event_service_type_view_search" model="ir.ui.view">
+        <field name="name">ike.event.service.type.view.search</field>
+        <field name="model">ike.event.service.type</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="disabled" />
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]"
+                    invisible="context.get('hide_disabled_enabled_filters', 0) == 1" />
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]"
+                    invisible="context.get('hide_disabled_enabled_filters', 0) == 1" />
+            </search>
+        </field>
+    </record>
+
+    <record id="ike_event_service_type_action" model="ir.actions.act_window">
+        <field name="name">Services Type</field>
+        <field name="res_model">ike.event.service.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_enabled':1, 'x_subservice_view': True}</field>
+    </record>
+</odoo>
