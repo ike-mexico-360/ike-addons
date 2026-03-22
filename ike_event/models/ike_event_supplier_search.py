@@ -5,6 +5,9 @@ import logging
 import math
 import requests
 
+from datetime import timedelta
+from psycopg2.errors import LockNotAvailable
+
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError, ValidationError
 
@@ -25,6 +28,7 @@ class IkeEvent_Search(models.Model):
         ('manual_manual', 'Manual Added'),
     ], default='electronic', string="Search Type (Supplier)", copy=False)
     supplier_search_number = fields.Integer(string='Search Number (Supplier)', default=0, copy=False)
+    is_searching = fields.Boolean(default=False, copy=False)
     next_search_uuid = fields.Char(copy=False)
     use_external_locations = fields.Boolean(default=False)
 
@@ -68,6 +72,11 @@ class IkeEvent_Search(models.Model):
         if len(service_suppliers):
             # Supplier products with costs
             current_authorization_ids = self.authorization_ids.filtered(lambda x: x.supplier_number <= self.supplier_number)
+            # Max Distance by Supplier
+            supplier_max_distances = {}
+            for item in service_suppliers:
+                if item['estimated_distance'] > supplier_max_distances.get(item['supplier_id'], 0):
+                    supplier_max_distances[item['supplier_id']] = item['estimated_distance']
             for supplier in service_suppliers:
                 supplier_link_id = self.service_supplier_link_ids.filtered(
                     lambda x:
@@ -86,7 +95,7 @@ class IkeEvent_Search(models.Model):
                     authorized = (self.previous_amount + supplier_link_id.estimated_cost) <= self.authorized_amount
                     for product_id in supplier_link_id.supplier_product_ids:
                         if authorized:
-                            product_id.authorization_pending = False
+                            product_id.authorization_pending = False or not product_id.covered
                             if current_authorization_ids:
                                 product_id.authorization_ids = [Command.create({
                                     'event_authorization_id': current_authorization_ids[0].id,
@@ -95,16 +104,16 @@ class IkeEvent_Search(models.Model):
                                 })]
                         else:
                             product_id.authorization_pending = True
+
                 # Products cost by km
                 products_cost_by_km = supplier_link_id.supplier_product_ids.filtered(lambda x: x.product_id.x_cost_by_km)
                 if len(products_cost_by_km):
-                    total_distance_km = supplier.get('estimated_distance', 0) + (self.destination_distance or 0)
+                    total_distance_km = supplier_max_distances[supplier['supplier_id']] + (self.destination_distance or 0)
                     total_distance_km = int(-(-total_distance_km // 1))
-                    if products_cost_by_km[0].quantity < total_distance_km:
-                        products_cost_by_km.with_context(ignore_authorization=True).quantity = total_distance_km
+                    products_cost_by_km.with_context(ignore_authorization=True).quantity = total_distance_km
 
                 supplier['supplier_link_id'] = supplier_link_id.id
-                supplier['estimated_cost'] = supplier_link_id.estimated_cost
+                supplier['estimated_cost'] = supplier_link_id.amount_concept_total
 
                 # Electronic Search ignore
                 if assignation_type == 'electronic' and supplier['estimated_cost'] > self.authorized_amount:
@@ -482,6 +491,7 @@ class IkeEvent_Search(models.Model):
     def _get_event_sub_service_variables(self) -> tuple[list[int], list[int]]:
         sub_res_id = self.env[self.sub_service_res_model].browse(self.sub_service_res_id)
         service_vehicle_type_ids = []
+        service_accessory_ids = []
         if self.sub_service_ref in ['town_truck', 'tire_change', 'fuel_supply', 'other_fluid', 'battery_jump']:
             service_vehicle_type_ids = sub_res_id.service_vehicle_type_ids.ids  # type: ignore
             service_accessory_ids = sub_res_id.service_accessory_ids.ids  # type: ignore
@@ -567,9 +577,14 @@ class IkeEvent_Search(models.Model):
         state_id: int = municipality.state_id.id
         municipality_id: int = municipality.id
         account_id: int = self.user_membership_id.membership_plan_id.account_id.id
-        event_date = self.event_date
+        event_date = self.event_date + timedelta(hours=6)  # ToDo: use time zone from geographical area (new one)
+        event_time = event_date.hour + event_date.minute / 60 + event_date.second / 3600
+        event_date = event_date.date()
+        is_holiday = self.env['custom.holidays'].search_count([('date', '=', event_date)], limit=1)
 
         params = (
+            event_time,
+            is_holiday,
             supplier_center_id,
             sub_service_id,
             event_type_id,
@@ -586,16 +601,23 @@ class IkeEvent_Search(models.Model):
         query = """
             WITH matrix AS (
                 SELECT
-                    m.id,
-                    m.concept_id AS product_id,
-                    m.state_id,
-                    m.geographical_area_id AS municipality_id,
-                    m.account_id,
-                    m.date_init,
-                    m.date_end,
-                    st.ref AS supplier_status_ref
+                    m.id
+                    ,m.concept_id AS product_id
+                    ,m.state_id
+                    ,m.geographical_area_id AS municipality_id
+                    ,m.account_id
+                    ,m.date_init
+                    ,m.date_end
+                    ,COALESCE(sc.start_time, 0) AS start_time
+                    ,COALESCE(sc.end_time, 24) AS end_time
+                    ,CASE WHEN %s BETWEEN start_time AND end_time THEN 1 ELSE 0 END AS in_time
+                    ,m.holiday_date_applies::int = %s as holiday_applies
+                    ,m.holiday_date_applies
+                    ,st.ref AS supplier_status_ref
                 FROM custom_supplier_cost_matrix_line m
                 INNER JOIN custom_supplier_types_statuses st ON st.id = m.supplier_status_id
+                INNER JOIN vacation_schedule_cost_product_rel_id scr ON scr.custom_supplier_cost_product_id = m.id
+                INNER JOIN custom_supplier_cost_product_schedule sc ON scr.custom_supplier_cost_product_schedule_id = sc.id
                 WHERE m.active AND NOT m.disabled
                     AND supplier_center_id = %s
                     AND m.subservice_id = %s
@@ -616,7 +638,14 @@ class IkeEvent_Search(models.Model):
                     AND (mm.account_id IS NULL OR mm.account_id = %s)
                     AND date_init <= %s
                     AND (date_end IS NULL OR date_end > %s)
-                ORDER BY mm.state_id, mm.municipality_id, mm.account_id, date_init DESC, date_end
+                ORDER BY
+                    mm.state_id,
+                    mm.municipality_id,
+                    mm.account_id,
+                    date_init DESC,
+                    date_end,
+                    mm.in_time DESC,
+                    mm.holiday_applies DESC
                 LIMIT 1
             ) AS m ON TRUE
             WHERE p.id = ANY(%s)
@@ -912,8 +941,7 @@ class IkeEvent_Search(models.Model):
         if len(products_cost_by_km):
             total_distance_km = estimated_distance_km + (self.destination_distance or 0)
             total_distance_km = int(-(-total_distance_km // 1))
-            if products_cost_by_km[0].quantity < total_distance_km:
-                products_cost_by_km.with_context(ignore_authorization=True).quantity = total_distance_km
+            products_cost_by_km.with_context(ignore_authorization=True).quantity = total_distance_km
 
         # Create
         self.service_supplier_ids = [Command.create({
@@ -1038,6 +1066,45 @@ class IkeEvent_Search(models.Model):
         }
 
     # === SUPPLIER SEARCH ACTIONS FOR JAVASCRIPT === #
+    def next_search_suppliers(self, params):
+        """ Process executed from JavaScript to handle the concurrency problems. """
+        self.ensure_one()
+        is_searching = False
+        try:
+            with self.env.cr.savepoint():
+                self.env.cr.execute(
+                    "SELECT id FROM %s WHERE id = %%s FOR UPDATE" % self._table,
+                    (self.id,)
+                )
+                self.env.cr.execute(
+                    "SELECT is_searching, next_search_uuid FROM %s WHERE id = %%s" % self._table,
+                    (self.id,)
+                )
+                row = self.env.cr.fetchone()
+
+                if row and (row[0] is True or row[1] != params['next_uuid']):
+                    is_searching = True
+                if not is_searching:
+                    self.env.cr.execute(
+                        "UPDATE %s SET is_searching = true WHERE id = %%s" % self._table,
+                        (self.id,)
+                    )
+        except Exception:
+            return
+        if is_searching:
+            return
+
+        try:
+            method = getattr(self, params['function_name'], None)
+            if callable(method):
+                method(params)
+        except UserError:
+            raise
+        except Exception as e:
+            _logger.exception("Unexpected error (id=%s): %s", self.id, e)
+        finally:
+            self.write({'is_searching': False, 'next_search_uuid': None})
+
     def search_publication_suppliers_3(self, params):
         self.ensure_one()
         if self.next_search_uuid == params['next_uuid']:

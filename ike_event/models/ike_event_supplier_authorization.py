@@ -12,7 +12,7 @@ class IkeEventSupplierLink(models.Model):
     uncovered_authorization_required = fields.Boolean(compute='_compute_uncovered_authorization_required', store=True, copy=False)
 
     # === COMPUTES === #
-    @api.depends('supplier_product_ids', 'supplier_product_ids.authorization_id')
+    @api.depends('supplier_product_ids', 'supplier_product_ids.covered', 'supplier_product_ids.authorization_id')
     def _compute_uncovered_authorization_required(self):
         for rec in self:
             rec.uncovered_authorization_required = bool(
@@ -88,17 +88,20 @@ class IkeEvent(models.Model):
                 current_amount = sum(current_selected)
             else:
                 # Max Amount
-                current_amounts = event_id.service_supplier_ids.read_group([
-                    ('search_number', '=', event_id.supplier_search_number),
-                    ('state', 'not in', ['cancel', 'cancel_event', 'cancel_supplier']),
-                ], ['event_id', 'amount_concept_total:max'], ['event_id'])
-                current_amount = current_amounts[0].get('amount_concept_total', 0) if current_amounts else 0
+                current_amounts = event_id.service_supplier_ids.filtered(
+                    lambda supplier_id:
+                        supplier_id.search_number == event_id.supplier_search_number
+                        and not supplier_id.selected
+                        and not str(supplier_id.state).startswith('cancel_')
+                ).mapped('amount_concept_total')
+
+                current_amount = max(current_amounts, default=0)
 
             event_id.previous_amount = previous_amount
             event_id.current_amount = current_amount
 
     # === SUPPLIER AUTHORIZATION ACTIONS === #
-    def action_request_authorization(self):
+    def action_open_request_authorization(self):
         supplier_with_max_amount = self.get_most_expensive_supplier()
         return supplier_with_max_amount.action_view_products()
 
@@ -110,6 +113,13 @@ class IkeEvent(models.Model):
     def action_start_notifications(self):
         """ This function manually initiates automatic notifications."""
         for rec in self:
+            if rec.service_supplier_ids.filtered(
+                lambda x:
+                    x.search_number == rec.supplier_search_number
+                    and x.state in ['accepted', 'assigned']
+                    and not x.display_type
+            ):
+                continue
             line_ids = rec.service_supplier_ids.filtered(
                 lambda x:
                     x.search_number == rec.supplier_search_number

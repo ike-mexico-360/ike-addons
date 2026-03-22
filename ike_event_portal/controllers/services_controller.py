@@ -110,7 +110,7 @@ class PortalUserAccount(CustomerPortal):
                             "service_id_label": event.service_id.name if event.service_id else "",
                             "sub_service_id_label": sub_service_name,
                             "stage_id_label": stage_name,
-                            "stage": event.stage_id.ref if event.stage_id.ref else "",
+                            "stage": supplier_line.stage_ref
                         }
                     )
                 return {"success": True, "suppliers_events": results}
@@ -174,6 +174,7 @@ class PortalUserAccount(CustomerPortal):
                 ),
                 "event_supplier_summary_data": supplier_line.get_event_supplier_summary_data(),
                 "travel_tracking_url": supplier_line.get_travel_tracking_url(),
+                "stage": supplier_line.stage_ref
             }
 
             return {"success": True, "supplier_event": result}
@@ -321,11 +322,10 @@ class PortalUserAccount(CustomerPortal):
                 ('sale_ok', '=', False),
                 ('sh_product_subscribe', '=', False),
                 ('purchase_ok', '=', True),
-                ('x_accessory_ok', '=', False),
+                ('x_concept_ok', '=', True),
                 ('type', '=', 'service'),
                 ('disabled', '=', False),
                 ('list_price', '=', 0),
-                ('standard_price', '=', 0),
                 ('uom_id', 'in', [
                     request.env.ref('uom.product_uom_km').id,
                     request.env.ref('uom.product_uom_day').id,
@@ -438,6 +438,14 @@ class PortalUserAccount(CustomerPortal):
             _logger.error(f"Error creating concept: {str(e)}")
             return {"success": False, "error": str(e)}
 
+    @http.route('/provider/portal/supplier/request_authorization', type='json', auth='user')
+    def request_authorization(self, event_supplier_id):
+        supplier = request.env['ike.event.supplier'].browse(event_supplier_id)
+        supplier.action_request_authorization()
+        return {
+            'success': True
+        }
+
     @http.route("/fleet/vehicle/safe/<int:vehicle_id>", type="json", auth="user")
     def get_vehicle_safe(self, vehicle_id):
         """Returns EXACTLY the same format as searchRead with name instead of display_name"""
@@ -461,7 +469,8 @@ class PortalUserAccount(CustomerPortal):
                         "x_federal_license_plates",
                         "x_manages_tire_conditioning",
                         "x_product_category_id",
-                        "x_product_id",
+                        # "x_product_id", # ToDo delete after test change to x_subservice_ids
+                        "x_subservice_ids",
                         "x_vehicle_service_state",
                         "x_maneuvers",
                         "x_accessories",
@@ -474,18 +483,29 @@ class PortalUserAccount(CustomerPortal):
             if not vehicle_data:
                 return []
             result = vehicle_data[0]
-            # Process x_product_id to return [id, name] instead of [id, display_name]
-            if result.get("x_product_id"):
-                product_id = result["x_product_id"][0]  # Get the ID
-                product = request.env["product.product"].sudo().browse(product_id)
-                if product.exists():
-                    result["x_product_id"] = [product.id, product.name]
-            # Process x_accessories to return [[id, name], ...] instead of [[id, display_name], ...]
-            # if result.get('x_accessories'):
-            #     accessory_ids = [acc[0] for acc in result['x_accessories']]  # Extract IDs
-            #     accessories = request.env['product.product'].sudo().browse(accessory_ids)
-            #     # Create new list with [id, name] format
-            #     result['x_accessories'] = [[acc.id, acc.name, acc.display_name] for acc in accessories if acc.exists()]
+            # ToDo delete after test change to x_subservice_ids
+            # # Process x_product_id to return [id, name] instead of [id, display_name]
+            # if result.get("x_product_id"):
+            #     product_id = result["x_product_id"][0]  # Get the ID
+            #     product = request.env["product.product"].sudo().browse(product_id)
+            #     if product.exists():
+            #         result["x_product_id"] = [product.id, product.name]
+            # # Process x_accessories to return [[id, name], ...] instead of [[id, display_name], ...]
+            # # if result.get('x_accessories'):
+            # #     accessory_ids = [acc[0] for acc in result['x_accessories']]  # Extract IDs
+            # #     accessories = request.env['product.product'].sudo().browse(accessory_ids)
+            # #     # Create new list with [id, name] format
+            # #     result['x_accessories'] = [[acc.id, acc.name, acc.display_name] for acc in accessories if acc.exists()]
+
+            if result.get("x_subservice_ids"):
+                subservice_ids = result["x_subservice_ids"]
+                subservices = request.env["product.product"].sudo().browse(subservice_ids)
+                result["x_subservice_ids"] = [
+                    [s.id, s.name] for s in subservices if s.exists()
+                ]
+            else:
+                result["x_subservice_ids"] = []
+
             return [result]
         except Exception as e:
             _logger.error(f"Error getting vehicle {vehicle_id}: {str(e)}")

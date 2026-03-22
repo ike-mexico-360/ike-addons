@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-06 20:02+0000\n"
-"PO-Revision-Date: 2026-03-06 20:02+0000\n"
+"POT-Creation-Date: 2026-03-20 18:27+0000\n"
+"PO-Revision-Date: 2026-03-20 18:27+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -200,6 +200,7 @@ msgstr "Responsable de cuenta"
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.custom_account_type_action
 #: model:ir.model,name:custom_master_catalog.model_custom_account_type
+#: model:ir.model,name:custom_master_catalog.model_custom_holidays
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_account_type_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_account_type_id
 msgid "Account Type"
@@ -219,7 +220,6 @@ msgstr "Cuenta especial"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_account_child_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_account_child_ids
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_account_menu_account
-#: model:ir.ui.menu,name:custom_master_catalog.res_partner_account_menu_account_readonly
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_menu_account_config
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_client_view_form
 msgid "Accounts"
@@ -575,10 +575,6 @@ msgstr "Supervisor de cabina"
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_import_postal_codes_view_form
-msgid "Cancel"
-msgstr "Cancelar"
-
-#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_model_confirm_wizard_view_form
 msgid "Cancel"
 msgstr "Cancelar"
@@ -756,11 +752,6 @@ msgid "Color Computed"
 msgstr "Color calculado"
 
 #. module: custom_master_catalog
-#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_model_confirm_wizard_view_form
-msgid "Commentation"
-msgstr "Comentarios"
-
-#. module: custom_master_catalog
 #: model:res.groups,name:custom_master_catalog.custom_group_commercial_supervisor
 msgid "Commercial Supervisor"
 msgstr "Supervisor comercial"
@@ -782,6 +773,12 @@ msgstr "Compañías"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_company_ike_view_list
 msgid "Companies IKE"
 msgstr "Empresas IKE"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_concept_ok
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_template__x_concept_ok
+msgid "Concept"
+msgstr "Concepto"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_concepts_categ_domain
@@ -1207,7 +1204,6 @@ msgstr "Descripción"
 #: code:addons/custom_master_catalog/models/other/custom_subservice_specification.py:0
 #: code:addons/custom_master_catalog/models/other/custom_supplier_coverage_configuration.py:0
 #: code:addons/custom_master_catalog/models/other/custom_supplier_type.py:0
-#: code:addons/custom_master_catalog/models/other/custom_supplier_types_statuses.py:0
 #: code:addons/custom_master_catalog/models/other/custom_vehicle_type.py:0
 #: code:addons/custom_master_catalog/models/other/res_country.py:0
 #: code:addons/custom_master_catalog/models/other/res_country_state.py:0
@@ -1803,6 +1799,12 @@ msgid "Has Message"
 msgstr "Tiene mensaje"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_has_external_notification
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_has_external_notification
+msgid "Has external notification"
+msgstr "Notificación externa"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_has_portal
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_has_portal
 msgid "Has portal"
@@ -2046,6 +2048,11 @@ msgstr "Es seguidor"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_template__sh_product_subscribe
 msgid "Is Subscription Type"
 msgstr "Es tipo cobertura"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_additional_ok
+msgid "Is additional"
+msgstr "Es adicional"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_is_cancelation
@@ -2421,6 +2428,12 @@ msgstr "Nombre en mayúsculas"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_type_event_view_form
 msgid "Name..."
 msgstr "Nombre..."
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_calendar_event_id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_date_deadline
@@ -2838,6 +2851,31 @@ msgid "Quote"
 msgstr "Comillas"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_type__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_weight_category__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model_category__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_country__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_country_state__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_fleet_vehicle_action
 msgid "Ready to manage your fleet more efficiently?"
 msgstr "¿Listo para gestionar su flota de forma más eficiente?"
@@ -3046,7 +3084,6 @@ msgstr "Secuencia"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_mapping__categ_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__service_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__service_id
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__x_service_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__x_service_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_product_category_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model_category__x_service_id
@@ -3057,7 +3094,6 @@ msgstr "Secuencia"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_subservice_specification_view_search
-#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_types_statuses_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_vehicle_type_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.product_category_service_view_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.product_category_service_view_search
@@ -3080,7 +3116,6 @@ msgstr "Descripción del servicio"
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__x_categ_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__x_service_domain
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__x_categ_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__x_categ_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model_category__x_categ_domain
 msgid "Service domain"
@@ -3225,7 +3260,6 @@ msgstr "Submarca"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_product_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_product_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_template__x_product_id
-#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_subservice_specification_view_search
@@ -3263,7 +3297,10 @@ msgstr "Especificación del subservicio"
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.action_x_subservice_product_template_view
 #: model:ir.actions.server,name:custom_master_catalog.x_subservice_product_template_view_action_server
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__x_subservice_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_subservice_ids
 #: model:ir.ui.menu,name:custom_master_catalog.product_category_subservices_menu_subservices
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_search
 msgid "Subservices"
 msgstr "Subservicios"
 
@@ -3545,15 +3582,11 @@ msgid "The year must have exactly 4 digits and be greater than 2000"
 msgstr "El año debe tener exactamente 4 dígitos y ser mayor a 2000"
 
 #. module: custom_master_catalog
-#. odoo-python
-#: code:addons/custom_master_catalog/models/other/custom_holidays.py:0
-msgid "There is already an ACTIVE record with the combination of "
-msgstr "Ya existe un registro ACTIVO con la combinación de "
-
-#. module: custom_master_catalog
 #: model_terms:ir.actions.act_window,help:custom_master_catalog.action_custom_holidays
 msgid "There is no examples click here to add new Custom Holidays."
-msgstr "No hay ejemplos, haga clic aquí para agregar nuevos días festivos personalizados"
+msgstr ""
+"No hay ejemplos, haga clic aquí para agregar nuevos días festivos "
+"personalizados"
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_currency_form
@@ -3711,6 +3744,18 @@ msgstr "Estado de la unidad"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_search
 msgid "Vehicle Type"
 msgstr "Tipo de vehículo"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/fleet_vehicle.py:0
+msgid "Vehicle already exists with this reference"
+msgstr "Vehículo ya existe con este referencia"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/fleet_vehicle.py:0
+msgid "Vehicle already exists with this reference and is disabled"
+msgstr "Vehículo ya existe con este referencia y está deshabilitado"
 
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.custom_fleet_vehicle_model_category_action

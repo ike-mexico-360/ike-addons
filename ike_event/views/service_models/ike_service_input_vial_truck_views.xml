@@ -130,8 +130,8 @@
                         </group>
                         <group>
                             <div class="o_row" colspan="2">
-                                <field name="destination_latitude" invisible="0"/>
-                                <field name="destination_longitude" invisible="0"/>
+                                <field name="destination_latitude" invisible="0" required="sections.get('destination_data')"/>
+                                <field name="destination_longitude" invisible="0" required="sections.get('destination_data')"/>
                             </div>
                             <field name="destination_label" invisible="1"/>
                             <div class="o_address_format" colspan="2">

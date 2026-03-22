@@ -39,7 +39,16 @@
                             <field name="x_service_id" readonly="disabled" domain="x_categ_domain"
                                 options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
                                 context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list','form_view_ref': 'custom_master_catalog.product_category_service_view_form'}"/>
-                            <field name="x_subservice_id" readonly="disabled"
+                            <!-- # ToDo delete after test change to x_subservice_ids -->
+                            <!-- <field name="x_subservice_id" readonly="disabled"
+                                options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                context="{
+                                    'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list',
+                                    'form_view_ref': 'custom_master_catalog.view_x_subservice_product_template_form',
+                                    'display_default_code': 0
+                                }"/> -->
+                            <field name="x_subservice_ids" readonly="disabled"
+                                widget="many2many_tags"
                                 options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
                                 context="{
                                     'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list',
@@ -68,7 +77,9 @@
             <list delete="0" edit="false">
                 <field name="name" string="Types of service vehicles"/>
                 <field name="x_service_id"/>
-                <field name="x_subservice_id" context="{'display_default_code': 0}"/>
+                <!-- # ToDo delete after test change to x_subservice_ids -->
+                <!-- <field name="x_subservice_id" context="{'display_default_code': 0}"/> -->
+                <field name="x_subservice_ids" widget="many2many_tags"/>
                 <field name="subservice_specification_ids" widget="many2many_tags"/>
             </list>
         </field>

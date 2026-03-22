@@ -185,8 +185,8 @@
                         </group>
                         <group>
                             <div class="o_row" colspan="2">
-                                <field name="location_latitude" invisible="0"/>
-                                <field name="location_longitude" invisible="0"/>
+                                <field name="location_latitude" invisible="0" required="sections.get('location_data', False)"/>
+                                <field name="location_longitude" invisible="0" required="sections.get('location_data', False)"/>
                             </div>
                             <field name="location_label" invisible="1"/>
                             <div class="o_address_format" colspan="2">

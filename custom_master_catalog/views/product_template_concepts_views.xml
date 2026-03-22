@@ -71,6 +71,7 @@
                                     'display_default_code': 0,
                                 }"
                                 domain="x_product_concept_domain"/>
+                                <field name="x_additional_ok" readonly="disabled"/>
                                 <field name="x_cost_by_km" readonly="disabled"/>
                         </group>
                     </group>
@@ -92,17 +93,16 @@
             ('sale_ok', '=', False),
             ('sh_product_subscribe', '=', False),
             ('purchase_ok', '=', True),
-            ('x_accessory_ok', '=', False),
+            ('x_concept_ok', '=', True),
             ('type', '=', 'service'),
             ('list_price', '=', 0),
-            ('standard_price', '=', 0),
             ('categ_id', '=', ref('product.product_category_all')),
             ('uom_id', 'in', [ref('uom.product_uom_km'), ref('uom.product_uom_day'), ref('uom.product_uom_hour'), ref('l10n_mx.product_uom_service_unit'), ref('uom.product_uom_unit'), ref('uom.product_uom_litre')]),
         ]"/> <!-- To be set in action.server -->
         <field name="context" eval="{
             'default_sale_ok': False,
             'default_purchase_ok': True,
-            'default_x_accessory_ok': False,
+            'default_x_concept_ok': True,
             'default_type': 'service',
             'default_list_price': 0,
             'default_standard_price': 0,

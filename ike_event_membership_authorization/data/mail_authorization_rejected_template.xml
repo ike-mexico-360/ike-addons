@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Email template for authorization request -->
+        <record id="email_template_authorization_request_rejected" model="mail.template">
+            <field name="name">Authorization Request Rejected</field>
+            <field name="model_id" ref="model_ike_event_membership_authorization"/>
+            <field name="subject">Rejected for membership {{object.name}}</field>
+            <field name="email_from">{{ object.env.user.company_id.email or object.env.user.email}}</field>
+            <field name="email_to">{{ object.get_authorization_rejected_email_to() }}</field>
+            <field name="lang">{{ object.env.user.lang }}</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px;">
+            <h2 style="color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;">
+                Authorization Request Rejected
+            </h2>
+
+            <p>Dear supervisor <strong><t t-out="object.authorizer_id.name or ''"></t></strong>,</p>
+
+            <p>Rejected for the following membership authorization:</p>
+
+            <div style="background-color: white; padding: 15px; border-left: 4px solid #007bff; margin: 15px 0; border-radius: 4px;">
+                <h3 style="margin-top: 0; color: #007bff;">
+                    <t t-out="object.name or 'N/A'"></t>
+                </h3>
+            </div>
+
+            <p><strong>Request Details:</strong></p>
+            <div style="background-color: white; padding: 15px; border-radius: 4px; margin-bottom: 20px;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee; color: #666;">Rejected Reference:</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee; font-weight: bold;">
+                            <t t-out="object.event_id.name or ''"></t>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee; color: #666;">Rejected Date:</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee;">
+                            <t t-out="format_datetime(object.request_date, dt_format='MM/dd/yyyy') or ''"></t>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px; color: #666;">Rejected By:</td>
+                        <td style="padding: 8px;">
+                            <t t-out="object.create_uid.name or ''"></t>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div style="text-align: center; margin: 30px 0;">
+                <a t-att-href="object.get_authorization_url()"
+                   style="background-color: #007bff; color: white; padding: 14px 28px;
+                          text-decoration: none; border-radius: 4px; font-weight: bold;
+                          display: inline-block; font-size: 16px;">
+                    Review Rejected
+                </a>
+                <p style="color: #666; font-size: 14px; margin-top: 10px;">
+                    Click the button above to review and take action on this authorization request rejected.
+                </p>
+            </div>
+
+            <div style="background-color: #e9f5ff; padding: 15px; border-radius: 4px; margin: 20px 0;">
+                <p style="margin: 0; color: #0056b3; font-size: 14px;">
+                    <strong>Note:</strong> This authorization requires your review and rejected before proceeding.
+                </p>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid #dee2e6; margin: 25px 0;"/>
+
+            <div style="text-align: center; font-size: 12px; color: #6c757d;">
+                <p style="margin: 5px 0;">
+                    This is an automated email from the Authorization System.
+                </p>
+                <p style="margin: 5px 0;">
+                    Please do not reply to this message.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+            </field>
+        </record>
+
+    </data>
+</odoo>

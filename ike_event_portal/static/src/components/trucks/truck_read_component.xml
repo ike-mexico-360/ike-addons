@@ -91,9 +91,16 @@
                             </div>
                         </div>
                         <div class="mb-3">
-                            <label class="fw-bold text-muted small">Subservicio</label>
-                            <div class="fs-5">
-                                <t t-esc="state.truck.x_product_id ? state.truck.x_product_id[1] : 'N/A'"/>
+                            <label class="fw-bold text-muted small">Subservicios asociados</label>
+                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                <t t-if="state.truck.x_subservice_ids and state.truck.x_subservice_ids.length">
+                                    <t t-foreach="state.truck.x_subservice_ids" t-as="subservice" t-key="subservice[0]">
+                                        <span class="badge bg-info text-dark">
+                                            <t t-esc="subservice[1]"/>
+                                        </span>
+                                    </t>
+                                </t>
+                                <span t-else="" class="text-muted fst-italic">Sin subservicios</span>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -113,17 +120,6 @@
                             <i t-if="state.truck.x_manages_tire_conditioning" class="fa fa-check-circle text-success me-2"/>
                             <i t-else="" class="fa fa-times-circle text-muted me-2"/>
                             <span>Gestiona acondicionamiento de llantas</span>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold text-muted small">Accesorios</label>
-                            <div class="d-flex flex-wrap gap-2 mt-1">
-                                <t t-if="state.truck.x_accessories and state.truck.x_accessories.length">
-                                    <span class="badge bg-secondary">
-                                        <t t-esc="state.truck.x_accessories.length + ' Accesorios'"/>
-                                    </span>
-                                </t>
-                                <span t-else="" class="text-muted fst-italic">Sin accesorios</span>
-                            </div>
                         </div>
                     </div>
                 </div>

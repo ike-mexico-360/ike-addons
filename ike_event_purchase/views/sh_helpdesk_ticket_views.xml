@@ -23,6 +23,9 @@
             <xpath expr="//button[@name='action_create_purchase_order']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+            <xpath expr="//button[@name='action_view_purchase_orders']" position="after">
+                <button name="x_action_open_purchase_order" type="object" string="View Purchase Order" class="oe_highlight" icon="fa-shopping-cart"/>
+            </xpath>
         </field>
     </record>
 

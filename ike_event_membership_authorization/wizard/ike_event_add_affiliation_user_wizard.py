@@ -13,8 +13,9 @@ class IkeEventAffiliationUser(models.TransientModel):
         string='event',
     )
 
-    # Clave de identificación
+    # AFFILIATION
     account_id = fields.Many2one('custom.membership.plan', string="account")
+    account_name = fields.Char(related="account_id.name", string="Account")
     account_identification_id = fields.Many2one(
         'custom.account.identification',
         related='account_id.account_id.x_account_identification_id',
@@ -25,30 +26,27 @@ class IkeEventAffiliationUser(models.TransientModel):
         related='account_id.account_id.x_second_key_identification_id',
         readonly=True
     )
-
-    x_validation_pattern = fields.Char(string='Validation pattern', related="account_id.x_validation_pattern")
-    x_display_mask = fields.Char(string='Display mask', related="account_id.x_display_mask")
-    x_validation_pattern_second = fields.Char(string='Second validation pattern', related="account_id.x_validation_pattern_second")
-    x_display_mask_second = fields.Char(string='Second display mask', related="account_id.x_display_mask_second")
-
-    is_policy_account = fields.Boolean(
-        compute='_compute_is_policy_account',
-        store=False
-    )
+    key_primary = fields.Char(required=True)
+    key_second = fields.Char()
     label_identification_primary = fields.Char(related="account_identification_id.label", string="label")
     label_identification_second = fields.Char(related="account_identification_second_id.label")
     clause_primary = fields.Char(string="Clause")
     clause_second = fields.Char(string="Second clause")
-
-    # Cuenta
-    account_name = fields.Char(related="account_id.name", string="Account")
-    key_primary = fields.Char(required=True)
-    key_second = fields.Char()
     check_second_key = fields.Boolean(related="account_id.account_id.x_check_second_key")
     check_clause = fields.Boolean(related="account_identification_id.clause", string="Clause ")
     check_clause_second = fields.Boolean(related="account_identification_second_id.clause", string="Second Clause")
 
-    # Usuario
+    check_is_fleet = fields.Boolean(string="Is fleet", readonly=False)
+    check_is_special = fields.Boolean(string="Is special", readonly=False)
+    vehicle_weight_category_id = fields.Many2one(
+        'custom.vehicle.weight.category',
+        'Weight Category',
+        readonly=False,
+        domain="[('disabled', '=', False)]")
+    display_key_primary_clause = fields.Char(compute="_onchange_key_clause")
+    display_key_second_clause_second = fields.Char(compute="_onchange_key_second_clause_second")
+
+    # USER
     name = fields.Char()
     phone = fields.Char()
     phone_alternative = fields.Char()
@@ -62,15 +60,19 @@ class IkeEventAffiliationUser(models.TransientModel):
         ('whatsapp', 'WhatsApp'),
         ('message', 'Message'),
     ], default='whatsapp',)
-    # Afiliation
-    check_is_fleet = fields.Boolean(string="Is fleet", readonly=False)
-    check_is_special = fields.Boolean(string="Is special", readonly=False)
-    vehicle_weight_category_id = fields.Many2one(
-        'custom.vehicle.weight.category',
-        'Weight Category',
-        readonly=False,
-        domain="[('disabled', '=', False)]")
+
+    # FIELDS
     fields_readonly = fields.Boolean(default=False)
+
+    x_validation_pattern = fields.Char(string='Validation pattern', related="account_id.x_validation_pattern")
+    x_display_mask = fields.Char(string='Display mask', related="account_id.x_display_mask")
+    x_validation_pattern_second = fields.Char(string='Second validation pattern', related="account_id.x_validation_pattern_second")
+    x_display_mask_second = fields.Char(string='Second display mask', related="account_id.x_display_mask_second")
+
+    is_policy_account = fields.Boolean(
+        compute='_compute_is_policy_account',
+        store=False
+    )
 
     # ONCHANGE
     @api.onchange('phone', 'phone_alternative')
@@ -154,6 +156,22 @@ class IkeEventAffiliationUser(models.TransientModel):
             self.check_is_special = False
             self.fields_readonly = False
             self.key_second = False
+
+    @api.onchange('key_primary', 'clause_primary')
+    def _onchange_key_clause(self):
+        for rec in self:
+            if rec.key_primary and rec.clause_primary:
+                rec.display_key_primary_clause = f"{rec.key_primary}-{rec.clause_primary}"
+            else:
+                rec.display_key_primary_clause = rec.key_primary or rec.clause_primary or False
+
+    @api.onchange('key_second', 'clause_second')
+    def _onchange_key_second_clause_second(self):
+        for rec in self:
+            if rec.key_second and rec.clause_second:
+                rec.display_key_primary_clause = f"{rec.key_second}-{rec.clause_second}"
+            else:
+                rec.display_key_second_clause_second = rec.key_second or rec.clause_second or False
 
     # COMPUTE
     @api.depends('user_authorization_affiliation_id')
@@ -343,6 +361,8 @@ class IkeEventAffiliationUser(models.TransientModel):
             'clause': self.clause_primary,
             'second_clause': self.clause_second,
             'date': fields.Date.today(),
+            'display_key_primary_clause': self.display_key_primary_clause,
+            'display_key_second_clause_second': self.display_key_second_clause_second
         })
 
     def _create_new_user(self):

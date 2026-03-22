@@ -228,8 +228,8 @@ class IkeEventSupplierSelection(models.Model):
                 notification_type='ike_event_next_search',
                 message={
                     'id': rec.event_id.id,
-                    'function_name': function_name,
                     'params': {
+                        'function_name': function_name,
                         'next_uuid': next_uuid,
                     },
                 },

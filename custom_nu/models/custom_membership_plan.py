@@ -372,11 +372,10 @@ class CustomMembershipPlanProductLine(models.Model):
                 ('sale_ok', '=', False),
                 ('sh_product_subscribe', '=', False),
                 ('purchase_ok', '=', True),
-                ('x_accessory_ok', '=', False),
+                ('x_concept_ok', '=', True),
                 ('type', '=', 'service'),
                 ('disabled', '=', False),
                 ('list_price', '=', 0),
-                ('standard_price', '=', 0),
                 ('uom_id', 'in', [
                     self.env.ref('uom.product_uom_km').id,
                     self.env.ref('uom.product_uom_day').id,

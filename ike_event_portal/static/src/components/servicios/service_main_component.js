@@ -53,6 +53,7 @@ export class ServicesMainComponent extends Component {
             },
             currentEventId: null,
             currentSupplierId: null,
+            currentEventSupplierId: null
         });
         // Initialize pagination service
         this.pagination = usePagination({
@@ -169,40 +170,40 @@ export class ServicesMainComponent extends Component {
 
             let ike_event_supplier = await this.getEventSupplierById(payload.data[0].id);
             let service_supplier_state = payload.data[0].state;
-                if (ike_event_supplier && (service_supplier_state === 'notified' || service_supplier_state === 'assigned' || service_supplier_state === 'accepted')) {
-                    let event = await this.getEventById(ike_event_supplier.event_id);
+            if (ike_event_supplier && (service_supplier_state === 'notified' || service_supplier_state === 'assigned' || service_supplier_state === 'accepted')) {
+                let event = await this.getEventById(ike_event_supplier.event_id);
+                this.removeServiceById(ike_event_supplier.event_supplier_id);
+                this.fetchAndAppendService(ike_event_supplier, event)
+            }
+            if (ike_event_supplier && (service_supplier_state === 'timeout' || service_supplier_state === 'rejected')) {
+                if (ike_event_supplier.supplier_id == this.supplier_id) {
                     this.removeServiceById(ike_event_supplier.event_supplier_id);
-                    this.fetchAndAppendService(ike_event_supplier, event)
+                    this.showNotification({
+                        message: 'El servicio ha sido actualizado y removido de la lista',
+                        type: 'info'
+                    });
                 }
-                if (ike_event_supplier && (service_supplier_state === 'timeout' || service_supplier_state === 'rejected')) {
-                    if (ike_event_supplier.supplier_id == this.supplier_id) {
-                        this.removeServiceById(ike_event_supplier.event_supplier_id);
-                        this.showNotification({
-                            message: 'El servicio ha sido actualizado y removido de la lista',
-                            type: 'info'
-                        });
-                    }
-                }
+            }
 
-                // Handle cancel_event: remove from list and notify
-                if (service_supplier_state === 'cancel_event') {
+            // Handle cancel_event: remove from list and notify
+            if (service_supplier_state === 'cancel_event') {
                 const cancelData = payload.data[0];
-                    const eventSupplierId = cancelData.id;
-                    const cancelReason = cancelData.cancel_reason || '';
-                    const cancelUser = cancelData.cancel_user || 'Administrador';
+                const eventSupplierId = cancelData.id;
+                const cancelReason = cancelData.cancel_reason || '';
+                const cancelUser = cancelData.cancel_user || 'Administrador';
 
-                    const index = this.state.services.findIndex(
-                        service => service.event_supplier_id === eventSupplierId
-                    );
+                const index = this.state.services.findIndex(
+                    service => service.event_supplier_id === eventSupplierId
+                );
 
-                    if (index !== -1) {
-                        this.state.services.splice(index, 1);
-                        this.showNotification({
-                            message: `El servicio ha sido cancelado por ${cancelUser}. Motivo: ${cancelReason}`,
-                            type: 'warning',
-                        });
-                    }
-                    return;
+                if (index !== -1) {
+                    this.state.services.splice(index, 1);
+                    this.showNotification({
+                        message: `El servicio ha sido cancelado por ${cancelUser}. Motivo: ${cancelReason}`,
+                        type: 'warning',
+                    });
+                }
+                return;
             }
         });
     }
@@ -232,8 +233,7 @@ export class ServicesMainComponent extends Component {
                 truck_name: event_supplier.truck_name,
                 event_supplier_state: event_supplier.event_supplier_state,
                 event_supplier_state_label: event_supplier.event_supplier_state_label,
-                stage: event.stage_ref,
-                highlighted: true,
+                stage: event_supplier.stage
             });
 
         } catch (err) {
@@ -343,6 +343,7 @@ export class ServicesMainComponent extends Component {
                     event_supplier_state_label: updated.event_supplier_state_label,
                     truck_name: updated.truck_name,
                     driver_name: updated.driver_name,
+                    stage: updated.stage,
                     highlighted: false,
                 });
             }
@@ -565,7 +566,7 @@ export class ServicesMainComponent extends Component {
                     truck_name: supplier_event.truck_name,
                     event_supplier_state: supplier_event.event_supplier_state,
                     event_supplier_state_label: supplier_event.event_supplier_state_label,
-                    stage: supplier_event.stage,
+                    stage: supplier_event.stage
                 }));
             } else {
                 console.log(result.message);
@@ -736,13 +737,11 @@ export class ServicesMainComponent extends Component {
             this.state.showServiceSummaryModal = true;
             this.state.event_supplier_summary_data = event_supplier.event_supplier_summary_data;
             this.state.travel_tracking_url = event_supplier.travel_tracking_url;
-
+            this.state.currentEventSupplierId = event_supplier_id;
             this.state.isLoadingCosts = true;
             this.state.serviceCostsData = null;
-            console.log("Loading service costs data for event_supplier_id:", event_supplier.supplier_id, event_supplier.event_id);
             const rawCostsData = await this.loadConceptsByEventSupplierId(event_supplier.event_id, event_supplier.supplier_id);
             this.state.serviceCostsData = this.transformCostsData(rawCostsData);
-            console.log("Service costs data loaded:", this.state.serviceCostsData);
 
             await this.loadAvailableProducts(event_supplier.event_id, event_supplier.supplier_id);
         }
@@ -784,6 +783,7 @@ export class ServicesMainComponent extends Component {
         };
         this.state.currentEventId = null;
         this.state.currentSupplierId = null;
+        this.state.currentEventSupplierId = null;
     }
 
     sanitizeHtml(htmlString) {
@@ -840,7 +840,7 @@ export class ServicesMainComponent extends Component {
          * Updates the backend and refreshes the calculated fields
          */
         const value = parseFloat(ev.target.value) || 0;
-        
+
         try {
             // Update the record in the backend
             await this.orm.write('ike.event.supplier.product', [itemId], {
@@ -872,22 +872,41 @@ export class ServicesMainComponent extends Component {
     }
 
     async onSendAdditionalConceptsRequest() {
-        /**
-         * Send a request for additional concepts
-         */
         try {
-            // TODO: Implement the backend call to send the request
-            this.showNotification({
-                message: 'Solicitud de conceptos adicionales enviada exitosamente',
-                type: 'success',
-            });
+            await this.requestAuthorization();
         } catch (err) {
-            console.error("Error sending additional concepts request:", err);
+            if (err.data?.name === "odoo.exceptions.ValidationError") {
+                const message = err.data.message;
+                this.showNotification({
+                    message: 'Error al enviar la solicitud de autorización: ' + message,
+                    type: 'warning',
+                });
+                return;
+            }
             this.showNotification({
-                message: 'Error al enviar la solicitud',
+                message: 'Error al enviar la solicitud de autorización',
                 type: 'danger',
             });
         }
+    }
+
+    async requestAuthorization() {
+        console.log('Requesting authorization for additional concepts, event_supplier_id:', this.state.currentEventSupplierId);
+        let response = await rpc('/provider/portal/supplier/request_authorization', { event_supplier_id: this.state.currentEventSupplierId });
+        // Optionally, handle response or reload data
+        if (response.success) {
+            this.showNotification({
+                message: 'Solicitud de autorización enviada exitosamente',
+                type: 'success',
+            });
+        }
+        else {
+            this.showNotification({
+                message: response.error || 'Error al enviar la solicitud de autorización',
+                type: 'danger',
+            });
+        }
+
     }
 
     async onSaveNewConcept() {

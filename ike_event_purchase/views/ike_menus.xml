@@ -6,4 +6,10 @@
     <record id="project_todo.menu_todo_todos" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
     </record>
+    <record id="project.menu_main_pm" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
+    <record id="hr_timesheet.timesheet_menu_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
 </odoo>

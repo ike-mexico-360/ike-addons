@@ -89,25 +89,65 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         if not supplier:
             return
 
-        stage_map = [
-            ('assigned', 'assignation_date', None, self.assigned_date, supplier.action_assign),
-            ('on_route', 'on_route_to_user_start_date', 'on_route_to_start_user_id', self.on_route_date, supplier.action_on_route),
-            ('arrived', 'on_route_to_user_end_date', 'on_route_to_end_user_id', self.arrived_date, supplier.action_arrive),
-            ('contacted', 'contacted_date', 'contacted_user_id', self.contacted_date, supplier.action_contact),
-            ('on_route_2', 'on_route_to_destination_start_date', 'on_route_to_destination_start_user_id', self.on_route_2_date,  supplier.action_on_route_to_the_destination),
-            ('arrived_2', 'on_route_to_destination_end_date', 'on_route_to_destination_end_user_id', self.arrived_2_date, supplier.action_arrive_to_the_destination),
-            ('finalized', 'finalized_date', 'finalized_user_id', self.finalized_date, supplier.action_finalize),
-        ]
+        stage_map = {
+            'assigned': (
+                'assignation_date',
+                None,
+                self.assigned_date,
+                supplier.action_assign
+            ),
+            'on_route': (
+                'on_route_to_user_start_date',
+                'on_route_to_start_user_id',
+                self.on_route_date,
+                supplier.action_on_route
+            ),
+            'arrived': (
+                'on_route_to_user_end_date',
+                'on_route_to_end_user_id',
+                self.arrived_date,
+                supplier.action_arrive
+            ),
+            'contacted': (
+                'contacted_date',
+                'contacted_user_id',
+                self.contacted_date,
+                supplier.action_contact
+            ),
+            'on_route_2': (
+                'on_route_to_destination_start_date',
+                'on_route_to_destination_start_user_id',
+                self.on_route_2_date,
+                supplier.action_on_route_to_the_destination
+            ),
+            'arrived_2': (
+                'on_route_to_destination_end_date',
+                'on_route_to_destination_end_user_id',
+                self.arrived_2_date,
+                supplier.action_arrive_to_the_destination
+            ),
+            'finalized': (
+                'finalized_date',
+                'finalized_user_id',
+                self.finalized_date,
+                supplier.action_finalize
+            ),
+        }
 
-        target_ref = self.new_stage_id.ref
-        for stage_ref, supplier_dt_field, supplier_user_field, wizard_date, action in stage_map:
-            date_value = wizard_date or fields.Datetime.now()
-            if not getattr(supplier, supplier_dt_field):
-                setattr(supplier, supplier_dt_field, date_value)
+        target = self.new_stage_id.ref
+        data = stage_map.get(target)
 
-            # Guardar usuario si el estado tiene campo de usuario
-            if supplier_user_field and not getattr(supplier, supplier_user_field):
-                setattr(supplier, supplier_user_field, self.env.user.id)
-            action()
-            if stage_ref == target_ref:
-                break
+        if not data:
+            return
+
+        date_field, user_field, wizard_date, action = data
+
+        date_value = wizard_date or fields.Datetime.now()
+
+        if not getattr(supplier, date_field):
+            setattr(supplier, date_field, date_value)
+
+        if user_field and not getattr(supplier, user_field):
+            setattr(supplier, user_field, self.env.user.id)
+
+        action()

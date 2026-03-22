@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="purchase_order_kpis_tree_inherit_ike_event_purchase" model="ir.ui.view">
+    <!-- <record id="purchase_order_kpis_tree_inherit_ike_event_purchase" model="ir.ui.view">
         <field name="name">purchase_order_kpis_tree.inherit.ike_event_purchase</field>
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_kpis_tree"/>
@@ -10,27 +10,41 @@
                 <button name="x_action_consolidate" type="object" string="Consolidate"/>
             </xpath>
         </field>
-    </record>
+    </record> -->
 
     <record id="purchase_order_form_inherit_ike_event_purchase" model="ir.ui.view">
         <field name="name">purchase_order_form.inherit.ike_event_purchase</field>
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
-            <!-- ToDo: Quitar este botón -->
-            <!-- <xpath expr="//header" position="inside">
-                <button name="x_action_button_test_tiket_details" type="object" string="Test Ticket Details"/>
-            </xpath> -->
+            <xpath expr="//header" position="inside">
+                <button name="x_syncronize_po_with_sap" type="object" string="Test SAP Sync" groups="base.group_no_one"
+                    invisible="x_event_id == False or state not in ('done', 'purchase') or x_ref_sap != False"/>
+                <button name="x_action_consolidate" type="object" string="Consolidate" invisible="not x_event_id or state != 'to_consolidate'"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list" position="attributes">
+                <attribute name="decoration-danger">x_has_dispute_changes</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_qty']" position="attributes">
+                <attribute name="readonly">parent.x_event_id</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="attributes">
+                <attribute name="readonly">parent.x_event_id and id != False</attribute>
+            </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="after">
-                <field name="x_price_unit_dispute" optional="show"/>
-                <field name="x_product_qty_dispute" optional="show"/>
-                <field name="x_price_unit_approved" optional="show"/>
-                <field name="x_product_qty_approved" optional="show"/>
+                <field name="x_price_unit_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id"/>
+                <field name="x_product_qty_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id"/>
+                <field name="x_price_unit_approved" optional="show" column_invisible="not parent.x_event_id"/>
+                <field name="x_product_qty_approved" optional="show" column_invisible="not parent.x_event_id"/>
+                <field name="x_has_dispute_changes" column_invisible="1" readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='fiscal_position_id']" position="after">
+                <field name="x_ref_sap" readonly="1" invisible="not x_event_id or state not in ('done', 'purchase')"/>
             </xpath>
         </field>
     </record>
 
-    <!-- <record id="sh_helpdesk_ticket_po_inherited_view_form_inherit_ike_event_purchase" model="ir.ui.view">
+    <record id="sh_helpdesk_ticket_po_inherited_view_form_inherit_ike_event_purchase" model="ir.ui.view">
         <field name="name">sh_helpdesk_ticket_po_inherited_view_form_.inherit.ike_event_purchase</field>
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_po_inherited_view_form"/>
@@ -38,10 +52,8 @@
             <xpath expr="//field[@name='sh_purchase_ticket_ids']" position="after">
                 <field name="x_dispute_state" invisible="1"/>
                 <field name="x_event_id" readonly="1" invisible="x_event_id == False"/>
-                <button name="x_action_submit_dispute" type="object" string="Submit dispute" invisible="x_dispute_state != 'open'" groups="base.group_no_one"/>
-                <button name="x_action_approve_dispute" type="object" string="Approve dispute" invisible="x_dispute_state != 'submitted'" groups="base.group_no_one"/>
             </xpath>
         </field>
-    </record> -->
+    </record>
 
 </odoo>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-09 14:03+0000\n"
-"PO-Revision-Date: 2026-03-09 14:03+0000\n"
+"POT-Creation-Date: 2026-03-20 18:03+0000\n"
+"PO-Revision-Date: 2026-03-20 18:03+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -692,6 +692,16 @@ msgstr "Deshabilitado"
 #: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_exclusions_html_form
 msgid "Discard"
 msgstr "Cerrar"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__display_key_primary_clause
+msgid "Display Key Primary Clause"
+msgstr "Clave identificacion + inciso"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__display_key_second_clause_second
+msgid "Display Key Second Clause Second"
+msgstr "Segunda clave identificacion + inciso"
 
 #. module: custom_nu
 #: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__display_name

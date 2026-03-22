@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 02:27+0000\n"
-"PO-Revision-Date: 2026-03-17 02:27+0000\n"
+"POT-Creation-Date: 2026-03-19 14:46+0000\n"
+"PO-Revision-Date: 2026-03-19 14:46+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -306,6 +306,151 @@ msgstr ""
 "            "
 
 #. module: ike_event_membership_authorization
+#: model:mail.template,body_html:ike_event_membership_authorization.email_template_authorization_request_rejected
+msgid ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"    <div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n"
+"        <div style=\"background-color: #f8f9fa; padding: 20px; border-radius: 5px;\">\n"
+"            <h2 style=\"color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;\">\n"
+"                Authorization Request Rejected\n"
+"            </h2>\n"
+"\n"
+"            <p>Dear supervisor <strong><t t-out=\"object.authorizer_id.name or ''\"/></strong>,</p>\n"
+"\n"
+"            <p>Rejected for the following membership authorization:</p>\n"
+"\n"
+"            <div style=\"background-color: white; padding: 15px; border-left: 4px solid #007bff; margin: 15px 0; border-radius: 4px;\">\n"
+"                <h3 style=\"margin-top: 0; color: #007bff;\">\n"
+"                    <t t-out=\"object.name or 'N/A'\"/>\n"
+"                </h3>\n"
+"            </div>\n"
+"\n"
+"            <p><strong>Request Details:</strong></p>\n"
+"            <div style=\"background-color: white; padding: 15px; border-radius: 4px; margin-bottom: 20px;\">\n"
+"                <table style=\"width: 100%; border-collapse: collapse;\">\n"
+"                    <tr>\n"
+"                        <td style=\"padding: 8px; border-bottom: 1px solid #eee; color: #666;\">Rejected Reference:</td>\n"
+"                        <td style=\"padding: 8px; border-bottom: 1px solid #eee; font-weight: bold;\">\n"
+"                            <t t-out=\"object.event_id.name or ''\"/>\n"
+"                        </td>\n"
+"                    </tr>\n"
+"                    <tr>\n"
+"                        <td style=\"padding: 8px; border-bottom: 1px solid #eee; color: #666;\">Rejected Date:</td>\n"
+"                        <td style=\"padding: 8px; border-bottom: 1px solid #eee;\">\n"
+"                            <t t-out=\"format_datetime(object.request_date, dt_format='MM/dd/yyyy') or ''\"/>\n"
+"                        </td>\n"
+"                    </tr>\n"
+"                    <tr>\n"
+"                        <td style=\"padding: 8px; color: #666;\">Rejected By:</td>\n"
+"                        <td style=\"padding: 8px;\">\n"
+"                            <t t-out=\"object.create_uid.name or ''\"/>\n"
+"                        </td>\n"
+"                    </tr>\n"
+"                </table>\n"
+"            </div>\n"
+"\n"
+"            <div style=\"text-align: center; margin: 30px 0;\">\n"
+"                <a t-att-href=\"object.get_authorization_url()\" style=\"background-color: #007bff; color: white; padding: 14px 28px;                           text-decoration: none; border-radius: 4px; font-weight: bold;                           display: inline-block; font-size: 16px;\">\n"
+"                    Review Rejected\n"
+"                </a>\n"
+"                <p style=\"color: #666; font-size: 14px; margin-top: 10px;\">\n"
+"                    Click the button above to review and take action on this authorization request rejected.\n"
+"                </p>\n"
+"            </div>\n"
+"\n"
+"            <div style=\"background-color: #e9f5ff; padding: 15px; border-radius: 4px; margin: 20px 0;\">\n"
+"                <p style=\"margin: 0; color: #0056b3; font-size: 14px;\">\n"
+"                    <strong>Note:</strong> This authorization requires your review and rejected before proceeding.\n"
+"                </p>\n"
+"            </div>\n"
+"\n"
+"            <hr style=\"border: none; border-top: 1px solid #dee2e6; margin: 25px 0;\"/>\n"
+"\n"
+"            <div style=\"text-align: center; font-size: 12px; color: #6c757d;\">\n"
+"                <p style=\"margin: 5px 0;\">\n"
+"                    This is an automated email from the Authorization System.\n"
+"                </p>\n"
+"                <p style=\"margin: 5px 0;\">\n"
+"                    Please do not reply to this message.\n"
+"                </p>\n"
+"            </div>\n"
+"        </div>\n"
+"    </div>\n"
+"</div>\n"
+"            "
+msgstr ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"    <div style=\"font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;\">\n"
+"        <div style=\"background-color: #f8f9fa; padding: 20px; border-radius: 5px;\">\n"
+"            <h2 style=\"color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px;\">\n"
+"                Autorización rechazada\n"
+"            </h2>\n"
+"\n"
+"            <p>Estimado supervisor <strong><t t-out=\"object.authorizer_id.name or ''\"/></strong>,</p>\n"
+"\n"
+"            <p>Se ha rechazado la siguiente autorizacion:</p>\n"
+"\n"
+"            <div style=\"background-color: white; padding: 15px; border-left: 4px solid #007bff; margin: 15px 0; border-radius: 4px;\">\n"
+"                <h3 style=\"margin-top: 0; color: #007bff;\">\n"
+"                    <t t-out=\"object.name or 'N/A'\"/>\n"
+"                </h3>\n"
+"            </div>\n"
+"\n"
+"            <p><strong>Detalle de la solicitud:</strong></p>\n"
+"            <div style=\"background-color: white; padding: 15px; border-radius: 4px; margin-bottom: 20px;\">\n"
+"                <table style=\"width: 100%; border-collapse: collapse;\">\n"
+"                    <tr>\n"
+"                        <td style=\"padding: 8px; border-bottom: 1px solid #eee; color: #666;\">Referencia rechazada:</td>\n"
+"                        <td style=\"padding: 8px; border-bottom: 1px solid #eee; font-weight: bold;\">\n"
+"                            <t t-out=\"object.event_id.name or ''\"/>\n"
+"                        </td>\n"
+"                    </tr>\n"
+"                    <tr>\n"
+"                        <td style=\"padding: 8px; border-bottom: 1px solid #eee; color: #666;\">Fecha de rechazo:</td>\n"
+"                        <td style=\"padding: 8px; border-bottom: 1px solid #eee;\">\n"
+"                            <t t-out=\"format_datetime(object.request_date, dt_format='MM/dd/yyyy') or ''\"/>\n"
+"                        </td>\n"
+"                    </tr>\n"
+"                    <tr>\n"
+"                        <td style=\"padding: 8px; color: #666;\">Rechazado por:</td>\n"
+"                        <td style=\"padding: 8px;\">\n"
+"                            <t t-out=\"object.create_uid.name or ''\"/>\n"
+"                        </td>\n"
+"                    </tr>\n"
+"                </table>\n"
+"            </div>\n"
+"\n"
+"            <div style=\"text-align: center; margin: 30px 0;\">\n"
+"                <a t-att-href=\"object.get_authorization_url()\" style=\"background-color: #007bff; color: white; padding: 14px 28px;                           text-decoration: none; border-radius: 4px; font-weight: bold;                           display: inline-block; font-size: 16px;\">\n"
+"                    Revisar rechazo\n"
+"                </a>\n"
+"                <p style=\"color: #666; font-size: 14px; margin-top: 10px;\">\n"
+"                    Click the button above to review and take action on this authorization request rejected.\n"
+"                </p>\n"
+"            </div>\n"
+"\n"
+"            <div style=\"background-color: #e9f5ff; padding: 15px; border-radius: 4px; margin: 20px 0;\">\n"
+"                <p style=\"margin: 0; color: #0056b3; font-size: 14px;\">\n"
+"                    <strong>Nota:</strong> Esta autorizacion requiere tu revisión antes de continuar.\n"
+"                </p>\n"
+"            </div>\n"
+"\n"
+"            <hr style=\"border: none; border-top: 1px solid #dee2e6; margin: 25px 0;\"/>\n"
+"\n"
+"            <div style=\"text-align: center; font-size: 12px; color: #6c757d;\">\n"
+"                <p style=\"margin: 5px 0;\">\n"
+"                    Este es un corero automatico del sistema de autorizaciones.\n"
+"                </p>\n"
+"                <p style=\"margin: 5px 0;\">\n"
+"                    Por favor no responda a este mensaje.\n"
+"                </p>\n"
+"            </div>\n"
+"        </div>\n"
+"    </div>\n"
+"</div>\n"
+"            "
+
+#. module: ike_event_membership_authorization
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__account_name
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__account
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__account_id
@@ -405,6 +550,29 @@ msgstr "Motivo de autorización"
 #: model:mail.template,name:ike_event_membership_authorization.email_template_commercial_authorization_request
 msgid "Authorization Request"
 msgstr "Requiere autorización"
+
+#. module: ike_event_membership_authorization
+#: model:mail.template,name:ike_event_membership_authorization.email_template_authorization_request_rejected
+msgid "Authorization Request Rejected"
+msgstr "Autorizacion rechazada"
+
+#. module: ike_event_membership_authorization
+#: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_authorization_view_form_inherit
+#: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_authorization_view_list_inherit
+msgid "Authorization cabin supervisor"
+msgstr "Autorización supervisor de cabina"
+
+#. module: ike_event_membership_authorization
+#: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_authorization_view_form_inherit
+#: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_authorization_view_list_inherit
+msgid "Authorization commercial supervisor"
+msgstr "Autorización supervisor comercial"
+
+#. module: ike_event_membership_authorization
+#: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_authorization_view_form_inherit
+#: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_authorization_view_list_inherit
+msgid "Authorization coordinator"
+msgstr "Autorización coordinador"
 
 #. module: ike_event_membership_authorization
 #: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_membership_authorization_popup_view_form
@@ -539,6 +707,12 @@ msgid "Draft"
 msgstr ""
 
 #. module: ike_event_membership_authorization
+#. odoo-python
+#: code:addons/ike_event_membership_authorization/models/ike_event_membership_authorization.py:0
+msgid "Email template not found."
+msgstr "No se encontro el template"
+
+#. module: ike_event_membership_authorization
 #: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_membership_authorization_view_form
 msgid "Enviar para Aprobación"
 msgstr ""
@@ -577,6 +751,11 @@ msgstr "Seguidores (contactos)"
 #. module: ike_event_membership_authorization
 #: model:ir.model.fields,help:ike_event_membership_authorization.field_ike_event_membership_authorization__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: ike_event_membership_authorization
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__image_formatted
+msgid "Formatted Image"
 msgstr ""
 
 #. module: ike_event_membership_authorization
@@ -872,6 +1051,11 @@ msgid "Rejected"
 msgstr "Rechazado"
 
 #. module: ike_event_membership_authorization
+#: model:mail.template,subject:ike_event_membership_authorization.email_template_authorization_request_rejected
+msgid "Rejected for membership {{object.name}}"
+msgstr ""
+
+#. module: ike_event_membership_authorization
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__request_date
 msgid "Request Date"
 msgstr "Fecha de solicitud"
@@ -883,7 +1067,6 @@ msgstr "Solicitar autorización"
 
 #. module: ike_event_membership_authorization
 #: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_authorization_view_form_inherit
-#: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_authorization_view_list_inherit
 msgid "Request authorization event"
 msgstr "Autorización de evento"
 
@@ -1060,8 +1243,8 @@ msgstr "Cuenta"
 
 #. module: ike_event_membership_authorization
 #: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_membership_authorization_popup_view_form
-msgid "dd/mm/yyyy,dd/mm/yyyy"
-msgstr ""
+msgid "dd/mm/yyyy - dd/mm/yyyy"
+msgstr "dd/mm/yyyy,dd/mm/yyyy"
 
 #. module: ike_event_membership_authorization
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__event_id

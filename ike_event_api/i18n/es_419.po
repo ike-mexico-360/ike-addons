@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-12 15:22+0000\n"
-"PO-Revision-Date: 2026-03-12 15:22+0000\n"
+"POT-Creation-Date: 2026-03-18 13:05+0000\n"
+"PO-Revision-Date: 2026-03-18 13:05+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -55,7 +55,7 @@ msgstr "Asistido"
 #. odoo-python
 #: code:addons/ike_event_api/models/ike_service_input_vial.py:0
 msgid "Assistview"
-msgstr "Assistview"
+msgstr ""
 
 #. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__brand
@@ -97,6 +97,11 @@ msgstr "Código de confirmación: #"
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_supplier_elapsed_time__create_uid
 msgid "Created by"
 msgstr "Creado por"
+
+#. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event__created_from_bp
+msgid "Created from BP"
+msgstr "Creado desde BP"
 
 #. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__create_date
@@ -147,8 +152,8 @@ msgid ""
 "Endpoint URL where the sub-service totals for external service membership "
 "are queried"
 msgstr ""
-"URL de EndPoint donde se consultan los totales de sub-servicio para"
-" afiliaciones externas"
+"URL de EndPoint donde se consultan los totales de sub-servicio para "
+"afiliaciones externas"
 
 #. module: ike_event_api
 #. odoo-python
@@ -246,8 +251,8 @@ msgid ""
 "Flag to determine whether the counters in service will be queried on the "
 "endpoint defined in the coverage plan"
 msgstr ""
-"Indica si se consultarán los contadores en el servicio en el endpoint"
-" definido en el plan de cobertura"
+"Indica si se consultarán los contadores en el servicio en el endpoint "
+"definido en el plan de cobertura"
 
 #. module: ike_event_api
 #: model:ir.model,name:ike_event_api.model_ir_http
@@ -293,12 +298,6 @@ msgstr "Valor de estado de progreso inválido"
 #: code:addons/ike_event_api/controllers/catalogs.py:0
 msgid "Invalid state"
 msgstr "Estado inválido"
-
-#. module: ike_event_api
-#. odoo-python
-#: code:addons/ike_event_api/controllers/catalogs.py:0
-msgid "Invalid vehicle_id"
-msgstr "ID de vehículo inválido"
 
 #. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__write_uid
@@ -351,6 +350,11 @@ msgstr "Modelo"
 #: code:addons/ike_event_api/controllers/events.py:0
 msgid "Motivo de cancelación inválido"
 msgstr ""
+
+#. module: ike_event_api
+#: model:ir.model,name:ike_event_api.model_ike_event_membership_authorization
+msgid "NUs Membership Authorization"
+msgstr "Autorización de membresía"
 
 #. module: ike_event_api
 #. odoo-python
@@ -481,6 +485,33 @@ msgid "Supplier not found"
 msgstr "Proveedor no encontrado"
 
 #. module: ike_event_api
+#: model:ir.model.fields,help:ike_event_api.field_ike_event__temporary_membership_plan_id
+msgid ""
+"Technical (BP): Field that temporarily stores the coverage plan value "
+"corresponding to the BrightPattern call"
+msgstr ""
+"Técnico (BP): Campo que temporalmente almacena el valor del plan de cobertura "
+"correspondiente a la llamada de BrightPattern"
+
+#. module: ike_event_api
+#: model:ir.model.fields,help:ike_event_api.field_ike_event__created_from_bp
+msgid ""
+"Technical (BP): Flag to indicate that the current event was created from a "
+"call from the BrightPattern service"
+msgstr ""
+"Técnico (BP): Indicador para indicar que el evento actual se creó desde una "
+"llamada del servicio BrightPattern"
+
+#. module: ike_event_api
+#: model:ir.model.fields,help:ike_event_api.field_ike_event__temporary_phone
+msgid ""
+"Technical (BP): This field will temporarily store the value received from "
+"BrightPattern when there is no record matching the phone number."
+msgstr ""
+"Técnico (BP): Este campo almacenará temporalmente el valor recibido de "
+"BrightPattern cuando no hay registro que coincida con el número de teléfono."
+
+#. module: ike_event_api
 #: model_terms:ir.ui.view,arch_db:ike_event_api.view_custom_membership_plan_form_inherit_ike_event_api
 msgid "Technical configuration"
 msgstr "Configuración técnica"
@@ -491,8 +522,23 @@ msgid ""
 "Technical: Flag to check if this line already has total data queried in the "
 "external API"
 msgstr ""
-"Técnico: Indica si esta línea ya tiene datos totales consultados en la API"
-" externa"
+"Técnico: Indica si esta línea ya tiene datos totales consultados en la API "
+"externa"
+
+#. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event__temporary_membership_plan_id
+msgid "Temporary account"
+msgstr "Cuenta temporal"
+
+#. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event__temporary_key_indentification
+msgid "Temporary key identification"
+msgstr "Identificación de clave temporal"
+
+#. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event__temporary_phone
+msgid "Temporary phone"
+msgstr "Teléfono temporal"
 
 #. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_count_detail__total_events
@@ -534,7 +580,7 @@ msgstr "El usuario no es conductor del proveedor."
 #. odoo-python
 #: code:addons/ike_event_api/controllers/events.py:0
 msgid "Usuario no autenticado"
-msgstr "Usuario no autenticado"
+msgstr ""
 
 #. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__vin

@@ -88,6 +88,7 @@
                                        options='{"no_open": True, "no_create": True}'/>
                             </div>
                             <field name="x_has_portal"/>
+                            <field name="x_has_external_notification"/>
                         </group>
                         <group>
                             <field name="phone" widget="phone" options="{'enable_sms': False, 'enable_call': False}" readonly="disabled" required="1"/>

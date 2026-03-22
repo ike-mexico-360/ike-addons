@@ -1,8 +1,11 @@
+import re
 import logging
+import requests
+# from urllib.parse import urlparse, parse_qs
 from collections import defaultdict
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError
-from markupsafe import Markup
+# from markupsafe import Markup
 from werkzeug.urls import url_encode
 
 _logger = logging.getLogger(__name__)
@@ -27,6 +30,7 @@ class PurchaseOrder(models.Model):
         ('rejected', 'Rejected'),
     ], string='Dispute State', default='none')
     x_dispute_approved = fields.Boolean(string='Dispute Approved', default=False)
+    x_ref_sap = fields.Char(string='SAP Reference')
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -36,115 +40,6 @@ class PurchaseOrder(models.Model):
             for purchase_id in res:
                 purchase_id._x_ike_check_automatic_rfq()
         return res
-
-    # ============================================================
-    #  FLUJO DE DISPUTA Y CONSOLIDACIÓN - PURCHASE ORDER
-    # ============================================================
-    #
-    #  ESTADOS PO (state): sent → to_consolidate → consolidated
-    #  DISPUTA (x_dispute_state): none → open → resolved
-    #
-    # ┌─────────────────────────────────────────────────────────┐
-    # │                       SENT                              │
-    # └──────────────────────┬──────────────────────────────────┘
-    #                        │
-    #          ┌─────────────┴─────────────┐
-    #          │                           │
-    #   Acepta (portal)             Declina (portal)
-    #  mail_reception_confirmed     mail_reception_declined = True
-    #          │                     _x_action_start_dispute()
-    #          │                     x_dispute_state = 'open'
-    #          │                           │
-    #          │                           ▼
-    #          │                  Proveedor llena líneas:
-    #          │                  x_price_unit_dispute
-    #          │                  x_product_qty_dispute
-    #          │                           │
-    #          │                           ▼
-    #          │                  x_action_submit_dispute()
-    #          │                  → Valida líneas llenas
-    #          │                  → Notifica al comprador
-    #          │                           │
-    #          │              ┌────────────┴────────────┐
-    #          │        Rechaza                      Aprueba
-    #          │   x_action_reject_dispute()   x_action_approve_dispute()
-    #          │   → Log resumen al chatter    → dispute → approved fields
-    #          │   → Limpia campos dispute     → x_dispute_approved = True
-    #          │   → x_dispute_state = 'none'  → x_dispute_state = 'resolved'
-    #          │              │                          │
-    #          │              ▼                          │
-    #          │            SENT                         │
-    #          │   (nueva ronda de negociación)          │
-    #          │                                     (aprobado)
-    #          └─────────────────┬───────────────────────┘
-    #                            │
-    #          ┌─────────────────┴─────────────────┐
-    #          │                                   │
-    #  partner.x_has_consolidation = True   partner.x_has_consolidation = False
-    #          │                                   │
-    #          ▼                                   │
-    # ┌─────────────────────────┐                  │
-    # │     TO CONSOLIDATE      │                  │
-    # │  (x_dispute_state       │                  │
-    # │   != 'open')            │                  │
-    # └────────────┬────────────┘                  │
-    #              │                               │
-    #              │   CRON (cada X tiempo)        │
-    #              │  → POs en to_consolidate      │
-    #              │  → date_order <= hoy          │
-    #              │  → x_dispute_state != 'open'  │
-    #              │  X Disputa abierta = omitida  │
-    #              │    hasta resolverse           │
-    #              │                               │
-    #              └──────────────┬────────────────┘
-    #                             │
-    #                             ▼
-    #                  x_action_consolidate()
-    #                  → Agrupa por (partner, membership, sub_service)
-    #                  → Agrupa líneas por concepto SAP
-    #                  → Usa price_unit normal, o
-    #                    x_price_unit_approved / x_product_qty_approved
-    #                    si x_dispute_approved = True
-    #                             │
-    #                             ▼
-    # ┌───────────────────────────────────────────────────────────┐
-    # │                      CONSOLIDATED                         │
-    # └───────────────────────────────────────────────────────────┘
-    #
-    # ============================================================
-    #  CAMPOS CLAVE
-    # ============================================================
-    #  purchase.order
-    #    x_dispute_state    : none | open | resolved
-    #    x_dispute_approved : True si pasó por disputa aprobada
-    #
-    #  purchase.order.line
-    #    price_unit              → Original (nunca se modifica)
-    #    product_qty             → Original (nunca se modifica)
-    #    x_price_unit_dispute    → Propuesta del proveedor
-    #    x_product_qty_dispute   → Propuesta del proveedor
-    #    x_price_unit_approved   → Valor final acordado
-    #    x_product_qty_approved  → Valor final acordado
-    # ============================================================
-
-    # Se omite, Mario solicitó que no sea con este botón, sino tener otro botón o check que habilite los campos
-    # y un botón para enviar la propuesta en el mismo momento
-    # @api.constrains('mail_reception_confirmed', 'mail_reception_declined')
-    # def _check_mail_reception_confirmed_and_declined(self):
-    #     """ Para controlar cuando en el portal se acepte o decline un RFQ """
-    #     for order in self:
-    #         # Si se acepta el RFQ
-    #         if order.mail_reception_confirmed:
-    #             # Se inicia el proceso de consolidación, de acuerdo a la configuración
-    #             if self.partner_id.x_has_consolidation:
-    #                 pass
-    #             else:
-    #                 pass
-    #         # Si no se acepta el RFQ
-    #         elif order.mail_reception_declined:
-    #             # Se inicia el proceso de disputa, se genera el ticket
-    #             order._x_action_start_dispute()
-    #             # order._x_start_sh_helpdesk_ticket()
 
     def _x_prepare_grouped_data(self, rfq):
         return (rfq.partner_id.id, rfq.x_membership_plan_id.id, rfq.x_sub_service_id.id)
@@ -225,6 +120,7 @@ class PurchaseOrder(models.Model):
                         'product_id': values[0]['product_id'],  # ToDo: Será el producto configurado como SAP
                         'product_qty': 1,
                         'price_unit': sum([line['price_subtotal'] for line in values] + [group_concepts['extra_sub_total'].get(purchase_id, 0.0)]),
+                        'x_concept_line_id': values[0]['concept_line_id'],
                     }))
                 new_pos.append(data)
                 consolidate_pos += group_concepts['purchase_ids']
@@ -232,6 +128,7 @@ class PurchaseOrder(models.Model):
             new_po_ids = self.env['purchase.order'].create(new_pos)
             consolidate_pos.write({'state': 'consolidated'})
             new_po_ids.button_confirm()
+            # new_po_ids.x_syncronize_po_with_sap()
         except Exception as e:
             _logger.error(e)
             return {
@@ -307,14 +204,9 @@ class PurchaseOrder(models.Model):
 
         self.write({'x_dispute_state': 'open'})
 
-        # self.message_post(
-        #     body=_('The supplier declined the order. Dispute opened, awaiting supplier proposal.'),
-        #     message_type='comment',
-        #     subtype_xmlid='mail.mt_comment',
-        # )
-
     def _x_start_sh_helpdesk_ticket(self):
         """ Se crea el ticket donde se dejará el log de los cambios para la disputa """
+        # ToDo: Validar que el ticket no esté cerrado, si está cerrado, se crea otro
         if self.partner_id:
             ticket_ids = self.env['sh.helpdesk.ticket'].sudo().search([
                 ('partner_id', '=', self.partner_id.id),
@@ -346,19 +238,11 @@ class PurchaseOrder(models.Model):
 
         for line in self.order_line:
             line.write({
-                'x_price_unit_approved': line.x_price_unit_dispute,
-                'x_product_qty_approved': line.x_product_qty_dispute,
+                'x_price_unit_approved': line.unit_price,
+                'x_product_qty_approved': line.product_qty,
             })
 
         self.x_action_start_consolidation()
-        # ToDo: Lógica para el ticket
-        # ToDo: Se dejará algún mensaje en el chatter?
-        # self.message_post(
-        #     body=_('Dispute approved. Approved values have been recorded.'),
-        #     message_type='comment',
-        #     subtype_xmlid='mail.mt_comment',
-        #     body_is_html=True,
-        # )
 
     def x_action_start_consolidation(self):
         """Verificar si el proveedor tiene la configuración para consolidar las órdenes por batch.
@@ -377,7 +261,7 @@ class PurchaseOrder(models.Model):
             raise UserError(_('There is no open dispute on this order.'))
 
         disputed_lines = self.order_line.filtered(
-            lambda l: l.x_price_unit_dispute > 0 or l.x_product_qty_dispute > 0
+            lambda line: line.x_price_unit_dispute > 0 or line.x_product_qty_dispute > 0
         )
         if not disputed_lines:
             raise UserError(_('You must propose at least one new price or quantity before submitting.'))
@@ -431,6 +315,20 @@ class PurchaseOrder(models.Model):
         if self.partner_id.x_has_consolidation:
             self.x_action_consolidate()
 
+    def x_action_send_new_values_rfq(self):
+        """Send new values to RFQ."""
+        self.ensure_one()
+        if self.x_dispute_state != 'submitted':
+            raise UserError(_('There is no submitted dispute on this order.'))
+        # Validar que no hay campos aprobados en 0
+        empty_vals = []
+        for line in self.order_line:
+            if line.x_price_unit_approved == 0 or line.x_product_qty_approved == 0:
+                empty_vals.append(line.id)
+        if empty_vals:
+            raise UserError(_('There are zero approved values on lines.'))
+        self.write({'x_dispute_state': 'resolved'})
+
     def x_action_reject_dispute(self):
         """Comprador rechaza la propuesta, se limpian los campos dispute."""
         self.ensure_one()
@@ -440,7 +338,7 @@ class PurchaseOrder(models.Model):
 
         lines_summary = []
         for line in self.order_line.filtered(
-            lambda l: l.x_price_unit_dispute > 0 or l.x_product_qty_dispute > 0
+            lambda line: line.x_price_unit_dispute > 0 or line.x_product_qty_dispute > 0
         ):
             lines_summary.append(
                 f"<li><b>{line.product_id.display_name}</b>: "
@@ -468,25 +366,106 @@ class PurchaseOrder(models.Model):
             # body_is_html=True,
         )
 
-    # ToDo: Eliminar, solo para pruebas
-    def x_action_test_chatter(self):
-        self.ensure_one()
-        body = Markup("""
-            <ul class="mb-0 ps-4">
-                <li>
-                    <b>{}: </b><span class="">{}</span>
-                </li>
-            </ul>
-        """).format(
-            _('Dispute Opened'),
-            _('The supplier declined the order. Dispute opened, awaiting supplier proposal.'),
-        )
-        self.message_post(
-            body=body,
-            message_type='comment',
-            subtype_xmlid='mail.mt_comment',
-            # body_is_html=True,
-        )
-        # template = self.env.ref('ike_event_purchase.ike_event_purchase_proposal_dispute_ticket')
-        # for ticket in self.sh_purchase_ticket_ids:
-        #     template.with_context(dict(self._context, actual_order=self.id)).send_mail(ticket.id, force_send=True)
+    def x_syncronize_po_with_sap(self):
+        """Enviar la orden a SAP."""
+        # * Se realiza el proceso de autenticación SAP de forma lineal en el método principal,
+        # * debido a que al intercambiar el token desde una función aparte se pierde el valor.
+        access_token = False
+        access_token_url = self.env['ir.config_parameter'].sudo().get_param('ike_event_purchase.url.getToken')
+        username = self.env['ir.config_parameter'].sudo().get_param('ike_event_purchase.sap.username')
+        password = self.env['ir.config_parameter'].sudo().get_param('ike_event_purchase.sap.password')
+        headers = {'Content-Type': 'application/json'}
+        login_body = {
+            'petition': 'getToken',
+            'user': username,
+            'password': password,
+        }
+        try:
+            response = requests.post(access_token_url, headers=headers, json=login_body)
+            if response.status_code == 200:
+                _logger.info("PO-SAP: successfully obtained access token")
+                response_data = response.json()
+
+                access_token = response_data.get('access_token', False)  # Obtener el token
+            else:
+                _logger.warning(f'PO-SAP: Error al obtener el token de acceso a SAP: {response}')
+        except Exception as e:
+            _logger.warning(f'PO-SAP: Error al obtener el token de acceso a SAP: {str(e)}')
+
+        if access_token:
+            orders_data = self.x_create_sap_order(access_token)
+            # ToDo: Crear campo en orden de compra para almacenar la respuesta de SAP
+            # [{
+            #     "odoo_id": 1,
+            #     "code": "200",
+            #     "detail": {"purchaseOrder": "5510", "message": "OK"}
+            # }]
+            _logger.info(f"order_data: {orders_data}")
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'SAP',
+                'message': 'Token obtenido correctamente.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
+    def x_create_sap_order(self, access_token):
+        def parse_code_name(text: str) -> dict:
+            match = re.match(r'^\[([^\]]+)\]\s*(.+)$', text.strip())
+            if not match:
+                raise ValueError(f"Formato inválido: '{text}'")
+            return {
+                'code': match.group(1),
+                'name': match.group(2)
+            }
+
+        create_po_url = self.env['ir.config_parameter'].sudo().get_param('ike_event_purchase.url.createPurchaseOrder')
+        headers = {
+            'Authorization': access_token,
+            'Content-Type': 'application/json'
+        }
+
+        for purchase in self:
+            account_id = self.x_membership_plan_id.account_id
+            body = {
+                "identifier": {
+                    "tenants": "adff7f6a-e97d-11eb-9a03-0242ac130003",  # MX Tenant
+                    "app": "IKE360"  # Identificador de la aplicación
+                },
+                "sap": {
+                    "companyCode": account_id.x_invoice_company_id[0] if account_id.x_invoice_company_id else "ARSA",
+                    "supplier": str(self.partner_id.x_ref_sap),
+                    "documentCurrency": str(self.currency_id.name),
+                    "copago": "",  # * Se envía vacío
+                    "incotermsLocation1": account_id.parent_id.x_ref_sap or "",
+                    "incotermsLocation2": "",  # * Se envía vacío
+                    "toPurchaseOrderItem": {
+                        "results": [
+                            {
+                                "supplierMaterialNumber": line.x_concept_line_id.sap_id_income,  # Valor SAP ingeso de Plan de cobertura
+                                "orderQuantity": str(line.product_qty),
+                                "netPriceAmount": str(line.price_unit),
+                                "material": line.x_concept_line_id.sap_id_outgoing,  # Valor SAP egreso de Plan de cobertura
+                                "purchaseOrderQuantityUnit": "SER",
+                                "expediente": str(self.x_event_id.id)
+                            } for line in self.order_line
+                        ]
+                    }
+                }
+            }
+            try:
+                order_response = requests.post(create_po_url, headers=headers, json=body)
+                if order_response.status_code == 200:
+                    _logger.info("PO-SAP: successfully created order")
+                    order_data = order_response.json()
+                    return order_data
+                else:
+                    _logger.warning(f'PO-SAP: Error al crear la orden en SAP: {order_response.text}')
+                    return False
+            except Exception as e:
+                _logger.warning(f'PO-SAP: Error al crear la orden en SAP: {str(e)}')
+                return False

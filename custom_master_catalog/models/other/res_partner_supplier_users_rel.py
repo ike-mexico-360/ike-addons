@@ -10,7 +10,7 @@ class ResPartnerSupplierUsersRel(models.Model):
         'res.users', string='User', ondelete='cascade', tracking=True, required=True, copy=False)
     partner_id = fields.Many2one(
         'res.partner', related='user_id.partner_id', string='Partner', ondelete='cascade', tracking=True,
-        required=True, copy=False, store=True)
+        copy=False, store=True)
     user_type = fields.Selection(
         selection=[
             ('operator', 'Operator'),
@@ -20,7 +20,7 @@ class ResPartnerSupplierUsersRel(models.Model):
     center_of_attention_id = fields.Many2one(
         'res.partner', string='Center of Attention', ondelete='cascade', tracking=True, required=True, copy=True)
     supplier_id = fields.Many2one(
-        'res.partner', string='Supplier', ondelete='cascade', tracking=True, required=True,
+        'res.partner', string='Supplier', ondelete='cascade', tracking=True,
         domain=[('x_is_supplier', '=', True)], copy=True, compute='_compute_supplier_id', store=True)
     users_domain = fields.Binary(string='Users Domain', compute='_compute_users_domain')
 

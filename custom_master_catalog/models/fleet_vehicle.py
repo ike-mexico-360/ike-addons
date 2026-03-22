@@ -17,8 +17,14 @@ class FleetVehicle(models.Model):
     x_vehicle_type = fields.Many2one('custom.vehicle.type', 'Custom Vehicle Type', tracking=True)
     x_product_category_id = fields.Many2one(
         'product.category', 'Service', related='x_vehicle_type.x_service_id', store=True, tracking=True)
+
+    # ToDo delete x_product_id after test change to x_subservice_ids
     x_product_id = fields.Many2one(
         'product.product', 'Subservice', related='x_vehicle_type.x_subservice_id', store=True, tracking=True)
+    x_subservice_ids = fields.Many2many(
+        related='x_vehicle_type.x_subservice_ids',
+        string='Subservices',
+    )
     x_federal_license_plates = fields.Boolean('Federal License Plates', tracking=True)
     subservice_specification_ids = fields.Many2many(
         'custom.subservice.specification',

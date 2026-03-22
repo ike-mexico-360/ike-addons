@@ -325,10 +325,26 @@ class IkeEvent(models.Model):
             rec.services_available = selected.get('available', 0)
             rec.selected_sub_service_name = selected.get('sub_service_ref')
 
-    # === FLOW ACTIONS === #
+    # === STAGE ACTIONS === #
+    def action_completed(self):
+        self.stage_id = self.env.ref('ike_event.ike_event_stage_completed').id
+        total_amount = sum(self.selected_supplier_ids.mapped('amount_concept_total'))
+        if self.covered_amount <= total_amount:
+            self.action_create_purchase_orders()
+            self.action_close()
+
+    def action_close(self):
+        self.stage_id = self.env.ref('ike_event.ike_event_stage_closed').id
+        # ToDo
+
+    def action_create_purchase_orders(self):
+        # ToDo:
+        pass
+
     def action_testing_reload(self):
         self.broadcastEventReload(4)
 
+    # === FLOW ACTIONS === #
     def action_forward(self):
         event_flow = self._get_event_flow_dict()
         stage_keys = list(event_flow.keys())
@@ -612,7 +628,6 @@ class IkeEvent(models.Model):
                     'covered': True,
                     'mandatory': True,
                     'sequence': 1,
-
                 })
             else:
                 section_covered.write({'sequence': 1, 'covered': True, 'mandatory': True})

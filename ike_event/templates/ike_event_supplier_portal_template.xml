@@ -5,9 +5,6 @@
     <template id="ike_event.portal_my_ike_event_suppliers" name="My Ike Event Suppliers">
         <t t-call="web.frontend_layout">
             <div class="container pt-2">
-                Hello <t t-out="word" />!
-                <br />
-
                 <owl-component name="ike_event.IkeEventSupplierApp"
                     t-att-props="json.dumps({
                         'word': word,

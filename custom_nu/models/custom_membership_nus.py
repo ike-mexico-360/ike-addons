@@ -48,6 +48,9 @@ class CustomMembershipNus(models.Model):
     )
     check_is_fleet = fields.Boolean()
     check_is_special = fields.Boolean()
+    display_key_primary_clause = fields.Char()
+    display_key_second_clause_second = fields.Char()
+
     active = fields.Boolean(string='Active', default=True)
     disabled = fields.Boolean(string='Disabled', default=False, tracking=True)
     subscription_validity = fields.Boolean()

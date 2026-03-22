@@ -105,9 +105,8 @@ export class IkeEventFormController extends FormController {
         if (!payload || payload.id != this.model.root.resId) {
             return;
         }
-        const function_name = payload.function_name;
         const params = payload.params;
-        this._executeAction(this.model.root, function_name, params);
+        this._executeAction(this.model.root, "next_search_suppliers", params);
     }
     async broadcastEventReload(payload) {
         if (!payload || !payload.data || !payload.data.length) {

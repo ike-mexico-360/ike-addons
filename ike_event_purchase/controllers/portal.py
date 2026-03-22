@@ -25,7 +25,7 @@ class CustomerPortal(PurchasePortal):
                 ('partner_id', '=', result[0]),
                 ('x_dispute_state', 'not in', ['open', 'submitted']),
                 ('state', 'in', ['sent'])
-            ]) if PurchaseOrder.has_access('read') else 0
+            ]) or 1 if PurchaseOrder.has_access('read') else 0
 
         return values
 
@@ -81,13 +81,6 @@ class CustomerPortal(PurchasePortal):
 
         # Disputa
         dispute_type = kw.get('dispute')
-        # if dispute_type in ('accept', 'decline'):
-        #     if dispute_type == 'accept':
-        #         _logger.warning('====== ACCEPT ======')
-        #         order_sudo.x_action_approve_dispute()
-        #     elif dispute_type == 'decline':
-        #         _logger.warning('====== DECLINE ======')
-        #         order_sudo.x_action_reject_dispute()
         values = {
             'order_sudo': order_sudo,
             'page_name': 'po_dispute',
@@ -97,3 +90,16 @@ class CustomerPortal(PurchasePortal):
 
         # Redirige al mismo portal sin el parámetro dispute
         # return request.redirect(f'/my/purchase/{order_id}?access_token={access_token or ""}')
+
+    @http.route(
+        ["/my/purchase/<int:product_id>/get_matrix_lines"],
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=False,
+    )
+    def x_ike_my_purchase_product_get_matrix_lines(self, product_id, event_id, supplier_id, **kw):
+        matrix_lines = request.env['ike.event'].sudo().browse(event_id)\
+            .get_supplier_product_matrix_lines(supplier_id, [product_id])
+        _logger.warning(f"matrix_lines: {matrix_lines}")
+        return {"success": True, "matrix_lines": matrix_lines}

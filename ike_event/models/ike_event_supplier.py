@@ -51,6 +51,11 @@ class IkeEventSupplier(models.Model):
     event_supplier_summary_data = fields.Html(compute='_compute_event_supplier_summary_data')
     travel_tracking_url = fields.Char(compute='_compute_travel_tracking_url')
     # === STAGED LINE PROGRESS FIELDS === #
+    on_route_to_user_start_date_widget = fields.Datetime()
+    on_route_to_user_end_date_widget = fields.Datetime()
+    on_route_to_destination_start_date_widget = fields.Datetime()
+    on_route_to_destination_end_date_widget = fields.Datetime()
+
     on_route_to_user_start_date = fields.Datetime()
     on_route_to_start_user_id = fields.Many2one('res.users', 'In route user', readonly=True, tracking=True)
     on_route_to_user_end_date = fields.Datetime()
@@ -58,7 +63,11 @@ class IkeEventSupplier(models.Model):
     on_route_to_destination_start_date = fields.Datetime()
     on_route_to_destination_start_user_id = fields.Many2one('res.users', 'In route to destination user', readonly=True, tracking=True)
     on_route_to_destination_end_date = fields.Datetime()
-    on_route_to_destination_end_user_id = fields.Many2one('res.users', 'He arrived at his destination user', readonly=True, tracking=True)
+    on_route_to_destination_end_user_id = fields.Many2one(
+        'res.users',
+        'He arrived at his destination user',
+        readonly=True,
+        tracking=True)
     travel_progress_percent = fields.Float(string="Travel Progress (%)")
 
     # === DETAILS FIELDS === #
@@ -249,7 +258,7 @@ class IkeEventSupplier(models.Model):
         event_stage_assigned = self.env.ref('ike_event.ike_event_stage_assigned')
         for rec in self:
             rec.stage_id = supplier_on_route_stage.id
-            rec.on_route_to_user_start_date = fields.Datetime.now()
+            rec.on_route_to_user_start_date_widget = fields.Datetime.now()
             # Si el evento aún está en etapa asignado, se puede pasar a la etapa en ruta
             if rec.event_id.stage_ref == event_stage_assigned.ref and rec.event_id.step_number == 1:
                 rec.event_id.action_forward()
@@ -259,6 +268,7 @@ class IkeEventSupplier(models.Model):
         arrived_stage = self.env.ref('ike_event.ike_service_stage_arrived')
         for rec in self:
             rec.stage_id = arrived_stage.id
+            rec.on_route_to_user_end_date_widget = fields.Datetime.now()
 
     def action_contact(self):
         contacted_stage = self.env.ref('ike_event.ike_service_stage_contacted')
@@ -269,12 +279,13 @@ class IkeEventSupplier(models.Model):
         on_route_stage = self.env.ref('ike_event.ike_service_stage_on_route_2')
         for rec in self:
             rec.stage_id = on_route_stage.id
-            rec.on_route_to_destination_start_date = fields.Datetime.now()
+            rec.on_route_to_destination_start_date_widget = fields.Datetime.now()
 
     def action_arrive_to_the_destination(self):
         arrived_stage = self.env.ref('ike_event.ike_service_stage_arrived_2')
         for rec in self:
             rec.stage_id = arrived_stage.id
+            rec.on_route_to_destination_end_date_widget = fields.Datetime.now()
 
     def action_finalize(self):
         supplier_finalized_stage = self.env.ref('ike_event.ike_service_stage_finalized')
@@ -337,6 +348,9 @@ class IkeEventSupplier(models.Model):
         # ToDo: add required params and save it. Adapt ike.event.confirm.wizard
         self.action_finalize()
 
+    def action_create_purchase_order(self):
+        pass
+
     # === ACTION VIEW === #
     def action_view_products(self):
         self.ensure_one()
@@ -353,6 +367,22 @@ class IkeEventSupplier(models.Model):
                 'create': False,
                 'edit': True,
                 'from_add_concept': self.selected is True or self.is_manual and self.state == 'available'
+            },
+            'target': 'new',
+        }
+
+    def action_view_products_base_costs(self):
+        self.ensure_one()
+        view_id = self.env.ref('ike_event.ike_event_supplier_link_base_cots_form_view').id
+        return {
+            'name': self.supplier_id.display_name + " " + _('Concepts'),
+            'view_mode': 'form',
+            'type': 'ir.actions.act_window',
+            'res_model': 'ike.event.supplier.link',
+            'res_id': self.supplier_link_id.id,
+            'views': [(view_id, 'form')],
+            'context': {
+                **self.env.context,
             },
             'target': 'new',
         }
@@ -429,6 +459,13 @@ class IkeEventSupplierLink(models.Model):
     amount_concept_vat = fields.Float(string='VAT', compute='_compute_amount_supplier_product', store=True)
     amount_concept_total = fields.Float(string='Total', compute='_compute_amount_supplier_product', store=True)
 
+    base_amount_concept_subtotal = fields.Float(
+        string='Agreement Subtotal', compute='_compute_base_amount_supplier_product', store=True)
+    base_amount_concept_vat = fields.Float(
+        string='Agreement VAT', compute='_compute_base_amount_supplier_product', store=True)
+    base_amount_concept_total = fields.Float(
+        string='Agreement Total', compute='_compute_base_amount_supplier_product', store=True)
+
     # === COMPUTED === #
     @api.depends('supplier_product_ids.subtotal', 'supplier_product_ids.vat')
     def _compute_amount_supplier_product(self):
@@ -446,6 +483,23 @@ class IkeEventSupplierLink(models.Model):
             rec.amount_concept_subtotal = amount_subtotal
             rec.amount_concept_vat = amount_vat
             rec.amount_concept_total = amount_total
+
+    @api.depends('supplier_product_ids.base_subtotal', 'supplier_product_ids.base_vat')
+    def _compute_base_amount_supplier_product(self):
+        for rec in self:
+            base_amount_subtotal = 0.0
+            base_amount_total = 0.0
+            base_amount_vat = 0.0
+
+            for line in rec.supplier_product_ids:
+                if not line.display_type:
+                    base_amount_subtotal += line.base_cost_price
+                    base_amount_vat += line.base_vat
+                    base_amount_total = base_amount_subtotal + base_amount_vat
+
+            rec.base_amount_concept_subtotal = base_amount_subtotal
+            rec.base_amount_concept_vat = base_amount_vat
+            rec.base_amount_concept_total = base_amount_total
 
     @api.depends('supplier_product_ids')
     def _compute_estimated_cost(self):

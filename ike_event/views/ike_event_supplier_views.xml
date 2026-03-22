@@ -4,6 +4,7 @@
     <record id="view_ike_event_supplier_screen_form" model="ir.ui.view">
         <field name="name">ike.event.supplier.screen.form.view</field>
         <field name="model">ike.event.supplier</field>
+        <field name="priority">100</field>
         <field name="arch" type="xml">
             <form create="0" delete="0" duplicate="0" edit="0" js_class="ike_service_input_screen_form">
                 <header>
@@ -55,7 +56,7 @@
                 <field name="product_domain" column_invisible="1"/>
                 <field name="name" column_invisible="1"/>
                 <field name="supplier_number" string="Supplier" readonly="1"/>
-                <field name="covered" column_invisible="1"/>
+                <field name="covered" column_invisible="0"/>
                 <field name="mandatory" column_invisible="1"/>
                 <field name="uom_id" options="{'no_create': 1, 'no_open': 1}"/>
                 <field name="estimated_quantity" />
@@ -205,6 +206,57 @@
         </field>
     </record>
 
+     <!-- EVENT SUPPLIER PRODUCT DETAIL LIST VIEW -->
+    <record id="ike_event_supplier_product_detail_base_costs_list_view" model="ir.ui.view">
+        <field name="name">ike.event.supplier.product.detail.base.costs.list.view</field>
+        <field name="model">ike.event.supplier.product</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="event_supplier_link_id" column_invisible="1" />
+                <field name="product_domain" column_invisible="1" />
+                <field name="display_type" column_invisible="1" />
+                <field name="sequence" widget="handle" column_invisible="1" />
+                <field name="covered" column_invisible="1" />
+                <field name="mandatory" column_invisible="1" />
+                <field name="product_id" widget="ike_label_section_and_note_field" readonly="1" />
+                <field name="name" column_invisible="1" />
+                <field name="quantity" readonly="1"/>
+                <field name="uom_id" readonly="1"/>
+                <field name="base_unit_price" />
+                <field name="base_cost_price" readonly="1" />
+                <field name="base_vat" readonly="1" />
+                <field name="tax_ids" column_invisible="1" widget="many2many_tags" optional="hide" readonly="1"/>
+                <field name="base_subtotal" readonly="1" />
+                <field name="is_manual" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- EVENT SUPPLIER LINK POPUP BASE COSTS -->
+    <record id="ike_event_supplier_link_base_cots_form_view" model="ir.ui.view">
+        <field name="name">ike.event.supplier.link.base.costs.form.view</field>
+        <field name="model">ike.event.supplier.link</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="supplier_product_ids"
+                        nolabel="1"
+                        colspan="2"
+                        widget="ike_section_and_note_field_o2m"
+                        readonly="1"
+                        context="{
+                            'list_view_ref': 'ike_event.ike_event_supplier_product_detail_base_costs_list_view',
+                        }"/>
+                    <group class="oe_subtotal_footer oe_right">
+                        <field name="base_amount_concept_subtotal"/>
+                        <field name="base_amount_concept_vat"/>
+                        <field name="base_amount_concept_total" class="oe_subtotal_footer_separator"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
 
     <!-- EVENT SUPPLIER POPUP TRACKING -->
     <record id="view_ike_event_supplier_popup_form" model="ir.ui.view">
@@ -243,8 +295,10 @@
                                 <field name="destination_duration" invisible="1"/>
                                 <field name="estimated_duration" invisible="1"/>
                                 <field name="stage_ref" invisible="1"/>
-                                <field name="on_route_to_user_start_date" invisible="1"/>
-                                <field name="on_route_to_destination_start_date" invisible="1" />
+                                <field name="on_route_to_user_start_date_widget" invisible="1"/>
+                                <field name="on_route_to_user_end_date_widget" invisible="1"/>
+                                <field name="on_route_to_destination_start_date_widget" invisible="1"/>
+                                <field name="on_route_to_destination_end_date_widget" invisible="1"/>      
                                 <!-- Widget  LineProgress-->
                                 <field
                                     name="travel_progress_percent"

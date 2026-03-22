@@ -152,14 +152,7 @@ class IkeEventDuplicateWizard(models.TransientModel):
             vals['sub_service_id'] = self.sub_service_id.id
 
         # ORIGIN
-        if self.duplicate_location:
-            vals.update({
-                'location_label': event_id.location_label,
-                'location_latitude': event_id.location_latitude,
-                'location_longitude': event_id.location_longitude,
-                'location_zip_code': event_id.location_zip_code,
-            })
-        else:
+        if not self.duplicate_location:
             vals.update({
                 'location_label': False,
                 'location_latitude': False,
@@ -168,14 +161,7 @@ class IkeEventDuplicateWizard(models.TransientModel):
             })
 
         # DESTINATION
-        if self.duplicate_destination:
-            vals.update({
-                'destination_label': event_id.destination_label,
-                'destination_latitude': event_id.destination_latitude,
-                'destination_longitude': event_id.destination_longitude,
-                'destination_zip_code': event_id.destination_zip_code,
-            })
-        else:
+        if not self.duplicate_destination:
             vals.update({
                 'destination_label': False,
                 'destination_latitude': False,
@@ -183,19 +169,67 @@ class IkeEventDuplicateWizard(models.TransientModel):
                 'destination_zip_code': False,
             })
 
+        vals.update({
+            'event_date': fields.Datetime.now()
+        })
         # CREATE NEW EVENT
-        new_event_id = event_id.copy(vals)
+        new_event_id = event_id.with_context(
+            create_duplicate_binnacle_message=True,
+            original_event_id=event_id.id,
+            original_event_name=event_id.name,
+            reason_name=self.duplicate_reason_id.name if self.duplicate_reason_id else False
+        ).copy(vals)
         new_event_id.parent_id = event_id.id
 
         self.get_duplicate_ike_event_membership_authorization(new_event_id)
 
-        # DUPLICATE SERVICE INPUT MODEL
-        if self.duplicate_service and event_id.service_res_model and event_id.service_res_id:
+        # Copiar service input (ORIGEN)
+        if event_id.service_res_model and event_id.service_res_id:
             service_res = self.env[event_id.service_res_model].browse(event_id.service_res_id)
-            new_service = service_res.copy({
-                'event_id': new_event_id.id
-            })
+            service_vals = {'event_id': new_event_id.id}
+
+            if not self.duplicate_location:
+                origin_fields = [
+                    'street',
+                    'street2',
+                    'city',
+                    'colony',
+                    'municipality_id',
+                    'state_id',
+                    'country_id',
+                    'street_ref',
+                    'street_number',
+                ]
+                service_vals.update({
+                    f: False for f in origin_fields if f in service_res._fields
+                })
+
+            new_service = service_res.copy(service_vals)
             new_event_id.service_res_id = new_service.id
+
+        # Copiar sub service input (DESTINO)
+        if event_id.sub_service_res_model and event_id.sub_service_res_id:
+            sub_service_res = self.env[event_id.sub_service_res_model].browse(event_id.sub_service_res_id)
+            sub_service_vals = {'event_id': new_event_id.id}
+
+            if not self.duplicate_destination:
+                destination_fields = [
+                    'street',
+                    'street2',
+                    'city',
+                    'colony',
+                    'municipality_id',
+                    'state_id',
+                    'country_id',
+                    'street_ref',
+                    'street_number',
+                ]
+                sub_service_vals.update({
+                    f: False for f in destination_fields if f in sub_service_res._fields
+                })
+
+            new_sub_service = sub_service_res.copy(sub_service_vals)
+            new_event_id.sub_service_res_id = new_sub_service.id
 
     def get_duplicate_ike_event_membership_authorization(self, new_event_id):
         if not self.duplicate_user_data:

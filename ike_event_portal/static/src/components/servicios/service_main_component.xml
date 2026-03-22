@@ -381,7 +381,7 @@
                                         </thead>
                                         <tbody>
                                             <t t-foreach="pagination.paginatedItems" t-as="service" t-key="service.event_supplier_id">
-                                                <tr t-att-class="'border-bottom ' + ((service.highlighted || service.event_supplier_state_label == 'Notificado') ? 'bg-warning' : '')">
+                                                <tr t-att-class="'border-bottom ' + ((service.event_supplier_state_label == 'Notificado') ? 'bg-warning' : '')">
                                                     <!-- Expediente -->
                                                     <td class="text-nowrap py-3 px-3 border-0">
                                                         <span class="fw-semibold text-primary">

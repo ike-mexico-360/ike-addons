@@ -21,11 +21,21 @@ class CustomVehicleType(models.Model):
         domain="[('disabled', '=', False)]",
         tracking=True
     )
+    # ToDo delete after test change to x_subservice_ids
     x_subservice_id = fields.Many2one(
         'product.product',
         'Subservice',
         domain="[('disabled', '=', False), ('categ_id', '=', x_service_id)]",
         tracking=True)
+    x_subservice_ids = fields.Many2many(
+        'product.product',
+        'custom_subservices_vehicle_type_rel',
+        'vehicle_type_id',
+        'subservice_id',
+        string='Subservices',
+        domain="[('disabled', '=', False), ('categ_id', '=', x_service_id)]",
+        tracking=True
+    )
     subservice_specification_ids = fields.Many2many(
         'custom.subservice.specification',
         'subservice_specification_vehicle_type_rel',
@@ -57,7 +67,7 @@ class CustomVehicleType(models.Model):
     # === ONCHANGE === #
     @api.onchange('x_service_id')
     def _onchange_x_service_id(self):
-        self.x_subservice_id = False
+        self.x_subservice_ids = False
         if self.x_service_id:
             categories = self.env['custom.subservice.specification'].search([
                 ('disabled', '=', False),

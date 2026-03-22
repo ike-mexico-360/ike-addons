@@ -258,14 +258,14 @@
                         <group colspan="2">
                             <div class="o_row" style="float: right;">
                                 <button
-                                    name="action_request_authorization"
+                                    name="action_open_request_authorization"
                                     string="Request Authorization"
                                     type="object" class="btn btn-primary rounded-4 py-1" title="Request Authorization"
                                     context="{'from_event_authorization': True}"
                                     invisible="not authorization_required or not service_supplier_ids"
                                 />
                                 <button
-                                    name="action_request_authorization"
+                                    name="action_open_request_authorization"
                                     string=""
                                     type="object" class="oe_stat_butto" icon="fa-eye" title="Authorizer View"
                                     context="{'from_authorizer': True}"

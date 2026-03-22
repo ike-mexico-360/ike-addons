@@ -5,10 +5,23 @@ from odoo.exceptions import ValidationError
 import logging
 _logger = logging.getLogger(__name__)
 
+
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    x_accessory_ok = fields.Boolean(string="Accessory")
+    x_accessory_ok = fields.Boolean(
+        string="Accessory", compute='_compute_x_accessory_ok', inverse='_set_x_accessory_ok',
+        search='_search_x_accessory_ok')
+
+    @api.depends('product_variant_ids.x_accessory_ok')
+    def _compute_x_accessory_ok(self):
+        self._compute_template_field_from_variant_field('x_accessory_ok')
+
+    def _set_x_accessory_ok(self):
+        self._set_product_variant_field('x_accessory_ok')
+
+    def _search_x_accessory_ok(self, operator, value):
+        return [('product_variant_ids.x_accessory_ok', operator, value)]
 
 
 class ProductProduct(models.Model):

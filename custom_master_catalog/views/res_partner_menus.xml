@@ -39,13 +39,13 @@
         <menuitem id="res_partner_account_menu_account"
             name="Accounts"
             action="res_partner_account_action_window"
-            groups="base.group_system,custom_group_contact_admin_account"
+            groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_operational"
             sequence="2"/>
-        <menuitem id="res_partner_account_menu_account_readonly"
+        <!-- <menuitem id="res_partner_account_menu_account_readonly"
             name="Accounts"
             action="action_res_partner_account_supplier_operational"
             groups="custom_group_supplier_operational"
-            sequence="10"/>
+            sequence="10"/> -->
     </menuitem>
 
     <!-- Sub-menu Config -->

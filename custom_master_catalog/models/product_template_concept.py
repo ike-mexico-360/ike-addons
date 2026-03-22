@@ -15,6 +15,20 @@ class ProductTemplate(models.Model):
     x_categ_id = fields.Many2one('product.category', string="Service", tracking=True)
     x_product_id = fields.Many2one('product.product', string="Subservice", tracking=True)
 
+    x_concept_ok = fields.Boolean(
+        string="Concept", compute='_compute_x_concept_ok', inverse='_set_x_concept_ok',
+        search='_search_x_concept_ok')
+
+    @api.depends('product_variant_ids.x_concept_ok')
+    def _compute_x_concept_ok(self):
+        self._compute_template_field_from_variant_field('x_concept_ok')
+
+    def _set_x_concept_ok(self):
+        self._set_product_variant_field('x_concept_ok')
+
+    def _search_x_concept_ok(self, operator, value):
+        return [('product_variant_ids.x_concept_ok', operator, value)]
+
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
@@ -32,9 +46,11 @@ class ProductProduct(models.Model):
         default=0,
         help="Evidence photos required for this subservice."
     )
+    x_concept_ok = fields.Boolean(string="Concept", tracking=True)
+    x_additional_ok = fields.Boolean(string="Is additional", tracking=True)
 
     @api.constrains(
-        'name', 'sale_ok', 'sh_product_subscribe', 'purchase_ok', 'x_accessory_ok', 'categ_id', 'uom_id',
+        'name', 'sale_ok', 'sh_product_subscribe', 'purchase_ok', 'x_concept_ok', 'categ_id', 'uom_id',
         'x_apply_all_services_subservices')
     def chec_unique_concept(self):
         for rec in self:
@@ -222,10 +238,9 @@ class ProductProduct(models.Model):
             ('sale_ok', '=', False),
             ('sh_product_subscribe', '=', False),
             ('purchase_ok', '=', True),
-            ('x_accessory_ok', '=', False),
+            ('x_concept_ok', '=', True),
             ('type', '=', 'service'),
             ('list_price', '=', 0),
-            # ('standard_price', '=', 0),  # Precio de compra, necesario especificar en conceptos para la disputa
             ('categ_id', '=', all_categ_id.id),
             ('uom_id', 'in', uom_ids),
         ]

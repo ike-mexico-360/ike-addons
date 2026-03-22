@@ -7,19 +7,32 @@
         <field name="inherit_id" ref="ike_event.ike_event_authorization_view_form"/>
         <field name="arch" type="xml">
             <xpath expr="//group[@name='authorizations_concepts']" position="inside">
-                <group name="authorization_event" string="Request authorization event" colspan="6"
-                    invisible="
-                            stage_ref in ['searching','assigned', 'in_progress']
-                            or ((membership_authorization_status != 'pending_cabine' or stage_ref == 'cancel') and check_commercial_authorization == False)
-                            and (services_available != 0 or event_coverage_authorizer or required_commercial_authorizer)">
+                <group name="authorization_event" string="Request authorization event" colspan="6">
                     <field name="membership_authorization_status" invisible="1"/>
                     <field name="stage_ref" invisible="1"/>
                     <field name="check_commercial_authorization" invisible="1"/>
-                    <button
-                        name="action_view_authorization"
-                        string="Request authorization event"
-                        type="object" class="btn-primary"
-                    />
+                    <div class="d-flex flex-column gap-2 w-100" colspan="2">
+                        <!-- Cabin Supervisor -->
+                        <button name="action_view_authorization" string="Authorization cabin supervisor" type="object"
+                            class="btn-success w-50"
+                            invisible="membership_authorization_status not in ['pending', 'pending_cabine','pending_commercial'] or stage_ref not in ['draft', 'capturing']"
+                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor"/>
+
+                        <!-- Coordinator -->
+                        <button name="action_view_authorization" string="Authorization coordinator" type="object"
+                            class="btn-success w-50"
+                            context="{'from_event_button_service': True}"
+                            invisible="services_available != 0
+                                or membership_authorization_status in ['rejected','pending_cabine','pending_commercial', False]
+                                or required_commercial_authorizer or event_coverage_authorizer or stage_ref not in ['draft', 'capturing']"
+                            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator"/>
+
+                        <!-- Commercial Supervisor -->
+                        <button name="action_view_authorization" string="Authorization commercial supervisor" type="object"
+                            class="btn-success w-50"
+                            invisible="membership_authorization_status in ['authorized', 'rejected', False] or stage_ref not in ['draft', 'capturing']"
+                            groups="base.group_system,custom_master_catalog.custom_group_commercial_supervisor"/>
+                    </div>
                 </group>
             </xpath>
         </field>
@@ -30,17 +43,27 @@
         <field name="model">ike.event</field>
         <field name="inherit_id" ref="ike_event.ike_event_authorization_view_list"/>
         <field name="arch" type="xml">
-            <xpath expr="//button[@name='action_request_authorization']" position="after">
-                <button
-                    name="action_view_authorization"
-                    string="Request authorization event"
-                    type="object" class="btn-primary"
-                    context="{'from_authorizer': True}"
-                    invisible="
-                        stage_ref in ['searching','assigned', 'in_progress']
-                        or ((membership_authorization_status != 'pending_cabine' or stage_ref == 'cancel') and check_commercial_authorization == False)
-                        and (services_available != 0 or event_coverage_authorizer or required_commercial_authorizer)"
-                />
+            <xpath expr="//button[@name='action_open_request_authorization']" position="after">
+                <!-- Cabin Supervisor -->
+                <button name="action_view_authorization" string="Authorization cabin supervisor" type="object"
+                    class="btn-success"
+                    invisible="membership_authorization_status not in ['pending', 'pending_cabine','pending_commercial'] or stage_ref not in ['draft', 'capturing']"
+                    groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor"/>
+
+                <!-- Coordinator -->
+                <button name="action_view_authorization" string="Authorization coordinator" type="object"
+                    class="btn-success"
+                    context="{'from_event_button_service': True}"
+                    invisible="services_available != 0
+                        or membership_authorization_status in ['rejected','pending_cabine','pending_commercial', False]
+                        or required_commercial_authorizer or event_coverage_authorizer or stage_ref not in ['draft', 'capturing']"
+                    groups="base.group_system,custom_master_catalog.custom_group_event_coordinator"/>
+
+                <!-- Commercial Supervisor -->
+                <button name="action_view_authorization" string="Authorization commercial supervisor" type="object"
+                    class="btn-success"
+                    invisible="membership_authorization_status in ['authorized', 'rejected', False] or stage_ref not in ['draft', 'capturing']"
+                    groups="base.group_system,custom_master_catalog.custom_group_commercial_supervisor"/>
             </xpath>
         </field>
     </record>

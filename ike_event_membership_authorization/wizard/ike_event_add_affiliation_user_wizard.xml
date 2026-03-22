@@ -19,20 +19,42 @@
                     <!-- Membership -->
                     <!-- <label for="key_primary" class="o_form_label_required"/> -->
                     <group>
-                        <field name="label_identification_primary" nolabel="1"/>
-                        <field name="key_primary" password="1" nolabel="1" invisible="not account_id" widget="regex_validator_field"/>
-                        <field name="label_identification_second" invisible="not check_second_key" nolabel="1"/>
-                        <field name="key_second" password="1" invisible="not check_second_key" nolabel="1"
-                        widget="regex_validator_field"
-                        mask_field="x_display_mask_second"
-                        pattern_field="x_validation_pattern_second"/>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <field name="label_identification_primary" nolabel="1"/>
+                            <span class="text-danger" invisible="not account_id">*</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <field name="key_primary"
+                                password="1"
+                                nolabel="1"
+                                invisible="not account_id"
+                                widget="regex_validator_field"/>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <field name="label_identification_second"
+                                invisible="not check_second_key"
+                                nolabel="1"/>
+                            <span class="text-danger" invisible="not check_second_key">*</span>
+                        </div>
+
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <field name="key_second"
+                                password="1"
+                                invisible="not check_second_key"
+                                nolabel="1"
+                                widget="regex_validator_field"
+                                mask_field="x_display_mask_second"
+                                pattern_field="x_validation_pattern_second"/>
+                        </div>
                     </group>
 
                     <group>
-                        <field name="clause_primary" invisible="not check_clause"  />
+                        <field name="clause_primary" invisible="not check_clause"  required="check_clause"/>
                         <field name="clause_second" invisible="not check_clause_second" required="check_clause_second"/>
                     </group>
                 </group>
+                <!-- <field name="display_key_primary_clause" invisible="not check_clause" readonly="1"/>
+                <field name="display_key_second_clause_second" invisible="not check_clause_second" readonly="1"/> -->
 
                 <!-- User -->
                 <group>

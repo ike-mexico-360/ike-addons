@@ -102,7 +102,7 @@
         <field name="sequence">6</field>
         <field name="fold">False</field>
     </record>
-    <record id="ike_event_stage_close" model="ike.event.stage">
+    <record id="ike_event_stage_closed" model="ike.event.stage">
         <field name="name">Closed</field>
         <field name="ref">close</field>
         <field name="sequence">7</field>

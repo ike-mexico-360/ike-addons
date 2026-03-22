@@ -23,13 +23,30 @@ class IkeEvent(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         result = super().create(vals_list)
+
+        # Context
+        create_duplicate = self.env.context.get('create_duplicate_binnacle_message')
+        original_event_id = self.env.context.get('original_event_id')
+        reason_name = self.env.context.get('reason_name')
+
         for rec in result:
-            rec._create_message_binnacle([
-                "ike_event_binnacle.ike_binnacle_stage_1_1",
-                "ike_event_binnacle.ike_binnacle_stage_1_2",
-                "ike_event_binnacle.ike_binnacle_stage_1_3",
-                "ike_event_binnacle.ike_binnacle_stage_1_4"
-            ])
+            if not create_duplicate:
+                rec._create_message_binnacle([
+                    "ike_event_binnacle.ike_binnacle_stage_1_1",
+                    "ike_event_binnacle.ike_binnacle_stage_1_2",
+                    "ike_event_binnacle.ike_binnacle_stage_1_3",
+                    "ike_event_binnacle.ike_binnacle_stage_1_4"
+                ])
+
+            if create_duplicate and original_event_id:
+                rec.with_context(
+                    original_event_id=original_event_id,
+                    original_event_name=self.env['ike.event'].browse(original_event_id).name,
+                    reason_name=reason_name
+                )._create_message_binnacle([
+                    "ike_event_binnacle.ike_binnacle_stage_9_2"
+                ])
+
         return result
 
     def _create_message_binnacle(self, binnacle_xmlids):
@@ -220,6 +237,60 @@ class IkeEvent(models.Model):
             }
         }
 
+    def action_search_electronic_suppliers(self):
+        self.ensure_one()
+
+        self._search_suppliers('electronic')
+
+        self._create_message_binnacle([
+            "ike_event_binnacle.ike_binnacle_stage_5_6"
+        ])
+
+    def action_search_publication_suppliers_3(self):
+        self.ensure_one()
+
+        self._search_suppliers('publication', '3')
+
+        self._create_message_binnacle([
+            "ike_event_binnacle.ike_binnacle_stage_5_6"
+        ])
+
+    def action_search_publication_suppliers_2(self):
+        self.ensure_one()
+
+        self._search_suppliers('publication', '2')
+
+        self._create_message_binnacle([
+            "ike_event_binnacle.ike_binnacle_stage_5_6"
+        ])
+
+    def action_search_publication_suppliers_1(self):
+        self.ensure_one()
+
+        self._search_suppliers('publication', '1')
+
+        self._create_message_binnacle([
+            "ike_event_binnacle.ike_binnacle_stage_5_6"
+        ])
+
+    def action_search_publication_suppliers_0(self):
+        self.ensure_one()
+
+        self._search_suppliers('publication', '0')
+
+        self._create_message_binnacle([
+            "ike_event_binnacle.ike_binnacle_stage_5_6"
+        ])
+
+    def action_search_manual_suppliers(self):
+        self.ensure_one()
+
+        self._search_suppliers('manual')
+
+        self._create_message_binnacle([
+            "ike_event_binnacle.ike_binnacle_stage_5_6"
+        ])
+
     def action_set_user_data(self):
         result = super(IkeEvent, self).action_set_user_data()
         for rec in self:
@@ -280,35 +351,38 @@ class IkeEventSupplier(models.Model):
     def action_assign(self):
         result = super(IkeEventSupplier, self).action_assign()
         for rec in self:
+            ctx = dict(current_supplier_id=rec.id)
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_2"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_3"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_4"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_5"])
-            rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_6_1"])
+            # rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_6_1"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_1"])
-            rec.event_id.with_context(
-                current_supplier_id=rec.id)._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_2"])
+            rec.event_id.with_context(**ctx)._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_2"])
         return result
 
     def action_on_route(self):
         result = super(IkeEventSupplier, self).action_on_route()
         for rec in self:
             rec.event_id.with_context(
-                current_supplier_id=rec.id)._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_3"])
+                current_supplier_id=rec.id
+            )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_3"])
         return result
 
     def action_arrive(self):
         result = super(IkeEventSupplier, self).action_arrive()
         for rec in self:
             rec.event_id.with_context(
-                current_supplier_id=rec.id)._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_4"])
+                current_supplier_id=rec.id
+            )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_4"])
         return result
 
     def action_on_route_to_the_destination(self):
         result = super(IkeEventSupplier, self).action_on_route_to_the_destination()
         for rec in self:
             rec.event_id.with_context(
-                current_supplier_id=rec.id)._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_13"])
+                current_supplier_id=rec.id
+            )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_13"])
 
         return result
 
@@ -316,15 +390,27 @@ class IkeEventSupplier(models.Model):
         result = super(IkeEventSupplier, self).action_arrive_to_the_destination()
         for rec in self:
             rec.event_id.with_context(
-                current_supplier_id=rec.id)._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_14"])
+                current_supplier_id=rec.id
+            )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_14"])
 
         return result
 
     def action_finalize(self):
-        result = super(IkeEventSupplier, self).action_finalize()
+        result = super().action_finalize()
+
         for rec in self:
-            rec.event_id.with_context(
-                current_supplier_id=rec.id)._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_22"])
+            event = rec.event_id.sudo().browse(rec.event_id.id)  
+
+            event.with_context(
+                current_supplier_id=rec.id
+            )._create_message_binnacle([
+                "ike_event_binnacle.ike_binnacle_stage_7_22"
+            ])
+            if event.stage_ref == 'completed':
+                event._create_message_binnacle([
+                    "ike_event_binnacle.ike_binnacle_stage_10_1"
+                ])
+
         return result
 
     class IkeEventSupplierLink(models.Model):
@@ -376,6 +462,7 @@ class IkeEventMembershipAuthorization(models.Model):
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_25"])
             # rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_26"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_27"])
+            rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_32"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_29"])
         return result
 

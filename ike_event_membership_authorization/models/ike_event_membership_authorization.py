@@ -3,6 +3,7 @@ from datetime import datetime
 from odoo.addons.ike_event.models.other_models.ike_event_batcher import event_batcher
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
+import base64
 
 
 class IkeEventMembershipAuthorization(models.Model):
@@ -128,6 +129,11 @@ class IkeEventMembershipAuthorization(models.Model):
         attachment=True,
         help="Upload an image for this authorization",
     )
+    image_formatted = fields.Binary(
+        string="Formatted Image",
+        compute="_compute_image_formatted",
+        store=False
+    )
 
     @api.onchange('date_range_input')
     def _onchange_date_range_input(self):
@@ -211,6 +217,25 @@ class IkeEventMembershipAuthorization(models.Model):
             self.check_is_fleet = False
 
     # COMPUTE
+
+    @api.depends('image')
+    def _compute_image_formatted(self):
+
+        for rec in self:
+            image = rec.image
+
+            if not image:
+                rec.image_formatted = ''
+                continue
+
+            if isinstance(image, bytes):
+                image = image.decode('utf-8')
+
+            if isinstance(image, str) and image.startswith("b'"):
+                image = image[2:-1]
+
+            rec.image_formatted = image
+
     @api.depends('nus_membership_id.name')
     def _compute_name(self):
         encryption = self.env['custom.model.encryption']
@@ -311,6 +336,7 @@ class IkeEventMembershipAuthorization(models.Model):
             else:
                 rec.x_domain_authorization_commercial_affiliation = [('id', '=', -1)]
 
+    # ACTIONS
     def action_authorized_membership(self):
         for rec in self:
 
@@ -330,7 +356,6 @@ class IkeEventMembershipAuthorization(models.Model):
             rec.write({
                 'state': 'authorized',
                 'authorization_date': fields.Datetime.now(),
-                'check_membership_authorizer': False,
                 'check_membership_authorizer': False,
                 'check_commercial_authorization': False
             })
@@ -365,6 +390,7 @@ class IkeEventMembershipAuthorization(models.Model):
             rec.write({
                 'state': 'rejected',
             })
+            rec.action_send_authorization_rejected_email()
 
     def action_authororizer_wizard(self):
         self.ensure_one()
@@ -486,3 +512,29 @@ class IkeEventMembershipAuthorization(models.Model):
                 result += m
 
         return result
+
+    def action_send_authorization_rejected_email(self):
+        """Send authorization request email to supervisor"""
+        self.ensure_one()
+        if not self.authorizer_id or not self.authorizer_id.email:
+            raise UserError(_("The supervisor doesn't have an email address configured."))
+
+        # Check if email template exists
+        template = self.env.ref(
+            'ike_event_membership_authorization.email_template_authorization_request_rejected',
+            raise_if_not_found=False
+        )
+        if not template:
+            raise UserError(_("Email template not found."))
+        template.send_mail(self.id, force_send=True)
+
+    def get_authorization_rejected_email_to(self):
+        self.ensure_one()
+
+        emails = []
+
+        # Si es comercial → enviar a comercial
+        if self.check_commercial_authorization and self.authorizer_id:
+            emails.append(self.authorizer_id.email)
+
+        return ','.join(emails)

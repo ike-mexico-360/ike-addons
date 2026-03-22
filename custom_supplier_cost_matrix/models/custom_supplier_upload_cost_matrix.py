@@ -761,7 +761,7 @@ class CustomSupplierCostMatrixLine(models.Model):
         comodel_name='product.product', string='Concept', required=True, tracking=True,
         domain=[
             ('sale_ok', '=', False), ('purchase_ok', '=', True),
-            ('x_accessory_ok', '=', False), ('type', '=', 'service')
+            ('x_concept_ok', '=', True), ('type', '=', 'service')
         ], index=True)
     vehicle_category_id = fields.Many2one('fleet.vehicle.model.category', string='Category', required=True, tracking=True, index=True)
     account_id = fields.Many2one(

@@ -12,7 +12,7 @@
                 <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 <group expand="0" string="Group By">
-                    <filter string="Service" name="group_by_service" context="{'group_by':'x_service_id'}"/>
+                    <!-- <filter string="Service" name="group_by_service" context="{'group_by':'x_service_id'}"/> -->
                 </group>
             </search>
         </field>
@@ -31,10 +31,6 @@
                         <group>
                             <field name="name" readonly="disabled"/>
                             <field name="ref"/>
-                            <field name="x_categ_domain" invisible="1"/>
-                            <field name="x_service_id" readonly="disabled" domain="x_categ_domain"
-                                options="{'no_create': True, 'no_create_edit': True}"
-                                context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list'}"/>
                             <field name="description" widget="text" readonly="disabled"/>
                         </group>
                         <group>
@@ -57,7 +53,6 @@
             <list delete="0" edit="0" duplicate="0">
                 <field name="name" string="Provider State"/>
                 <field name="affects_costs"/>
-                <field name="x_service_id"/>
             </list>
         </field>
     </record>

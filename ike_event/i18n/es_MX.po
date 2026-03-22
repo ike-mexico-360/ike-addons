@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 02:30+0000\n"
-"PO-Revision-Date: 2026-03-17 02:30+0000\n"
+"POT-Creation-Date: 2026-03-20 21:26+0000\n"
+"PO-Revision-Date: 2026-03-20 21:26+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -83,6 +83,7 @@ msgstr "La API Key de Google Maps para el GeoCoding (Rutas) es requerido.\n"
 #. module: ike_event
 #. odoo-javascript
 #: code:addons/ike_event/static/src/fields/section_and_note_o2m/ike_timer_widget.xml:0
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
 msgid "Accept"
 msgstr "Aceptar"
 
@@ -107,7 +108,8 @@ msgid "Accepted"
 msgstr "Aceptado"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__service_accessories_ids
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__service_accessory_ids
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__service_accessory_ids
 msgid "Accessories"
 msgstr "Accesorios"
 
@@ -139,6 +141,7 @@ msgstr "Acción"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_needaction
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__message_needaction
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__message_needaction
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__message_needaction
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__message_needaction
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__message_needaction
@@ -154,6 +157,7 @@ msgstr "Se requiere una acción"
 #: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__active
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__active
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__active
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_flow__active
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__active
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_stage__active
@@ -165,6 +169,7 @@ msgstr "Se requiere una acción"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__active
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__active
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__active
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__active
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__active
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__active
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_stage__active
@@ -187,6 +192,7 @@ msgstr "Vigencia activa"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__activity_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__activity_ids
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__activity_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__activity_ids
 msgid "Activities"
 msgstr "Actividades"
@@ -194,6 +200,7 @@ msgstr "Actividades"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__activity_exception_decoration
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__activity_exception_decoration
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__activity_exception_decoration
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__activity_exception_decoration
 msgid "Activity Exception Decoration"
 msgstr ""
@@ -201,6 +208,7 @@ msgstr ""
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__activity_state
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__activity_state
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__activity_state
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__activity_state
 msgid "Activity State"
 msgstr "Estado de actividad"
@@ -208,6 +216,7 @@ msgstr "Estado de actividad"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__activity_type_icon
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__activity_type_icon
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__activity_type_icon
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__activity_type_icon
 msgid "Activity Type Icon"
 msgstr "Icono de tipo de actividad"
@@ -217,6 +226,12 @@ msgstr "Icono de tipo de actividad"
 #: code:addons/ike_event/static/src/fields/icon_picker/icon_picker.xml:0
 msgid "Add"
 msgstr "Agregar"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
+msgid "Add Channel and Subscribe"
+msgstr ""
 
 #. module: ike_event
 #: model:ir.actions.act_window,name:ike_event.ike_add_manual_supplier_wizard_action
@@ -265,9 +280,35 @@ msgid "Agreement Cancel Cost"
 msgstr "Costo de cancelación acordado"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__base_unit_price
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__base_cost_price
 msgid "Agreement Cost"
-msgstr "Costo acordado"
+msgstr "Costo convenio"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__base_amount_concept_subtotal
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__base_subtotal
+msgid "Agreement Subtotal"
+msgstr "Subtotal convenio"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__base_amount_concept_total
+msgid "Agreement Total"
+msgstr "Total Convenio"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__base_unit_price
+msgid "Agreement Unit Price"
+msgstr "Precio unitario convenio"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__base_amount_concept_vat
+msgid "Agreement VAT"
+msgstr "Impuestos convenio"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__base_vat
+msgid "Agreement Vat"
+msgstr "Impuestos convenio"
 
 #. module: ike_event
 #. odoo-javascript
@@ -325,6 +366,7 @@ msgstr "Solicitante"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_cancellation_reason_view_form
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_duplicate_reason_view_form
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_service_type_view_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_supplier_assignment_type_form
 msgid "Archived"
@@ -416,6 +458,7 @@ msgstr "Tipo de asignación"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_attachment_count
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__message_attachment_count
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__message_attachment_count
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__message_attachment_count
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__message_attachment_count
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__message_attachment_count
@@ -714,7 +757,7 @@ msgid "Close Events"
 msgstr "Eventos cerrados"
 
 #. module: ike_event
-#: model:ike.event.stage,name:ike_event.ike_event_stage_close
+#: model:ike.event.stage,name:ike_event.ike_event_stage_closed
 msgid "Closed"
 msgstr "Cerrado"
 
@@ -926,6 +969,7 @@ msgstr "Monto cubierto"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_confirm_wizard__create_uid
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence_detail__create_uid
@@ -961,6 +1005,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_confirm_wizard__create_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence_detail__create_date
@@ -1208,6 +1253,7 @@ msgstr "Máscara de visualización"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_confirm_wizard__display_name
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence_detail__display_name
@@ -1337,6 +1383,11 @@ msgid "Duplicate Expedient"
 msgstr "Duplicar expediente"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__duplicate_reason_id
+msgid "Duplicate Reason"
+msgstr "Motivo de duplicación:"
+
+#. module: ike_event
 #. odoo-python
 #: code:addons/ike_event/models/ike_event.py:0
 msgid "Duplicate event"
@@ -1350,7 +1401,7 @@ msgstr ""
 #. module: ike_event
 #: model:ir.actions.act_window,name:ike_event.ike_event_duplicate_reason_action
 msgid "Duplicate reason"
-msgstr "Motivos de duplicación"
+msgstr "Motivo de duplicación"
 
 #. module: ike_event
 #: model:ir.ui.menu,name:ike_event.ike_service_duplicate_reason_action
@@ -1367,6 +1418,12 @@ msgstr "Duración"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_vehicle_detail_wizard__duration_m
 msgid "Duration (min)"
 msgstr "Duración (min)"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
+msgid "EVENT ID:"
+msgstr ""
 
 #. module: ike_event
 #. odoo-javascript
@@ -1456,6 +1513,8 @@ msgid "Estimated duration to reach the destination, in minutes."
 msgstr "Duración estimada para llegar al destino, en minutos."
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
 #: model:ir.actions.act_window,name:ike_event.action_ike_event
 #: model:ir.model,name:ike_event.model_ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_authorization__event_id
@@ -1478,6 +1537,7 @@ msgstr "Duración estimada para llegar al destino, en minutos."
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__event_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__event_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__event_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__event_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__event_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__event_id
 #: model:ir.model.fields,field_description:ike_event.field_survey_user_input__event_id
@@ -1708,7 +1768,7 @@ msgstr ""
 
 #. module: ike_event
 #: model:ir.actions.act_window,name:ike_event.ike_event_authorization_action
-msgid "Evento autorización"
+msgid "Event authorization"
 msgstr ""
 
 #. module: ike_event
@@ -1857,6 +1917,16 @@ msgid "Finalized"
 msgstr "Finalizado"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__finalized_date
+msgid "Finalized Date"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__finalized_user_id
+msgid "Finalized User"
+msgstr ""
+
+#. module: ike_event
 #: model:survey.question,title:ike_event.survey_vial_truck_question_5
 msgid "Flat Tires"
 msgstr "Llantas ponchadas"
@@ -1888,6 +1958,7 @@ msgstr "Consulta de seguimiento"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_follower_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__message_follower_ids
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__message_follower_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__message_follower_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__message_follower_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__message_follower_ids
@@ -1901,6 +1972,7 @@ msgstr "Seguidores"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_partner_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__message_partner_ids
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__message_partner_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__message_partner_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__message_partner_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__message_partner_ids
@@ -1914,6 +1986,7 @@ msgstr "Seguidores (contactos)"
 #. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event__activity_type_icon
 #: model:ir.model.fields,help:ike_event.field_ike_event_cancellation_reason__activity_type_icon
+#: model:ir.model.fields,help:ike_event.field_ike_event_duplicate_reason__activity_type_icon
 #: model:ir.model.fields,help:ike_event.field_ike_event_membership_authorization__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
 msgstr ""
@@ -1969,6 +2042,7 @@ msgstr "Agrupar por"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__has_message
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__has_message
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__has_message
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__has_message
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__has_message
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__has_message
@@ -1978,6 +2052,11 @@ msgstr "Agrupar por"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__has_message
 msgid "Has Message"
 msgstr "Tiene un mensaje"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_end_user_id
+msgid "He arrived at his destination user"
+msgstr ""
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_stage__hide_timer
@@ -1991,11 +2070,14 @@ msgid "High"
 msgstr "Alta"
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_authorization__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_confirm_wizard__id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence_detail__id
@@ -2029,8 +2111,28 @@ msgid "ID"
 msgstr ""
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event__ia_suggestion_done
+msgid "Ia Suggestion Done"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input__ia_suggestion_loading
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic__ia_suggestion_loading
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic_sub__ia_suggestion_loading
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical__ia_suggestion_loading
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__ia_suggestion_loading
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__ia_suggestion_loading
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__ia_suggestion_loading
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__ia_suggestion_loading
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__ia_suggestion_loading
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__ia_suggestion_loading
+msgid "Ia Suggestion Loading"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__activity_exception_icon
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__activity_exception_icon
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__activity_exception_icon
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__activity_exception_icon
 #: model:ir.model.fields,field_description:ike_event.field_product_category__x_icon
 msgid "Icon"
@@ -2044,6 +2146,7 @@ msgstr "Ícono"
 #. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event__activity_exception_icon
 #: model:ir.model.fields,help:ike_event.field_ike_event_cancellation_reason__activity_exception_icon
+#: model:ir.model.fields,help:ike_event.field_ike_event_duplicate_reason__activity_exception_icon
 #: model:ir.model.fields,help:ike_event.field_ike_event_membership_authorization__activity_exception_icon
 msgid "Icon to indicate an exception activity."
 msgstr ""
@@ -2066,6 +2169,7 @@ msgstr "Tipo de identificación"
 #. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event__message_needaction
 #: model:ir.model.fields,help:ike_event.field_ike_event_cancellation_reason__message_needaction
+#: model:ir.model.fields,help:ike_event.field_ike_event_duplicate_reason__message_needaction
 #: model:ir.model.fields,help:ike_event.field_ike_event_membership_authorization__message_needaction
 #: model:ir.model.fields,help:ike_event.field_ike_event_service_type__message_needaction
 #: model:ir.model.fields,help:ike_event.field_ike_event_supplier__message_needaction
@@ -2081,6 +2185,8 @@ msgstr "Si está seleccionado, hay nuevos mensajes que requieren tu atención."
 #: model:ir.model.fields,help:ike_event.field_ike_event__message_has_sms_error
 #: model:ir.model.fields,help:ike_event.field_ike_event_cancellation_reason__message_has_error
 #: model:ir.model.fields,help:ike_event.field_ike_event_cancellation_reason__message_has_sms_error
+#: model:ir.model.fields,help:ike_event.field_ike_event_duplicate_reason__message_has_error
+#: model:ir.model.fields,help:ike_event.field_ike_event_duplicate_reason__message_has_sms_error
 #: model:ir.model.fields,help:ike_event.field_ike_event_membership_authorization__message_has_error
 #: model:ir.model.fields,help:ike_event.field_ike_event_membership_authorization__message_has_sms_error
 #: model:ir.model.fields,help:ike_event.field_ike_event_service_type__message_has_error
@@ -2117,6 +2223,16 @@ msgstr "En progreso"
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
 msgid "In Progress Events"
 msgstr "Eventos en progreso"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_start_user_id
+msgid "In route to destination user"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_start_user_id
+msgid "In route user"
+msgstr ""
 
 #. module: ike_event
 #. odoo-javascript
@@ -2158,6 +2274,7 @@ msgstr "Es autorizado por usuario NU"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_is_follower
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__message_is_follower
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__message_is_follower
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__message_is_follower
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__message_is_follower
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__message_is_follower
@@ -2260,6 +2377,7 @@ msgstr "Última etapa"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_confirm_wizard__write_uid
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence_detail__write_uid
@@ -2296,6 +2414,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_confirm_wizard__write_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence_detail__write_date
@@ -2372,7 +2491,6 @@ msgstr "Cargando..."
 #. module: ike_event
 #. odoo-python
 #: code:addons/ike_event/models/ike_event_summary.py:0
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__duplicate_location
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_duplicate_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 msgid "Location"
@@ -2467,7 +2585,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__assignation_type__manual_manual
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_base__assignation_type__manual_manual
 msgid "Manual Added"
-msgstr ""
+msgstr "Agregado manualmente"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
@@ -2521,6 +2639,7 @@ msgstr ""
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_has_error
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__message_has_error
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__message_has_error
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__message_has_error
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__message_has_error
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__message_has_error
@@ -2534,6 +2653,7 @@ msgstr "Error al enviar el mensaje"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__message_ids
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__message_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__message_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__message_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__message_ids
@@ -2596,6 +2716,7 @@ msgstr "Mis eventos activos"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__my_activity_date_deadline
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__my_activity_date_deadline
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__my_activity_date_deadline
 msgid "My Activity Deadline"
 msgstr ""
@@ -2630,6 +2751,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__name
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__name
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__name
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__name
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__name
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__name
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_stage__name
@@ -2662,6 +2784,11 @@ msgid "New"
 msgstr "Nuevo"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__new_stage_domain
+msgid "New Stage Domain"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__new_stage_id
 msgid "New state"
 msgstr "Nuevo estado"
@@ -2669,6 +2796,7 @@ msgstr "Nuevo estado"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__activity_date_deadline
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__activity_date_deadline
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__activity_date_deadline
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__activity_date_deadline
 msgid "Next Activity Deadline"
 msgstr ""
@@ -2676,6 +2804,7 @@ msgstr ""
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__activity_summary
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__activity_summary
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__activity_summary
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__activity_summary
 msgid "Next Activity Summary"
 msgstr ""
@@ -2683,6 +2812,7 @@ msgstr ""
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__activity_type_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__activity_type_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__activity_type_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__activity_type_id
 msgid "Next Activity Type"
 msgstr ""
@@ -2779,6 +2909,7 @@ msgstr "Notificado"
 #. module: ike_event
 #. odoo-javascript
 #: code:addons/ike_event/static/src/fields/section_and_note_o2m/ike_timer_widget.xml:0
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
 msgid "Notify"
 msgstr "Notificar"
 
@@ -2806,6 +2937,7 @@ msgstr "Nombre de usuario"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_needaction_counter
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__message_needaction_counter
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__message_needaction_counter
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__message_needaction_counter
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__message_needaction_counter
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__message_needaction_counter
@@ -2829,6 +2961,7 @@ msgstr "¿Número de llantas ponchadas?"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_has_error_counter
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__message_has_error_counter
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__message_has_error_counter
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__message_has_error_counter
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__message_has_error_counter
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__message_has_error_counter
@@ -2842,6 +2975,7 @@ msgstr "Número de errores"
 #. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event__message_needaction_counter
 #: model:ir.model.fields,help:ike_event.field_ike_event_cancellation_reason__message_needaction_counter
+#: model:ir.model.fields,help:ike_event.field_ike_event_duplicate_reason__message_needaction_counter
 #: model:ir.model.fields,help:ike_event.field_ike_event_membership_authorization__message_needaction_counter
 #: model:ir.model.fields,help:ike_event.field_ike_event_service_type__message_needaction_counter
 #: model:ir.model.fields,help:ike_event.field_ike_event_supplier__message_needaction_counter
@@ -2855,6 +2989,7 @@ msgstr "Número de mensajes que requieren una acción"
 #. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event__message_has_error_counter
 #: model:ir.model.fields,help:ike_event.field_ike_event_cancellation_reason__message_has_error_counter
+#: model:ir.model.fields,help:ike_event.field_ike_event_duplicate_reason__message_has_error_counter
 #: model:ir.model.fields,help:ike_event.field_ike_event_membership_authorization__message_has_error_counter
 #: model:ir.model.fields,help:ike_event.field_ike_event_service_type__message_has_error_counter
 #: model:ir.model.fields,help:ike_event.field_ike_event_supplier__message_has_error_counter
@@ -2896,8 +3031,18 @@ msgid "On Route To Destination End Date"
 msgstr ""
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_end_date_widget
+msgid "On Route To Destination End Date Widget"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_start_date
 msgid "On Route To Destination Start Date"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_start_date_widget
+msgid "On Route To Destination Start Date Widget"
 msgstr ""
 
 #. module: ike_event
@@ -2906,8 +3051,18 @@ msgid "On Route To User End Date"
 msgstr ""
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_user_end_date_widget
+msgid "On Route To User End Date Widget"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_user_start_date
 msgid "On Route To User Start Date"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_user_start_date_widget
+msgid "On Route To User Start Date Widget"
 msgstr ""
 
 #. module: ike_event
@@ -3012,6 +3167,7 @@ msgstr "Placa"
 
 #. module: ike_event
 #: model:survey.question,comments_message:ike_event.survey_vial_truck_question_2
+#: model:survey.question,question_placeholder:ike_event.survey_vial_truck_question_9
 msgid "Please specify"
 msgstr "Por favor especifica"
 
@@ -3141,6 +3297,7 @@ msgstr "Referencias"
 #. module: ike_event
 #. odoo-javascript
 #: code:addons/ike_event/static/src/fields/section_and_note_o2m/ike_timer_widget.xml:0
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_link_form_view
 msgid "Reject"
 msgstr "Rechazar"
@@ -3194,6 +3351,7 @@ msgstr "Necesita placas federales"
 #. module: ike_event
 #. odoo-javascript
 #: code:addons/ike_event/static/src/fields/section_and_note_o2m/ike_timer_widget.xml:0
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
 msgid "Reset"
 msgstr "Reiniciar"
 
@@ -3208,6 +3366,7 @@ msgstr "Nombre responsable"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__activity_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__activity_user_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__activity_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__activity_user_id
 msgid "Responsible User"
 msgstr "Usuario responsable"
@@ -3241,6 +3400,7 @@ msgstr "Datos de la ruta"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_has_sms_error
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__message_has_sms_error
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__message_has_sms_error
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__message_has_sms_error
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__message_has_sms_error
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__message_has_sms_error
@@ -3250,6 +3410,12 @@ msgstr "Datos de la ruta"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__message_has_sms_error
 msgid "SMS Delivery error"
 msgstr "Error en el envío del SMS"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
+msgid "SUPPLIER ID:"
+msgstr ""
 
 #. module: ike_event
 #: model:ike.event.service.type,name:ike_event.ike_event_stype_safekeeping
@@ -3366,6 +3532,7 @@ msgstr "Sección"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__sections
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__sections
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__sections
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__sections
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__sections
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__sections
 msgid "Sections"
@@ -3444,6 +3611,7 @@ msgstr "Secuencia"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__service_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__service_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__service_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__service_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__service_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__service_id
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_duplicate_wizard_view_form
@@ -3455,6 +3623,8 @@ msgid "Service"
 msgstr "Servicio"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__service_accessories_domain
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__service_accessories_domain
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__service_accessories_domain
 msgid "Service Accessories Domain"
 msgstr "Dominio de accesorios de servicio"
@@ -3554,6 +3724,11 @@ msgid "Service Input Vial"
 msgstr "Servicio vial"
 
 #. module: ike_event
+#: model:ir.model,name:ike_event.model_ike_service_input_vial_base
+msgid "Service Input Vial Base"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model,name:ike_event.model_ike_service_input_vial_generic
 msgid "Service Input Vial Generic"
 msgstr "Servicio vial genérico"
@@ -3608,12 +3783,14 @@ msgid "Service Vehicle Type"
 msgstr "Tipo de vehículo de servicio"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__service_vehicle_type_domain
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__service_vehicle_type_domain
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__service_vehicle_type_domain
 msgid "Service Vehicle Type Domain"
 msgstr "Dominio de vehículo de servicio"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__service_vehicle_type_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__service_vehicle_type_ids
 msgid "Service Vehicle Types"
 msgstr "Tipos de vehículos de servio"
@@ -3626,6 +3803,7 @@ msgstr "Tipos de vehículos de servio"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__service_product_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__service_product_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__service_product_ids
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__service_product_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__service_product_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__service_product_ids
 msgid "Service concepts"
@@ -3663,11 +3841,6 @@ msgid "Service type"
 msgstr "Tipo de servicio"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__service_vehicle_type_ids
-msgid "Service vehicle Types"
-msgstr "Tipos de vehículos de servio"
-
-#. module: ike_event
 #: model:ir.model,name:ike_event.model_product_category
 msgid "Services"
 msgstr "Categoría del producto"
@@ -3691,6 +3864,11 @@ msgstr "Tipo de servicios"
 #: model:ir.ui.menu,name:ike_event.ike_menu_event_service_type_action
 msgid "Services type"
 msgstr "Tipo de servicios"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
+msgid "Set Products Covered"
+msgstr "Asignar productos cubiertos"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__show_arrived
@@ -3767,6 +3945,8 @@ msgid "Specialist Consultation"
 msgstr "Consulta de especialista"
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__stage_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_base__stage_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_flow__stage_id
@@ -3800,12 +3980,15 @@ msgstr "Ref. de la etapa"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__stage_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__stage_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__stage_ref
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__stage_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__stage_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__stage_ref
 msgid "Stage Reference"
 msgstr "Referencia de etapa"
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__state
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__state
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__state
@@ -3826,6 +4009,7 @@ msgstr "Estado"
 #. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event__activity_state
 #: model:ir.model.fields,help:ike_event.field_ike_event_cancellation_reason__activity_state
+#: model:ir.model.fields,help:ike_event.field_ike_event_duplicate_reason__activity_state
 #: model:ir.model.fields,help:ike_event.field_ike_event_membership_authorization__activity_state
 msgid ""
 "Status based on activities\n"
@@ -3859,6 +4043,7 @@ msgstr "El volante gira"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__step_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__step_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__step_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__step_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__step_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__step_number
 msgid "Step Number"
@@ -3912,6 +4097,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__sub_service_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__sub_service_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__sub_service_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__sub_service_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__sub_service_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__sub_service_id
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_duplicate_wizard_view_form
@@ -3973,11 +4159,14 @@ msgid "Suggested"
 msgstr "Sugerido"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__suggested_accessories
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__suggested_accessories
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__suggested_accessories
 msgid "Suggested Service Accessories"
 msgstr "Accesorios de servicio sugeridos"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__suggested_vehicle_types
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__suggested_vehicle_types
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__suggested_vehicle_types
 msgid "Suggested Service Vehicle Types"
@@ -4003,8 +4192,10 @@ msgid "Summary Top"
 msgstr "Resumen superior"
 
 #. module: ike_event
+#. odoo-javascript
 #. odoo-python
 #: code:addons/ike_event/models/ike_event_summary.py:0
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_authorization__supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__supplier_id
@@ -4050,6 +4241,7 @@ msgstr "Enlace de proveedor"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__supplier_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__supplier_number
 msgid "Supplier Number"
@@ -4188,7 +4380,7 @@ msgstr ""
 
 #. module: ike_event
 #. odoo-python
-#: code:addons/ike_event/models/ike_event_duplicate_reason.py:0
+#: code:addons/ike_event/models/event_catalog_models/ike_event_duplicate_reason.py:0
 msgid "The reason name must be unique."
 msgstr "El motivo debe ser unico."
 
@@ -4365,13 +4557,9 @@ msgid "Type of service vehicle"
 msgstr "Tipo de vehículo de servicio"
 
 #. module: ike_event
-#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_truck_screen_form
-msgid "Types of accessories"
-msgstr "Tipos de accesorios"
-
-#. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event__activity_exception_decoration
 #: model:ir.model.fields,help:ike_event.field_ike_event_cancellation_reason__activity_exception_decoration
+#: model:ir.model.fields,help:ike_event.field_ike_event_duplicate_reason__activity_exception_decoration
 #: model:ir.model.fields,help:ike_event.field_ike_event_membership_authorization__activity_exception_decoration
 msgid "Type of the exception activity on record."
 msgstr ""
@@ -4380,6 +4568,11 @@ msgstr ""
 #: model_terms:survey.question,description:ike_event.survey_vial_truck_question_7
 msgid "Type of transmission"
 msgstr "Tipo de transmisión"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_truck_screen_form
+msgid "Types of accessories"
+msgstr "Tipos de accesorios"
 
 #. module: ike_event
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__state__unassigned
@@ -4414,6 +4607,12 @@ msgstr "Uso"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__use_external_locations
 msgid "Use External Locations"
 msgstr "Utilizar ubicaciones externas"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
+msgid "Use Public models:"
+msgstr ""
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__user_id
@@ -4625,6 +4824,11 @@ msgstr "Ver detalles"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
+msgid "View Details Base Costs"
+msgstr "Ver detalles convenio"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "View Vehicles Data"
 msgstr ""
@@ -4653,6 +4857,7 @@ msgstr "Tiempo de espera"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__website_message_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__website_message_ids
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__website_message_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__website_message_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__website_message_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__website_message_ids
@@ -4666,6 +4871,7 @@ msgstr "Mensajes del website"
 #. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event__website_message_ids
 #: model:ir.model.fields,help:ike_event.field_ike_event_cancellation_reason__website_message_ids
+#: model:ir.model.fields,help:ike_event.field_ike_event_duplicate_reason__website_message_ids
 #: model:ir.model.fields,help:ike_event.field_ike_event_membership_authorization__website_message_ids
 #: model:ir.model.fields,help:ike_event.field_ike_event_service_type__website_message_ids
 #: model:ir.model.fields,help:ike_event.field_ike_event_supplier__website_message_ids

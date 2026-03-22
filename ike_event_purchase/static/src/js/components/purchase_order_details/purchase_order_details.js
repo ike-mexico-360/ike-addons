@@ -5,6 +5,7 @@ import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 import { addLoadingEffect } from '@web/core/utils/ui';
 import { registry } from "@web/core/registry";
+import { rpc } from "@web/core/network/rpc";
 
 
 var new_line_id = 0;
@@ -50,6 +51,18 @@ export class PurchaseOrderDetails extends Component {
                         id: {},
                         name: {},
                         state: {},
+                        partner_id: {
+                            fields: {
+                                id: {},
+                                name: {},
+                            }
+                        },
+                        x_event_id: {
+                            fields: {
+                                id: {},
+                                name: {},
+                            }
+                        },
                         x_dispute_state: {},
                         x_dispute_approved: {},
                         order_line: {
@@ -101,7 +114,7 @@ export class PurchaseOrderDetails extends Component {
 
     async _loadComplementaryData() {
         try {
-            const uom_domain = await this.orm.call('product.product', 'get_concepts_uom_ids', [this.props.order_id]);
+            const uom_domain = await this.orm.call('product.product', 'get_concepts_uom_ids', []);
             const concepts_domain = await this.orm.call('product.product', 'get_concepts_domain', []);
             const [uom_ids, product_ids] = await Promise.all([
                 this.orm.searchRead(
@@ -147,12 +160,17 @@ export class PurchaseOrderDetails extends Component {
     toggle_dispute_fields() {
         // Establecer valores por defecto
         if (this.state.show_dispute_fields == false) {
-            this.state.order_data.order_line = this.state.order_data.order_line.map((line) => ({
-                ...line,
-                x_price_unit_dispute: line.x_price_unit_dispute || line.price_unit,
-                x_product_qty_dispute: line.x_product_qty_dispute || line.product_qty,
-                changed_line: true,  // Para que se guarde el cambio en la base de datos
-            }));
+            this.state.order_data.order_line = this.state.order_data.order_line.map((line) => {
+                const new_price = line.x_price_unit_dispute || line.price_unit;
+                const new_qty = line.x_product_qty_dispute || line.product_qty;
+                const changed = new_price !== line.price_unit || new_qty !== line.product_qty;
+                return {
+                    ...line,
+                    x_price_unit_dispute: new_price,
+                    x_product_qty_dispute: new_qty,
+                    ...(changed && { changed_line: true, x_has_dispute_changes: true }),  // Para que se guarde el cambio en la base de datos
+                };
+            });
         }
         this.state.show_dispute_fields = !this.state.show_dispute_fields;
     }
@@ -218,6 +236,13 @@ export class PurchaseOrderDetails extends Component {
         // Establecer UoM configurado en el concepto
         if (fieldName === 'product_id') {
             const product = this.state.product_ids.find((p) => p.id === value);
+            const event_id = this.state.order_data.x_event_id.id;
+            const supplier_id = this.state.order_data.partner_id.id;
+            const matrix_lines = await rpc('/my/purchase/' + product.id + '/get_matrix_lines', {
+                event_id: event_id,
+                supplier_id: supplier_id,
+            });
+            console.log("matrix_lines", matrix_lines);
             if (product?.uom_id) {
                 extra = { price_unit: product.standard_price, product_uom: product.uom_id.id, product_uom_name: product.uom_id.display_name };
             }
@@ -225,7 +250,7 @@ export class PurchaseOrderDetails extends Component {
 
         this.state.order_data.order_line = this.state.order_data.order_line.map((l) =>
             l.id === lineId
-                ? { ...l, [fieldName]: value, ...extra, changed_line: true }
+                ? { ...l, [fieldName]: value, ...extra, changed_line: true, x_has_dispute_changes: true }
                 : l
         );
         this._validate_field(lineId, fieldName, value);
@@ -279,6 +304,10 @@ export class PurchaseOrderDetails extends Component {
             const vals = {
                 x_price_unit_dispute: line.x_price_unit_dispute,
                 x_product_qty_dispute: line.x_product_qty_dispute,
+                // Establecer los campos aprobados igual a la disputa por default
+                x_price_unit_approved: line.x_price_unit_dispute,
+                x_product_qty_approved: line.x_product_qty_dispute,
+                x_has_dispute_changes: line.x_has_dispute_changes || false,
             };
 
             if (line.new_line) {

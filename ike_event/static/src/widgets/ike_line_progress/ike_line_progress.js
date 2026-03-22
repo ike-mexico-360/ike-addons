@@ -67,13 +67,23 @@ export class IkeLineProgress extends Component {
      * FECHAS
      * ====================== */
     get routeToUserStartDate() {
-        return this.props.record.data.on_route_to_user_start_date
-            ? new Date(this.props.record.data.on_route_to_user_start_date)
+        return this.props.record.data.on_route_to_user_start_date_widget
+            ? new Date(this.props.record.data.on_route_to_user_start_date_widget)
             : null;
     }
     get routeToDestinationDate() {
-        return this.props.record.data.on_route_to_destination_start_date
-            ? new Date(this.props.record.data.on_route_to_destination_start_date)
+         return this.props.record.data.on_route_to_destination_start_date_widget
+            ? new Date(this.props.record.data.on_route_to_destination_start_date_widget)
+            : null;
+    }
+    get routeToUserEndDate() {
+        return this.props.record.data.on_route_to_user_end_date_widget
+            ? new Date(this.props.record.data.on_route_to_user_end_date_widget)
+            : null;
+    }
+    get routeToDestinationEndDate() {
+        return this.props.record.data.on_route_to_destination_end_date_widget
+            ? new Date(this.props.record.data.on_route_to_destination_end_date_widget)
             : null;
     }
     /* ======================
@@ -83,9 +93,11 @@ export class IkeLineProgress extends Component {
         const start = this.routeToUserStartDate;
         if (!start) return 0;
 
-        if (this.on_on_route_to_user_end_date_date) {
+        const end = this.routeToUserEndDate;
+
+        if (end) {
             return Math.floor(
-                (this.on_on_route_to_user_end_date_date.getTime() - start.getTime()) / 1000
+                (end.getTime() - start.getTime()) / 1000
             );
         }
 
@@ -97,11 +109,12 @@ export class IkeLineProgress extends Component {
 
         return this.routeToUserDuration;
     }
+
     get elapsedSecondsRouteToOrigin() {
         const start = this.routeToDestinationDate;
         if (!start) return 0;
 
-        const end = this.on_route_to_destination_end_date;
+        const end = this.routeToDestinationEndDate;
         if (end) {
             return Math.max(
                 Math.floor((end.getTime() - start.getTime()) / 1000),

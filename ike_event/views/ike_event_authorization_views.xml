@@ -13,32 +13,6 @@
         </field>
     </record>
 
-    <record id="ike_event_authorization_view_list" model="ir.ui.view">
-        <field name="name">ike.event.authorization.view.list</field>
-        <field name="model">ike.event</field>
-        <field name="arch" type="xml">
-            <list class="ike-show-table-buttons" edit="false" duplicate="false" delete="false">
-                <field name="name" />
-                <field name="user_id"/>
-                <field name="service_id"/>
-                <field name="sub_service_id" context="{'display_default_code': 0}"/>
-                <field name="selected_supplier_ids" widget="many2many_tags" />
-                <button
-                    name="action_request_authorization"
-                    string="Request authorization concepts"
-                    type="object" class="btn-primary"
-                    context="{
-                        'from_authorizer': True,
-                        'from_event_authorization': False,
-                        'from_add_concept': False}"
-                    invisible="stage_ref in ['capturing','draft'] or (not authorization_required or not service_supplier_ids)"
-                />
-                <field name="stage_id" widget="badge"/>
-                <field name="stage_ref" column_invisible="1"/>
-            </list>
-        </field>
-    </record>
-
     <record id="ike_event_authorization_view_form" model="ir.ui.view">
         <field name="name">ike.event.authorization.view.form</field>
         <field name="model">ike.event</field>
@@ -62,27 +36,49 @@
                     <notebook>
                         <page name="authorizations" string="Authorizations">
                             <group name="authorizations_concepts" col="12">
-                                <group string="Authorization concepts" colspan="6"
-                                    invisible="stage_ref in ['capturing','draft'] or (not authorization_required or not service_supplier_ids)">
+                                <group string="Authorization concepts" colspan="6">
                                     <field name="authorization_required" invisible="1"/>
                                     <field name="uncovered_authorization_required" invisible="1"/>
-                                    <button
-                                        name="action_request_authorization"
-                                        string="Request authorization concepts"
-                                        type="object" class="btn-primary"
-                                        context="{
-                                            'from_authorizer': True,
-                                            'from_event_authorization': False,
-                                            'from_add_concept': False}"
-                                        invisible="stage_ref in ['capturing','draft'] or (not authorization_required or not service_supplier_ids)"
-                                    />
-                                    <field name="service_supplier_ids" invisible="1"/>
+                                    <div class="d-flex flex-column gap-2 w-100" colspan="2">
+                                        <button name="action_open_request_authorization" string="Request authorization concepts" type="object"
+                                            class="btn-primary w-50"
+                                            context="{
+                                                'from_authorizer': True,
+                                                'from_event_authorization': False,
+                                                'from_add_concept': False}"
+                                            invisible="stage_ref in ['capturing','draft'] or (not authorization_required or not service_supplier_ids)"/>
+                                    </div>
                                 </group>
                             </group>
                         </page>
                     </notebook>
                 </sheet>
             </form>
+        </field>
+    </record>
+
+    <record id="ike_event_authorization_view_list" model="ir.ui.view">
+        <field name="name">ike.event.authorization.view.list</field>
+        <field name="model">ike.event</field>
+        <field name="arch" type="xml">
+            <list class="ike-show-table-buttons" edit="false" duplicate="false" delete="false">
+                <field name="name" />
+                <field name="user_id"/>
+                <field name="service_id"/>
+                <field name="sub_service_id" context="{'display_default_code': 0}"/>
+                <button
+                    name="action_open_request_authorization"
+                    string="Request authorization concepts"
+                    type="object" class="btn-primary"
+                    context="{
+                        'from_authorizer': True,
+                        'from_event_authorization': False,
+                        'from_add_concept': False}"
+                    invisible="stage_ref in ['capturing','draft'] or (not authorization_required or not service_supplier_ids)"
+                />
+                <field name="stage_id" widget="badge"/>
+                <field name="stage_ref" column_invisible="1"/>
+            </list>
         </field>
     </record>
 
@@ -94,7 +90,11 @@
         <field name="view_ids" eval="[(5, 0, 0),
                 (0, 0, {'view_mode': 'list', 'view_id': ref('ike_event_authorization_view_list')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('ike_event_authorization_view_form')})]"/>
-        <field name="domain">[]</field>
-        <field name="context">{}</field>
+        <field name="domain">[
+            ('stage_ref', 'in', ['draft', 'capturing', 'searching', 'assigned', 'in_progress']),
+            ('user_id', '!=', False)
+            ]
+        </field>
+        <field name="context">{'search_default_stage': 1}</field>
     </record>
 </odoo>

@@ -91,7 +91,9 @@ patch(IkeEventScreenFormController.prototype, {
             this.orm.searchRead(
                 "product.product", accessories_domain, ["id", "name"]),
             this.orm.searchRead(
-                "custom.vehicle.type", [["x_subservice_id", "=", sub_service_id[0]]], ["id", "name"]),
+                // ToDo delete after test change to x_subservice_ids
+                // "custom.vehicle.type", [["x_subservice_id", "=", sub_service_id[0]]], ["id", "name"]),
+                "custom.vehicle.type", [["x_subservice_ids", "in", [sub_service_id[0]]],["disabled", "=", false]], ["id", "name"]),
         ]);
 
         // IA Data

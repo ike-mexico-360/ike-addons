@@ -20,6 +20,7 @@
         'security/ir.model.access.csv',
         'data/mail_authorization_template.xml',
         'data/mail_commercial_authorization_template.xml',
+        'data/mail_authorization_rejected_template.xml',
         'wizard/ike_event_add_affiliation_user_wizard.xml',
         'wizard/ike_event_membership_authorization_wizard.xml',
         "views/ike_event_screen_views.xml",

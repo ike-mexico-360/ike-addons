@@ -47,6 +47,12 @@ class IkeServiceInputVial(models.Model):
                 if response_data.get('status') == 'ok':
                     call_api_hub = True
                     _logger.info(f"Session created successfully: {response_data}")
+                else:
+                    if response_data.get('existing_session', False):
+                        call_api_hub = True
+                        _logger.info(f"Session created successfully: {response_data}")
+                    else:
+                        _logger.warning(f"Error al crear sesión {response_data}")
             except Exception as e:
                 call_api_hub = False
                 _logger.error(f"Error al enviar petición: {str(e)}")

@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import json
-from odoo import models, fields
-import requests
-
 import logging
+import requests
+from odoo import models, fields
 
 _logger = logging.getLogger(__name__)
 
@@ -12,11 +11,118 @@ _logger = logging.getLogger(__name__)
 class IkeEventSupplierSelection(models.Model):
     _inherit = 'ike.event.supplier'
 
-    notification_sent_to_app = fields.Boolean(string="Notification sent to app", default=False)
+    SEARCH_TYPE_MAP = {
+        'electronic': {'code': 1, 'name': 'Electrónica'},
+        'publication': {'code': 2, 'name': 'Publicación'},
+        'manual': {'code': 3, 'name': 'Manual'},
+        'manual_manual': {'code': 3, 'name': 'Manual'},
+    }
+    # Necesario para mapear los sub_servicios antes de entrar a la lógica de la notificaciíon y filtrar
+    SUB_SERVICE_REF_MAP = {
+        'town_truck': {'code': 211, 'name': 'Arrastre de Grua'},
+        'fuel_supply': {'code': 213, 'name': 'Suministro de Gasolina'},
+        'battery_charge': {'code': 214, 'name': 'Paso de corriente'},
+        'tire_change': {'code': 215, 'name': 'Cambio de llanta'},
+    }
 
+    # === Private methdos === #
     def _is_db_neutralized(self):
         return self.env['ir.config_parameter'].sudo().get_param('database.is_neutralized')
 
+    def _prepare_body_for_external_notification(self):
+        def get_status(ref):
+            if ref in ('preparing', 'assigned', 'on_route', 'arrived', 'contacted', 'on_route_2', 'arrived_2'):
+                return {'code': 1, 'name': 'Abierto'}
+            elif ref == 'finalized':
+                return {'code': 2, 'name': 'Cerrado'}
+            return {}
+
+        service_id = self.env[self.event_id.service_res_model].browse(self.event_id.service_res_id)
+        sub_service_id = self.env[self.event_id.sub_service_res_model].browse(self.event_id.sub_service_res_id)
+        rangehigh = False
+        if service_id.vehicle_category_id:
+            rangehigh = bool(service_id.vehicle_category_id.name.strip().lower().replace(' ', '') == 'altagama')
+
+        body = {
+            "id": str(self.event_id.id),
+            "car": {
+                "yearCar": service_id.vehicle_year or '',
+                "typeCar": service_id.vehicle_model or '',
+                "brandCar": service_id.vehicle_brand or '',
+                "colorCar": service_id.vehicle_color or '',
+                "platesCar": service_id.vehicle_plate or '',
+                "rangehigh": rangehigh,
+                "rangetype": service_id.vehicle_category_id.name or ''
+            },
+            "service": {
+                "code": "1",  # ToDo: queda fijo, se cambiará al definirse el origen
+                "description": "Asistencia Vial",  # ToDo: queda fijo, se cambiará al definirse el origen
+                "id": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"  # ToDo: queda fijo, se cambiará al definirse el origen
+            },
+            "subservice": {
+                "id": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
+                "code": self.SUB_SERVICE_REF_MAP.get(self.event_id.sub_service_id.default_code)['code'],
+                "description": self.SUB_SERVICE_REF_MAP.get(self.event_id.sub_service_id.default_code)['name']
+            },
+            "origin": {
+                "postalCode": service_id.location_zip_code or '',
+                "state": service_id.state_id.name or '',
+                "municipality": service_id.municipality_id.name or '',
+                "neighborhood": service_id.colony or '',
+                "street": f"{service_id.street} {service_id.street_number}" or '',
+                "betweenStreets": service_id.street2 or '',
+                "visualReference": service_id.street_ref or '',
+                "latitude": service_id.location_latitude or '',
+                "longitude": service_id.location_longitude or '',
+            },
+            "destino": {
+                "postalCode": sub_service_id.destination_zip_code or '',
+                "state": sub_service_id.state_id.name or '',
+                "municipality": sub_service_id.municipality_id.name or '',
+                "neighborhood": sub_service_id.colony or '',
+                "street": f"{sub_service_id.street} {sub_service_id.street_number}" or '',
+                "betweenStreets": sub_service_id.street2 or '',
+                "visualReference": sub_service_id.street_ref or '',
+                "latitude": sub_service_id.destination_latitude or '',
+                "longitude": sub_service_id.destination_longitude or '',
+            },
+            "typeAssignment": {
+                "code": self.SEARCH_TYPE_MAP.get(self.assignation_type)['code'],
+                "description": self.SEARCH_TYPE_MAP.get(self.assignation_type)['name'],
+                "id": str(self.truck_id.x_vehicle_ref) if self.truck_id.x_vehicle_ref else '',
+            },
+            # ToDo: Mapear con las respuestas de la encuesta
+            "serviceDetails": {
+                "reasonFailure": {
+                    "id": 0,
+                    "description": "NU no sabe",
+                    "code": 7
+                },
+                "accompaniesTransfer": {
+                    "id": 0,
+                    "description": "Nuestro Usuario",
+                    "code": 1
+                },
+                "typeFaul": {
+                    "id": 0,
+                    "description": "MECANICA",
+                    "code": 1
+                },
+                "peopleVehicle": 1
+            },
+        }
+
+        # handle status
+        status = get_status(self.stage_id.ref)
+        body.update({
+            "status": {
+                "code": status['code'],
+                "description": status['name'],
+            }
+        })
+        return body
+
+    # === AUXILIAR METHODS === #
     def operator_app_notify(
         self, url: str, user_id: str, vehicle_id: str, service_id: str, ca_id: str, lat: str, lng: str, dst_lat: str,
         dst_lng: str, control: str, assignation_type: str, status: str, event_supplier_id: str, user_code: str,
@@ -86,8 +192,66 @@ class IkeEventSupplierSelection(models.Model):
             },
             json=json_data,
         )
-        _logger.warning(f"Sending route payload: {json_data}")
+        _logger.info(f"Sending route payload: {json_data}")
         return response.json()
+
+    def notify_external_supplier(self, url: str):
+        if not url:
+            return False
+
+        headers = {"Content-Type": "application/json"}
+        body = self._prepare_body_for_external_notification()
+        external_response = requests.post(
+            url,
+            headers=headers,
+            json=body,
+        )
+        return external_response.json()
+
+    # === Override methods === #
+    def action_notify_cancelation_to_app(self, url: str, origin: str = 'internal'):
+        for rec in self:
+            headers = {"Content-Type": "application/json"}
+            body = {
+                "vehicleId": str(rec.truck_id.x_vehicle_ref),
+                "userId": None,
+                "payload": {
+                    "type": "TRAVEL_CANCELATION",
+                    "details": {
+                        "serviceId": str(rec.event_id.id),
+                    }
+                }
+            }
+            service_notification_response = requests.post(
+                url,
+                headers=headers,
+                json=body,
+            )
+            service_data = service_notification_response.json()
+            if 'ok' in service_data:
+                _logger.info(f"Notification sent successfully ({origin}): {service_data}")
+            else:
+                _logger.warning(f"Error sending notification ({origin}): {service_data}")
+
+    def action_notify(self):
+        # Override
+        res = super().action_notify()
+        self_filtered = self.filtered(
+            lambda x: x.state == 'notified'  # Notiticados
+            and x.notification_date  # Con fecha de notificación
+            and x.event_id.service_id.x_ref == 'vial'  # Tipo vial
+            and x.event_id.sub_service_id.default_code in self.SUB_SERVICE_REF_MAP.keys()  # Que sea de los subservicios mapeados
+            and x.supplier_id.x_has_external_notification  # Que tenga notificación externa
+            and x.truck_id.x_vehicle_ref  # Que tenga uid el vehiculo
+        )
+        url = self.env['ir.config_parameter'].sudo().get_param('ike_event.url.send_external_supplier')
+        if not url:
+            _logger.warning("No se ha configurado la URL de notificación a proveedores externos")
+        for rec in self_filtered:
+            response = rec.notify_external_supplier(url)
+            _logger.info(f"Notified external supplier {rec.event_id.id}/{rec.truck_id.x_vehicle_ref}: {response}")
+            # response => 'success': True or False
+        return res
 
     def action_notify_operator(self):
         # Realizamos el proces antes del super, ya que después del super, el filtrado de self_filtered se complicaría,
@@ -143,7 +307,7 @@ class IkeEventSupplierSelection(models.Model):
                 if not s.route:
                     continue
                 if s.truck_id.driver_id:
-                    _logger.warning(f"Preparando ruta para {s.truck_id.license_plate}")
+                    _logger.info(f"Preparando ruta para {s.truck_id.license_plate}")
                     origin = {
                         "lat": s.event_id.location_latitude,
                         "lng": s.event_id.location_longitude,
@@ -188,14 +352,14 @@ class IkeEventSupplierSelection(models.Model):
             for response in tracking_responses:  # ToDo: Quitar esto, solo se utiliza para verificar que se envíe
                 _logger.info(f"Tracking route: {response}")
 
-        return super(IkeEventSupplierSelection, self).action_notify_operator()
+        return super().action_notify_operator()
 
     def action_cancel(self, cancel_reason_id: int, reason_text=None):
         # Implement: Notify cancel from internal to app
         global_app_notification_url =\
             self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.global_notification')
         self_filtered = self.filtered(lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized')
-        res = super(IkeEventSupplierSelection, self).action_supplier_cancel(cancel_reason_id, reason_text)
+        res = super().action_supplier_cancel(cancel_reason_id, reason_text)
         if not global_app_notification_url:
             _logger.warning("No se ha configurado la URL de notificación global a la app")
         if self_filtered and global_app_notification_url:
@@ -207,7 +371,7 @@ class IkeEventSupplierSelection(models.Model):
         global_app_notification_url =\
             self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.global_notification')
         self_filtered = self.filtered(lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized')
-        res = super(IkeEventSupplierSelection, self).action_supplier_cancel(cancel_reason_id, reason_text)
+        res = super().action_supplier_cancel(cancel_reason_id, reason_text)
         if not global_app_notification_url:
             _logger.warning("No se ha configurado la URL de notificación global a la app")
         if self_filtered and global_app_notification_url:
@@ -222,36 +386,12 @@ class IkeEventSupplierSelection(models.Model):
             lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized'
             and x.supplier_id.x_has_portal is True  # Notificar solo si tiene mesa de control
         )
-        res = super(IkeEventSupplierSelection, self).action_supplier_cancel(cancel_reason_id, reason_text)
+        res = super().action_supplier_cancel(cancel_reason_id, reason_text)
         if not global_app_notification_url:
             _logger.warning("No se ha configurado la URL de notificación global a la app")
         if self_filtered and global_app_notification_url:
             self_filtered.action_notify_cancelation_to_app(global_app_notification_url, 'portal')
         return res
-
-    def action_notify_cancelation_to_app(self, url: str, origin: str = 'internal'):
-        for rec in self:
-            headers = {"Content-Type": "application/json"}
-            body = {
-                "vehicleId": str(rec.truck_id.x_vehicle_ref),
-                "userId": None,
-                "payload": {
-                    "type": "TRAVEL_CANCELATION",
-                    "details": {
-                        "serviceId": str(rec.event_id.id),
-                    }
-                }
-            }
-            service_notification_response = requests.post(
-                url,
-                headers=headers,
-                json=body,
-            )
-            service_data = service_notification_response.json()
-            if 'ok' in service_data:
-                _logger.info(f"Notification sent successfully ({origin}): {service_data}")
-            else:
-                _logger.warning(f"Error sending notification ({origin}): {service_data}")
 
 
 class IkeEventSupplierElapsedTime(models.Model):

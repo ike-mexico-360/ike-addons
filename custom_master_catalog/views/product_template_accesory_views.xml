@@ -42,7 +42,8 @@
                             <field name="name" class="w-100" readonly="disabled"/>
                         </h1>
                     </div>
-                    <group invisible="1">
+                    <group>
+                        <field name="x_concept_ok" readonly="disabled"/>
                         <field name="create_date" invisible="1"/>
                         <field name="disabled" invisible="1" />
                         <field name="active" invisible="1" />

@@ -57,6 +57,7 @@
                     <button string="Confirm"
                         name="action_duplicate_event"
                         type="object"
+                        context="{'original_event_id': True}"
                         class="btn-primary"/>
                     <button string="Cancel" special="cancel"/>
                 </footer>

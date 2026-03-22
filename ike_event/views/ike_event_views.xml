@@ -61,7 +61,6 @@
                 <field name="selected_supplier_ids" widget="many2many_tags" />
                 <field name="stage_id" widget="badge"/>
                 <field name="stage_ref" column_invisible="1"/>
-                <!-- <button name="action_testing_reload" string="Reload" type="object" class="btn-secondary"/> -->
             </list>
         </field>
     </record>
@@ -171,15 +170,15 @@
                         <page name="supplier_data" string="Supplier">
                             <group>
                                 <group>
-                                    <field name="covered_amount" readonly="1"/>
+                                    <field name="covered_amount" readonly="0"/>
                                     <label for="authorized_amount"/>
                                     <div class="o_row">
-                                        <field name="authorized_amount" readonly="1"/>
-                                        <button string="Request Authorization" name="action_request_authorization"
+                                        <field name="authorized_amount" readonly="0"/>
+                                        <button string="Request Authorization" name="action_open_request_authorization"
                                             type="object" class="btn-primary"
                                             context="{'from_event_authorization': True}"
                                             invisible="not authorization_required"/>
-                                        <button string="" name="action_request_authorization"
+                                        <button string="" name="action_open_request_authorization"
                                             type="object" class="btn-primary" icon="fa-eye" title="Authorizer View"
                                             context="{'from_authorizer': True}"
                                             invisible="not authorization_required"/>
@@ -335,6 +334,8 @@
                                     <field name="truck_id"/>
                                     <field name="state"/>
                                     <field name="stage_id"/>
+                                    <button name="action_view_products" string="View Details" type="object"/>
+                                    <button name="action_view_products_base_costs" string="View Details Base Costs" type="object"/>
                                     <button name="open_cancel_wizard" string="Cancel"
                                         invisible="stage_ref not in ['accepted', 'assigned']"
                                         type="object" class="btn-link text-danger"/>

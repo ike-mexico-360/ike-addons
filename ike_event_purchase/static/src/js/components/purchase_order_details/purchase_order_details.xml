@@ -17,16 +17,17 @@
                 <strong>The dispute has been rejected.</strong>
             </div>
 
-            <div class="row">
+            <div class="row" t-if="state.order_data.state == 'sent'">
                 <div class="col-12">
                     <div class="d-flex flex-row justify-content-end">
-                        <button class="btn btn-primary me-2 mb-2" t-on-click="accept_prices" t-if="!state.show_dispute_fields &amp;&amp; state.order_data.x_dispute_state == 'none'">
+                        <!-- ToDo: Mostrar también cuando ya se aprobó los cambios -->
+                        <button class="btn btn-primary me-2 mb-2" t-on-click="accept_prices" t-if="!state.show_dispute_fields &amp;&amp; ['none', 'resolved'].includes(state.order_data.x_dispute_state)">
                             Accept
                         </button>
-                        <button class="btn btn-secondary me-2 mb-2" t-on-click="toggle_dispute_fields" t-if="!state.show_dispute_fields &amp;&amp; state.order_data.x_dispute_state == 'none'">
+                        <button class="btn btn-secondary me-2 mb-2" t-on-click="toggle_dispute_fields" t-if="!state.show_dispute_fields &amp;&amp; ['none', 'resolved'].includes(state.order_data.x_dispute_state)">
                             Start Dispute
                         </button>
-                        <button class="btn btn-secondary me-2 mb-2" t-on-click="toggle_dispute_fields" disabled="disabled" t-if="state.show_dispute_fields &amp;&amp; state.order_data.x_dispute_state == 'none'">
+                        <button class="btn btn-secondary me-2 mb-2" t-on-click="toggle_dispute_fields" disabled="disabled" t-if="state.show_dispute_fields &amp;&amp; ['none', 'resolved'].includes(state.order_data.x_dispute_state)">
                             Start Dispute
                         </button>
                     </div>

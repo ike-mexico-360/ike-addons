@@ -5,7 +5,7 @@
         parent="custom_master_catalog.res_partner_menu_suppliers"
         action="custom_supplier_upload_cost_matrix_configuration_action"
         name="Supplier Cost Matrix Configuration"
-        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_supplier_admin_system"
+        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_procurement"
         sequence="25"/>
 
     <menuitem id="custom_general_menu_root"

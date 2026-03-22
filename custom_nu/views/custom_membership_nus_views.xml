@@ -74,6 +74,8 @@
                             <field name="date_end"/>
                             <field name="check_is_fleet" readonly="check_is_special"/>
                             <field name="check_is_special" readonly="check_is_fleet"/>
+                            <field name="display_key_primary_clause" readonly="1" invisible="1"/>
+                            <field name="display_key_second_clause_second" readonly="1" invisible="1"/>
                             <field name="x_validation_pattern" invisible="1"/>
                             <field name="x_display_mask" invisible="1"/>
                             <field name="x_validation_pattern_second" invisible="1"/>

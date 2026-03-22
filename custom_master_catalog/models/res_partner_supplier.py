@@ -126,6 +126,12 @@ class ResPartner(models.Model):
         default=False,
         tracking=True
     )
+    x_has_external_notification = fields.Boolean(
+        string='Has external notification',
+        default=False,
+        tracking=True,
+        copy=False,
+    )
 
     @api.depends("x_exclusive_account_ids", "x_special_account_ids")
     def _compute_x_allowed_account_ids(self):

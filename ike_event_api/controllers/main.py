@@ -242,6 +242,9 @@ class EventsAPIController(http.Controller):
         #   PRSE-001 -> PRIMERO SEGUROS
         #   PRSE-002 -> PRIMERO SEGUROS PESADOS
         account_ref = f"{account.upper()}-{str(call_type).zfill(3)}"
+        # ToDo: Cuando sea primero seguros, ignorar el valor de key
+        if account_ref in ['PRSE-001', 'PRSE-002']:
+            key = False
         valid_account_ref = self.x_ike_validate_account_ref_format(account_ref)
         if not valid_account_ref:
             _logger.warning(f'Bad request account ref {account_ref}')
@@ -258,6 +261,8 @@ class EventsAPIController(http.Controller):
         if not uid:
             _logger.warning('Unauthorized')
             return request.make_json_response({'error': 'Unauthorized'}, status=401)
+
+        _logger.info(f"/event/historyService/{account_ref}/{phone}")
 
         # Buscar NU: affiliate validation
         decrypt_encrypt_utility_sudo = request.env['custom.encryption.utility'].sudo()
@@ -330,33 +335,33 @@ class EventsAPIController(http.Controller):
                 nu_data = nu
                 affiliation_data = affiliation
                 plan_data = plan
-                _logger.warning(f'Membership: {affiliation['id']}: Matching account, key identification and complete_phone')
+                _logger.warning(f"Membership: {affiliation['id']}: Matching account, key identification and complete_phone")
                 break
             # ToDo: Quitar este caso, debe ser con complete_phone, se añade porque complete_phone no está guardando correctamente
             elif key and key_identification_dec == key and f"+52{phone_dec}" == f"+52{phone}":
                 nu_data = nu
                 affiliation_data = affiliation
                 plan_data = plan
-                _logger.warning(f'Membership: {affiliation['id']}: Matching account, key identification and phone')
+                _logger.warning(f"Membership: {affiliation['id']}: Matching account, key identification and phone")
                 break
             elif key and key_identification_dec == key:
                 nu_data = nu
                 affiliation_data = affiliation
                 plan_data = plan
-                _logger.warning(f'Membership: {affiliation['id']}: Matching account and key identification')
+                _logger.warning(f"Membership: {affiliation['id']}: Matching account and key identification")
                 break
             elif complete_phone_dec == f"+52{phone}":
                 nu_data = nu
                 affiliation_data = affiliation
                 plan_data = plan
-                _logger.warning(f'Membership: {affiliation['id']}: Matching account and complete_phone')
+                _logger.warning(f"Membership: {affiliation['id']}: Matching account and complete_phone")
                 break
             # ToDo: Quitar este caso, debe ser con complete_phone, se añade porque complete_phone no está guardando correctamente
             elif f"+52{phone_dec}" == f"+52{phone}":
                 nu_data = nu
                 affiliation_data = affiliation
                 plan_data = plan
-                _logger.warning(f'Membership: {affiliation['id']}: Matching account and phone')
+                _logger.warning(f"Membership: {affiliation['id']}: Matching account and phone")
                 break
 
         if not nu_data:
@@ -497,15 +502,8 @@ class EventsAPIController(http.Controller):
 
             # 2. Agregar mensaje al Thread
             prompt = '''
-                Analiza el siguiente JSON de solicitud y determina el tipo de unidad que debe atender el servicio, aplicando las reglas del archivo IKE.txt.
+                Analiza este caso de asistencia vial. Devuelve solo el JSON final.
 
-                Devuelve la respuesta únicamente en el siguiente formato JSON exacto:
-                {"id": <id>, "truck_type": ["<valor>"]}
-
-                Si no existe coincidencia clara, responde:
-                {"id": <id>, "truck_type": [""]}
-
-                Entrada:
                 {{ JSON.stringify(%s) }}
             ''' % json.dumps(survey)
             requests.post(

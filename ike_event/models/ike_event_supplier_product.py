@@ -42,11 +42,10 @@ class IkeEventProduct(models.Model):
                 ('sale_ok', '=', False),
                 ('sh_product_subscribe', '=', False),
                 ('purchase_ok', '=', True),
-                ('x_accessory_ok', '=', False),
+                ('x_concept_ok', '=', True),
                 ('type', '=', 'service'),
                 ('disabled', '=', False),
                 ('list_price', '=', 0),
-                ('standard_price', '=', 0),
                 ('uom_id', 'in', [
                     self.env.ref('uom.product_uom_km').id,
                     self.env.ref('uom.product_uom_day').id,
@@ -85,9 +84,6 @@ class IkeEventSupplierProduct(models.Model):
     event_id = fields.Many2one(related='event_supplier_link_id.event_id')
 
     # === AMOUNT FIELDS === #
-    base_unit_price = fields.Float('Agreement Cost', default=0.0)
-    base_cancel_price = fields.Float('Agreement Cancel Cost', default=0.0)
-
     unit_price = fields.Float('Unit Cost', default=0.0)
     quantity = fields.Integer(default=1)
     is_net = fields.Boolean('Net?', default=False)
@@ -99,10 +95,16 @@ class IkeEventSupplierProduct(models.Model):
     vat = fields.Float('VAT', compute="_compute_amount", store=True)
     subtotal = fields.Float('Subtotal', compute="_compute_amount", store=True)
 
+    # Base fields
     cost_matrix_line_id = fields.Many2one('custom.supplier.cost.matrix.line', ondelete='set null')
+    base_unit_price = fields.Float('Agreement Unit Price', default=0.0)
+    base_cancel_price = fields.Float('Agreement Cancel Cost', default=0.0)
+    base_cost_price = fields.Float('Agreement Cost', compute='_compute_base_amount', store=True)
+    base_vat = fields.Float('Agreement Vat', compute='_compute_base_amount', store=True)
+    base_subtotal = fields.Float('Agreement Subtotal', compute='_compute_base_amount', store=True)
 
     # === AUTHORIZATION FIELDS === #
-    authorization_pending = fields.Boolean(default=False)
+    authorization_pending = fields.Boolean(default=True)
     authorization_ids = fields.One2many(
         'ike.event.supplier.product.authorization', 'event_supplier_product_id',
         string='Authorizations')
@@ -131,6 +133,24 @@ class IkeEventSupplierProduct(models.Model):
                 rec.cost_price = cost
                 rec.vat = vat
                 rec.subtotal = subtotal
+
+    @api.depends('quantity', 'base_unit_price', 'tax_ids')
+    def _compute_base_amount(self):
+        for rec in self:
+            if not rec.is_net:
+                base_cost = rec.quantity * rec.base_unit_price
+
+                base_tax_amount = 0.0
+                if rec.tax_ids:
+                    taxes = rec.tax_ids.compute_all(rec.base_unit_price, quantity=rec.quantity)
+                    base_tax_amount = sum(t['amount'] for t in taxes['taxes'])
+
+                base_vat = base_tax_amount
+                base_subtotal = base_cost + base_vat
+
+                rec.base_cost_price = base_cost
+                rec.base_vat = base_vat
+                rec.base_subtotal = base_subtotal
 
     @api.depends('authorization_ids')
     def _compute_authorization_id(self):

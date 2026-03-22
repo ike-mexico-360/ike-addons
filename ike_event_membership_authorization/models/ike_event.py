@@ -44,9 +44,9 @@ class IkeEvent(models.Model):
             'default_phone': decrypt_encrypt_utility_sudo.decrypt_aes256(self.user_phone)
         }
         # Implementando flujo de BP, cuenta no existente
-        if self.created_from_bp:
+        if bool(self.created_from_bp and self.temporary_phone):
             ctx.update({
-                'created_from_bp': True,
+                'created_from_bp': self.created_from_bp,
                 'default_account_id': self.temporary_membership_plan_id.id,
                 'default_key_primary': self.temporary_key_indentification,
                 'default_phone': self.temporary_phone,

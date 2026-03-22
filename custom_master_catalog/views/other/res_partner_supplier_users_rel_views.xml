@@ -24,11 +24,11 @@
                 <field name="user_id" domain="users_domain" options="{'no_create': True, 'no_edit': True, 'no_open': True}"
                     context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list'}"/>
                 <field name="partner_id" options="{'no_create': True, 'no_edit': True, 'no_open': True}"
-                    force_save="1" column_invisible="1"/>
+                    force_save="1" column_invisible="1" required="1"/>
                 <field name="user_type"/>
                 <field name="supplier_id" options="{'no_create': True, 'no_edit': True, 'no_open': True}"
                     context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list'}"
-                    domain="[('x_is_supplier', '=', True), ('disabled', '=', False)]" readonly="0" force_save="1"/>
+                    domain="[('x_is_supplier', '=', True), ('disabled', '=', False)]" readonly="0" force_save="1" required="1"/>
                 <field name="center_of_attention_id" domain="[('parent_id', '=', supplier_id), ('disabled', '=', False)]"
                     options="{'no_create': True, 'no_edit': True, 'no_open': True}" force_save="1"
                     context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_center_view_list'}"/>
@@ -48,12 +48,12 @@
                             <field name="user_id" domain="users_domain" options="{'no_create': True, 'no_edit': True, 'no_open': True}"
                                 context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list'}"/>
                             <field name="users_domain" invisible="1"/>
-                            <field name="partner_id" options="{'no_create': True, 'no_edit': True, 'no_open': True}"
+                            <field name="partner_id" options="{'no_create': True, 'no_edit': True, 'no_open': True}" required="1"
                                 readonly="1" invisible="1" force_save="1" groups="base.group_system"/>
                             <field name="user_type"/>
                         </group>
                         <group>
-                            <field name="supplier_id" options="{'no_create': True, 'no_edit': True, 'no_open': True}"
+                            <field name="supplier_id" options="{'no_create': True, 'no_edit': True, 'no_open': True}" required="1"
                                 context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list'}"
                                 domain="[('x_is_supplier', '=', True), ('disabled', '=', False)]" readonly="0"/>
                             <field name="center_of_attention_id" domain="[('parent_id', '=', supplier_id), ('disabled', '=', False)]"

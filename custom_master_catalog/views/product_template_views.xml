@@ -22,6 +22,8 @@
                     <span class="d-inline-block">
                         <field name="x_accessory_ok" invisible="product_variant_count > 1"/>
                         <label for="x_accessory_ok" invisible="product_variant_count > 1"/>
+                        <field name="x_concept_ok"  invisible="product_variant_count > 1"/>
+                        <label for="x_concept_ok"  invisible="product_variant_count > 1"/>
                     </span>
                 </xpath>
             </field>
