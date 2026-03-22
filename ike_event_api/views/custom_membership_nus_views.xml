@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_custom_membership_nus_form_inherit_ike_event_api" model="ir.ui.view">
+        <field name="name">view_custom_membership_nus_form.inherit.ike_event_api</field>
+        <field name="model">custom.membership.nus</field>
+        <field name="inherit_id" ref="custom_nu.view_custom_membership_nus_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='x_display_mask']" position="after">
+                <field name="x_service_counter_validation" readonly="disabled" groups="base.group_no_one"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

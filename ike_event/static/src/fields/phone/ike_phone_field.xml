@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkePhoneField">
+        <t>
+            <input
+                class="o_input"
+                t-att-id="props.id"
+                type="tel"
+                autocomplete="off"
+                t-att-placeholder="' '"
+                t-att-required="props.required"
+                t-ref="input"
+                t-att-readonly="props.readonly"
+            />
+            <label t-att-for="props.id" t-out="label" class="ike_input_label"/>
+        </t>
+    </t>
+
+</templates>

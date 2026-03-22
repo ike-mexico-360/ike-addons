@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View custom.membership.nus View List -->
+    <record id="view_custom_membership_nus_list" model="ir.ui.view">
+        <field name="name">view.custom.membership.nus.list</field>
+        <field name="model">custom.membership.nus</field>
+        <field name="arch" type="xml">
+            <list delete="false" edit="false" duplicate="false">
+                <field name="name"/>
+                <field name="nus_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View custom.membership.nus form -->
+    <record id="view_custom_membership_nus_form" model="ir.ui.view">
+        <field name="name">view.custom.membership.nus.form</field>
+        <field name="model">custom.membership.nus</field>
+        <field name="arch" type="xml">
+            <form delete="false" duplicate="false">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <div class="oe_title">
+                        <label for="name" class="o_form_label_required"/>
+                        <h1>
+                            <field name="name" placeholder="Name..." readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field
+                                name="nus_id"
+                                required="1"
+                                options='{"no_open": True, "no_create": True}'
+                                domain="[('disabled', '=', False)]"
+                                readonly="disabled"
+                            />
+                            <field
+                                name="membership_plan_id"
+                                required="1"
+                                options='{"no_open": True, "no_create": True}'
+                                domain="[('disabled', '=', False)]"
+                                readonly="disabled"
+                            />
+                            <field name="date" readonly="disabled" required="1"/>
+                            <field
+                                name="key_identification"
+                                required="1"
+                                widget="regex_validator_field"
+                                password="true"
+                                invisible="disabled == True"
+                            />
+                            <field name="clause" invisible="not check_clause"/>
+                            <field
+                                name="second_key_identification"
+                                required="1"
+                                widget="regex_validator_field"
+                                mask_field="x_display_mask_second"
+                                pattern_field="x_validation_pattern_second"
+                                password="true"
+                                invisible="disabled == True or not check_second_key"
+                            />
+                            <field name="second_clause" invisible="not second_check_clause"/>
+                            <field
+                                name="subscription_validity"
+                                invisible="0"
+                                readonly="disabled"
+                            />
+                        </group>
+                        <group>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="check_is_fleet" readonly="check_is_special"/>
+                            <field name="check_is_special" readonly="check_is_fleet"/>
+                            <field name="x_validation_pattern" invisible="1"/>
+                            <field name="x_display_mask" invisible="1"/>
+                            <field name="x_validation_pattern_second" invisible="1"/>
+                            <field name="x_display_mask_second" invisible="1"/>
+                            <field name="disabled" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                            <field name="create_date" invisible="1"/>
+                            <field name="x_validation_pattern" invisible="1"/>
+                            <field name="x_display_mask" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="name" string="Detail">
+                            <group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="custom_membership_nus_view_kanban" model="ir.ui.view">
+        <field name="name">custom_membership_nus.view.kanban</field>
+        <field name="model">custom.membership.nus</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" editable="false" create="false" multiedit="false" delete="false" default_order="subscription_validity desc, id">
+                <field name="x_display_mask"/>
+                <templates>
+                    <t t-name="card" class="d-flex flex-row position-relative">
+                        <main class="ps-2 ps-md-0 flex-grow-1">
+                            <div class="o_row ps-1">
+                                <span class="fw-bolder">Account: </span><field name="membership_plan_id"/>
+                            </div>
+                            <div class="o_row ps-1">
+                                <span class="fw-bolder">Validity: </span><field t-if="record.date.raw_value" name="date"/>
+                            </div>
+                            <div class="o_row ps-1">
+                                <span class="fw-bolder">Clue: </span><field name="key_identification" class="d-inline" widget="regex_validator_field"/>
+                            </div>
+                            <!-- <div class="o_row ps-1">
+                                <span class="fw-bolder">Beneficiarios: </span>
+                            </div> -->
+                            <field name="subscription_validity" invisible="1"/>
+                        </main>
+
+                        <div class="d-flex flex-column align-items-end align-self-center pe-1">
+                            <t t-if="record.subscription_validity.raw_value">
+                                <span class="badge rounded-pill text-bg-success small ps-2">
+                                    <i class="fa fa-check-circle me-1"/> Active validity
+                                </span>
+                            </t>
+                            <t t-else="">
+                                <span class="badge rounded-pill text-bg-danger small ps-1">
+                                    <i class="fa fa-times me-1"/> Expired validity
+                                </span>
+                            </t>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- View custom.membership.nus search -->
+    <record id="view_custom_membership_nus_search" model="ir.ui.view">
+        <field name="name">view.custom.membership.nus.search</field>
+        <field name="model">custom.membership.nus</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="disabled"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group expand="1" string="Group By">
+                    <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action custom.membership.nus -->
+    <record id="action_custom_membership_nus" model="ir.actions.act_window">
+        <field name="name">Custom Membership Nus</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">custom.membership.nus</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                There is no examples click here to add new Custom Membership Nus.
+            </p>
+        </field>
+    </record>
+
+</odoo>

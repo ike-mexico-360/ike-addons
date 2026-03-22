@@ -1,0 +1,310 @@
+{
+  "info": {
+    "name": "Shopify Admin API",
+    "description": "Complete Shopify Admin API collection for testing with API Connector",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "apikey",
+    "apikey": [
+      {
+        "key": "key",
+        "value": "X-Shopify-Access-Token"
+      },
+      {
+        "key": "value",
+        "value": "{{shopify_access_token}}"
+      },
+      {
+        "key": "in",
+        "value": "header"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "shop_domain",
+      "value": "your-shop.myshopify.com"
+    },
+    {
+      "key": "api_version",
+      "value": "2025-01"
+    },
+    {
+      "key": "shopify_access_token",
+      "value": "your-access-token-here"
+    }
+  ],
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://{{shop_domain}}/admin/api/{{api_version}}/products.json?limit=250",
+              "protocol": "https",
+              "host": ["{{shop_domain}}"],
+              "path": ["admin", "api", "{{api_version}}", "products.json"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "250"
+                },
+                {
+                  "key": "fields",
+                  "value": "id,title,handle,vendor,product_type,created_at,updated_at,status,variants"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Single Product",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://{{shop_domain}}/admin/api/{{api_version}}/products/{{product_id}}.json",
+              "protocol": "https",
+              "host": ["{{shop_domain}}"],
+              "path": ["admin", "api", "{{api_version}}", "products", "{{product_id}}.json"]
+            }
+          }
+        },
+        {
+          "name": "Create Product",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "https://{{shop_domain}}/admin/api/{{api_version}}/products.json",
+              "protocol": "https",
+              "host": ["{{shop_domain}}"],
+              "path": ["admin", "api", "{{api_version}}", "products.json"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"product\": {\n    \"title\": \"New Product from API\",\n    \"body_html\": \"Product description here\",\n    \"vendor\": \"Your Company\",\n    \"product_type\": \"Electronics\",\n    \"status\": \"draft\",\n    \"variants\": [\n      {\n        \"price\": \"29.99\",\n        \"sku\": \"API-PROD-001\",\n        \"inventory_management\": \"shopify\",\n        \"inventory_policy\": \"deny\"\n      }\n    ]\n  }\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Orders",
+      "item": [
+        {
+          "name": "Get Orders",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://{{shop_domain}}/admin/api/{{api_version}}/orders.json?status=any&limit=250",
+              "protocol": "https",
+              "host": ["{{shop_domain}}"],
+              "path": ["admin", "api", "{{api_version}}", "orders.json"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "any"
+                },
+                {
+                  "key": "limit",
+                  "value": "250"
+                },
+                {
+                  "key": "fields",
+                  "value": "id,order_number,created_at,updated_at,total_price,currency,customer,line_items,financial_status,fulfillment_status"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Orders by Date Range",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://{{shop_domain}}/admin/api/{{api_version}}/orders.json?updated_at_min={{date_min}}&updated_at_max={{date_max}}&status=any",
+              "protocol": "https",
+              "host": ["{{shop_domain}}"],
+              "path": ["admin", "api", "{{api_version}}", "orders.json"],
+              "query": [
+                {
+                  "key": "updated_at_min",
+                  "value": "{{date_min}}"
+                },
+                {
+                  "key": "updated_at_max",
+                  "value": "{{date_max}}"
+                },
+                {
+                  "key": "status",
+                  "value": "any"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customers",
+      "item": [
+        {
+          "name": "Get Customers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://{{shop_domain}}/admin/api/{{api_version}}/customers.json?limit=250",
+              "protocol": "https",
+              "host": ["{{shop_domain}}"],
+              "path": ["admin", "api", "{{api_version}}", "customers.json"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "250"
+                },
+                {
+                  "key": "fields",
+                  "value": "id,email,first_name,last_name,phone,created_at,updated_at,addresses,tags"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Customer",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "https://{{shop_domain}}/admin/api/{{api_version}}/customers.json",
+              "protocol": "https",
+              "host": ["{{shop_domain}}"],
+              "path": ["admin", "api", "{{api_version}}", "customers.json"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"customer\": {\n    \"first_name\": \"John\",\n    \"last_name\": \"Doe\",\n    \"email\": \"john.doe@example.com\",\n    \"phone\": \"+33123456789\",\n    \"verified_email\": true,\n    \"send_email_welcome\": false\n  }\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Get Locations",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://{{shop_domain}}/admin/api/{{api_version}}/locations.json",
+              "protocol": "https",
+              "host": ["{{shop_domain}}"],
+              "path": ["admin", "api", "{{api_version}}", "locations.json"]
+            }
+          }
+        },
+        {
+          "name": "Get Inventory Levels",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://{{shop_domain}}/admin/api/{{api_version}}/inventory_levels.json?location_ids={{location_id}}",
+              "protocol": "https",
+              "host": ["{{shop_domain}}"],
+              "path": ["admin", "api", "{{api_version}}", "inventory_levels.json"],
+              "query": [
+                {
+                  "key": "location_ids",
+                  "value": "{{location_id}}"
+                },
+                {
+                  "key": "limit",
+                  "value": "250"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "GraphQL - Set Inventory",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "https://{{shop_domain}}/admin/api/{{api_version}}/graphql.json",
+              "protocol": "https",
+              "host": ["{{shop_domain}}"],
+              "path": ["admin", "api", "{{api_version}}", "graphql.json"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "graphql",
+              "graphql": {
+                "query": "mutation inventorySetOnHandQuantities($input: InventorySetOnHandQuantitiesInput!) {\n  inventorySetOnHandQuantities(input: $input) {\n    inventoryAdjustmentGroup {\n      id\n    }\n    userErrors {\n      field\n      message\n    }\n  }\n}",
+                "variables": "{\n  \"input\": {\n    \"reason\": \"correction\",\n    \"referenceDocumentUri\": \"odoo-sync\",\n    \"setQuantities\": [\n      {\n        \"inventoryItemId\": \"gid://shopify/InventoryItem/{{inventory_item_id}}\",\n        \"locationId\": \"gid://shopify/Location/{{location_id}}\",\n        \"quantity\": {{quantity}}\n      }\n    ]\n  }\n}"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Webhooks",
+      "item": [
+        {
+          "name": "Get Webhooks",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "https://{{shop_domain}}/admin/api/{{api_version}}/webhooks.json",
+              "protocol": "https",
+              "host": ["{{shop_domain}}"],
+              "path": ["admin", "api", "{{api_version}}", "webhooks.json"]
+            }
+          }
+        },
+        {
+          "name": "Create Webhook",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "https://{{shop_domain}}/admin/api/{{api_version}}/webhooks.json",
+              "protocol": "https",
+              "host": ["{{shop_domain}}"],
+              "path": ["admin", "api", "{{api_version}}", "webhooks.json"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"webhook\": {\n    \"topic\": \"orders/create\",\n    \"address\": \"https://your-odoo-server.com/shopify/webhook/orders/create\",\n    \"format\": \"json\"\n  }\n}"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

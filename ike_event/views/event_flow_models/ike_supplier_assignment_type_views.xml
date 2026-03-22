@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View ike.event.supplier.assignment.type View List -->
+    <record id="view_ike_event_supplier_assignment_type_list" model="ir.ui.view">
+        <field name="name">view.ike.event.supplier.assignment.type.list</field>
+        <field name="model">ike.event.supplier.assignment.type</field>
+        <field name="arch" type="xml">
+            <list duplicate="0" delete="0" edit="0">
+                <field name="sequence" widget="handle" />
+                <field name="name" />
+                <field name="wait_time" widget="integer" options="{'postfix': 'seconds'}" />
+                <field name="geofence_radius" widget="float" options="{'postfix': 'km'}" />
+                <field name="arrival_duration" widget="integer" options="{'postfix': 'min'}" />
+                <field name="max_suppliers" />
+                <field name="by_priority" />
+                <field name="total_assignment_time" widget="float" options="{'postfix': 'min'}" />
+                <field name="active" column_invisible="1" />
+                <field name="disabled" column_invisible="1" />
+            </list>
+        </field>
+    </record>
+
+    <!-- View ike.event.supplier.assignment.type form -->
+    <record id="view_ike_event_supplier_assignment_type_form" model="ir.ui.view">
+        <field name="name">view.ike.event.supplier.assignment.type.form</field>
+        <field name="model">ike.event.supplier.assignment.type</field>
+        <field name="arch" type="xml">
+            <form create="0" duplicate="0" delete="0">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active" />
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary"
+                        invisible="not disabled or not active" />
+                    <div class="oe_title">
+                        <label for="name" />
+                        <h1>
+                            <field name="name" placeholder="Name..." readonly="disabled" />
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="sequence" required="1" readonly="1" />
+                            <field name="wait_time" options="{'postfix': 'seconds'}" readonly="disabled"
+                                style="width: 10rem;" />
+                            <label for="geofence_radius" />
+                            <div class="o_row">
+                                <field name="geofence_radius_meters" options="{'postfix': 'm'}" readonly="disabled"
+                                    style="max-width: 5rem;" />
+                                <span class="mx-4"></span>
+                                <field name="geofence_radius" options="{'postfix': 'km'}" readonly="1"
+                                    style="max-width: 5rem;" />
+                            </div>
+                            <field name="arrival_duration" options="{'postfix':'min'}" readonly="disabled"
+                                style="max-width: 5rem;"/>
+                        </group>
+                        <group>
+                            <field name="max_suppliers" readonly="disabled" />
+                            <field name="by_priority" readonly="disabled" />
+                            <field name="total_assignment_time" options="{'postfix': 'min'}" readonly="1"
+                                style="max-width: 5rem;" />
+                            <field name="disabled" invisible="1" />
+                            <field name="active" invisible="1" />
+                        </group>
+                    </group>
+                </sheet>
+                <chatter />
+            </form>
+        </field>
+    </record>
+
+    <!-- View ike.event.supplier.assignment.type search -->
+    <record id="view_ike_event_supplier_assignment_type_search" model="ir.ui.view">
+        <field name="name">view.ike.event.supplier.assignment.type.search</field>
+        <field name="model">ike.event.supplier.assignment.type</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" />
+                <field name="disabled" />
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]"
+                    invisible="context.get('hide_disabled_enabled_filters', 0) == 1" />
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]"
+                    invisible="context.get('hide_disabled_enabled_filters', 0) == 1" />
+            </search>
+        </field>
+    </record>
+
+    <!-- Action ike.event.supplier.assignment.type -->
+    <record id="action_ike_event_supplier_assignment_type" model="ir.actions.act_window">
+        <field name="name">Event Supplier Assignment Type</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ike.event.supplier.assignment.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+    </record>
+
+</odoo>

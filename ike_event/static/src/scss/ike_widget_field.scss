@@ -1,0 +1,58 @@
+.o_cell:has(.ike-widget-field) {
+    height: 42px!important;
+}
+
+.ike-widget-field {
+    $widget-primary-color: $o-brand-primary;  // Color primario del texto (azul)
+    $widget-border-color: #D1D8E2;  // Color del borde del input
+    $widget-border-accent-color: #F2A83E;  // Color del borde del input cuando esta en foco
+
+    position: relative;
+    height: 40px!important;
+    max-height: 40px!important;
+    min-height: 40px!important;
+    padding: 0!important;
+    padding-inline: 0!important;
+    margin: 0!important;
+    background-color: #ffffff!important;
+
+    > label {
+        position: absolute;
+        top: 6px;
+        font-size: $o-font-size-base-touch;  // Añadimos un tamaño de fuente fijo para que el label se vea correctamente
+        font-weight: $o-font-weight-medium;  // Añadimos un peso de fuente fijo para que el label se vea correctamente
+        color: $o-brand-primary;
+        transition: top 0.1s ease, font-size 0.2s ease, color 0.2s ease;  // Añadimos transiciones para el efecto del clic
+        cursor: text;
+    }
+    > label.o_form_label_readonly {
+        opacity: 0.66!important;
+    }
+    > label.o_field_invalid {
+        color: o-text-color('danger');
+    }
+
+    > input, > span, > a, > select, .o-autocomplete--input {
+        display: block!important;
+        margin: 16px 0 0 0;
+        height: 24px!important;
+        border-bottom: 1px solid $widget-border-color;
+    }
+
+    > input:focus,
+    .o-autocomplete--input:focus {
+        border-bottom: 1px solid $widget-border-accent-color;  // Cambiamos el borde cuando esta en foco
+        outline: none;  // Quitamos el outline cuando esta en foco
+    }
+
+    > input:focus + label,
+    > input:not(:placeholder-shown) + label,
+    > label.label-with-value {
+        top: -1px!important;  // Colocamos el label arriba del input
+        font-size: $o-font-size-base-smaller!important;  // Establecemos tamaño de fuente pequeña
+    }
+
+    > span.span-without-value {
+        border-bottom: 1px solid $widget-border-color;
+    }
+}

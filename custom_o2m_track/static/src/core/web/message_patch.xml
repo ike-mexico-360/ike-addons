@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="mail.Message" t-inherit-mode="extension">
+        <xpath expr="//t[@name='bodyAsNotification']" position="attributes">
+            <attribute name="t-if">!(message.o2mTrackings and message.o2mTrackings.length) and (message.message_type === 'notification' and message.body)</attribute>
+        </xpath>
+        <xpath expr="//t[@name='hasTrackingValue']" position="attributes">
+            <attribute name="t-if">!(message.o2mTrackings and message.o2mTrackings.length) and (message.message_type === 'notification' or message.is_transient or message.trackingValues.length > 0)</attribute>
+        </xpath>
+        <xpath expr="//t[@name='bodyAsNotification']" position="after">
+            <t t-if="message.o2mTrackings and message.o2mTrackings.length" name="hasO2mTrackingValues">
+                <div>
+                    <t t-if="message.subtype_description">
+                        <p class="mb-0">
+                            <t t-out="props.messageSearch?.highlight(message.subtype_description) ?? message.subtype_description"/>
+                        </p>
+                    </t>
+                    <t t-if="message.trackingValues.length or message.o2mTrackings.length">
+                        <ul class="mb-0 ps-4">
+                            <t name="trackingValues" t-foreach="message.trackingValues" t-as="trackingValue" t-key="trackingValue.id">
+                                <li class="o-mail-Message-tracking mb-1" role="group">
+                                    <span class="o-mail-Message-trackingOld me-1 px-1 text-muted fw-bold" t-esc="formatTrackingOrNone(trackingValue.fieldType, trackingValue.oldValue)"/>
+                                    <i class="o-mail-Message-trackingSeparator fa fa-long-arrow-right mx-1 text-600"/>
+                                    <span class="o-mail-Message-trackingNew me-1 fw-bold text-info" t-esc="formatTrackingOrNone(trackingValue.fieldType, trackingValue.newValue)"/>
+                                    <span class="o-mail-Message-trackingField ms-1 fst-italic text-muted">(<t t-esc="trackingValue.changedField"/>)</span>
+                                </li>
+                            </t>
+                            <t name="o2mTrackings" t-foreach="message.o2mTrackings" t-as="o2mTracking" t-key="o2mTracking.o2m_field_id">
+                                <li class="o-mail-Message-tracking mb-1" role="group">
+                                    <span class="o-mail-Message-trackingOld me-1 px-1 fw-bold">
+                                        <t t-out="o2mTracking.o2m_field_description"/>
+                                    </span>
+                                    <ul class="">
+                                        <t name="trackingCommands" t-foreach="o2mTracking.o2mTrackingCommands" t-as="trackingCommand" t-key="trackingCommand.id">
+                                            <li class="o-mail-Message-tracking mb-1" role="group">
+                                                <span t-out="trackingCommand.o2m_record_name"/> (<span class="fst-italic text-muted" t-out="trackingCommand.o2m_command"/>)
+                                                <ul>
+                                                    <t name="o2mTrackingValues" t-foreach="trackingCommand.o2mTrackingValues" t-as="o2mTrackingValue" t-key="o2mTrackingValue.id">
+                                                        <li class="o-mail-Message-tracking mb-1" role="group">
+                                                            <span class="o-mail-Message-trackingOld me-1 px-1 text-muted fw-bold" t-esc="formatTrackingOrNone(o2mTrackingValue.fieldType, o2mTrackingValue.oldValue)"/>
+                                                            <i class="o-mail-Message-trackingSeparator fa fa-long-arrow-right mx-1 text-600"/>
+                                                            <span class="o-mail-Message-trackingNew me-1 fw-bold text-info" t-esc="formatTrackingOrNone(o2mTrackingValue.fieldType, o2mTrackingValue.newValue)"/>
+                                                            <span class="o-mail-Message-trackingField ms-1 fst-italic text-muted">(<t t-esc="o2mTrackingValue.changedField"/>)</span>
+                                                        </li>
+                                                    </t>
+                                                </ul>
+                                            </li>
+                                        </t>
+                                    </ul>
+                                </li>
+                            </t>
+                        </ul>
+                    </t>
+                    <div t-if="message.body" t-call="mail.Message.bodyAsNotification" t-ref="body"/>
+                </div>
+            </t>
+        </xpath>
+    </t>
+</templates>

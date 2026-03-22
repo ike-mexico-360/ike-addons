@@ -1,0 +1,27 @@
+.pref-box {
+    width: 40px;
+    height: 30px;
+    border-radius: 10px;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 2px solid #1c437e;
+    background: white;
+    transition: 0.2s ease-in-out;
+
+    i {
+        font-size: 15px;
+        color: #1c437e;
+    }
+
+    &.selected {
+        background: #1c437e;
+
+        i {
+            color: white;
+        }
+    }
+}

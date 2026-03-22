@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista lista para event.public -->
+    <record id="ike_event_public_view_list" model="ir.ui.view">
+        <field name="name">ike.event.public.list</field>
+        <field name="model">ike.event.public</field>
+        <field name="arch" type="xml">
+            <list string="Mis Eventos" create="false" delete="false" edit="false">
+                <field name="name"/>
+                <field name="event_date"/>
+                <field name="service_id"/>
+                <field name="sub_service_id"/>
+                <field name="stage_id"/>
+            </list>
+        </field>
+    </record>
+    <!-- Vista formulario para event.public -->
+    <record id="ike_event_public_view_form" model="ir.ui.view">
+        <field name="name">ike.event.public.form</field>
+        <field name="model">ike.event.public</field>
+        <field name="arch" type="xml">
+            <form string="Evento" create="false" delete="false" edit="false">
+                <header>
+                    <field name="stage_id" widget="statusbar" options="{'clickable': '0'}"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="event_date"/>
+                            <field name="service_id"/>
+                            <field name="sub_service_id"/>
+                        </group>
+                        <group>
+                            <field name="user_id"/>
+                            <field name="location_label"/>
+                            <field name="destination_label"/>
+                            <field name="covered_amount"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <!-- Acción para event.publicl -->
+    <record id="ike_event_public_action" model="ir.actions.act_window">
+        <field name="name">Evento</field>
+        <field name="res_model">ike.event.public</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{}</field>
+        <field name="domain">[]</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No tienes eventos registrados
+            </p>
+        </field>
+    </record>
+    <menuitem id="menu_ike_event_public"
+              name="Eventos Publicos"
+              parent="ike_event.ike_menu_event"
+              action="ike_event_public_action"
+              groups="base.group_no_one"
+              sequence="10"/>
+</odoo>

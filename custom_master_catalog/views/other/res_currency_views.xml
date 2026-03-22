@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="custom_ike_view_currency_tree" model="ir.ui.view">
+            <field name="name">custom_ike_res.currency.list</field>
+            <field name="model">res.currency</field>
+            <field name="priority" eval="50"/>
+            <field name="arch" type="xml">
+                <list string="Currencies" create="0" delete="0" edit="0">
+                    <field name="name"/>
+                    <field name="symbol"/>
+                    <field name="full_name" string="Name" optional="show"/>
+                    <field name="date" string="Last Update"/>
+                    <field name="rate" digits="[12,6]"/>
+                    <field name="inverse_rate" digits="[12,6]" optional="hide"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="custom_ike_view_currency_form" model="ir.ui.view">
+            <field name="name">custom_ike_res.currency.form</field>
+            <field name="model">res.currency</field>
+            <field name="priority" eval="50"/>
+            <field name="arch" type="xml">
+                <form string="Currency">
+                    <div class="alert alert-info text-center" role="alert" groups="base.group_no_one">
+                        You cannot reduce the number of decimal places of a currency already used on an accounting entry.
+                    </div>
+                    <div class="alert alert-info text-center" role="alert" invisible="not is_current_company_currency">
+                        This is your company's currency.
+                    </div>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="full_name" string="Name"/>
+                                <field name="active" widget="boolean_toggle"/>
+                            </group>
+                            <group>
+                                <field name="symbol"/>
+                                <field name="currency_unit_label"/>
+                                <field name="currency_subunit_label"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,103 @@
+.ike_portal_ike_events_category, .ike_portal_ike_events_services {
+    .o_portal_index_card > a {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        border-radius: 12px;
+        background-color: #005691 !important;
+        height: 200px !important;
+        font-size: 16px;
+        font-weight: bold;
+        color: white;
+        padding: 40px !important;
+        cursor: pointer;
+        transition: transform 0.2s, background-color 0.2s !important;
+        &:hover {
+            background-color: #F3A93E !important;
+            transform: translateY(-5px);
+        }
+
+        > div {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: 0 !important;
+        }
+
+        > div > div:first-child {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            justify-content: center !important;
+            margin: 0 !important;
+        }
+
+        > div > div:last-child {
+            font-size: 16px;
+            font-weight: bold;
+            opacity: 0.75;
+            margin: 0 !important;
+        }
+
+        .o_portal_icon {
+            display: flex !important;
+            align-self: center !important;
+            justify-content: center !important;
+        }
+
+        img {
+            height: 60px;
+            width: 60px;
+            color: white;
+        }
+    }
+}
+
+.portal-main-container {
+    max-width: 900vw !important;
+    margin-left: calc(-50vw + 50%) !important;
+    margin-right: calc(-50vw + 50%) !important;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    box-sizing: border-box;
+}
+
+
+.portal-main-container table thead tr th {
+    background-color: #ffffff !important;
+    color: #0d6efd !important;
+    border-bottom: 2px solid #e9ecef !important;
+    text-align: center;
+}
+
+.portal-main-container table tbody tr {
+    text-align: center;
+}
+
+/* Costs table header styling */
+.table thead tr.bg-primary th.rounded-start {
+    border-top-left-radius: 0.5rem;
+    border-bottom-left-radius: 0.5rem;
+}
+
+.table thead tr.bg-primary th.rounded-end {
+    border-top-right-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+}
+
+.table thead tr.bg-primary th {
+    border: none;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.table tbody tr.border-bottom {
+    border-bottom: 1px solid #e9ecef !important;
+}
+
+.table tbody td {
+    color: #344054;
+}

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- View Search -->
+    <record id="custom_vehicle_type_view_search" model="ir.ui.view">
+        <field name="name">custom.vehicle.type.view.search</field>
+        <field name="model">custom.vehicle.type</field>
+        <field name="arch" type="xml">
+            <search string="Vehicle type">
+                <field name="name"/>
+                <field name="disabled"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group expand="0" string="Group By">
+                    <filter string="Service" name="group_by_service" context="{'group_by': 'x_service_id'}"/>
+                    <filter string="Subservice" name="group_by_subservice" context="{'group_by': 'x_subservice_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- View Form -->
+    <record id="custom_vehicle_type_view_form" model="ir.ui.view">
+        <field name="name">custom.vehicle.type.view.form</field>
+        <field name="model">custom.vehicle.type</field>
+        <field name="arch" type="xml">
+            <form delete="0">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <div class="oe_title">
+                        <label for="name" class="o_form_label_required"/>
+                        <h1>
+                            <field name="name" placeholder="Vehicle type name" readonly="disabled"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="x_categ_domain" invisible="1"/>
+                            <field name="x_service_id" readonly="disabled" domain="x_categ_domain"
+                                options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list','form_view_ref': 'custom_master_catalog.product_category_service_view_form'}"/>
+                            <field name="x_subservice_id" readonly="disabled"
+                                options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                context="{
+                                    'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list',
+                                    'form_view_ref': 'custom_master_catalog.view_x_subservice_product_template_form',
+                                    'display_default_code': 0
+                                }"/>
+                            <field name="subservice_specification_ids" readonly="disabled"
+                                widget="many2many_tags"
+                                options="{'no_create': True, 'no_create_edit': True}"
+                                context="{'list_view_ref': 'custom_master_catalog.custom_subservice_specification_view_list'}"/>
+                            <field name="active" invisible="1"/>
+                            <field name="disabled" invisible="1"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- View List -->
+    <record id="custom_vehicle_type_view_list" model="ir.ui.view">
+        <field name="name">custom.vehicle.type.view.list</field>
+        <field name="model">custom.vehicle.type</field>
+        <field name="arch" type="xml">
+            <list delete="0" edit="false">
+                <field name="name" string="Types of service vehicles"/>
+                <field name="x_service_id"/>
+                <field name="x_subservice_id" context="{'display_default_code': 0}"/>
+                <field name="subservice_specification_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="custom_vehicle_type_action" model="ir.actions.act_window">
+        <field name="name">Types of service vehicles</field>
+        <field name="res_model">custom.vehicle.type</field>
+        <field name="view_mode">list,form</field>
+            <field name="context">
+                {
+                    'search_default_filter_enabled': 1,
+                    'x_subservice_view': True,
+                    'display_default_code': 0
+                }
+            </field>
+    </record>
+
+</odoo>

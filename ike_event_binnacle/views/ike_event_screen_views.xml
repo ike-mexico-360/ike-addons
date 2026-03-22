@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   <!-- Event Screen -->
+    <record id="view_ike_event_screen_inherit_binnacle_form" model="ir.ui.view">
+        <field name="name">view.ike.event.screen.inherit.binnacle.form</field>
+        <field name="model">ike.event</field>
+        <field name="inherit_id" ref="ike_event.view_ike_event_screen_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <!-- # ToDo delete after testing the widget -->
+                <!-- ............................ -->
+                <button
+                    name="action_open_view_binnacle_html"
+                    string="Binnacle"
+                    type="object"
+                    class="btn-primary"
+                    invisible="1"
+                />
+                <!-- ............................ -->
+                <widget name="ike_binnacle_button"/>
+                <button name="action_open_view_comment_wizard"
+                    type="object" class="btn btn-primary bottom-0 end-0 m-3 rounded-circle"
+                    icon="fa-commenting-o"
+                    title="Comment"
+                />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_binnacle_event_form" model="ir.ui.view">
+        <field name="name">view.binnacle.event.form</field>
+        <field name="model">ike.event</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <field name="binnacle_html" type="html" placeholder="" readonly="1"/>
+                    <footer>
+                        <button string="Discard" class="btn-secondary" special="cancel" data-hotkey="z" invisible="context.get('from_event_kanban', False)"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>

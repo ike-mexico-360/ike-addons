@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_mail_tracking_command_all,mail.tracking.command.all,model_mail_tracking_command,base.group_public,1,0,0,0
+access_mail_tracking_command_portal,mail.tracking.command.portal,model_mail_tracking_command,base.group_portal,1,1,1,1
+access_mail_tracking_command_user,mail.tracking.command.user,model_mail_tracking_command,base.group_user,1,1,1,1

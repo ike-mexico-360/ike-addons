@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ike_event_portal.UsersMainComponent" owl="1">
+        <t t-if="!state.isLoading and state.view === 'list' and !state.isCreating and !state.selectedUserId">
+            <div class="container py-4">
+                <t t-if="state.notification">
+                    <div t-attf-class="alert alert-{{state.notification.type}} alert-dismissible fade show" role="alert" style="position: fixed; top: 20px; right: 20px; z-index: 9999;">
+                        <strong t-esc="state.notification.message"/>
+                        <button type="button" class="btn-close" aria-label="Close" t-on-click="closeNotification"></button>
+                    </div>
+                </t>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="d-flex align-items-center">
+                        <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="usuarios" class="me-3" style="width:30px;" />
+                        <h1 class="fw-bold mb-0">Usuarios</h1>
+                    </div>
+                    <a t-on-click="openCreateForm" class="btn btn-primary">
+                        <i class="fa fa-user-plus me-1"/> Nuevo Usuario
+                    </a>
+                </div>
+                <div class="o_portal_content">
+                    <div t-if="state.isLoading">
+                        <p>Loading users...</p>
+                    </div>
+                    <PaginationComponent pagination="pagination">
+                        <table t-if="!state.isLoading" class="usuarios-table">
+                            <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Email</th>
+                                    <th>Centro de Atención</th>
+                                    <th>Tipo</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="pagination.paginatedItems" t-as="user" t-key="user.id">
+                                    <tr>
+                                        <td>
+                                            <t t-esc="user.name"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="user.email"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="user.center_of_attention_name"/>
+                                        </td>
+                                        <td>
+                                            <span t-if="user.user_type === 'administrator'" class="badge bg-danger">Administrador</span>
+                                            <span t-elif="user.user_type === 'supervisor'" class="badge bg-warning text-dark">Supervisor</span>
+                                            <span t-elif="user.user_type === 'operator'" class="badge bg-primary">Operador</span>
+                                            <span t-else="" class="badge bg-secondary"><t t-esc="user.user_type"/></span>
+                                        </td>
+                                        <td>
+                                            <button t-on-click="() => this.selectUser(user.id)" class="btn btn-primary">Ver detalles</button>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </PaginationComponent>
+                </div>
+            </div>
+        </t>
+        <!-- MODE 1: CREATE -->
+        <t t-if="state.isCreating">
+            <UserCreateComponent
+                    onUserCreated.bind="onUserCreated"
+                    onCancel.bind="closeCreateForm"
+                />
+        </t>
+        <!-- MODE 2: READ (Details) -->
+        <!-- Check if a user is selected -->
+        <t t-if="state.selectedUserId">
+            <UserReadComponent
+                    userId="state.selectedUserId"
+                    onClose.bind="clearSelection"
+                />
+        </t>
+    </t>
+</templates>

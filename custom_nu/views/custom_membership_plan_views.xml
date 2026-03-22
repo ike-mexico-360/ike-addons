@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View custom.membership.plan View List -->
+    <record id="view_custom_membership_plan_list" model="ir.ui.view">
+        <field name="name">view.custom.membership.plan.list</field>
+        <field name="model">custom.membership.plan</field>
+        <field name="arch" type="xml">
+            <list edit="false" delete="false" duplicate="false">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View custom.membership.plan form -->
+    <record id="view_custom_membership_plan_form" model="ir.ui.view">
+        <field name="name">view.custom.membership.plan.form</field>
+        <field name="model">custom.membership.plan</field>
+        <field name="arch" type="xml">
+            <form delete="false" duplicate="false">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <div class="oe_title">
+                         <label for="name" class="o_form_label_required"/>
+                        <h1>
+                            <field name="name" placeholder="Name..." readonly="disabled"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="account_id"
+                                options='{"no_open": True, "no_create": True}' readonly="disabled"
+                                context="{'list_view_ref': 'custom_master_catalog.res_partner_account_view_list'}"/>
+                            <field name="commercial_name" readonly="disabled"/>
+                            <field name="vat_rfc" readonly="disabled"/>
+                            <field name="account_type_id" readonly="disabled" options='{"no_open": True, "no_create": True}'/>
+                            <field name="account_identification_id" readonly="disabled" options='{"no_open": True, "no_create": True}'/>
+                            <field name="second_account_identification_id" readonly="disabled" invisible="not check_second_key" options='{"no_open": True, "no_create": True}'/>
+                        </group>
+                        <group>
+                            <field name="bp_account_ref" readonly="disabled"/>
+                            <field name="contract_start_date" readonly="disabled"/>
+                            <field name="contract_end_date" readonly="disabled"/>
+                            <field name="cicle_reset" readonly="disabled"/>
+
+                            <field name="x_validation_pattern" readonly="1" groups="base.group_no_one"/>
+                            <field name="x_display_mask" readonly="1" groups="base.group_no_one"/>
+                            <field name="x_validation_pattern_second" readonly="1" groups="base.group_no_one"/>
+                            <field name="x_display_mask_second" readonly="1" groups="base.group_no_one"/>
+                            <field name="disabled" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                            <field name="create_date" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="product_line_ids" string="Services and subservices">
+                            <group>
+                                <field name="product_line_ids" nolabel="1" mode="list" readonly="disabled">
+                                    <list string="Products" limit="10" no_open="0" delete="1">
+                                        <field name="currency_id" column_invisible="1"/>
+                                        <field name="x_service_domain" column_invisible="1"/>
+                                        <field name="x_product_domain" column_invisible="1"/>
+                                        <field name="service_id" options='{"no_open": True, "no_create": True}' required="1"
+                                            domain="x_service_domain"
+                                            context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list'}"/>
+                                        <field name="sub_service_ids" options='{"no_open": True, "no_create": True}' required="1"
+                                            widget="many2many_tags"
+                                            domain="x_product_domain"
+                                            context="{
+                                                'display_default_code': 0,
+                                                'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list'
+                                            }"/>
+                                        <field name="vehicle_weight_category_id"/>
+                                        <field name="sap_id_income"/>
+                                        <field name="commercial_name"/>
+                                        <field name="local"/>
+                                        <field name="national"/>
+                                        <field name="foreigner"/>
+                                        <field name="period_per_event"/>
+                                        <field name="period"/>
+                                        <field name="limit_amount_per_event" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="limit_distance" widget="postfix_field" options="{'postfix':'km'}" column_invisible="1"/>
+                                        <field name="product_description_po"/>
+                                        <field name="sap_id_outgoing"/>
+                                        <button name="action_open_view_considerations_html" type="object" class="oe_stat_button" icon="fa-eye" title="Considerations"/>
+                                        <button name="action_open_view_exclusions_html" type="object" class="oe_stat_button" icon="fa-times" title="Exclusions"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- View custom.membership.plan search -->
+    <record id="view_custom_membership_plan_search" model="ir.ui.view">
+        <field name="name">view.custom.membership.plan.search</field>
+        <field name="model">custom.membership.plan</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="disabled"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group expand="1" string="Group By">
+                    <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Vista Kanban para detalles en eventos -->
+    <record id="view_membership_plan_product_line_kanban" model="ir.ui.view">
+        <field name="name">custom.membership.plan.product.line.kanban</field>
+        <field name="model">custom.membership.plan.product.line</field>
+        <field name="arch" type="xml">
+
+            <kanban class="o_kanban_mobile wide-kanban" create="False" group_create="false">
+                <!-- Content -->
+                <field name="id"/>
+                <field name="name"/>
+                <field name="service_id"/>
+                <field name="sub_service_ids" context="{'display_default_code': 0}"/>
+                <field name="local"/>
+                <field name="national"/>
+                <field name="foreigner"/>
+                <field name="limit_amount_per_event"/>
+                <field name="period_per_event"/>
+                <field name="period"/>
+                <field name="limit_distance"/>
+
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_card p-0 font-family: inherit;">
+                                <div class="mb-2">
+                                    <small class="text-muted d-block mb-1" style="font-size: 0.65rem;">Commercial Name:</small>
+                                    <strong style="font-size: 0.85rem;">
+                                        <field name="commercial_name"/>
+                                    </strong>
+                                </div>
+                                <!-- Sub-service -->
+                                <div class="mb-0" t-if="record.sub_service_ids.raw_value.length > 0">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div class="flex-grow-1">
+                                            <small class="text-muted d-block" style="font-size: 0.65rem;">Subservice:</small>
+                                            <field name="sub_service_ids" widget="many2many_tags" context="{'display_default_code': 0}"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Coverage -->
+                                <div class="mb-0">
+                                    <small class="text-muted d-block mb-1" style="font-size: 0.65rem;">Coverage:</small>
+                                    <div class="d-flex gap-1 flex-wrap">
+                                        <span t-if="record.local.raw_value" class="badge badge-info" style="font-size: 0.6rem; padding: 0.2rem 0.4rem;">
+                                            <i class="fa fa-map-marker"/> Local
+                                        </span>
+                                        <span t-if="record.national.raw_value" class="badge badge-info" style="font-size: 0.6rem; padding: 0.2rem 0.4rem;">
+                                            <i class="fa fa-globe"/> National
+                                        </span>
+                                        <span t-if="record.foreigner.raw_value" class="badge badge-info" style="font-size: 0.6rem; padding: 0.2rem 0.4rem;">
+                                            <i class="fa fa-plane"/> Foreigner
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Event / Limit -->
+                                <div class="row g-2">
+                                    <div class="col-6">
+                                        <div class="border rounded p-2 text-center d-flex flex-column justify-content-center" style="background-color: #f8f9fa; height: 70px;">
+                                            <t t-if="record.period_per_event.raw_value > 0">
+                                                <small class="text-muted" style="font-size: 0.55rem;">Period per event</small>
+                                                <strong class="d-block" style="font-size: .90rem;" t-esc="record.period_per_event.value"/>
+                                                <span t-if="record.period.raw_value" class="badge badge-secondary" style="font-size: 0.6rem; padding: 0.15rem 0.35rem;">
+                                                    <field name="period"/>
+                                                </span>
+                                            </t>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-6">
+                                        <div class="border rounded p-2 text-center d-flex flex-column justify-content-center" style="background-color: #f8f9fa; height: 70px;">
+                                            <t t-if="record.limit_amount_per_event.raw_value > 0">
+                                                <small class="text-muted" style="font-size: 0.55rem;">limit per event</small>
+                                                <strong class="d-block" style="font-size: .90rem;" t-esc="'$ ' + record.limit_amount_per_event.value"/>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-center align-items-center mt-0 " >
+                                <!-- Considerations -->
+                                <div class="d-flex align-items-center gap-1" >
+                                    <strong class="text-muted" style="font-size: 0.55rem;">Considerations</strong>
+                                    <button name="action_open_view_considerations_html"
+                                            type="object"
+                                            class="oe_stat_button"
+                                            icon="fa-eye"
+                                            title="Details"
+                                            style="font-size: 0.55rem;"
+                                            context="{'from_event_kanban': True}"
+                                            />
+                                </div>
+
+                                <!-- Exclusions -->
+                                <div class="d-flex align-items-center gap-1">
+                                    <strong class="text-muted" style="font-size: 0.55rem;">Exclusions</strong>
+                                    <button name="action_open_view_exclusions_html"
+                                            type="object"
+                                            class="fa fa-exclamation-triangle text-warning"
+                                            title="Details"
+                                            style="font-size: 0.55rem;"
+                                            context="{'from_event_kanban': True}"
+                                            />
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Action custom.membership.plan -->
+    <record id="action_custom_membership_plan" model="ir.actions.act_window">
+        <field name="name">Custom Membership Plan</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">custom.membership.plan</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                There is no examples click here to add new Custom Membership Plan.
+            </p>
+        </field>
+    </record>
+
+</odoo>

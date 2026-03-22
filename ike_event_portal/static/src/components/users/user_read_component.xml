@@ -1,0 +1,140 @@
+<templates xml:space="preserve">
+    <t t-name="ike_event_portal.UserReadComponent" owl="1">
+        <div class="user-read-container card shadow-sm">
+            <div class="card-body p-4">
+                <!-- Loading State -->
+                <div t-if="state.isLoading" class="text-center py-5">
+                    <i class="fa fa-spinner fa-spin fa-2x text-primary"/>
+                    <p class="mt-2 text-muted">Cargando detalles del usuario...</p>
+                </div>
+
+                <!-- Error State -->
+                <div t-elif="state.error" class="alert alert-danger m-3" role="alert">
+                    <i class="fa fa-exclamation-triangle me-2"/>
+                    <t t-esc="state.error"/>
+                </div>
+
+                <!-- Data Display -->
+                <div t-elif="state.user">
+                    <!-- Header with Close Button -->
+                    <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
+                        <h3 class="card-title m-0 text-primary">
+                            <i class="fa fa-user-circle me-2"/>
+                            <t t-esc="state.user.name"/>
+                        </h3>
+                        <button t-if="props.onClose"
+                                class="btn btn-outline-secondary btn-sm"
+                                t-on-click="props.onClose">
+                            <i class="fa fa-times"/> Cerrar
+                        </button>
+                    </div>
+
+                    <div class="row g-5">
+                        <!-- Left: Datos del Usuario (Partner fields usually on user) -->
+                        <div class="col-md-6">
+                            <h5 class="text-primary border-bottom pb-2 mb-4">Información del Contacto</h5>
+                            <div class="mb-3">
+                                <label class="fw-bold text-muted small text-uppercase">Nombre</label>
+                                <div class="fs-5"><t t-esc="state.user.name"/></div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="fw-bold text-muted small text-uppercase">Email</label>
+                                <div class="fs-5"><t t-esc="state.user.email"/></div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="fw-bold text-muted small text-uppercase">Teléfono</label>
+                                <div class="fs-5">
+                                    <t t-if="state.user.phone" t-esc="state.user.phone"/>
+                                    <span t-else="" class="text-muted fst-italic">No registrado</span>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="fw-bold text-muted small text-uppercase">Centro de Atención</label>
+                                <div class="fs-5">
+                                    <t t-if="state.user.center_of_attention_name" t-esc="state.user.center_of_attention_name"/>
+                                    <span t-else="" class="text-muted fst-italic">No registrado</span>
+                                </div>
+                            </div>
+                            <!-- Assuming 'vat' is fetched or mapped. If it's on partner, we might need to fetch partner data separately or rely on related fields if available on user -->
+                            <div class="mb-3">
+                                <label class="fw-bold text-muted small text-uppercase">Número de Licencia</label>
+                                <div class="fs-5">
+                                    <!-- Note: 'vat' is not on res.users by default, check your read() call -->
+                                    <t t-if="state.user.partner_id" t-esc="state.partner_vat || 'No disponible'"/>
+                                    <span t-else="" class="text-muted">No disponible</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Dirección -->
+                        <div class="col-md-6">
+                            <h5 class="text-primary border-bottom pb-2 mb-4">Dirección</h5>
+                            <div class="mb-2">
+                                <label class="fw-bold text-muted small text-uppercase">Calle</label>
+                                <div><t t-esc="state.user.street || '-'"/></div>
+                            </div>
+                            <div class="mb-2">
+                                <label class="fw-bold text-muted small text-uppercase">Calle 2</label>
+                                <div><t t-esc="state.user.street2 || '-'"/></div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 mb-2">
+                                    <label class="fw-bold text-muted small text-uppercase">CP</label>
+                                    <div><t t-esc="state.user.zip || '-'"/></div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="fw-bold text-muted small text-uppercase">Ciudad</label>
+                                    <div><t t-esc="state.user.city || '-'"/></div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="fw-bold text-muted small text-uppercase">País</label>
+                                    <div>
+                                        <!-- Relational field: [id, name] -->
+                                        <t t-esc="state.user.country_id ? state.user.country_id[1] : '-'"/>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-2">
+                                    <label class="fw-bold text-muted small text-uppercase">Estado</label>
+                                    <div>
+                                        <!-- Relational field: [id, name] -->
+                                        <t t-esc="state.user.state_id ? state.user.state_id[1] : '-'"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Access Info -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <h5 class="text-primary border-bottom pb-2 mb-3">Acceso al Sistema</h5>
+                            <div class="mb-2">
+                                <label class="fw-bold text-muted small text-uppercase">Login</label>
+                                <div>
+                                    <t t-esc="state.user.login"/>
+                                </div>
+                            </div>
+                            <div class="mb-2">
+                                <label class="fw-bold text-muted small text-uppercase">Grupos</label>
+                                <div>
+                                    <t t-if="state.user.groups_id and state.user.groups_id.length">
+                                        <span class="badge bg-secondary">
+                                            <t t-esc="state.user.groups_id.length"/> Grupos Asignados
+                                        </span>
+                                        <!-- Note: To show names, you'd need to fetch them separately like in the main component -->
+                                    </t>
+                                    <span t-else="" class="text-muted">Sin grupos</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Empty State -->
+                <div t-else="" class="text-center py-5 text-muted">
+                    <p>Seleccione un usuario para ver los detalles.</p>
+                </div>
+
+            </div>
+        </div>
+    </t>
+</templates>

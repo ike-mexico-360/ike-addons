@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List View -->
+    <record id="view_ike_event_service_count_list" model="ir.ui.view">
+        <field name="name">ike.event.service.count.list</field>
+        <field name="model">ike.event.service.count</field>
+        <field name="arch" type="xml">
+            <list string="Event Service Count" create="false" edit="false" delete="false">
+                <field name="user_id"/>
+                <field name="user_membership_plan_id"/>
+                <field name="account_id" optional="hide"/>
+                <field name="service_id"/>
+                <field name="sub_service_ids" widget="many2many_tags" context="{'display_default_code': 0}"/>
+                <field name="total_events"/>
+                <field name="detail_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View with Details -->
+    <record id="view_ike_event_service_count_form" model="ir.ui.view">
+        <field name="name">ike.event.service.count.form</field>
+        <field name="model">ike.event.service.count</field>
+        <field name="arch" type="xml">
+            <form string="Event Service Count" create="false" edit="false" delete="false">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="user_id" readonly="1" options="{'no_open': True}"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="user_membership_plan_id" options="{'no_open': True}"/>
+                            <field name="account_id" options="{'no_open': True}"/>
+                            <field name="service_id" options="{'no_open': True}"/>
+                        </group>
+                        <group>
+                            <field name="total_events"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Membership Details" name="details">
+                            <field name="detail_ids" readonly="1">
+                                <list string="Details" create="false" edit="false" delete="false" editable="bottom">
+                                    <field name="user_id" column_invisible="1"/>
+                                    <field name="user_membership_id"/>
+                                    <field name="user_membership_plan_id"/>
+                                    <field name="service_id"/>
+                                    <field name="sub_service_ids" widget="many2many_tags" context="{'display_default_code': 0}"/>
+                                    <field name="date_start"/>
+                                    <field name="date_end"/>
+                                    <field name="coverage_events"/>
+                                    <field name="events_of_period"/>
+                                    <field name="status" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Search View -->
+    <record id="view_ike_event_service_count_search" model="ir.ui.view">
+        <field name="name">ike.event.service.count.search</field>
+        <field name="model">ike.event.service.count</field>
+        <field name="arch" type="xml">
+            <search string="Search Event Service Count">
+                <field name="user_id" string="User" filter_domain="[('user_id', 'ilike', self)]"/>
+                <field name="user_membership_plan_id"/>
+                <field name="service_id"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="User" name="group_by_user" context="{'group_by': 'user_id'}"/>
+                    <filter string="Membership Plan" name="group_by_plan" context="{'group_by': 'user_membership_plan_id'}"/>
+                    <filter string="Account" name="group_by_account" context="{'group_by': 'account_id'}"/>
+                    <filter string="Service" name="group_by_service" context="{'group_by': 'service_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ike_event_service_count" model="ir.actions.act_window">
+        <field name="name">Event Service Count</field>
+        <field name="res_model">ike.event.service.count</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ike_event_service_count_search"/>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No event service counts found
+            </p>
+            <p>
+                This view shows the count of events per user, service and membership plan.
+            </p>
+        </field>
+    </record>
+
+
+    <!-- Form View with Event Details -->
+    <record id="view_ike_event_service_count_detail_form" model="ir.ui.view">
+        <field name="name">ike.event.service.count.detail.form</field>
+        <field name="model">ike.event.service.count.detail</field>
+        <field name="arch" type="xml">
+            <form string="Event Service Detail Count" create="false" edit="false" delete="false">
+                <header>
+                    <!--<field name="status" widget="statusbar"/>-->
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="user_membership_plan_id" readonly="1" options='{"no_open": True, "no_create": True}'/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="User Information">
+                            <field name="user_id" options='{"no_open": True, "no_create": True}'/>
+                            <field name="user_membership_id" options='{"no_open": True, "no_create": True}'/>
+                            <field name="user_membership_plan_id" options="{'no_open': True}"/>
+                        </group>
+                        <group string="Service Information">
+                            <field name="service_id" options="{'no_open': True}"/>
+                            <field name="sub_service_ids" widget="many2many_tags" context="{'display_default_code': 0}"/>
+                        </group>
+                    </group>
+
+                    <group>
+                        <group string="Dates">
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                        </group>
+                        <group string="Event Count">
+                            <field name="coverage_events"/>
+                            <field name="events_of_period"/>
+                            <label for="events_of_period" string="Usage"/>
+                            <div>
+                                <field name="events_of_period" class="oe_inline"/> /
+                                <field name="coverage_events" class="oe_inline"/>
+                                <span class="text-muted"> events</span>
+                            </div>
+                        </group>
+                    </group>
+
+                    <!--<notebook>
+                        <page string="Related Events" name="events">
+                            <field name="event_ids" readonly="1">
+                                <list string="Events" create="false" edit="false" delete="false">
+                                    <field name="name"/>
+                                    <field name="event_date"/>
+                                    <field name="service_id"/>
+                                    <field name="sub_service_id"/>
+                                    <field name="stage_id"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>-->
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="view_custom_membership_nus_form_inherit_ike_event" model="ir.ui.view">
+        <field name="name">view.custom.membership.nus.form.inherit.ike.event</field>
+        <field name="model">custom.membership.nus</field>
+        <field name="inherit_id" ref="custom_nu.view_custom_membership_nus_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet/notebook/page" position="inside">
+                <field name="event_count_detail_ids">
+                    <list string="Event Service Details" editable="bottom" create="false" delete="false">
+                        <field name="service_id" options='{"no_open": True, "no_create": True}'/>
+                        <field name="vehicle_weight_category_id" column_invisible="1"/>
+                        <field name="sub_service_ids" widget="many2many_tags"
+                            context="{'display_default_code': 0}"/>
+                        <field name="coverage_events" readonly="1"/>
+                        <field name="period" readonly="1"/>
+                        <field name="events_of_period" readonly="0"/>
+                    </list>
+                </field>
+            </xpath>
+        </field>
+    </record>
+</odoo>

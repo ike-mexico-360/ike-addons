@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ike_event_membership_authorization.IkeImageClipboardField"
+       t-inherit="web.ImageField"
+       t-inherit-mode="primary">
+    </t>
+</templates>

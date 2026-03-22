@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Services -->
+    <data noupdate="0">
+        <record id="custom_master_catalog.ike_product_category_vial" model="product.category">
+            <field name="x_ref">vial</field>
+            <field name="x_input_res_model">ike.service.input.vial</field>
+            <field name="x_icon">fa fa-car</field>
+            <field name="x_survey_id" ref="survey_vial"/>
+        </record>
+        <record id="custom_master_catalog.ike_product_category_medical" model="product.category">
+            <field name="x_ref">medical</field>
+            <field name="x_input_res_model">ike.service.input.medical</field>
+            <field name="x_icon">fa fa-user-md</field>
+            <field name="x_survey_id" ref="survey_medical"/>
+        </record>
+        <record id="custom_master_catalog.ike_product_category_home" model="product.category">
+            <field name="x_ref">home</field>
+            <field name="x_input_res_model">ike.service.input.generic</field>
+            <field name="x_icon">fa fa-home</field>
+            <field name="x_survey_id" ref="survey_home"/>
+        </record>
+        <record id="custom_master_catalog.ike_product_category_legal" model="product.category">
+            <field name="x_ref">legal</field>
+            <field name="x_input_res_model">ike.service.input.generic</field>
+            <field name="x_icon">fa fa-balance-scale</field>
+            <field name="x_survey_id" ref="survey_legal"/>
+        </record>
+        <record id="custom_master_catalog.ike_product_category_pets" model="product.category">
+            <field name="x_ref">pets</field>
+            <field name="x_input_res_model">ike.service.input.generic</field>
+            <field name="x_icon">fa fa-paw</field>
+            <field name="x_survey_id" ref="survey_pets"/>
+        </record>
+
+        <record id="custom_master_catalog.ike_product_product_vial_truck" model="product.product">
+            <field name="x_input_res_model">ike.service.input.vial.truck</field>
+            <field name="x_icon">fa fa-truck</field>
+            <field name="x_survey_id" ref="survey_vial_truck"/>
+        </record>
+        <record id="custom_master_catalog.ike_product_product_vial_tire" model="product.product">
+            <field name="x_input_res_model">ike.service.input.vial.generic</field>
+            <field name="x_icon">fa fa-car</field>
+            <field name="x_survey_id" ref="survey_vial_tire"/>
+        </record>
+        <record id="custom_master_catalog.ike_product_product_vial_fuel" model="product.product">
+            <field name="x_input_res_model">ike.service.input.vial.generic</field>
+            <field name="x_icon">fa fa-car</field>
+            <field name="x_survey_id" ref="survey_vial_tire"/>
+        </record>
+        <record id="custom_master_catalog.ike_product_product_vial_fluid" model="product.product">
+            <field name="x_input_res_model">ike.service.input.vial.generic</field>
+            <field name="x_icon">fa fa-car</field>
+            <field name="x_survey_id" ref="survey_vial_tire"/>
+        </record>
+        <record id="custom_master_catalog.ike_product_product_vial_battery" model="product.product">
+            <field name="x_input_res_model">ike.service.input.vial.generic</field>
+            <field name="x_icon">fa fa-car</field>
+            <field name="x_survey_id" ref="survey_vial_tire"/>
+        </record>
+        <record id="custom_master_catalog.ike_product_product_medical_consultation" model="product.product">
+            <field name="x_input_res_model">ike.service.input.medical.consultation</field>
+            <field name="x_icon">fa fa-stethoscope</field>
+            <field name="x_survey_id" ref="survey_medical_consultation"/>
+        </record>
+    </data>
+
+    <!-- Event Stages -->
+    <record id="ike_event_stage_draft" model="ike.event.stage">
+        <field name="name">Draft</field>
+        <field name="ref">draft</field>
+        <field name="sequence">1</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_event_stage_capturing" model="ike.event.stage">
+        <field name="name">Capturing</field>
+        <field name="ref">capturing</field>
+        <field name="sequence">2</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_event_stage_searching" model="ike.event.stage">
+        <field name="name">Searching</field>
+        <field name="ref">searching</field>
+        <field name="sequence">3</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_event_stage_assigned" model="ike.event.stage">
+        <field name="name">Assigned</field>
+        <field name="ref">assigned</field>
+        <field name="sequence">4</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_event_stage_in_progress" model="ike.event.stage">
+        <field name="name">In Progress</field>
+        <field name="ref">in_progress</field>
+        <field name="sequence">5</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_event_stage_completed" model="ike.event.stage">
+        <field name="name">Completed</field>
+        <field name="ref">completed</field>
+        <field name="sequence">6</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_event_stage_close" model="ike.event.stage">
+        <field name="name">Closed</field>
+        <field name="ref">close</field>
+        <field name="sequence">7</field>
+        <field name="fold">True</field>
+        <field name="color">#BB78BC</field>
+        <field name="last_stage">True</field>
+    </record>
+    <record id="ike_event_stage_cancelled" model="ike.event.stage">
+        <field name="name">Cancelled</field>
+        <field name="ref">cancel</field>
+        <field name="sequence">8</field>
+        <field name="fold">True</field>
+        <field name="color">#db5f5f</field>
+        <field name="last_stage">True</field>
+    </record>
+    <record id="ike_event_stage_cancelled_subsequently" model="ike.event.stage">
+        <field name="name">Cancelled Subsequently</field>
+        <field name="ref">cancel_subsequently</field>
+        <field name="sequence">9</field>
+        <field name="fold">True</field>
+        <field name="color">#db5f5f</field>
+        <field name="last_stage">True</field>
+    </record>
+
+    <!-- Service Stages -->
+    <record id="ike_service_stage_preparing" model="ike.service.stage">
+        <field name="name">Preparing</field>
+        <field name="ref">preparing</field>
+        <field name="sequence">1</field>
+        <field name="fold">True</field>
+    </record>
+    <record id="ike_service_stage_assigned" model="ike.service.stage">
+        <field name="name">Assigned</field>
+        <field name="ref">assigned</field>
+        <field name="sequence">2</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_service_stage_on_route" model="ike.service.stage">
+        <field name="name">On Route</field>
+        <field name="ref">on_route</field>
+        <field name="sequence">3</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_service_stage_arrived" model="ike.service.stage">
+        <field name="name">Arrived</field>
+        <field name="ref">arrived</field>
+        <field name="sequence">4</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_service_stage_contacted" model="ike.service.stage">
+        <field name="name">Contacted</field>
+        <field name="ref">contacted</field>
+        <field name="sequence">5</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_service_stage_on_route_2" model="ike.service.stage">
+        <field name="name">On Route to Destiny</field>
+        <field name="ref">on_route_2</field>
+        <field name="sequence">6</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_service_stage_arrived_2" model="ike.service.stage">
+        <field name="name">Arrived to destination</field>
+        <field name="ref">arrived_2</field>
+        <field name="sequence">7</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_service_stage_finalized" model="ike.service.stage">
+        <field name="name">Finalized</field>
+        <field name="ref">finalized</field>
+        <field name="sequence">8</field>
+        <field name="fold">True</field>
+        <field name="color">#BB78BC</field>
+        <field name="last_stage">True</field>
+    </record>
+    <record id="ike_service_stage_cancelled" model="ike.service.stage">
+        <field name="name">Cancelled</field>
+        <field name="ref">cancel</field>
+        <field name="sequence">10</field>
+        <field name="fold">True</field>
+        <field name="color">#db5f5f</field>
+        <field name="last_stage">True</field>
+    </record>
+    <!-- Configuration -->
+    <record id="ike_supplier_assignment_electronic" model="ike.event.supplier.assignment.type">
+        <field name="name">Electronic</field>
+        <field name="sequence">1</field>
+        <field name="wait_time">40</field>
+        <field name="geofence_radius_meters">3500</field>
+        <field name="geofence_radius">3.5</field>
+        <field name="arrival_duration">35</field>
+        <field name="max_suppliers">6</field>
+        <field name="by_priority">False</field>
+        <field name="total_assignment_time">240</field>
+    </record>
+    <record id="ike_supplier_assignment_publication" model="ike.event.supplier.assignment.type">
+        <field name="name">Publication</field>
+        <field name="sequence">2</field>
+        <field name="wait_time">80</field>
+        <field name="geofence_radius_meters">5000</field>
+        <field name="geofence_radius">5</field>
+        <field name="arrival_duration">40</field>
+        <field name="max_suppliers">0</field>
+        <field name="by_priority">True</field>
+        <field name="total_assignment_time">80</field>
+    </record>
+    <record id="ike_supplier_assignment_manual" model="ike.event.supplier.assignment.type">
+        <field name="name">Manual</field>
+        <field name="sequence">3</field>
+        <field name="wait_time">0</field>
+        <field name="geofence_radius_meters">8000</field>
+        <field name="geofence_radius">8</field>
+        <field name="arrival_duration">50</field>
+        <field name="max_suppliers">0</field>
+        <field name="by_priority">False</field>
+        <field name="total_assignment_time">0</field>
+    </record>
+</odoo>

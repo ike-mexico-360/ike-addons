@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+        
+        <!-- Collection: REST APIs Examples -->
+        <record id="collection_rest_examples" model="api.collection">
+            <field name="name">REST APIs Examples</field>
+            <field name="description">Collection of public REST API examples for testing and learning</field>
+            <field name="base_url">https://jsonplaceholder.typicode.com</field>
+            <field name="auth_type">none</field>
+            <field name="active">True</field>
+            <field name="collection_variables">{"api_version": "v1", "format": "json"}</field>
+        </record>
+
+        <!-- REST: JSONPlaceholder Posts -->
+        <record id="connector_jsonplaceholder_posts" model="api.connector">
+            <field name="name">Get Posts</field>
+            <field name="collection_id" ref="collection_rest_examples"/>
+            <field name="api_type">rest</field>
+            <field name="method">GET</field>
+            <field name="endpoint_path">/posts</field>
+            <field name="custom_headers">{"Content-Type": "application/json"}</field>
+
+            <field name="active">True</field>
+        </record>
+
+        <!-- REST: JSONPlaceholder Single Post -->
+        <record id="connector_jsonplaceholder_post" model="api.connector">
+            <field name="name">Get Single Post</field>
+            <field name="collection_id" ref="collection_rest_examples"/>
+            <field name="api_type">rest</field>
+            <field name="method">GET</field>
+            <field name="endpoint_path">/posts/{id}</field>
+            <field name="custom_headers">{"Content-Type": "application/json"}</field>
+            <field name="endpoint_variables">{"id": "1"}</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- REST: Cat Facts API -->
+        <record id="connector_cat_fact_get" model="api.connector">
+            <field name="name">Random Cat Fact</field>
+            <field name="collection_id" ref="collection_rest_examples"/>
+            <field name="api_type">rest</field>
+            <field name="method">GET</field>
+            <field name="use_collection_url">False</field>
+            <field name="base_url">https://catfact.ninja/fact</field>
+            <field name="custom_headers">{"Accept": "application/json"}</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- Collection: French Government APIs -->
+        <record id="collection_french_gov" model="api.collection">
+            <field name="name">French Government APIs</field>
+            <field name="description">Public APIs from French government services</field>
+            <field name="auth_type">none</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- French Address API -->
+        <record id="connector_adresse_gouv" model="api.connector">
+            <field name="name">Search French Address</field>
+            <field name="collection_id" ref="collection_french_gov"/>
+            <field name="api_type">rest</field>
+            <field name="method">GET</field>
+            <field name="use_collection_url">False</field>
+            <field name="base_url">https://api-adresse.data.gouv.fr/search/?q=8+bd+du+port&amp;limit=5</field>
+            <field name="custom_headers">{"Accept": "application/json"}</field>
+
+            <field name="active">True</field>
+        </record>
+
+        <!-- Collection: International APIs -->
+        <record id="collection_international" model="api.collection">
+            <field name="name">International Public APIs</field>
+            <field name="description">Various international public APIs</field>
+            <field name="auth_type">none</field>
+            <field name="active">True</field>
+            <field name="collection_variables">{"country": "france", "city": "paris"}</field>
+        </record>
+
+        <!-- REST Countries -->
+        <record id="connector_rest_countries" model="api.connector">
+            <field name="name">Get Country Info</field>
+            <field name="collection_id" ref="collection_international"/>
+            <field name="api_type">rest</field>
+            <field name="method">GET</field>
+            <field name="use_collection_url">False</field>
+            <field name="base_url">https://restcountries.com/v3.1/name/{country}</field>
+            <field name="endpoint_variables">{"country": "france"}</field>
+            <field name="custom_headers">{"Accept": "application/json"}</field>
+
+            <field name="active">True</field>
+        </record>
+
+        <!-- Simple JSON API -->
+        <record id="connector_cat_facts" model="api.connector">
+            <field name="name">Random User Generator</field>
+            <field name="collection_id" ref="collection_international"/>
+            <field name="api_type">rest</field>
+            <field name="method">GET</field>
+            <field name="use_collection_url">False</field>
+            <field name="base_url">https://randomuser.me/api/</field>
+            <field name="custom_headers">{"Accept": "application/json"}</field>
+
+            <field name="active">True</field>
+        </record>
+
+        <!-- Collection: POST Examples -->
+        <record id="collection_post_examples" model="api.collection">
+            <field name="name">POST Request Examples</field>
+            <field name="description">Examples of POST requests with different body types</field>
+            <field name="base_url">https://jsonplaceholder.typicode.com</field>
+            <field name="auth_type">none</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- POST JSON -->
+        <record id="connector_post_json_demo" model="api.connector">
+            <field name="name">Create New Post</field>
+            <field name="collection_id" ref="collection_post_examples"/>
+            <field name="api_type">rest</field>
+            <field name="method">POST</field>
+            <field name="endpoint_path">/posts</field>
+            <field name="custom_headers">{"Content-Type": "application/json"}</field>
+            <field name="request_body_type">json</field>
+            <field name="request_body">{"title": "Demo Post", "body": "This is a demo post content", "userId": 1}</field>
+
+            <field name="active">True</field>
+        </record>
+
+        <!-- POST Form Data -->
+        <record id="connector_post_comment_demo" model="api.connector">
+            <field name="name">Create User Comment</field>
+            <field name="collection_id" ref="collection_post_examples"/>
+            <field name="api_type">rest</field>
+            <field name="method">POST</field>
+            <field name="endpoint_path">/comments</field>
+            <field name="custom_headers">{"Content-Type": "application/json"}</field>
+            <field name="request_body_type">json</field>
+            <field name="request_body">{"name": "Demo User", "email": "demo@example.com", "body": "This is a demo comment", "postId": 1}</field>
+
+            <field name="active">True</field>
+        </record>
+
+        <!-- Collection: JSON-RPC Examples -->
+        <record id="collection_jsonrpc" model="api.collection">
+            <field name="name">JSON-RPC Examples</field>
+            <field name="description">JSON-RPC protocol examples</field>
+            <field name="auth_type">none</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- JSON-RPC Example -->
+        <record id="connector_jsonrpc_example" model="api.connector">
+            <field name="name">JSON-RPC Demo Call</field>
+            <field name="collection_id" ref="collection_jsonrpc"/>
+            <field name="api_type">jsonrpc</field>
+            <field name="method">POST</field>
+            <field name="use_collection_url">False</field>
+            <field name="base_url">https://jsonplaceholder.typicode.com/posts</field>
+            <field name="custom_headers">{"Content-Type": "application/json"}</field>
+            <field name="request_body_type">json</field>
+            <field name="request_body">{"jsonrpc": "2.0", "method": "get_demo_data", "params": {"format": "json", "count": 5}, "id": 1}</field>
+
+            <field name="active">True</field>
+        </record>
+
+        <!-- Collection: GraphQL Examples -->
+        <record id="collection_graphql" model="api.collection">
+            <field name="name">GraphQL Examples</field>
+            <field name="description">GraphQL query examples</field>
+            <field name="auth_type">none</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- GraphQL Example -->
+        <record id="connector_graphql_example" model="api.connector">
+            <field name="name">Rick and Morty GraphQL</field>
+            <field name="collection_id" ref="collection_graphql"/>
+            <field name="api_type">graphql</field>
+            <field name="method">POST</field>
+            <field name="use_collection_url">False</field>
+            <field name="base_url">https://rickandmortyapi.com/graphql</field>
+            <field name="custom_headers">{"Content-Type": "application/json"}</field>
+            <field name="request_body_type">json</field>
+            <field name="request_body">{"query": "{ character(id: 1) { name status species } }"}</field>
+
+            <field name="active">True</field>
+        </record>
+
+        <!-- Collection: XML/SOAP Examples -->
+        <record id="collection_xml_soap" model="api.collection">
+            <field name="name">XML/SOAP Examples</field>
+            <field name="description">XML and SOAP protocol examples</field>
+            <field name="auth_type">none</field>
+            <field name="active">True</field>
+        </record>
+
+        <!-- XML POST Example -->
+        <record id="connector_xml_post" model="api.connector">
+            <field name="name">XML Demo Post</field>
+            <field name="collection_id" ref="collection_xml_soap"/>
+            <field name="api_type">soap</field>
+            <field name="method">POST</field>
+            <field name="use_collection_url">False</field>
+            <field name="base_url">https://jsonplaceholder.typicode.com/posts</field>
+            <field name="custom_headers">{"Content-Type": "application/xml"}</field>
+            <field name="request_body_type">xml</field>
+            <field name="request_body">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;catalog&gt;
+    &lt;product&gt;
+        &lt;name&gt;Demo Product&lt;/name&gt;
+        &lt;price&gt;29.99&lt;/price&gt;
+        &lt;category&gt;Electronics&lt;/category&gt;
+    &lt;/product&gt;
+&lt;/catalog&gt;</field>
+
+            <field name="active">True</field>
+        </record>
+
+        <!-- Collection: Authentication Examples -->
+        <record id="collection_auth_examples" model="api.collection">
+            <field name="name">Authentication Examples</field>
+            <field name="description">Examples of different authentication methods (requires valid tokens)</field>
+            <field name="auth_type">none</field>
+            <field name="active">False</field>
+        </record>
+
+        <!-- Basic Auth Example -->
+        <record id="connector_basic_auth" model="api.connector">
+            <field name="name">Basic Auth Demo</field>
+            <field name="collection_id" ref="collection_auth_examples"/>
+            <field name="api_type">rest</field>
+            <field name="method">GET</field>
+            <field name="use_collection_url">False</field>
+            <field name="base_url">https://jsonplaceholder.typicode.com/posts/1</field>
+            <field name="auth_type">basic</field>
+            <field name="auth_username">demo_user</field>
+            <field name="auth_password">demo_pass</field>
+
+            <field name="active">False</field>
+        </record>
+
+        <!-- Bearer Token Example -->
+        <record id="connector_bearer_token" model="api.connector">
+            <field name="name">Bearer Token Demo</field>
+            <field name="collection_id" ref="collection_auth_examples"/>
+            <field name="api_type">rest</field>
+            <field name="method">GET</field>
+            <field name="use_collection_url">False</field>
+            <field name="base_url">https://jsonplaceholder.typicode.com/posts/1</field>
+            <field name="auth_type">bearer</field>
+            <field name="auth_token">demo_bearer_token_123</field>
+
+            <field name="active">False</field>
+        </record>
+
+</odoo>

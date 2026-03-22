@@ -1,0 +1,401 @@
+/* Contenedor principal de usuarios */
+.usuarios-container {
+    padding: 30px 40px;
+    background-color: white;
+    min-height: calc(100vh - 60px);
+}
+
+/* Encabezado */
+.usuarios-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 8px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.icon-users {
+    width: 45px;
+    height: 45px;
+
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #002A4F;
+    font-size: 24px;
+}
+
+/* Icono universal (imagen o <i>) */
+.icon-users .icon {
+    width: 24px;   /* igual que font-size */
+    height: 24px;
+    font-size: 24px;
+    object-fit: contain;
+    color: #002A4F;
+}
+
+
+.usuarios-header h1 {
+    color: #002A4F;
+    font-size: 28px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.search-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.search-input {
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    width: 250px;
+    font-size: 14px;
+    background-color: #F5F5F5;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #005691;
+}
+
+.btn-nuevo {
+    background-color: #002A4F;
+    color: white;
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.2s;
+}
+
+.btn-nuevo:hover {
+    background-color: #005691;
+}
+
+/* Filtros */
+.filters {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.filters label {
+    color: #002A4F;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.filter-input {
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #F5F5F5;
+    font-size: 14px;
+    min-width: 150px;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: #005691;
+    background-color: white;
+}
+
+/* Wrapper de la tabla */
+.table-wrapper {
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Tabla */
+.usuarios-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.usuarios-table thead {
+    background-color: white;
+}
+
+.usuarios-table th {
+    padding: 15px 20px;
+    text-align: left;
+    font-weight: 600;
+    color: #002A4F;
+    font-size: 14px;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.usuarios-table td {
+    padding: 10px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    color: #002A4F;
+}
+
+.usuarios-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.usuarios-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+
+.estado-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    gap: 6px;
+}
+
+.estado-activo {
+    background-color: #27AE60;
+    color: black
+}
+
+.estado-inactivo {
+    background-color: #E74C3C;
+    color: black;
+}
+
+.check-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.x-icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #E74C3C;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: black;
+    font-size: 10px;
+    font-weight: bold;
+}
+
+
+.ver-detalle {
+    color: #002A4F;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.ver-detalle:hover {
+    color: #F3A93E;
+    text-decoration: underline;
+}
+
+
+.rol-badge {
+    color: #002A4F;
+    font-size: 13px;
+}
+
+
+input::placeholder {
+    color: #005691;
+    opacity: 1;
+    font-weight: bold;
+}
+
+
+
+@media (max-width: 1200px) {
+    .usuarios-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .search-container {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .filters {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .usuarios-container {
+        padding: 15px;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .usuarios-table {
+        min-width: 900px;
+    }
+}
+
+/* Main container for the view */
+.trucks-view-container {
+    font-family: 'Arial', sans-serif;
+}
+
+/* Header section with title, search, and new button */
+.trucks-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.trucks-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.trucks-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.trucks-header-actions .search-bar {
+    border: 1px solid #ced4da;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    width: 250px;
+}
+
+.trucks-header-actions .btn-nuevo {
+    background-color: #0d2d52;
+    color: white;
+    border-radius: 20px;
+    padding: 0.6rem 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Filter section */
+.trucks-filters {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.trucks-filters .filter-label {
+    font-weight: bold;
+    color: #555;
+}
+
+.trucks-filters .filter-pill {
+    background-color: #f0f0f0;
+    border: none;
+    border-radius: 20px;
+    padding: 0.5rem 1.5rem;
+    color: #333;
+    cursor: pointer;
+}
+
+.trucks-filters .filter-pill.active {
+    background-color: #e0e0e0;
+    font-weight: bold;
+}
+
+/* Table styling */
+.trucks-table-wrapper {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.trucks-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.trucks-table th, .trucks-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.trucks-table th {
+    font-weight: bold;
+    color: #333;
+}
+
+.trucks-table td {
+    color: #555;
+}
+
+/* Status badges */
+.estado-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.estado-badge.estado-activo {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.estado-badge.estado-inactivo {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+/* View detail link */
+.ver-detalle {
+    color: #0d6efd;
+    text-decoration: none;
+    font-weight: 500;
+}
+.ver-detalle:hover {
+    text-decoration: underline;
+}
+
+/* Pager / "Ver más" */
+.o_portal_pager {
+    text-align: center;
+    margin-top: 2rem;
+}

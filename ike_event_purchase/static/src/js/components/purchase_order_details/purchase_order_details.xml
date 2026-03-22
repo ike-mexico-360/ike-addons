@@ -1,0 +1,159 @@
+<templates id="template" xml:space="preserve">
+
+    <t t-name="ike_event_purchase.PurchaseOrderDetails">
+        <t t-if="state.order_data">
+            <div t-if="state.order_data.x_dispute_state == 'submitted'" class="alert alert-warning alert-dismissible d-print-none" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+                <strong>The dispute has been submitted.</strong>
+            </div>
+
+            <div t-if="state.order_data.x_dispute_state == 'resolved' and state.order_data.x_dispute_approved" class="alert alert-success alert-dismissible d-print-none" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+                <strong>The dispute has been approved.</strong>
+            </div>
+
+            <div t-if="state.order_data.x_dispute_state == 'rejected'" class="alert alert-danger alert-dismissible d-print-none" role="alert">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
+                <strong>The dispute has been rejected.</strong>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex flex-row justify-content-end">
+                        <button class="btn btn-primary me-2 mb-2" t-on-click="accept_prices" t-if="!state.show_dispute_fields &amp;&amp; state.order_data.x_dispute_state == 'none'">
+                            Accept
+                        </button>
+                        <button class="btn btn-secondary me-2 mb-2" t-on-click="toggle_dispute_fields" t-if="!state.show_dispute_fields &amp;&amp; state.order_data.x_dispute_state == 'none'">
+                            Start Dispute
+                        </button>
+                        <button class="btn btn-secondary me-2 mb-2" t-on-click="toggle_dispute_fields" disabled="disabled" t-if="state.show_dispute_fields &amp;&amp; state.order_data.x_dispute_state == 'none'">
+                            Start Dispute
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <table class="table table-sm">
+                <t t-set="show_dispute_columns" t-value="state.show_dispute_fields || state.order_data.x_dispute_state == 'submitted' || ['resolved', 'rejected'].includes(state.order_data.x_dispute_state)"/>
+                <t t-set="show_approved_columns" t-value="['resolved', 'rejected'].includes(state.order_data.x_dispute_state)"/>
+                <t t-set="show_dispute_values" t-value="state.order_data.x_dispute_state == 'submitted' || ['resolved', 'rejected'].includes(state.order_data.x_dispute_state)"/>
+                <thead>
+                    <tr>
+                        <th>Concept</th>
+                        <th class="text-end">Quantity</th>
+                        <th class="text-end">Unit Price</th>
+                        <th t-if="show_dispute_columns" class="text-end" style="width: 150px; max-width: 200px;">
+                            Dispute Price
+                        </th>
+                        <th t-if="show_dispute_columns" class="text-end" style="width: 100px; max-width: 150px;">
+                            Dispute Quantity
+                        </th>
+                        <th t-if="show_approved_columns" class="text-end" style="width: 150px; max-width: 200px;">Approved Price</th>
+                        <th t-if="show_approved_columns" class="text-end" style="width: 100px; max-width: 150px;">Approved Quantity</th>
+                        <th class="text-end">Taxes</th>
+                        <th class="text-end">Discount</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <t t-foreach="state.order_data.order_line" t-as="line" t-key="line.id">
+                        <t t-set="is_new_line" t-value="line.new_line"/>
+                        <tr>
+                            <!-- Concept -->
+                            <td class="align-content-center">
+                                <img
+                                    t-att-src="getProductImage(line)"
+                                    alt="Product"
+                                    class="d-none d-lg-inline me-2"
+                                    style="width:48px; height:48px; object-fit:contain;"
+                                    t-if="!is_new_line"
+                                />
+                                <span t-out="line.display_name" t-if="!is_new_line"/>
+                                <t t-if="is_new_line">
+                                    <select class="form-control" name="product_id"
+                                        t-att-style="state.invalid_lines.has(line.id + '_product_id') ? 'border: 1px solid red' : ''"
+                                        t-on-change="(ev) => onchange_disputed_value(line.id, 'product_id', +ev.target.value)"
+                                    >
+                                        <option value="">Select a product</option>
+                                        <t t-foreach="state.product_ids" t-as="product" t-key="product_index">
+                                            <option t-att-value="product.id" t-out="product.name"/>
+                                        </t>
+                                    </select>
+                                </t>
+                            </td>
+                            <!-- Quantity -->
+                            <td class="text-end align-content-center">
+                                <div t-if="!is_new_line">
+                                    <span t-out="line.product_qty"/> <span t-out="line.product_uom.display_name"/>
+                                </div>
+                                <t t-if="is_new_line">
+                                    <span t-out="line.product_qty"/> <span t-out="line.product_uom_name or ''"/>
+                                </t>
+                            </td>
+                            <!-- Price -->
+                            <td class="text-end align-content-center">
+                                <t t-out="line.price_unit" t-if="!is_new_line"/>
+                                <t t-out="line.price_unit" t-if="is_new_line"/>
+                            </td>
+
+                            <!-- Dispute fields -->
+                            <td class="text-end align-content-center" t-if="show_dispute_columns">
+                                <t t-out="line.x_price_unit_dispute" t-if="show_dispute_values"/>
+                                <input t-if="is_new_line || state.show_dispute_fields" type="number" class="form-control text-end"
+                                    t-att-value="line.x_price_unit_dispute" t-on-change="(ev) => onchange_disputed_value(line.id, 'x_price_unit_dispute', +ev.target.value)"
+                                    t-att-style="state.invalid_lines.has(line.id + '_x_price_unit_dispute') ? 'border: 1px solid red' : ''"
+                                />
+                            </td>
+                            <td class="text-end align-content-center" t-if="show_dispute_columns">
+                                <t t-out="line.x_product_qty_dispute" t-if="show_dispute_values"/>
+                                <input t-if="is_new_line || state.show_dispute_fields" type="number" class="form-control text-end"
+                                    t-att-value="line.x_product_qty_dispute" t-on-change="(ev) => onchange_disputed_value(line.id, 'x_product_qty_dispute', +ev.target.value)"
+                                    t-att-style="state.invalid_lines.has(line.id + '_x_product_qty_dispute') ? 'border: 1px solid red' : ''"
+                                />
+                            </td>
+
+                            <!-- Approved fields -->
+                            <td class="text-end align-content-center" t-if="show_approved_columns">
+                                <t t-out="line.x_price_unit_approved" t-if="!is_new_line"/>
+                                <!-- <input t-if="is_new_line" type="number" class="form-control"/> -->
+                            </td>
+                            <td class="text-end align-content-center" t-if="show_approved_columns">
+                                <t t-out="line.x_product_qty_approved" t-if="!is_new_line"/>
+                                <!-- <input t-if="is_new_line" type="number" class="form-control"/> -->
+                            </td>
+
+                            <td class="text-end align-content-center"></td>
+                            <td class="text-end align-content-center"></td>
+                            <td>
+                                <button class="btn btn-link" t-on-click="() => remove_line(line.id)" t-if="is_new_line">
+                                    <i class="fa fa-trash"/>
+                                </button>
+                            </td>
+                        </tr>
+                    </t>
+                </tbody>
+            </table>
+
+            <div class="row text-center mb-3" t-if="state.show_dispute_fields">
+                <div class="col-12">
+                    <button class="btn btn-link" t-on-click="add_line">
+                        Add concept
+                    </button>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-primary me-2" t-on-click="send_dispute" t-if="state.show_dispute_fields">
+                        Send Dispute
+                    </button>
+                </div>
+            </div>
+        </t>
+        <t t-else="">
+            <!-- Spinner loader -->
+            <div class="text-center py-4">
+                <i class="fa fa-spinner fa-spin"/> Loading...
+            </div>
+        </t>
+
+    </t>
+
+</templates>

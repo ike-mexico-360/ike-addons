@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="ike_event.IkeSurveyInputScreenFormView" t-inherit="web.FormView" t-inherit-mode="primary">
+        <xpath expr="//t[@archInfo='archInfo']" position="before">
+            <div class="o_form_sheet_bg ike-sheet" t-if="state.surveyData.id and state.surveyData.question_ids.length">
+                <form class="o_form_sheet position-relative" t-on-submit.prevent="onSubmit">
+                    <div class="mt-4 mb-3 text-uppercase fw-bolder text-primary" style="font-size: 15px;">
+                        <t t-out="title"/>
+                    </div>
+                    <div class="ike_survey_form d-grid gap-2">
+                        <t t-foreach="state.surveyData.question_ids" t-as="question" t-key="question.id">
+                            <t t-call="ike_event.ike_question_container"/>
+                        </t>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2 mt-2" t-if="showButtons">
+                        <button type="button" class="btn btn-secondary" t-on-click="(ev) => this.onReturn(ev)">
+                            Return
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Continue
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </xpath>
+    </t>
+    <t t-name="ike_event.ike_question_container">
+        <t t-set="default_constr_error_msg">This question requires an answer.</t>
+        <t t-set="default_validation_error_msg">This question has an incorrect answer.</t>
+
+        <div class="ike_survey_question_container border-ike-light p-2" t-if="displayQuestion(question)">
+            <div class="d-flex gap-1 mb-2">
+                <span t-out="getMarkupValue(question.description)"/>
+                <span class="text-danger" t-if="question.constr_mandatory">*</span>
+            </div>
+            <t t-if="question.question_type == 'text_box'" t-call="ike_event.ike_question_text_box" />
+            <t t-if="question.question_type == 'char_box'" t-call="ike_event.ike_question_char_box" />
+            <t t-if="question.question_type == 'numerical_box'" t-call="ike_event.ike_question_numerical_box" />
+            <t t-if="question.question_type == 'simple_choice'" t-call="ike_event.ike_question_simple_choice" />
+            <t t-if="question.question_type == 'multiple_choice'" t-call="ike_event.ike_question_multiple_choice" />
+            <!-- ERROR MESSAGE -->
+            <div t-if="question.constr_mandatory and question.requiredError"
+                 class="d-flex align-items-center justify-content-between overflow-hidden border-0 py-0 px-3 alert alert-danger mt-2" role="alert">
+                <span t-out="question.constr_error_msg or default_constr_error_msg"/>
+            </div>
+            <div t-if="question.validation_required and question.validationError"
+                 class="d-flex align-items-center justify-content-between overflow-hidden border-0 py-0 px-3 alert alert-warning mt-2" role="alert">
+                <span t-out="question.validation_error_msg or default_validation_error_msg"/>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="ike_event.ike_question_text_box">
+        <div class="ike_survey_comment_container h-auto p-0">
+            <textarea class="form-control ike_survey_question_text_box bg-transparent rounded-0 p-0" rows="3"
+                t-att-name="question.id" t-att-placeholder="question.question_placeholder"
+                t-model="question.answer_value"
+                t-on-change="(ev) => this.inputAnswer(ev, question)"
+            />
+        </div>
+    </t>
+
+    <t t-name="ike_event.ike_question_char_box">
+        <div class="ike_survey_comment_container p-0">
+            <input type="text" class="form-control ike_survey_question_text_box bg-transparent rounded-0 p-0"
+                t-att-name="question.id" t-att-placeholder="question.question_placeholder"
+                t-model="question.answer_value"
+                t-on-change="(ev) => this.inputAnswer(ev, question)"
+            />
+        </div>
+    </t>
+
+    <t t-name="ike_event.ike_question_numerical_box">
+        <div class="o_survey_answer_wrapper p-1 rounded">
+            <input type="number" step="any" class="form-control ike_survey_question_numerical_box bg-transparent rounded-0 p-0"
+                t-att-name="question.id" t-att-placeholder="question.question_placeholder"
+                t-model="question.answer_value"
+                t-att-min="question.validation_min_float_value" t-att-max="question.validation_max_float_value"
+                t-on-change="(ev) => this.inputAnswer(ev, question)"
+            />
+        </div>
+    </t>
+
+    <t t-name="ike_event.ike_question_date">
+        <div></div>
+    </t>
+    <t t-name="ike_event.ike_question_datetime">
+        <div></div>
+    </t>
+
+    <t t-name="ike_event.ike_question_simple_choice">
+        <div t-att-data-name="question.id" class="row g-2 ike_survey_answer_wrapper ike_survey_form_choice">
+            <t t-foreach='question.suggested_answer_ids' t-as="label_id" t-key="label_id_index">
+                <t t-set="answer_selected" t-value="isAnswerSelected(question, label_id)"/>
+                <div class="col-sm-12">
+                    <label t-att-for="question.id + '_' + label_id.id"
+                        class="ike_survey_choice_btn py-1 px-3 w-100 h-100 rounded" t-att-class="{'ike_survey_selected': answer_selected}">
+                        <i t-if="answer_selected" class="fa fa-check-circle float-end mt-1 ms-1 position-relative" />
+                        <i t-else="" class="fa fa-circle-thin float-end mt-1 ms-1 position-relative" />
+                        <input t-att-id="question.id + '_' + label_id.id" t-att-value='label_id.id'
+                               type="radio" class="ike_survey_form_choice_item invisible position-absolute" t-att-class="{'ike_survey_form_choice_item_selected': answer_selected}"
+                               t-att-name='question.id'
+                               t-att-checked="answer_selected ? 'checked' : null"
+                               t-on-click="() => this.selectAnswer(question, label_id, answer_selected)"
+                               t-att-disabled="question.locked"/>
+                        <span class="ms-2 text-break" t-out='label_id.value'/>
+                    </label>
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <t t-name="ike_event.ike_question_multiple_choice">
+        <div t-att-data-name="question.id" class="row g-2 ike_survey_answer_wrapper ike_survey_form_choice">
+            <t t-foreach='question.suggested_answer_ids' t-as="label_id" t-key="label_id_index">
+                <t t-set="answer_selected" t-value="isAnswerSelected(question, label_id)"/>
+                <div class="col-sm-12">
+                    <label t-att-for="question.id + '_' + label_id.id"
+                        class="ike_survey_choice_btn py-1 px-3 w-100 h-100 rounded" t-att-class="{'ike_survey_selected': answer_selected}">
+                        <i t-if="answer_selected" class="fa fa-check-square float-end mt-1 ms-1 position-relative" />
+                        <i t-else="" class="fa fa-square-o float-end mt-1 ms-1 position-relative" />
+                        <input t-att-id="question.id + '_' + label_id.id" t-att-value='label_id.id'
+                               type="checkbox" class="ike_survey_form_choice_item invisible position-absolute" t-att-class="{'ike_survey_form_choice_item_selected': answer_selected}"
+                               t-att-name='question.id'
+                               t-att-checked="answer_selected ? 'checked' : null"
+                               t-on-click="() => this.selectAnswer(question, label_id, answer_selected)"
+                               t-att-disabled="question.locked"/>
+                        <span class="ms-2 text-break" t-out='label_id.value'/>
+                    </label>
+                </div>
+            </t>
+        </div>
+    </t>
+
+
+</templates>

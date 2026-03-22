@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_ike_events" name="Ike Events Portal" inherit_id="portal.portal_my_home" customize_show="True" priority="50">
+        <!-- Hide native menus -->
+        <xpath expr="//div[@id='portal_common_category']" position="attributes">  <!-- Settings tab -->
+            <attribute name="t-if">portal_common_category_enable</attribute>
+        </xpath>
+        <xpath expr="//div[@t-if='portal_alert_category_enable']" position="before">
+            <t t-set="portal_alert_category_enable" t-value="False"/>
+        </xpath>
+        <xpath expr="//div[@t-if='portal_client_category_enable']" position="before">
+            <t t-set="portal_client_category_enable" t-value="False"/>
+        </xpath>
+        <xpath expr="//div[@t-if='portal_service_category_enable']" position="before">
+            <t t-set="portal_service_category_enable" t-value="False"/>
+        </xpath>
+        <xpath expr="//div[@t-if='portal_vendor_category_enable']" position="before">
+            <t t-set="portal_vendor_category_enable" t-value="False"/>
+        </xpath>
+        <xpath expr="//div[hasclass('o_portal_docs')]" position="before">
+            <t t-set="portal_common_category_enable" t-value="False"/>
+        </xpath>
+        <!-- Hide native menus -->
+        <xpath expr="//div[@id='portal_vendor_category']" position="after">
+            <div class="o_portal_category row g-3 mt-3 ike_portal_ike_events_category" id="portal_ike_events_category"/>
+            <div class="o_portal_category row g-3 mt-3 ike_portal_ike_events_services" id="portal_ike_events_services"/>
+        </xpath>
+
+        <!-- category -->
+        <div id="portal_ike_events_category" position="inside">
+            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_admin')">
+                <t t-set="title">Users</t>
+                <t t-set="url" t-value="'/provider/portal/users'"/>
+                <t t-set="text">Users portal</t>
+                <t t-set="placeholder_count" t-value="'ike_event_supplier_count'"/>
+                <t t-set="icon" t-value="'/ike_event_portal/static/src/assets/white_user.png'"/>
+
+            </t>
+            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_admin') or request.env.user.has_group('ike_event_portal.custom_group_portal_supervisor')">
+                <t t-set="title">Cranes</t>
+                <t t-set="url" t-value="'/provider/portal/trucks'"/>
+                <t t-set="text">Cranes Portal</t>
+                <t t-set="placeholder_count" t-value="'ike_event_truck_count'"/>
+                <t t-set="icon" t-value="'/ike_event_portal/static/src/assets/white_crane.png'"/>
+            </t>
+        </div>
+
+        <!-- services -->
+        <div id="portal_ike_events_services" position="inside">
+            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_supervisor')">
+                <t t-set="title">Services</t>
+                <t t-set="url" t-value="'/provider/portal/services'"/>
+                <t t-set="text">Services Portal</t>
+                <t t-set="placeholder_count" t-value="'ike_event_service_count'"/>
+                <t t-set="icon" t-value="'/ike_event_portal/static/src/assets/white_service.png'"/>
+            </t>
+            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_admin')">
+                <t t-set="title">Requests for Quotation</t>
+                <t t-set="url" t-value="'/my/rfq'"/>
+                <t t-set="text">Follow your Requests for Quotation</t>
+                <t t-set="placeholder_count" t-value="'rfq_count'"/>
+                <t t-set="icon" t-value="'/web/static/img/rfq.svg'"/>
+            </t>
+            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_admin')">
+                <t t-set="title">Our Orders</t>
+                <t t-set="url" t-value="'/my/purchase'"/>
+                <t t-set="text">Follow orders you have to fulfill</t>
+                <t t-set="placeholder_count" t-value="'purchase_count'"/>
+                <t t-set="icon" t-value="'/purchase/static/src/img/calculator.svg'"/>
+            </t>
+        </div>
+    </template>
+
+
+    <!-- Inheritance My Portal Docs Entry - col 3 -->
+    <template id="portal_docs_entry_col_3" inherit_id="portal.portal_docs_entry">
+        <xpath expr="//div[contains(@t-att-class, 'o_portal_index_card')]" position="attributes">
+            <attribute name="t-att-class">
+                'o_portal_index_card ' +
+                ('' if force_show or config_card else 'd-none ') +
+                ('col-12 order-0' if show_count else 'col-md-4 order-2')
+            </attribute>
+        </xpath>
+    </template>
+
+    <template id="portal_layout_account_name" inherit_id="portal.portal_layout">
+        <xpath expr="//t[@t-if='my_details']//h3[contains(@class, 'my-3')]"
+               position="replace">
+            <h3 class="my-3">
+                Welcome <t t-out="request.env.user.name"/>
+            </h3>
+        </xpath>
+    </template>
+
+    <!-- Hidden: Edit information -->
+    <template id="hide_edit_information" inherit_id="portal.side_content">
+        <xpath expr="//a[@href='/my/account']" position="replace"/>
+    </template>
+
+</odoo>

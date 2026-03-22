@@ -1,0 +1,3 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ike_event_supplier_elapsed_time_manager,ike_event_supplier_elapsed_time_manager,model_ike_event_supplier_elapsed_time,,1,1,1,1
+access_ike_event_service_assistview_manager,ike_event_service_assistview_manager,model_ike_event_service_assistview,,1,1,1,1

@@ -1,0 +1,119 @@
+/* Contenedor principal */
+.o_field_ike_statusbar_duration {
+    width: 70%;
+    overflow-x: auto;
+    padding: 20px 0px; /* Más espacio para que el tiempo no se corte arriba */
+    -webkit-overflow-scrolling: touch;
+
+}
+
+.ike_statusbar {
+    display: inline-flex;
+    align-items: flex-start;
+    padding: 15px 25px;
+    border-radius: 60px;
+    min-width: max-content;
+    flex-wrap: nowrap;
+}
+
+/* --- LÓGICA DE OCULTAR / MOSTRAR --- */
+
+.ike_statusbar_step:not(.current) {
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: all 0.4s ease;
+}
+
+.ike_statusbar_line {
+    width: 0;
+    opacity: 0;
+    position: relative; /* Para posicionar el tiempo */
+    height: 30px; /* Altura para alinear con el círculo */
+    display: flex;
+    justify-content: center;
+    transition: all 0.4s ease;
+}
+
+/* La rayita física (el conector) */
+.ike_statusbar_line::after {
+    content: "";
+    position: absolute;
+    top: 15px; /* Mitad del círculo (30px / 2) */
+    left: 0;
+    right: 0;
+    height: 3px;
+    background-color: #E0E0E0;
+    z-index: 1;
+}
+
+/* --- HOVER: EXPANSIÓN --- */
+
+.o_field_ike_statusbar_duration:hover .ike_statusbar_step,
+.o_field_ike_statusbar_duration:focus-within .ike_statusbar_step {
+    width: 60px;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.o_field_ike_statusbar_duration:hover .ike_statusbar_line,
+.o_field_ike_statusbar_duration:focus-within .ike_statusbar_line {
+    width: 60px;
+    opacity: 1;
+
+}
+
+/* --- COLORES DE LAS LÍNEAS --- */
+
+.ike_statusbar_line.completed::after { background-color: #4CAF50; }
+.ike_statusbar_line.current::after { background-color: #0866a4; }
+.ike_statusbar_line.pending::after { background-color: #E0E0E0; }
+
+/* --- CÍRCULOS Y TEXTO --- */
+
+.ike_statusbar_step_content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    z-index: 2;
+    
+}
+
+.ike_statusbar_circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    background-color: #BDBDBD;
+    flex-shrink: 0;
+}
+
+/* Colores de círculos */
+.ike_statusbar_step.completed .ike_statusbar_circle { background-color: #4CAF50; }
+.ike_statusbar_step.current .ike_statusbar_circle { background-color: #0866a4; }
+
+.ike_statusbar_step_label {
+    margin-top: 10px;
+    font-size: 11px;
+    font-weight: 500;
+    text-align: center;
+    white-space: wrap;
+}
+
+/* --- EL TIEMPO (POSICIONADO ARRIBA) --- */
+
+.ike_statusbar_line_time {
+    position: absolute;
+    top: 10px; /* Lo saca hacia arriba de la línea */
+    font-size: 10px;
+    font-weight: bold;
+    color: #555;
+    white-space: nowrap;
+    z-index: 3;
+}

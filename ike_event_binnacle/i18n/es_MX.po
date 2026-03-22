@@ -1,0 +1,2471 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ike_event_binnacle
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-17 18:12+0000\n"
+"PO-Revision-Date: 2026-03-17 18:12+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_23
+msgid "  Binnacle stage mail template 7_23 "
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_24
+msgid "  Binnacle stage mail template 7_24 "
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_25
+msgid "  Binnacle stage mail template 7_25 "
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_26
+msgid "  Binnacle stage mail template 7_26 "
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_27
+msgid "  Binnacle stage mail template 7_27 "
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_23
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_24
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_25
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_26
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_27
+msgid "  Reference {{ object.name or 'n/a' }} "
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_4_2
+msgid ""
+"<div>\n"
+"                    <!-- Guardamos el subservicio en una variable -->\n"
+"                    <t t-if=\"object.sub_service_res_model and object.sub_service_res_id\">\n"
+"                        <t t-set=\"sub_service\" t-value=\"object.env[object.sub_service_res_model].browse(object.sub_service_res_id)\"/>\n"
+"\n"
+"                        <t t-if=\"sub_service.exists() and sub_service.service_vehicle_type_ids\">\n"
+"                            <strong>Vehicle selected:</strong>\n"
+"                            <ul>\n"
+"                                <t t-foreach=\"sub_service.service_vehicle_type_ids\" t-as=\"vehicle\">\n"
+"                                    <li>\n"
+"                                        <span t-out=\"vehicle.display_name\"/>\n"
+"                                    </li>\n"
+"                                </t>\n"
+"                            </ul>\n"
+"                        </t>\n"
+"\n"
+"                        <t t-else=\"\">\n"
+"                            <em>No vehicle selected.</em>\n"
+"                        </t>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No vehicle selected.</em>\n"
+"                    </t>\n"
+"                </div>\n"
+"            "
+msgstr ""
+"<div>\n"
+"                    <!-- Guardamos el subservicio en una variable -->\n"
+"                    <t t-if=\"object.sub_service_res_model and object.sub_service_res_id\">\n"
+"                        <t t-set=\"sub_service\" t-value=\"object.env[object.sub_service_res_model].browse(object.sub_service_res_id)\"/>\n"
+"\n"
+"                        <t t-if=\"sub_service.exists() and sub_service.service_vehicle_type_ids\">\n"
+"                            <strong>Vehículo seleccionado:</strong>\n"
+"                            <ul>\n"
+"                                <t t-foreach=\"sub_service.service_vehicle_type_ids\" t-as=\"vehicle\">\n"
+"                                    <li>\n"
+"                                        <span t-out=\"vehicle.display_name\"/>\n"
+"                                    </li>\n"
+"                                </t>\n"
+"                            </ul>\n"
+"                        </t>\n"
+"\n"
+"                        <t t-else=\"\">\n"
+"                            <em>No hay vehículo seleccionado.</em>\n"
+"                        </t>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No hay vehículo seleccionado.</em>\n"
+"                    </t>\n"
+"                </div>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_5
+msgid ""
+"<span><t t-set=\"link\" t-value=\"object.service_supplier_link_ids.filtered(lambda l: l.id == ctx.get('supplier_link_id'))[:1]\"/>\n"
+"\n"
+"                <t t-if=\"link\">\n"
+"                <t t-set=\"link\" t-value=\"link[0]\"/>\n"
+"\n"
+"                    <!-- CONCEPTS ADDITIONALS -->\n"
+"                    <strong>Concepts additionals:</strong>\n"
+"\n"
+"                    <t t-set=\"new_ids\" t-value=\"link.new_concept_ids or []\"/>\n"
+"\n"
+"                    <t t-set=\"outside_lines\" t-value=\"link.supplier_product_ids.filtered(                             lambda l: not l.display_type and not l.covered and l.id in new_ids                         )\"/>\n"
+"\n"
+"                    <t t-if=\"outside_lines\">\n"
+"                        <t t-foreach=\"outside_lines\" t-as=\"line\">\n"
+"                            <br/>• <t t-out=\"line.product_id.display_name\"/>\n"
+"                        </t>\n"
+"                    </t>\n"
+"                    <t t-else=\"\">\n"
+"                        <br/><em>No additional concepts.</em>\n"
+"                    </t>\n"
+"\n"
+"                    <br/><br/>\n"
+"\n"
+"                    <!-- AUTHORIZATION TYPE -->\n"
+"                    <strong>Authorization type:</strong>\n"
+"\n"
+"                    <t t-if=\"link.type_authorization_id\">\n"
+"                        <t t-out=\"link.type_authorization_id.name\"/>\n"
+"                    </t>\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No authorization type.</em>\n"
+"                    </t>\n"
+"\n"
+"                    <br/><br/>\n"
+"\n"
+"                    <!-- RESPONSIBLE -->\n"
+"                    <strong>Responsible authorizator:</strong>\n"
+"\n"
+"                    <t t-set=\"responsible_name\" t-value=\"link.nu_user_id.display_name if link.authorization_by_nu else link.authorizer_id.display_name\"/>\n"
+"\n"
+"                    <t t-if=\"responsible_name\">\n"
+"                        <t t-out=\"responsible_name\"/>\n"
+"                    </t>\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No responsible assigned.</em>\n"
+"                    </t>\n"
+"\n"
+"                    <br/><br/>\n"
+"\n"
+"                    <!-- MOTIVE -->\n"
+"                    <strong>Motive:</strong>\n"
+"\n"
+"                    <t t-if=\"link.reason_authorizer_id\">\n"
+"                        <t t-out=\"link.reason_authorizer_id.name\"/>\n"
+"                    </t>\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No motive assigned.</em>\n"
+"                    </t>\n"
+"\n"
+"                </t>\n"
+"\n"
+"                <!-- Si por alguna raz&#243;n no llega el contexto -->\n"
+"                <t t-else=\"\">\n"
+"                    <em>No supplier information available.</em>\n"
+"                </t>\n"
+"\n"
+"            </span>"
+msgstr ""
+"<span><t t-set=\"link\" t-value=\"object.service_supplier_link_ids.filtered(lambda l: l.id == ctx.get('supplier_link_id'))[:1]\"/>\n"
+"\n"
+"                <t t-if=\"link\">\n"
+"                <t t-set=\"link\" t-value=\"link[0]\"/>\n"
+"\n"
+"                    <!-- CONCEPTS ADDITIONALS -->\n"
+"                    <strong>Conceptos adicionales:</strong>\n"
+"\n"
+"                    <t t-set=\"new_ids\" t-value=\"link.new_concept_ids or []\"/>\n"
+"\n"
+"                    <t t-set=\"outside_lines\" t-value=\"link.supplier_product_ids.filtered(                             lambda l: not l.display_type and not l.covered and l.id in new_ids                         )\"/>\n"
+"\n"
+"                    <t t-if=\"outside_lines\">\n"
+"                        <t t-foreach=\"outside_lines\" t-as=\"line\">\n"
+"                            <br/>• <t t-out=\"line.product_id.display_name\"/>\n"
+"                        </t>\n"
+"                    </t>\n"
+"                    <t t-else=\"\">\n"
+"                        <br/><em>No hay conceptos adicionales.</em>\n"
+"                    </t>\n"
+"\n"
+"                    <br/><br/>\n"
+"\n"
+"                    <!-- AUTHORIZATION TYPE -->\n"
+"                    <strong>Tipo de autorización:</strong>\n"
+"\n"
+"                    <t t-if=\"link.type_authorization_id\">\n"
+"                        <t t-out=\"link.type_authorization_id.name\"/>\n"
+"                    </t>\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No se asigno tipo de autorización.</em>\n"
+"                    </t>\n"
+"\n"
+"                    <br/><br/>\n"
+"\n"
+"                    <!-- RESPONSIBLE -->\n"
+"                    <strong>Autorizador responsable:</strong>\n"
+"\n"
+"                    <t t-set=\"responsible_name\" t-value=\"link.nu_user_id.display_name if link.authorization_by_nu else link.authorizer_id.display_name\"/>\n"
+"\n"
+"                    <t t-if=\"responsible_name\">\n"
+"                        <t t-out=\"responsible_name\"/>\n"
+"                    </t>\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No se asigno autorizador responsable.</em>\n"
+"                    </t>\n"
+"\n"
+"                    <br/><br/>\n"
+"\n"
+"                    <!-- MOTIVE -->\n"
+"                    <strong>Motivo:</strong>\n"
+"\n"
+"                    <t t-if=\"link.reason_authorizer_id\">\n"
+"                        <t t-out=\"link.reason_authorizer_id.name\"/>\n"
+"                    </t>\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No hay motivo.</em>\n"
+"                    </t>\n"
+"\n"
+"                </t>\n"
+"\n"
+"                <!-- Si por alguna raz&#243;n no llega el contexto -->\n"
+"                <t t-else=\"\">\n"
+"                    <em>No hay informacion del proveedor.</em>\n"
+"                </t>\n"
+"\n"
+"            </span>"
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_27
+msgid ""
+"<t t-if=\"object.membership_authorization_id\">\n"
+"                    <strong>Is special:</strong>\n"
+"                    <t t-out=\"'Yes' if object.membership_authorization_id.check_is_special else 'No'\"/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t t-if=\"object.membership_authorization_id\">\n"
+"                    <strong>Es especial:</strong>\n"
+"                    <t t-out=\"'Si' if object.membership_authorization_id.check_is_special else 'No'\"/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_25
+msgid ""
+"<t t-if=\"object.membership_authorization_id\">\n"
+"                    <strong>Valid vigency</strong>\n"
+"                    <br/>\n"
+"\n"
+"                    <strong>Date start:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.affiliation_date_start or '-'\"/>\n"
+"                    <br/>\n"
+"                    <strong>Date end:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.affiliation_date_end or '-'\"/>\n"
+"                    <br/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t t-if=\"object.membership_authorization_id\">\n"
+"                    <strong>Vigencia válida</strong>\n"
+"                    <br/>\n"
+"\n"
+"                    <strong>Fecha de inicio:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.affiliation_date_start or '-'\"/>\n"
+"                    <br/>\n"
+"                    <strong>Fecha de finalización:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.affiliation_date_end or '-'\"/>\n"
+"                    <br/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_26
+msgid ""
+"<t t-if=\"object.membership_authorization_id\">\n"
+"                    <strong>vehicle weight category:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.vehicle_weight_category_id.name or '-'\"/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t t-if=\"object.membership_authorization_id\">\n"
+"                    <strong>Categoría de peso del vehículo:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.vehicle_weight_category_id.name or '-'\"/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_8
+msgid ""
+"<t t-if=\"object.service_input_ref and object.service_input_ref.identification_type\">\n"
+"                    <div>\n"
+"                        <strong>Identification by: </strong>\n"
+"                        <t t-out=\"dict(object.service_input_ref._fields['identification_type'].selection).get(object.service_input_ref.identification_type)\"/>\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t t-if=\"object.service_input_ref and object.service_input_ref.identification_type\">\n"
+"                    <div>\n"
+"                        <strong>Identificación por: </strong>\n"
+"                        <t t-out=\"dict(object.service_input_ref._fields['identification_type'].selection).get(object.service_input_ref.identification_type)\"/>\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_4_3
+msgid ""
+"<t>\n"
+"                        <strong>Covered concepts:</strong>\n"
+"\n"
+"                        <t t-set=\"lines\" t-value=\"object.service_product_ids\"/>\n"
+"\n"
+"                        <t t-if=\"lines\">\n"
+"                            <t t-set=\"printed\" t-value=\"0\"/>\n"
+"\n"
+"                            <t t-foreach=\"lines\" t-as=\"line\" t-index=\"i\">\n"
+"                                <t t-if=\"not line.display_type and line.covered\">\n"
+"                                    <t t-if=\"printed &gt; 0\"> | </t>\n"
+"\n"
+"                                    <t t-out=\"line.product_id.name or line.name\"/>\n"
+"\n"
+"                                    <t t-set=\"printed\" t-value=\"printed + 1\"/>\n"
+"                                </t>\n"
+"                            </t>\n"
+"\n"
+"                            <t t-if=\"printed &gt; 0\">.</t>\n"
+"                            <t t-else=\"\">\n"
+"                                <em>No covered concepts available.</em>\n"
+"                            </t>\n"
+"                        </t>\n"
+"                    </t>\n"
+"                "
+msgstr ""
+"<t>\n"
+"                        <strong>Conceptos de cobertura:</strong>\n"
+"\n"
+"                        <t t-set=\"lines\" t-value=\"object.service_product_ids\"/>\n"
+"\n"
+"                        <t t-if=\"lines\">\n"
+"                            <t t-set=\"printed\" t-value=\"0\"/>\n"
+"\n"
+"                            <t t-foreach=\"lines\" t-as=\"line\" t-index=\"i\">\n"
+"                                <!-- Ignorar secciones/notas -->\n"
+"                                <t t-if=\"not line.display_type and line.covered\">\n"
+"                                    <!-- Separador -->\n"
+"                                    <t t-if=\"printed &gt; 0\"> | </t>\n"
+"\n"
+"                                    <!-- Nombre del concepto -->\n"
+"                                    <t t-out=\"line.product_id.name or line.name\"/>\n"
+"\n"
+"                                    <!-- Contador manual -->\n"
+"                                    <t t-set=\"printed\" t-value=\"printed + 1\"/>\n"
+"                                </t>\n"
+"                            </t>\n"
+"\n"
+"                            <!-- Punto  solo si se imprimi&#243; algo -->\n"
+"                            <t t-if=\"printed &gt; 0\">.</t>\n"
+"                            <t t-else=\"\">\n"
+"                                <em>No hay conceptos.</em>\n"
+"                            </t>\n"
+"                        </t>\n"
+"                    </t>\n"
+"                "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_3
+msgid ""
+"<t>\n"
+"                     <strong>Alternative phone: </strong> <t t-out=\"object.get_user_phone() or 'No provided'\"/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                     <strong>Teléfono alternativo: </strong> <t t-out=\"object.get_user_phone() or 'No asignado'\"/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_4
+msgid ""
+"<t>\n"
+"                     <strong>Contact preference: </strong> <t t-out=\"dict(object._fields['preference_contact'].get_description(object.env)['selection']).get(object.preference_contact, '')\"/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                     <strong>Contacto de preferencia: </strong> <t t-out=\"dict(object._fields['preference_contact'].get_description(object.env)['selection']).get(object.preference_contact, '')\"/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_7
+msgid ""
+"<t>\n"
+"                     <strong>Scheduled service: </strong>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                     <strong>Servicio programado: </strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_6
+msgid ""
+"<t>\n"
+"                     <strong>Service type: </strong> <t t-out=\"object.service_type_id.name or 'No provided'\"/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                     <strong>Tipo de servicio: </strong> <t t-out=\"object.service_type_id.name or 'No asignado'\"/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_5
+msgid ""
+"<t>\n"
+"                     <strong>Subservice selected: </strong> <t t-out=\"object.service_id.name or 'No provided'\"/> / <t t-out=\"object.sub_service_id.name or 'No provided'\"/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                     <strong>Subservicio seleccionado: </strong> <t t-out=\"object.service_id.name or 'No seleccionado'\"/> / <t t-out=\"object.sub_service_id.name or 'No seleccionado'\"/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_9
+msgid ""
+"<t>\n"
+"                     <strong>Vehicle data reception</strong>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                     <strong>Datos del vehículo</strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_13_1
+msgid ""
+"<t>\n"
+"                    <!-- Obtener el supplier_link desde el contexto -->\n"
+"                    <t t-set=\"link\" t-value=\"object.service_supplier_link_ids.filtered(lambda l: l.id == ctx.get('supplier_link_id'))[:1]\"/>\n"
+"\n"
+"                    <t t-if=\"link\">\n"
+"                        <t t-set=\"link\" t-value=\"link[0]\"/>\n"
+"\n"
+"                        <strong>Approved additional concept</strong>\n"
+"                        <br/>\n"
+"\n"
+"                        <t t-set=\"new_ids\" t-value=\"link.new_concept_ids or []\"/>\n"
+"\n"
+"                        <t t-set=\"outside_lines\" t-value=\"link.supplier_product_ids.filtered(                                 lambda l: not l.display_type and not l.covered and l.id in new_ids                             )\"/>\n"
+"\n"
+"                        <t t-if=\"outside_lines\">\n"
+"                            <t t-foreach=\"outside_lines\" t-as=\"line\">\n"
+"                                <br/>• <t t-out=\"line.product_id.display_name\"/>\n"
+"                            </t>\n"
+"                        </t>\n"
+"                        <t t-else=\"\">\n"
+"                            <br/><em>No additional concepts.</em>\n"
+"                        </t>\n"
+"\n"
+"                        <br/><br/>\n"
+"                    </t>\n"
+"\n"
+"                    <!-- fallback por si no llega contexto -->\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No supplier information available.</em>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <!-- Obtener el supplier_link desde el contexto -->\n"
+"                    <t t-set=\"link\" t-value=\"object.service_supplier_link_ids.filtered(lambda l: l.id == ctx.get('supplier_link_id'))[:1]\"/>\n"
+"\n"
+"                    <t t-if=\"link\">\n"
+"                        <t t-set=\"link\" t-value=\"link[0]\"/>\n"
+"\n"
+"                        <strong>Conceptos adicionales aprobados</strong>\n"
+"                        <br/>\n"
+"\n"
+"                        <t t-set=\"new_ids\" t-value=\"link.new_concept_ids or []\"/>\n"
+"\n"
+"                        <t t-set=\"outside_lines\" t-value=\"link.supplier_product_ids.filtered(                                 lambda l: not l.display_type and not l.covered and l.id in new_ids                             )\"/>\n"
+"\n"
+"                        <t t-if=\"outside_lines\">\n"
+"                            <t t-foreach=\"outside_lines\" t-as=\"line\">\n"
+"                                <br/>• <t t-out=\"line.product_id.display_name\"/>\n"
+"                            </t>\n"
+"                        </t>\n"
+"                        <t t-else=\"\">\n"
+"                            <br/><em>No hay concpetos adicionales.</em>\n"
+"                        </t>\n"
+"\n"
+"                        <br/><br/>\n"
+"                    </t>\n"
+"\n"
+"                    <!-- fallback por si no llega contexto -->\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No se encontro informacion de proveedor.</em>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_8_1
+msgid ""
+"<t>\n"
+"                    <div>\n"
+"                        <strong>Event canceled</strong>\n"
+"                    </div>\n"
+"\n"
+"                    <t t-if=\"object.cancel_user_id\">\n"
+"                        <div>\n"
+"                            <strong>Canceled by:</strong>\n"
+"                            <t t-out=\"object.cancel_user_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-if=\"object.cancel_reason_id\">\n"
+"                        <div>\n"
+"                            <strong>Reason:</strong>\n"
+"                            <t t-out=\"object.cancel_reason_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-if=\"object.cancel_reason_text\">\n"
+"                        <div>\n"
+"                            <strong>Comment:</strong>\n"
+"                            <t t-out=\"object.cancel_reason_text\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <div>\n"
+"                        <strong>Evento cancelado</strong>\n"
+"                    </div>\n"
+"\n"
+"                    <t t-if=\"object.cancel_user_id\">\n"
+"                        <div>\n"
+"                            <strong>Cancelado por:</strong>\n"
+"                            <t t-out=\"object.cancel_user_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-if=\"object.cancel_reason_id\">\n"
+"                        <div>\n"
+"                            <strong>Motivo:</strong>\n"
+"                            <t t-out=\"object.cancel_reason_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-if=\"object.cancel_reason_text\">\n"
+"                        <div>\n"
+"                            <strong>Comentario:</strong>\n"
+"                            <t t-out=\"object.cancel_reason_text\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_13
+msgid ""
+"<t>\n"
+"                    <strong> \n"
+"                        <t t-if=\"object.requires_federal_plates\"> requires federal plates</t>\n"
+"                        <t t-else=\"\"> does not require federal plates</t> \n"
+"                    </strong>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong> \n"
+"                        <t t-if=\"object.requires_federal_plates\"> Requiere placas federales</t>\n"
+"                        <t t-else=\"\"> No requiere placas federales</t> \n"
+"                    </strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_23
+msgid ""
+"<t>\n"
+"                    <strong>Account:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.account\"/>\n"
+"                    <br/>\n"
+"                    <strong><t t-out=\"object.membership_authorization_id.label_identification_primary or 'Primary key'\"/>:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.masked_key_identification\"/>\n"
+"                    <br/>\n"
+"                    <t t-if=\"object.membership_authorization_id.second_key_identification\">\n"
+"                        <strong><t t-out=\"object.membership_authorization_id.label_identification_second or 'Second key'\"/>:</strong>\n"
+"                        <t t-out=\"object.membership_authorization_id.masked_second_key_identification\"/>\n"
+"                        <br/>\n"
+"                    </t>\n"
+"                    <strong>Titular user name:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.nus_name\"/>\n"
+"                    <br/>\n"
+"                    <strong>Phone:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.phone_nu\"/>\n"
+"                    <br/>\n"
+"                    <strong>Alternative phone:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.nu_alternative or '-'\"/>\n"
+"                    <br/>\n"
+"                    <strong>Preference contact:</strong>\n"
+"                    <t t-out=\"dict(object._fields['preference_contact'].get_description(object.env)['selection']).get(object.preference_contact, '')\"/>\n"
+"                    <br/>\n"
+"                    <strong>Responsible authorizer:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.authorizer_id.name or '-'\"/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Cuenta:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.account\"/>\n"
+"                    <br/>\n"
+"                    <strong><t t-out=\"object.membership_authorization_id.label_identification_primary or 'Primary key'\"/>:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.key_identification\"/>\n"
+"                    <br/>\n"
+"                    <t t-if=\"object.membership_authorization_id.second_key_identification\">\n"
+"                        <strong><t t-out=\"object.membership_authorization_id.label_identification_second or 'Second key'\"/>:</strong>\n"
+"                        <t t-out=\"object.membership_authorization_id.second_key_identification\"/>\n"
+"                        <br/>\n"
+"                    </t>\n"
+"                    <strong>Nombre del titular:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.nus_name\"/>\n"
+"                    <br/>\n"
+"                    <strong>Telefono:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.phone_nu\"/>\n"
+"                    <br/>\n"
+"                    <strong>Teléfono alternativo:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.nu_alternative or '-'\"/>\n"
+"                    <br/>\n"
+"                    <strong>Preferencia de contacto:</strong>\n"
+"                    <t t-out=\"dict(object._fields['preference_contact'].get_description(object.env)['selection']).get(object.preference_contact, '')\"/>\n"
+"                    <br/>\n"
+"                    <strong>Autorizador responsable:</strong>\n"
+"                    <t t-out=\"object.membership_authorization_id.authorizer_id.name or '-'\"/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_9
+msgid ""
+"<t>\n"
+"                    <strong>Authorization was requested.</strong>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Se solicitó autorización.</strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_24
+msgid ""
+"<t>\n"
+"                    <strong>Authorization was requested</strong>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Se solicitó autorización</strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_5_3
+msgid ""
+"<t>\n"
+"                    <strong>Best suppliers:</strong>\n"
+"\n"
+"                    <t t-set=\"suppliers\" t-value=\"object.service_supplier_ids\"/>\n"
+"\n"
+"                    <t t-if=\"suppliers\">\n"
+"                        <ul>\n"
+"                            <t t-foreach=\"suppliers\" t-as=\"supplier\">\n"
+"                                <t t-if=\"supplier.state == 'accepted' and supplier.selected\">\n"
+"                                    <li t-out=\"supplier.supplier_id.name\">\n"
+"                                </li></t>\n"
+"                            </t>\n"
+"                        </ul>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No accepted suppliers selected.</em>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<div data-oe-version=\"1.2\" style=\"border-radius: 0px; border-style: none; padding: 0px; margin: 0px; box-sizing: border-box; border-color: #4a5573; border-width: 0px; scrollbar-color: #ebebef #ffffff; scrollbar-width: thin;\"><br/></div><div style=\"border-radius: 0px; border-style: none; padding: 0px; margin: 0px; box-sizing: border-box; border-color: #4a5573; border-width: 0px; scrollbar-color: #ebebef #ffffff; scrollbar-width: thin;\"><t>\n"
+"                    <strong style=\"border-radius:0px;border-style:none;padding:0px;margin:0px;box-sizing:border-box;border-left-color:#4a5573;border-bottom-color:#4a5573;border-right-color:#4a5573;border-top-color:#4a5573;border-left-width:0px;border-bottom-width:0px;border-right-width:0px;border-top-width:0px;font-weight:bolder;\">Proveedor asignado:</strong>\n"
+"\n"
+"                    <t t-set=\"suppliers\" t-value=\"object.service_supplier_ids\"/>\n"
+"\n"
+"                    <t t-if=\"suppliers\">\n"
+"                        <ul style=\"border-radius: 0px; border-style: none; padding: 0px 0px 0px 32px; margin: 0px 0px 16px; box-sizing: border-box; border-color: #4a5573; border-width: 0px; scrollbar-color: #ebebef #ffffff; scrollbar-width: thin; list-style-type: disc;\">\n"
+"                            <t t-foreach=\"suppliers\" t-as=\"supplier\">\n"
+"                                <t t-if=\"supplier.state == 'accepted' and supplier.selected\">\n"
+"                                    <li t-out=\"supplier.supplier_id.name\">\n"
+"                                </li></t>\n"
+"                            </t>\n"
+"                        </ul>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No hay proveedores aceptados.</em>\n"
+"                    </t>\n"
+"                </t></div>"
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_16
+msgid ""
+"<t>\n"
+"                    <strong>Comment:</strong>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Comentario:</strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_5_5
+msgid ""
+"<t>\n"
+"                    <strong>Confirmation</strong>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Confirmación</strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_9_1
+msgid ""
+"<t>\n"
+"                    <strong>Duplicate Event</strong>\n"
+"                    <br/>\n"
+"                    <strong>Event: </strong><t t-out=\"object.name\"/>\n"
+"                    <br/>\n"
+"                    <strong>Reason: </strong><t t-out=\"ctx.get('reason_name')\"/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Evento duplicado</strong>\n"
+"                    <br/>\n"
+"                    <strong>Evento: </strong><t t-out=\"object.name\"/>\n"
+"                    <br/>\n"
+"                    <strong>Motivo: </strong><t t-out=\"ctx.get('reason_name')\"/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_12
+msgid ""
+"<t>\n"
+"                    <strong>Event type: </strong><t t-out=\"object.event_type_id.name or 'No provided'\"/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Tipo de evento: </strong><t t-out=\"object.event_type_id.name or 'No asignado'\"/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_4_4
+msgid ""
+"<t>\n"
+"                    <strong>Has beed added:</strong>\n"
+"\n"
+"                    <t t-set=\"lines\" t-value=\"object.service_product_ids\"/>\n"
+"\n"
+"                    <t t-if=\"lines\">\n"
+"                        <t t-set=\"printed\" t-value=\"0\"/>\n"
+"\n"
+"                        <t t-foreach=\"lines\" t-as=\"line\">\n"
+"                            <t t-if=\"not line.display_type and not line.covered\">\n"
+"                                <t t-if=\"printed &gt; 0\"> | </t>\n"
+"\n"
+"                                <t t-out=\"line.product_id.name or line.name\"/>\n"
+"\n"
+"                                <t t-set=\"printed\" t-value=\"printed + 1\"/>\n"
+"                            </t>\n"
+"                        </t>\n"
+"\n"
+"                        <t t-if=\"printed &gt; 0\">.</t>\n"
+"                        <t t-else=\"\">\n"
+"                            <em>No out-of-coverage concepts.</em>\n"
+"                        </t>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Conceptos agregados:</strong>\n"
+"\n"
+"                    <t t-set=\"lines\" t-value=\"object.service_product_ids\"/>\n"
+"\n"
+"                    <t t-if=\"lines\">\n"
+"                        <t t-set=\"printed\" t-value=\"0\"/>\n"
+"\n"
+"                        <t t-foreach=\"lines\" t-as=\"line\">\n"
+"                            <!-- Ignorar secciones/notas -->\n"
+"                            <t t-if=\"not line.display_type and not line.covered\">\n"
+"                                <!-- Separador -->\n"
+"                                <t t-if=\"printed &gt; 0\"> | </t>\n"
+"\n"
+"                                <!-- Nombre del concepto -->\n"
+"                                <t t-out=\"line.product_id.name or line.name\"/>\n"
+"\n"
+"                                <!-- Contador -->\n"
+"                                <t t-set=\"printed\" t-value=\"printed + 1\"/>\n"
+"                            </t>\n"
+"                        </t>\n"
+"\n"
+"                        <!-- Punto final solo si hubo resultados -->\n"
+"                        <t t-if=\"printed &gt; 0\">.</t>\n"
+"                        <t t-else=\"\">\n"
+"                            <em>No hay conceptos fuera de cobertura.</em>\n"
+"                        </t>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_15
+msgid ""
+"<t>\n"
+"                    <strong>Origin geolocation identification</strong><br/>\n"
+"                    <strong>Latitude:</strong> <t t-out=\"object.destination_latitude or ''\"/><br/>\n"
+"                    <strong>Longitude:</strong> <t t-out=\"object.destination_longitude or ''\"/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Identificación de geolocalización destino</strong><br/>\n"
+"                    <strong>Latitud:</strong> <t t-out=\"object.destination_latitude or ''\"/><br/>\n"
+"                    <strong>Longitud:</strong> <t t-out=\"object.destination_longitude or ''\"/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_11
+msgid ""
+"<t>\n"
+"                    <strong>Origin geolocation identification</strong><br/>\n"
+"                    <strong>Latitude:</strong> <t t-out=\"object.location_latitude or ''\"/><br/>\n"
+"                    <strong>Longitude:</strong> <t t-out=\"object.location_longitude or ''\"/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Identificación de geolocalización origen:</strong><br/>\n"
+"                    <strong>Latitud:</strong> <t t-out=\"object.location_latitude or ''\"/><br/>\n"
+"                    <strong>Longitud:</strong> <t t-out=\"object.location_longitude or ''\"/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_5_1
+msgid ""
+"<t>\n"
+"                    <strong>Searching supplier</strong>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Buscando proveedor</strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_5_4
+msgid ""
+"<t>\n"
+"                    <strong>Send supplier notification</strong>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Notificación enviada al proveedor</strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_14
+msgid ""
+"<t>\n"
+"                    <strong>Service details:</strong><br/>\n"
+"\n"
+"                    <t t-if=\"object.event_summary_id                             and object.event_summary_id.survey_data                             and object.event_summary_id.survey_data.get('fields')\">\n"
+"\n"
+"                        <ul>\n"
+"                            <t t-foreach=\"object.event_summary_id.survey_data.get('fields')\" t-as=\"f\">\n"
+"                                <li>\n"
+"                                    <strong t-out=\"f.get('string')\"/>:\n"
+"                                    <span t-out=\"f.get('value')\"/>\n"
+"                                </li>\n"
+"                            </t>\n"
+"                        </ul>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No service details provided.</em>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Detalles del servicio:</strong><br/>\n"
+"\n"
+"                    <!-- Validaci&#243;n -->\n"
+"                    <t t-if=\"object.event_summary_id                             and object.event_summary_id.survey_data                             and object.event_summary_id.survey_data.get('fields')\">\n"
+"\n"
+"                        <ul>\n"
+"                            <!-- FOR -->\n"
+"                            <t t-foreach=\"object.event_summary_id.survey_data.get('fields')\" t-as=\"f\">\n"
+"                                <li>\n"
+"                                    <strong t-out=\"f.get('string')\"/>:\n"
+"                                    <span t-out=\"f.get('value')\"/>\n"
+"                                </li>\n"
+"                            </t>\n"
+"                        </ul>\n"
+"                    </t>\n"
+"\n"
+"                    <!-- ELSE -->\n"
+"                    <t t-else=\"\">\n"
+"                        <em>No hay detalles.</em>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_1
+msgid ""
+"<t>\n"
+"                    <strong>Service in progress</strong>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Servicio en progreso</strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_4_1
+msgid ""
+"<t>\n"
+"                    <strong>Service vehicle and concept selection</strong>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Selección de vehículo de servicio y conceptos</strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_8_2
+msgid ""
+"<t>\n"
+"                    <strong>Supplier Canceled:</strong>\n"
+"                    <br/>\n"
+"                    <ul>\n"
+"                        <t t-foreach=\"object.service_supplier_ids.filtered(lambda s: s.cancelled)\" t-as=\"supplier\">\n"
+"                            <li>\n"
+"                                <strong>\n"
+"                                    <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                                </strong>\n"
+"                                <br/>\n"
+"\n"
+"                                <t t-if=\"supplier.cancel_reason_id\">\n"
+"                                    <strong>Reason:</strong>\n"
+"                                    <t t-out=\"supplier.cancel_reason_id.name\"/>\n"
+"                                    <br/>\n"
+"                                </t>\n"
+"\n"
+"                                <t t-if=\"supplier.cancel_reason_text\">\n"
+"                                   <strong>Comment:</strong>\n"
+"                                    <t t-out=\"supplier.cancel_reason_text\"/>\n"
+"                                    <br/>\n"
+"                                </t>\n"
+"\n"
+"                                <t t-if=\"supplier.cancel_user_id\">\n"
+"                                    <strong>Canceled by:</strong>\n"
+"                                    <t t-out=\"supplier.cancel_user_id.name\"/>\n"
+"                                </t>\n"
+"                            </li>\n"
+"                        </t>\n"
+"                    </ul>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Proveedor cancelado:</strong>\n"
+"                    <br/>\n"
+"                    <ul>\n"
+"                        <t t-foreach=\"object.service_supplier_ids.filtered(lambda s: s.cancelled)\" t-as=\"supplier\">\n"
+"                            <li>\n"
+"                                <strong>\n"
+"                                    <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                                </strong>\n"
+"                                <br/>\n"
+"\n"
+"                                <t t-if=\"supplier.cancel_reason_id\">\n"
+"                                    <strong>Motivo:</strong>\n"
+"                                    <t t-out=\"supplier.cancel_reason_id.name\"/>\n"
+"                                    <br/>\n"
+"                                </t>\n"
+"\n"
+"                                <t t-if=\"supplier.cancel_reason_text\">\n"
+"                                   <strong>Comentario:</strong>\n"
+"                                    <t t-out=\"supplier.cancel_reason_text\"/>\n"
+"                                    <br/>\n"
+"                                </t>\n"
+"\n"
+"                                <t t-if=\"supplier.cancel_user_id\">\n"
+"                                    <strong>Cancelado por:</strong>\n"
+"                                    <t t-out=\"supplier.cancel_user_id.name\"/>\n"
+"                                </t>\n"
+"                            </li>\n"
+"                        </t>\n"
+"                    </ul>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_5_2
+msgid ""
+"<t>\n"
+"                    <strong>Type assignation:</strong>\n"
+"                    <t t-set=\"supplier\" t-value=\"object.service_supplier_ids[:1]\"/>\n"
+"                    <t t-if=\"supplier and supplier.assignation_type\">\n"
+"                        <t t-out=\"dict(supplier._fields['assignation_type']._description_selection(object.env)).get(supplier.assignation_type, '')\"/>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Tipo de asignación:</strong>\n"
+"                    <t t-set=\"supplier\" t-value=\"object.service_supplier_ids[:1]\"/>\n"
+"                    <t t-if=\"supplier and supplier.assignation_type\">\n"
+"                        <t t-out=\"dict(supplier._fields['assignation_type']._description_selection(object.env)).get(supplier.assignation_type, '')\"/>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_10
+msgid ""
+"<t>\n"
+"                    <strong>Vehicle identification:</strong><br/>\n"
+"                    <strong>Brand:</strong> <t t-out=\"object.service_input_ref.vehicle_brand or ''\"/><br/>\n"
+"                    <strong>Subbrand:</strong> <t t-out=\"object.service_input_ref.vehicle_model or ''\"/><br/>\n"
+"                    <strong>Year:</strong> <t t-out=\"object.service_input_ref.vehicle_year or ''\"/><br/>\n"
+"                    <strong>Category:</strong> <t t-out=\"object.service_input_ref.vehicle_category_id.name or ''\"/><br/>\n"
+"                    <strong>Plate:</strong> <t t-out=\"object.service_input_ref.vehicle_plate or ''\"/><br/>\n"
+"                    <strong>Color:</strong> <t t-out=\"object.service_input_ref.vehicle_color or ''\"/>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <strong>Identificación del vehículo:</strong><br/>\n"
+"                    <strong>Marca:</strong> <t t-out=\"object.service_input_ref.vehicle_brand or ''\"/><br/>\n"
+"                    <strong>Submarca:</strong> <t t-out=\"object.service_input_ref.vehicle_model or ''\"/><br/>\n"
+"                    <strong>Año:</strong> <t t-out=\"object.service_input_ref.vehicle_year or ''\"/><br/>\n"
+"                    <strong>Categoría:</strong> <t t-out=\"object.service_input_ref.vehicle_category_id.name or ''\"/><br/>\n"
+"                    <strong>Placas:</strong> <t t-out=\"object.service_input_ref.vehicle_plate or ''\"/><br/>\n"
+"                    <strong>Color:</strong> <t t-out=\"object.service_input_ref.vehicle_color or ''\"/>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_30
+msgid ""
+"<t>\n"
+"                    <t t-if=\"object.membership_authorization_id\">\n"
+"                        <p>\n"
+"                            <strong>Approved authorizer</strong>\n"
+"                        </p>\n"
+"                        <p>\n"
+"                           <strong>Motive: </strong> <t t-out=\"object.membership_authorization_id.authorization_reasons_id.name\"/>\n"
+"                        </p>\n"
+"                        <p>\n"
+"                            <strong>Comment: </strong> <t t-out=\"object.membership_authorization_id.comment_authorizer\"/>\n"
+"                        </p>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <t t-if=\"object.membership_authorization_id\">\n"
+"                        <p>\n"
+"                            <strong>Autorización aprobada</strong>\n"
+"                        </p>\n"
+"                        <p>\n"
+"                           <strong>Motivo: </strong> <t t-out=\"object.membership_authorization_id.authorization_reasons_id.name\"/>\n"
+"                        </p>\n"
+"                        <p>\n"
+"                            <strong>Comentario: </strong> <t t-out=\"object.membership_authorization_id.comment_authorizer\"/>\n"
+"                        </p>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_28
+msgid ""
+"<t>\n"
+"                    <t t-if=\"object.membership_authorization_id\">\n"
+"                        <p>\n"
+"                            <strong>Authorization Escalated</strong>\n"
+"                        </p>\n"
+"                        <p>\n"
+"                            <strong>Authorizer responsible: </strong><t t-out=\"object.membership_authorization_id.user_authorization_commercial_affiliation_id.name\"/>\n"
+"                        </p>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <t t-if=\"object.membership_authorization_id\">\n"
+"                        <p>\n"
+"                            <strong>Autorización escalada</strong>\n"
+"                        </p>\n"
+"                        <p>\n"
+"                            <strong>Autorizador responsable: </strong><t t-out=\"object.membership_authorization_id.user_authorization_commercial_affiliation_id.name\"/>\n"
+"                        </p>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_29
+msgid ""
+"<t>\n"
+"                    <t t-if=\"object.membership_authorization_id\">\n"
+"                        <p>\n"
+"                            <strong>Authorization aproved</strong>\n"
+"                        </p>\n"
+"                        <!-- <p>\n"
+"                           <strong>Motive: </strong> <t t-out=\"object.membership_authorization_id.authorization_reasons_id.name\" ></t>\n"
+"                        </p>\n"
+"                        <p>\n"
+"                            <strong>Comment: </strong> <t t-out=\"object.membership_authorization_id.comment_authorizer\" ></t>\n"
+"                        </p> -->\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <t t-if=\"object.membership_authorization_id\">\n"
+"                        <p>\n"
+"                            <strong>Autorización aprobada</strong>\n"
+"                        </p>\n"
+"                        <p>\n"
+"                           <strong>Motivo: </strong> <t t-out=\"object.membership_authorization_id.authorization_reasons_id.name\"/>\n"
+"                        </p>\n"
+"                        <p>\n"
+"                            <strong>Comentario: </strong> <t t-out=\"object.membership_authorization_id.comment_authorizer\"/>\n"
+"                        </p>\n"
+"\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_31
+msgid ""
+"<t>\n"
+"                    <t t-if=\"object.membership_authorization_id\">\n"
+"                        <p>\n"
+"                            <strong>Rejected authorization</strong>\n"
+"                        </p>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <t t-if=\"object.membership_authorization_id\">\n"
+"                        <p>\n"
+"                            <strong>Autorización rechazada</strong>\n"
+"                        </p>\n"
+"                    </t>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_4
+msgid ""
+"<t>\n"
+"                    <t t-set=\"current_supplier_id\" t-value=\"ctx.get('current_supplier_id')\"/>\n"
+"\n"
+"                    <t t-set=\"supplier\" t-value=\"current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False\"/>\n"
+"\n"
+"                    <t t-if=\"supplier\">\n"
+"                        <div>\n"
+"                            <strong>Supplier:</strong>\n"
+"                            <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <div>\n"
+"                        <strong>State:</strong> Arrived\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <t t-set=\"current_supplier_id\" t-value=\"ctx.get('current_supplier_id')\"/>\n"
+"\n"
+"                    <t t-set=\"supplier\" t-value=\"current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False\"/>\n"
+"\n"
+"                    <t t-if=\"supplier\">\n"
+"                        <div>\n"
+"                            <strong>Proveedor:</strong>\n"
+"                            <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <div>\n"
+"                        <strong>Estado:</strong> Llegó\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_14
+msgid ""
+"<t>\n"
+"                    <t t-set=\"current_supplier_id\" t-value=\"ctx.get('current_supplier_id')\"/>\n"
+"\n"
+"                    <t t-set=\"supplier\" t-value=\"current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False\"/>\n"
+"\n"
+"                    <t t-if=\"supplier\">\n"
+"                        <div>\n"
+"                            <strong>Supplier:</strong>\n"
+"                            <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <div>\n"
+"                        <strong>State:</strong> Arrived to destination\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <t t-set=\"current_supplier_id\" t-value=\"ctx.get('current_supplier_id')\"/>\n"
+"\n"
+"                    <t t-set=\"supplier\" t-value=\"current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False\"/>\n"
+"\n"
+"                    <t t-if=\"supplier\">\n"
+"                        <div>\n"
+"                            <strong>Proveedor:</strong>\n"
+"                            <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <div>\n"
+"                        <strong>Estado:</strong> Llegó al destino\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_2
+msgid ""
+"<t>\n"
+"                    <t t-set=\"current_supplier_id\" t-value=\"ctx.get('current_supplier_id')\"/>\n"
+"\n"
+"                    <t t-set=\"supplier\" t-value=\"current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False\"/>\n"
+"\n"
+"                    <t t-if=\"supplier\">\n"
+"                        <div>\n"
+"                            <strong>Supplier:</strong>\n"
+"                            <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <div>\n"
+"                        <strong>State:</strong> Assing\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <t t-set=\"current_supplier_id\" t-value=\"ctx.get('current_supplier_id')\"/>\n"
+"\n"
+"                    <t t-set=\"supplier\" t-value=\"current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False\"/>\n"
+"\n"
+"                    <t t-if=\"supplier\">\n"
+"                        <div>\n"
+"                            <strong>Proveedor:</strong>\n"
+"                            <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <div>\n"
+"                        <strong>Estado:</strong> Asignado\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_22
+msgid ""
+"<t>\n"
+"                    <t t-set=\"current_supplier_id\" t-value=\"ctx.get('current_supplier_id')\"/>\n"
+"\n"
+"                    <t t-set=\"supplier\" t-value=\"current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False\"/>\n"
+"\n"
+"                    <t t-if=\"supplier\">\n"
+"                        <div>\n"
+"                            <strong>Supplier:</strong>\n"
+"                            <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <div>\n"
+"                        <strong>State:</strong> Finalized\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <t t-set=\"current_supplier_id\" t-value=\"ctx.get('current_supplier_id')\"/>\n"
+"\n"
+"                    <t t-set=\"supplier\" t-value=\"current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False\"/>\n"
+"\n"
+"                    <t t-if=\"supplier\">\n"
+"                        <div>\n"
+"                            <strong>Proveedor:</strong>\n"
+"                            <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <div>\n"
+"                        <strong>Estado:</strong> Finalizado\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_3
+msgid ""
+"<t>\n"
+"                    <t t-set=\"current_supplier_id\" t-value=\"ctx.get('current_supplier_id')\"/>\n"
+"\n"
+"                    <t t-set=\"supplier\" t-value=\"current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False\"/>\n"
+"\n"
+"                    <t t-if=\"supplier\">\n"
+"                        <div>\n"
+"                            <strong>Supplier:</strong>\n"
+"                            <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <div>\n"
+"                        <strong>State:</strong> On route\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <t t-set=\"current_supplier_id\" t-value=\"ctx.get('current_supplier_id')\"/>\n"
+"\n"
+"                    <t t-set=\"supplier\" t-value=\"current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False\"/>\n"
+"\n"
+"                    <t t-if=\"supplier\">\n"
+"                        <div>\n"
+"                            <strong>Proveedor:</strong>\n"
+"                            <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <div>\n"
+"                        <strong>Estado:</strong> En ruta\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_13
+msgid ""
+"<t>\n"
+"                    <t t-set=\"current_supplier_id\" t-value=\"ctx.get('current_supplier_id')\"/>\n"
+"\n"
+"                    <t t-set=\"supplier\" t-value=\"current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False\"/>\n"
+"\n"
+"                    <t t-if=\"supplier\">\n"
+"                        <div>\n"
+"                            <strong>Supplier:</strong>\n"
+"                            <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <div>\n"
+"                        <strong>State:</strong> On route to destination\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <t t-set=\"current_supplier_id\" t-value=\"ctx.get('current_supplier_id')\"/>\n"
+"\n"
+"                    <t t-set=\"supplier\" t-value=\"current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False\"/>\n"
+"\n"
+"                    <t t-if=\"supplier\">\n"
+"                        <div>\n"
+"                            <strong>Proveedor:</strong>\n"
+"                            <t t-out=\"supplier.supplier_id.name\"/>\n"
+"                        </div>\n"
+"                    </t>\n"
+"\n"
+"                    <div>\n"
+"                        <strong>Estado:</strong> En ruta al destino\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_10
+msgid ""
+"<t> \n"
+"                    <strong>Notification sent to the supplier.</strong>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t> \n"
+"                    <strong>Notificación enviada al proveedor.</strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_11
+msgid ""
+"<t> \n"
+"                    <strong>Responsible authorizator:</strong>\n"
+"\n"
+"                    <t t-set=\"printed_resp\" t-value=\"0\"/>\n"
+"\n"
+"                    <t t-foreach=\"object.service_supplier_link_ids\" t-as=\"link\">\n"
+"\n"
+"                        <t t-set=\"responsible_name\" t-value=\"link.nu_user_id.display_name if link.authorization_by_nu else link.authorizer_id.display_name\"/>\n"
+"\n"
+"                        <t t-if=\"responsible_name\">\n"
+"\n"
+"                            <t t-if=\"printed_resp &gt; 0\"> | </t>\n"
+"\n"
+"                            <t t-out=\"responsible_name\"/>\n"
+"\n"
+"                            <t t-set=\"printed_resp\" t-value=\"printed_resp + 1\"/>\n"
+"                        </t>\n"
+"\n"
+"                    </t>\n"
+"\n"
+"                    <t t-if=\"printed_resp == 0\">\n"
+"                        <em>No responsible assigned.</em>\n"
+"                    </t>\n"
+"                    <t t-else=\"\">.</t>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t> \n"
+"                    <strong>Autorizador responsable:</strong>\n"
+"\n"
+"                    <t t-set=\"printed_resp\" t-value=\"0\"/>\n"
+"\n"
+"                    <t t-foreach=\"object.service_supplier_link_ids\" t-as=\"link\">\n"
+"\n"
+"                        <t t-set=\"responsible_name\" t-value=\"link.nu_user_id.display_name if link.authorization_by_nu else link.authorizer_id.display_name\"/>\n"
+"\n"
+"                        <t t-if=\"responsible_name\">\n"
+"\n"
+"                            <t t-if=\"printed_resp &gt; 0\"> | </t>\n"
+"\n"
+"                            <t t-out=\"responsible_name\"/>\n"
+"\n"
+"                            <t t-set=\"printed_resp\" t-value=\"printed_resp + 1\"/>\n"
+"                        </t>\n"
+"\n"
+"                    </t>\n"
+"\n"
+"                    <t t-if=\"printed_resp == 0\">\n"
+"                        <em>No hay autorizador responsable asignado.</em>\n"
+"                    </t>\n"
+"                    <t t-else=\"\">.</t>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_1_4
+msgid ""
+"<t><strong>File number registration </strong>/  <t t-out=\"object.name\"/></t>\n"
+"            "
+msgstr ""
+"<t><strong>Número del registro </strong>/  <t t-out=\"object.name\"/></t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_1_3
+msgid "<t>Applicant identification</t>"
+msgstr "<t>Identificación del solicitante</t>"
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_2_1
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_2_2
+msgid "<t>Coverage validation</t>"
+msgstr "<t>Cobertura válida</t>"
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_1
+msgid "<t>Data capturing</t>"
+msgstr "<t>Capturando datos</t>"
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_2_4
+msgid "<t>Number of valid events</t>"
+msgstr "<t>Número de eventos válidos</t>"
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_1_1
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_1_2
+msgid "<t>Opening of the service</t>"
+msgstr "<t>Apertura del servicio</t>"
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_2
+msgid "<t>Titular user</t>"
+msgstr "<t>Usuario titular</t>"
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_2_3
+msgid "<t>Valid term</t>"
+msgstr "<t>Vigencia válida</t>"
+
+#. module: ike_event_binnacle
+#: model:ir.model.constraint,message:ike_event_binnacle.constraint_ike_event_binnacle_category_name_uniq
+msgid "A category with the same name already exists."
+msgstr "Ya existe una categoría con el mismo nombre"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__message_needaction
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__message_needaction
+msgid "Action Needed"
+msgstr "Se requiere una acción"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__active
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__active
+msgid "Active"
+msgstr "Activo"
+
+#. module: ike_event_binnacle
+#. odoo-python
+#: code:addons/ike_event_binnacle/models/ike_event.py:0
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_comment_wizard_form
+msgid "Add Comment"
+msgstr "Añadir comentario"
+
+#. module: ike_event_binnacle
+#: model:ir.model,name:ike_event_binnacle.model_ike_add_affiliation_nu
+msgid "Add NU User to Event"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_category_form
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_form
+msgid "Archived"
+msgstr "Archivado"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_progress_summary_arrived
+msgid "Arrived"
+msgstr "Llegó"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_progress_summary_arrived_destination
+msgid "Arrived destination"
+msgstr "Llegó al destino"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_assigned_summary
+msgid "Assigned supplier"
+msgstr "Asignando proveedor"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_progress_summary_assigned
+msgid "Assinged"
+msgstr "Asignado"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__message_attachment_count
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__message_attachment_count
+msgid "Attachment Count"
+msgstr "Número de archivos adjuntos"
+
+#. module: ike_event_binnacle
+#. odoo-javascript
+#: code:addons/ike_event_binnacle/static/src/widgets/binnacle_widget/binnacle_widget.xml:0
+msgid "Author"
+msgstr "Entrada"
+
+#. module: ike_event_binnacle
+#. odoo-python
+#: code:addons/ike_event_binnacle/models/ike_event.py:0
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_screen_inherit_binnacle_form
+msgid "Binnacle"
+msgstr "Bitácora"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__binnacle_category_id
+msgid "Binnacle Category"
+msgstr "Categoría de bitácora"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event__binnacle_html
+msgid "Binnacle Html"
+msgstr "Html de Bitácora"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__binnacle_template_id
+msgid "Binnacle Template"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_1_1
+msgid "Binnacle stage mail template 1 1"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_1_2
+msgid "Binnacle stage mail template 1 2"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_1_3
+msgid "Binnacle stage mail template 1 3"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_1_4
+msgid "Binnacle stage mail template 1 4"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_2_1
+msgid "Binnacle stage mail template 2 1"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_2_2
+msgid "Binnacle stage mail template 2 2"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_2_3
+msgid "Binnacle stage mail template 2 3"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_2_4
+msgid "Binnacle stage mail template 2 4"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_1
+msgid "Binnacle stage mail template 3 1"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_10
+msgid "Binnacle stage mail template 3 10"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_11
+msgid "Binnacle stage mail template 3 11"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_12
+msgid "Binnacle stage mail template 3 12"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_13
+msgid "Binnacle stage mail template 3 13"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_14
+msgid "Binnacle stage mail template 3 14"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_15
+msgid "Binnacle stage mail template 3 15"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_16
+msgid "Binnacle stage mail template 3 16"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_2
+msgid "Binnacle stage mail template 3 2"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_3
+msgid "Binnacle stage mail template 3 3"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_4
+msgid "Binnacle stage mail template 3 4"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_5
+msgid "Binnacle stage mail template 3 5"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_6
+msgid "Binnacle stage mail template 3 6"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_7
+msgid "Binnacle stage mail template 3 7"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_8
+msgid "Binnacle stage mail template 3 8"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_3_9
+msgid "Binnacle stage mail template 3 9"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_4_1
+msgid "Binnacle stage mail template 4 1"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_4_2
+msgid "Binnacle stage mail template 4 2"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_4_3
+msgid "Binnacle stage mail template 4 3"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_4_4
+msgid "Binnacle stage mail template 4 4"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_5_1
+msgid "Binnacle stage mail template 5 1"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_5_2
+msgid "Binnacle stage mail template 5 2"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_5_3
+msgid "Binnacle stage mail template 5 3"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_5_4
+msgid "Binnacle stage mail template 5 4"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_5_5
+msgid "Binnacle stage mail template 5_5"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_5
+msgid "Binnacle stage mail template 7 5"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_1
+msgid "Binnacle stage mail template 7_1"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_10
+msgid "Binnacle stage mail template 7_10"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_11
+msgid "Binnacle stage mail template 7_11"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_13
+msgid "Binnacle stage mail template 7_13"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_13_1
+msgid "Binnacle stage mail template 7_13_1"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_14
+msgid "Binnacle stage mail template 7_14"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_2
+msgid "Binnacle stage mail template 7_2"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_22
+msgid "Binnacle stage mail template 7_22"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_28
+msgid "Binnacle stage mail template 7_28"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_29
+msgid "Binnacle stage mail template 7_29"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_3
+msgid "Binnacle stage mail template 7_3"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_30
+msgid "Binnacle stage mail template 7_30"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_31
+msgid "Binnacle stage mail template 7_31"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_4
+msgid "Binnacle stage mail template 7_4"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_9
+msgid "Binnacle stage mail template 7_9"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_8_1
+msgid "Binnacle stage mail template 8_1"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_8_2
+msgid "Binnacle stage mail template 8_2"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_9_1
+msgid "Binnacle stage mail template 9_1"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__text_html
+msgid "Body"
+msgstr "Plantilla"
+
+#. module: ike_event_binnacle
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_comment_wizard_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_cancel_summary
+msgid "Cancel - summary"
+msgstr "Resumen"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event__cancel_reason_text
+msgid "Cancel Reason Text"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_cancel
+msgid "Canceled"
+msgstr "Cancelado"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_capturanding_data_summary
+msgid "Capturanding data - Summary"
+msgstr "Resumen"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_capturanding_data
+msgid "Capturing service details"
+msgstr "Capturando datos del servicio"
+
+#. module: ike_event_binnacle
+#. odoo-javascript
+#: code:addons/ike_event_binnacle/static/src/widgets/binnacle_widget/binnacle_widget.xml:0
+msgid "Category"
+msgstr "Categoría"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__child_id
+msgid "Child Categories"
+msgstr "Categorías hijas"
+
+#. module: ike_event_binnacle
+#. odoo-javascript
+#: code:addons/ike_event_binnacle/static/src/widgets/binnacle_widget/binnacle_widget.xml:0
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_comment_wizard__body
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_screen_inherit_binnacle_form
+msgid "Comment"
+msgstr "Comentario"
+
+#. module: ike_event_binnacle
+#. odoo-javascript
+#: code:addons/ike_event_binnacle/static/src/widgets/binnacle_widget/binnacle_widget.xml:0
+msgid "Comments"
+msgstr "Comentarios"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_progress_summary_concepts_additionals
+msgid "Concepts additionals"
+msgstr "Conceptos adicionales"
+
+#. module: ike_event_binnacle
+#: model:ir.ui.menu,name:ike_event_binnacle.ike_menu_event_config_binnacle
+msgid "Configuration Binnacle"
+msgstr "Configuración bitácora de eventos"
+
+#. module: ike_event_binnacle
+#: model:ir.ui.menu,name:ike_event_binnacle.ike_menu_event_config_binnacle_category
+msgid "Configuration Binnacle Category"
+msgstr "Categoría de bitácora"
+
+#. module: ike_event_binnacle
+#: model:ir.actions.act_window,name:ike_event_binnacle.action_ike_event_binnacle
+msgid "Configuration Event Binnacle"
+msgstr "Bitácora de eventos"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_coverage_validation
+msgid "Coverage Validation"
+msgstr "Validación de cobertura"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_coverage_validation_summary
+msgid "Coverage_validation - Summary"
+msgstr "Resumen"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_opening_of_the_service
+msgid "Created"
+msgstr "Creado"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__create_uid
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__create_uid
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_comment_wizard__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__create_date
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__create_date
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_comment_wizard__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: ike_event_binnacle
+#. odoo-javascript
+#: code:addons/ike_event_binnacle/static/src/widgets/binnacle_widget/binnacle_widget.xml:0
+msgid "Date and Time"
+msgstr "Fecha y hora"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__description
+msgid "Description"
+msgstr "Descripción"
+
+#. module: ike_event_binnacle
+#. odoo-python
+#: code:addons/ike_event_binnacle/models/ike_event_binnacle.py:0
+#: code:addons/ike_event_binnacle/models/ike_event_binnacle_category.py:0
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__disabled
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__disabled
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_category_form
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_category_search
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_form
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_search
+msgid "Disabled"
+msgstr "Deshabilitado"
+
+#. module: ike_event_binnacle
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_binnacle_event_form
+msgid "Discard"
+msgstr "Cerrar"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__display_name
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__display_name
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_comment_wizard__display_name
+msgid "Display Name"
+msgstr "Nombre en pantalla"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event__duplicate_reason_id
+msgid "Duplicate Reason"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:ir.model,name:ike_event_binnacle.model_ike_event_duplicate_wizard
+msgid "Duplicate event wizard"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_category_search
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_search
+msgid "Enabled"
+msgstr "Habilitado"
+
+#. module: ike_event_binnacle
+#: model:ir.model,name:ike_event_binnacle.model_ike_event
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_comment_wizard__event_id
+msgid "Event"
+msgstr "Evento"
+
+#. module: ike_event_binnacle
+#. odoo-javascript
+#: code:addons/ike_event_binnacle/static/src/widgets/binnacle_widget/binnacle_widget.js:0
+#: model:ir.model,name:ike_event_binnacle.model_ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_comment_wizard__event_binnacle_id
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_mail_mail__event_binnacle_id
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_mail_message__event_binnacle_id
+msgid "Event Binnacle"
+msgstr "Evento"
+
+#. module: ike_event_binnacle
+#: model:ir.model,name:ike_event_binnacle.model_ike_event_binnacle_category
+msgid "Event Binnacle Category"
+msgstr "Categoría de bitácora"
+
+#. module: ike_event_binnacle
+#: model:ir.model,name:ike_event_binnacle.model_ike_event_comment_wizard
+msgid "Event Comment Wizard"
+msgstr "Wizard para comentarios de eventos"
+
+#. module: ike_event_binnacle
+#: model:ir.model,name:ike_event_binnacle.model_ike_event_confirm_wizard
+msgid "Event Confirm Wizard"
+msgstr "Asistente de confirmación de evento"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__event_stage_id
+msgid "Event Stage"
+msgstr "Etapa del evento"
+
+#. module: ike_event_binnacle
+#: model:ir.model,name:ike_event_binnacle.model_ike_event_supplier
+msgid "Event Supplier"
+msgstr "Proveedor del evento"
+
+#. module: ike_event_binnacle
+#: model:ir.model,name:ike_event_binnacle.model_ike_event_supplier_link
+msgid "Event Supplier Link"
+msgstr "Enlace de proveedor del evento"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_progress_summary_finalized
+msgid "Finalized"
+msgstr "Finalizado"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__message_follower_ids
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__message_partner_ids
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores (contactos)"
+
+#. module: ike_event_binnacle
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_category_search
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_search
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: ike_event_binnacle
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_form
+msgid "HTML"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__has_message
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__has_message
+msgid "Has Message"
+msgstr "Tiene un mensaje"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__id
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__id
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_comment_wizard__id
+msgid "ID"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,help:ike_event_binnacle.field_ike_event_binnacle__message_needaction
+#: model:ir.model.fields,help:ike_event_binnacle.field_ike_event_binnacle_category__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si está seleccionado, hay nuevos mensajes que requieren tu atención."
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,help:ike_event_binnacle.field_ike_event_binnacle__message_has_error
+#: model:ir.model.fields,help:ike_event_binnacle.field_ike_event_binnacle__message_has_sms_error
+#: model:ir.model.fields,help:ike_event_binnacle.field_ike_event_binnacle_category__message_has_error
+#: model:ir.model.fields,help:ike_event_binnacle.field_ike_event_binnacle_category__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si está seleccionado, algunos mensajes tienen error de envío."
+
+#. module: ike_event_binnacle
+#: model:ir.actions.act_window,name:ike_event_binnacle.action_ike_event_binnacle_category
+msgid "Ike Event Binnacle Category"
+msgstr "Categoría de bitácora"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_progress
+msgid "In progress"
+msgstr "En progreso"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__message_is_follower
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__message_is_follower
+msgid "Is Follower"
+msgstr "Es un seguidor"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__write_uid
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__write_uid
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_comment_wizard__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__write_date
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__write_date
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_comment_wizard__write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: ike_event_binnacle
+#: model:ir.model,name:ike_event_binnacle.model_mail_message
+msgid "Message"
+msgstr "Mensaje"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__message_has_error
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__message_has_error
+msgid "Message Delivery error"
+msgstr "Error al enviar el mensaje"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__message_ids
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__message_ids
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: ike_event_binnacle
+#: model:ir.model,name:ike_event_binnacle.model_ike_event_membership_authorization
+msgid "NUs Membership Authorization"
+msgstr "Autorización de membrecía"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__name
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__name
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_category_search
+msgid "Name"
+msgstr "Nombre"
+
+#. module: ike_event_binnacle
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_category_form
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_form
+msgid "Name..."
+msgstr "Nombre..."
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_supplier_link__new_concept_ids
+msgid "New Concept IDs"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__message_needaction_counter
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de intentos"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__message_has_error_counter
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de errores"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,help:ike_event_binnacle.field_ike_event_binnacle__message_needaction_counter
+#: model:ir.model.fields,help:ike_event_binnacle.field_ike_event_binnacle_category__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Número de mensajes que requieren una acción"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,help:ike_event_binnacle.field_ike_event_binnacle__message_has_error_counter
+#: model:ir.model.fields,help:ike_event_binnacle.field_ike_event_binnacle_category__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de envío"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_progress_summary_on_rute
+msgid "On rute"
+msgstr "En ruta"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_progress_summary_on_rute_to_destination
+msgid "On rute destination"
+msgstr "En ruta al destino"
+
+#. module: ike_event_binnacle
+#. odoo-javascript
+#: code:addons/ike_event_binnacle/static/src/widgets/binnacle_widget/binnacle_widget.xml:0
+msgid "Open Binnacle"
+msgstr "Bitácora"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__parent_id
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_category_search
+msgid "Parent"
+msgstr "Categoría padre"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__rating_ids
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_1_1
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_1_2
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_1_3
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_1_4
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_2_1
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_2_2
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_2_3
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_2_4
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_1
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_10
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_11
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_12
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_13
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_14
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_15
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_16
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_2
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_3
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_4
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_5
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_6
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_7
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_8
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_9
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_4_1
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_4_2
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_4_3
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_4_4
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_5_1
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_5_2
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_5_3
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_5_4
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_5_5
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_1
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_10
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_11
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_13
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_13_1
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_14
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_2
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_22
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_28
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_29
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_3
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_30
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_31
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_4
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_5
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_9
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_8_1
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_8_2
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_9_1
+msgid "Reference {{ object.name or 'n/a' }}"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__message_has_sms_error
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Error en el envío del SMS"
+
+#. module: ike_event_binnacle
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_comment_wizard_form
+msgid "Save Comment"
+msgstr "Guardar comentario"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_searching_supplier
+msgid "Searching supplier"
+msgstr "Buscando proveedor"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_progress_summary
+msgid "Service in progress"
+msgstr "Servicio en progreso"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_searching
+msgid "Service vehicle and concept selection"
+msgstr "Selección de vehículo de servicio y conceptos"
+
+#. module: ike_event_binnacle
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_binnacle_search
+msgid "Stage"
+msgstr "Etapa"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__step_number
+msgid "Step Number"
+msgstr "Paso número"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_opening_of_the_service_summary
+msgid "Summary"
+msgstr "Resumen"
+
+#. module: ike_event_binnacle
+#. odoo-javascript
+#: code:addons/ike_event_binnacle/static/src/widgets/binnacle_widget/binnacle_widget.xml:0
+msgid "Supplier"
+msgstr "Proveedor"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_assigned
+msgid "Supplier assigned"
+msgstr "Asignando proveedor"
+
+#. module: ike_event_binnacle
+#: model_terms:ir.actions.act_window,help:ike_event_binnacle.action_ike_event_binnacle_category
+msgid ""
+"There is no examples click here to add new Ike Event Binnacle Category."
+msgstr ""
+"No hay ejemplos haga clic aquí para agregar una nueva categoría de Binnacle "
+"de eventos de Ike"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__website_message_ids
+#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__website_message_ids
+msgid "Website Messages"
+msgstr "Mensajes del website"
+
+#. module: ike_event_binnacle
+#: model:ir.model.fields,help:ike_event_binnacle.field_ike_event_binnacle__website_message_ids
+#: model:ir.model.fields,help:ike_event_binnacle.field_ike_event_binnacle_category__website_message_ids
+msgid "Website communication history"
+msgstr "Historial de comunicación del website"
+
+#. module: ike_event_binnacle
+#: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_comment_wizard_form
+msgid "Write your comment here..."
+msgstr "Escriba su comentario aquí..."
+
+#. module: ike_event_binnacle
+#. odoo-python
+#: code:addons/ike_event_binnacle/models/ike_event_binnacle_category.py:0
+msgid "You cannot create recursive categories."
+msgstr "No se pueden crear categorías recursivas."
+
+#. module: ike_event_binnacle
+#. odoo-python
+#: code:addons/ike_event_binnacle/models/ike_event_binnacle.py:0
+msgid "paso"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_searching_summary
+msgid "searching - Summary"
+msgstr "Resumen"
+
+#. module: ike_event_binnacle
+#: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_searching_supplier_summary
+msgid "searching supplier - summary"
+msgstr "Búsqueda de proveedor"

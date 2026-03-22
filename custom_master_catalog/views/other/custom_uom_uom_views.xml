@@ -1,0 +1,20 @@
+<odoo>
+    <record id="custom_ike_product_uom_tree_view" model="ir.ui.view">
+        <field name="name">custom_ike_uom.uom.list</field>
+        <field name="model">uom.uom</field>
+        <field name="priority" eval="100"/>
+        <field name="mode">primary</field>
+        <field name="inherit_id" ref="uom.product_uom_tree_view"/>
+        <field name="arch" type="xml">
+            <list position="attributes">
+                <attribute name="edit">false</attribute>
+            </list>
+            <field name="category_id" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </field>
+            <field name="uom_type" position="attributes">
+                <attribute name="column_invisible">1</attribute>
+            </field>
+        </field>
+    </record>
+</odoo>

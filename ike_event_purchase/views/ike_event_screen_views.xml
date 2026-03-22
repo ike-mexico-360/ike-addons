@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ike_event_screen_inherit_purchase_order_form" model="ir.ui.view">
+        <field name="name">view.ike.event.screen.inherit.purchase.order.form</field>
+        <field name="model">ike.event</field>
+        <field name="inherit_id" ref="ike_event.view_ike_event_screen_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button
+                    name="x_action_create_purchases"
+                    string="Create Purchase Order"
+                    type="object"
+                    class="btn-primary"
+                    invisible="stage_ref != 'completed' or x_purchase_ids_count &gt; 0"
+                />
+                <field name="x_purchase_ids_count" invisible="1"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <div class="oe_button_box" name="button_box">
+                    <button name="x_action_view_purchases" string="Purchase Orders"
+                        type="object" class="oe_stat_button" icon="fa-shopping-cart"
+                        invisible="x_purchase_ids_count &lt;= 0"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

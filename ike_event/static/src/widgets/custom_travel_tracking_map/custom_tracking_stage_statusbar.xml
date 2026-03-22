@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Detalles de proveedor -->
+    <t t-name="ike_event.IkeTravelTrackingStatusbar">
+
+        <!-- Progress Stepper -->
+        <div class="travel_tracking_progress">
+            <div class="progress_container">
+                <t t-set="lastItem" t-value="items[items.length - 1]"/>
+                <t t-foreach="items" t-as="item" t-key="item.id">
+                    <div class="progress_step">
+                        <div t-attf-class="step_circle {{ item.isSelected === true ? 'selected' : '' }}">
+                            <i t-if="item.isSelected === true" class="fa fa-check"/>
+                        </div>
+                        <div t-attf-class="step_label {{ item.isSelected === true ? 'selected': '' }}" t-out="item.label"/>
+                    </div>
+                    <div class="progress_line" t-if="item.id !== lastItem.id"/>
+                </t>
+            </div>
+        </div>
+
+    </t>
+
+</templates>

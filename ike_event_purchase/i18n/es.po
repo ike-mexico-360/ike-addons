@@ -1,0 +1,636 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ike_event_purchase
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0-20250918\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-05 21:00+0000\n"
+"PO-Revision-Date: 2026-03-05 21:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.res_config_settings_view_form_purchase_inherit_ike_event_purchase
+msgid "<span> hours</span>"
+msgstr "<span> horas</span>"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "A dispute can only be opened on orders in Sent state."
+msgstr "Una disputa solo puede abrirse en las órdenes en estado Enviado."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Accept"
+msgstr "Aceptar"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Add concept"
+msgstr "Añadir concepto"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_po_inherited_view_form_inherit_ike_event_purchase
+msgid "Approve dispute"
+msgstr "Aprobar disputa"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_price_unit_approved
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_purchase_purchase_order_portal_content
+msgid "Approved Price"
+msgstr "Precio aprobado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_product_qty_approved
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_purchase_purchase_order_portal_content
+msgid "Approved Quantity"
+msgstr "Cantidad aprobada"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__biweekly
+msgid "Biweekly"
+msgstr "Cada 14 días"
+
+#. module: ike_event_purchase
+#: model:ir.model,name:ike_event_purchase.model_res_company
+msgid "Companies"
+msgstr "Empresas"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Concept"
+msgstr "Concepto"
+
+#. module: ike_event_purchase
+#: model:ir.model,name:ike_event_purchase.model_res_config_settings
+msgid "Config Settings"
+msgstr "Ajustes de configuración"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_kpis_tree_inherit_ike_event_purchase
+msgid "Consolidate"
+msgstr "Consolidar"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__state__consolidated
+msgid "Consolidated"
+msgstr "Consolidado"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_partner__x_consolidation_frequency
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_users__x_consolidation_frequency
+msgid "Consolidation Frequency"
+msgstr "Frecuencia de consolidación"
+
+#. module: ike_event_purchase
+#: model:ir.model,name:ike_event_purchase.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_ike_event_screen_inherit_purchase_order_form
+msgid "Create Purchase Order"
+msgstr "Crear orden de compra"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__daily
+msgid "Daily"
+msgstr "Diario"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_partner__x_consolidation_day_of_month
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_users__x_consolidation_day_of_month
+msgid "Day of Month"
+msgstr "Día del mes"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_partner__x_consolidation_day_of_week
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_users__x_consolidation_day_of_week
+msgid "Day of Week"
+msgstr "Día de la semana"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Discount"
+msgstr "Descuento"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_dispute_approved
+msgid "Dispute Approved"
+msgstr "Disputa Aprobada"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "Dispute Opened"
+msgstr "Disputa Abierta"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_price_unit_dispute
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_purchase_purchase_order_portal_content
+msgid "Dispute Price"
+msgstr "Precio disputado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_product_qty_dispute
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_purchase_purchase_order_portal_content
+msgid "Dispute Quantity"
+msgstr "Cantidad disputada"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_dispute_state
+msgid "Dispute State"
+msgstr "Estado de disputa"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.js:0
+msgid "Dispute approved"
+msgstr "Disputa aprobada"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "Dispute approved. Approved values have been recorded."
+msgstr "Disputa aprobada. Valores aprobados han sido registrados."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.js:0
+msgid "Dispute declined"
+msgstr "Disputa rechazada"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "Dispute rejected. The values change has been reverted."
+msgstr "Disputa rechazada. Los valores han sido revertidos."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "Dispute sent successfully"
+msgstr "Disputa enviada correctamente"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "Error at accept prices: "
+msgstr "Error al aceptar precios: "
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.js:0
+msgid "Error at approve dispute: "
+msgstr "Error al aprobar disputa: "
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.js:0
+msgid "Error at decline dispute: "
+msgstr "Error al rechazar disputa: "
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "Error consolidating purchase orders"
+msgstr "Error al consolidar órdenes de compra"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "Error loading complementary data: "
+msgstr "Error al cargar datos complementarios: "
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.js:0
+msgid "Error loading order data: "
+msgstr "Error al cargar datos de la orden: "
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "Error sending dispute: "
+msgstr "Error al enviar disputa: "
+
+#. module: ike_event_purchase
+#: model:ir.model,name:ike_event_purchase.model_ike_event
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_event_id
+msgid "Event"
+msgstr "Evento"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__5
+msgid "Friday"
+msgstr "Viernes"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_partner__x_has_consolidation
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_users__x_has_consolidation
+msgid "Has Consolidation"
+msgstr "Tiene consolidación"
+
+#. module: ike_event_purchase
+#: model:ir.model,name:ike_event_purchase.model_sh_helpdesk_ticket
+msgid "Helpdesk Ticket"
+msgstr "Ticket de Ayuda"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.js:0
+msgid "Invalid dispute action: "
+msgstr "Acción de disputa inválida: "
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
+msgid "Loading..."
+msgstr "Cargando..."
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_membership_plan_id
+msgid "Membership Plan"
+msgstr "Membresía"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__1
+msgid "Monday"
+msgstr "Lunes"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__monthly
+msgid "Monthly"
+msgstr "Mensual"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_partner__x_consolidation_next_date
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_users__x_consolidation_next_date
+msgid "Next Consolidation Date"
+msgstr "Próxima fecha de consolidación"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__none
+msgid "No Dispute"
+msgstr "Sin disputa"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "No changes to save"
+msgstr "No hay cambios para guardar"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__open
+msgid "Open"
+msgstr "Abierto"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "Order Details"
+msgstr "Detalles de la Orden"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "Price"
+msgstr "Precio"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Product"
+msgstr "Producto"
+
+#. module: ike_event_purchase
+#: model:ir.model,name:ike_event_purchase.model_product_product
+msgid "Product Variant"
+msgstr "Variante del producto"
+
+#. module: ike_event_purchase
+#: model:mail.template,name:ike_event_purchase.ike_event_purchase_proposal_dispute_ticket
+msgid "Proposal dispute: Send by email"
+msgstr "Propuesta de disputa: Enviar por correo electrónico"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
+#: model:ir.model,name:ike_event_purchase.model_purchase_order
+msgid "Purchase Order"
+msgstr "Orden de compra"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__purchase_order_details
+msgid "Purchase Order Details"
+msgstr "Detalles de la Orden de Compra"
+
+#. module: ike_event_purchase
+#: model:ir.model,name:ike_event_purchase.model_purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Línea de la orden de compra"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_ike_event_screen_inherit_purchase_order_form
+msgid "Purchase Orders"
+msgstr "Ordenes de Compra"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "Purchase orders consolidated"
+msgstr "Ordenes de compra consolidadas"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event__x_purchase_ids
+msgid "Purchases"
+msgstr "Compras"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event__x_purchase_ids_count
+msgid "Purchases Count"
+msgstr "Cantidad de Compras"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "Qty"
+msgstr "Cantidad"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Quantity"
+msgstr "Cantidad"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__rejected
+msgid "Rejected"
+msgstr "Rechazada"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
+msgid "Request for Quotation"
+msgstr "Solicitud de Cotización"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__resolved
+msgid "Resolved"
+msgstr "Resuelto"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__6
+msgid "Saturday"
+msgstr "Sábado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Select UoM"
+msgstr "Seleccionar Unidad de Medida"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Select a product"
+msgstr "Seleccionar un producto"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Send Dispute"
+msgstr "Enviar disputa"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Start Dispute"
+msgstr "Iniciar disputa"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__state
+msgid "Status"
+msgstr "Estado"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_po_inherited_view_form_inherit_ike_event_purchase
+msgid "Submit dispute"
+msgstr ""
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__submitted
+msgid "Submitted"
+msgstr "Enviada"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_sub_service_id
+msgid "Subservice"
+msgstr "Subservicio"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__0
+msgid "Sunday"
+msgstr "Domingo"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_supplier_product_id
+msgid "Supplier Product"
+msgstr "Producto del proveedor"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Taxes"
+msgstr "Impuestos"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_form_view_inherit_ike_event_purchase
+msgid "Test Scalar"
+msgstr ""
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
+msgid "Test Ticket Details"
+msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
+msgid "The dispute has been approved."
+msgstr "La disputa ha sido aprobada."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
+msgid "The dispute has been rejected."
+msgstr "La disputa ha sido rechazada."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "The dispute has been submitted."
+msgstr "La disputa ha sido enviada."
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid ""
+"The following orders have an open or submitted dispute and cannot be consolidated:\n"
+"%s"
+msgstr "Las siguientes órdenes tienen una disputa abierta o enviada y no pueden ser consolidadas:\n%s"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid ""
+"The supplier declined the order. Dispute opened, awaiting supplier proposal."
+msgstr ""
+"El proveedor rechazó la orden. Disputa abierta, esperando la propuesta del "
+"proveedor."
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "The supplier has submitted their dispute proposal on ticket #%s."
+msgstr "El proveedor ha enviado su propuesta de disputa en el ticket #%s."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "There are fields with invalid values"
+msgstr "Hay campos con valores inválidos"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "There is a dispute on this order."
+msgstr "Hay una disputa en esta orden."
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "There is no open dispute on this order."
+msgstr "No hay ninguna disputa abierta en esta orden."
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "There is no submitted dispute on this order."
+msgstr "No hay ninguna disputa enviada en esta orden."
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "This order already has a dispute submitted."
+msgstr "Esta orden ya tiene una disputa enviada."
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "This order already has an open dispute."
+msgstr "Esta orden ya tiene una disputa abierta."
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__4
+msgid "Thursday"
+msgstr "Jueves"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_company__x_time_for_automatic_purchase_generation
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_config_settings__x_time_for_automatic_purchase_generation
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.res_config_settings_view_form_purchase_inherit_ike_event_purchase
+msgid "Time for automatic purchase generation"
+msgstr "Tiempo espera para generación automatica"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__state__to_consolidate
+msgid "To Consolidate"
+msgstr "Para consolidar"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__triweekly
+msgid "Triweekly"
+msgstr "Cada 21 días"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__2
+msgid "Tuesday"
+msgstr "Martes"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Unit Price"
+msgstr "Precio Unitario"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.js:0
+msgid "Unknown error"
+msgstr "Error desconocido"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
+msgid "Wait a moment, processing..."
+msgstr "Espere un momento, procesando..."
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,help:ike_event_purchase.field_res_company__x_time_for_automatic_purchase_generation
+#: model:ir.model.fields,help:ike_event_purchase.field_res_config_settings__x_time_for_automatic_purchase_generation
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.res_config_settings_view_form_purchase_inherit_ike_event_purchase
+msgid "Waiting time to automatically approve the quote"
+msgstr "Tiempo de espera para aprobar de forma automatica la Cotización"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__3
+msgid "Wednesday"
+msgstr "Miércoles"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__weekly
+msgid "Weekly"
+msgstr "Semanal"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "You must propose at least one new price or quantity before submitting."
+msgstr "Debe proponer al menos una nueva cantidad o precio antes de enviar."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
+msgid "close"
+msgstr "cerrar"
+
+#. module: ike_event_purchase
+#: model:mail.template,subject:ike_event_purchase.ike_event_purchase_proposal_dispute_ticket
+msgid ""
+"{{object.company_id.name}} Dispute opened (Ref {{object.name or 'n/a' }})"
+msgstr "{{object.company_id.name}} Disputa abierta (Ref {{object.name or 'n/a' }})"

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkeCheckboxField">
+        <div class="o_ike_checkbox_root">
+            <label class="d-flex flex-row align-items-center justify-content-between gap-2 text-nowrap">
+
+                <span class="o_ike_checkbox_label">
+                    <span t-if="label" t-esc="label"/>
+                </span>
+
+                <div class="o_ike_checkbox_input">
+                    <input
+                        type="checkbox"
+                        t-att-checked="props.record.data[props.name]"
+                        t-att-disabled="props.readonly"
+                        t-on-change="(ev) => this.onChange(ev.target.checked)"
+                    />
+                </div>
+            </label>
+        </div>
+    </t>
+</templates>

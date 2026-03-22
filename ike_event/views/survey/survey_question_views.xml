@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- <record id="ike_survey_user_input_view_list" model="ir.ui.view">
+        <field name="name">ike.survey.user_input.view.list</field>
+        <field name="model">survey.user_input</field>
+        <field name="arch" type="xml">
+            <list create="0" delete="0">
+                <field name="event_id"/>
+                <field name="survey_id"/>
+            </list>
+        </field>
+    </record> -->
+
+    <record id="survey_question_form" model="ir.ui.view">
+        <field name="name">ike.survey.question.form.inherit</field>
+        <field name="model">survey.question</field>
+        <field name="inherit_id" ref="survey.survey_question_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='options']" position="inside">
+                <group>
+                    <group string="Operators">
+                        <field name="x_send_to_operator" />
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

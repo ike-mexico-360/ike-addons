@@ -1,0 +1,58 @@
+
+$ike-brand: #005691 !default;
+$whatsapp: #25d366 !default;
+
+$o-btns-bs-override: map-merge($o-btns-bs-override, (
+    "brand": (
+        background: $ike-brand,
+        border: $ike-brand,
+        color: $o-white,
+        hover-background: darken($ike-brand, 10%),
+        hover-border: darken($ike-brand, 20%),
+        hover-color: $o-white,
+        active-background: darken($ike-brand, 20%),
+        active-border: darken($ike-brand, 20%),
+        active-color: $o-white,
+        focus-box-shadow: 0 0 0 0.2rem rgba($ike-brand, 0.25),
+    ),
+    "whatsapp": (
+        background: $whatsapp,
+        border: $whatsapp,
+        color: $o-white,
+        hover-background: darken($whatsapp, 10%),
+        hover-border: darken($whatsapp, 20%),
+        hover-color: $o-white,
+        active-background: darken($whatsapp, 20%),
+        active-border: darken($whatsapp, 20%),
+        active-color: $o-white,
+        focus-box-shadow: 0 0 0 0.2rem rgba($whatsapp, 0.25),
+    )
+));
+
+$o-btns-bs-outline-override: map-merge($o-btns-bs-outline-override, (
+    "brand": (
+        background: $o-white,
+        border: $ike-brand,
+        color: $ike-brand,
+        hover-background: $ike-brand,
+        hover-border: darken($ike-brand, 20%),
+        hover-color: $o-white,
+        active-background: darken($ike-brand, 20%),
+        active-border: darken($ike-brand, 20%),
+        active-color: $o-white,
+        focus-box-shadow: 0 0 0 0.2rem rgba($ike-brand, 0.25),
+    ),
+    "whatsapp": (
+        background: $o-white,
+        border: $whatsapp,
+        color: $whatsapp,
+        hover-background: darken($whatsapp, 10%),
+        hover-border: darken($whatsapp, 20%),
+        hover-color: $o-white,
+        active-background: darken($whatsapp, 20%),
+        active-border: darken($whatsapp, 20%),
+        active-color: $o-white,
+        focus-box-shadow: 0 0 0 0.2rem rgba($whatsapp, 0.25),
+    )
+));
+

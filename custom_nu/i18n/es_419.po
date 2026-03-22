@@ -1,0 +1,1838 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* custom_nu
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-09 14:03+0000\n"
+"PO-Revision-Date: 2026-03-09 14:03+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus_vehicle.py:0
+msgid ""
+"- The VIN contains invalid characters. Letters I, O, and Q are not allowed."
+msgstr ""
+"- El número de chasis (VIN) contiene caracteres no válidos. No se permiten "
+"las letras I, O y Q."
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus_vehicle.py:0
+msgid "- The VIN must be exactly 17 characters long (currently %(length)d)."
+msgstr ""
+"- El número de chasis (VIN) debe tener exactamente 17 caracteres "
+"(actualmente tiene %(length)d)."
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid "<i class=\"fa fa-globe\"/> National"
+msgstr "<i class=\"fa fa-globe\"/> Nacional"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid "<i class=\"fa fa-map-marker\"/> Local"
+msgstr ""
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid "<i class=\"fa fa-plane\"/> Foreigner"
+msgstr "<i class=\"fa fa-plane\"/> Extranjero"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid ""
+"<small class=\"text-muted d-block mb-1\" style=\"font-size: "
+"0.65rem;\">Commercial Name:</small>"
+msgstr "Nombre Comercial:"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid ""
+"<small class=\"text-muted d-block mb-1\" style=\"font-size: "
+"0.65rem;\">Coverage:</small>"
+msgstr ""
+"<small class=\"text-muted d-block mb-1\" style=\"font-size: "
+"0.65rem;\">Cobertura:</small>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid ""
+"<small class=\"text-muted d-block\" style=\"font-size: "
+"0.65rem;\">Subservice:</small>"
+msgstr ""
+"<small class=\"text-muted d-block\" style=\"font-size: "
+"0.65rem;\">Subservicio:</small>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid ""
+"<small class=\"text-muted\" style=\"font-size: 0.55rem;\">Period per "
+"event</small>"
+msgstr ""
+"<small class=\"text-muted\" style=\"font-size: 0.55rem;\">Periodo por "
+"evento</small>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid ""
+"<small class=\"text-muted\" style=\"font-size: 0.55rem;\">limit per "
+"event</small>"
+msgstr ""
+"<small class=\"text-muted\" style=\"font-size: 0.55rem;\">Limite por "
+"evento</small>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_membership_nus_view_kanban
+msgid ""
+"<span class=\"badge rounded-pill text-bg-danger small ps-1\">\n"
+"                                    <i class=\"fa fa-times me-1\"/> Expired validity\n"
+"                                </span>"
+msgstr ""
+"<span class=\"badge rounded-pill text-bg-danger small ps-1\">\n"
+"                                    <i class=\"fa fa-times me-1\"/> Vigencia vencida\n"
+"                                </span>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_membership_nus_view_kanban
+msgid ""
+"<span class=\"badge rounded-pill text-bg-success small ps-2\">\n"
+"                                    <i class=\"fa fa-check-circle me-1\"/> Active validity\n"
+"                                </span>"
+msgstr ""
+"<span class=\"badge rounded-pill text-bg-success small ps-2\">\n"
+"                                    <i class=\"fa fa-check-circle me-1\"/> Vigencia activa\n"
+"                                </span>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_membership_nus_view_kanban
+msgid "<span class=\"fw-bolder\">Account: </span>"
+msgstr "<span class=\"fw-bolder\">Cuenta: </span>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_kanban
+msgid "<span class=\"fw-bolder\">City:</span>"
+msgstr "<span class=\"fw-bolder\">Ciudad:</span>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_membership_nus_view_kanban
+msgid "<span class=\"fw-bolder\">Clue: </span>"
+msgstr "<span class=\"fw-bolder\">Clave: </span>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_vehicle_view_kanban
+msgid "<span class=\"fw-bolder\">License Plate:</span>"
+msgstr "<span class=\"fw-bolder\">Matrícula:</span>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_kanban
+msgid "<span class=\"fw-bolder\">State:</span>"
+msgstr "<span class=\"fw-bolder\">Estado:</span>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_kanban
+msgid "<span class=\"fw-bolder\">Street:</span>"
+msgstr "<span class=\"fw-bolder\">Calle:</span>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_vehicle_view_kanban
+msgid "<span class=\"fw-bolder\">Subbrand:</span>"
+msgstr "<span class=\"fw-bolder\">Submarca:</span>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_membership_nus_view_kanban
+msgid "<span class=\"fw-bolder\">Validity: </span>"
+msgstr "<span class=\"fw-bolder\">Validez: </span>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_kanban
+msgid "<span class=\"fw-bolder\">Zip code:</span>"
+msgstr "<span class=\"fw-bolder\">C.P.:</span>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid ""
+"<strong class=\"text-muted\" style=\"font-size: "
+"0.55rem;\">Considerations</strong>"
+msgstr ""
+"<strong class=\"text-muted\" style=\"font-size: "
+"0.55rem;\">Consideraciones</strong>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid "<strong class=\"text-muted\" style=\"font-size: 0.55rem;\">Exclusions</strong>"
+msgstr ""
+"<strong class=\"text-muted\" style=\"font-size: "
+"0.55rem;\">Exclusiones</strong>"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_address_type.py:0
+msgid "A record with the same name already exists."
+msgstr "Ya existe un registro con el mismo nombre."
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__account_id
+msgid "Account"
+msgstr "Cuenta"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__account_identification_id
+msgid "Account Identification"
+msgstr "Identificacion de cuenta"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__account_type_id
+msgid "Account Type"
+msgstr "Tipo de cuenta"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__message_needaction
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__message_needaction
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__message_needaction
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__message_needaction
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__message_needaction
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__message_needaction
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__message_needaction
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__message_needaction
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__message_needaction
+msgid "Action Needed"
+msgstr "Se requiere acción"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__active
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__active
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__active
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__active
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__active
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__active
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__active
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__active
+msgid "Active"
+msgstr "Activo"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_considerations_html_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_exclusions_html_form
+msgid "Add details..."
+msgstr "Agregar detalles..."
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_form
+msgid "Address"
+msgstr "Dirección"
+
+#. module: custom_nu
+#: model:ir.actions.act_window,name:custom_nu.custom_nus_address_type_action
+#: model:ir.ui.menu,name:custom_nu.custom_nus_address_type_menu
+msgid "Address types"
+msgstr "Tipo de direcciones"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__address_nus_ids
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Addresses"
+msgstr "Direcciones"
+
+#. module: custom_nu
+#: model:ir.ui.menu,name:custom_nu.custom_nus_address_menu
+msgid "Addresses NUs"
+msgstr "Direcciones NUs"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_search
+msgid "Addresses Nus"
+msgstr "Direcciones NUs"
+
+#. module: custom_nu
+#: model:res.groups,name:custom_nu.group_custom_nus_admin
+msgid "Administrator (No Delete)"
+msgstr "Administrador"
+
+#. module: custom_nu
+#: model:ir.model.fields.selection,name:custom_nu.selection__custom_membership_plan__cicle_reset__aniversary_date
+msgid "Anniversary date"
+msgstr "Fecha de Aniversario"
+
+#. module: custom_nu
+#: model:ir.model.fields.selection,name:custom_nu.selection__custom_membership_plan_product_line__period__annually
+msgid "Annually"
+msgstr "Anual"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_type_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_breed_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_type_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_nus_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Archived"
+msgstr "Archivado"
+
+#. module: custom_nu
+#: model:ir.model.fields.selection,name:custom_nu.selection__custom_membership_plan__cicle_reset__at_the_end_of_the_year
+msgid "At the end of the year"
+msgstr "Al finalizar el año"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__message_attachment_count
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__message_attachment_count
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__message_attachment_count
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__message_attachment_count
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__message_attachment_count
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__message_attachment_count
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__message_attachment_count
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__message_attachment_count
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__message_attachment_count
+msgid "Attachment Count"
+msgstr "Número de archivos adjuntos"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__bp_account_ref
+msgid "BP Reference"
+msgstr "Referencia BP"
+
+#. module: custom_nu
+#: model:ir.model.fields.selection,name:custom_nu.selection__custom_membership_plan_product_line__period__biannually
+msgid "Biannually"
+msgstr "Bimestral"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__birthdate
+msgid "Birthdate"
+msgstr "Fecha de nacimiento"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__breed_id
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_view_search
+msgid "Breed"
+msgstr "Raza"
+
+#. module: custom_nu
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_plan__bp_account_ref
+msgid ""
+"BrightPattern service reference value; this value will be used to search for"
+" the coverage plan when the call is received at the BrightPattern endpoint."
+msgstr "Referencia de servicio BrightPattern; este valor se utilizará para buscar"
+" el plan de cobertura cuando se reciba la llamada en el endpoint de BrightPattern."
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__vehicle_category_id
+msgid "Category"
+msgstr "Categoría"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__vin_sn_nus
+msgid "Chassis Number"
+msgstr "Número de chasis"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__check_is_fleet
+msgid "Check Is Fleet"
+msgstr "Es flotilla"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__check_is_special
+msgid "Check Is Special"
+msgstr "Es especial"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__check_second_key
+msgid "Check second key"
+msgstr "Verifique la segunda clave"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__cicle_reset
+msgid "Cicle Reset"
+msgstr "Ciclo de reseteo"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__city_nus
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_form
+msgid "City"
+msgstr "Ciudad"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__check_clause
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__clause
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__second_check_clause
+msgid "Clause"
+msgstr "Inciso"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper__code
+msgid "Code"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__l10n_mx_edi_colony_nus
+msgid "Colony"
+msgstr "Colonia"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_form
+msgid "Colony..."
+msgstr "Colonia..."
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__commercial_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__commercial_name
+msgid "Commercial Name"
+msgstr "Nombre comercial"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__complete_phone
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Complete Phone"
+msgstr "Teléfono completo"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__display_complete_phone
+msgid "Complete Phone Display"
+msgstr "Teléfono completo"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__x_concept_domain
+msgid "Concept domain"
+msgstr "Dominio de conceptos"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__product_id
+msgid "Concepto"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__detail_ids
+msgid "Conceptos"
+msgstr ""
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_form
+msgid "Conceptos Detallados"
+msgstr ""
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_membership_plan.py:0
+msgid ""
+"Configuration Conflict: You cannot have a \"General\" rule (no weight) and "
+"\"Specific\" rules (with weight) for the same service combination."
+msgstr ""
+"Conflicto de configuración: No puede tener una regla \"General\" (sin peso) "
+"y reglas \"Específicas\" (con peso) para la misma combinación de servicios."
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid "Connection error: %s"
+msgstr "Error de conexión: %s"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_membership_plan.py:0
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_form
+msgid "Considerations"
+msgstr "Consideraciones"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__considerations_html
+msgid "Considerations Html"
+msgstr "Consideraciones"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_considerations_html_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_exclusions_html_form
+msgid "Content"
+msgstr "Contenido"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__cost
+msgid "Cost ($)"
+msgstr "Costo ($)"
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_res_country
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__country_id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__country_nus_id
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Country"
+msgstr "País"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_form
+msgid "Coverage"
+msgstr "Cobertura"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_membership_plan.py:0
+msgid "Coverage Details"
+msgstr "Detalle de cobertura"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__coverage_type
+msgid "Coverage Type"
+msgstr "Tipo de cobertura"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_form
+msgid "Coverage rules"
+msgstr "Reglas de cobertura"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_encryption_utility__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper_rel__create_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_encryption_utility__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper_rel__create_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__currency_id
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_encryption_utility
+msgid "Custom Encryption Utility"
+msgstr "Utilidad de cifrado personalizada"
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_membership_nus
+msgid "Custom Membership NUs"
+msgstr "Afiliaciones"
+
+#. module: custom_nu
+#: model:ir.actions.act_window,name:custom_nu.action_custom_membership_nus
+msgid "Custom Membership Nus"
+msgstr "Afiliaciones"
+
+#. module: custom_nu
+#: model:ir.actions.act_window,name:custom_nu.action_custom_membership_plan
+#: model:ir.model,name:custom_nu.model_custom_membership_plan
+msgid "Custom Membership Plan"
+msgstr "Plan de cobertura"
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_nus_address
+msgid "Custom NUS Address"
+msgstr "Custom NUD Dirección"
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_nus_pet
+msgid "Custom NUS Pet"
+msgstr "NUS Mascota"
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_nus_vehicle
+msgid "Custom NUS Vehicle"
+msgstr "Custom NUS Vehículo"
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_nus
+#: model:ir.module.category,name:custom_nu.module_category_custom_nu
+msgid "Custom NUs"
+msgstr "NUs"
+
+#. module: custom_nu
+#: model:ir.actions.act_window,name:custom_nu.action_custom_nus
+msgid "Custom Nus"
+msgstr "NUs"
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_address_type
+msgid "Custom address type"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_nus_search_helper
+msgid "Custom nus search helper"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_nus_search_helper_rel
+msgid "Custom nus search helper rel"
+msgstr ""
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_type_view_form
+msgid "Custom_address_type"
+msgstr "Custom_address_type Py"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__date
+msgid "Date"
+msgstr "Fecha"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__date_end
+msgid "Date End"
+msgstr "Fecha de finalización"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__name
+msgid "Descripción"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__description
+msgid "Description"
+msgstr "Descripción"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__product_description_po
+msgid "Description PO"
+msgstr "Descripción orden de compra"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_nus_form
+msgid "Detail"
+msgstr "Detalle"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid "Details"
+msgstr "Detalles"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_address_type.py:0
+#: code:addons/custom_nu/models/custom_membership_nus.py:0
+#: code:addons/custom_nu/models/custom_membership_plan.py:0
+#: code:addons/custom_nu/models/custom_nus_pet_breed.py:0
+#: code:addons/custom_nu/models/custom_nus_pet_type.py:0
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__disabled
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__disabled
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__disabled
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__disabled
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__disabled
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__disabled
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__disabled
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__disabled
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_type_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_type_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_breed_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_breed_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_type_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_type_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_nus_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_nus_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_search
+msgid "Disabled"
+msgstr "Deshabilitado"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_considerations_html_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_exclusions_html_form
+msgid "Discard"
+msgstr "Cerrar"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_encryption_utility__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper_rel__display_name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__display_name
+msgid "Display Name"
+msgstr "Nombre a mostrar"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__x_display_mask
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__x_display_mask_second
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__x_display_mask
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__x_display_mask_second
+msgid "Display mask"
+msgstr "Máscara de visualización"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__check_second_key
+msgid "Do you have a second key?"
+msgstr "Tiene segunda clave?"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_membership_plan.py:0
+msgid ""
+"Duplicate found: An identical record already exists for this combination."
+msgstr "Combinación duplicada: Ya existe un registro idéntico."
+
+#. module: custom_nu
+#: model:ir.model.constraint,message:custom_nu.constraint_custom_membership_plan_line_product_uniq_line_product
+msgid "El subservicio ya existe en esta línea."
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__email
+#: model:ir.model.fields.selection,name:custom_nu.selection__custom_nus__preference_contact__email
+msgid "Email"
+msgstr "Correo electrónico"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_type_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_breed_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_type_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_nus_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_search
+msgid "Enabled"
+msgstr "Habilitado"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper_rel__encrypt_helper_id
+msgid "Encrypt Helper"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper_rel__encrypt_model_id
+msgid "Encrypt Model"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper__encrypt_rel_ids
+msgid "Encrypt Rel"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__contract_end_date
+msgid "End Date"
+msgstr "Fecha final del contrato"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid "Error connecting to SMS API: %s"
+msgstr "Error al conectar con la API de SMS: %s"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid "Error connecting to WhatsApp API: %s"
+msgstr "Error al conectar con la API de WhatsApp: %s"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_membership_plan.py:0
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_form
+msgid "Exclusions"
+msgstr "Exclusiones"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__exclusions_html
+msgid "Exclusions Html"
+msgstr "Exclusiones"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid "Failed to obtain token: %s"
+msgstr "No se pudo obtener el token: %s"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper_rel__field_name
+msgid "Field Name"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__message_follower_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__message_follower_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__message_follower_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__message_follower_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__message_follower_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__message_follower_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__message_follower_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__message_follower_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__message_partner_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__message_partner_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__message_partner_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__message_partner_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__message_partner_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__message_partner_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__message_partner_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__message_partner_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores"
+
+#. module: custom_nu
+#: model:ir.model.fields,help:custom_nu.field_custom_address_type__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__foreigner
+msgid "Foreigner"
+msgstr "Extranjero"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_type_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_breed_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_type_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_vehicle_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_nus_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_search
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__has_message
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__has_message
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__has_message
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__has_message
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__has_message
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__has_message
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__has_message
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__has_message
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__has_message
+msgid "Has Message"
+msgstr "Tiene mensaje"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_encryption_utility__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper_rel__id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__id
+msgid "ID"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,help:custom_nu.field_custom_address_type__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,help:custom_nu.field_custom_address_type__message_needaction
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_nus__message_needaction
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_plan__message_needaction
+#: model:ir.model.fields,help:custom_nu.field_custom_nus__message_needaction
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_address__message_needaction
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet__message_needaction
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet_breed__message_needaction
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet_type__message_needaction
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_vehicle__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si está marcado, los mensajes nuevos requieren su atención."
+
+#. module: custom_nu
+#: model:ir.model.fields,help:custom_nu.field_custom_address_type__message_has_error
+#: model:ir.model.fields,help:custom_nu.field_custom_address_type__message_has_sms_error
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_nus__message_has_error
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_nus__message_has_sms_error
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_plan__message_has_error
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_plan__message_has_sms_error
+#: model:ir.model.fields,help:custom_nu.field_custom_nus__message_has_error
+#: model:ir.model.fields,help:custom_nu.field_custom_nus__message_has_sms_error
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_address__message_has_error
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_address__message_has_sms_error
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet__message_has_error
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet__message_has_sms_error
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet_breed__message_has_error
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet_breed__message_has_sms_error
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet_type__message_has_error
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet_type__message_has_sms_error
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_vehicle__message_has_error
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_vehicle__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si está marcada, algunos mensajes tendrán un error de entrega."
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__image_128
+msgid "Image 128"
+msgstr "Imagen 128"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__message_is_follower
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__message_is_follower
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__message_is_follower
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__message_is_follower
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__message_is_follower
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__message_is_follower
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__message_is_follower
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__message_is_follower
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__message_is_follower
+msgid "Is Follower"
+msgstr "Es seguidor"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__key_identification
+msgid "Key identification"
+msgstr "Clave de identificación"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_encryption_utility__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper_rel__write_uid
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_encryption_utility__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper_rel__write_date
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__license_plate_nus
+msgid "License Plate"
+msgstr "Matrícula"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__limit_amount_per_event
+msgid "Limit Amount Per Event"
+msgstr "Monto limite por evento"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__limit_coverage
+msgid "Limit Coverage"
+msgstr "Limite de cobertura"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__limit_distance
+msgid "Limit distance (km)"
+msgstr "Limite de distancia (Km)"
+
+#. module: custom_nu
+#: model:ir.model.fields.selection,name:custom_nu.selection__custom_membership_plan_line_product__coverage_type__limited
+msgid "Limited"
+msgstr "Limitada"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_form
+msgid "Limits"
+msgstr "Limites"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__local
+msgid "Local"
+msgstr ""
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Membership"
+msgstr "Afiliaciones"
+
+#. module: custom_nu
+#: model:ir.ui.menu,name:custom_nu.custom_membership_nus_menu
+msgid "Membership NUs"
+msgstr "Afiliaciones"
+
+#. module: custom_nu
+#: model:ir.ui.menu,name:custom_nu.custom_membership_plan_menu
+msgid "Membership Plan"
+msgstr "Plan de cobertura"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_considerations_html_form
+msgid "Membership Plan Product Considerations"
+msgstr "Consideraciones del producto del plan de cobertura"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_exclusions_html_form
+msgid "Membership Plan Product Exclusions"
+msgstr "Exclusiones del producto del plan de cobertura"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_form
+msgid "Membership Plan Product Line"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__membership_plan_id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__membership_plan_id
+msgid "Membership plan"
+msgstr "Plan de cobertura"
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_membership_plan_product_line
+msgid "Membership plan Product Line"
+msgstr "Lineas de productos de plan de cobertura"
+
+#. module: custom_nu
+#: model:ir.model.constraint,message:custom_nu.constraint_custom_membership_plan_membership_plan_uniq
+msgid "Membership plan must be unique."
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__membership_nus_ids
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Memberships"
+msgstr "Afiliaciones"
+
+#. module: custom_nu
+#: model:ir.model.fields.selection,name:custom_nu.selection__custom_nus__preference_contact__message
+msgid "Message"
+msgstr "Mensaje"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__message_has_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__message_has_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__message_has_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__message_has_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__message_has_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__message_has_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__message_has_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__message_has_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__message_has_error
+msgid "Message Delivery error"
+msgstr "Error de entrega del mensaje"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__message_ids
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__model_nus_id
+msgid "Model"
+msgstr "Modelo"
+
+#. module: custom_nu
+#: model:ir.model.fields.selection,name:custom_nu.selection__custom_membership_plan_product_line__period__monthly
+msgid "Monthly"
+msgstr "Mensual"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__nus_id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__nus_id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__nus_id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__nus_id
+#: model:ir.ui.menu,name:custom_nu.custom_nus_menu
+#: model:ir.ui.menu,name:custom_nu.custom_nus_menu_config
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_vehicle_view_search
+msgid "NUs"
+msgstr ""
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_form
+msgid "NUs Address"
+msgstr "NUs Dirección"
+
+#. module: custom_nu
+#: model:ir.actions.act_window,name:custom_nu.custom_nus_address_view_action
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_kanban
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_list
+msgid "NUs Addresses"
+msgstr "Direcciones NUs"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_view_form
+msgid "NUs Pet"
+msgstr "NUs Mascota"
+
+#. module: custom_nu
+#: model:ir.actions.act_window,name:custom_nu.custom_nus_pet_action
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_view_kanban
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_view_list
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_view_search
+msgid "NUs Pets"
+msgstr "Mascotas NUs"
+
+#. module: custom_nu
+#: model:ir.actions.act_window,name:custom_nu.custom_nus_vehicle_action
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_vehicle_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_vehicle_view_kanban
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_vehicle_view_list
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_vehicle_view_search
+msgid "NUs Vehicles"
+msgstr "Vehículo Nus"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__name
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_search_helper__name
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_type_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_type_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_nus_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_search
+msgid "Name"
+msgstr "Nombre"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_type_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_nus_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Name..."
+msgstr "Nombre..."
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__national
+msgid "National"
+msgstr "Nacional"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_membership_nus.py:0
+msgid "New"
+msgstr "Nuevo"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid "No access token received"
+msgstr "No se recibió ningún token de acceso."
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid "No phone number available for SMS"
+msgstr "No hay número de teléfono disponible para SMS."
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid "No phone number available for WhatsApp"
+msgstr "No hay ningún número de teléfono disponible para WhatsApp."
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_type_view_search
+msgid "Nombre"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__message_needaction_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__message_needaction_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__message_needaction_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__message_needaction_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__message_needaction_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__message_needaction_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__message_needaction_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__message_needaction_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de acciones"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__message_has_error_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__message_has_error_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__message_has_error_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__message_has_error_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__message_has_error_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__message_has_error_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__message_has_error_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__message_has_error_counter
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de errores"
+
+#. module: custom_nu
+#: model:ir.model.fields,help:custom_nu.field_custom_address_type__message_needaction_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_nus__message_needaction_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_plan__message_needaction_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_nus__message_needaction_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_address__message_needaction_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet__message_needaction_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet_breed__message_needaction_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet_type__message_needaction_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_vehicle__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Número de mensajes que requieren acción"
+
+#. module: custom_nu
+#: model:ir.model.fields,help:custom_nu.field_custom_address_type__message_has_error_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_nus__message_has_error_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_plan__message_has_error_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_nus__message_has_error_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_address__message_has_error_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet__message_has_error_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet_breed__message_has_error_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet_type__message_has_error_counter
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_vehicle__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de entrega"
+
+#. module: custom_nu
+#: model:ir.ui.menu,name:custom_nu.res_partner_menu_clients
+msgid "Nus"
+msgstr "NUs"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__period_per_event
+msgid "Period Per Event"
+msgstr "Eventos de la cobertura"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__period
+msgid "Period event"
+msgstr "Periodo del evento"
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_nus_pet_breed
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_breed_view_form
+msgid "Pet Breed"
+msgstr "Raza de mascota"
+
+#. module: custom_nu
+#: model:ir.actions.act_window,name:custom_nu.custom_nus_pet_breed_action
+#: model:ir.ui.menu,name:custom_nu.custom_nus_pet_breed_menu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_breed_view_list
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_breed_view_search
+msgid "Pet Breeds"
+msgstr "Raza de mascotas"
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_nus_pet_type
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__pet_type_id
+msgid "Pet Type"
+msgstr "Tipo de mascota"
+
+#. module: custom_nu
+#: model:ir.actions.act_window,name:custom_nu.custom_nus_pet_type_action
+#: model:ir.ui.menu,name:custom_nu.custom_nus_pet_type_menu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_type_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_type_view_list
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_type_view_search
+msgid "Pet Types"
+msgstr "Tipo de mascotas"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__pet_nus_ids
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Pets"
+msgstr "Mascotas"
+
+#. module: custom_nu
+#: model:ir.ui.menu,name:custom_nu.custom_nus_pet_menu
+msgid "Pets Nus"
+msgstr "Mascotas NUs"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__phone
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Phone"
+msgstr "Teléfono"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Phone number"
+msgstr "Número teléfono"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__preference_contact
+msgid "Preference Contact"
+msgstr "Contacto de preferencia"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Preference contact"
+msgstr "Contacto de preferencia"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__line_id
+msgid "Product Line"
+msgstr "Produto"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__x_product_domain
+msgid "Product domain"
+msgstr ""
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_form
+msgid "Products"
+msgstr "Productos"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__product_line_ids
+msgid "Products Lines"
+msgstr "Líneas de productos"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__quantity
+msgid "Quantity"
+msgstr "Cantidad"
+
+#. module: custom_nu
+#: model:ir.model.fields.selection,name:custom_nu.selection__custom_membership_plan_product_line__period__quarterly
+msgid "Quarterly"
+msgstr "Trimestral"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__vat_rfc
+msgid "RFC"
+msgstr ""
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_list
+msgid "Reprocess Search Helper"
+msgstr ""
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid "Request timeout"
+msgstr "Tiempo de espera agotado"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_considerations_html_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_exclusions_html_form
+msgid "Return"
+msgstr "Volver"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__message_has_sms_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__message_has_sms_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__message_has_sms_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__message_has_sms_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__message_has_sms_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__message_has_sms_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__message_has_sms_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__message_has_sms_error
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Error de entrega de SMS"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid ""
+"SMS configuration incomplete:\n"
+"- sms.login_url\n"
+"- sms.username\n"
+"- sms.password"
+msgstr ""
+"Configuración de SMS incompleta (Parámetros del sistema):\n"
+"- sms.login_url\n"
+"- sms.username\n"
+"- sms.password"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid ""
+"SMS configuration incomplete:\n"
+"- sms.send_message_list_template_url"
+msgstr ""
+"Configuración de SMS incompleta (Parámetros del sistema):\n"
+"- sms.send_message_list_template_url"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid ""
+"SMS configuration incomplete:\n"
+"- sms.send_message_template_url"
+msgstr ""
+"Configuración de SMS incompleta (Parámetros del sistema):\n"
+"- sms.send_message_template_url"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__sap_id_income
+msgid "Sap Id Income"
+msgstr "ID sap ingreso"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__sap_id_outgoing
+msgid "Sap Id Outgoing"
+msgstr "ID sap egreso PO"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_considerations_html_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_exclusions_html_form
+msgid "Save"
+msgstr "Guardar"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__second_account_identification_id
+msgid "Second Account Identification"
+msgstr "Segunda clave de identifición"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__second_key_identification
+msgid "Second key identification"
+msgstr "Segunda clave de identificación"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Send SMS notification"
+msgstr "Enviar notificación por SMS"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Send SMS notification list"
+msgstr "Enviar notificaciones SMS a una lista de números"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Send WhatsApp notification"
+msgstr "Enviar notificación de WhatsApp"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__service_id
+msgid "Service"
+msgstr "Servicio"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__x_service_domain
+msgid "Service domain"
+msgstr ""
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_form
+msgid "Services and subservices"
+msgstr "Servicios y subservicios"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__contract_start_date
+msgid "Start Date"
+msgstr "Fecha inicio del contrato"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__date_start
+msgid "Start date"
+msgstr "Fecha de inicio"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__state_nus_id
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_form
+msgid "State"
+msgstr "Estado"
+
+#. module: custom_nu
+#: model:ir.model.fields,help:custom_nu.field_custom_address_type__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__street_nus
+msgid "Street"
+msgstr "Calle"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_form
+msgid "Street 2..."
+msgstr "Calle 2..."
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_form
+msgid "Street..."
+msgstr "Calle..."
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__street2_nus
+msgid "Street2"
+msgstr "Calle 2"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_vehicle_view_form
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_vehicle_view_kanban
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_vehicle_view_list
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_vehicle_view_search
+msgid "Subbrand"
+msgstr "Submarca"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__subscription_validity
+msgid "Subscription Validity"
+msgstr "Validez de la suscripción"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__sub_service_ids
+msgid "Subservice"
+msgstr "Subservicio"
+
+#. module: custom_nu
+#: model:ir.model,name:custom_nu.model_custom_membership_plan_line_product
+msgid "Subservices details for product line"
+msgstr ""
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus_address.py:0
+msgid ""
+"The Mexican postal code must contain exactly 5 numeric digits.. Example: "
+"03100"
+msgstr ""
+"El código postal mexicano debe contener exactamente 5 dígitos numéricos. "
+"Ejemplo: 03100"
+
+#. module: custom_nu
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_plan__vat_rfc
+msgid ""
+"The Tax Identification Number. Values here will be validated based on the "
+"country format. You can use '/' to indicate that the partner is not subject "
+"to tax."
+msgstr ""
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus_vehicle.py:0
+msgid "The chassis number (VIN) could not be validated."
+msgstr "No se pudo validar el número de chasis (VIN)."
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus_pet_breed.py:0
+msgid "The combination of breed and type must be unique."
+msgstr "La combinación de raza y tipo debe ser única."
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid "The entered phone number is not valid for country %s"
+msgstr "El teléfono ingresado no es válido para el país %s"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus_pet_type.py:0
+msgid "The name must be unique."
+msgstr "El nombre debe ser único."
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus_address.py:0
+msgid "The postal code must be between 01000 and 99999"
+msgstr "El código postal debe estar entre 01000 y 99999"
+
+#. module: custom_nu
+#: model_terms:ir.actions.act_window,help:custom_nu.action_custom_membership_nus
+msgid "There is no examples click here to add new Custom Membership Nus."
+msgstr "No hay ejemplos haga clic aquí para agregar nueva afiliación."
+
+#. module: custom_nu
+#: model_terms:ir.actions.act_window,help:custom_nu.action_custom_membership_plan
+msgid "There is no examples click here to add new Custom Membership Plan."
+msgstr "No hay ejemplos haga clic aquí para agregar nuevo plan de cobertura."
+
+#. module: custom_nu
+#: model_terms:ir.actions.act_window,help:custom_nu.action_custom_nus
+msgid "There is no examples click here to add new Custom Nus."
+msgstr "No hay ejemplos haga clic aquí para agregar nuevo NUs."
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__pet_type_id
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_breed_view_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_pet_view_search
+msgid "Type"
+msgstr "Tipo"
+
+#. module: custom_nu
+#: model:ir.model.fields,help:custom_nu.field_custom_address_type__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields.selection,name:custom_nu.selection__custom_membership_plan_line_product__coverage_type__unlimited
+msgid "Unlimited"
+msgstr "Ilimitada"
+
+#. module: custom_nu
+#: model:res.groups,name:custom_nu.group_custom_nus_user
+msgid "User (Read Only)"
+msgstr "Usuario"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "VIP"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__vip_user
+msgid "VIP User"
+msgstr "Usuario VIP"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__visa_user
+msgid "VISA User"
+msgstr "Usuario VISA"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid "Validate Phone"
+msgstr "Validar Teléfono"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__x_validation_pattern
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__x_validation_pattern_second
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__x_validation_pattern
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__x_validation_pattern_second
+msgid "Validation pattern"
+msgstr "Patrón de validación"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__vehicle_nus_ids
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
+msgid "Vehicles"
+msgstr "Vehículos"
+
+#. module: custom_nu
+#: model:ir.ui.menu,name:custom_nu.custom_nus_vehicle_menu
+msgid "Vehicles NUs"
+msgstr "Vehículos NUs"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__website_message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__website_message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__website_message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__website_message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__website_message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet__website_message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_breed__website_message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_pet_type__website_message_ids
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__website_message_ids
+msgid "Website Messages"
+msgstr "Mensajes del sitio web"
+
+#. module: custom_nu
+#: model:ir.model.fields,help:custom_nu.field_custom_address_type__website_message_ids
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_nus__website_message_ids
+#: model:ir.model.fields,help:custom_nu.field_custom_membership_plan__website_message_ids
+#: model:ir.model.fields,help:custom_nu.field_custom_nus__website_message_ids
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_address__website_message_ids
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet__website_message_ids
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet_breed__website_message_ids
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_pet_type__website_message_ids
+#: model:ir.model.fields,help:custom_nu.field_custom_nus_vehicle__website_message_ids
+msgid "Website communication history"
+msgstr "Historial de comunicaciones del sitio web"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__vehicle_weight_category_id
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__vehicle_weight_category_id
+msgid "Weight Category"
+msgstr "Categoría de peso"
+
+#. module: custom_nu
+#: model:ir.model.fields.selection,name:custom_nu.selection__custom_nus__preference_contact__whatsapp
+msgid "WhatsApp"
+msgstr ""
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid ""
+"WhatsApp configuration incomplete:\n"
+"- whatsapp.login_url\n"
+"- whatsapp.username\n"
+"- whatsapp.password"
+msgstr ""
+"Configuración de WhatsApp incompleta (Parámetros del sistema):\n"
+"- whatsapp.login_url\n"
+"- whatsapp.username\n"
+"- whatsapp.password"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid ""
+"WhatsApp configuration incomplete:\n"
+"- whatsapp.template_url"
+msgstr ""
+"Configuración de WhatsApp incompleta (Parámetros del sistema):\n"
+"- whatsapp.template_url"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__x_name_search_ids
+msgid "X Name Search"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus__x_phone_search_ids
+msgid "X Phone Search"
+msgstr ""
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_vehicle__vehicle_year
+msgid "Year"
+msgstr "Año"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus_vehicle.py:0
+msgid "Year must be 4 digits."
+msgstr "El año debe tener 4 dígitos."
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus_vehicle.py:0
+msgid "Year must contain only numbers."
+msgstr "El año debe contener sólo números."
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.custom_nus_address_view_form
+msgid "ZIP"
+msgstr "C.P."
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_nus_address__zip_nus
+msgid "Zip code"
+msgstr "C.P."
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__second_clause
+msgid "second clause"
+msgstr "Segundo inciso"
+
+#. module: custom_nu
+#. odoo-python
+#: code:addons/custom_nu/models/custom_nus.py:0
+msgid "unknown"
+msgstr "desconocido"

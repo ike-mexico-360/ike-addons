@@ -1,0 +1,20 @@
+.ike-expandable-text-content {
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+}
+
+.ike-expandable-text-content.collapsed {
+    max-height: 9em;
+    position: relative;
+}
+
+.ike-expandable-text-content.collapsed::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1.5em;
+    // background: linear-gradient(to bottom, transparent, white);
+    background: linear-gradient(to bottom, transparent, $o-webclient-background-color) !important;
+}

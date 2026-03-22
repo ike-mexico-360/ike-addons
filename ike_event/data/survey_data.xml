@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <!-- Surveys Services -->
+        <record id="survey_vial" model="survey.survey">
+            <field name="title">Survey Vial Test</field>
+        </record>
+
+        <record id="survey_medical" model="survey.survey">
+            <field name="title">Survey Medical Test</field>
+        </record>
+        <record id="survey_medical_question_1" model="survey.question">
+            <field name="title">Is a Human?</field>
+            <field name="survey_id" ref="survey_medical"/>
+        </record>
+        <record id="survey_medical_question_answer_1_yes" model="survey.question.answer">
+            <field name="value">Yes</field>
+            <field name="question_id" ref="survey_medical_question_1"/>
+        </record>
+        <record id="survey_medical_question_answer_1_no" model="survey.question.answer">
+            <field name="value">No</field>
+            <field name="question_id" ref="survey_medical_question_1"/>
+        </record>
+        <record id="survey_medical_question_2" model="survey.question">
+            <field name="title">Their design is very Human?</field>
+            <field name="survey_id" ref="survey_medical"/>
+        </record>
+        <record id="survey_medical_question_answer_2_yes" model="survey.question.answer">
+            <field name="value">Yes</field>
+            <field name="question_id" ref="survey_medical_question_2"/>
+        </record>
+        <record id="survey_medical_question_answer_2_no" model="survey.question.answer">
+            <field name="value">No</field>
+            <field name="question_id" ref="survey_medical_question_2"/>
+        </record>
+
+        <record id="survey_home" model="survey.survey">
+            <field name="title">Survey Home Test</field>
+        </record>
+
+        <record id="survey_legal" model="survey.survey">
+            <field name="title">Survey Legal Test</field>
+        </record>
+
+        <record id="survey_pets" model="survey.survey">
+            <field name="title">Survey Pets Test</field>
+        </record>
+
+        <record id="survey_vial_truck" model="survey.survey">
+            <field name="title">Survey Vial Truck Test</field>
+        </record>
+        <record id="survey_vial_truck_question_1" model="survey.question">
+            <field name="title">Armored</field>
+            <field name="description">Is it an armored vehicle?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="survey_id" ref="survey_vial_truck"/>
+            <field name="x_send_to_operator">True</field>
+        </record>
+        <record id="survey_vial_truck_question_answer_1_1" model="survey.question.answer">
+            <field name="value">Yes</field>
+            <field name="question_id" ref="survey_vial_truck_question_1"/>
+        </record>
+        <record id="survey_vial_truck_question_answer_1_2" model="survey.question.answer">
+            <field name="value">No</field>
+            <field name="question_id" ref="survey_vial_truck_question_1"/>
+        </record>
+        <record id="survey_vial_truck_question_2" model="survey.question">
+            <field name="title">Street Level</field>
+            <field name="description">Is it at street level?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="comments_allowed">True</field>
+            <field name="comments_message">Please specify</field>
+            <field name="comment_count_as_answer">True</field>
+            <field name="survey_id" ref="survey_vial_truck"/>
+            <field name="x_send_to_operator">True</field>
+        </record>
+        <record id="survey_vial_truck_question_answer_2_1" model="survey.question.answer">
+            <field name="value">Yes</field>
+            <field name="question_id" ref="survey_vial_truck_question_2"/>
+        </record>
+        <record id="survey_vial_truck_question_answer_2_2" model="survey.question.answer">
+            <field name="value">No</field>
+            <field name="question_id" ref="survey_vial_truck_question_2"/>
+        </record>
+        <record id="survey_vial_truck_question_3" model="survey.question">
+            <field name="title">Steering wheel turn</field>
+            <field name="description">Does the steering wheel turn?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="survey_id" ref="survey_vial_truck"/>
+            <field name="x_send_to_operator">True</field>
+        </record>
+        <record id="survey_vial_truck_question_answer_3_1" model="survey.question.answer">
+            <field name="value">Yes</field>
+            <field name="question_id" ref="survey_vial_truck_question_3"/>
+        </record>
+        <record id="survey_vial_truck_question_answer_3_2" model="survey.question.answer">
+            <field name="value">No</field>
+            <field name="question_id" ref="survey_vial_truck_question_3"/>
+        </record>
+        <record id="survey_vial_truck_question_4" model="survey.question">
+            <field name="title">Tires turn</field>
+            <field name="description">Do the tires turn?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="survey_id" ref="survey_vial_truck"/>
+            <field name="x_send_to_operator">True</field>
+        </record>
+        <record id="survey_vial_truck_question_answer_4_1" model="survey.question.answer">
+            <field name="value">Yes</field>
+            <field name="question_id" ref="survey_vial_truck_question_4"/>
+        </record>
+        <record id="survey_vial_truck_question_answer_4_2" model="survey.question.answer">
+            <field name="value">No</field>
+            <field name="question_id" ref="survey_vial_truck_question_4"/>
+        </record>
+        <record id="survey_vial_truck_question_5" model="survey.question">
+            <field name="title">Flat Tires</field>
+            <field name="description">Flat Tires?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="constr_mandatory">True</field>
+            <field name="constr_error_msg">This question requires an answer.</field>
+            <field name="survey_id" ref="survey_vial_truck"/>
+            <field name="x_send_to_operator">True</field>
+        </record>
+        <record id="survey_vial_truck_question_answer_5_1" model="survey.question.answer">
+            <field name="value">Yes</field>
+            <field name="question_id" ref="survey_vial_truck_question_5"/>
+        </record>
+        <record id="survey_vial_truck_question_answer_5_2" model="survey.question.answer">
+            <field name="value">No</field>
+            <field name="question_id" ref="survey_vial_truck_question_5"/>
+        </record>
+        <record id="survey_vial_truck_question_6" model="survey.question">
+            <field name="title">Number of Flat tires</field>
+            <field name="description">Number of Flat tires?</field>
+            <field name="question_type">numerical_box</field>
+            <field name="validation_required">True</field>
+            <field name="validation_min_float_value">1</field>
+            <field name="validation_max_float_value">8</field>
+            <field name="validation_error_msg">Wrong answer</field>
+            <field name="constr_mandatory">True</field>
+            <field name="constr_error_msg">This questions requires an answer between 1 to 8</field>
+            <field name="question_placeholder">1-8</field>
+            <field name="survey_id" ref="survey_vial_truck"/>
+            <field name="x_send_to_operator">True</field>
+            <field name="triggering_answer_ids" eval="[(4, ref('ike_event.survey_vial_truck_question_answer_5_1'))]"/>
+        </record>
+        <record id="survey_vial_truck_question_7" model="survey.question">
+            <field name="title">Transmission</field>
+            <field name="description">Type of transmission</field>
+            <field name="question_type">simple_choice</field>
+            <field name="survey_id" ref="survey_vial_truck"/>
+            <field name="x_send_to_operator">True</field>
+        </record>
+        <record id="survey_vial_truck_question_answer_7_1" model="survey.question.answer">
+            <field name="value">Manual</field>
+            <field name="question_id" ref="survey_vial_truck_question_7"/>
+        </record>
+        <record id="survey_vial_truck_question_answer_7_2" model="survey.question.answer">
+            <field name="value">Automatic</field>
+            <field name="question_id" ref="survey_vial_truck_question_7"/>
+        </record>
+        <record id="survey_vial_truck_question_8" model="survey.question">
+            <field name="title">Driver Name</field>
+            <field name="description">Driver Name?</field>
+            <field name="question_type">char_box</field>
+            <field name="survey_id" ref="survey_vial_truck"/>
+            <field name="x_send_to_operator">True</field>
+        </record>
+        <record id="survey_vial_truck_question_9" model="survey.question">
+            <field name="title">Other</field>
+            <field name="description">Other detail?</field>
+            <field name="question_type">text_box</field>
+            <field name="question_placeholder">Please specify</field>
+            <field name="survey_id" ref="survey_vial_truck"/>
+            <field name="x_send_to_operator">True</field>
+        </record>
+
+        <record id="survey_vial_tire" model="survey.survey">
+            <field name="title">Survey Vial Tire Change Test</field>
+        </record>
+        <record id="survey_vial_tire_question_1" model="survey.question">
+            <field name="title">Spare Tire</field>
+            <field name="description">Do they have a spare tire?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="survey_id" ref="survey_vial_tire"/>
+        </record>
+        <record id="survey_vial_tire_question_answer_1_1" model="survey.question.answer">
+            <field name="value">Yes</field>
+            <field name="question_id" ref="survey_vial_tire_question_1"/>
+        </record>
+        <record id="survey_vial_tire_question_answer_1_2" model="survey.question.answer">
+            <field name="value">No</field>
+            <field name="question_id" ref="survey_vial_tire_question_1"/>
+        </record>
+        <record id="survey_vial_tire_question_2" model="survey.question">
+            <field name="title">Locking Lug Nut</field>
+            <field name="description">Do they have a locking lug nut?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="survey_id" ref="survey_vial_tire"/>
+        </record>
+        <record id="survey_vial_tire_question_answer_2_1" model="survey.question.answer">
+            <field name="value">Yes</field>
+            <field name="question_id" ref="survey_vial_tire_question_2"/>
+        </record>
+        <record id="survey_vial_tire_question_answer_2_2" model="survey.question.answer">
+            <field name="value">No</field>
+            <field name="question_id" ref="survey_vial_tire_question_2"/>
+        </record>
+
+        <record id="survey_medical_consultation" model="survey.survey">
+            <field name="title">Survey Medical Consultation Test</field>
+        </record>
+        <record id="survey_medical_consultation_question_1" model="survey.question">
+            <field name="title">Question 01?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="survey_id" ref="survey_medical_consultation"/>
+        </record>
+        <record id="survey_medical_consultation_question_answer_1_yes" model="survey.question.answer">
+            <field name="value">Yes</field>
+            <field name="question_id" ref="survey_medical_consultation_question_1"/>
+        </record>
+        <record id="survey_medical_consultation_question_answer_1_no" model="survey.question.answer">
+            <field name="value">No</field>
+            <field name="question_id" ref="survey_medical_consultation_question_1"/>
+        </record>
+    </data>
+</odoo>

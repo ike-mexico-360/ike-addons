@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="sh_action_ticket_dashboard" model="ir.actions.client">
+        <field name="name">Ticket Dashboard</field>
+        <field name="tag">ticket_dashboard.dashboard</field>
+    </record>
+    <menuitem id="helpdesk_dashboard_menu" name="Dashboard" parent="sh_all_in_one_helpdesk.helpdesk_main_menu" sequence="1" action="sh_action_ticket_dashboard" />
+    <template id="ticket_dashboard_count" name="My Dashboard Count">
+        <div id="js_ticket_count_div">
+            <div>
+                <div class="row">
+                    <t t-if="data_dict">
+                        <t t-foreach="data_dict.keys()" t-as="value">
+                            <t t-foreach="data_dict[value]" t-as="v">
+                                <div class="col-lg-3 col-md-4 col-sm-12">
+                                    <a class="sh_tile_click custom" href="#" t-att-data-res_ids="v or []">
+                                        <div class="card card_1 custom-card" href="#">
+                                            <div class="sh-card-body dash1 badge-info" style="background-color: #445ee9;">
+                                                <div class="media">
+                                                    <i class="fa fa-clock-o fs-20 text-white align-self-center mr-3"></i>
+                                                    <div style="display: inline-block;color: white;">
+                                                        <h3 class="mt-0" style="color:white;">
+                                                            <t t-esc="len(v)" />
+                                                        </h3>
+                                                        <p>
+                                                            <span t-esc="value" style="color:white;" />
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            </t>
+                            <br />
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </template>
+    <template id="ticket_dashboard_tbl" name="My Ticket Table">
+        <div id="js_ticket_tbl_div">
+            <div>
+                <div class="row" style="margin: 0;">
+                    <t t-if="ticket_data_dic">
+                        <div class="modal fade whatsapp_modal" tabindex="-1" role="dialog" aria-labelledby="whatsappModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="whatsappModalLabel">Send By Whatsapp</h5>
+                                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&amp;times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form>
+                                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" />
+                                            <div class="form-group" style="display: flex;align-items: center;">
+                                                <label for="ticket_partner_id" style="margin-bottom: 0;font-weight: 600;width:100px">Partner</label>
+                                                <select class="form-select form-select-lg mb-3 custom-select" id="ticket_partner_id" required="True" style="margin-bottom: 0 !important;">
+                                                    <option value="select_partner">Select Partner</option>
+                                                    <t t-foreach="request.env['res.partner'].search([])" t-as="partner">
+                                                        <option t-att-value="partner.id">
+                                                            <t t-esc="partner.name_get()[0][1]" />
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+                                            <div class="form-group" style="display: flex;align-items: center;margin-bottom: 1.3rem;">
+                                                <label for="partner_mobile_no" style="font-weight: 600;margin-bottom: 0;width: 100px;">Mobile No</label>
+                                                <input id="partner_mobile_no" name="partner_mobile_no" class="form-control" type="text" placeholder="Enter Mobile No with conutry code" required="True" />
+                                            </div>
+                                            <div class="form-group" style="display: flex;align-items: center;margin-bottom: 1.3rem;">
+                                                <label for="whatsapp_message" style="font-weight: 600;width: 100px;margin-bottom: 0;">Message</label>
+                                                <textarea class="form-control rounded-0" id="whatsapp_message" required="True"></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <p>
+                                                    <strong>Note:</strong>
+                                                    <br />
+                                                    1) Use *text* to make text bold.
+                                                    <br />
+                                                    2) Use _text_ to make text italic.
+                                                    <br />
+                                                    3) Use %0A after/before Text if you want to add blank line.
+                                                    <br />
+                                                    4) use %20 after/before any Text if you want to give space.
+                                                    <br />
+                                                    5) go to users => preferences to add signature.
+                                                </p>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" id="send">Send</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <t t-foreach="ticket_data_dic.keys()" t-as="ticket">
+                            <div class="col-md-12" style="margin-bottom: 20px; box-shadow: 0 0 2px rgba(0, 0, 0, 0.5); padding-left: 0 !important; padding-right: 0 !important;">
+                                <h3 style="padding: 10px; margin-top: 7px; margin-bottom: 7px;">
+                                    <b>
+                                        <span>Stage :</span>
+                                        <span t-esc="ticket" />
+                                    </b>
+                                </h3>
+                                <div class="table-responsive">
+                                    <table class="table" style="margin-bottom: 0.5rem;">
+                                        <tr>
+                                            <th>Ticket No</th>
+                                            <th>Customer Name</th>
+                                            <th>Mobile Number</th>
+                                            <th>Create Date</th>
+                                            <th>Last Update Date</th>
+                                            <th>Assign User</th>
+                                            <th style="padding-left: 25px;">Action</th>
+                                            <th style="display: none;"></th>
+                                        </tr>
+                                        <t t-if="len(ticket_data_dic[ticket])==0">
+                                            <tr>
+                                                <td colspan="7">
+                                                    Data not available.
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <t t-if="len(ticket_data_dic[ticket])&gt;0">
+                                            <tr t-foreach="ticket_data_dic[ticket]" t-as="order">
+                                                <td>
+                                                    <t t-set="menu_id" t-value="request.env.ref('sh_all_in_one_helpdesk.helpdesk_main_menu').id"/>
+                                                    <a t-att-href="'/web#id=%s&amp;view_type=form&amp;model=sh.helpdesk.ticket&amp;menu_id=%s' % (order.get('ticket_id'),menu_id)" target="_blank">
+                                                        <span t-esc="order.get('ticket_no')" />
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <span t-esc="order.get('partner_name')" />
+                                                </td>
+                                                <td>
+                                                    <span t-esc="order.get('partner_mobile')" />
+                                                </td>
+                                                <td>
+                                                    <span t-esc="order.get('create_date')" />
+                                                </td>
+                                                <td>
+                                                    <span t-esc="order.get('write_date')" />
+                                                </td>
+                                                <td>
+                                                    <span t-esc="order.get('user_id')" />
+                                                </td>
+                                                <td>
+                                                    <div style="display:flex;">
+                                                        <a style="cursor: pointer;" class="btn-success" t-att-href="'/web#id=%s&amp;view_type=form&amp;model=sh.helpdesk.ticket&amp;menu_id=%s' % (order.get('ticket_id'),menu_id)" target="_blank">
+                                                            <i class="fa fa-eye" />
+                                                        </a>
+                                                        &amp;nbsp;
+                                                        <button style="cursor: pointer;" class="btn-success mark-whatsapp">
+                                                            <i class="fa fa-whatsapp" />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                                <td style="display: none;">
+                                                    <input type="hidden" id="partner_id" name="partner_id" t-att-value="order.get('partner_id')" t-att-data-mobile="order.get('partner_mobile') or ''" />
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </table>
+                                </div>
+                            </div>
+                            <br />
+                        </t>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </template>
+</odoo>

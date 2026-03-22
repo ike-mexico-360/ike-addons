@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- Lista de proveedores -->
+    <t t-name="ike_event.IkeSelectedSuppliersInfo">
+        <div class="row">
+            <div class="col-12">
+                <h3 t-out="'Servicio confirmado'"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12 col-xl-5">
+                <div class="row">
+                    <div class="col-12">
+                        <span style="font-weight: bold;" t-out="'Vehículo: '"/>
+                        <span t-out="state.vehicleRecord.vehicle_brand"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <span style="font-weight: bold;" t-out="'Submarca: '"/>
+                        <span t-out="state.vehicleRecord.vehicle_model"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <span style="font-weight: bold;" t-out="'Año: '"/>
+                        <span t-out="state.vehicleRecord.vehicle_year"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <span style="font-weight: bold;" t-out="'Categoría: '"/>
+                        <span t-if="state.vehicleRecord.vehicle_category_id" t-out="state.vehicleRecord.vehicle_category_id.display_name"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <span style="font-weight: bold;" t-out="'Placa: '"/>
+                        <span t-out="state.vehicleRecord.vehicle_plate"/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <span style="font-weight: bold;" t-out="'Color: '"/>
+                        <span t-out="state.vehicleRecord.vehicle_color"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-7">
+                <div class="row">
+                    <div class="col-12 d-flex flex-row gap-1">
+                        <div class="d-inline-block">
+                            <span style="font-weight: bold;" t-out="'Origen: '"/>
+                        </div>
+                        <div class="d-inline-block">
+                            <span t-out="state.locations.location_label"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 d-flex flex-row gap-1">
+                        <div class="d-inline-block">
+                            <span style="font-weight: bold;" t-out="'Destino: '"/>
+                        </div>
+                        <div class="d-inline-block">
+                            <span t-out="state.locations.destination_label"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <span style="font-weight: bold;" t-out="'Tipo: '"/>
+                        <!-- ToDo -->
+                        <!-- <span t-out="state.event_type_name"/> -->
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <span style="font-weight: bold;" t-out="'Distancia: '"/>
+                        <span t-out="state.locations.destination_distance"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div t-if="state.suppliers.length > 0">
+            <h3 t-out="'Proveedores asignados'" class="mt-3"/>
+        </div>
+        <t t-set="suppliers_count" t-value="0"/>
+        <t t-foreach="state.suppliers" t-as="supplier" t-key="suppliers_count">
+            <div t-attf-class="{{ ['cancel', 'cancel_event', 'cancel_supplier'].includes(supplier.state) ? 'text-muted' : '' }}">
+                <t t-set="suppliers_count" t-value="suppliers_count + 1"/>
+                <t t-set="supplier_title" t-value="'Proveedor asignado ' + suppliers_count + ': '"/>
+                <span style="font-weight: bold;" t-out="supplier_title"/>
+                <t t-out="supplier.supplier_id.display_name"/>
+                <button class="btn btn-link mt-0 mb-0 pt-0 pb-0" style="vertical-align: baseline; text-decoration: underline;"
+                    t-on-click="() => this.openSupplierTravelDetails(supplier.id, supplier_title, supplier.supplier_id.display_name)">View details</button>
+                <span
+                    t-if="supplier.state &amp;&amp; ['cancel', 'cancel_event', 'cancel_supplier'].includes(supplier.state)"
+                    t-out="'(' + this.getStateLabel(supplier.state) + ')'"/>
+            </div>
+        </t>
+    </t>
+
+</templates>

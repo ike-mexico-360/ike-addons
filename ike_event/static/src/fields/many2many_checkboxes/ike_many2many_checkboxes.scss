@@ -1,0 +1,65 @@
+.o_ike_checkboxes_field > div > label {
+    border-radius: 15px;
+    background-color: #F6F8FD;
+    border: 1px solid #D9E7F3 !important;
+    padding: 6px 7px 7px 8px;
+
+    > i {
+        margin-left: 2px;
+
+        &::before {
+            vertical-align: middle;
+        }
+    }
+
+    > span {
+        color: #134F82;
+        font-size: $o-font-size-base-touch;
+        font-weight: $font-weight-medium;
+    }
+
+    > div {
+        background-color: #ffffff !important;
+        padding: 2px !important;
+        margin: 0 !important;
+        border-radius: 100% !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #134F82;
+            border-radius: 50%;
+            outline: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            display: block;
+            margin: 0 !important;
+            padding: 0 !important;
+            box-sizing: border-box;
+            background: transparent !important;
+        }
+
+        input[type="checkbox"]:checked::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #134F82;
+            // Esto evita el subpixel rendering y anti-aliasing, cuando se cambia entre resoluciones de pantallas
+            // o tipos/tecnologías de pantallas
+            top: 50%;
+            left: 50%;
+            margin-top: -6px;  // -width/2
+            margin-left: -6px; // -height/2
+        }
+    }
+}

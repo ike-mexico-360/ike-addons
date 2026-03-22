@@ -1,0 +1,145 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* custom_o2m_track
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0+e\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-08-25 18:43+0000\n"
+"PO-Revision-Date: 2025-08-25 18:43+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: custom_o2m_track
+#: model:ir.model,name:custom_o2m_track.model_base
+msgid "Base"
+msgstr ""
+
+#. module: custom_o2m_track
+#. odoo-python
+#: code:addons/custom_o2m_track/models/mail_thread.py:0
+msgid ""
+"Batch log cannot support attachments or tracking values on more than 1 "
+"document"
+msgstr ""
+"El registro de lotes no admite anexos ni valores de seguimiento en más de 1 "
+"documento"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields.selection,name:custom_o2m_track.selection__mail_tracking_command__o2m_command__0
+msgid "Created"
+msgstr "Creado"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_command__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_command__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields.selection,name:custom_o2m_track.selection__mail_tracking_command__o2m_command__2
+msgid "Deleted"
+msgstr "Borrado"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_command__display_name
+msgid "Display Name"
+msgstr "Nombre en pantalla"
+
+#. module: custom_o2m_track
+#: model:ir.model,name:custom_o2m_track.model_mail_thread
+msgid "Email Thread"
+msgstr "Hilo de correos"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_command__id
+msgid "ID"
+msgstr ""
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_command__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_command__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_command__mail_message_id
+msgid "Mail Message"
+msgstr "Mensaje de correo"
+
+#. module: custom_o2m_track
+#: model:ir.model,name:custom_o2m_track.model_mail_tracking_value
+msgid "Mail Tracking Value"
+msgstr "Valor de seguimiento de correo"
+
+#. module: custom_o2m_track
+#: model:ir.model,name:custom_o2m_track.model_mail_message
+msgid "Message"
+msgstr "Mensaje"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_command__o2m_command
+msgid "One2many Command"
+msgstr "One2many Comando"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_command__o2m_field_id
+msgid "One2many Field"
+msgstr "One2many Campo"
+
+#. module: custom_o2m_track
+#: model_terms:ir.ui.view,arch_db:custom_o2m_track.mail_message_view_form
+msgid "One2many Messages"
+msgstr "On2many Mensajes"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_command__o2m_record_id
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_value__o2m_record_id
+msgid "One2many Record"
+msgstr "One2many Registro"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_command__o2m_record_name
+msgid "One2many Record Name"
+msgstr "One2many Nombre del registro"
+
+#. module: custom_o2m_track
+#: model:ir.model,name:custom_o2m_track.model_mail_tracking_command
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_value__o2m_mail_tracking_command_id
+msgid "One2many Tracking Command"
+msgstr "One2many Comando de seguimiento"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_mail__custom_o2m_tracking_command_ids
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_message__custom_o2m_tracking_command_ids
+msgid "One2many Tracking Commands"
+msgstr "One2many Comandos de seguimiento"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields,field_description:custom_o2m_track.field_mail_tracking_command__custom_o2m_tracking_value_ids
+msgid "One2many Tracking Values"
+msgstr "Oone2many Valores de seguimiento"
+
+#. module: custom_o2m_track
+#. odoo-python
+#: code:addons/custom_o2m_track/models/mail_message.py:0
+msgid "Unknown"
+msgstr "Desconocido"
+
+#. module: custom_o2m_track
+#: model:ir.model.fields.selection,name:custom_o2m_track.selection__mail_tracking_command__o2m_command__1
+msgid "Updated"
+msgstr "Actualizado"

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <menuitem id="res_partner_menu_clients"
+            name="Nus"
+            parent="custom_master_catalog.res_partner_menu_clients_root"
+            groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_account"
+            sequence="2">
+
+            <menuitem id="custom_nus_menu"
+                name="NUs"
+                action="action_custom_nus"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client"
+                sequence="15"/>
+            <menuitem id="custom_membership_plan_menu"
+                name="Membership Plan"
+                action="action_custom_membership_plan"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client"
+                sequence="20"/>
+            <menuitem id="custom_membership_nus_menu"
+                name="Membership NUs"
+                action="action_custom_membership_nus"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client"
+                sequence="25"/>
+            <menuitem id="custom_nus_vehicle_menu"
+                name="Vehicles NUs"
+                action="custom_nus_vehicle_action"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client"
+                sequence="30"/>
+            <menuitem id="custom_nus_address_menu"
+                name="Addresses NUs"
+                action="custom_nus_address_view_action"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client"
+                sequence="35"/>
+            <menuitem id="custom_nus_pet_menu"
+                name="Pets Nus"
+                action="custom_nus_pet_action"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client"
+                sequence="40"/>
+        </menuitem>
+
+        <menuitem id="custom_nus_menu_config"
+            name="NUs"
+            parent="custom_master_catalog.res_partner_menu_clientes_config"
+            groups="base.group_system,custom_master_catalog.custom_group_contact_admin_account"
+            sequence="2">
+            <menuitem id="custom_nus_pet_type_menu"
+                name="Pet Types"
+                action="custom_nus_pet_type_action"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_account"
+                sequence="1"/>
+            <menuitem id="custom_nus_pet_breed_menu"
+                name="Pet Breeds"
+                action="custom_nus_pet_breed_action"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_account"
+                sequence="2"/>
+            <menuitem id="custom_nus_address_type_menu"
+                name="Address types"
+                action="custom_nus_address_type_action"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_account"
+                sequence="3"/>
+        </menuitem>
+</odoo>

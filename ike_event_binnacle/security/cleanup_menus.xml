@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- TODO Delete in sprint18 or after the client has updated their database with this code -->
+    <record id="ike_menu_event_config_binnacle" model="ir.ui.menu">
+        <field name="groups_id" eval="[(3, ref('custom_master_catalog.custom_group_event_coordinator'))]"/>
+    </record>
+
+    <record id="ike_menu_event_config_binnacle_category" model="ir.ui.menu">
+        <field name="groups_id" eval="[(3, ref('custom_master_catalog.custom_group_event_coordinator'))]"/>
+    </record>
+</odoo>

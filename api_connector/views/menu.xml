@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Menu -->
+    <menuitem id="menu_api_connector_main"
+              name="API Connector"
+              sequence="90"
+              web_icon="api_connector,static/description/icon.png"
+              groups="api_connector.group_api_connector_user,api_connector.group_api_connector_manager"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_api_connector_config"
+              name="Configuration"
+              parent="menu_api_connector_main"
+              sequence="10"/>
+
+    <!-- API Collections Menu -->
+    <menuitem id="menu_api_collections"
+              name="Collections"
+              parent="menu_api_connector_config"
+              action="action_api_collection"
+              sequence="5"/>
+
+    <!-- API Connections Menu -->
+    <menuitem id="menu_api_connector_connections"
+              name="Endpoints"
+              parent="menu_api_connector_config"
+              action="action_api_connector"
+              sequence="10"/>
+
+    <!-- Import Configuration Menu -->
+    <menuitem id="menu_api_import_config"
+              name="Import Configuration"
+              parent="menu_api_connector_config"
+              action="action_import_config_wizard"
+              sequence="15"/>
+
+    <!-- Monitoring Menu -->
+    <menuitem id="menu_api_connector_monitoring"
+              name="Monitoring"
+              parent="menu_api_connector_main"
+              sequence="20"/>
+
+    <!-- Call Logs Menu -->
+    <menuitem id="menu_api_call_logs"
+              name="Call Logs"
+              parent="menu_api_connector_monitoring"
+              action="action_api_call_log"
+              sequence="10"/>
+
+
+
+    <!-- Statistics Menu -->
+    <menuitem id="menu_api_connector_stats"
+              name="Statistics"
+              parent="menu_api_connector_monitoring"
+              sequence="20"/>
+</odoo>

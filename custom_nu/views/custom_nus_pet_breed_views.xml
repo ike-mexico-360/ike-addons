@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- View Search -->
+    <record id="custom_nus_pet_breed_view_search" model="ir.ui.view">
+        <field name="name">custom.nus.pet.breed.view.search</field>
+        <field name="model">custom.nus.pet.breed</field>
+        <field name="arch" type="xml">
+            <search string="Pet Breeds">
+                <field name="name"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group expand="0" string="Group By">
+                    <filter name="group_by_nus" string="Type" context="{'group_by': 'pet_type_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- View List -->
+    <record id="custom_nus_pet_breed_view_list" model="ir.ui.view">
+        <field name="name">custom.nus.pet.breed.view.list</field>
+        <field name="model">custom.nus.pet.breed</field>
+        <field name="arch" type="xml">
+            <list string="Pet Breeds" edit="false" duplicate="false" delete="false">
+                <field name="name"/>
+                <field name="pet_type_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View Form -->
+    <record id="custom_nus_pet_breed_view_form" model="ir.ui.view">
+        <field name="name">custom.nus.pet.breed.view.form</field>
+        <field name="model">custom.nus.pet.breed</field>
+        <field name="arch" type="xml">
+            <form string="Pet Breed" duplicate="false" delete="false">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <group>
+                        <field name="name"/>
+                        <field name="pet_type_id" options='{"no_open": True, "no_create": True}' domain="[('disabled', '=', False)]"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action Window -->
+    <record id="custom_nus_pet_breed_action" model="ir.actions.act_window">
+        <field name="name">Pet Breeds</field>
+        <field name="res_model">custom.nus.pet.breed</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+    </record>
+</odoo>

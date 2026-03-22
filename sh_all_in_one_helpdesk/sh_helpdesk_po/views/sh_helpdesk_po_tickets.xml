@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="sh_helpdesk_ticket_po_inherited_view_form" model="ir.ui.view">
+        <field name="name">sh.helpdesk.po.inherited.view.form</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form" />
+        <field name="arch" type="xml">
+            <field name="state" position="before">
+                <button class="btn btn-primary" name="action_create_purchase_ticket" type="object" string="Create Ticket" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_po" />
+            </field>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_purchase_tickets" type="object" class="oe_stat_button" icon="fa-ticket" context="{'partner_id': partner_id}" invisible="purchase_ticket_count == 0" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_po">
+                    <!-- attrs="{'invisible':[('purchase_ticket_count','=',0)]}"-->
+                    <div class="o_stat_info">
+                        <field name="purchase_ticket_count" class="o_stat_value" />
+                        <span class="o_stat_text">Ticket</span>
+                    </div>
+                </button>
+            </xpath>
+            <field name="partner_ref" position="after">
+                <field name="sh_purchase_ticket_ids" widget="many2many_tags" />
+            </field>
+        </field>
+    </record>
+    <record id="sh_helpdesk_tickets_po_inherited_view_form" model="ir.ui.view">
+        <field name="name">sh.helpdesk.tickets.po.view.form</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_form_view" />
+        <field name="arch" type="xml">
+            <field name="stage_id" position="before">
+                <button class="btn btn-primary" name="action_create_purchase_order" icon="fa-shopping-cart" type="object" string="Create Purchase Order" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_po" />
+            </field>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_purchase_orders" type="object" class="oe_stat_button" icon="fa-shopping-cart" context="{'partner_id': partner_id}" invisible="purchase_order_count == 0" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_po">
+                    <!--  attrs="{'invisible':[('purchase_order_count','=',0)]}"-->
+                    <div class="o_stat_info">
+                        <field name="purchase_order_count" class="o_stat_value" />
+                        <span class="o_stat_text">Purchases</span>
+                    </div>
+                </button>
+            </xpath>
+            <field name="product_ids" position="after">
+                <field name="sh_purchase_order_ids" string="Purchase Orders" widget="many2many_tags" />
+            </field>
+        </field>
+    </record>
+    <record id="sh_helpdesk_tickets_inherited_view_po_search" model="ir.ui.view">
+        <field name="name">sh.helpdesk.tickets.view.search</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_search_view" />
+        <field name="arch" type="xml">
+            <field name="stage_id" position="after">
+                <field name="sh_purchase_order_ids" />
+            </field>
+            <xpath expr="//filter[last()]" position="after">
+                <filter string="Purchase Order" name="helpdesk_po" domain="[('sh_purchase_order_ids','!=',False)]" />
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_helpdesk_po_inherited_view_search" model="ir.ui.view">
+        <field name="name">sh.helpdesk.po.view.search</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.view_purchase_order_filter" />
+        <field name="arch" type="xml">
+            <field name="product_id" position="after">
+                <field name="sh_purchase_ticket_ids" />
+            </field>
+            <xpath expr="//filter[1]" position="after">
+                <filter string="Helpdesk Ticket" name="sh_helpdesk_ticket" domain="[('sh_purchase_ticket_ids','!=',False)]" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sh_helpdesk_po_inherited_view_tree" model="ir.ui.view">
+        <field name="name">sh.helpdesk.po.view.list</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='activity_ids']" position="after">
+                <field name="sh_purchase_ticket_ids" widget="ticket_popover_widget"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="sh_helpdesk_po_inherited_view_tree" model="ir.ui.view">
+        <field name="name">sh.helpdesk.po.view.list</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_kpis_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='activity_ids']" position="after">
+                <field name="sh_purchase_ticket_ids" widget="ticket_popover_widget"/>
+            </xpath>
+        </field>
+    </record>
+     <record id="sh_helpdesk_po_inherited_view_kanban" model="ir.ui.view">
+        <field name="name">sh.helpdesk.po.view.kanban</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.view_purchase_order_kanban" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='activity_ids']" position="after">
+                <field name="sh_purchase_ticket_ids" widget="ticket_popover_widget"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

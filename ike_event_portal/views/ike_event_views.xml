@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ike_event_form_inherit_test_notification" model="ir.ui.view">
+            <field name="name">view_ike_event_form.inherit.test_notification</field>
+            <field name="model">ike.event</field>
+            <field name="inherit_id" ref="ike_event.view_ike_event_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_forward']" position="after">
+                    <button name="test_button_notification" type="object" string="Test Notification" class="btn-primary"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

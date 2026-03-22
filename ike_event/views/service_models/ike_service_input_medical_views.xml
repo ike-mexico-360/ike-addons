@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View ike.service.input.medical View List -->
+    <record id="view_ike_service_input_medical_list" model="ir.ui.view">
+        <field name="name">view.ike.service.input.medical.list</field>
+        <field name="model">ike.service.input.medical</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="event_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View ike.service.input.medical form -->
+    <record id="view_ike_service_input_medical_form" model="ir.ui.view">
+        <field name="name">view.ike.service.input.medical.form</field>
+        <field name="model">ike.service.input.medical</field>
+        <field name="arch" type="xml">
+            <form string="Service Input Medical">
+                <!-- <header>
+                    <field name="stage_id" widget="statusbar_duration" options="{'clickable': 1, 'fold_field': 'fold'}" />
+                </header> -->
+                <sheet>
+                    <div class="oe_title">
+                        <label for="event_id"/>
+                        <h1>
+                            <field name="event_id" placeholder="Event..."/>
+                        </h1>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Service Input Screen -->
+    <record id="view_ike_service_input_medical_screen_form" model="ir.ui.view">
+        <field name="name">view.ike.service.input.medical.screen.form</field>
+        <field name="model">ike.service.input.medical</field>
+        <field name="mode">primary</field>
+        <field eval="100" name="priority"/>
+        <field name="inherit_id" ref="ike_event.view_ike_service_input_medical_form"/>
+        <field name="arch" type="xml">
+            <data>
+                <xpath expr="//form" position="attributes">
+                    <attribute name="js_class">ike_service_input_screen_form</attribute>
+                </xpath>
+            </data>
+        </field>
+    </record>
+
+    <!-- View ike.service.input.medical search -->
+    <record id="view_ike_service_input_medical_search" model="ir.ui.view">
+        <field name="name">view.ike.service.input.medical.search</field>
+        <field name="model">ike.service.input.medical</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="event_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Action ike.service.input.medical -->
+    <record id="action_ike_service_input_medical" model="ir.actions.act_window">
+        <field name="name">Service Input Medical</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ike.service.input.medical</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

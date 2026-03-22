@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="sh_all_in_one_helpdesk.TicketPopoverWidget" owl="1">
+        <div>
+            <a href="#" t-on-click="onClick" class="fa fa-life-ring" aria-hidden="true"></a>
+            <span style="margin-left:4px;"><t t-esc="state.count" /></span>
+            <div t-if="state.visible" class="popover shadow p-2 mt-2 bg-white border" style="position: absolute; z-index: 1000;width: 100%;">
+                <span t-if="state.tickets.length === 0" class="p-3 text-center fst-italic text-500 border-bottom fs-6" style="display:block">Add tickets from here</span>
+                <t t-foreach="state.tickets" t-as="ticket" t-key="ticket.id">
+                    <div class="d-flex justify-content-between align-items-start mb-1">
+                        <div class="me-2">
+                            <strong><t t-esc="ticket.name"/></strong><br/>
+                            <small>Partner: <t t-esc="ticket.partner_id?.[1] || '—'"/></small><br/>
+                            <small>Subject: <t t-esc="ticket.email_subject"/></small><br/>
+                            <small>Stage: <t t-esc="ticket.stage_id[1]"/></small>
+                        </div>
+                        <button
+                            class="btn btn-sm btn-outline-secondary"
+                            title="Edit"
+                            aria-label="Edit"
+                            t-on-click.stop.prevent="() => onClickEditActivityButton(ticket.id)"
+                        >
+                            <i class="fa fa-pencil"/>
+                        </button>
+                    </div>
+                    <hr class="my-1"/>
+                </t>
+                 <button class="btn btn-secondary p-3 text-center" t-on-click.stop.prevent="onClickAddTicketButton" style="width:100%;">
+                     <i class="fa fa-plus fa-fw"/><strong>Add Ticket</strong>
+                </button>
+            </div>
+        </div>
+    </t>
+</templates>

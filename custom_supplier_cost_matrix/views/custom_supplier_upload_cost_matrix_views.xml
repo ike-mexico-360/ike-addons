@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View custom.supplier.upload.cost.matrix search -->
+    <record id="custom_supplier_upload_cost_matrix_view_search" model="ir.ui.view">
+        <field name="name">custom.supplier.upload.cost.matrix.view.search</field>
+        <field name="model">custom.supplier.upload.cost.matrix</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="supplier_id"/>
+                <field name="disabled"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group expand="1" string="Group By">
+                    <filter string="Center of attention" name="group_by_supplier_center_id" domain="[]" context="{'group_by':'supplier_center_id'}"/>
+                    <filter string="Supplier" name="group_by_supplier_id" domain="[]" context="{'group_by':'supplier_id'}"/>
+                    <filter string="State" name="group_by_state" domain="[]" context="{'group_by':'state'}"/>
+                    <filter string="Date Upload" name="group_by_date_upload" domain="[]" context="{'group_by':'date_upload'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- View custom.supplier.upload.cost.matrix View List -->
+    <record id="custom_supplier_upload_cost_matrix_view_list" model="ir.ui.view">
+        <field name="name">custom.supplier.upload.cost.matrix.view.list</field>
+        <field name="model">custom.supplier.upload.cost.matrix</field>
+        <field name="arch" type="xml">
+            <list delete="0" edit="0" default_order="date_upload desc">
+                <field name="supplier_center_id"/>
+                <field name="supplier_id"/>
+                <field name="service_id"/>
+                <field name="date_upload"/>
+                <field name="date_confirm"/>
+                <field name="state"/>
+                <field name="active" column_invisible="1"/>
+                <field name="disabled" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View custom.supplier.upload.cost.matrix form -->
+    <record id="custom_supplier_upload_cost_matrix_view_form" model="ir.ui.view">
+        <field name="name">custom.supplier.upload.cost.matrix.view.form</field>
+        <field name="model">custom.supplier.upload.cost.matrix</field>
+        <field name="arch" type="xml">
+            <form delete="0">
+                <header>
+                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary"
+                            invisible="state != 'draft' or disabled == True or product_ids_count == 0"
+                            confirm="¿Estás seguro?"/>
+                    <button name="action_decline" string="Decline" type="object" class="btn-danger"
+                            invisible="state != 'draft' or disabled == True or product_ids_count == 0"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,refused"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <widget name="web_ribbon" title="Refused" bg_color="text-bg-danger" invisible="state != 'refused'"/>
+                    <widget name="web_ribbon" title="Confirmed" bg_color="text-bg-success" invisible="state != 'confirmed' or products_to_confirm_count == 0"/>
+                    <widget name="web_ribbon" title="Nothing to confirm" bg_color="text-bg-warning" invisible="products_to_confirm_count &gt; 0"/>
+                    <group>
+                        <group>
+                            <field name="supplier_center_id" readonly="context.get('from_supplier_center', False) or disabled == True or state != 'draft'" required="1"
+                                options='{"no_open": True, "no_create": True}' context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_center_view_list'}"/>
+                            <field name="supplier_id" readonly="1" required="1" force_save="1"
+                                options='{"no_open": True, "no_create": True}' context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list'}"/>
+                            <field name="service_id" readonly="disabled == True or state != 'draft'" required="1" options='{"no_open": True, "no_create": True}'
+                                context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list'}"
+                                domain="service_domain"/>
+                            <field name="service_domain" invisible="1"/>
+                            <field name="products_to_confirm_count" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="date_upload" readonly="1"/>
+                            <field name="date_confirm" readonly="1" invisible="id == False"/>
+                            <label for="file" string="File" readonly="state == 'refused'"/>
+                            <div class="oe_inline">
+                                <field name="file" widget="binary" class="oe_inline" filename="file_name"
+                                    options="{'accepted_file_extensions': '.xlsx,.csv'}" readonly="product_ids_count > 0 or state == 'refused'"/>
+                                <button name="action_import_cost_matrix_file" type="object" string="Import"
+                                    class="btn btn-sm btn-secondary oe_inline ms-1 border-primary border-1"
+                                    icon="fa-upload" invisible="file == False or product_ids_count > 0" readonly="state == 'refused'"/>
+                            </div>
+                            <field name="file_name" invisible="1"/>
+                            <field name="file_type" invisible="1"/>
+                            <!-- <field name="x_state" readonly="disabled"/> -->
+                            <field name="disabled" invisible="1"/>
+                            <field name="active" invisible="1"/>
+                            <field name="id" invisible="1"/>
+                            <field name="product_ids_count" invisible="1"/>
+                            <field name="product_ids_with_missing_values_count" invisible="1"/>
+                        </group>
+                    </group>
+                    <notebook invisible="product_ids_count == 0">
+                        <page name="cost_product_ids" string="Costs">
+                            <div class="oe_inline d-flex justify-content-end" invisible="state != 'draft' or product_ids_with_missing_values_count == 0">
+                                <button name="view_records_with_missing_values" string="View records with missing values" type="object" class="btn-link" colspan="2" icon="fa-search"/>
+                            </div>
+                            <group>
+                                <field name="cost_product_ids" nolabel="1" mode="list" readonly="disabled == True or state != 'draft'">
+                                    <list string="Products" editable="bottom" limit="20" no_open="1" decoration-danger="missing_value == True" decoration-muted="not_confirm == True" decoration-info="not_confirm == False and parent.state == 'confirmed'" create="0">
+                                        <field name="service_id" column_invisible="1"/>
+                                        <field name="country_id" column_invisible="1"/>
+                                        <field name="mapping_product_ids" column_invisible="1"/>
+                                        <field name="subservice_id" options='{"no_open": True, "no_create": True}' required="1"
+                                            domain="[('categ_id', '=', service_id),('type', '=', 'service'),('disabled', '=', False)]"
+                                            context="{'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list', 'display_default_code': 0}"/>
+                                        <field name="state_id" options='{"no_open": True, "no_create": True}' required="1"
+                                            domain="[('country_id', '=', country_id),('disabled', '=', False)]"
+                                            context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_country_state_tree'}"/>
+                                        <field name="geographical_area_id" options='{"no_open": True, "no_create": True}' required="1"
+                                            domain="[('state_id', '=', state_id),('disabled', '=', False)]"/>
+                                        <field name="type_event_id" options='{"no_open": True, "no_create": True}' required="1"
+                                            domain="[('disabled', '=', False)]"/>
+                                        <field name="concept_id" options='{"no_open": True, "no_create": True}' required="1"
+                                            domain="[('id', 'in', mapping_product_ids),('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'}"/>
+                                        <field name="vehicle_category_id" options='{"no_open": True, "no_create": True}' required="1"
+                                            domain="[('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_category_view_list'}"/>
+                                        <field name="cost" required="1"/>
+                                        <field name="account_id" options='{"no_open": True, "no_create": True}'
+                                            domain="[('disabled', '=', False)]"
+                                            context="{'list_view_ref': 'custom_master_catalog.res_partner_account_view_list'}"/>
+                                        <field name="holiday_date_applies"/>
+                                        <field name="high_risk_area" readonly="1"/>
+                                        <field name="active_agreement"/>
+                                        <field name="supplier_status_id" options='{"no_open": True, "no_create": True}'
+                                            domain="[('disabled', '=', False)]" required="1"/>
+                                        <field name="date_init" required="1"/>
+                                        <field name="date_end"/>
+                                        <field name="vacation_schedule_ids" widget="many2many_tags" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="missing_value" column_invisible="1"/>
+                                        <field name="not_confirm" column_invisible="1"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="custom_supplier_upload_cost_lines_popup_view_tree" model="ir.ui.view">
+        <field name="name">custom_supplier_upload_cost_lines_popup.view.tree</field>
+        <field name="model">custom.supplier.cost.product</field>
+        <field name="arch" type="xml">
+            <list string="Products" editable="bottom" create="0">
+                <field name="service_id" column_invisible="1"/>
+                <field name="country_id" column_invisible="1"/>
+                <field name="mapping_product_ids" column_invisible="1"/>
+                <field name="subservice_id" options='{"no_open": True, "no_create": True}' required="1"
+                    domain="[('categ_id', '=', service_id),('type', '=', 'service'),('disabled', '=', False)]"
+                    context="{'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list'}"/>
+                <field name="state_id" options='{"no_open": True, "no_create": True}' required="1"
+                    domain="[('country_id', '=', country_id),('disabled', '=', False)]"
+                    context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_country_state_tree'}"/>
+                <field name="geographical_area_id" options='{"no_open": True, "no_create": True}' required="1"
+                    domain="[('state_id', '=', state_id),('disabled', '=', False)]"/>
+                <field name="type_event_id" options='{"no_open": True, "no_create": True}' required="1"
+                    domain="[('disabled', '=', False)]"/>
+                <field name="concept_id" options='{"no_open": True, "no_create": True}' required="1"
+                    domain="[('id', 'in', mapping_product_ids),('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'}"/>
+                <field name="vehicle_category_id" options='{"no_open": True, "no_create": True}' required="1"
+                    domain="[('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_category_view_list'}"/>
+                <field name="cost" required="1"/>
+                <field name="account_id" options='{"no_open": True, "no_create": True}'
+                    domain="[('disabled', '=', False)]"
+                    context="{'list_view_ref': 'custom_master_catalog.res_partner_account_view_list'}"/>
+                <field name="holiday_date_applies"/>
+                <field name="high_risk_area" readonly="1"/>
+                <field name="active_agreement"/>
+                <field name="supplier_status_id" options='{"no_open": True, "no_create": True}'
+                    domain="[('disabled', '=', False)]" required="1"/>
+                <field name="date_init" required="1"/>
+                <field name="date_end"/>
+                <field name="missing_value" column_invisible="1"/>
+                <field name="not_confirm" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="custom_supplier_cost_product_view_form_popup" model="ir.ui.view">
+        <field name="name">custom_supplier_cost_product.view.form_popup</field>
+        <field name="model">custom.supplier.cost.product</field>
+        <field name="arch" type="xml">
+            <form string="">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="subservice_id"  readonly="1" options="{'no_open': True, 'no_create': True}"/>
+                        </group>
+                    </group>
+                    <field name="missing_values" nolabel="1" colspan="4" widget="code" options="{'mode': 'python'}" readonly="1"/>
+                </sheet>
+                <footer>
+                    <button special="cancel" string="Cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action custom.supplier.upload.cost.matrix.type -->
+    <record id="custom_supplier_upload_cost_matrix_configuration_action" model="ir.actions.act_window">
+        <field name="name">Supplier Upload Cost Matrix</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">custom.supplier.upload.cost.matrix</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+    </record>
+
+</odoo>

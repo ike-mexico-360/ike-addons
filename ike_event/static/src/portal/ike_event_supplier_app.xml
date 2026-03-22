@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+    <t t-name="ike_event.IkeEventSupplierApp">
+        <div>
+            Use Public models: <input type="checkbox" t-model="state.use_public_model"/>
+            <br/>
+            EVENT ID:
+            <input type="number" t-model="state.channel_event_id"/>
+            <button type="button" t-on-click="subscribeEvent">
+                Add Channel and Subscribe
+            </button>
+            <br/>
+            <table t-if="state.event">
+                <thead>
+                    <tr>
+                        <th colspan="4">
+                            <t t-out="state.event.display_name"/>
+                            <t t-out="state.event.stage_ref"/>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>ID</th>
+                        <th>Supplier</th>
+                        <th>State</th>
+                        <th>Stage</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="state.event.service_supplier_ids"
+                        t-as="service_supplier_id" t-key="service_supplier_id.id"
+                        t-if="service_supplier_id.supplier_id"
+                        t-att-class="{'bg-warning': service_supplier_id.changed}">
+                        <td>
+                            <t t-out="service_supplier_id.id" />
+                        </td>
+                        <td>
+                            <t t-out="service_supplier_id.supplier_id.name" />
+                        </td>
+                        <td>
+                            <t t-out="service_supplier_id.state" />
+                        </td>
+                        <td>
+                            <t t-out="service_supplier_id.stage_ref" />
+                        </td>
+                        <td>
+                            <button type="button" t-if="showReset(service_supplier_id)"
+                                t-on-click="() => this.actionReset(service_supplier_id.id)">
+                                Reset
+                            </button>
+                            <button type="button" t-if="showNotify(service_supplier_id)"
+                                t-on-click="() => this.actionNotify(service_supplier_id.id)">
+                                Notify
+                            </button>
+                            <button type="button" t-if="showAcceptReject(service_supplier_id)"
+                                t-on-click="() => this.actionAccept(service_supplier_id.id)">
+                                Accept
+                            </button>
+                            <button type="button" t-if="showAcceptReject(service_supplier_id)"
+                                t-on-click="() => this.actionReject(service_supplier_id.id)">
+                                Reject
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <hr/>
+            SUPPLIER ID:
+            <input type="number" t-model="state.channel_supplier_id"/>
+            <button type="button" t-on-click="subscribeSupplier">
+                Add Channel and Subscribe
+            </button>
+            <table t-if="state.eventSupplierLines">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>ID</th>
+                        <th>Supplier</th>
+                        <th>State</th>
+                        <th>Stage</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="state.eventSupplierLines"
+                        t-as="service_supplier_id" t-key="service_supplier_id.id"
+                        t-if="service_supplier_id.supplier_id"
+                        t-att-class="{'bg-warning': service_supplier_id.changed}">
+                        <td>
+                            <t t-out="service_supplier_id.event_id.name" />
+                        </td>
+                        <td>
+                            <t t-out="service_supplier_id.id" />
+                        </td>
+                        <td>
+                            <t t-out="service_supplier_id.supplier_id.name" />
+                        </td>
+                        <td>
+                            <t t-out="service_supplier_id.state" />
+                        </td>
+                        <td>
+                            <t t-out="service_supplier_id.stage_ref" />
+                        </td>
+                        <td>
+                            <button type="button" t-if="showReset(service_supplier_id)"
+                                t-on-click="() => this.actionReset(service_supplier_id.id)">
+                                Reset
+                            </button>
+                            <button type="button" t-if="showNotify(service_supplier_id)"
+                                t-on-click="() => this.actionNotify(service_supplier_id.id)">
+                                Notify
+                            </button>
+                            <button type="button" t-if="showAcceptReject(service_supplier_id)"
+                                t-on-click="() => this.actionAccept(service_supplier_id.id)">
+                                Accept
+                            </button>
+                            <button type="button" t-if="showAcceptReject(service_supplier_id)"
+                                t-on-click="() => this.actionReject(service_supplier_id.id)">
+                                Reject
+                            </button>
+                        </td>
+                        <!-- <td>
+                            <button type="button" t-on-click="service_supplier_id.load">
+                                Load
+                            </button>
+                        </td> -->
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </t>
+</templates>

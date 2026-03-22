@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+   <!-- Event Screen -->
+    <record id="view_ike_event_screen_form" model="ir.ui.view">
+        <field name="name">view.ike.event.screen.form</field>
+        <field name="model">ike.event</field>
+        <field name="arch" type="xml">
+            <form string="Event" js_class="ike_event_screen_form" delete="false" duplicate="false">
+                <header>
+                    <button name="action_open_duplicate_wizard" string="Duplicate Expedient"
+                            confirm="Are you sure?"
+                            type="object" class="btn-info"/>
+                    <button name="open_cancel_wizard" string="Cancel"
+                            confirm="Are you sure?"
+                            type="object" class="btn-danger"
+                            invisible="not id or stage_ref in ['completed', 'cancel', 'cancel_subsequently']"/>
+                    <field name="stage_id" widget="ike_statusbar_duration" options="{'clickable': 0, 'fold_field': 'fold'}"/>
+                </header>
+                <sheet class="ike-sheet">
+                    <widget name="web_ribbon" title="VIP" bg_color="text-bg-warning" invisible="not vip_user"/>
+                    <widget name="ike_event_screen_header_info"/>
+                    <group invisible="1">
+                        <field name="stage_ref"/>
+                        <field name="step_number"/>
+                        <field name="sections"/>
+                        <field name="ia_suggestion_done"/>
+                        <field name="user_id"/>
+                        <field name="vip_user"/>
+                    </group>
+                    <group string="Account holder user" name="titular_user" invisible="not sections.get('user_data', False)">
+                        <group>
+                            <field name="user_id" options="{'no_create': 1, 'no_open': 1}"
+                                   required="stage_ref == 'draft'" domain="[('disabled', '=', False)]"
+                                   groups="base.group_no_one"/>
+                            <label for="user_membership_id" />
+                            <div class="o_row">
+                                <field name="user_membership_id"
+                                    domain="[('nus_id', '=', user_id), ('disabled', '=', False)]"
+                                    options="{'no_create': 1, 'no_open': 1}"
+                                    required="stage_ref == 'draft'"
+                                    groups="base.group_no_one"/>
+                            </div>
+                            <field name="membership_validity" invisible="1"/>
+                            <div>
+                                <field name="nu_name" widget="ike_char" nolabel="1"/>
+                                <field name="user_phone"  widget="ike_phone" nolabel="1"/>
+                            </div>
+                        </group>
+                    </group>
+                    <group string="Applicant" name="user_data" class="ike-group-bordered" invisible="not sections.get('user_data', False)">
+                        <group class="ike-group">
+                            <field name="name" string="Expedient"/>
+                            <field name="user_by" widget="ike_radio"
+                                options="{'icons': ['fa-user', 'fa-users']}"
+                                nolabel="1" colspan="2"/>
+                            <separator string="Preference contact"/>
+                            <field name="preference_contact"
+                                widget="preference_contact_widget"
+                                widget_props="{'hide_email': true}"/>
+                                <field name="key_identification" invisible="1"/>
+                                <field name="membership_display_mask" invisible="1"/>
+                            <div class="clearfix"/>
+                        </group>
+                        <group>
+                            <div class="o_row gap-1" colspan="2" invisible="user_by == 'by_id'">
+                                <field name="user_additional_name" widget="ike_char"/>
+                                <field name="user_additional_last_name" widget="ike_char"/>
+                                <field name="user_additional_phone" widget="ike_phone"/>
+                            </div>
+                            <div class="o_row gap-1" colspan="2" invisible="user_by == 'by_other'">
+                                <field name="nu_name" widget="ike_char"/>
+                                <field name="user_phone" widget="ike_phone" readonly="1"/>
+                                <field name="user_additional_phone" widget="ike_phone"/>
+                            </div>
+                            <div class="d-flex justify-content-end gap-2">
+                                <button name="action_forward" string="Continue"
+                                        type="object" class="btn-primary" colspan="2"
+                                        invisible="not user_membership_id"/>
+                            </div>
+                        </group>
+                    </group>
+                    <!-- Hide fields but necessary to show widget 'ike_event_screen_header_info', don't remove -->
+                    <group name="summary_data" invisible="1">
+                        <field name="event_summary_service_data" nolabel="1" widget="code" options="{'mode': 'python'}" readonly="1"/>
+                        <field name="event_summary_user_service_data" nolabel="1" widget="code" options="{'mode': 'python'}" readonly="1" invisible="stage_ref == 'capturing' and step_number &lt;= 2"/>
+                        <field name="event_summary_location_data" nolabel="1" widget="code" options="{'mode': 'python'}" readonly="1" invisible="stage_ref == 'capturing' and step_number &lt;= 3"/>
+                        <field name="event_summary_survey_data" nolabel="1" widget="code" options="{'mode': 'python'}" readonly="1" invisible="stage_ref == 'capturing' and step_number &lt;= 4"/>
+                        <field name="event_summary_user_sub_service_data" nolabel="1" widget="code" options="{'mode': 'python'}" readonly="1"  invisible="stage_ref == 'capturing' and step_number &lt;= 5"/>
+                        <field name="event_summary_supplier_data" nolabel="1" widget="code" options="{'mode': 'python'}" readonly="1"  invisible="stage_ref == 'capturing' and step_number &lt;= 6"/>
+                        <field name="event_summary_event_data" nolabel="1" widget="code" options="{'mode': 'python'}" readonly="1"  invisible="stage_ref == 'capturing' and step_number &lt;= 7"/>
+                    </group>
+                    <group name="service_data" class="ike-group ike-group-bordered" invisible="not sections.get('service_data')">
+                        <group string="Service" name="service" class="ike-group">
+                            <field name="service_id" widget="ike_service_radio" nolabel="1"
+                                   required="stage_ref != 'draft'"
+                                   domain="service_domain"
+                                   options="{'icon_field': 'x_icon'}"/>
+                            <field name="service_domain" invisible="1"/>
+                            <field name="service_res_model" invisible="1"/>
+                            <field name="service_res_id" readonly="1" invisible="1"/>
+                            <field name="service_survey_input_id" readonly="1" invisible="1"/>
+                        </group>
+                        <group string="Sub-Service" name="sub_service" class="ike-group">
+                            <field name="sub_service_id" nolabel="1"
+                                   required="stage_ref != 'draft'"
+                                   context="{
+                                        'display_default_code': 0,
+                                        'search_view_ref': 'custom_master_catalog.view_x_subservice_product_template_filter',
+                                        'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list',
+                                    }"
+                                   options="{'no_open': 1, 'no_create': 1}"
+                                   class="ike-select" placeholder="Sub-Service"/>
+                            <field name="sub_service_res_model" invisible="1"/>
+                            <field name="sub_service_res_id" readonly="1" invisible="1"/>
+                            <field name="sub_service_survey_input_id" readonly="1" invisible="1"/>
+                            <div class="clearfix"/>
+                            <div class="row mt-2" invisible="not sub_service_id">
+                                <!-- Alert SUCCESS -->
+                                <div class="col-12" invisible="not sub_service_id or not services_available &gt; 0">
+                                    <div class="alert alert-success d-flex flex-wrap gap-1" role="status">
+                                        <div class="d-flex gap-1 align-items-center text-nowrap">
+                                            <i class="fa fa-check-circle"></i>
+                                            <span>You have services available</span>
+                                            <span class="badge bg-success fs-6">
+                                                <field name="services_available" nolabel="1"/>
+                                            </span>
+                                            <span>out of</span>
+                                            <strong class="fs-6">
+                                                <field name="services_allowed" nolabel="1" readonly="1"/>
+                                            </strong>
+                                            <span>of your program.</span>
+                                        </div>
+                                        <div>
+                                            <button name="action_show_history_wizard" string="View history" type="object" class="btn btn-link"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Alert WARNING -->
+                                <div class="col-12" invisible="not sub_service_id or services_available &gt; 0">
+                                    <div class="alert alert-warning d-flex flex-wrap gap-1" role="status">
+                                        <div class="d-flex gap-1 align-items-center text-nowrap">
+                                            <i class="fa fa-exclamation-triangle text-warning"></i>
+                                            <span>You have no services available</span>
+                                            <span class="badge bg-warning text-dark fs-6">
+                                                <field name="services_available" nolabel="1" />
+                                            </span>
+                                            <span>out of</span>
+                                            <strong class="fs-6">
+                                                <field name="services_allowed" nolabel="1" readonly="1" />
+                                            </strong>
+                                            <span>of your program.</span>
+                                        </div>
+                                        <div>
+                                            <button name="action_show_history_wizard" string="View history" type="object" class="btn btn-link"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <separator class="col-12 my-1" string="Service type"/>
+                                <div class="col-12 mt-3">
+                                    <field name="service_type_id"
+                                        nolabel="1"
+                                        required="stage_ref != 'draft'"
+                                        domain="[('disabled', '!=', True)]"
+                                        options="{'no_create': True, 'no_open': True}"
+                                        class="ike-select"
+                                        placeholder="Select option"/>
+                                </div>
+
+                                <div class="d-flex justify-content-end gap-1">
+                                    <button name="action_backward" string="Return"
+                                            type="object" class="btn-secondary" colspan="2"/>
+                                    <button name="action_forward" string="Continue"
+                                            type="object" class="btn-primary" colspan="2"
+                                            invisible="not sub_service_id"/>
+                                </div>
+                            </div>
+                        </group>
+                    </group>
+                    <group string="Supplier Selection" name="supplier_data_control" invisible="not sections.get('supplier_data')">
+                        <group>
+                            <field name="covered_amount" readonly="1"/>
+                            <field name="authorized_amount" readonly="1"/>
+                            <field name="previous_amount" groups="base.group_no_one"/>
+                            <field name="current_amount" groups="base.group_no_one"/>
+                            <field name="authorization_required" groups="base.group_no_one"/>
+                            <field name="uncovered_authorization_required" groups="base.group_no_one"/>
+                            <field name="use_external_locations" widget="boolean_toggle" groups="base.group_no_one"/>
+                            <div class="o_row" colspan="2">
+                                <button string="View Vehicles Data" name="action_view_vehicles_info" type="object" class="btn-info"/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="supplier_number" readonly="1" groups="base.group_no_one"/>
+                            <field name="supplier_search_number" readonly="1" groups="base.group_no_one"/>
+                            <field name="supplier_search_type" readonly="1" groups="base.group_no_one"/>
+                            <div class="o_row" colspan="2">
+                                <button name="action_search_electronic_suppliers" string="Search Electronic (Suppliers)"
+                                        type="object" class="btn-info"/>
+                                <button name="action_search_publication_suppliers_3" string="Search Publication 3 (Suppliers)"
+                                        type="object" class="btn-info"/>
+                                <button name="action_search_manual_suppliers" string="Search Manual (Suppliers)"
+                                        type="object" class="btn-info"/>
+                                <button name="action_delete_suppliers" string="Delete Searched (Suppliers)"
+                                        type="object" class="btn-danger"/>
+                            </div>
+                        </group>
+                    </group>
+                    <group name="supplier_data" invisible="not sections.get('supplier_data')">
+                        <field name="service_supplier_ids" nolabel="1" colspan="2"
+                            widget="ike_supplier_section_and_note_field_o2m"
+                            options="{'field_columns': ['supplier_id']}"
+                            context="{'default_search_number': supplier_search_number}"
+                            readonly="supplier_search_type  not in ['manual', 'manual_manual']">
+                            <list create="0" delete="0">
+                                <field name="display_type" column_invisible="1" />
+                                <field name="sequence" column_invisible="1"/>
+
+                                <field name="event_search_number" column_invisible="1"/>
+
+                                <field name="search_number" column_invisible="1"/>
+                                <field name="ranking" string="#" width="25px"
+                                    column_invisible="parent.supplier_search_type in ['manual', 'manual']"
+                                    readonly="1"/>
+                                <field name="supplier_id"
+                                    widget="ike_label_section_and_note_field"
+                                    options="{'no_create': 1, 'no_open': 1}"
+                                    readonly="assignation_type not in ['manual', 'manual_manual'] or display_type"
+                                    width="200px"/>
+                                <field name="truck_id" domain="[('x_partner_id', '=', supplier_id)]"
+                                    options="{'no_create': 1, 'no_open': 1}"
+                                    column_invisible="parent.supplier_search_type not in ['manual', 'manual_manual']"
+                                    optional="show"
+                                    readonly="assignation_type not in ['manual', 'manual_manual'] or display_type"/>
+                                <field name="supplier_phone"
+                                    column_invisible="parent.supplier_search_type not in ['manual', 'manual_manual']"
+                                    readonly="1"/>
+                                <field name="name" optional="show" readonly="1"/>
+                                <field name="state" width="100px" readonly="1"/>
+                                <field name="priority" widget="priority" readonly="1" width="75px"/>
+                                <field name="estimated_duration" widget="float_time" optional="show" readonly="1" />
+                                <field name="estimated_cost" optional="show" readonly="1"/>
+
+                                <field name="assignation_type" optional="hide" readonly="1"/>
+                                <field name="is_manual" column_invisible="1"/>
+                                <field name="notification_date" optional="hide" readonly="1"/>
+                                <field name="acceptance_date" optional="hide" readonly="1"/>
+                                <field name="rejection_date" optional="hide" readonly="1"/>
+                                <field name="timer_duration" optional="hide" readonly="1"/>
+                                <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
+                                <button name="action_view_products" string="View Details" type="object" class="btn-link"/>
+                            </list>
+                        </field>
+                        <button string="Add Supplier" name="action_open_add_manual_supplier_wizard" type="object" class="btn-link"
+                            invisible="supplier_search_type not in ['manual', 'manual_manual']"/>
+                    </group>
+                    <group name="supplier_data_authorization" invisible="not sections.get('supplier_data')">
+                        <group colspan="2">
+                            <div class="o_row" style="float: right;">
+                                <button
+                                    name="action_request_authorization"
+                                    string="Request Authorization"
+                                    type="object" class="btn btn-primary rounded-4 py-1" title="Request Authorization"
+                                    context="{'from_event_authorization': True}"
+                                    invisible="not authorization_required or not service_supplier_ids"
+                                />
+                                <button
+                                    name="action_request_authorization"
+                                    string=""
+                                    type="object" class="oe_stat_butto" icon="fa-eye" title="Authorizer View"
+                                    context="{'from_authorizer': True}"
+                                    invisible="not authorization_required or not service_supplier_ids"
+                                />
+                            </div>
+                        </group>
+                    </group>
+                    <group invisible="stage_ref != 'searching'">
+                        <group>
+                        </group>
+                        <group>
+                            <div class="d-flex justify-content-end gap-1">
+                                <button name="action_backward" string="Return"
+                                        type="object" class="btn-secondary" colspan="2"/>
+                                <button name="action_forward" string="Continue"
+                                        type="object" class="btn-primary" colspan="2"
+                                        invisible="not sub_service_id"/>
+                            </div>
+                        </group>
+                    </group>
+                    <group invisible="not ((stage_ref == 'assigned' or stage_ref == 'in_progress') and step_number == 3)">
+                        <group>
+                        </group>
+                        <group>
+                            <div class="d-flex justify-content-end gap-1">
+                                <button name="action_backward" string="Return"
+                                        type="object" class="btn-primary" colspan="2"/>
+                                <button name="action_add_multi_supplier_continue" string="Continue"
+                                        type="object" class="btn-primary" colspan="2"/>
+                            </div>
+                        </group>
+                    </group>
+
+                    <group invisible="not sections.get('service_supplier')" class="text-end">
+                        <button string="Add Supplier" name="action_add_multi_supplier_product_data" type="object" class="btn-primary"/>
+                    </group>
+
+                    <group name="suppliers_selected" invisible="stage_ref not in ('assigned', 'in_progress', 'completed')">
+                        <group>
+                            <field name="service_supplier_ids" nolabel="1" colspan="2" widget="ike_selected_suppliers_info"/>
+                        </group>
+                        <group>
+                            <div class="d-flex flex-column align-items-center">
+                                <div><h3>Confirmation code: #7890</h3></div>
+                                <div class="mb-2">
+                                    <button name="action_view_ike_event_service_cost"
+                                        string="View service cost details"
+                                        type="object"
+                                        class="btn btn-primary rounded-4 py-1"/>
+                                </div>
+                                <div class="mb-2">
+                                    <button class="btn btn-primary rounded-4 py-1" >Send whatsapp info</button>
+                                </div>
+                                <div class="mb-2">
+                                    <button string="Add comments" class="btn btn-outline-primary rounded-4 py-0"/>
+                                </div>
+                            </div>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ike_event_screen" model="ir.actions.act_window">
+        <field name="name">Event Screen</field>
+        <field name="path">ike-event-screen</field>
+        <field name="res_model">ike.event</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_ike_event_search" />
+        <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'list', 'view_id': ref('view_ike_event_list')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('view_ike_event_screen_form')})]" />
+        <field name="domain">[]</field>
+        <field name="context" eval="{
+            'service_input_vial_form_id': ref('ike_event.view_ike_service_input_vial_screen_form'),
+            'service_input_vial_truck_form_id': ref('ike_event.view_ike_service_input_vial_truck_screen_form'),
+            'service_input_vial_generic_form_id': ref('ike_event.view_ike_service_input_vial_generic_screen_form'),
+            'service_input_vial_tire_form_id': ref('ike_event.view_ike_service_input_vial_generic_screen_form'),
+            'service_input_vial_fuel_form_id': ref('ike_event.view_ike_service_input_vial_generic_screen_form'),
+            'service_input_vial_fluid_form_id': ref('ike_event.view_ike_service_input_vial_generic_screen_form'),
+            'service_input_vial_battery_form_id': ref('ike_event.view_ike_service_input_vial_generic_screen_form'),
+            'service_input_medical_form_id': ref('ike_event.view_ike_service_input_medical_screen_form'),
+            'survey_user_input_form_id': ref('ike_event.ike_survey_user_input_view_screen_form'),
+            'service_supplier_screen_form_id': ref('ike_event.view_ike_event_supplier_screen_form'),
+        }"/>
+    </record>
+
+</odoo>

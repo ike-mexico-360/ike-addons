@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates>
+
+    <t t-name="ike_event.IkeEventListButtons">
+        <div class="o_purchase_dashboard container-fluid py-4 border-bottom bg-view" t-if="state.showIkeListButtons">
+            <div class="row justify-content-between gap-3 gap-lg-0">
+                <div class="col-12 col-lg-5 col-xl-5 col-xxl-3 flex-grow-1 flex-lg-grow-0 flex-shrink-0">
+                    <div class="grid gap-4">
+                        <div class="g-col-3 g-col-sm-3 d-flex align-items-center py-2 justify-content-end text-end justify-content-lg-start text-lg-start text-break">
+                            All Events
+                        </div>
+                        <div class="g-col-9 g-col-sm-9 grid gap-1">
+                            <div class="g-col-6 p-0" t-on-click="setSearchContext" title="All Active Events" filter_name="all_active">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                    <div class="fs-2" t-out="eventData['all_active_events']"/>Active
+                                </a>
+                            </div>
+                            <div class="g-col-6 p-0" t-on-click="setSearchContext" title="All Draft Events" filter_name="all_draft">
+                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                    <div class="fs-2" t-out="eventData['all_draft_events']"/>Draft
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid gap-4">
+                        <div class="g-col-3 g-col-sm-3 d-flex align-items-center py-2 justify-content-end text-end justify-content-lg-start text-lg-start text-break">
+                            My Events
+                        </div>
+                        <div class="g-col-9 g-col-sm-9 grid gap-2">
+                            <div class="g-col-6 p-0" t-on-click="setSearchContext" title="My Active Events" filter_name="all_active,my_events">
+                                <a href="#" class="btn btn-light d-flex align-items-center w-100 h-100 p-0 border-0 bg-100 fw-normal">
+                                    <div class="w-100 p-2" t-out="eventData['my_active_events']"/>
+                                </a>
+                            </div>
+                            <div class="g-col-6 p-0" t-on-click="setSearchContext" title="My Draft Events" filter_name="all_draft,my_events">
+                                <a href="#" class="btn btn-light d-flex align-items-center w-100 h-100 p-0 border-0 bg-100 fw-normal">
+                                    <div class="w-100 p-2" t-out="eventData['my_draft_events']"/>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

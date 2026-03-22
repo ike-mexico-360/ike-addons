@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- View Search -->
+    <record id="custom_nus_pet_type_view_search" model="ir.ui.view">
+        <field name="name">custom.nus.pet.type.view.search</field>
+        <field name="model">custom.nus.pet.type</field>
+        <field name="arch" type="xml">
+            <search string="Pet Types">
+                <field name="name"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group string="Group By">
+                    <filter name="groupby_name" string="Name" context="{'group_by': 'name'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- View List -->
+    <record id="custom_nus_pet_type_view_list" model="ir.ui.view">
+        <field name="name">custom.nus.pet.type.view.list</field>
+        <field name="model">custom.nus.pet.type</field>
+        <field name="arch" type="xml">
+            <list string="Pet Types" edit="false" duplicate="false" delete="false">
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- View Form -->
+    <record id="custom_nus_pet_type_view_form" model="ir.ui.view">
+        <field name="name">custom.nus.pet.type.view.form</field>
+        <field name="model">custom.nus.pet.type</field>
+        <field name="arch" type="xml">
+            <form string="Pet Types" duplicate="false" delete="false">
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action Window -->
+    <record id="custom_nus_pet_type_action" model="ir.actions.act_window">
+        <field name="name">Pet Types</field>
+        <field name="res_model">custom.nus.pet.type</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_filter_enabled': 1,}</field>
+    </record>
+</odoo>

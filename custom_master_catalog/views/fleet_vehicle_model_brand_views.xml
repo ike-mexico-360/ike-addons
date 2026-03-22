@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id='custom_fleet_vehicle_model_brand_view_tree' model='ir.ui.view'>
+        <field name="name">custom_fleet.vehicle.model.brand.list</field>
+        <field name="model">fleet.vehicle.model.brand</field>
+        <field name="priority" eval="50"/>
+        <field name="arch" type="xml">
+            <list string="Model Make" edit="0">
+                <field name="name" />
+                <field name="model_count" string="Models"/>
+            </list>
+        </field>
+    </record>
+
+    <record id='custom_fleet_vehicle_model_brand_view_form' model='ir.ui.view'>
+        <field name="name">custom_fleet.vehicle.model.brand.form</field>
+        <field name="model">fleet.vehicle.model.brand</field>
+        <field name="priority" eval="50"/>
+        <field name="arch" type="xml">
+            <form string="Model Make">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_brand_model" type="object" icon="fa-car" class="oe_stat_button"
+                            invisible="model_count == 0">
+                            <field name="model_count" widget="statinfo" string="Models"/>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="image_128" widget="image" class="oe_avatar float-start"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

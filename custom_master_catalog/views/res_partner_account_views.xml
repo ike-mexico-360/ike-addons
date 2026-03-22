@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Search View -->
+    <record id="res_partner_account_view_search" model="ir.ui.view">
+        <field name="name">res.partner.account.view.search</field>
+        <field name="model">res.partner</field>
+        <field name="priority" eval="50"/>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="vat"/>
+                <field name="parent_id"/>
+                <field name="x_account_type_id"/>
+                <field name="x_account_responsible_id"/>
+                <field name="x_account_identification_id"/>
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="México" name="filter_by_mexico" domain="[('country_id.code', '=', 'MX')]"/>
+                <separator/>
+                <group expand="1" string="Group By">
+                    <filter string="Client" name="group_by_client_id" domain="[]" context="{'group_by':'parent_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- List View -->
+    <record id="res_partner_account_view_list" model="ir.ui.view">
+        <field name="name">res.partner.account.view.list</field>
+        <field name="model">res.partner</field>
+        <field name="priority" eval="50"/>
+        <field name="arch" type="xml">
+            <list delete="0" edit="0" decoration-muted="not active or disabled" duplicate="0">
+                <field name="name"/>
+                <field name="vat"/>
+                <field name="x_account_type_id"/>
+                <field name="parent_id"/>
+                <field name="x_account_responsible_id"/>
+                <field name="disabled" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form View -->
+    <record id="res_partner_account_view_form" model="ir.ui.view">
+        <field name="name">res.partner.account.view.form</field>
+        <field name="model">res.partner</field>
+        <field name="priority" eval="50"/>
+        <field name="arch" type="xml">
+            <form delete="0" duplicate="0">
+                <div class="alert alert-warning oe_edit_only" role="alert" name="warning_company" invisible="not same_company_registry_partner_id">
+                  A partner with the same <span><field name="company_registry_label"/></span> already exists (<field name="same_company_registry_partner_id" context="{'show_address': False, 'show_vat': False}"/>), are you sure you want to create a new one?
+                </div>
+                <header>
+                    <field name="x_is_account" invisible="1" readonly="1" />
+                    <field name="company_type" invisible="1" readonly="1" />
+                    <field name="is_company" invisible="1" readonly="1" />
+                    <field name="disabled" invisible="1" />
+                    <field name="active" invisible="1" readonly="1"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box"/>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
+                    <field name="image_1920" widget='image' class="oe_avatar" options='{"preview_image": "avatar_128"}' readonly="disabled"/>
+                    <div class="oe_title mb24">
+                        <h1>
+                            <field id="company" options="{'line_breaks': False}" widget="text" class="text-break" name="name" default_focus="1" placeholder="e.g. Lumber Inc" required="1" readonly="disabled"/>
+                        </h1>
+                        <label for="x_business_name" invisible="x_use_parent_invoice_info" class="o_form_label_required"/>
+                        <h2 class="row" invisible="x_use_parent_invoice_info">
+                            <field
+                                name="x_business_name"
+                                placeholder="Business Name"
+                                required="x_use_parent_invoice_info == False"
+                                force_save="1"
+                                readonly="disabled"
+                            />
+                        </h2>
+                        <label for="parent_id" string="Client" class="o_form_label_required"/>
+                        <div class="o_row">
+                            <field name="parent_id"
+                                widget="res_partner_many2one"
+                                placeholder="Client Name..."
+                                domain="[('is_company', '=', True), ('x_is_client', '=', True), ('disabled', '=', False)]"
+                                context="{'form_view_ref': 'custom_master_catalog.res_partner_client_view_form', 'list_view_ref': 'custom_master_catalog.res_partner_client_view_list'}"
+                                options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                required="1"
+                                readonly="disabled"/>
+                        </div>
+                        <!--
+                        <label for="x_parent_business_name" string="Client Business Name" invisible="not x_use_parent_invoice_info"/>
+                        <div class="row">
+                            <field name="x_parent_business_name"/>
+                        </div>
+                        -->
+                    </div>
+                    <group>
+                        <group>
+                            <field name="ref" string="Account Number" readonly="ref" invisible="1"/>
+                            <field name="id" string="Account Number" readonly="1" invisible="not id"/>
+                            <field name="x_account_type_id"
+                                domain="[('disabled', '=', False)]"
+                                options="{'no_create': True, 'no_create_edit': True, 'no_open': True}" required="1"
+                                readonly="disabled"/>
+                            <field name="x_account_identification_id"
+                                domain="[('disabled', '=', False)]"
+                                options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                required="1" readonly="disabled"/>
+                                              
+                            <field name="x_check_second_key"/>
+                            <field name="x_second_key_identification_id" invisible="not x_check_second_key"/>
+                            <field name="authorizer"/>
+                            <field name="x_use_parent_invoice_info" readonly="disabled"/>
+                            <field name="vat" placeholder="e.g. BE0477472701" required="not x_use_parent_invoice_info" invisible="x_use_parent_invoice_info" readonly="disabled"/>
+                            <label for="street" string="Address" invisible="x_use_parent_invoice_info"/>
+                            <div class="o_address_format" invisible="x_use_parent_invoice_info">
+                                <field name="street" placeholder="Street..." class="o_address_street" required="not x_use_parent_invoice_info" readonly="disabled"/>
+                                <field name="street2" placeholder="Street 2..." class="o_address_street" readonly="disabled"/>
+                                <div class="o_address_street">
+                                    <field name="l10n_mx_edi_colony" placeholder="Colony..." style="flex: 2 1 auto" required="not x_use_parent_invoice_info" readonly="disabled"/>
+                                </div>
+                                <field name="city" placeholder="City" class="o_address_city" required="not x_use_parent_invoice_info" readonly="disabled"/>
+                                <field name="state_id" class="o_address_state" placeholder="State"
+                                       options="{'no_open': True, 'no_create': True}" domain="[('disabled', '=', False), ('country_id', '=', country_id)]"
+                                       context="{'default_country_id': country_id, 'list_view_ref': 'custom_master_catalog.custom_ike_view_country_state_tree', 'search_view_ref': 'custom_master_catalog.custom_ike_view_country_state_search', 'search_default_filter_by_mexico': 1, 'hide_disabled_enabled_filters': 1}"
+                                       required="not x_use_parent_invoice_info" readonly="disabled"/>
+                                <field name="zip" placeholder="ZIP" class="o_address_zip" style="margin-right: 2%;width: 23%;" required="not x_use_parent_invoice_info" readonly="disabled"/>
+                                <field name="country_id" placeholder="Country" class="o_address_country"
+                                       options='{"no_open": True, "no_create": True}' required="not x_use_parent_invoice_info" readonly="disabled"/>
+                            </div>
+                            <field name="x_parent_vat" string="Client VAT" invisible="not x_use_parent_invoice_info"/>
+                            <label for="x_parent_street" string="Client Address" invisible="not x_use_parent_invoice_info"/>
+                            <div class="o_address_format" invisible="not x_use_parent_invoice_info">
+                                <field name="x_parent_street" class="o_address_street"/>
+                                <field name="x_parent_street2" class="o_address_street"/>
+                                <div class="o_address_street">
+                                    <field name="x_parent_colony" style="flex: 2 1 auto"/>
+                                </div>
+                                <field name="x_parent_city" class="o_address_city"/>
+                                <field name="x_parent_state_id" class="o_address_state" options="{'no_open': 1}"/>
+                                <field name="x_parent_zip" class="o_address_zip"/>
+                                <field name="x_parent_country_id" class="o_address_country" options="{'no_open': 1}"/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="x_account_did" widget="phone" options="{'enable_sms': False, 'enable_call': False}" required="1" readonly="disabled"/>
+                            <field name="x_account_responsible_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}" required="1" readonly="disabled"
+                                context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_employee_tree'}"/>
+                            <field name="x_invoice_company_id" widget="many2many_tags" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}" required="1"
+                                readonly="disabled" context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_partner_tree'}"/>
+                            <field name="x_partner_contact" string="Account Contact" required="1" readonly="disabled"/>
+                            <field name="phone" widget="phone" options="{'enable_sms': False, 'enable_call': False}" required="1" readonly="disabled"/>
+                            <field name="mobile" widget="phone" options="{'enable_sms': False, 'enable_call': False}" required="1" readonly="disabled"/>
+                            <field name="email" required="1" options="{'regex': '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$'}" readonly="disabled"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="x_technical_configuration" string="Technical configuration">
+                            <group string="validation and visualization">
+                                <group>
+                                    <field name="x_validation_pattern" readonly="disabled"/>
+                                    <field name="x_validation_pattern_second" readonly="disabled" invisible="not x_check_second_key"/>
+                                </group>
+                                <group>
+                                    <field name="x_display_mask" readonly="disabled"/>
+                                    <field name="x_display_mask_second" readonly="disabled" invisible="not x_check_second_key"/>
+
+                                </group>
+                            </group>
+                            <group string="Validation type">
+                                <group>
+                                    <field name="validation_type" readonly="disabled"/>
+                                </group>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <data>
+        <record id="res_partner_account_action_window" model="ir.actions.act_window">
+            <field name="name">Account</field>
+            <field name="path">accounts</field>
+            <field name="res_model">res.partner</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="search_view_id" ref="res_partner_account_view_search"/>
+            <field name="view_ids" eval="[(5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('res_partner_account_view_list')}),
+                (0, 0, {'view_mode': 'kanban', 'view_id': ref('custom_master_catalog.custom_res_partner_view_kanban')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('res_partner_account_view_form')})]"/>
+            <field name="domain">[('x_is_account', '=', True)]</field>
+            <field name="context"
+                eval="{
+                    'default_custom_type_police_id': ref('custom_master_catalog.account_identification_policy'),
+                    'default_company_type': 'company',
+                    'default_is_company': True,
+                    'default_x_is_account': True,
+                    'x_account_view': True,
+                    'search_default_filter_enabled': 1
+                }"/>
+        </record>
+    </data>
+
+    <record id="view_partner_account_form_readonly" model="ir.ui.view">
+        <field name="name">res.partner.account.form.readonly</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="custom_master_catalog.res_partner_account_view_form"/>
+        <field name="mode">primary</field>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="edit">0</attribute>
+                <attribute name="create">0</attribute>
+                <attribute name="delete">0</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="action_res_partner_account_supplier_operational" model="ir.actions.act_window">
+        <field name="name">Account</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+            (0, 0, {'view_mode': 'list', 'view_id': ref('res_partner_account_view_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_partner_account_form_readonly')})
+        ]"/>
+        <field name="domain">[('x_is_account', '=', True)]</field>
+        <field name="context"
+            eval="{
+                'default_custom_type_police_id': ref('custom_master_catalog.account_identification_policy'),
+                'default_company_type': 'company',
+                'default_is_company': True,
+                'default_x_is_account': True,
+                'x_account_view': True,
+                'search_default_filter_enabled': 1
+            }"/>
+    </record>
+</odoo>
