@@ -244,6 +244,28 @@ class CustomMembershipNus(models.Model):
         string='Event Details'
     )
 
+    def action_create_details(self):
+        for record in self:
+            event_lines = []
+            if record.membership_plan_id:
+                for service in record.membership_plan_id.product_line_ids:
+                    event_lines.append((0, 0, {
+                        'user_membership_plan_id': record.membership_plan_id.id if record.membership_plan_id else False,
+                        'user_id': record.nus_id.id if record.nus_id else False,
+                        'service_id': service.service_id.id if service.service_id else False,
+                        'sub_service_ids': [(6, 0, service.sub_service_ids.ids)] if service.sub_service_ids else [],
+                        'user_membership_id': record,
+                        'vehicle_weight_category_id':
+                            service.vehicle_weight_category_id.id if service.vehicle_weight_category_id else False,
+                        'date_start': record.membership_plan_id.contract_start_date,
+                        'date_end': record.membership_plan_id.contract_end_date,
+                        'coverage_events': service.period_per_event,
+                        'period': service.period,
+                        'status': True,
+                    }))
+            if event_lines:
+                record.event_count_detail_ids = event_lines
+
     @api.model_create_multi
     def create(self, vals_list):
         records = super(CustomMembershipNus, self).create(vals_list)

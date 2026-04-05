@@ -1,59 +1,198 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
     <record id="ike_event_change_state_supplier_wizard_form" model="ir.ui.view">
         <field name="name">ike.event.change.state.supplier.wizard.form</field>
         <field name="model">ike.event.change.state.supplier.wizard</field>
         <field name="arch" type="xml">
             <form>
                 <sheet>
-                    <group col="12">
-                        <group colspan="4">
-                            <field name="event_id" readonly="1" options="{'no_open': True}"/>
-                        </group>
-                        <group colspan="4">
+                    <group name="detail_event">
+                        <group>
+                            <field name="event_id" options="{'no_open': True}"/>
                             <field name="supplier_id" readonly="1" options="{'no_open': True}"/>
-                            <field name="supplier_number" invisible="1"/>
-                        </group>
-                        <group colspan="4">
-                            <field name="stage_id" readonly="1" options="{'no_open': True}"/>
+                            <field name="stage_id" options="{'no_open': True}"/>
                         </group>
                     </group>
-                    <group invisible="0">
-                        <field name="new_stage_domain" invisible="1"/>
-                        <field name="new_stage_id"
-                            widget="statusbar"
-                            domain="new_stage_domain"
+                    <group>
+                        <field name="stage_selected_id" widget="statusbar"
+                            required="1"
                             options="{'clickable': 1, 'fold_field': 'fold'}"
                             nolabel="1"/>
                     </group>
-                    <group>
-                        <field name="user_id" readonly="1" options="{'no_open': True}"/>
-                        <field name="show_assigned" invisible="1"/>
-                        <field name="show_on_route" invisible="1"/>
-                        <field name="show_arrived" invisible="1"/>
-                        <field name="show_contacted" invisible="1"/>
-                        <field name="show_on_route_2" invisible="1"/>
-                        <field name="show_arrived_2" invisible="1"/>
-                        <field name="show_finalized" invisible="1"/>
+                    <group name="detail_status" col="12">
+                        <!-- DATES -->
+                        <group name="datetime_status" string="Datetime status"  colspan="4">
+                            <field name="first_assignation_date" invisible="not is_assigned_editable"/>
+                            <field name="assignation_date" widget="datetime"
+                                invisible="not is_assigned_editable"
+                                required="is_assigned_editable"
+                                options="{'rounding': 1}"/>
+
+                            <field name="first_on_route_to_user_start_date" invisible="not is_on_route_editable"/>
+                            <field name="on_route_to_user_start_date" widget="datetime"
+                                invisible="not is_on_route_editable"
+                                required="is_on_route_editable"
+                                options="{'rounding': 1}"/>
+
+                            <field name="first_on_route_to_user_end_date" widget="datetime" invisible="not is_arrived_editable"/>
+                            <field name="on_route_to_user_end_date" widget="datetime"
+                                invisible="not is_arrived_editable"
+                                required="is_arrived_editable"
+                                options="{'rounding': 1}"/>
+
+                            <field name="first_contacted_date" widget="datetime" invisible="not is_contacted_editable"/>
+                            <field name="contacted_date" widget="datetime"
+                                invisible="not is_contacted_editable"
+                                required="is_contacted_editable"
+                                options="{'rounding': 1}"/>
+
+                            <field name="first_on_route_to_destination_start_date" widget="datetime" invisible="not is_on_route_2_editable"/>
+                            <field name="on_route_to_destination_start_date" widget="datetime"
+                                invisible="not is_on_route_2_editable"
+                                required="is_on_route_2_editable"
+                                options="{'rounding': 1}"/>
+
+                            <field name="first_on_route_to_destination_end_date" widget="datetime" invisible="not is_arrived_2_editable"/>
+                            <field name="on_route_to_destination_end_date" widget="datetime"
+                                invisible="not is_arrived_2_editable"
+                                required="is_arrived_2_editable"
+                                options="{'rounding': 1}"/>
+
+                            <field name="first_finalized_date" widget="datetime" invisible="not is_finalized_editable"/>
+                            <field name="finalized_date" widget="datetime"
+                                invisible="not is_finalized_editable"
+                                required="is_finalized_editable"
+                                options="{'rounding': 1}"/>
+                        </group>
+                        <!-- USERS -->
+                        <group name="responsible_change_status" string="Responsible for the status change" colspan="4">
+                            <field name="first_assignation_user_id" invisible="not is_assigned_editable" options="{'no_open': True}"/>
+                            <field name="assignation_user_id" readonly="1"
+                                invisible="not is_assigned_hidden or not is_assigned_editable"
+                                options="{'no_open': True}"/>
+                            <field name="supplier_assignation_user_id" invisible="is_assigned_hidden or not is_assigned_editable"
+                                options="{'no_open': True}"/>
+
+                            <field name="first_on_route_to_start_user_id" invisible="not is_on_route_editable" options="{'no_open': True}"/>
+                            <field name="on_route_to_start_user_id" readonly="1"
+                                invisible="not is_on_route_hidden or not is_on_route_editable"
+                                options="{'no_open': True}"/>
+                            <field name="supplier_on_route_to_start_user_id"
+                                invisible="is_on_route_hidden or not is_on_route_editable"
+                                options="{'no_open': True}"/>
+
+                            <field name="first_on_route_to_end_user_id" invisible="not is_arrived_editable" options="{'no_open': True}"/>
+                            <field name="on_route_to_end_user_id" readonly="1"
+                                invisible="not is_arrived_hidden or not is_arrived_editable"
+                                options="{'no_open': True}"/>
+                            <field name="supplier_on_route_to_end_user_id"
+                                invisible="is_arrived_hidden or not is_arrived_editable"
+                                options="{'no_open': True}"/>
+
+                            <field name="first_contacted_user_id" invisible="not is_contacted_editable" options="{'no_open': True}"/>
+                            <field name="contacted_user_id" readonly="1"
+                                invisible="not is_contacted_hidden or not is_contacted_editable"
+                                options="{'no_open': True}"/>
+                            <field name="supplier_contacted_user_id"
+                                invisible="is_contacted_hidden or not is_contacted_editable"
+                                options="{'no_open': True}"/>
+
+                            <field name="first_on_route_to_destination_start_user_id" invisible="not is_on_route_2_editable" options="{'no_open': True}"/>
+                            <field name="on_route_to_destination_start_user_id" readonly="1"
+                                invisible="not is_on_route_2_hidden or not is_on_route_2_editable"
+                                options="{'no_open': True}"/>
+                            <field name="supplier_on_route_to_destination_start_user_id"
+                                invisible="is_on_route_2_hidden or not is_on_route_2_editable"
+                                options="{'no_open': True}"/>
+
+                            <field name="first_on_route_to_destination_end_user_id" invisible="not is_arrived_2_editable" options="{'no_open': True}"/>
+                            <field name="on_route_to_destination_end_user_id" readonly="1"
+                                invisible="not is_arrived_2_hidden or not is_arrived_2_editable"
+                                options="{'no_open': True}"/>
+                            <field name="supplier_on_route_to_destination_end_user_id"
+                                invisible="is_arrived_2_hidden or not is_arrived_2_editable"
+                                options="{'no_open': True}"/>
+
+                            <field name="first_finalized_user_id" invisible="not is_finalized_editable" options="{'no_open': True}"/>
+                            <field name="finalized_user_id" readonly="1"
+                                invisible="not is_finalized_hidden or not is_finalized_editable"
+                                options="{'no_open': True}"/>
+                            <field name="supplier_finalized_user_id"
+                                invisible="is_finalized_hidden or not is_finalized_editable"
+                                options="{'no_open': True}"/>
+                        </group>
+                        <!-- COMMENTS -->
+                        <group name="comment_change_status" string="Comment change status" colspan="4">
+                            <field name="first_assignation_comment" invisible="not is_assigned_editable"/>
+                            <field name="assignation_comment" invisible="not is_assigned_editable"
+                                required="is_assigned_editable"/>
+
+                            <field name="first_on_route_to_start_comment" invisible="not is_on_route_editable"/>
+                            <field name="on_route_to_start_comment" invisible="not is_on_route_editable"
+                                required="is_on_route_editable"/>
+
+                            <field name="first_on_route_to_end_comment" invisible="not is_arrived_editable"/>
+                            <field name="on_route_to_end_comment" invisible="not is_arrived_editable"
+                                required="is_arrived_editable"/>
+
+                            <field name="first_contacted_comment" invisible="not is_contacted_editable"/>
+                            <field name="contacted_comment"
+                                invisible="not is_contacted_editable"
+                                required="is_contacted_editable"/>
+
+                            <field name="first_on_route_to_destination_start_comment" invisible="not is_on_route_2_editable"/>
+                            <field name="on_route_to_destination_start_comment"
+                                invisible="not is_on_route_2_editable"
+                                required="is_on_route_2_editable"/>
+
+                            <field name="first_on_route_to_destination_end_comment" invisible="not is_arrived_2_editable"/>
+                            <field name="on_route_to_destination_end_comment"
+                                invisible="not is_arrived_2_editable"
+                                required="is_arrived_2_editable"/>
+
+                            <field name="first_finalized_comment" invisible="not is_finalized_editable"/>
+                            <field name="finalized_comment"
+                                invisible="not is_finalized_editable"
+                                required="is_finalized_editable"/>
+                        </group>
                     </group>
-                    <group invisible="not new_stage_id">
-                        <field name="assigned_date"  invisible="not show_assigned"  required="show_assigned"/>
-                        <field name="on_route_date"  invisible="not show_on_route"  required="show_on_route"/>
-                        <field name="arrived_date"   invisible="not show_arrived"   required="show_arrived"/>
-                        <field name="contacted_date" invisible="not show_contacted" required="show_contacted"/>
-                        <field name="on_route_2_date" invisible="not show_on_route_2" required="show_on_route_2"/>
-                        <field name="arrived_2_date"  invisible="not show_arrived_2"  required="show_arrived_2"/>
-                        <field name="finalized_date"  invisible="not show_finalized"  required="show_finalized"/>
+                    <group col="12" invisible="1">
+                        <group colspan="4">
+                            <field name="first_state_date"/>
+                        </group>
+                        <group colspan="4">
+                            <field name="first_state_user_id" options="{'no_open': True}"/>
+                        </group>
+                        <group colspan="4">
+                            <field name="first_comment" colspan="4"/>
+                        </group>
+                    </group>
+                    <group invisible="1">
+                        <field name="is_assigned_editable"/>
+                        <field name="is_on_route_editable"/>
+                        <field name="is_arrived_editable"/>
+                        <field name="is_contacted_editable"/>
+                        <field name="is_on_route_2_editable"/>
+                        <field name="is_arrived_2_editable"/>
+                        <field name="is_finalized_editable"/>
+
+                        <field name="is_assigned_hidden"/>
+                        <field name="is_on_route_hidden"/>
+                        <field name="is_arrived_hidden"/>
+                        <field name="is_contacted_hidden"/>
+                        <field name="is_on_route_2_hidden"/>
+                        <field name="is_arrived_2_hidden"/>
+                        <field name="is_finalized_hidden"/>
                     </group>
                 </sheet>
                 <footer>
                     <button name="action_confirm"
-                            string="Confirm"
-                            type="object"
-                            class="btn-primary" invisible="0"/>
+                        string="Confirm"
+                        type="object"
+                        class="btn-primary"/>
                     <button string="Cancel"
-                            special="cancel"
-                            class="btn-secondary"/>
+                        class="btn-secondary"
+                        special="cancel"/>
                 </footer>
             </form>
         </field>

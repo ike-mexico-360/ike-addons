@@ -7,7 +7,11 @@
             <form string="Duplicate">
                 <group string="User data" >
                     <field name="event_id" readonly="1" options="{'no_open': True}"/>
-                    <field name="duplicate_reason_id" options="{'no_open': True, 'no_create': True, 'no_edit': True}"/>
+                    <field name="duplicate_reason_id" 
+                        options="{'no_open': True, 'no_create': True, 'no_edit': True}" 
+                        required="1" 
+                        context="{'hide_disabled_enabled_filters': 1}"
+                        domain="[('disabled', '=', False)]"/>
                     <field name="duplicate_user_data"/>
                 </group>
 

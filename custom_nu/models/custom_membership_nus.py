@@ -27,11 +27,13 @@ class CustomMembershipNus(models.Model):
     date = fields.Date(string='Date', tracking=True, default=fields.Date.context_today)
     x_validation_pattern = fields.Char(string='Validation pattern', related="membership_plan_id.x_validation_pattern")
     x_display_mask = fields.Char(string='Display mask', related="membership_plan_id.x_display_mask")
-    x_validation_pattern_second = fields.Char(string='Validation pattern', related="membership_plan_id.x_validation_pattern_second")
-    x_display_mask_second = fields.Char(string='Display mask', related="membership_plan_id.x_display_mask_second")
+    x_validation_pattern_second = fields.Char(
+        string='Validation second pattern',
+        related="membership_plan_id.x_validation_pattern_second")
+    x_display_mask_second = fields.Char(string='Second display mask', related="membership_plan_id.x_display_mask_second")
     check_second_key = fields.Boolean(related="membership_plan_id.account_id.x_check_second_key")
-    check_clause = fields.Boolean(related="membership_plan_id.account_identification_id.clause")
-    second_check_clause = fields.Boolean(related="membership_plan_id.second_account_identification_id.clause")
+    check_clause = fields.Boolean(related="membership_plan_id.account_identification_id.clause", string="Clause")
+    second_check_clause = fields.Boolean(related="membership_plan_id.second_account_identification_id.clause", string="Second clause")
 
     nus_id = fields.Many2one(
         comodel_name='custom.nus',

@@ -29,8 +29,10 @@ class IkeEventDuplicateWizard(models.TransientModel):
         related="user_membership_id.membership_plan_id.account_identification_id")
     second_account_identification_id = fields.Many2one(
         related="user_membership_id.membership_plan_id.second_account_identification_id")
-    label_account_identification = fields.Char(related="account_identification_id.label")
-    second_label_account_identification = fields.Char(related="second_account_identification_id.label")
+    label_account_identification = fields.Char(related="account_identification_id.label", stirng="Account identification")
+    second_label_account_identification = fields.Char(
+        related="second_account_identification_id.label",
+        string="Second account identification")
     check_second_key = fields.Boolean(related="user_membership_id.membership_plan_id.account_id.x_check_second_key")
     decrypted_key_identification = fields.Char(
         string="Primary Key",
@@ -43,16 +45,24 @@ class IkeEventDuplicateWizard(models.TransientModel):
     )
 
     # SERVICE FIELD
-    duplicate_service_id = fields.Many2one(related="event_id.service_id")
-    service_id = fields.Many2one('product.category')
-    service_domain = fields.Binary('Service Domain', compute='_compute_service_domain')
+    duplicate_service_id = fields.Many2one(
+        related="event_id.service_id",
+        string="Event Service"
+    )
+
+    service_id = fields.Many2one(
+        'product.category',
+        string="service"
+    )
+    service_domain = fields.Binary('Service domain', compute='_compute_service_domain')
     service_domain_id = fields.Many2one(
         'product.category',
+        string="Service Domain",
         compute="_compute_service_domain_id",
     )
 
-    sub_service_id = fields.Many2one('product.product', 'Sub-Service')
-    duplicate_sub_service_id = fields.Many2one(related='event_id.sub_service_id')
+    sub_service_id = fields.Many2one('product.product', 'Sub-service')
+    duplicate_sub_service_id = fields.Many2one(related='event_id.sub_service_id', string="Subservice")
 
     # LOCATION FIELD
     # location_label = fields.Char('Origin')

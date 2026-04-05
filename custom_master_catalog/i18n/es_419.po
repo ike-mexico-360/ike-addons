@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-20 18:27+0000\n"
-"PO-Revision-Date: 2026-03-20 18:27+0000\n"
+"POT-Creation-Date: 2026-03-30 18:34+0000\n"
+"PO-Revision-Date: 2026-03-30 18:34+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -285,6 +285,7 @@ msgstr "Se requiere una acción"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality_code__active
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__active
@@ -501,6 +502,11 @@ msgstr "Disponible"
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__product_product__x_unit_reset_period__year
 msgid "Año(s)"
 msgstr ""
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__base_concept_id
+msgid "Base Concept"
+msgstr "Concepto base"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__behavior
@@ -798,16 +804,24 @@ msgid "Concept description"
 msgstr "Descripción"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__concepts_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_concepts_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_product_concept_domain
 msgid "Concept domain"
 msgstr "Dominio de concepto"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__concept_line_ids
+msgid "Concept line"
+msgstr "Line conceptos"
+
+#. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.custom_ike_concepts_product_view_action
 #: model:ir.actions.server,name:custom_master_catalog.custom_ike_concepts_product_action_server
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__concepts_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_concepts_ids
 #: model:ir.ui.menu,name:custom_master_catalog.custom_ike_concepts_product_view_menu
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_template_form
 msgid "Concepts"
 msgstr "Conceptos"
 
@@ -980,6 +994,7 @@ msgstr "¡Crea tu primera clasificación de teléfono!"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality_code__create_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__create_uid
@@ -1015,6 +1030,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality_code__create_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__create_date
@@ -1204,6 +1220,7 @@ msgstr "Descripción"
 #: code:addons/custom_master_catalog/models/other/custom_subservice_specification.py:0
 #: code:addons/custom_master_catalog/models/other/custom_supplier_coverage_configuration.py:0
 #: code:addons/custom_master_catalog/models/other/custom_supplier_type.py:0
+#: code:addons/custom_master_catalog/models/other/custom_supplier_types_statuses.py:0
 #: code:addons/custom_master_catalog/models/other/custom_vehicle_type.py:0
 #: code:addons/custom_master_catalog/models/other/res_country.py:0
 #: code:addons/custom_master_catalog/models/other/res_country_state.py:0
@@ -1223,6 +1240,7 @@ msgstr "Descripción"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality_code__disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__disabled
@@ -1255,6 +1273,7 @@ msgstr "Descripción"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_model_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_search
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_geographical_area_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_accessories_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_accessories_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concept_product_template_filter
@@ -1332,6 +1351,7 @@ msgstr "Razón de desactivación"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality_code__display_name
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__display_name
@@ -1502,6 +1522,7 @@ msgstr "Entidad"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographic_subservice_wizard__event_type_id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__event_type_id
 msgid "Event type"
 msgstr "Tipo de evento"
 
@@ -1848,6 +1869,7 @@ msgstr "Días festivos..."
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality_code__id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__id
@@ -2055,6 +2077,11 @@ msgid "Is additional"
 msgstr "Es adicional"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_check_is_armor
+msgid "Is armor?"
+msgstr "Es blindaje?"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_is_cancelation
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_template__x_is_cancelation
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_form
@@ -2119,6 +2146,7 @@ msgstr "Última actualización"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality_code__write_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__write_uid
@@ -2154,6 +2182,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality_code__write_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__write_date
@@ -2805,6 +2834,7 @@ msgid "Product"
 msgstr "Producto"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__categ_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__categ_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_template__categ_id
 msgid "Product Category"
@@ -3084,6 +3114,7 @@ msgstr "Secuencia"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_mapping__categ_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__service_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__service_id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__x_service_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__x_service_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_product_category_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model_category__x_service_id
@@ -3094,6 +3125,7 @@ msgstr "Secuencia"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_subservice_specification_view_search
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_types_statuses_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_vehicle_type_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.product_category_service_view_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.product_category_service_view_search
@@ -3116,6 +3148,7 @@ msgstr "Descripción del servicio"
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__x_categ_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__x_service_domain
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__x_categ_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__x_categ_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model_category__x_categ_domain
 msgid "Service domain"
@@ -3254,6 +3287,7 @@ msgid "Subbrand"
 msgstr "Submarca"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__subservice_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__subservice_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__product_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__x_subservice_id
@@ -3269,6 +3303,16 @@ msgstr "Submarca"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_template_list
 msgid "Subservice"
 msgstr "Subservicio"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__subservice_specification_domain
+msgid "Subservice Specification Domain"
+msgstr "Dominio especificación del subservicio"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__subservice_specification_ids
+msgid "Subservice Specifications"
+msgstr "Especificaciones del subservicio"
 
 #. module: custom_master_catalog
 #. odoo-python
@@ -3338,6 +3382,21 @@ msgstr "Proveedor"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_list
 msgid "Supplier Business Name"
 msgstr "Razón social del proveedor"
+
+#. module: custom_master_catalog
+#: model:res.groups,name:custom_master_catalog.custom_group_ccc_analyst
+msgid "Supplier CCC Analyst"
+msgstr "Proveedores CCC Analista"
+
+#. module: custom_master_catalog
+#: model:res.groups,name:custom_master_catalog.custom_group_ccc_coordinator
+msgid "Supplier CCC Coordinator"
+msgstr "Proveedores CCC Coordinador"
+
+#. module: custom_master_catalog
+#: model:res.groups,name:custom_master_catalog.custom_group_ccc_boss
+msgid "Supplier CCC leader / Boss"
+msgstr "Proveedores CCC Lider / Jefe"
 
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.res_partner_supplier_center_action_window
@@ -3869,6 +3928,11 @@ msgid "Weight Category vehicles"
 msgstr "Categorías de pesos"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_armor_level
+msgid "X Armor Level"
+msgstr "Nivel de blindaje"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_phone_p1_classification_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_phone_p1_classification_id
 msgid "X Phone P1 Classification"
@@ -3965,6 +4029,11 @@ msgid "already exists ("
 msgstr "ya existe ("
 
 #. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_custom_subservice_concept_line
+msgid "custom.subservice.concept.line"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_account_view_form
 msgid "e.g. BE0477472701"
 msgstr "Por ejemplo, BE0477472701"
@@ -3991,6 +4060,11 @@ msgstr "Ej. PAE 326"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_model_view_form
 msgid "e.g. Tesla"
 msgstr "Ej. Tesla"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_armor_level
+msgid "level armor"
+msgstr "Nivel de blindaje"
 
 #. module: custom_master_catalog
 #: model:res.groups,name:custom_master_catalog.custom_group_manager_cds

@@ -171,5 +171,6 @@ class IkeServiceVial(models.Model):
         self.vehicle_year = '2020'
         self.vehicle_plate = 'A00-AAA'
         self.vehicle_color = 'Gris'
-        self.vehicle_category_id = self.vehicle_category_id = self.env['fleet.vehicle.model.category'].search([
-            ('name', '=', 'Alta gama')], limit=1).id or False
+        vehicle_category_id = self.env['fleet.vehicle.model.category'].search([
+            ('name', '=ilike', 'Auto')], limit=1)
+        self.vehicle_category_id = vehicle_category_id and vehicle_category_id.id or False

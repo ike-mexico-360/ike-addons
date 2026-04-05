@@ -23,13 +23,13 @@
         name="Clients"
         sequence="20"
         web_icon="custom_master_catalog,static/description/client.png"
-        groups="base.group_system,custom_group_contact_admin_client,custom_group_contact_admin_account,custom_group_supplier_operational"/>
+        groups="base.group_system,custom_group_contact_admin_client,custom_group_contact_admin_account,custom_group_supplier_operational,custom_group_ccc_analyst,custom_group_ccc_coordinator,custom_group_supplier_admin_system"/>
 
     <!-- Sub-menu Clients -->
     <menuitem id="res_partner_menu_clients"
         name="Clients"
         parent="res_partner_menu_clients_root"
-        groups="base.group_system,custom_group_contact_admin_client,custom_group_contact_admin_account,custom_group_supplier_operational"
+        groups="base.group_system,custom_group_contact_admin_client,custom_group_contact_admin_account,custom_group_supplier_operational,custom_group_ccc_analyst,custom_group_ccc_coordinator"
         sequence="1">
         <menuitem id="res_partner_client_menu_clients"
             name="Clients"
@@ -39,7 +39,7 @@
         <menuitem id="res_partner_account_menu_account"
             name="Accounts"
             action="res_partner_account_action_window"
-            groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_operational"
+            groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_operational,custom_group_ccc_analyst,custom_group_ccc_coordinator"
             sequence="2"/>
         <!-- <menuitem id="res_partner_account_menu_account_readonly"
             name="Accounts"
@@ -52,7 +52,7 @@
     <menuitem id="res_partner_menu_clientes_config"
         name="Configuration"
         parent="res_partner_menu_clients_root"
-        groups="base.group_system,custom_group_contact_admin_client,custom_group_contact_admin_account"
+        groups="base.group_system,custom_group_contact_admin_client,custom_group_contact_admin_account,custom_group_supplier_admin_system"
         sequence="3"/>
 
     <menuitem id="res_partner_company_ike_menu"
@@ -64,12 +64,12 @@
     <menuitem id="res_partner_menu_account_config"
         name="Accounts"
         parent="res_partner_menu_clientes_config"
-        groups="base.group_system,custom_group_contact_admin_account"
+        groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_admin_system"
         sequence="2">
         <menuitem id="res_partner_menu_account_type_config"
             name="Accounts Types"
             action="custom_account_type_action"
-            groups="base.group_system,custom_group_contact_admin_account"
+            groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_admin_system"
             sequence="1"/>
         <menuitem id="res_partner_menu_account_identification_config"
             name="Accounts Identifications"

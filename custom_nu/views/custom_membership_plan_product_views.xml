@@ -57,20 +57,33 @@
                             </div>
                         </group>
                     </group>
+                    <separator string="Limits"/>
+                    <field name="limit_ids" create="false">
+                        <list editable="bottom">
+                            <field name="line_id" column_invisible="1"/>
+                            <field name="limit_coverage_min"/>
+                            <field name="limit_coverage_max" required="1"/>
+                            <field name="amount" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
                     <separator string="Conceptos Detallados"/>
                     <field name="detail_ids" create="false" options="{
-                            'field_columns': ['product_id'],
                             'delete_condition_field': 'mandatory',
                         }">
                         <list editable="bottom">
                             <field name="mandatory" column_invisible="1"/>
                             <field name="x_concept_domain" column_invisible="1"/>
+                            <field name="currency_id" column_invisible="1"/>
                             <field name="product_id" 
                             domain="x_concept_domain"
                                 options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
                                 context="{'display_default_code': 0,
                                 'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'}"/>
                             <field name="coverage_type"/>
+                            <field name="limit_coverage_min"/>
+                            <field name="limit_coverage_max"/>
+                            <field name="cost" widget="monetary" options="{'currency_field': 'currency_id'}"/>
                             <field name="quantity"/>
                             <!-- <field name="cost"/>
                             <field name="limit_coverage"/> -->

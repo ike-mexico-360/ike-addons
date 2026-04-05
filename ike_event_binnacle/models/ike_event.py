@@ -237,59 +237,14 @@ class IkeEvent(models.Model):
             }
         }
 
-    def action_search_electronic_suppliers(self):
-        self.ensure_one()
-
-        self._search_suppliers('electronic')
-
-        self._create_message_binnacle([
-            "ike_event_binnacle.ike_binnacle_stage_5_6"
-        ])
-
-    def action_search_publication_suppliers_3(self):
-        self.ensure_one()
-
-        self._search_suppliers('publication', '3')
-
-        self._create_message_binnacle([
-            "ike_event_binnacle.ike_binnacle_stage_5_6"
-        ])
-
-    def action_search_publication_suppliers_2(self):
-        self.ensure_one()
-
-        self._search_suppliers('publication', '2')
-
-        self._create_message_binnacle([
-            "ike_event_binnacle.ike_binnacle_stage_5_6"
-        ])
-
-    def action_search_publication_suppliers_1(self):
-        self.ensure_one()
-
-        self._search_suppliers('publication', '1')
-
-        self._create_message_binnacle([
-            "ike_event_binnacle.ike_binnacle_stage_5_6"
-        ])
-
-    def action_search_publication_suppliers_0(self):
-        self.ensure_one()
-
-        self._search_suppliers('publication', '0')
-
-        self._create_message_binnacle([
-            "ike_event_binnacle.ike_binnacle_stage_5_6"
-        ])
-
-    def action_search_manual_suppliers(self):
-        self.ensure_one()
-
-        self._search_suppliers('manual')
-
-        self._create_message_binnacle([
-            "ike_event_binnacle.ike_binnacle_stage_5_6"
-        ])
+    # Search Supplier
+    def _process_suppliers_data(self, service_suppliers, assignation_type):
+        result = super()._process_suppliers_data(service_suppliers, assignation_type)
+        for rec in self:
+            self._create_message_binnacle([
+                "ike_event_binnacle.ike_binnacle_stage_5_6"
+            ])
+        return result
 
     def action_set_user_data(self):
         result = super(IkeEvent, self).action_set_user_data()
@@ -311,7 +266,7 @@ class IkeEvent(models.Model):
         result = super(IkeEvent, self).action_set_location_data()
         for rec in self:
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_6"])
-            rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_7"])
+            # rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_7"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_8"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_9"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_10"])
@@ -344,6 +299,34 @@ class IkeEvent(models.Model):
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_1"])
         return result
 
+    def action_verify(self):
+        previous_stages = {rec.id: rec.stage_id for rec in self}
+
+        result = super().action_verify()
+
+        for rec in self:
+            previous_stage = previous_stages.get(rec.id)
+
+            if rec.stage_id != previous_stage:
+                if rec.stage_id == self.env.ref('ike_event.ike_event_stage_closed'):
+                    rec._create_message_binnacle([
+                        "ike_event_binnacle.ike_binnacle_stage_10_2"
+                    ])
+                elif rec.stage_id == self.env.ref('ike_event.ike_event_stage_verifying'):
+                    rec._create_message_binnacle([
+                        "ike_event_binnacle.ike_binnacle_stage_10_3"
+                    ])
+
+        return result
+
+    def action_confirm_costs(self):
+        result = super().action_confirm_costs()  # type: ignore
+        for rec in self:
+            rec._create_message_binnacle([
+                'ike_event_binnacle.ike_binnacle_stage_10_4',
+                'ike_event_binnacle.ike_binnacle_stage_10_2'])
+        return result
+
 
 class IkeEventSupplier(models.Model):
     _inherit = 'ike.event.supplier'
@@ -351,14 +334,13 @@ class IkeEventSupplier(models.Model):
     def action_assign(self):
         result = super(IkeEventSupplier, self).action_assign()
         for rec in self:
-            ctx = dict(current_supplier_id=rec.id)
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_2"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_3"])
-            rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_4"])
+            # rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_4"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_5"])
             # rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_6_1"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_1"])
-            rec.event_id.with_context(**ctx)._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_2"])
+            # rec.event_id.with_context(**ctx)._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_2"])
         return result
 
     def action_on_route(self):
@@ -375,6 +357,14 @@ class IkeEventSupplier(models.Model):
             rec.event_id.with_context(
                 current_supplier_id=rec.id
             )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_4"])
+        return result
+
+    def action_contact(self):
+        result = super(IkeEventSupplier, self).action_contact()
+        for rec in self:
+            rec.event_id.with_context(
+                current_supplier_id=rec.id
+            )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_33"])
         return result
 
     def action_on_route_to_the_destination(self):
@@ -412,6 +402,54 @@ class IkeEventSupplier(models.Model):
                 ])
 
         return result
+
+    def action_reject(self):
+        result = super().action_reject()
+        for rec in self:
+            rec.event_id.with_context(
+                supplier_id=rec.supplier_id.id,
+                truck_id=rec.truck_id.id
+            )._create_message_binnacle([
+                "ike_event_binnacle.ike_binnacle_stage_11_2"
+            ])
+            return result
+
+    def action_timeout(self):
+        result = super().action_timeout()
+        for rec in self:
+            rec.event_id.with_context(
+                supplier_id=rec.supplier_id.id,
+                truck_id=rec.truck_id.id
+            )._create_message_binnacle([
+                "ike_event_binnacle.ike_binnacle_stage_11_3"
+            ])
+            return result
+
+    def action_accept(self):
+        result = super().action_accept()
+        for rec in self:
+            rec.event_id.with_context(
+                supplier_id=rec.supplier_id.id,
+                truck_id=rec.truck_id.id
+            )._create_message_binnacle([
+                "ike_event_binnacle.ike_binnacle_stage_11_4"
+            ])
+            rec.event_id.with_context(
+                supplier_id=rec.supplier_id.id,
+                truck_id=rec.truck_id.id
+            )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_2"])
+            return result
+
+    def action_notify(self):
+        result = super().action_notify()
+        for rec in self:
+            rec.event_id.with_context(
+                supplier_id=rec.supplier_id.id,
+                truck_id=rec.truck_id.id
+            )._create_message_binnacle([
+                "ike_event_binnacle.ike_binnacle_stage_11_1"
+            ])
+            return result
 
     class IkeEventSupplierLink(models.Model):
         _inherit = 'ike.event.supplier.link'
@@ -476,6 +514,13 @@ class IkeEventMembershipAuthorization(models.Model):
         result = super().send_mail_commercial_authorizator()
         for rec in self:
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_28"])
+        return result
+
+    def action_send_authorization_email(self):
+        result = super().action_send_authorization_email()
+        if self.env.context.get('Autorization_supervisor_cabine'):
+            for rec in self:
+                rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_34"])
         return result
 
     def action_authorized_membership(self):

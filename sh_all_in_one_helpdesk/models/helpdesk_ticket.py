@@ -39,6 +39,13 @@ class HelpdeskTicket(models.Model):
         return stage_id.id
 
     @api.model
+    def get_default_ticket_type(self):
+        # Todo change for record create from data
+        stage_id = self.env['sh.helpdesk.ticket.type'].search(
+            [('name', 'ilike', "Disputa Proveedor")], limit=1)
+        return stage_id.id if stage_id else False
+
+    @api.model
     def default_due_date(self):
         return fields.Datetime.now()
 
@@ -96,6 +103,7 @@ class HelpdeskTicket(models.Model):
                                index=True)
     ticket_type = fields.Many2one('sh.helpdesk.ticket.type',
                                   string='Ticket Type',
+                                  default=get_default_ticket_type,
                                   tracking=True)
     team_id = fields.Many2one('sh.helpdesk.team', string='Team', tracking=True)
     team_head = fields.Many2one('res.users', "Team Head", tracking=True)

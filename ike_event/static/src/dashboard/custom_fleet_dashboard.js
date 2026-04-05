@@ -4,10 +4,15 @@ import { standardActionServiceProps } from "@web/webclient/actions/action_servic
 import { Layout } from "@web/search/layout";
 import { View } from "@web/views/view";
 
+import { Component, onWillStart, onWillUnmount, onMounted, useState, useRef } from '@odoo/owl';
 
-const { Component, onWillStart, onWillUnmount, onMounted, useState, useRef } = owl;
 
 class CustomFleetDashboard extends Component {
+    static components = { Layout, View };
+    static template = "ike_event.CustomFleetDashboard";
+    static props = {
+        ...standardActionServiceProps,
+    };
     setup() {
         console.log("CustomFleetDashboard setup", this);
         this.googleMapsService = useService("google_maps_service");
@@ -177,10 +182,10 @@ class CustomFleetDashboard extends Component {
                                 title: vehicle.name,
                             });
 
-                        // Center and adjust map zoom
-                        bounds.extend({ lat, lng });
-                        this.map.fitBounds(bounds);
-                            }
+                            // Center and adjust map zoom
+                            bounds.extend({ lat, lng });
+                            this.map.fitBounds(bounds);
+                        }
                     };
                 }
             };
@@ -208,11 +213,5 @@ class CustomFleetDashboard extends Component {
     }
 }
 
-// Registro OWL
-CustomFleetDashboard.components = { Layout, View};
-CustomFleetDashboard.template = "ike_event.CustomFleetDashboard";
-CustomFleetDashboard.props = {
-    ...standardActionServiceProps,
-};
 
 registry.category("lazy_components").add("CustomFleetDashboard", CustomFleetDashboard);

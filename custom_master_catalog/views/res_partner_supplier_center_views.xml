@@ -118,7 +118,7 @@
                                 <field name="x_allowed_product_ids" widget="many2many_tags" context="{'display_default_code': 0}" invisible="0"/>
                                 <widget name="custom_municipality_selection" field_name="x_geographical_area_ids" readonly="disabled" colspan="2"/>
                                 <field name="x_geographical_area_ids" nolabel="1" readonly="not x_allowed_product_ids or disabled == True" class="my-1">
-                                    <list editable="bottom" decoration-muted="disabled == True" delete="0" create="0"
+                                    <list editable="bottom" decoration-muted="disabled == True" delete="1" create="0"
                                           context="{'form_view_ref': 'custom_master_catalog.custom_geographical_area_product_view_form'}">
                                         <field name="partner_id" column_invisible="1"/>
                                         <field name="country_id" options="{'no_create': 1}"/>

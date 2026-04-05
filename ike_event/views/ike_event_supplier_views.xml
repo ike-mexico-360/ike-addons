@@ -55,8 +55,11 @@
                         force_save="1"/>
                 <field name="product_domain" column_invisible="1"/>
                 <field name="name" column_invisible="1"/>
-                <field name="supplier_number" string="Supplier" readonly="1"/>
+                <field name="supplier_number" string="Supplier" readonly="1"
+                    force_save="1"/>
                 <field name="covered" column_invisible="0"/>
+                <field name="base" column_invisible="1" />
+                <field name="additional" column_invisible="1" />
                 <field name="mandatory" column_invisible="1"/>
                 <field name="uom_id" options="{'no_create': 1, 'no_open': 1}"/>
                 <field name="estimated_quantity" />
@@ -78,6 +81,8 @@
                 <field name="display_type" column_invisible="1" />
                 <field name="sequence" widget="handle" column_invisible="1" />
                 <field name="covered" column_invisible="1" />
+                <field name="base" column_invisible="1" />
+                <field name="additional" column_invisible="1" />
                 <field name="mandatory" column_invisible="1" />
                 <field name="product_id" required="1" widget="ike_label_section_and_note_field" domain="product_domain"
                     context="{
@@ -211,17 +216,18 @@
         <field name="name">ike.event.supplier.product.detail.base.costs.list.view</field>
         <field name="model">ike.event.supplier.product</field>
         <field name="arch" type="xml">
-            <list>
+            <list editable="bottom" create="false">
                 <field name="event_supplier_link_id" column_invisible="1" />
                 <field name="product_domain" column_invisible="1" />
                 <field name="display_type" column_invisible="1" />
                 <field name="sequence" widget="handle" column_invisible="1" />
                 <field name="covered" column_invisible="1" />
                 <field name="mandatory" column_invisible="1" />
-                <field name="product_id" widget="ike_label_section_and_note_field" readonly="1" />
+                <field name="product_id" widget="ike_label_section_and_note_field" readonly="1"
+                    options="{'no_open': 1}" />
                 <field name="name" column_invisible="1" />
-                <field name="quantity" readonly="1"/>
-                <field name="uom_id" readonly="1"/>
+                <field name="quantity"/>
+                <field name="uom_id" readonly="1" options="{'no_open': 1}" />
                 <field name="base_unit_price" />
                 <field name="base_cost_price" readonly="1" />
                 <field name="base_vat" readonly="1" />
@@ -243,7 +249,7 @@
                         nolabel="1"
                         colspan="2"
                         widget="ike_section_and_note_field_o2m"
-                        readonly="1"
+                        readonly="not exceeds_coverage"
                         context="{
                             'list_view_ref': 'ike_event.ike_event_supplier_product_detail_base_costs_list_view',
                         }"/>
@@ -270,8 +276,9 @@
                             <h3 colspan="2"><field name="subservice_id" nolabel="1" readonly="1" options="{'no_open': True, 'no_create': True}" context="{'display_default_code': 0}"/></h3>
                         </group>
                         <group class="text-end" colspan="8">
-                            <button string="Record progress" class="btn btn-primary" type="object" name="open_change_state_supplier_wizard"
-                                invisible="stage_ref in ['cancel', 'preparing'] or event_stage_ref in ['cancel', 'cancel_subsequently', 'close', 'completed'] or cancelled"/>
+                            <button string="Watches" class="btn btn-primary fa-clock" type="object" name="open_change_state_supplier_wizard"
+                            invisible="stage_ref in ['cancel', 'preparing'] or
+                                event_stage_ref in ['cancel', 'cancel_subsequently', 'close'] or cancelled"/>
                             <button string="Cancel supplier" class="btn btn-danger" type="object" name="open_cancel_wizard" invisible="cancelled"/>
                         </group>
                     </group>
@@ -298,7 +305,7 @@
                                 <field name="on_route_to_user_start_date_widget" invisible="1"/>
                                 <field name="on_route_to_user_end_date_widget" invisible="1"/>
                                 <field name="on_route_to_destination_start_date_widget" invisible="1"/>
-                                <field name="on_route_to_destination_end_date_widget" invisible="1"/>      
+                                <field name="on_route_to_destination_end_date_widget" invisible="1"/>
                                 <!-- Widget  LineProgress-->
                                 <field
                                     name="travel_progress_percent"
@@ -350,6 +357,37 @@
                 <field name="type_authorization_id"
                     options="{'no_create': 1, 'no_open': 1}"
                     optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- EVENT SUPPLIER BASE COST FINAL -->
+    <record id="ike_event_supplier_product_detail_base_cost_final_list_view" model="ir.ui.view">
+        <field name="name">ike.event.supplier.product.detail.base.cost.final.list.view</field>
+        <field name="model">ike.event.supplier.product</field>
+        <field name="arch" type="xml">
+            <list create="false" delete="false" edit="true" editable="bottom"
+                default_order="supplier_id">
+                <field name="event_supplier_link_id" column_invisible="1" />
+                <field name="product_domain" column_invisible="1" />
+                <field name="display_type" column_invisible="1" />
+                <field name="sequence" widget="handle" column_invisible="1" />
+                <field name="covered" column_invisible="1" />
+                <field name="mandatory" column_invisible="1" />
+                <field name="supplier_id" readonly="1"
+                    optional="hide"
+                    options="{'no_open': 1}"/>
+                <field name="product_id" readonly="1"
+                    options="{'no_open': 1}" />
+                <field name="name" column_invisible="1" />
+                <field name="quantity" />
+                <field name="uom_id" readonly="1" options="{'no_open': 1}" />
+                <field name="base_unit_price" />
+                <field name="base_cost_price" readonly="1" sum="Agreement Cost"/>
+                <field name="base_vat" readonly="1" sum="Agreement Vat"/>
+                <field name="tax_ids" column_invisible="1" widget="many2many_tags" optional="hide" readonly="1"/>
+                <field name="base_subtotal" readonly="1" sum="Agreement Subtotal"/>
+                <field name="is_manual" column_invisible="1"/>
             </list>
         </field>
     </record>

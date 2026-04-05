@@ -41,9 +41,9 @@
                     </div>
                 </button>
             </xpath>
-            <field name="product_ids" position="after">
+            <!-- <field name="product_ids" position="after">
                 <field name="sh_invoice_ids" string="Invoices" widget="many2many_tags" />
-            </field>
+            </field> -->
         </field>
     </record>
     <record id="sh_helpdesk_tickets_inherited_view_invoice_search" model="ir.ui.view">

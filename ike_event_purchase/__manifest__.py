@@ -13,10 +13,12 @@
         'ike_event',
         'sh_all_in_one_helpdesk',
         'ike_event_portal',
+        'custom_o2m_track',
     ],
     "data": [
         'security/ir.model.access.csv',
         "data/purchase_email_data.xml",
+        "data/ike_event_purchase_data.xml",
         "views/ike_event_screen_views.xml",
         "views/purchase_order_views.xml",
         "views/res_partner_supplier_views.xml",
@@ -31,5 +33,8 @@
             'ike_event_purchase/static/src/js/components/purchase_order_details/*.*',
             'ike_event_purchase/static/src/js/components/purchase_order_dispute/*.*',
         ],
+        'web.assets_backend': [
+            'ike_event_purchase/static/src/xml/systray_notification_view.xml'
+        ]
     }
 }

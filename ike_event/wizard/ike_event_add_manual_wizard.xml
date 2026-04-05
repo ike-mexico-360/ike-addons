@@ -14,6 +14,7 @@
                         options="{'no_create': True}"
                         context="{'edit': False}"
                         domain="truck_domain" />
+                    <field name="x_center_id"/>
                 </group>
 
                 <footer>

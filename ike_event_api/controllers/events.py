@@ -1,8 +1,10 @@
 import base64
+import requests
 from odoo import http, Command, _
 from odoo.http import request
 from odoo.exceptions import AccessError
 from werkzeug.exceptions import (Forbidden, NotFound, BadRequest, InternalServerError, Unauthorized)  # noqa: F401  # type: ignore
+from odoo.addons.ike_event_portal.controllers.services_controller import PortalUserAccount  # ajusta el import
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -27,36 +29,57 @@ class EventAPIController(http.Controller):
     def ike_event_assistview(self, **kw):
         results = kw.get('results', {})
         event_id = kw.get("event_id", False)
-        # event_type = kw.get("event_type", False)
-        # event_type 1 = All
-        # event_type 2 = Only location
-        card = results.get("circulation_card", {}).get("document", {})
-        vehicle = results.get("vehicle_analysis", {}).get("vehicle", {})
-
-        brand = vehicle.get("brand", "")
-        model = vehicle.get("model", "")
-        plates = card.get("plate", "")
-        color = vehicle.get("color", "")
-        location = results.get("vehicle_analysis", {}).get("location_center", {})
-        answers = {
-            "movement_obstruction": vehicle.get("movement_obstruction", False),
-            "movement_obstruction_description": vehicle.get("movement_obstruction_description", ""),
-            "visible_damage": vehicle.get("visible_damage", False),
-            "damage_description": vehicle.get("damage_description", ""),
-        }
-
+        # assistview_id = kw.get("assistview_id", False)
         if not event_id:
             return {'status': 'error', 'message': 'Missing parameters'}
 
+        # event_type = kw.get("event_type", False)
+        # event_type 1 = All
+        # event_type 2 = Only location
         try:
+            card = results.get("circulation_card", {}).get("document", {})
+            vehicle_analysis = results.get("vehicle_analysis", {})
+            vehicle = vehicle_analysis.get("vehicle", {})
+
+            brand = vehicle.get("brand", "")
+            model = vehicle.get("model", "")
+            plates = vehicle.get("license_plate", False)
+            if not plates:
+                plates = card.get("plate", "")
+            color = vehicle.get("color", "")
+            location = vehicle_analysis.get("location_center", {})
+            plate_image = vehicle_analysis.get("plate_crop_url", "")
+            vehicle_images = vehicle_analysis.get("image_urls", {})
+            answers = {
+                "movement_obstruction": vehicle.get("movement_obstruction", False),
+                "movement_obstruction_description": vehicle.get("movement_obstruction_description", ""),
+                "visible_damage": vehicle.get("visible_damage", False),
+                "damage_description": vehicle.get("damage_description", ""),
+            }
+
+            # Descargar imágenes del vehículo en base64
+            plate_image_encoded = None
+
+            # Descargar imagen de placa
+            if plate_image:
+                b64 = self._x_ike_assistview_download_image_b64(plate_image)
+                if b64:
+                    plate_image_encoded = b64
+
+            # Descargar imagenes del vehículo
+            vehicle_images_encoded = {}
+            for key, url_image in vehicle_images.items():
+                b64 = self._x_ike_assistview_download_image_b64(url_image)
+                if b64:
+                    vehicle_images_encoded[key] = b64
+
             message = {
                 "id": event_id, "brand": brand, "model": model, "plate": plates, "color": color, "location": location,
-                "answers": answers
+                "plate_image": plate_image_encoded, "vehicle_images": vehicle_images_encoded, "answers": answers,
             }
             _logger.info(f"/ike/event/assistview/{event_id}")
-            _logger.info(f"assistivew message: {message}")
 
-            channel_name = f'ike_channel_assistview_event_{str(event_id)}'
+            channel_name = f'ike_channel_assistview_event_{event_id}'
             request.env['bus.bus']._sendone(
                 target=channel_name,
                 notification_type='ike_event_assistview_reload',
@@ -64,46 +87,64 @@ class EventAPIController(http.Controller):
             )
             return {'status': 'ok'}
         except Exception as e:
-            _logger.error(f"Error sending assistivew event: {str(e)}")
+            _logger.error(f"Error sending assistview event: {str(e)}")
             return {'status': 'error', 'message': str(e)}
-        # return {'status': 'Not implemented yet'}
+
+    def _x_ike_assistview_download_image_b64(self, url):
+        """Descarga una imagen desde una URL y retorna base64."""
+        if not url:
+            return None
+        try:
+            response = requests.get(url, timeout=10)
+            response.raise_for_status()
+            return base64.b64encode(response.content)
+        except Exception as e:
+            _logger.warning(f"No se pudo descargar imagen {url}: {str(e)}")
+            return None
 
     @http.route('/ike/event/accept', type='json', auth='user', methods=['POST'])
     def ike_event_accept(self, **kw):
-        # ToDo: Recibir el valor de event_supplier_id, para saber quien aceptó
-        # ToDo: Detonar el 'action_accept' de esa linea, para que se le asigne el evento
-        # ToDo: Ejecutar el 'action_forward' del evento
-        user = request.env.user
+        # Este endpoint se usará para aceptar proveedores externos,
+        # se recibirá event_id, vehicle_id, acccepted_datetime, accepted_user,
+        # este ultimo será opcional, buscar el usuario del proveedor del vehículo
+        # Enviar en la respuesta el código de usuario
+
+        # Validar sesión
+        if not request.env.uid:
+            request.env.cr.rollback()
+            raise Unauthorized(_('Usuario no autenticado'))
+
         event_id = kw.get('event_id', False)
-        # vehicle_id = kw.get('vehicle_id', False)  # ToDo: Para obtener linea de proveedor
-        event_supplier_id = kw.get('event_supplier_id', False)
-        if not event_id:
+        vehicle_id = kw.get('vehicle_id', False)
+        accepted_datetime = kw.get('accepted_datetime', False)
+        # accepted_user = kw.get('accepted_user', "")
+
+        if not event_id or not vehicle_id or not accepted_datetime:
             raise BadRequest(_('Missing parameters'))
 
-        event = request.env['ike.event'].sudo().browse([event_id])
-        event_sudo = event.sudo()
+        env = request.env
 
-        if not event_sudo:
-            raise NotFound(_('Event not found'))
+        Supplier = env['ike.event.supplier'].sudo()
 
-        self._check_operator_assigned_to_event(event_sudo, user)
+        domain = [
+            ('event_id', '=', event_id),
+            ('truck_id.x_vehicle_ref', '=', vehicle_id),
+            ('state', '=', 'notified'),
+        ]
 
-        if event_sudo.stage_id.ref != 'assigned':
-            raise BadRequest(_('Event not in assigned stage'))
+        supplier = Supplier.search(domain, limit=1)
 
-        # ToDo: Adaptar a la forma de validar que menciona Nefta para usar el action_forward
-        # event_sudo.action_forward()
-
-        if event_supplier_id:
-            event_supplier = request.env['ike.event.supplier'].sudo().browse([event_supplier_id])
-            event_supplier_sudo = event_supplier.sudo()
-            if not event_supplier_sudo:
-                raise NotFound(_('Event Supplier not found'))
-            if event_supplier_sudo.state != 'notified':
-                raise BadRequest(_('Event Supplier not notified to accept'))
-            event_supplier_sudo.action_accept()
-
-        return {'status': 'success'}
+        try:
+            supplier.action_accept()
+            # ToDo: Cómo integrar esto? Se necesita guardar la fecha y hora recibida
+            supplier.write({'acceptance_date': accepted_datetime})
+            return {
+                'status': 'success',
+                'user_code': supplier.event_id.user_code,
+            }
+        except Exception as e:
+            _logger.error(f"Error on action_accept: {str(e)}")
+            raise InternalServerError(str(e))
 
     # Terminación de recogida
     @http.route('/ike/event/send_end_format', type='http', auth='user', methods=['POST'], csrf=False)
@@ -357,6 +398,272 @@ class EventAPIController(http.Controller):
             'event_id': supplier.event_id.id,
             'vehicle_id': supplier.truck_id.x_vehicle_ref,
         }
+
+    @http.route('/ike/event/reject', type='json', auth='user', methods=['POST'], csrf=False)
+    def ike_event_supplier_reject(self, **kw):
+        # Validar sesión
+        if not request.env.uid:
+            request.env.cr.rollback()
+            raise Unauthorized(_('Usuario no autenticado'))
+
+        # Parámetros esperados desde la app móvil
+        event_id = kw.get('event_id')
+        vehicle_id = kw.get('vehicle_id')
+        reject_text = kw.get('reject_text')
+
+        # Validar parámetros mínimos
+        if not (event_id and vehicle_id and reject_text):
+            raise BadRequest(_('Parámetros requeridos faltantes'))
+
+        env = request.env
+
+        Supplier = env['ike.event.supplier'].sudo()
+
+        domain = [
+            ('event_id', '=', event_id),
+            ('truck_id.x_vehicle_ref', '=', vehicle_id),
+            ('state', 'in', ('accepted', 'assigned')),
+            ('selected', '=', True),
+        ]
+
+        supplier = Supplier.search(domain, limit=1)
+        if not supplier:
+            raise NotFound(_('No se encontró el registro de supplier para cancelar'))
+
+        # Ejecutar action_reject
+        supplier.action_reject()
+
+        return {
+            'status': 'success',
+            'message': _('Servicio rechazado correctamente'),
+            'event_id': supplier.event_id.id,
+            'vehicle_id': supplier.truck_id.x_vehicle_ref,
+        }
+
+    # ==========================#
+    #      EVENT/CONCEPTS       #
+    # ==========================#
+    @http.route('/ike/event/concetps/set', type='json', auth='user', methods=['POST'], csrf=False)
+    def ike_event_concepts_set(self, **kw):
+        """
+        Endpoint para registrar conceptos adicionales por evento y proveedor.
+
+        Recibe un payload donde cada clave es un event_id y su valor es una
+        lista de suppliers, cada uno con su vehicle_id y los conceptos a registrar.
+
+        Payload esperado:
+            {
+                "<event_id>": [
+                    {
+                        "vehicle_id": "<x_vehicle_ref>",
+                        "concepts": [
+                            {"id": <product_id>, "quantity": <cantidad>},
+                            ...
+                        ]
+                    },
+                    ...
+                ],
+                ...
+            }
+
+        Returns:
+            dict: {"status": "success", "results": [...]}
+
+        Raises:
+            Unauthorized:        Si el usuario no tiene sesion activa.
+            BadRequest:          Si el payload no cumple la estructura esperada
+                                 o faltan parametros requeridos.
+            NotFound:            Si no existe un proveedor activo para el par
+                                 (event_id, vehicle_id) recibido.
+            InternalServerError: Si ocurre un error inesperado durante la escritura.
+        """
+        if not request.env.uid:
+            request.env.cr.rollback()
+            raise Unauthorized(_('Usuario no autenticado'))
+
+        # Valida que el payload tenga la forma correcta antes de consultar BD.
+        # Si hay multiples errores de estructura, los acumula todos y los
+        # devuelve juntos para que el cliente pueda corregirlos en un solo ciclo.
+        self.__validate_concepts_structure(kw)
+
+        # Consulta la BD para verificar que cada (event_id, vehicle_id) tenga
+        # un proveedor valido y enriquece el payload con su supplier_id.
+        # Ninguna escritura ocurre aqui — si algo falla, no hay nada que revertir.
+        self.__resolve_supplier_ids(kw)
+
+        # Con el payload validado y enriquecido, delega la escritura.
+        return self.__save_concepts(kw)
+
+    def __validate_concepts_structure(self, data):
+        """
+        Valida que el payload tenga exactamente la estructura esperada.
+
+        Recorre todos los niveles del payload (eventos, suppliers, concepts)
+        acumulando todos los errores encontrados antes de lanzar la excepcion.
+        Esto evita el patron "corrige un error, vuelve a intentar, aparece otro"
+        que frustra a los consumidores del API.
+
+        Args:
+            data (dict): El payload crudo recibido en **kw.
+
+        Raises:
+            BadRequest: Si la estructura es invalida. El mensaje incluye la
+                        lista completa de errores para facilitar el debug.
+        """
+        if not isinstance(data, dict) or not data:
+            raise BadRequest('Estructura incorrecta: se esperaba un objeto con event_ids como claves')
+
+        errors = []
+
+        for event_key, suppliers in data.items():
+            # Las claves del objeto JSON son siempre strings; verificamos
+            # que representen un entero valido (el ID del evento en Odoo).
+            if not str(event_key).isdigit():
+                errors.append(f"Clave de evento invalida: '{event_key}' (debe ser numerica)")
+                continue
+
+            if not isinstance(suppliers, list):
+                errors.append(f"event_id '{event_key}': se esperaba una lista de suppliers")
+                continue
+
+            for i, supplier in enumerate(suppliers):
+                prefix = f"event_id '{event_key}', supplier[{i}]"
+
+                if 'vehicle_id' not in supplier:
+                    errors.append(f"{prefix}: falta 'vehicle_id'")
+
+                concepts = supplier.get('concepts')
+                if not isinstance(concepts, list) or not concepts:
+                    errors.append(f"{prefix}: 'concepts' debe ser una lista no vacia")
+                    continue
+
+                for j, concept in enumerate(concepts):
+                    c_prefix = f"{prefix}, concept[{j}]"
+
+                    if 'id' not in concept:
+                        errors.append(f"{c_prefix}: falta 'id'")
+                    if 'quantity' not in concept:
+                        errors.append(f"{c_prefix}: falta 'quantity'")
+                    if not isinstance(concept.get('id'), int):
+                        errors.append(f"{c_prefix}: 'id' debe ser entero")
+                    if not isinstance(concept.get('quantity'), (int, float)):
+                        errors.append(f"{c_prefix}: 'quantity' debe ser numerico")
+
+        if errors:
+            _logger.warning(f"Payload rechazado por estructura invalida: {errors}")
+            raise BadRequest(f"Estructura de datos incorrecta: {errors}")
+
+        _logger.info(f"Payload valido. Events recibidos: {list(data.keys())}")
+
+    def __resolve_supplier_ids(self, data):
+        """
+        Verifica la existencia de proveedores y enriquece el payload con su ID interno.
+
+        Para cada par (event_id, vehicle_id) del payload, busca en ike.event.supplier
+        un registro activo (estado accepted/assigned, seleccionado). Si lo encuentra,
+        agrega 'supplier_id' al dict del supplier para que __save_concepts lo use
+        directamente sin necesidad de volver a consultar la BD.
+
+        Se usa sudo() porque el usuario de la app movil puede no tener acceso
+        directo al modelo ike.event.supplier, pero la logica de negocio garantiza
+        que la operacion es valida para su sesion.
+
+        Args:
+            data (dict): Payload ya validado por __validate_concepts_structure.
+                         Se modifica in-place agregando 'supplier_id' a cada supplier.
+
+        Raises:
+            BadRequest: Si vehicle_id o concepts estan vacios (no deberia ocurrir
+                        tras la validacion de estructura, pero se guarda como
+                        segunda linea de defensa).
+            NotFound:   Si no existe un proveedor activo para el par (event_id, vehicle_id).
+        """
+        Supplier = request.env['ike.event.supplier'].sudo()
+
+        for event_key, suppliers_data in data.items():
+            event_id = int(event_key)
+            for supplier_data in suppliers_data:
+                vehicle_id = supplier_data.get('vehicle_id')
+                concepts = supplier_data.get('concepts', [])
+
+                if not vehicle_id or not concepts:
+                    _logger.warning(f"Evento {event_id}: faltan parametros en supplier_data")
+                    raise BadRequest('Faltan parametros')
+
+                supplier = Supplier.search([
+                    ('event_id', '=', event_id),
+                    ('truck_id.x_vehicle_ref', '=', vehicle_id),
+                    # Solo proveedores que hayan aceptado y esten asignados al evento
+                    ('state', 'in', ('accepted', 'assigned')),
+                    ('selected', '=', True),
+                ], limit=1)
+
+                if not supplier:
+                    raise NotFound(_(
+                        f"No se encontro proveedor activo para evento {event_id}, vehiculo '{vehicle_id}'"
+                    ))
+
+                # Enriquecemos el dict original para no tener que repetir
+                # la consulta a BD en el paso de escritura.
+                supplier_data['supplier_id'] = supplier.supplier_id.id
+
+    def __save_concepts(self, data):
+        """
+        Persiste los conceptos adicionales llamando al controlador de portal.
+
+        Delega la creacion de cada concepto a PortalUserAccount.create_concept,
+        que contiene la logica de negocio de creacion (validaciones de producto,
+        precios, lineas de pedido, etc.). Este metodo solo orquesta las llamadas
+        y agrega los resultados.
+
+        El try/except aqui unicamente captura errores inesperados (fallo de BD,
+        bug en create_concept, etc.). Los errores de negocio esperados deben
+        lanzarse antes de llegar a este punto.
+
+        Args:
+            data (dict): Payload validado y enriquecido con supplier_id.
+
+        Returns:
+            dict: {"status": "success", "results": [...]}, donde results contiene
+                  la respuesta de create_concept por cada concepto procesado.
+
+        Raises:
+            InternalServerError: Si ocurre cualquier excepcion no anticipada
+                                 durante la escritura. Hace rollback antes de lanzar.
+        """
+        try:
+            controller = PortalUserAccount()
+            results = []
+
+            for event_key, suppliers_data in data.items():
+                event_id = int(event_key)
+                for supplier_data in suppliers_data:
+                    for concept in supplier_data.get('concepts', []):
+                        result = controller.create_concept(
+                            event_id=event_id,
+                            supplier_id=supplier_data.get('supplier_id'),
+                            product_id=concept.get('id'),
+                            quantity=concept.get('quantity'),
+                        )
+                        results.append(
+                            dict(
+                                result,
+                                event_id=event_id,
+                                vehicle_id=supplier_data.get('vehicle_id'),
+                                concept_id=concept.get('id'),
+                                quantity=concept.get('quantity'),
+                            )
+                        )
+
+            _logger.info(f"Concepts creados exitosamente: {len(results)} registros")
+            return {'status': 'success', 'results': results}
+
+        except Exception as e:
+            # Revertimos cualquier escritura parcial que haya ocurrido
+            # antes del error para mantener consistencia en la BD.
+            request.env.cr.rollback()
+            _logger.error(f"Error inesperado al crear concepts: {str(e)}", exc_info=True)
+            raise InternalServerError("Error interno al crear conceptos")
 
     # ============================ #
     #         EVENT/DRIVER         #

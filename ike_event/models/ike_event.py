@@ -148,8 +148,24 @@ class IkeEvent(models.Model):
         copy=False)
     child_ids = fields.One2many('ike.event', 'parent_id', 'Children', copy=False)
 
-    ia_suggestion_done = fields.Boolean(default=False)
+    ia_suggestion_done = fields.Boolean(default=False, copy=False)
     ia_suggestion_product_ids = fields.Json(string="AI Suggested Concepts", copy=False, default=lambda self: [])
+
+    ike_event_coordinator_id = fields.Many2one(
+        'res.users',
+        string='Assign',
+        copy=False,
+        domain=lambda self: [
+            ('active', '=', True),
+            ('groups_id', 'in', [
+                self.env.ref('custom_master_catalog.custom_group_ccc_coordinator').id,
+                self.env.ref('custom_master_catalog.custom_group_ccc_analyst').id,
+                self.env.ref('custom_master_catalog.custom_group_ccc_boss').id,
+            ])
+        ]
+    )
+    satisfaction_survey_input_id = fields.Many2one('survey.user_input', readonly=True, copy=False, prefetch=False)
+    satisfaction_survey_input_url = fields.Char(string='Satisfaction Survey URL', readonly=True, copy=False, prefetch=False)
 
     # === DEFAULT === #
     @api.model
@@ -328,18 +344,34 @@ class IkeEvent(models.Model):
     # === STAGE ACTIONS === #
     def action_completed(self):
         self.stage_id = self.env.ref('ike_event.ike_event_stage_completed').id
-        total_amount = sum(self.selected_supplier_ids.mapped('amount_concept_total'))
-        if self.covered_amount <= total_amount:
-            self.action_create_purchase_orders()
+        self.action_create_satisfaction_survey()
+
+    def action_verify(self):
+        total_amount = sum(self.selected_supplier_ids.mapped('base_amount_concept_total'))
+        if total_amount <= self.covered_amount:
             self.action_close()
+        else:
+            self.stage_id = self.env.ref('ike_event.ike_event_stage_verifying').id
 
     def action_close(self):
         self.stage_id = self.env.ref('ike_event.ike_event_stage_closed').id
-        # ToDo
+        self.action_create_purchase_orders()
 
     def action_create_purchase_orders(self):
-        # ToDo:
         pass
+
+    def action_create_satisfaction_survey(self):
+        for rec in self:
+            service_satisfaction_survey_id = rec.service_id.sudo().x_satisfaction_survey_id
+            if not rec.satisfaction_survey_input_id and service_satisfaction_survey_id:
+                user_input_id = self.env['survey.user_input'].create({
+                    'event_id': rec.id,
+                    'survey_id': service_satisfaction_survey_id.id,
+                })
+                rec.satisfaction_survey_input_id = user_input_id.id
+                rec.satisfaction_survey_input_url = (
+                    f'/survey/{service_satisfaction_survey_id.access_token}/{user_input_id.access_token}'
+                )
 
     def action_testing_reload(self):
         self.broadcastEventReload(4)
@@ -406,9 +438,6 @@ class IkeEvent(models.Model):
                         'stage_ref': rec.stage_ref,
                     }, batch_timeout=10)
             rec.step_number = step_number
-
-            # Special treatments
-            rec._special_backward_treatment_1()
 
     def _find_next_step(self, event_flow, stage_keys, stage_conf, stage_ref, step_number):
         stage_index = stage_keys.index(stage_ref)
@@ -543,15 +572,6 @@ class IkeEvent(models.Model):
 
         return result
 
-    def _special_backward_treatment_1(self):
-        """ Multi Supplier not go. """
-        self.ensure_one()
-        if (self.stage_ref == 'assigned' or self.stage_ref == 'in_progress') and self.step_number == 1:
-            if self.supplier_number > 1:
-                self.supplier_number = max(self.selected_supplier_ids.mapped('supplier_number'))
-            if self.supplier_search_number > 1:
-                self.supplier_search_number = max(self.service_supplier_ids.mapped('search_number'))
-
     # === ACTIONS SET DATA === #
     def action_set_user_data(self):
         for rec in self:
@@ -575,14 +595,22 @@ class IkeEvent(models.Model):
             res_id.set_event_summary_user_service_data()  # type: ignore
             rec.event_summary_id.set_user_service_data()
 
-            # ? ToValidate: Real Covered amount
+            # Covered Amount
             covered_amount = 0.0
             membership_service_line_id = rec.user_membership_id.membership_plan_id.product_line_ids.filtered(
                 lambda x: rec.sub_service_id in x.sub_service_ids)
             if membership_service_line_id:
-                covered_amount = membership_service_line_id[0].limit_amount_per_event or 0.0
-            rec.covered_amount = covered_amount
-            rec.authorized_amount = covered_amount
+                membership_service_line_id = membership_service_line_id[0]
+                if membership_service_line_id.limit_ids:
+                    # By Limit
+                    covered_amount = membership_service_line_id.limit_ids[0].amount
+                else:
+                    # By Global
+                    covered_amount = membership_service_line_id.limit_amount_per_event or 0.0
+            rec.sudo().write({
+                'covered_amount': covered_amount,
+                'authorized_amount': covered_amount,
+            })
 
     def action_set_location_data(self):
         self.event_summary_id.set_location_data()
@@ -611,7 +639,7 @@ class IkeEvent(models.Model):
         """Algorithm to create service_product_ids"""
 
         for rec in self:
-            concept_ids = rec.service_product_ids
+            concept_ids = rec.service_product_ids.filtered(lambda x: x.supplier_number == rec.supplier_number)
 
             section_covered = concept_ids.filtered(
                 lambda p: p.display_type == 'line_section' and p.name == _('Concepts in coverage')
@@ -625,6 +653,7 @@ class IkeEvent(models.Model):
                     'event_id': rec.id,
                     'name': _('Concepts in coverage'),
                     'display_type': 'line_section',
+                    'supplier_number': rec.supplier_number,
                     'covered': True,
                     'mandatory': True,
                     'sequence': 1,
@@ -637,6 +666,7 @@ class IkeEvent(models.Model):
                     'event_id': rec.id,
                     'name': _('Concepts out of coverage'),
                     'display_type': 'line_section',
+                    'supplier_number': rec.supplier_number,
                     'covered': True,
                     'mandatory': True,
                     'sequence': 1001,
@@ -654,7 +684,11 @@ class IkeEvent(models.Model):
                 ).mapped('detail_ids.product_id.id')
             )
             # Subservice Concepts
-            subservice_product_ids = set(rec.sub_service_id.x_concepts_ids.ids)
+            concept_line_ids = rec.sub_service_id.concept_line_ids.filtered(
+                lambda x: x.event_type_id == rec.event_type_id
+            )
+            base_concept_ids = concept_line_ids.mapped('base_concept_id').ids
+            subservice_product_ids = set(base_concept_ids)
 
             # Suggestion Concepts IA
             ia_product_ids = set(rec.ia_suggestion_product_ids or [])
@@ -664,38 +698,53 @@ class IkeEvent(models.Model):
 
             # 1. Add subservice concepts (always required)
             products_to_add = subservice_product_ids - current_product_ids
-            for product_id in products_to_add:
-                product = self.env['product.product'].browse(product_id)
-                self.env['ike.event.product'].create({
-                    'event_id': rec.id,
-                    'product_id': product_id,
-                    'uom_id': product.uom_id.id,
-                    'mandatory': True,  # Subservice always required
-                    'covered': True,
-                })
+            if rec.supplier_number == 1:
+                for product_id in products_to_add:
+                    product = self.env['product.product'].browse(product_id)
+                    self.env['ike.event.product'].create({
+                        'event_id': rec.id,
+                        'product_id': product_id,
+                        'uom_id': product.uom_id.id,
+                        'mandatory': True,  # Subservice always required
+                        'additional': False,
+                        'base': True,
+                        'covered': True,
+                        'supplier_number': rec.supplier_number,
+                    })
 
             # 2. Adding IA concepts compared to a coverage plan
             products_ia_to_add = ia_product_ids - current_product_ids - subservice_product_ids
-            for product_id in products_ia_to_add:
-                product = self.env['product.product'].browse(product_id)
-                self.env['ike.event.product'].create({
-                    'event_id': rec.id,
-                    'product_id': product_id,
-                    'uom_id': product.uom_id.id,
-                    'mandatory': False,
-                    'covered': product_id in plan_product_ids,  # True if it's on the coverage plan
-                })
+            if rec.supplier_number == 1:
+                for product_id in products_ia_to_add:
+                    product = self.env['product.product'].browse(product_id)
+                    self.env['ike.event.product'].create({
+                        'event_id': rec.id,
+                        'product_id': product_id,
+                        'uom_id': product.uom_id.id,
+                        'additional': False,
+                        'base': False,
+                        'mandatory': False,
+                        'covered': product_id in plan_product_ids,  # True if it's on the coverage plan
+                        'supplier_number': rec.supplier_number,
+                    })
 
             # 3. Update all products: covered=True if in the plan or subservice, False if not
             for event_product in current_products:
                 is_subservice = event_product.product_id.id in subservice_product_ids
                 is_covered = is_subservice or event_product.product_id.id in plan_product_ids
-                if event_product.covered != is_covered:
-                    event_product.write({'covered': is_covered})
-                if event_product.mandatory != is_subservice:
-                    event_product.write({'mandatory': is_subservice})
 
-            concept_ids = rec.service_product_ids
+                if event_product.covered != is_covered:
+                    event_product.write({'covered': is_covered, 'additional': event_product.additional})
+
+                if event_product.mandatory != is_subservice:
+                    event_product.write({'mandatory': is_subservice, 'additional': event_product.additional})
+
+                if event_product.base != is_subservice:
+                    event_product.write({'base': is_subservice, 'additional': event_product.additional})
+
+            concept_ids = rec.service_product_ids.filtered(
+                lambda x: x.supplier_number == rec.supplier_number
+            )
 
             covered_products = concept_ids.filtered(
                 lambda p: p.covered and not p.display_type).sorted('id')

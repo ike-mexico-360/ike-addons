@@ -11,5 +11,11 @@
                 </field>
             </field>
         </record>
+        <template id="hide_powered_by_odoo" inherit_id="web.login_layout" name="Hide Powered by Odoo">
+            <xpath expr="//a[contains(@href, 'odoo.com')]" position="replace"/>
+            <xpath expr="//a[@href='/web/database/manager']" position="attributes">
+                <attribute name="class">pe-2 me-1</attribute>
+            </xpath>
+        </template>
     </data>
 </odoo>

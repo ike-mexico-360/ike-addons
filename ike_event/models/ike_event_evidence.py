@@ -18,6 +18,7 @@ class IkeEventEvidence(models.Model):
         ('pickup', 'Pickup'),
         ('destination', 'Destination'),
         ('completed', 'Completed'),
+        ('nu_evidence', 'Nu Evidence'),
     ], default='pickup', required=True)
 
     nu_user_code = fields.Char()

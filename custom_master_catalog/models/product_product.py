@@ -18,6 +18,16 @@ class ProductProduct(models.Model):
     x_date_reset = fields.Date(string='Fecha de Reseteo')
     x_cl_sub_service = fields.Integer('CL Sub Service')
     x_cost_by_km = fields.Boolean(string='Cost by Km', default=False)
+    x_check_is_armor = fields.Boolean(string="Is armor?", tracking=True)
+    x_armor_level = fields.Selection([
+        ('1', '1'),
+        ('2', '2'),
+        ('3', '3'),
+        ('4', '4'),
+        ('5', '5'),
+        ('6', '6'),
+        ('7', '7'),
+    ], string="level armor", tracking=True)
 
     @api.depends('name', 'default_code')
     def _compute_display_name(self):

@@ -22,6 +22,8 @@ class IkeEventProduct(models.Model):
         store=True,
         readonly=True)
     estimated_quantity = fields.Integer(default=1)
+    base = fields.Boolean(default=False)
+    additional = fields.Boolean(default=True)
     covered = fields.Boolean(default=False)
     mandatory = fields.Boolean(help='Can not be removed', default=False)
     is_manual = fields.Boolean(default=False)
@@ -73,6 +75,55 @@ class IkeEventProduct(models.Model):
 
             rec.product_domain = domain
 
+    # === OVERRIDE === #
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if vals.get('event_id') and not vals.get('display_type'):
+                event_id = self.env['ike.event'].browse(vals['event_id'])
+
+                product_base = event_id.sub_service_id.concept_line_ids.filtered(
+                    lambda x: x.event_type_id == event_id.event_type_id
+                ).mapped('base_concept_id').ids
+
+                product_plan = (
+                    event_id.user_membership_id.membership_plan_id
+                    .product_line_ids.filtered(
+                        lambda x: x.service_id.id == event_id.service_id.id
+                    ).mapped('detail_ids.product_id').ids
+                )
+
+                # Base
+                if vals.get('product_id') in product_base:
+                    vals['base'] = True
+                    vals['covered'] = True
+                    vals['mandatory'] = True
+                # Plan covered
+                if vals.get('product_id') in product_plan:
+                    vals['covered'] = True
+
+                # Sequence
+                existing = event_id.service_product_ids.filtered(
+                    lambda x:
+                        x.supplier_number == vals.get('supplier_number', 1)
+                        and not x.display_type
+                )
+
+                if vals.get('covered'):
+                    covered_seqs = existing.filtered(
+                        lambda x: x.covered
+                    ).mapped('sequence')
+                    last_seq = max(covered_seqs) if covered_seqs else 1
+                    vals['sequence'] = min(last_seq + 1, 1000)
+                else:
+                    not_covered_seqs = existing.filtered(
+                        lambda x: not x.covered
+                    ).mapped('sequence')
+                    last_seq = max(not_covered_seqs) if not_covered_seqs else 1001
+                    vals['sequence'] = last_seq + 1
+
+        return super().create(vals_list)
+
 
 class IkeEventSupplierProduct(models.Model):
     _name = 'ike.event.supplier.product'
@@ -102,6 +153,7 @@ class IkeEventSupplierProduct(models.Model):
     base_cost_price = fields.Float('Agreement Cost', compute='_compute_base_amount', store=True)
     base_vat = fields.Float('Agreement Vat', compute='_compute_base_amount', store=True)
     base_subtotal = fields.Float('Agreement Subtotal', compute='_compute_base_amount', store=True)
+    parent_product_id = fields.Many2one('product.product')
 
     # === AUTHORIZATION FIELDS === #
     authorization_pending = fields.Boolean(default=True)
@@ -212,6 +264,10 @@ class IkeEventSupplierProduct(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            if not vals.get('event_id') and vals.get('event_supplier_link_id'):
+                link = self.env['ike.event.supplier.link'].browse(vals['event_supplier_link_id'])
+                vals['event_id'] = link.event_id.id
+
             if not vals.get('display_type', None) and ('base_unit_price' not in vals or 'unit_price' not in vals):
                 event_supplier_link_id = self.env['ike.event.supplier.link'].sudo().browse(vals['event_supplier_link_id'])
                 base_unit_price, base_cancel_price = event_supplier_link_id.sudo().get_product_cost(vals['product_id'])
@@ -230,6 +286,9 @@ class IkeEventSupplierProduct(models.Model):
             if quantity > self.quantity or unit_price > self.unit_price:
                 vals['authorization_pending'] = True
         return super().write(vals)
+
+    def unlink(self):
+        return super().unlink()
 
 
 class IkeEventSupplierProductAuthorization(models.Model):

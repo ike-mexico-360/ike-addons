@@ -45,9 +45,9 @@
                             <field name="portal_ticket_url_wp" invisible="1" />
                             <field name="sh_ticket_report_url" invisible="1" />
                         </h1>
-                        <h1>
+                        <!-- <h1>
                             <field name="email_subject" placeholder="Email Subject ...." />
-                        </h1>
+                        </h1> -->
                         <field name="sh_sla_status_ids" widget="many2many_tags" options="{'color_field': 'color'}" readonly="1" force_save="1" groups="sh_all_in_one_helpdesk.group_helpdesk_sla_policy" />
                     </div>
                     <group>
@@ -75,17 +75,18 @@
                             <field name="write_date" string="Last Update Date" />
                             <field name="sh_due_date" />
                             <field name="partner_id" />
-                            <field name="person_name" />
+                            <!-- <field name="person_name" />
                             <field name="email" />
-                            <field name="mobile_no" />
+                            <field name="mobile_no" /> -->
                             <field name="replied_date" />
                             <field name="company_id" invisible="1"/>
-                            <field name="product_ids" widget="many2many_tags" invisible="sh_display_product == False" />
+                            <!-- <field name="product_ids" widget="many2many_tags" invisible="sh_display_product == False" /> -->
+                            <field name="product_ids" widget="many2many_tags" invisible="1" />
                             <field name="sh_status" invisible="1" />
                             <field name="sh_sla_deadline" invisible="sh_sla_deadline == False" groups="sh_all_in_one_helpdesk.group_helpdesk_sla_policy" />
                             <field name="sh_sla_policy_ids" widget="many2many_tags" force_save="1" invisible="1" />
-                            <field name="sh_ticket_alarm_ids" widget="many2many_tags" groups="sh_all_in_one_helpdesk.group_helpdesk_alarm" />
-                            <field name="sh_auto_followup" groups="sh_all_in_one_helpdesk.helpdesk_group_team_leader"/>
+                            <!-- <field name="sh_ticket_alarm_ids" widget="many2many_tags" groups="sh_all_in_one_helpdesk.group_helpdesk_alarm" />
+                            <field name="sh_auto_followup" groups="sh_all_in_one_helpdesk.helpdesk_group_team_leader"/> -->
                             <field name="sh_number_of_followup_taken" invisible="1"/>
                         </group>
                     </group>

@@ -151,7 +151,8 @@ class IkeEventAffiliationUser(models.TransientModel):
         else:
             self.name = False
             self.phone = False
-            self.vehicle_weight_category_id = False
+            self.clause_primary = False
+            self.clause_second = False
             self.check_is_fleet = False
             self.check_is_special = False
             self.fields_readonly = False

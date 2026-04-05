@@ -68,7 +68,7 @@
                         <field name="step_number"/>
                     </group>
                     <group>
-                        <group>
+                        <group string="Type of service vehicle" name="user_sub_service_data" invisible="not sections.get('user_sub_service_data')">
                             <field name="service_vehicle_type_domain" invisible="1"/>
                             <field name="service_vehicle_type_ids"
                                 domain="service_vehicle_type_domain"

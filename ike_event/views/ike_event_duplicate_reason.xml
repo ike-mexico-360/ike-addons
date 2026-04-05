@@ -11,8 +11,8 @@
                     <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active" />
                     <group>
                         <h1>
-                            <label for="name" class="o_form_label_required"/>
-                            <field name="name" required="1" placeholder="Reason"/>
+                            <label for="name" class="o_form_label_required" readonly="disabled"/>
+                            <field name="name" required="1" placeholder="Reason" readonly="disabled"/>
                         </h1>
                     </group>
                 </sheet>
@@ -47,7 +47,7 @@
     </record>
 
     <record id="ike_event_duplicate_reason_action" model="ir.actions.act_window">
-        <field name="name">Duplicate reason</field>
+        <field name="name">Duplicate Reason</field>
         <field name="res_model">ike.event.duplicate.reason</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[]</field>

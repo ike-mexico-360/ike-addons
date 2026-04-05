@@ -86,9 +86,12 @@ class IkeEventSupplierSelection(models.Model):
                 "latitude": sub_service_id.destination_latitude or '',
                 "longitude": sub_service_id.destination_longitude or '',
             },
+            # ToDo: Validar que el tipo de asignación sea el mismo para el grupo de vehículos que se enviará en la lista ids
             "typeAssignment": {
                 "code": self.SEARCH_TYPE_MAP.get(self.assignation_type)['code'],
                 "description": self.SEARCH_TYPE_MAP.get(self.assignation_type)['name'],
+                # ToDo: Se enviará un array bajo la clave ids, array de uid's
+                # "ids": [str(supplier.truck_id.x_vehicle_ref) for supplier in self]
                 "id": str(self.truck_id.x_vehicle_ref) if self.truck_id.x_vehicle_ref else '',
             },
             # ToDo: Mapear con las respuestas de la encuesta
@@ -199,6 +202,7 @@ class IkeEventSupplierSelection(models.Model):
         if not url:
             return False
 
+        # ToDo: IMP: Agrupar por evento para enviar los batchs
         headers = {"Content-Type": "application/json"}
         body = self._prepare_body_for_external_notification()
         external_response = requests.post(
@@ -207,6 +211,89 @@ class IkeEventSupplierSelection(models.Model):
             json=body,
         )
         return external_response.json()
+
+    def x_get_whatsapp_token(self):
+        # ToDo: Implementar expiración de token
+        # ToDo: Mover a custom_nu
+        allow_send_whatsapp = bool(self.env['ir.config_parameter'].sudo().get_param('events.allow_send_whatsapp'))
+        if not allow_send_whatsapp:
+            return False
+
+        access_token = False
+        login_url = self.env['ir.config_parameter'].sudo().get_param('ike_event_api.wp_service.login_url')
+        if not login_url:
+            return False
+
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "Python-IoT-Test/1.0",
+        }
+        userName = self.env['ir.config_parameter'].sudo().get_param('ike_event_api.wp_service.login.user')
+        password = self.env['ir.config_parameter'].sudo().get_param('ike_event_api.wp_service.login.pass')
+        login_body = {
+            "userName": userName,
+            "password": password
+        }
+        if not userName or not password:
+            _logger.error("WP Token: Error al obtener credenciales de usuario")
+
+        try:
+            login_response = requests.post(login_url, headers=headers, json=login_body)
+            data_login = login_response.json()
+            access_token = data_login.get('data', {}).get('accessToken', False)
+        except Exception as e:
+            _logger.error(f"WP Token: Error al enviar petición: {str(e)}")
+        return access_token
+
+    def x_send_whatsapp_template(
+        self,
+        access_token: str,
+        event_id: str,
+        template: int,
+        phone_number: str,
+        parameter=None
+    ):
+        # ToDo: Mover a custom_nu
+        allow_send_whatsapp = bool(self.env['ir.config_parameter'].sudo().get_param('events.allow_send_whatsapp'))
+        if not allow_send_whatsapp:
+            return False
+
+        template_url = self.env['ir.config_parameter'].sudo().get_param('ike_event_api.wp_service.template_url')
+        if not template_url:
+            return False
+
+        if not access_token:
+            _logger.warning("No se ha configurado el token de acceso para el whatsapp")
+            return False
+
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "Python-IoT-Test/1.0",
+            "Authorization": access_token,
+        }
+        body = {
+            "identifier": {
+                "appId": 16,
+                "tenants": "adff7f6a-e97d-11eb-9a03-0242ac130003",
+                "reference": event_id,
+            },
+            "petition": {
+                "phoneNumber": phone_number,
+                "templateId": template,
+            }
+        }
+        if parameter:
+            body['petition']['templateParameters'] = [{"parameter": parameter}]
+        # _logger.warning(f"WP User code: headers: {headers}")
+        _logger.warning(f"WP Template {template}: body: {body}")
+        try:
+            response = requests.post(template_url, headers=headers, json=body)
+            response_json = response.json()
+            _logger.info(f"WP Template {template}: response: {response_json}")
+            return True
+        except Exception as e:
+            _logger.error(f"WP Template {template}: Error enviando petición: {str(e)}")
+            return False
 
     # === Override methods === #
     def action_notify_cancelation_to_app(self, url: str, origin: str = 'internal'):
@@ -236,6 +323,12 @@ class IkeEventSupplierSelection(models.Model):
     def action_notify(self):
         # Override
         res = super().action_notify()
+
+        url = self.env['ir.config_parameter'].sudo().get_param('ike_event.url.send_external_supplier')
+        if not url:
+            _logger.warning("No se ha configurado la URL de notificación a proveedores externos")
+            return res
+
         self_filtered = self.filtered(
             lambda x: x.state == 'notified'  # Notiticados
             and x.notification_date  # Con fecha de notificación
@@ -244,11 +337,13 @@ class IkeEventSupplierSelection(models.Model):
             and x.supplier_id.x_has_external_notification  # Que tenga notificación externa
             and x.truck_id.x_vehicle_ref  # Que tenga uid el vehiculo
         )
-        url = self.env['ir.config_parameter'].sudo().get_param('ike_event.url.send_external_supplier')
-        if not url:
-            _logger.warning("No se ha configurado la URL de notificación a proveedores externos")
+        # ToDo: Enviar por batch
         for rec in self_filtered:
-            response = rec.notify_external_supplier(url)
+            response = False
+            try:
+                response = rec.notify_external_supplier(url)
+            except Exception as e:
+                _logger.error(f"Error al notificar a proveedor: {str(e)}")
             _logger.info(f"Notified external supplier {rec.event_id.id}/{rec.truck_id.x_vehicle_ref}: {response}")
             # response => 'success': True or False
         return res
@@ -352,6 +447,37 @@ class IkeEventSupplierSelection(models.Model):
             for response in tracking_responses:  # ToDo: Quitar esto, solo se utiliza para verificar que se envíe
                 _logger.info(f"Tracking route: {response}")
 
+        # IMP - Send user code to Whatsapp
+        # ToDO: Remove try block, for test
+        # -- Al asignar proveedor, se notifica por whatsapp
+        try:
+            wp_access_token = self.x_get_whatsapp_token()
+
+            if not wp_access_token:
+                _logger.error("WP Send user code: Error al obtener el token de acceso")
+
+            if wp_access_token:
+                decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
+                phone_number = decrypt_encrypt_utility_sudo.decrypt_aes256(self.event_id.user_id.phone or '')
+
+                # parameter = f"{self.truck_id.name} Matrícula {self.truck_id.license_plate} , Deberá proporcionar {self.event_id.user_code}"
+                parameter = f"de su servicio ha iniciado, el vehículo asignado es {self.truck_id.name},"\
+                    f" con matrícula {self.truck_id.license_plate}. Deberá proporcionar el siguiente"\
+                    f" código #{self.event_id.user_code} a"
+                successfully_sent = self.x_send_whatsapp_template(
+                    access_token=wp_access_token,
+                    event_id=str(self.event_id.id),
+                    template=71,  # CodigoVerificador
+                    phone_number=phone_number,
+                    parameter=parameter,
+                )
+                if successfully_sent:
+                    _logger.info(f"WP Send user code: {parameter}")
+                else:
+                    _logger.error("WP Send user code: Error al enviar el código de usuario")
+        except Exception as e:
+            _logger.error(f"WP Send user code: Error al enviar el código de usuario: {str(e)}")
+
         return super().action_notify_operator()
 
     def action_cancel(self, cancel_reason_id: int, reason_text=None):
@@ -403,3 +529,5 @@ class IkeEventSupplierElapsedTime(models.Model):
     stage_id = fields.Many2one('ike.service.stage', required=True)
     app_timestamp = fields.Datetime(required=True)
     elapsed_seconds = fields.Integer(required=True)
+    latitude = fields.Char()
+    longitude = fields.Char()

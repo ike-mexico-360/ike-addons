@@ -26,4 +26,10 @@
     <record id="custom_master_catalog.custom_group_event_coordinator" model="res.groups">
         <field name="implied_ids" eval="[(4, ref('group_ike_event_admin'))]"/>
     </record>
+    <record id="custom_master_catalog.custom_group_ccc_analyst" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_ike_event_user'))]"/>
+    </record>
+    <record id="custom_master_catalog.custom_group_ccc_coordinator" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_ike_event_user'))]"/>
+    </record>
 </odoo>

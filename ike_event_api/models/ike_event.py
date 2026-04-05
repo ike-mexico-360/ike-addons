@@ -116,3 +116,60 @@ class IkeEvent(models.Model):
                 except Exception as e:
                     _logger.error(f'Error al generar PDF: {str(e)}', exc_info=True)
                     raise ValidationError(_('Error: %s') % str(e))
+
+    @api.constrains('stage_id')
+    def _check_to_send_whatsapp_notification(self):
+        """Send whatsapp notifications"""
+        in_progress_stage_ref = self.env.ref('ike_event.ike_event_stage_in_progress').ref
+        end_stage_ref = self.env.ref('ike_event.ike_event_stage_completed').ref
+        for rec in self:
+            try:
+                # Evento en progreso
+                if rec.stage_ref == in_progress_stage_ref and rec.step_number == 1:
+                    rec._ike_event_send_whatsapp_notification('in_progress')
+                # Evento concluido
+                elif rec.stage_ref == end_stage_ref and rec.step_number == 1:
+                    rec._ike_event_send_whatsapp_notification('completed')
+            except Exception as e:
+                _logger.error(f'Error al enviar notificación WhatsApp: {str(e)}', exc_info=True)
+
+    def _ike_event_send_whatsapp_notification(self, stage_ref):
+        """Send whatsapp notifications"""
+        self.ensure_one()
+
+        _logger.warning(f"Sending whatsapp notifications for event at change stage_id {stage_ref}")
+
+        encryption_util = self.env['custom.encryption.utility']
+        phone_number = encryption_util.decrypt_aes256(self.user_id.phone or '')
+
+        # Si cambia a en progreso, se envía template 72, con el enlace de seguimiento
+        if stage_ref == 'in_progress':
+            # ToDo: Se envía el mapa del primer proveedor en ruta
+            on_route_supplier_stage = self.env.ref('ike_event.ike_service_stage_on_route')
+            on_route_suppliers = self.selected_supplier_ids.filtered(lambda x: x.stage_id.id == on_route_supplier_stage.id)
+            if on_route_suppliers:
+                wp_access_token = self.env['ike.event.supplier'].x_get_whatsapp_token()
+                self.env['ike.event.supplier'].x_send_whatsapp_template(
+                    access_token=wp_access_token,
+                    event_id=str(self.id),
+                    template=72,  # LinkUsuario
+                    phone_number=phone_number,
+                    parameter=str(on_route_suppliers[0].travel_tracking_url),
+                )
+
+        # Si cambia a concluido, se envían 70 y 73
+        elif stage_ref == 'completed':
+            wp_access_token = self.env['ike.event.supplier'].x_get_whatsapp_token()
+            self.env['ike.event.supplier'].x_send_whatsapp_template(
+                access_token=wp_access_token,
+                event_id=str(self.id),
+                template=70,  # terminó
+                phone_number=phone_number,
+            )
+            self.env['ike.event.supplier'].x_send_whatsapp_template(
+                access_token=wp_access_token,
+                event_id=str(self.id),
+                template=73,  # encuestaUser
+                phone_number=phone_number,
+                parameter="https://qaike360.alsiba.mx/survey/start/a2e7faf4-1a63-47d5-8975-3bf06f41d989"
+            )

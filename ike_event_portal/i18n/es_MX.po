@@ -510,6 +510,11 @@ msgid "Ike Admin Portal"
 msgstr "Administrador (portal)"
 
 #. module: ike_event_portal
+#: model:res.groups,name:ike_event_portal.custom_group_portal_finance
+msgid "Ike Finance Portal"
+msgstr "Finanzas (portal)"
+
+#. module: ike_event_portal
 #: model:res.groups,name:ike_event_portal.custom_group_portal_operator
 msgid "Ike Operator Portal"
 msgstr "Operador (portal)"

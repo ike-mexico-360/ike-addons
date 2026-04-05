@@ -9,7 +9,7 @@ class CustomHolidays(models.Model):
     _inherit = ['mail.thread']
 
     name = fields.Char(required=True, tracking=True)
-    year = fields.Integer(tracking=True, digits=4)
+    year = fields.Integer(tracking=True)
     date = fields.Date(required=True, tracking=True)
 
     active = fields.Boolean(default=True)

@@ -168,14 +168,15 @@
         <field name="inherit_id" ref="custom_nu.view_custom_membership_nus_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet/notebook/page" position="inside">
+                <!-- <button type="object" name="action_create_details" string="Create Details"/> -->
                 <field name="event_count_detail_ids">
-                    <list string="Event Service Details" editable="bottom" create="false" delete="false">
+                    <list string="Event Service Details" editable="bottom" create="1" delete="1">
                         <field name="service_id" options='{"no_open": True, "no_create": True}'/>
                         <field name="vehicle_weight_category_id" column_invisible="1"/>
                         <field name="sub_service_ids" widget="many2many_tags"
                             context="{'display_default_code': 0}"/>
-                        <field name="coverage_events" readonly="1"/>
-                        <field name="period" readonly="1"/>
+                        <field name="coverage_events" readonly="0"/>
+                        <field name="period" readonly="0"/>
                         <field name="events_of_period" readonly="0"/>
                     </list>
                 </field>

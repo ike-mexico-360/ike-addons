@@ -82,7 +82,7 @@
                                 readonly="disabled" required="1"/>
                             <field name="x_ref_supplier" readonly="1" />
                             <!-- ToDo: Probablemente este campo deba ser readonly ya que es el equivalente a carane uuid, se habilita para pruebas -->
-                            <field name="x_vehicle_ref" readonly="0" />
+                            <field name="x_vehicle_ref" readonly="disabled" />
                             <field name="x_center_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}" invisible="x_partner_id == False"
                                 domain="[('disabled', '=', False), ('parent_id', '=', x_partner_id)]" string="Center of attention"  context="{'edit': False}" required="1"/>
                             <field name="x_vehicle_type" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
@@ -124,8 +124,8 @@
                             <field name="x_driver_domain" invisible="1"/>
                             <field name="x_vehicle_service_state" readonly="disabled"/>
                             <!-- ToDo: Estos campos deben ser readonly="1", para pruebas se dejan editables. -->
-                            <field name="x_latitude" readonly="0"/>
-                            <field name="x_longitude" readonly="0"/>
+                            <field name="x_latitude" readonly="disabled" />
+                            <field name="x_longitude" readonly="disabled"/>
                         </group>
                     </group>
                     <group invisible="1">

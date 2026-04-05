@@ -22,11 +22,65 @@ class IkeEventSupplierSelection(models.Model):
     acceptance_date = fields.Datetime(tracking=True, copy=False)
     acceptance_duration = fields.Float(help='Time it took to accept the service, in seconds.', copy=False)
     rejection_date = fields.Datetime(tracking=True, copy=False)
-    assignation_date = fields.Datetime(tracking=True, copy=False)
-    contacted_date = fields.Datetime(tracking=True, copy=False)
-    contacted_user_id = fields.Many2one('res.users', 'Contacted user', readonly=True, tracking=True)
-    finalized_date = fields.Datetime(tracking=True, copy=False)
-    finalized_user_id = fields.Many2one('res.users', 'Finalized User', readonly=True, tracking=True)
+    # === STAGE FIELDS FIRST === #
+    first_state_date = fields.Datetime(string='First state datetime', tracking=True, copy=False)
+    first_state_user_id = fields.Many2one(
+        'res.users',
+        'First state user',
+        readonly=True,
+        tracking=True)
+    first_comment = fields.Text(string='First comment', tracking=True, copy=False)
+    # === STAGE FIELDS ASSIGNED === #
+    first_assignation_date = fields.Datetime(string="Assigned (first datetime)", tracking=True, copy=False)
+    first_assignation_user_id = fields.Many2one(
+        'res.users',
+        'Assigned (first user)',
+        readonly=True,
+        tracking=True)
+    first_assignation_comment = fields.Text(string='Assigned (first comment)', tracking=True, copy=False)
+
+    assignation_date = fields.Datetime(string='Assigned (datetime)', tracking=True, copy=False)
+    assignation_user_id = fields.Many2one(
+        'res.users',
+        'Assigned (user)',
+        readonly=True,
+        tracking=True)
+    assignation_comment = fields.Text(string='Assigned (comment)', tracking=True, copy=False)
+
+    # === STAGE FIELDS CONTACTED === #
+    first_contacted_date = fields.Datetime(string='Contacted (first datetime)', tracking=True, copy=False)
+    first_contacted_user_id = fields.Many2one(
+        'res.users',
+        'Contacted (first user)',
+        readonly=True,
+        tracking=True)
+    first_contacted_comment = fields.Text(string='Contacted (first comment)', tracking=True, copy=False)
+
+    contacted_date = fields.Datetime(string='Contacted (datetime)', tracking=True, copy=False)
+    contacted_user_id = fields.Many2one(
+        'res.users',
+        'Contacted (user)',
+        readonly=True,
+        tracking=True)
+    contacted_comment = fields.Text(string='Contacted (comment)', tracking=True, copy=False)
+
+    # === STAGE FIELDS FINALIZED === #
+    first_finalized_date = fields.Datetime(string='Finalized (first datetime)', tracking=True, copy=False)
+    first_finalized_user_id = fields.Many2one(
+        'res.users',
+        'Finalized (first user)',
+        readonly=True,
+        tracking=True)
+    first_finalized_comment = fields.Text(string='Finalized (first comment)', tracking=True, copy=False)
+
+    finalized_date = fields.Datetime(string='Finalized (datetime)', tracking=True, copy=False)
+    finalized_user_id = fields.Many2one(
+        'res.users',
+        'Finalized (user)',
+        readonly=True,
+        tracking=True)
+    finalized_comment = fields.Text(string='Finalized (comment)', tracking=True, copy=False)
+
     cancel_date = fields.Datetime(tracking=True, copy=False)
     cancel_reason_id = fields.Many2one('ike.event.cancellation.reason', 'Cancel Reason', readonly=True, tracking=True)
     cancel_user_id = fields.Many2one('res.users', 'Cancel User', readonly=True, tracking=True)
@@ -342,7 +396,7 @@ class IkeEventSupplierSelection(models.Model):
 
             # Vehicle State
             rec.truck_id.x_vehicle_service_state = 'available'
-
+        # ? ToImp: assign base concepts to next supplier
         # Common
         self_filtered.cancel_date = fields.Datetime.now()
         self_filtered.state = state
@@ -404,9 +458,6 @@ class IkeEventSupplierSelection(models.Model):
             'views': [(view_id, 'form')],
             'target': 'new',
             'context': {
-                'default_event_id': self.event_id.id if self.event_id else False,
-                'default_supplier_id': self.supplier_id.id if self.supplier_id else False,
-                'default_supplier_number': self.supplier_number,
-                'default_stage_id': self.stage_id.id if self.stage_id else False
+                'default_supplier_id': self.id,
             }
         }

@@ -3,10 +3,15 @@ import { Layout } from "@web/search/layout";
 import { View } from "@web/views/view";
 import { standardActionServiceProps } from "@web/webclient/actions/action_service";
 
+import { Component, onWillStart, onWillUnmount, useState, useSubEnv } from '@odoo/owl';
 
-const { Component, onWillStart, onWillUnmount, useState, useSubEnv } = owl;
 
 class IkeDashboardEvent extends Component {
+    static components = { Layout, View };
+    static template = "ike_event.IkeDashboardEvent";
+    static props = {
+        ...standardActionServiceProps,
+    };
     setup() {
         console.log("IkeDashboardEvent", this);
         this.display = {
@@ -61,11 +66,5 @@ class IkeDashboardEvent extends Component {
         });
     }
 }
-
-IkeDashboardEvent.components = { Layout, View };
-IkeDashboardEvent.template = "ike_event.IkeDashboardEvent";
-IkeDashboardEvent.props = {
-    ...standardActionServiceProps,
-};
 
 registry.category("lazy_components").add("IkeDashboardEvent", IkeDashboardEvent);

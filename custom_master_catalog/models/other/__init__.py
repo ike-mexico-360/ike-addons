@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from . import res_config_settings
 from . import res_country
 from . import res_country_state
 from . import custom_account_identification

@@ -66,6 +66,22 @@
         <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
         <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
     </record>
+    <!-- Groups CCC -->
+    <record id="custom_group_ccc_coordinator" model="res.groups">
+        <field name="name">Supplier CCC Coordinator</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
+    </record>
+    <record id="custom_group_ccc_analyst" model="res.groups">
+        <field name="name">Supplier CCC Analyst</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
+    </record>
+    <record id="custom_group_ccc_boss" model="res.groups">
+        <field name="name">Supplier CCC leader / Boss</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+        <field name="implied_ids" eval="[(4, ref('custom_master_catalog.custom_group_ccc_analyst'))]" />
+    </record>
 
     <data noupdate="0">
         <record id="custom_contact_admin_client_modify_rule" model="ir.rule">
@@ -121,5 +137,16 @@
             <field name="perm_unlink" eval="True" />
             <field name="domain_force">[]</field>
         </record>
+
+        <record id="base.access_res_country_state_group_user" model="ir.model.access">
+            <field name="name">res_country_state group_user (ReadOnly Update)</field>
+            <field name="model_id" ref="base.model_res_country_state"/>
+            <field name="group_id" ref="base.group_partner_manager"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
     </data>
 </odoo>

@@ -47,7 +47,7 @@ class IkeEventSupplier(models.Model):
     service_evidence_ids = fields.One2many('ike.event.evidence', 'event_supplier_id', string='Evidence')
 
     # === SERVICE FIELDS === #
-    subservice_id = fields.Many2one('product.product', related='event_id.sub_service_id', store=False)
+    subservice_id = fields.Many2one('product.product', related='event_id.sub_service_id')
     event_supplier_summary_data = fields.Html(compute='_compute_event_supplier_summary_data')
     travel_tracking_url = fields.Char(compute='_compute_travel_tracking_url')
     # === STAGED LINE PROGRESS FIELDS === #
@@ -56,18 +56,95 @@ class IkeEventSupplier(models.Model):
     on_route_to_destination_start_date_widget = fields.Datetime()
     on_route_to_destination_end_date_widget = fields.Datetime()
 
-    on_route_to_user_start_date = fields.Datetime()
-    on_route_to_start_user_id = fields.Many2one('res.users', 'In route user', readonly=True, tracking=True)
-    on_route_to_user_end_date = fields.Datetime()
-    on_route_to_end_user_id = fields.Many2one('res.users', 'Arrive user', readonly=True, tracking=True)
-    on_route_to_destination_start_date = fields.Datetime()
-    on_route_to_destination_start_user_id = fields.Many2one('res.users', 'In route to destination user', readonly=True, tracking=True)
-    on_route_to_destination_end_date = fields.Datetime()
-    on_route_to_destination_end_user_id = fields.Many2one(
+    # === STAGE FIELDS ON ROUTE === #
+    first_on_route_to_user_start_date = fields.Datetime(string='On route (first datetime)', tracking=True, copy=False)
+    first_on_route_to_start_user_id = fields.Many2one(
         'res.users',
-        'He arrived at his destination user',
+        'On route (first user)',
         readonly=True,
         tracking=True)
+    first_on_route_to_start_comment = fields.Text(string='On route (first comment)', tracking=True, copy=False)
+
+    on_route_to_user_start_date = fields.Datetime(string='On route (datetime)', tracking=True, copy=False)
+    on_route_to_start_user_id = fields.Many2one(
+        'res.users', 'On route (user)',
+        readonly=True,
+        tracking=True)
+    on_route_to_start_comment = fields.Text(string='On route (comment)', tracking=True, copy=False)
+
+    # === STAGE FIELDS ARRIVED === #
+    first_on_route_to_user_end_date = fields.Datetime(string='Arrived (first datetime)', tracking=True, copy=False)
+    first_on_route_to_end_user_id = fields.Many2one(
+        'res.users',
+        'Arrived (first user)',
+        readonly=True,
+        tracking=True)
+    first_on_route_to_end_comment = fields.Text(string='Arrived (first comment)', tracking=True, copy=False)
+
+    on_route_to_user_end_date = fields.Datetime(string='Arrived (datetime)', tracking=True, copy=False)
+    on_route_to_end_user_id = fields.Many2one(
+        'res.users', 'Arrived (user)',
+        readonly=True,
+        tracking=True)
+    on_route_to_end_comment = fields.Text(string='Arrived (comment)', tracking=True, copy=False)
+
+    # === STAGE FIELDS ROUTE TO DESTINATION === #
+    first_on_route_to_destination_start_date = fields.Datetime(
+        string='Route to destination (first datetime)',
+        tracking=True,
+        copy=False)
+    first_on_route_to_destination_start_user_id = fields.Many2one(
+        'res.users',
+        'Route to destination (first user)',
+        readonly=True,
+        tracking=True)
+    first_on_route_to_destination_start_comment = fields.Text(
+        string='Route to destination (first comment)',
+        tracking=True,
+        copy=False)
+
+    on_route_to_destination_start_date = fields.Datetime(
+        string='Route to destination (datetime)',
+        tracking=True,
+        copy=False)
+    on_route_to_destination_start_user_id = fields.Many2one(
+        'res.users', 'Route to destination (user)',
+        readonly=True,
+        tracking=True)
+    on_route_to_destination_start_comment = fields.Text(
+        string='Route to destination (comment)',
+        tracking=True,
+        copy=False)
+
+    # === STAGE FIELD ARRIVED DESTINATION === #
+    first_on_route_to_destination_end_date = fields.Datetime(
+        string='He arrived at his destination (first datetime)',
+        tracking=True,
+        copy=False)
+    first_on_route_to_destination_end_user_id = fields.Many2one(
+        'res.users',
+        'He arrived at his destination (first user)',
+        readonly=True,
+        tracking=True)
+    first_on_route_to_destination_end_comment = fields.Text(
+        string='He arrived at his destination (first comment)',
+        tracking=True,
+        copy=False)
+
+    on_route_to_destination_end_date = fields.Datetime(
+        string='He arrived at his destination (datetime)',
+        tracking=True,
+        copy=False)
+    on_route_to_destination_end_user_id = fields.Many2one(
+        'res.users',
+        'He arrived at his destination (user)',
+        readonly=True,
+        tracking=True)
+    on_route_to_destination_end_comment = fields.Text(
+        string='He arrived at his destination (comment)',
+        tracking=True,
+        copy=False)
+
     travel_progress_percent = fields.Float(string="Travel Progress (%)")
 
     # === DETAILS FIELDS === #
@@ -76,6 +153,10 @@ class IkeEventSupplier(models.Model):
     amount_concept_subtotal = fields.Float(related='supplier_link_id.amount_concept_subtotal', string='Subtotal')
     amount_concept_vat = fields.Float(related='supplier_link_id.amount_concept_vat', string='VAT')
     amount_concept_total = fields.Float(related='supplier_link_id.amount_concept_total', string='Total')
+
+    base_amount_concept_subtotal = fields.Float(related='supplier_link_id.base_amount_concept_subtotal', string='Subtotal agreement')
+    base_amount_concept_vat = fields.Float(related='supplier_link_id.base_amount_concept_vat', string='VAT agreement')
+    base_amount_concept_total = fields.Float(related='supplier_link_id.base_amount_concept_total', string='Total agreement')
 
     # === COMPUTES === #
     def _compute_display_name(self):
@@ -400,12 +481,36 @@ class IkeEventSupplier(models.Model):
             'domain': [
                 ('event_supplier_link_id', 'in', self.ids),
                 ('display_type', 'not in', ['line_section', 'line_note']),
+                ('parent_product_id', '=', False),
             ],
             'target': 'new',
             'context': {
                 **self.env.context,
                 'create': False,
                 'edit': False,
+            },
+        }
+
+    def action_view_ike_event_agreement_cost_final(self):
+        list_view = self.env.ref('ike_event.ike_event_supplier_product_detail_base_cost_final_list_view').id
+
+        return {
+            'name': _('Agreement costs'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'ike.event.supplier.product',
+            'view_mode': 'list',
+            'views': [(list_view, 'list')],
+            'search_view_id': False,
+            'domain': [
+                ('event_supplier_link_id', 'in', self.ids),
+                ('display_type', 'not in', ['line_section', 'line_note']),
+                ('parent_product_id', '=', False),
+            ],
+            'target': 'new',
+            'context': {
+                **self.env.context,
+                'create': False,
+                'edit': True,
             },
         }
 
@@ -454,7 +559,10 @@ class IkeEventSupplierLink(models.Model):
     authorizer = fields.Char('Authorizer', compute="_compute_authorizer_name", store=True)
 
     # === LINE FIELDS === #
-    supplier_product_ids = fields.One2many('ike.event.supplier.product', 'event_supplier_link_id', string='Concepts')
+    supplier_product_ids = fields.One2many(
+        'ike.event.supplier.product', 'event_supplier_link_id',
+        domain=[('parent_product_id', '=', False)],
+        string='Concepts')
     amount_concept_subtotal = fields.Float(string='Subtotal', compute='_compute_amount_supplier_product', store=True)
     amount_concept_vat = fields.Float(string='VAT', compute='_compute_amount_supplier_product', store=True)
     amount_concept_total = fields.Float(string='Total', compute='_compute_amount_supplier_product', store=True)
@@ -465,6 +573,9 @@ class IkeEventSupplierLink(models.Model):
         string='Agreement VAT', compute='_compute_base_amount_supplier_product', store=True)
     base_amount_concept_total = fields.Float(
         string='Agreement Total', compute='_compute_base_amount_supplier_product', store=True)
+
+    # === EXCEEDS COVERAGE FIELDS === #
+    exceeds_coverage = fields.Boolean(compute='_compute_exceeds_coverage')
 
     # === COMPUTED === #
     @api.depends('supplier_product_ids.subtotal', 'supplier_product_ids.vat')
@@ -533,6 +644,26 @@ class IkeEventSupplierLink(models.Model):
                 rec.authorizer = encryption_util.decrypt_aes256(rec.nu_user_id.name) or ''
             else:
                 rec.authorizer = rec.authorizer_id.name or ''
+
+    @api.depends(
+        'event_id.user_membership_id.membership_plan_id',
+        'base_amount_concept_total'
+    )
+    def _compute_exceeds_coverage(self):
+        user = self.env.user
+        # ToDo: Change when you have the CCC coordinator user
+        has_group = user.has_group('base.group_system')
+
+        for rec in self:
+            coverage_plan = rec.event_id.user_membership_id.membership_plan_id
+            coverage_plan_line = coverage_plan.product_line_ids.filtered(
+                lambda x: rec.event_id.service_id.id == x.service_id.id
+                and rec.event_id.sub_service_id.id in x.sub_service_ids.ids
+            )
+            limit_amount_per_event = coverage_plan_line.limit_amount_per_event if coverage_plan_line else 0
+            exceeds = rec.base_amount_concept_total > limit_amount_per_event
+
+            rec.exceeds_coverage = exceeds and has_group
 
     # === ONCHANGE === #
     @api.onchange('type_authorization_id')

@@ -31,7 +31,7 @@ class ResPartner(models.Model):
 
     x_supplier_center_ids = fields.One2many(
         'res.partner', 'parent_id',
-        domain=[('type', '=', 'center')],
+        domain=[('type', '=', 'center'), ('disabled', '=', False)],
         string='Supplier Centers')
 
     x_geographical_area_ids = fields.One2many(

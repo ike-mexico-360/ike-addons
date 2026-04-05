@@ -31,10 +31,14 @@
                                context="{'default_geographical_area_id': id, 'display_default_code': 0}">
                             <list editable="bottom">
                                 <field name="geographical_area_id" column_invisible="1"/>
+                                <field name="subservice_specification_domain" column_invisible="1"/>
                                 <field name="product_id"
                                        domain="[('id', 'in', context.get('allowed_product_ids', []))]"
                                        context="{'display_default_code': 0,
                                        'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list'}"
+                                       options="{'no_open': True, 'no_create': True}"/>
+                                <field name="subservice_specification_ids" widget="many2many_tags"
+                                       domain="subservice_specification_domain"
                                        options="{'no_open': True, 'no_create': True}"/>
                                 <field name="color" widget="color_picker"/>
                                 <field name="disabled" widget="disable_field"

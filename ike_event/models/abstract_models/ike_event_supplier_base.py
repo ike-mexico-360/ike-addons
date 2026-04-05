@@ -14,7 +14,8 @@ class IkeEventSupplierBase(models.AbstractModel):
     name = fields.Text('Description')
 
     # Related fields
-    supplier_id = fields.Many2one('res.partner', string='Supplier', domain="[('x_is_supplier', '=', True)]")
+    supplier_id = fields.Many2one('res.partner', domain="[('x_is_supplier', '=', True)]")
+    supplier_center_id = fields.Many2one('res.partner', readonly=True)
     service_ref = fields.Char(related="event_id.service_ref")
     subservice_id = fields.Many2one(related='event_id.sub_service_id')
     event_search_type = fields.Selection(related='event_id.supplier_search_type')
@@ -49,3 +50,4 @@ class IkeEventSupplierBase(models.AbstractModel):
 
     # Manage state app notification
     notification_sent_to_app = fields.Boolean(string="Notification sent to app", default=False)
+    supplier_link_id = fields.Many2one('ike.event.supplier.link')

@@ -71,6 +71,9 @@ class ProductProduct(models.Model):
         'concept_id',
         string='Concepts')
     x_concepts_domain = fields.Binary(string="Concept domain", compute="_compute_x_concepts_domain")
+    concept_line_ids = fields.One2many(
+        'custom.subservice.concept.line', 'subservice_id',
+        string='Concept line')
 
     @api.constrains('name', 'sale_ok', 'sh_product_subscribe', 'purchase_ok', 'x_accessory_ok', 'categ_id', 'uom_id')
     def _check_unique_subservice(self):
@@ -136,3 +139,40 @@ class ProductProduct(models.Model):
         if self.env.context.get('x_subservice_view'):
             return _("Subservice created")
         return super()._creation_message()
+
+
+class CustomSubserviceConceptLine(models.Model):
+    _name = 'custom.subservice.concept.line'
+
+    subservice_id = fields.Many2one(
+        'product.product',
+        'Subservice',
+        domain="[('disabled', '=', False)]",
+        tracking=True
+    )
+
+    categ_id = fields.Many2one('product.category', related="subservice_id.categ_id")
+    event_type_id = fields.Many2one(
+        'custom.type.event',
+        'Event type',
+        domain="[('disabled', '=', False)]",
+        tracking=True
+    )
+    concepts_ids = fields.Many2many(
+        'product.product',
+        'subservice_concept_line_concept_rel',
+        'subservice_concept_line_id',
+        'concept_id',
+        string='Concepts')
+    base_concept_id = fields.Many2one('product.product', string='Base Concept')
+    concepts_domain = fields.Binary(string="Concept domain", compute="_compute_concepts_domain")
+    active = fields.Boolean(default=True)
+    disabled = fields.Boolean(default=False, tracking=True)
+
+    @api.depends('concepts_ids')
+    def _compute_concepts_domain(self):
+        for rec in self:
+            domain = self.env['product.product'].get_concepts_domain()
+            domain.append(('x_categ_id', 'in', [self.categ_id.id, False]))
+            domain.append(('disabled', '=', False))
+            rec.concepts_domain = domain

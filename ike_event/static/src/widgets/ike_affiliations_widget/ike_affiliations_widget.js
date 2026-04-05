@@ -239,6 +239,7 @@ export class IkeAffiliations extends Component {
         //obtenemos el membershiop del actual
         const membershipPlanId = this.state.currentAffiliationInfo?.membership_plan_id?.[0];
         const vehicleMembershipWeigth = this.state.currentAffiliationInfo?.vehicle_weight_category_id?.[0];
+        console.log("vehicleMembershipWeigth:", vehicleMembershipWeigth)
         if (!membershipPlanId) {
             this.notification.add("No se encontró el plan de membresía", {
                 type: "warning"
@@ -255,9 +256,9 @@ export class IkeAffiliations extends Component {
             context: {group_by: ['service_id']},
             domain: [
                 ['membership_plan_id', '=', membershipPlanId],
-                '|',
-                ['vehicle_weight_category_id', '=', vehicleMembershipWeigth],
-                ['vehicle_weight_category_id', '=', false],
+                // '|',
+                // ['vehicle_weight_category_id', '=', vehicleMembershipWeigth],
+                // ['vehicle_weight_category_id', '=', false],
             ],
         });
     }

@@ -55,6 +55,22 @@
                                 />
                         </group>
                     </group>
+                    <notebook>
+                        <page name="x_concepts" string="Concepts">
+                            <group>
+                                <field name="concept_line_ids" nolabel="1" readonly="disabled == True" class="my-1">
+                                    <list editable="bottom" decoration-muted="disabled == True" delete="0" create="1"
+                                          context="{'form_view_ref': 'custom_master_catalog.custom_geographical_area_product_view_form'}">
+                                        <field name="concepts_domain" column_invisible="1"/>
+                                        <field name="categ_id" column_invisible="1"/>
+                                        <field name="event_type_id" required="1"/>
+                                        <field name="base_concept_id" required="1" domain="concepts_domain"/>
+                                        <field name="concepts_ids" widget="many2many_tags" domain="concepts_domain"/>
+                                    </list>
+                                </field>
+                            </group>
+                        </page>
+                    </notebook>
                 </sheet>
                 <chatter/>
             </form>

@@ -3,16 +3,40 @@
 
     <!-- ToDo: Se ocultan campos y botones en lo que se define su uso en el proyecto bajo petición de Mario -->
 
-    <!-- <record id="sh_helpdesk_ticket_form_view_inherit_ike_event_purchase" model="ir.ui.view">
+    <record id="sh_helpdesk_ticket_form_view_inherit_ike_event_purchase" model="ir.ui.view">
         <field name="name">sh_helpdesk_ticket_form_view.inherit.ike_event_purchase</field>
         <field name="model">sh.helpdesk.ticket</field>
         <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_form_view"/>
         <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='preview_ticket']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
             <xpath expr="//header/button[@name='action_send_whatsapp']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+            <xpath expr="//header/button[@name='action_sale_create_order']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_create_invoice']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_create_lead']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_create_opportunity']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_repair_create_order']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_ticket_start']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='create_task']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
         </field>
-    </record> -->
+    </record>
 
     <!-- Purchase orders view -->
     <record id="sh_helpdesk_tickets_po_inherited_view_form_inherit_ike_event_purchase" model="ir.ui.view">
@@ -24,7 +48,8 @@
                 <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//button[@name='action_view_purchase_orders']" position="after">
-                <button name="x_action_open_purchase_order" type="object" string="View Purchase Order" class="oe_highlight" icon="fa-shopping-cart"/>
+                <button name="x_action_open_purchase_order" type="object" string="View Cost Review" class="oe_highlight" icon="fa-shopping-cart"
+                    invisible="purchase_order_count == 0"/>
             </xpath>
         </field>
     </record>

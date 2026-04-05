@@ -2,7 +2,7 @@
 {
     'name': 'IKE Events',
     'summary': '''''',
-    'author': 'Neftalí Michelet',
+    'author': 'Alsiba MX',
     'website': 'https://www.linkedin.com/in/neftalimich',
     'license': 'LGPL-3',
     'category': 'Uncategorized',
@@ -15,6 +15,7 @@
     'data': [
         'security/ir_module_security.xml',
         'data/survey_data.xml',
+        'data/survey_satisfaction_data.xml',
         'data/ike_event_data.xml',
         'data/ike_event_flow_data.xml',
         'data/ir_sequence_data.xml',

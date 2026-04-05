@@ -46,6 +46,17 @@ export class IkeEventSystray extends Component {
                 clearTimeout(id);
             }
             this._timeouts.clear();
+            // Delete Channels
+            if (this.state.eventChannel) {
+                this.busService.deleteChannel(this.state.eventChannel);
+            }
+            if (this.state.listChannel) {
+                this.busService.deleteChannel(this.state.listChannel);
+            }
+            // Unsubscribe notifications
+            for (let subscription in SUBSCRIPTIONS) {
+                this.busService.unsubscribe(SUBSCRIPTIONS[subscription], this.subscriptions[subscription]);
+            }
         });
         onError((error) => {
             console.error("ike_event_systray onError", error, this);
@@ -87,7 +98,7 @@ export class IkeEventSystray extends Component {
         this.subscriptions = {};
         for (let subscription in SUBSCRIPTIONS) {
             this.subscriptions[subscription] = (payload, { id }) => {
-                console.log(subscription, payload, id);
+                // console.log(subscription, payload, id);
                 this["broadcast" + subscription](payload);
             };
             this.busService.subscribe(SUBSCRIPTIONS[subscription], this.subscriptions[subscription]);

@@ -6,7 +6,7 @@
         <field name="name">view.custom.membership.nus.list</field>
         <field name="model">custom.membership.nus</field>
         <field name="arch" type="xml">
-            <list delete="false" edit="false" duplicate="false">
+            <list delete="false" edit="false" duplicate="false" create="false">
                 <field name="name"/>
                 <field name="nus_id"/>
             </list>
@@ -18,7 +18,7 @@
         <field name="name">view.custom.membership.nus.form</field>
         <field name="model">custom.membership.nus</field>
         <field name="arch" type="xml">
-            <form delete="false" duplicate="false">
+            <form delete="false" duplicate="false" create="false">
                 <sheet>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                     <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
@@ -55,7 +55,7 @@
                             <field name="clause" invisible="not check_clause"/>
                             <field
                                 name="second_key_identification"
-                                required="1"
+                                required="0"
                                 widget="regex_validator_field"
                                 mask_field="x_display_mask_second"
                                 pattern_field="x_validation_pattern_second"

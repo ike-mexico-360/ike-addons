@@ -107,10 +107,10 @@
                                         <field name="subservice_id" options='{"no_open": True, "no_create": True}' required="1"
                                             domain="[('categ_id', '=', service_id),('type', '=', 'service'),('disabled', '=', False)]"
                                             context="{'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list', 'display_default_code': 0}"/>
-                                        <field name="state_id" options='{"no_open": True, "no_create": True}' required="1"
+                                        <field name="state_id" options='{"no_open": True, "no_create": True}' required="0"
                                             domain="[('country_id', '=', country_id),('disabled', '=', False)]"
                                             context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_country_state_tree'}"/>
-                                        <field name="geographical_area_id" options='{"no_open": True, "no_create": True}' required="1"
+                                        <field name="geographical_area_id" options='{"no_open": True, "no_create": True}' required="0"
                                             domain="[('state_id', '=', state_id),('disabled', '=', False)]"/>
                                         <field name="type_event_id" options='{"no_open": True, "no_create": True}' required="1"
                                             domain="[('disabled', '=', False)]"/>
@@ -131,6 +131,7 @@
                                         <field name="date_end"/>
                                         <field name="vacation_schedule_ids" widget="many2many_tags" options="{'no_open': True, 'no_create': True}"/>
                                         <field name="missing_value" column_invisible="1"/>
+                                        <field name="missing_values" optional="hide"/>
                                         <field name="not_confirm" column_invisible="1"/>
                                     </list>
                                 </field>
@@ -154,10 +155,10 @@
                 <field name="subservice_id" options='{"no_open": True, "no_create": True}' required="1"
                     domain="[('categ_id', '=', service_id),('type', '=', 'service'),('disabled', '=', False)]"
                     context="{'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list'}"/>
-                <field name="state_id" options='{"no_open": True, "no_create": True}' required="1"
+                <field name="state_id" options='{"no_open": True, "no_create": True}' required="0"
                     domain="[('country_id', '=', country_id),('disabled', '=', False)]"
                     context="{'list_view_ref': 'custom_master_catalog.custom_ike_view_country_state_tree'}"/>
-                <field name="geographical_area_id" options='{"no_open": True, "no_create": True}' required="1"
+                <field name="geographical_area_id" options='{"no_open": True, "no_create": True}' required="0"
                     domain="[('state_id', '=', state_id),('disabled', '=', False)]"/>
                 <field name="type_event_id" options='{"no_open": True, "no_create": True}' required="1"
                     domain="[('disabled', '=', False)]"/>
@@ -176,7 +177,8 @@
                     domain="[('disabled', '=', False)]" required="1"/>
                 <field name="date_init" required="1"/>
                 <field name="date_end"/>
-                <field name="missing_value" column_invisible="1"/>
+                <field name="missing_value" column_invisible="0"/>
+                <field name="missing_values" optional="hide"/>
                 <field name="not_confirm" column_invisible="1"/>
             </list>
         </field>

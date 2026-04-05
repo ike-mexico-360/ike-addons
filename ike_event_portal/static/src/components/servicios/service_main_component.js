@@ -53,7 +53,8 @@ export class ServicesMainComponent extends Component {
             },
             currentEventId: null,
             currentSupplierId: null,
-            currentEventSupplierId: null
+            currentEventSupplierId: null,
+            link_supplier_id: null
         });
         // Initialize pagination service
         this.pagination = usePagination({
@@ -86,13 +87,22 @@ export class ServicesMainComponent extends Component {
         });
     }
 
-    async loadConceptsByEventSupplierId(event_id, supplier_id) {
+    async loadConceptsByEventSupplierId(supplier_link_id) {
+        console.log(await this.orm.searchRead(
+            'ike.event.supplier.product',
+            [
+                ['event_supplier_link_id', '=', supplier_link_id],
+                ['display_type', 'not in', ['line_section', 'line_note']],
+                ['parent_product_id', '=', false],
+            ],
+            []
+        ));
         return await this.orm.searchRead(
             'ike.event.supplier.product',
             [
-                ['event_id', '=', event_id],
-                ['supplier_id', '=', supplier_id],
-                ['display_type', 'not in', ['line_section', 'line_note']]
+                ['event_supplier_link_id', '=', supplier_link_id],
+                ['display_type', 'not in', ['line_section', 'line_note']],
+                ['parent_product_id', '=', false],
             ],
             []
         );
@@ -167,43 +177,36 @@ export class ServicesMainComponent extends Component {
         this.busService.subscribe('ike_supplier_lines_reload_2', async (payload) => {
             console.log("Received notification:", payload);
 
+            for (const item of payload.data) {
+                const ike_event_supplier = await this.getEventSupplierById(item.id);
+                const service_supplier_state = item.state;
 
-            let ike_event_supplier = await this.getEventSupplierById(payload.data[0].id);
-            let service_supplier_state = payload.data[0].state;
-            if (ike_event_supplier && (service_supplier_state === 'notified' || service_supplier_state === 'assigned' || service_supplier_state === 'accepted')) {
-                let event = await this.getEventById(ike_event_supplier.event_id);
-                this.removeServiceById(ike_event_supplier.event_supplier_id);
-                this.fetchAndAppendService(ike_event_supplier, event)
-            }
-            if (ike_event_supplier && (service_supplier_state === 'timeout' || service_supplier_state === 'rejected')) {
-                if (ike_event_supplier.supplier_id == this.supplier_id) {
+                if (ike_event_supplier && (service_supplier_state === 'notified' || service_supplier_state === 'assigned' || service_supplier_state === 'accepted')) {
+                    const event = await this.getEventById(ike_event_supplier.event_id);
                     this.removeServiceById(ike_event_supplier.event_supplier_id);
-                    this.showNotification({
-                        message: 'El servicio ha sido actualizado y removido de la lista',
-                        type: 'info'
-                    });
+                    this.fetchAndAppendService(ike_event_supplier, event);
+                } else if (ike_event_supplier && (service_supplier_state === 'timeout' || service_supplier_state === 'rejected')) {
+                    if (ike_event_supplier.supplier_id == this.supplier_id) {
+                        this.removeServiceById(ike_event_supplier.event_supplier_id);
+                        this.showNotification({
+                            message: 'El servicio ha sido actualizado y removido de la lista',
+                            type: 'info'
+                        });
+                    }
+                } else if (service_supplier_state === 'cancel_event') {
+                    const cancelReason = item.cancel_reason || '';
+                    const cancelUser = item.cancel_user || 'Administrador';
+                    const index = this.state.services.findIndex(
+                        service => service.event_supplier_id === item.id
+                    );
+                    if (index !== -1) {
+                        this.state.services.splice(index, 1);
+                        this.showNotification({
+                            message: `El servicio ha sido cancelado por ${cancelUser}. Motivo: ${cancelReason}`,
+                            type: 'warning',
+                        });
+                    }
                 }
-            }
-
-            // Handle cancel_event: remove from list and notify
-            if (service_supplier_state === 'cancel_event') {
-                const cancelData = payload.data[0];
-                const eventSupplierId = cancelData.id;
-                const cancelReason = cancelData.cancel_reason || '';
-                const cancelUser = cancelData.cancel_user || 'Administrador';
-
-                const index = this.state.services.findIndex(
-                    service => service.event_supplier_id === eventSupplierId
-                );
-
-                if (index !== -1) {
-                    this.state.services.splice(index, 1);
-                    this.showNotification({
-                        message: `El servicio ha sido cancelado por ${cancelUser}. Motivo: ${cancelReason}`,
-                        type: 'warning',
-                    });
-                }
-                return;
             }
         });
     }
@@ -566,7 +569,8 @@ export class ServicesMainComponent extends Component {
                     truck_name: supplier_event.truck_name,
                     event_supplier_state: supplier_event.event_supplier_state,
                     event_supplier_state_label: supplier_event.event_supplier_state_label,
-                    stage: supplier_event.stage
+                    stage: supplier_event.stage,
+                    supplier_link_id: supplier_event.supplier_link_id
                 }));
             } else {
                 console.log(result.message);
@@ -734,13 +738,15 @@ export class ServicesMainComponent extends Component {
     async openServiceSummaryModal(event_supplier_id) {
         try {
             let event_supplier = await this.getEventSupplierById(event_supplier_id);
+            console.log("Event supplier for summary modal:", event_supplier);
             this.state.showServiceSummaryModal = true;
             this.state.event_supplier_summary_data = event_supplier.event_supplier_summary_data;
             this.state.travel_tracking_url = event_supplier.travel_tracking_url;
             this.state.currentEventSupplierId = event_supplier_id;
+            this.state.link_supplier_id = event_supplier.supplier_link_id;
             this.state.isLoadingCosts = true;
             this.state.serviceCostsData = null;
-            const rawCostsData = await this.loadConceptsByEventSupplierId(event_supplier.event_id, event_supplier.supplier_id);
+            const rawCostsData = await this.loadConceptsByEventSupplierId(event_supplier.supplier_link_id);
             this.state.serviceCostsData = this.transformCostsData(rawCostsData);
 
             await this.loadAvailableProducts(event_supplier.event_id, event_supplier.supplier_id);
@@ -775,6 +781,7 @@ export class ServicesMainComponent extends Component {
         this.state.isLoadingCosts = false;
         this.state.isAddingConcept = false;
         this.state.availableProducts = [];
+        this.state.link_supplier_id = null;
         this.state.newConcept = {
             product_id: null,
             estimated_quantity: 1,
@@ -835,10 +842,6 @@ export class ServicesMainComponent extends Component {
     }
 
     async onCostItemFieldChange(itemId, field, ev) {
-        /**
-         * Handle changes to quantity or unit_price fields in the costs table
-         * Updates the backend and refreshes the calculated fields
-         */
         const value = parseFloat(ev.target.value) || 0;
 
         try {
@@ -846,11 +849,10 @@ export class ServicesMainComponent extends Component {
             await this.orm.write('ike.event.supplier.product', [itemId], {
                 [field]: value
             });
-
+            console.log('Cost item updated successfully:', itemId, field, value);
             // Reload the costs data to get recalculated values
             const rawCostsData = await this.loadConceptsByEventSupplierId(
-                this.state.currentEventId,
-                this.state.currentSupplierId
+                this.state.link_supplier_id
             );
             this.state.serviceCostsData = this.transformCostsData(rawCostsData);
 
@@ -910,10 +912,6 @@ export class ServicesMainComponent extends Component {
     }
 
     async onSaveNewConcept() {
-        /**
-         * Save the new concept to the database using backend endpoint
-         * that applies onchange logic for pricing
-         */
         if (!this.state.newConcept.product_id) {
             this.showNotification({
                 message: 'Por favor seleccione un concepto',
@@ -946,8 +944,7 @@ export class ServicesMainComponent extends Component {
 
             // Reload the costs data
             const rawCostsData = await this.loadConceptsByEventSupplierId(
-                this.state.currentEventId,
-                this.state.currentSupplierId
+                this.state.link_supplier_id
             );
             this.state.serviceCostsData = this.transformCostsData(rawCostsData);
 
@@ -1100,7 +1097,7 @@ export class ServicesMainComponent extends Component {
 
         const supplierName = rawItems[0].supplier_id ? rawItems[0].supplier_id[1] : "Sin proveedor";
 
-        const items = rawItems.map((item, index) => ({
+        const items = rawItems.filter(item => item.product_id && item.product_id[1]).map((item, index) => ({
             id: item.id,
             row_number: index + 1,
             concept: item.product_id ? item.product_id[1] : "Sin concepto",
@@ -1134,10 +1131,6 @@ export class ServicesMainComponent extends Component {
     }
 
     async loadAvailableProducts(event_id, supplier_id) {
-        /**
-         * Load available products that can be added as concepts
-         * Uses backend domain logic from get_concepts_domain()
-         */
         try {
             this.state.currentEventId = event_id;
             this.state.currentSupplierId = supplier_id;

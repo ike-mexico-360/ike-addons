@@ -12,3 +12,4 @@ class ProductCategory(models.Model):
         ('ike.service.input.medical', 'Medical'),
         ('ike.service.input.generic', 'Generic'),
     ], string='Input Model')
+    x_satisfaction_survey_id = fields.Many2one('survey.survey', string='Satisfaction Survey')

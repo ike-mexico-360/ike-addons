@@ -199,6 +199,11 @@ class EventsAPIController(http.Controller):
     #         return request.make_json_response({"error": "Invalid or expired refresh token"}, status=401)
     #     return request.make_json_response(new_token_data, status=200)
 
+    # ToDo: General
+    # Refactorizar historyService & newEvent, la forma de hacer match y validar los datos es similar,
+    # unificar en una función reutilizable para ambos, son las mismas reglas, a diferencia del user_bp
+    # por temas de tiempo se copia y pega por la urgenica y premura de tenerlo
+    # ! Importante refactorizar para tener simple y limpio el código
     @http.route('/event/historyService', type='http', auth='public', methods=['POST'], csrf=False)
     def ike_event_history_service(self, **kwargs):
         # === Autorización ===
@@ -263,6 +268,224 @@ class EventsAPIController(http.Controller):
             return request.make_json_response({'error': 'Unauthorized'}, status=401)
 
         _logger.info(f"/event/historyService/{account_ref}/{phone}")
+
+        # Buscar NU: affiliate validation
+        decrypt_encrypt_utility_sudo = request.env['custom.encryption.utility'].sudo()
+
+        nu_data = False
+        affiliation_data = False
+        plan_data = False
+
+        plan_query = """
+            SELECT
+                plan.id AS id,
+                plan.name AS name
+            FROM
+                custom_membership_plan plan
+            WHERE
+                plan.bp_account_ref = %s
+            ORDER BY plan.id DESC
+            LIMIT 1;
+        """
+        request.env.cr.execute(plan_query, (account_ref,))
+        plan_data = request.env.cr.dictfetchone()
+
+        if not plan_data:
+            _logger.warning('Not found: No matching account (Plan)')
+            return request.make_json_response({}, status=200)
+
+        query = """
+            SELECT
+                -- Affiliation fields (custom.membership.nus)
+                jsonb_build_object(
+                    'id', affiliation.id,
+                    'key_identification', affiliation.key_identification
+                ) AS affiliation,
+                -- NU fields (custom.nus)
+                jsonb_build_object(
+                    'id', nu.id,
+                    'name', nu.name,
+                    'phone', nu.phone,
+                    'complete_phone', nu.complete_phone,
+                    'vip_user', nu.vip_user
+                ) AS nu
+            FROM
+                custom_membership_nus affiliation
+            INNER JOIN
+                custom_nus nu ON nu.id = affiliation.nus_id
+            WHERE
+                affiliation.membership_plan_id = %s
+                AND affiliation.disabled = false
+            ORDER BY affiliation.id DESC;
+        """
+        request.env.cr.execute(query, (plan_data['id'],))
+        # Separar, primero buscar account, y validar si existe el account y entonces buscar lo demás
+        records = request.env.cr.dictfetchall()
+        # ToDo: Integrar búsqueda con los campos de búsqueda de encriptación
+        for record in records:
+            affiliation = record['affiliation']
+            plan = plan_data
+            nu = record['nu']
+            phone_dec = decrypt_encrypt_utility_sudo.decrypt_aes256(str(nu['phone']) if nu['phone'] else '')
+            complete_phone_dec = decrypt_encrypt_utility_sudo.decrypt_aes256(str(nu['complete_phone']) if nu['complete_phone'] else '')
+            if complete_phone_dec:
+                complete_phone_dec = complete_phone_dec.replace(' ', '')  # Eliminar espacios en números formateados
+            if phone_dec:
+                phone_dec = phone_dec.replace(' ', '')  # Eliminar espacios en números formateados
+            key_identification_dec = decrypt_encrypt_utility_sudo.decrypt_aes256(str(affiliation['key_identification']) if affiliation['key_identification'] else '')
+            if key_identification_dec:
+                key_identification_dec = key_identification_dec.replace(' ', '')  # Eliminar espacios en números formateados
+
+            if key and key_identification_dec == key and complete_phone_dec == f"+52{phone}":
+                nu_data = nu
+                affiliation_data = affiliation
+                plan_data = plan
+                _logger.warning(f"Membership: {affiliation['id']}: Matching account, key identification and complete_phone")
+                break
+            # ToDo: Quitar este caso, debe ser con complete_phone, se añade porque complete_phone no está guardando correctamente
+            elif key and key_identification_dec == key and f"+52{phone_dec}" == f"+52{phone}":
+                nu_data = nu
+                affiliation_data = affiliation
+                plan_data = plan
+                _logger.warning(f"Membership: {affiliation['id']}: Matching account, key identification and phone")
+                break
+            elif key and key_identification_dec == key:
+                nu_data = nu
+                affiliation_data = affiliation
+                plan_data = plan
+                _logger.warning(f"Membership: {affiliation['id']}: Matching account and key identification")
+                break
+            elif complete_phone_dec == f"+52{phone}":
+                nu_data = nu
+                affiliation_data = affiliation
+                plan_data = plan
+                _logger.warning(f"Membership: {affiliation['id']}: Matching account and complete_phone")
+                break
+            # ToDo: Quitar este caso, debe ser con complete_phone, se añade porque complete_phone no está guardando correctamente
+            elif f"+52{phone_dec}" == f"+52{phone}":
+                nu_data = nu
+                affiliation_data = affiliation
+                plan_data = plan
+                _logger.warning(f"Membership: {affiliation['id']}: Matching account and phone")
+                break
+
+        if not nu_data:
+            _logger.warning('Not found: No matching account (NU)')
+            return request.make_json_response({}, status=200)
+
+        if not affiliation_data:
+            _logger.warning('Not found: No matching account (Affiliation)')
+            # return request.make_json_response({'error': 'Not found: No matching account (Membership)'}, status=400)
+
+        user_tz = request.env.user.tz or 'UTC'
+        user_lang = request.env.user.lang or 'en_US'
+        user_id = nu_data['id']
+        nu_name = decrypt_encrypt_utility_sudo.decrypt_aes256(nu_data['name'] if nu_data else '')
+        history_query = """
+            SELECT
+                ie.id::TEXT AS "id",
+                '' AS "key",
+                ie.name::TEXT AS "idExpedient",
+                plan.name::TEXT AS "accountName",
+                service.id::TEXT AS "idService",
+                service.name::TEXT AS "serviceName",
+                COALESCE(subservice.id::TEXT, '') AS "idSubService",
+                COALESCE(pt.name->>%(user_lang)s, pt.name->>'en_US', '') AS "subServiceName",
+                stage.id::TEXT AS "idStatus",
+                COALESCE(stage.name->>%(user_lang)s, stage.name->>'en_US', '') AS "statusName",
+                to_char((ie.event_date AT TIME ZONE 'UTC') AT TIME ZONE %(user_tz)s, 'YYYY-MM-DD"T"HH24:MI:SS.US') AS "registrationDate"
+            FROM ike_event ie
+            INNER JOIN custom_membership_nus membership ON membership.id = ie.user_membership_id
+            INNER JOIN custom_membership_plan plan ON plan.id = membership.membership_plan_id
+            INNER JOIN product_category service ON service.id = ie.service_id
+            LEFT JOIN product_product subservice ON subservice.id = ie.sub_service_id
+            LEFT JOIN product_template pt ON pt.id = subservice.product_tmpl_id
+            INNER JOIN ike_event_stage stage ON stage.id = ie.stage_id
+            WHERE ie.user_id = %(user_id)s;
+        """
+        request.env.cr.execute(history_query, {'user_id': user_id, 'user_lang': user_lang, 'user_tz': user_tz})
+        events = request.env.cr.dictfetchall()
+        return request.make_json_response({
+            "nameUser": nu_name,
+            "historyService": events
+        }, status=200)
+
+    @http.route('/event/newEvent', type='http', auth='public', methods=['POST'], csrf=False)
+    def ike_event_new_event(self, **kwargs):
+        # === Autorización ===
+        # ToDo: Mover mx_tenant fuera, ya sea como parámetro o un ajuste en la configuración
+        mx_tenant = "adff7f6a-e97d-11eb-9a03-0242ac130003"
+        headers = request.httprequest.headers
+        authorization = headers.get('Authorization')
+        if not authorization:
+            _logger.warning('Unauthorized')
+            return request.make_json_response({'error': 'Unauthorized'}, status=401)
+        if authorization.startswith("Bearer "):
+            authorization = authorization[7:]
+
+        # === Datos de la petición ===
+        json_data = request.get_json_data() or {}
+        identifier = json_data.get('identifier', {})
+        petition = json_data.get('petition', {})
+
+        if not identifier or not petition:
+            _logger.warning('Bad request')
+            return request.make_json_response({'error': 'Bad request'}, status=400)
+        if identifier.get('tenants', '') != mx_tenant:
+            _logger.warning('Bad request')
+            return request.make_json_response({'error': 'Bad request'}, status=400)
+
+        # === Validar petición ===
+        phone = str(petition.get('phone', '') or '').strip().replace(' ', '')
+        account = str(petition.get('account', '') or '').strip().replace(' ', '')  # Deberá sr el valor de la referencia de la cuenta, ejemplo PRSE -> PRIMERO SEGUROS
+        # ToDo: UserBP puede ser buscado directo a res.users con el login y tomar el campo parent_id que es el res.partner
+        user_bp = str(petition.get('user_bp', '') or '').strip().replace(' ', '')
+        key = petition.get('key', False)  # Opcional
+        try:  # Opcional, por default 1, se completará a 3 ceros, ejemplo 001
+            call_type = int(petition.get('type', 1))
+        except (ValueError, TypeError):
+            call_type = 1
+        if not (1 <= call_type <= 999):
+            call_type = 1
+
+        if not phone or not account or not user_bp:
+            _logger.warning('Bad request')
+            return request.make_json_response({'error': 'Bad request'}, status=400)
+        # Se forma la clave de la referencia, ejemplo:
+        #   PRSE-001 -> PRIMERO SEGUROS
+        #   PRSE-002 -> PRIMERO SEGUROS PESADOS
+        account_ref = f"{account.upper()}-{str(call_type).zfill(3)}"
+        # ToDo: Cuando sea primero seguros, ignorar el valor de key
+        if account_ref in ['PRSE-001', 'PRSE-002']:
+            key = False
+        valid_account_ref = self.x_ike_validate_account_ref_format(account_ref)
+        if not valid_account_ref:
+            _logger.warning(f'Bad request account ref {account_ref}')
+            return request.make_json_response({'error': 'Bad request account'}, status=400)
+
+        # === Validar token ===
+        api_key_model = request.env["res.users.apikeys"].sudo()
+        try:
+            uid = api_key_model._check_credentials(scope='event/getToken', key=authorization)
+        except Exception:
+            _logger.warning("Invalid or unknown refresh token")
+            uid = None
+
+        if not uid:
+            _logger.warning('Unauthorized')
+            return request.make_json_response({'error': 'Unauthorized'}, status=401)
+
+        _logger.info(f"/event/newEvent/{account_ref}/{phone}/{user_bp}")
+
+        # User query: user_BP
+        user_id_BP = "select partner_id from res_users where login = %s"
+
+        request.env.cr.execute(user_id_BP, (user_bp,))
+        user_id_data = request.env.cr.dictfetchone()
+
+        if not user_id_data:
+            _logger.warning('Not found: No matching account (Plan)')
+            return request.make_json_response({'error': 'Not found: No matching account (Plan)'}, status=400)
 
         # Buscar NU: affiliate validation
         decrypt_encrypt_utility_sudo = request.env['custom.encryption.utility'].sudo()
@@ -385,10 +608,25 @@ class EventsAPIController(http.Controller):
                 'temporary_key_indentification': key if not affiliation_data else '',
                 'temporary_membership_plan_id': plan_data['id'] if not affiliation_data else False,
             })
+
+            # channel = request.env['discuss.channel'].sudo().search([
+            #     ('channel_type', '=', 'channel'),
+            #     ('name', '=', 'general')
+            # ], limit=1)
+
+            user_partner_id = request.env['res.partner'].sudo().browse(user_id_data.get('partner_id'))
+
             channel = request.env['discuss.channel'].sudo().search([
-                ('channel_type', '=', 'channel'),
-                ('name', '=', 'general')
+                ('channel_type', '=', 'chat'),
+                ('channel_partner_ids', 'in', [user_partner_id.id]),
             ], limit=1)
+
+            if not channel:
+                channel = request.env['discuss.channel'].sudo().search([
+                    ('channel_type', '=', 'channel'),
+                    ('name', '=', 'general')
+                ], limit=1)
+
             if channel:
                 author_id = request.env.ref('base.user_root')
                 base_url = request.env['ir.config_parameter'].sudo().get_param('web.base.url')

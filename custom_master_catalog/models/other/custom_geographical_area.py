@@ -103,6 +103,15 @@ class CustomGeographicalAreaProduct(models.Model):
         'custom.geographical.area', string='Geographical Coverage Area',
         ondelete='cascade',
         required=True)
+    subservice_specification_domain = fields.Binary(
+        string="Subservice Specification Domain",
+        compute="_compute_subservice_specification_domain")
+    subservice_specification_ids = fields.Many2many(
+        'custom.subservice.specification',
+        'custom_geographical_area_product_subservice_specification_rel',
+        'geographical_area_product_id',
+        'subservice_specification_id',
+        string='Subservice Specifications')
     product_id = fields.Many2one('product.product', string='Sub-Service', required=True)
     color = fields.Integer()
     product_category_color = fields.Integer(related='product_id.categ_id.x_color', string='Product Color')
@@ -120,3 +129,16 @@ class CustomGeographicalAreaProduct(models.Model):
                 if not rec.disabled and not rec.geographical_area_id.disabled
                 else 12
             )
+
+    @api.depends('product_id', 'subservice_specification_ids')
+    def _compute_subservice_specification_domain(self):
+        for rec in self:
+            if rec.product_id:
+                subservice_specs = self.env['custom.subservice.specification'].search([
+                    ('subservice_ids', 'in', rec.product_id.id),
+                    ('disabled', '=', False)
+                ])
+                domain = [('id', 'in', subservice_specs.ids)]
+            else:
+                domain = [('id', 'in', [])]
+            rec.subservice_specification_domain = domain

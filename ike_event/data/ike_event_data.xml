@@ -97,23 +97,29 @@
         <field name="fold">False</field>
     </record>
     <record id="ike_event_stage_completed" model="ike.event.stage">
-        <field name="name">Completed</field>
+        <field name="name">Assistance Completed</field>
         <field name="ref">completed</field>
         <field name="sequence">6</field>
         <field name="fold">False</field>
     </record>
-    <record id="ike_event_stage_closed" model="ike.event.stage">
-        <field name="name">Closed</field>
-        <field name="ref">close</field>
+    <record id="ike_event_stage_verifying" model="ike.event.stage">
+        <field name="name">Verifying</field>
+        <field name="ref">verifying</field>
         <field name="sequence">7</field>
-        <field name="fold">True</field>
+        <field name="fold">False</field>
+    </record>
+    <record id="ike_event_stage_closed" model="ike.event.stage">
+        <field name="name">Concluded</field>
+        <field name="ref">close</field>
+        <field name="sequence">8</field>
+        <field name="fold">False</field>
         <field name="color">#BB78BC</field>
         <field name="last_stage">True</field>
     </record>
     <record id="ike_event_stage_cancelled" model="ike.event.stage">
         <field name="name">Cancelled</field>
         <field name="ref">cancel</field>
-        <field name="sequence">8</field>
+        <field name="sequence">9</field>
         <field name="fold">True</field>
         <field name="color">#db5f5f</field>
         <field name="last_stage">True</field>
@@ -121,7 +127,7 @@
     <record id="ike_event_stage_cancelled_subsequently" model="ike.event.stage">
         <field name="name">Cancelled Subsequently</field>
         <field name="ref">cancel_subsequently</field>
-        <field name="sequence">9</field>
+        <field name="sequence">10</field>
         <field name="fold">True</field>
         <field name="color">#db5f5f</field>
         <field name="last_stage">True</field>

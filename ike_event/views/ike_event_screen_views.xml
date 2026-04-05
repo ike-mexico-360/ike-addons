@@ -7,9 +7,17 @@
         <field name="arch" type="xml">
             <form string="Event" js_class="ike_event_screen_form" delete="false" duplicate="false">
                 <header>
+                    <button name="action_verify" string="Conclude"
+                            confirm="Are you sure?"
+                            type="object" class="btn-primary" invisible="stage_ref != 'completed'"
+                            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds"/>
+                    <button name="action_close" string="Close"
+                            confirm="Are you sure?"
+                            type="object" class="btn-primary" invisible="1"/>
                     <button name="action_open_duplicate_wizard" string="Duplicate Expedient"
                             confirm="Are you sure?"
-                            type="object" class="btn-info"/>
+                            type="object" class="btn-info"
+                            invisible="stage_ref in ['draft']"/>
                     <button name="open_cancel_wizard" string="Cancel"
                             confirm="Are you sure?"
                             type="object" class="btn-danger"
@@ -185,7 +193,7 @@
                             <field name="current_amount" groups="base.group_no_one"/>
                             <field name="authorization_required" groups="base.group_no_one"/>
                             <field name="uncovered_authorization_required" groups="base.group_no_one"/>
-                            <field name="use_external_locations" widget="boolean_toggle" groups="base.group_no_one"/>
+                            <field name="use_external_locations" widget="boolean_toggle" groups="base.group_erp_manager"/>
                             <div class="o_row" colspan="2">
                                 <button string="View Vehicles Data" name="action_view_vehicles_info" type="object" class="btn-info"/>
                             </div>
@@ -201,8 +209,8 @@
                                         type="object" class="btn-info"/>
                                 <button name="action_search_manual_suppliers" string="Search Manual (Suppliers)"
                                         type="object" class="btn-info"/>
-                                <button name="action_delete_suppliers" string="Delete Searched (Suppliers)"
-                                        type="object" class="btn-danger"/>
+                                <!-- <button name="action_delete_suppliers" string="Delete Searched (Suppliers)"
+                                        type="object" class="btn-danger" groups="base.group_erp_manager"/> -->
                             </div>
                         </group>
                     </group>
@@ -318,11 +326,39 @@
                                         class="btn btn-primary rounded-4 py-1"/>
                                 </div>
                                 <div class="mb-2">
+                                    <button name="action_view_ike_event_agreement_cost_final"
+                                        string="View agreement cost details"
+                                        type="object"
+                                        invisible="stage_ref != 'verifying'"
+                                        class="btn btn-primary rounded-4 py-1"
+                                        groups="custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds"/>
+                                </div>
+                                <div class="mb-2">
                                     <button class="btn btn-primary rounded-4 py-1" >Send whatsapp info</button>
                                 </div>
                                 <div class="mb-2">
                                     <button string="Add comments" class="btn btn-outline-primary rounded-4 py-0"/>
                                 </div>
+                            </div>
+                        </group>
+                    </group>
+                    <group name="agreement_cost_final" invisible="stage_ref not in ('verifying')">
+                        <group>
+                            <field name="ike_event_coordinator_id"
+                                context="{
+                                    'search_view_ref': 'custom_master_catalog.custom_view_users_search',
+                                    'list_view_ref': 'custom_master_catalog.custom_view_users_list',
+                                }"
+                                options="{'no_create': 1, 'no_open': 1}" required="stage_ref in ('verifying')"/>
+                        </group>
+                        <group>
+                            <div class="d-flex flex-column align-items-center">
+                                <button name="action_view_ike_event_agreement_cost_final"
+                                    string="View agreement cost details"
+                                    type="object"
+                                    invisible="stage_ref != 'verifying'"
+                                    class="btn btn-primary rounded-4 py-1"
+                                    groups="custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds"/>
                             </div>
                         </group>
                     </group>

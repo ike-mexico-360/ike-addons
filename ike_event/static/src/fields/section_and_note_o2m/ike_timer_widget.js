@@ -26,6 +26,7 @@ export class IkeTimerWidget extends Component {
             paused: false,
             blocked: false,
             is_manual: null,
+            assignation_type: 'electronic',
         });
         this.configurationLoaded = false;
         this.configuration = [];
@@ -45,6 +46,7 @@ export class IkeTimerWidget extends Component {
             this.timer_duration = record.data.timer_duration;
             this.state.current_state = record.data.state;
             this.state.is_manual = record.data.is_manual;
+            this.state.assignation_type = record.data.assignation_type;
             this.notification_date = record.data.notification_date;
             this.acceptance_date = record.data.acceptance_date;
             this.rejection_date = record.data.rejection_date;
@@ -241,7 +243,7 @@ export class IkeTimerWidget extends Component {
         return odoo.debug && !['available', 'notified'].includes(this.state.current_state);
     }
     get showNotification() {
-        return this.state.current_state == 'available' && (odoo.debug || this.state.is_manual);
+        return this.state.current_state == 'available' && (odoo.debug || this.state.is_manual || this.state.assignation_type == 'manual');
     }
 };
 

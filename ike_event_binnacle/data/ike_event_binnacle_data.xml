@@ -27,9 +27,17 @@
         <record id="ike_binnacle_category_cancel" model="ike.event.binnacle.category">
             <field name="name">Canceled</field>
         </record>
+        <!-- Assistance concluded -->
+        <record id="ike_binnacle_category_assistance_concluded" model="ike.event.binnacle.category">
+            <field name="name">Assistance concluded</field>
+        </record>
+        <!-- Verification CCC -->
+        <record id="ike_binnacle_category_verification_ccc" model="ike.event.binnacle.category">
+            <field name="name">Verification CCC</field>
+        </record>
         <!-- Event concluded -->
         <record id="ike_binnacle_category_event_concluded" model="ike.event.binnacle.category">
-            <field name="name">Assistance concluded</field>
+            <field name="name">Event concluded</field>
         </record>
         <!--Message to event duplicate -->
           <record id="ike_binnacle_category_duplicate" model="ike.event.binnacle.category">
@@ -39,7 +47,11 @@
             <field name="name">Cancel - summary</field>
             <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_cancel"/>
         </record>
-        <record id="ike_binnacle_category_opening_of_the_service_summary" model="ike.event.binnacle.category">
+        <record id="ike_binnacle_category_verification_ccc_summary" model="ike.event.binnacle.category">
+            <field name="name">Summary - verification</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_verification_ccc"/>
+        </record>
+         <record id="ike_binnacle_category_opening_of_the_service_summary" model="ike.event.binnacle.category">
             <field name="name">Summary</field>
             <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_opening_of_the_service"/>
         </record>
@@ -77,6 +89,10 @@
         </record>
         <record id="ike_binnacle_category_progress_summary_arrived" model="ike.event.binnacle.category">
             <field name="name">Arrived</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_assigned"/>
+        </record>
+          <record id="ike_binnacle_category_progress_summary_contact" model="ike.event.binnacle.category">
+            <field name="name">Contacted</field>
             <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_assigned"/>
         </record>
         <record id="ike_binnacle_category_progress_summary_on_rute_to_destination" model="ike.event.binnacle.category">
@@ -380,9 +396,68 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <strong>Origin geolocation identification</strong><br/>
-                    <strong>Latitude:</strong> <t t-out="object.location_latitude or ''"/><br/>
-                    <strong>Longitude:</strong> <t t-out="object.location_longitude or ''"/>
+                    <strong>Origin location</strong><br/>
+                    <t t-set="service" t-value="object.env[object.service_res_model].browse(object.service_res_id)"/>
+                    
+                    <t t-if="service">
+                        <t t-if="service.location_latitude">
+                            <strong>Latitude:</strong>
+                            <t t-out="service.location_latitude"/><br/>
+                        </t>
+                         <t t-if="service.location_longitude">
+                            <strong>Longitude:</strong>
+                            <t t-out="service.location_longitude"/><br/>
+                        </t>
+                        
+                        <t t-if="service.street_ref">
+                            <strong>References:</strong>
+                            <t t-out="service.street_ref"/><br/>
+                        </t>
+                        <t t-if="service.street2">
+                            <strong>Street ref:</strong>
+                            <t t-out="service.street2"/><br/>
+                        </t>
+                        
+                        <t t-if="service.country_id">
+                            <strong>Country:</strong>
+                            <t t-out="service.country_id.name"/><br/>
+                        </t>
+                        
+                        <t t-if="service.state_id">
+                            <strong>State:</strong>
+                            <t t-out="service.state_id.name"/><br/>
+                        </t>
+                        
+                        <t t-if="service.municipality_id">
+                            <strong>Municipality:</strong>
+                            <t t-out="service.municipality_id.name"/><br/>
+                        </t>
+                        
+                        <t t-if="service.city">
+                            <strong>City:</strong>
+                            <t t-out="service.city"/><br/>
+                        </t>
+                        
+                        <t t-if="service.colony">
+                            <strong>Colony:</strong>
+                            <t t-out="service.colony"/><br/>
+                        </t>
+                        
+                        <t t-if="service.street_number">
+                            <strong>Street number:</strong>
+                            <t t-out="service.street_number"/><br/>
+                        </t>
+
+                        <t t-if="service.street">
+                            <strong>Stret:</strong>
+                            <t t-out="service.street"/><br/>
+                        </t>
+
+                        <t t-if="service.location_zip_code">
+                            <strong>CP:</strong>
+                            <t t-out="service.location_zip_code"/><br/>
+                        </t>
+                    </t>
                 </t>
             </field>
         </record>
@@ -478,9 +553,71 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <strong>Origin geolocation identification</strong><br/>
-                    <strong>Latitude:</strong> <t t-out="object.destination_latitude or ''"/><br/>
-                    <strong>Longitude:</strong> <t t-out="object.destination_longitude or ''"/>
+                    <t t-set="service" t-value="object.env[object.sub_service_res_model].browse(object.sub_service_res_id)"/>                    
+                    <strong>Destination location:</strong><br/>
+                    
+                    <t t-if="service">
+                        
+                        <t t-if="service.destination_latitude">
+                            <strong>Latitude:</strong>
+                            <t t-out="service.destination_latitude"/><br/>
+                        </t>
+                        
+                        <t t-if="service.destination_longitude">
+                            <strong>Longitude:</strong>
+                            <t t-out="service.destination_longitude"/><br/>
+                        </t>
+
+                        <t t-if="service.street_ref">
+                            <strong>Reference:</strong>
+                            <t t-out="service.street_ref"/><br/>
+                        </t>
+                        
+                        <t t-if="service.street2">
+                            <strong>Street ref:</strong>
+                            <t t-out="service.street2"/><br/>
+                        </t>
+
+                        <t t-if="service.municipality_id">
+                            <strong>Municipality:</strong>
+                            <t t-out="service.municipality_id.name"/><br/>
+                        </t>
+
+                        <t t-if="service.country_id">
+                            <strong>Country:</strong>
+                            <t t-out="service.country_id.name"/><br/>
+                        </t>
+
+                        <t t-if="service.state_id">
+                            <strong>Estate:</strong>
+                            <t t-out="service.state_id.name"/><br/>
+                        </t>
+
+                        <t t-if="service.city">
+                            <strong>City:</strong>
+                            <t t-out="service.city"/><br/>
+                        </t>
+                        
+                        <t t-if="service.colony">
+                            <strong>Colony:</strong>
+                            <t t-out="service.colony"/><br/>
+                        </t>
+
+                        <t t-if="service.street_number">
+                            <strong>Number:</strong>
+                            <t t-out="service.street_number"/><br/>
+                        </t>
+
+                        <t t-if="service.street">
+                            <strong>Street:</strong>
+                            <t t-out="service.street"/><br/>
+                        </t>
+                        
+                        <t t-if="service.destination_zip_code">
+                            <strong>CP:</strong>
+                            <t t-out="service.destination_zip_code"/><br/>
+                        </t>
+                    </t>
                 </t>
             </field>
         </record>
@@ -983,15 +1120,19 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
-
-                    <t t-set="supplier"
-                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
+                    <t t-set="supplier" t-value="object.env['res.partner'].browse(ctx.get('supplier_id'))"/>
+                    <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
 
                     <t t-if="supplier">
                         <div>
                             <strong>Supplier:</strong>
-                            <t t-out="supplier.supplier_id.name"/>
+                            <t t-out="supplier.name"/>
+                        </div>
+                    </t>
+                     <t t-if="truck">
+                        <div>
+                            <strong>Plate:</strong>
+                            <t t-out="truck.license_plate or truck.name"/>
                         </div>
                     </t>
 
@@ -1029,16 +1170,29 @@
                             <strong>Supplier:</strong>
                             <t t-out="supplier.supplier_id.name"/>
                         </div>
+                        
+                        <div t-if="supplier.truck_id and supplier.truck_id.license_plate">
+                            <strong>Plates:</strong>
+                            <t t-out="supplier.truck_id.license_plate"/>
+                        </div>
 
                         <div>
                             <strong>State:</strong> On route
                         </div>
 
-                        <div>
-                            <strong>Manual date:</strong>
-                            <t t-if="supplier.on_route_to_user_start_date">
-                                <t t-out="format_datetime(supplier.on_route_to_user_start_date)"/>
-                            </t>
+                        <div t-if="supplier.first_on_route_to_user_start_date">
+                            <strong>Previous date:</strong>
+                            <t t-out="format_datetime(supplier.first_on_route_to_user_start_date)"/>
+                        </div>
+                        
+                        <div t-if="supplier.on_route_to_user_start_date">
+                            <strong>Current date:</strong>
+                            <t t-out="format_datetime(supplier.on_route_to_user_start_date)"/>
+                        </div>
+
+                        <div t-if="supplier.on_route_to_start_comment">
+                            <strong>Comment:</strong>
+                            <t t-out="supplier.on_route_to_start_comment"/>
                         </div>
                     </t>
                 </t>
@@ -1069,18 +1223,30 @@
                             <strong>Supplier:</strong>
                             <t t-out="supplier.supplier_id.name"/>
                         </div>
-
                     </t>
+
+                    <div t-if="supplier.truck_id and supplier.truck_id.license_plate">
+                        <strong>Plates:</strong>
+                        <t t-out="supplier.truck_id.license_plate"/>
+                    </div>
                     
                     <div>
                         <strong>State:</strong> Arrived
                     </div>
+
+                    <div t-if="supplier.first_on_route_to_user_end_date">
+                        <strong>Previous date:</strong>
+                        <t t-out="format_datetime(supplier.first_on_route_to_user_end_date)"/>
+                    </div>
                     
-                    <div>
-                        <strong>Manual date:</strong>
-                        <t t-if="supplier.on_route_to_user_end_date">
-                            <t t-out="format_datetime(supplier.on_route_to_user_end_date)"/>
-                        </t>
+                    <div t-if="supplier.on_route_to_user_end_date">
+                        <strong>Current date:</strong>
+                        <t t-out="format_datetime(supplier.on_route_to_user_end_date)"/>
+                    </div>
+
+                    <div t-if="supplier.on_route_to_end_comment">
+                        <strong>Comment:</strong>
+                        <t t-out="supplier.on_route_to_end_comment"/>
                     </div>
                 </t>
             </field>
@@ -1092,7 +1258,59 @@
             <field name="sequence">4</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_4"/>
         </record>
-       
+       <record id="ike_binnacle_stage_mail_template_7_33" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_33</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+               <t>
+                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+
+                    <t t-set="supplier"
+                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
+
+                    <t t-if="supplier">
+                        <t t-set="supplier" t-value="supplier[0]"/>
+
+                        <div>
+                            <strong>Supplier:</strong>
+                            <t t-out="supplier.supplier_id.name"/>
+                        </div>
+                    </t>
+
+                    <div t-if="supplier.truck_id and supplier.truck_id.license_plate">
+                        <strong>Plates:</strong>
+                        <t t-out="supplier.truck_id.license_plate"/>
+                    </div>
+                    
+                    <div>
+                        <strong>State:</strong> Contacted
+                    </div>
+                    
+                    <div t-if="supplier.first_contacted_date">
+                        <strong>Previous date:</strong>
+                        <t t-out="format_datetime(supplier.first_contacted_date)"/>
+                    </div>
+                    
+                    <div t-if="supplier.contacted_date">
+                        <strong>Current date:</strong>
+                        <t t-out="format_datetime(supplier.contacted_date)"/>
+                    </div>
+
+                    <div t-if="supplier.contacted_comment">
+                        <strong>Comment:</strong>
+                        <t t-out="supplier.contacted_comment"/>
+                    </div>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_33" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_contact"/>
+            <field name="step_number">7</field>
+            <field name="sequence">33</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_33"/>
+        </record>
         <record id="ike_binnacle_stage_mail_template_7_13" model="mail.template">
             <field name="name">Binnacle stage mail template 7_13</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
@@ -1111,18 +1329,30 @@
                             <strong>Supplier:</strong>
                             <t t-out="supplier.supplier_id.name"/>
                         </div>
-
                     </t>
+
+                    <div t-if="supplier.truck_id and supplier.truck_id.license_plate">
+                        <strong>Plates:</strong>
+                        <t t-out="supplier.truck_id.license_plate"/>
+                    </div>
                     
                     <div>
                         <strong>State:</strong> On route to destination
                     </div>
+
+                    <div t-if="supplier.first_on_route_to_destination_start_date">
+                        <strong>Previous date:</strong>
+                        <t t-out="format_datetime(supplier.first_on_route_to_destination_start_date)"/>
+                    </div>
                     
-                    <div>
-                        <strong>Manual date:</strong>
-                        <t t-if="supplier.on_route_to_destination_start_date">
-                            <t t-out="format_datetime(supplier.on_route_to_destination_start_date)"/>
-                        </t>
+                    <div t-if="supplier.on_route_to_destination_start_date">
+                        <strong>Current date:</strong>
+                        <t t-out="format_datetime(supplier.on_route_to_destination_start_date)"/>
+                    </div>
+
+                    <div t-if="supplier.on_route_to_destination_start_comment">
+                        <strong>Comment:</strong>
+                        <t t-out="supplier.on_route_to_destination_start_comment"/>
                     </div>
                 </t>
             </field>
@@ -1152,18 +1382,30 @@
                             <strong>Supplier:</strong>
                             <t t-out="supplier.supplier_id.name"/>
                         </div>
-
                     </t>
+
+                    <div t-if="supplier.truck_id and supplier.truck_id.license_plate">
+                        <strong>Plates:</strong>
+                        <t t-out="supplier.truck_id.license_plate"/>
+                    </div>
                     
                     <div>
                         <strong>State:</strong> Arrived to destination
                     </div>
+
+                    <div t-if="supplier.first_on_route_to_destination_end_date">
+                        <strong>Previous date:</strong>
+                        <t t-out="format_datetime(supplier.first_on_route_to_destination_end_date)"/>
+                    </div>
                     
-                    <div>
-                        <strong>Manual date:</strong>
-                        <t t-if="supplier.on_route_to_destination_end_date">
-                            <t t-out="format_datetime(supplier.on_route_to_destination_end_date)"/>
-                        </t>
+                    <div t-if="supplier.on_route_to_destination_end_date">
+                        <strong>Current date:</strong>
+                        <t t-out="format_datetime(supplier.on_route_to_destination_end_date)"/>
+                    </div>
+
+                    <div t-if="supplier.on_route_to_destination_end_comment">
+                        <strong>Comment:</strong>
+                        <t t-out="supplier.on_route_to_destination_end_comment"/>
                     </div>
                 </t>
             </field>
@@ -1193,18 +1435,30 @@
                             <strong>Supplier:</strong>
                             <t t-out="supplier.supplier_id.name"/>
                         </div>
-
                     </t>
+
+                    <div t-if="supplier.truck_id and supplier.truck_id.license_plate">
+                        <strong>Plates:</strong>
+                        <t t-out="supplier.truck_id.license_plate"/>
+                    </div>
                     
                     <div>
                         <strong>State:</strong> Finalized
                     </div>
+
+                    <div t-if="supplier.first_finalized_date">
+                        <strong>Previous date:</strong>
+                        <t t-out="format_datetime(supplier.first_finalized_date)"/>
+                    </div>
                     
-                    <div>
-                        <strong>Manual date:</strong>
-                        <t t-if="supplier.finalized_date">
-                            <t t-out="format_datetime(supplier.finalized_date)"/>
-                        </t>
+                    <div t-if="supplier.finalized_date">
+                        <strong>Current date:</strong>
+                        <t t-out="format_datetime(supplier.finalized_date)"/>
+                    </div>
+
+                    <div t-if="supplier.finalized_comment">
+                        <strong>Comment:</strong>
+                        <t t-out="supplier.finalized_comment"/>
                     </div>
                 </t>
             </field>
@@ -1286,10 +1540,10 @@
                     <br/>
 
                     <strong>Date start:</strong>
-                    <t t-out="object.membership_authorization_id.affiliation_date_start or '-'"/>
+                    <t t-out="object.membership_authorization_id.affiliation_date_start and format_date(object.membership_authorization_id.affiliation_date_start) or '-'"/>
                     <br/>
                     <strong>Date end:</strong>
-                    <t t-out="object.membership_authorization_id.affiliation_date_end or '-'"/>
+                    <t t-out="object.membership_authorization_id.affiliation_date_end and format_date(object.membership_authorization_id.affiliation_date_end) or '-'"/>
                     <br/>
                 </t>
             </field>
@@ -1356,6 +1610,30 @@
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_27"/>
         </record>
         <!-- MESSAGE AUTHORIZATION -->
+        <record id="ike_binnacle_stage_mail_template_7_34" model="mail.template">
+            <field name="name">Binnacle stage mail template 7_34</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-if="object.membership_authorization_id">
+                        <p>
+                            <strong>Authorization Escalated</strong>
+                        </p>
+                        <p>
+                            <strong>Authorizer responsible: </strong><t t-out="object.membership_authorization_id.authorizer_id.name" ></t>
+                        </p>
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_34" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">7</field>
+            <field name="sequence">34</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_34"/>
+        </record>
         <record id="ike_binnacle_stage_mail_template_7_28" model="mail.template">
             <field name="name">Binnacle stage mail template 7_28</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
@@ -1581,49 +1859,7 @@
             <field name="sequence">2</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_9_2"/>
         </record>
-        <record id="ike_binnacle_stage_mail_template_7_22" model="mail.template">
-            <field name="name">Binnacle stage mail template 7_22</field>
-            <field name="model_id" ref="ike_event.model_ike_event"/>
-            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
-            <field name="body_html" type="html">
-                <t>
-                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
-
-                    <t t-set="supplier"
-                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
-
-                    <t t-if="supplier">
-                        <t t-set="supplier" t-value="supplier[0]"/>
-
-                        <div>
-                            <strong>Supplier:</strong>
-                            <t t-out="supplier.supplier_id.name"/>
-                        </div>
-
-                    </t>
-                    
-                    <div>
-                        <strong>State:</strong> Finalized
-                    </div>
-                    
-                    <div>
-                        <strong>Manual date:</strong>
-                        <t t-if="supplier.finalized_date">
-                            <t t-out="format_datetime(supplier.finalized_date)"/>
-                        </t>
-                    </div>
-                </t>
-            </field>
-        </record>
-        <record id="ike_binnacle_stage_7_22" model="ike.event.binnacle">
-            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
-            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_finalized"/>
-            <field name="step_number">7</field>
-            <field name="sequence">22</field>
-            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_22"/>
-        </record>
-        <!-- Event concluded -->
-
+        <!-- Assistance concluded -->
         <record id="ike_binnacle_stage_mail_template_10_1" model="mail.template">
             <field name="name">Binnacle stage mail template 10_1</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
@@ -1638,11 +1874,206 @@
         </record>
         <record id="ike_binnacle_stage_10_1" model="ike.event.binnacle">
             <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
-            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_event_concluded"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_assistance_concluded"/>
             <field name="step_number">10</field>
             <field name="sequence">1</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_10_1"/>
         </record>
+        <!-- Event conluded  -->
+        <record id="ike_binnacle_stage_mail_template_10_2" model="mail.template">
+            <field name="name">Binnacle stage mail template 10_2</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <p>
+                        <strong>Event concluded</strong>
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_10_2" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_event_concluded"/>
+            <field name="step_number">10</field>
+            <field name="sequence">2</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_10_2"/>
+        </record>
+        <!-- Event verification CCC  -->
+        <record id="ike_binnacle_stage_mail_template_10_3" model="mail.template">
+            <field name="name">Binnacle stage mail template 10_3</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <p>
+                        <strong>Event in verification CCC</strong>
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_10_3" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_verification_ccc"/>
+            <field name="step_number">10</field>
+            <field name="sequence">3</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_10_3"/>
+        </record>
+        <!-- Confirm costs -->
+        <record id="ike_binnacle_stage_mail_template_10_4" model="mail.template">
+            <field name="name">Binnacle stage mail template 10_4</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <p>
+                        <strong>Confirmed costs</strong><br/>
+                        <t t-if="object.ike_event_coordinator_id">
+                            <strong>Cordinator CCC: </strong><t t-out="object.ike_event_coordinator_id.name or 'N/A'"/>
+                        </t>
+                        
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_10_4" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_verification_ccc_summary"/>
+            <field name="step_number">10</field>
+            <field name="sequence">4</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_10_4"/>
+        </record>
 
+        <!-- Notification sent to supplier -->
+        <record id="ike_binnacle_stage_mail_template_11_1" model="mail.template">
+            <field name="name">Binnacle stage mail template notify</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-set="supplier" t-value="object.env['res.partner'].browse(ctx.get('supplier_id'))"/>
+                    <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
+
+                    <p>
+                        <strong>Notification sent to operator: </strong><br/>
+                        <strong>Supplier: </strong><t t-out="supplier.name"></t><br/>
+                        <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
+
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_11_1" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">11</field>
+            <field name="sequence">1</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_11_1"/>
+        </record>
+        <!-- Notification rechazed -->
+
+        <record id="ike_binnacle_stage_mail_template_11_2" model="mail.template">
+            <field name="name">Binnacle stage mail template notify</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-set="supplier" t-value="object.env['res.partner'].browse(ctx.get('supplier_id'))"/>
+                    <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
+
+                    <p>
+                        <strong>Notification rejected: </strong><br/>
+                        <strong>Supplier: </strong><t t-out="supplier.name"></t><br/>
+                        <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
+
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_11_2" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">11</field>
+            <field name="sequence">2</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_11_2"/>
+        </record>
+        <!-- Notification timeout -->
+        <record id="ike_binnacle_stage_mail_template_11_3" model="mail.template">
+            <field name="name">Binnacle stage mail template notify</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-set="supplier" t-value="object.env['res.partner'].browse(ctx.get('supplier_id'))"/>
+                    <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
+
+                    <p>
+                        <strong>Notification timeout: </strong><br/>
+                        <strong>Supplier: </strong><t t-out="supplier.name"></t><br/>
+                        <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
+
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_11_3" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">11</field>
+            <field name="sequence">3</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_11_3"/>
+        </record>
+        <!-- Notification accept -->
+        <record id="ike_binnacle_stage_mail_template_11_4" model="mail.template">
+            <field name="name">Binnacle stage mail template notify</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-set="supplier" t-value="object.env['res.partner'].browse(ctx.get('supplier_id'))"/>
+                    <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
+
+                    <p>
+                        <strong>Notification accepted: </strong><br/>
+                        <strong>Supplier: </strong><t t-out="supplier.name"></t><br/>
+                        <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
+
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_11_4" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">11</field>
+            <field name="sequence">4</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_11_4"/>
+        </record>
+        <!-- Notification to operator -->
+        <record id="ike_binnacle_stage_mail_template_11_5" model="mail.template">
+            <field name="name">Binnacle stage mail template notify</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-set="supplier" t-value="object.env['res.partner'].browse(ctx.get('supplier_id'))"/>
+                    <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
+
+                    <p>
+                        <strong>Notification asigned: </strong><br/>
+                        <strong>Supplier: </strong><t t-out="supplier.name"></t><br/>
+                        <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
+
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_11_5" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">11</field>
+            <field name="sequence">5</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_11_5"/>
+        </record>
     </data>
 </odoo>

@@ -347,6 +347,18 @@ class IkeEventMembershipAuthorization(models.Model):
             rec.write({
                 'state': 'authorized'
             })
+        if self.check_is_event_commercial:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Autorizaciones',
+                'res_model': 'ike.event.membership.authorization',
+                'view_mode': 'list,form',
+                'views': [
+                    (self.env.ref('ike_event_membership_authorization.ike_event_membership_authorization_view_list').id, 'list'),
+                    (False, 'form'),
+                ],
+                'target': 'current',
+            }
 
     def action_authorized(self):
         for rec in self:
@@ -361,17 +373,24 @@ class IkeEventMembershipAuthorization(models.Model):
             })
             rec.nus_membership_id.write({
                 'subscription_validity': True,
-                'vehicle_weight_category_id': rec.vehicle_weight_category_id,
                 'date_start': rec.affiliation_date_start,
                 'date_end': rec.affiliation_date_end,
                 'check_is_fleet': rec.check_is_fleet,
                 'check_is_special': rec.check_is_special,
             })
-            rec.nus_membership_id.event_count_detail_ids.filtered(
-                lambda d: d.vehicle_weight_category_id
-                and d.vehicle_weight_category_id != rec.vehicle_weight_category_id
-            ).unlink()
             rec.action_ike_event_reload()
+        if self.check_is_event_commercial:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Autorizaciones',
+                'res_model': 'ike.event.membership.authorization',
+                'view_mode': 'list,form',
+                'views': [
+                    (self.env.ref('ike_event_membership_authorization.ike_event_membership_authorization_view_list').id, 'list'),
+                    (False, 'form'),
+                ],
+                'target': 'current',
+            }
 
     def action_ike_event_reload(self):
         self.event_id.broadcastEventReload()
@@ -446,11 +465,29 @@ class IkeEventMembershipAuthorization(models.Model):
         self.ensure_one()
 
         from_event_button = self.env.context.get('from_event_button')
+        if from_event_button:
+            self.write({
+                'check_membership_authorizer': from_event_button,
+                'state': 'pending_cabine'
+            })
 
-        check_value = False if from_event_button is False else True
+            self.event_id.write({
+                'required_commercial_authorizer': True
+            })
 
+            if not self.authorizer_id or not self.authorizer_id.email:
+                raise UserError(_("The supervisor doesn't have an email address configured."))
+
+            template = self.env.ref(
+                'ike_event_membership_authorization.email_template_authorization_request',
+                raise_if_not_found=False
+            )
+
+            if template:
+                template.send_mail(self.id, force_send=True)
+
+            return True
         self.write({
-            'check_membership_authorizer': check_value,
             'state': 'pending_cabine'
         })
 

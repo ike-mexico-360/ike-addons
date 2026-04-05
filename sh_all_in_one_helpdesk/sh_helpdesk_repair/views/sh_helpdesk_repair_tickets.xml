@@ -37,12 +37,12 @@
                     </div>
                 </button>
             </xpath>
-            <field name="product_ids" position="before">
+            <!-- <field name="product_ids" position="before">
                 <field name="sh_repair_product_id" string="Repair Product" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_repair" />
-            </field>
-            <field name="product_ids" position="after">
+            </field> -->
+            <!-- <field name="product_ids" position="after">
                 <field name="sh_repair_order_ids" string="Repair Orders" widget="many2many_tags" />
-            </field>
+            </field> -->
         </field>
     </record>
     <record id="sh_helpdesk_tickets_inherited_view_repair_search" model="ir.ui.view">
@@ -50,9 +50,9 @@
         <field name="model">sh.helpdesk.ticket</field>
         <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_search_view" />
         <field name="arch" type="xml">
-            <field name="stage_id" position="after">
+            <!-- <field name="stage_id" position="after">
                 <field name="sh_repair_order_ids" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_repair" />
-            </field>
+            </field> -->
             <xpath expr="//filter[last()]" position="after">
                 <filter string="Repair Order" name="helpdesk_repair" domain="[('sh_repair_order_ids','!=',False)]" groups="sh_all_in_one_helpdesk.sh_helpdesk_ticket_repair" />
             </xpath>

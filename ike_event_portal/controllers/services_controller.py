@@ -103,14 +103,21 @@ class PortalUserAccount(CustomerPortal):
                             "event_supplier_state_label": state_translations.get(
                                 supplier_line.state, supplier_line.state
                             ),
+                            "supplier_link_id": supplier_line.supplier_link_id.id,
                             # Event details (avoids N+1 frontend queries)
                             "event_name": event.name or "",
-                            "event_date": fields.Datetime.to_string(event.event_date) if event.event_date else "",
+                            "event_date": (
+                                fields.Datetime.to_string(event.event_date)
+                                if event.event_date
+                                else ""
+                            ),
                             "location_label": event.location_label or "",
-                            "service_id_label": event.service_id.name if event.service_id else "",
+                            "service_id_label": (
+                                event.service_id.name if event.service_id else ""
+                            ),
                             "sub_service_id_label": sub_service_name,
                             "stage_id_label": stage_name,
-                            "stage": supplier_line.stage_ref
+                            "stage": supplier_line.stage_ref,
                         }
                     )
                 return {"success": True, "suppliers_events": results}
@@ -174,7 +181,8 @@ class PortalUserAccount(CustomerPortal):
                 ),
                 "event_supplier_summary_data": supplier_line.get_event_supplier_summary_data(),
                 "travel_tracking_url": supplier_line.get_travel_tracking_url(),
-                "stage": supplier_line.stage_ref
+                "stage": supplier_line.stage_ref,
+                "supplier_link_id": supplier_line.supplier_link_id.id,
             }
 
             return {"success": True, "supplier_event": result}
@@ -231,7 +239,9 @@ class PortalUserAccount(CustomerPortal):
 
                     _logger.info(f"Notify operator by portal -> {result}")
                     # Marcar la linea como notificada
-                    request.env["ike.event.supplier"].sudo().browse(event_supplier_id).notification_sent_to_app = True
+                    request.env["ike.event.supplier"].sudo().browse(
+                        event_supplier_id
+                    ).notification_sent_to_app = True
                 except Exception as e:
                     _logger.error(f"Error notificando al operador: {str(e)}")
 
@@ -274,7 +284,9 @@ class PortalUserAccount(CustomerPortal):
             if not cancel_reason_id:
                 return {"success": False, "error": "cancel_reason_id is required"}
 
-            supplier_line = request.env["ike.event.supplier.public"].browse(event_supplier_id)
+            supplier_line = request.env["ike.event.supplier.public"].browse(
+                event_supplier_id
+            )
 
             if not supplier_line.exists():
                 return {"success": False, "error": "Service not found"}
@@ -287,7 +299,7 @@ class PortalUserAccount(CustomerPortal):
 
             # Call the action_supplier_cancel method
             supplier_line.action_supplier_cancel(
-                cancel_reason_id=cancel_reason_id, reason_text=reason_text or ''
+                cancel_reason_id=cancel_reason_id, reason_text=reason_text or ""
             )
             # .with_context(ike_event_action_from="control_panel")
 
@@ -310,7 +322,10 @@ class PortalUserAccount(CustomerPortal):
         """
         try:
             if not event_id or not supplier_id:
-                return {"success": False, "error": "event_id and supplier_id are required"}
+                return {
+                    "success": False,
+                    "error": "event_id and supplier_id are required",
+                }
 
             event = request.env["ike.event"].sudo().browse(event_id)
             if not event.exists():
@@ -318,29 +333,17 @@ class PortalUserAccount(CustomerPortal):
 
             # Get the concepts domain from product.product model
             ProductProduct = request.env["product.product"].sudo()
-            domain = domain = [
-                ('sale_ok', '=', False),
-                ('sh_product_subscribe', '=', False),
-                ('purchase_ok', '=', True),
-                ('x_concept_ok', '=', True),
-                ('type', '=', 'service'),
-                ('disabled', '=', False),
-                ('list_price', '=', 0),
-                ('uom_id', 'in', [
-                    request.env.ref('uom.product_uom_km').id,
-                    request.env.ref('uom.product_uom_day').id,
-                    request.env.ref('uom.product_uom_hour').id,
-                    request.env.ref('l10n_mx.product_uom_service_unit').id,
-                    request.env.ref('uom.product_uom_unit').id,
-                    request.env.ref('uom.product_uom_litre').id
-                ]),
-                '|',
-                ('x_apply_all_services_subservices', '=', True),
-                ('x_categ_id', 'in', [event.service_id.id, False]),
-                '|',
-                ('x_product_id', 'in', [event.sub_service_id.id]),
-                ('x_product_id', '=', False),
-            ]
+            domain = ProductProduct.get_concepts_domain()
+            domain.extend(
+                [
+                    "|",
+                    ("x_apply_all_services_subservices", "=", True),
+                    ("x_categ_id", "in", [event.service_id.id, False]),
+                    "|",
+                    ("x_product_id", "in", [event.sub_service_id.id]),
+                    ("x_product_id", "=", False),
+                ]
+            )
 
             # Get existing product IDs for this event/supplier to exclude
             existing_products = request.env["ike.event.supplier.product"].sudo().search([
@@ -352,13 +355,11 @@ class PortalUserAccount(CustomerPortal):
             if existing_product_ids:
                 domain.append(('id', 'not in', existing_product_ids))
 
-            _logger.info(f"Concepts domain for event {event_id}: {domain}")
+            # _logger.info(f"Concepts domain for event {event_id}: {alternative_domain}")
 
             # Search products with the domain
             products = ProductProduct.search_read(
-                domain,
-                ['id', 'name', 'uom_id'],
-                limit=100
+                domain, ["id", "name", "uom_id"], limit=100
             )
 
             return {
@@ -383,17 +384,23 @@ class PortalUserAccount(CustomerPortal):
         """
         try:
             if not event_id or not supplier_id or not product_id:
-                return {"success": False, "error": "event_id, supplier_id and product_id are required"}
+                return {
+                    "success": False,
+                    "error": "event_id, supplier_id and product_id are required",
+                }
 
             EventSupplierLink = request.env["ike.event.supplier.link"].sudo()
             EventSupplierProduct = request.env["ike.event.supplier.product"].sudo()
             Product = request.env["product.product"].sudo()
 
             # Find the event_supplier_link
-            event_supplier_link = EventSupplierLink.search([
-                ('event_id', '=', event_id),
-                ('supplier_id', '=', supplier_id),
-            ], limit=1)
+            event_supplier_link = EventSupplierLink.search(
+                [
+                    ("event_id", "=", event_id),
+                    ("supplier_id", "=", supplier_id),
+                ],
+                limit=1,
+            )
 
             if not event_supplier_link:
                 return {"success": False, "error": "Event supplier link not found"}
@@ -404,15 +411,17 @@ class PortalUserAccount(CustomerPortal):
                 return {"success": False, "error": "Product not found"}
 
             # Create the supplier product record with basic fields
-            new_concept = EventSupplierProduct.create({
-                'event_supplier_link_id': event_supplier_link.id,
-                'event_id': event_id,
-                'supplier_id': supplier_id,
-                'product_id': product_id,
-                'estimated_quantity': quantity or 1,
-                'quantity': quantity or 1,
-                'uom_id': product.uom_id.id if product.uom_id else False,
-            })
+            new_concept = EventSupplierProduct.create(
+                {
+                    "event_supplier_link_id": event_supplier_link.id,
+                    "event_id": event_id,
+                    "supplier_id": supplier_id,
+                    "product_id": product_id,
+                    "estimated_quantity": quantity or 1,
+                    "quantity": quantity or 1,
+                    "uom_id": product.uom_id.id if product.uom_id else False,
+                }
+            )
 
             # Apply onchange logic to populate pricing fields
             new_concept._onchange_product_id()
@@ -426,7 +435,9 @@ class PortalUserAccount(CustomerPortal):
             )
             concept_data._onchange_product_id()
 
-            _logger.info(f"Created concept {new_concept.id} for event {event_id}, supplier {supplier_id}, product {product_id}")
+            _logger.info(
+                f"Created concept {new_concept.id} for event {event_id}, supplier {supplier_id}, product {product_id}"
+            )
 
             return {
                 "success": True,
@@ -438,13 +449,13 @@ class PortalUserAccount(CustomerPortal):
             _logger.error(f"Error creating concept: {str(e)}")
             return {"success": False, "error": str(e)}
 
-    @http.route('/provider/portal/supplier/request_authorization', type='json', auth='user')
+    @http.route(
+        "/provider/portal/supplier/request_authorization", type="json", auth="user"
+    )
     def request_authorization(self, event_supplier_id):
-        supplier = request.env['ike.event.supplier'].browse(event_supplier_id)
+        supplier = request.env["ike.event.supplier"].browse(event_supplier_id)
         supplier.action_request_authorization()
-        return {
-            'success': True
-        }
+        return {"success": True}
 
     @http.route("/fleet/vehicle/safe/<int:vehicle_id>", type="json", auth="user")
     def get_vehicle_safe(self, vehicle_id):
@@ -499,7 +510,9 @@ class PortalUserAccount(CustomerPortal):
 
             if result.get("x_subservice_ids"):
                 subservice_ids = result["x_subservice_ids"]
-                subservices = request.env["product.product"].sudo().browse(subservice_ids)
+                subservices = (
+                    request.env["product.product"].sudo().browse(subservice_ids)
+                )
                 result["x_subservice_ids"] = [
                     [s.id, s.name] for s in subservices if s.exists()
                 ]

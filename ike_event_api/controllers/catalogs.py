@@ -1,3 +1,4 @@
+from odoo.tools import SQL
 from odoo import http, fields, _
 from odoo.http import request
 from odoo.tools import html2plaintext
@@ -354,10 +355,12 @@ class CatalogsAPIController(http.Controller):
 
         app_timestamp = kw.get('app_timestamp', False)
         elapsed_seconds = kw.get('elapsed_seconds', 0)
+        latitude = kw.get('latitude', '')
+        longitude = kw.get('longitude', '')
 
         _logger.warning(f"/set/progress_state/{event_id}/{vehicle_id}/{progress_state}")
 
-        if not event_id or not progress_state or not vehicle_id:
+        if not event_id or progress_state == '' or not vehicle_id:
             raise BadRequest(_('Missing parameters'))
         vehicle_id = str(vehicle_id)
 
@@ -381,13 +384,17 @@ class CatalogsAPIController(http.Controller):
                 LEFT JOIN
                     ike_event_stage stage ON ie.stage_id = stage.id
                 LEFT JOIN
-                    ir_model_data imd ON supplier.stage_id = imd.res_id
+                    ir_model_data imd
+                        ON supplier.stage_id = imd.res_id
+                        AND imd.model = 'ike.service.stage'
                 WHERE
-                    imd.model = 'ike.service.stage'
-                    AND supplier.id = %(line_id)s;
+                    supplier.id = %(line_id)s;
             """, {'line_id': ike_event_supplier_id['id']})
 
             result = request.env.cr.dictfetchone()
+
+            if not result:
+                raise BadRequest(_('Supplier stage not found'))
 
             if result:
                 current_xmlid = result['supplier_stage_xmlid']
@@ -419,14 +426,16 @@ class CatalogsAPIController(http.Controller):
                         WHERE x_vehicle_ref = %s
                     """
                     request.env.cr.execute(vehicle_query, (vehicle_id,))
-                    vehicle_id = request.env.cr.fetchone()
-                    if vehicle_id:
+                    vehicle_id_int = request.env.cr.fetchone()
+                    if vehicle_id_int:
                         request.env['ike.event.supplier.elapsed_time'].create({
                             'event_id': event_id,
-                            'vehicle_id': vehicle_id,
+                            'vehicle_id': vehicle_id_int[0],
                             'stage_id': res_id,
                             'app_timestamp': app_timestamp,
                             'elapsed_seconds': elapsed_seconds,
+                            'latitude': latitude,
+                            'longitude': longitude,
                         })
 
                 # Actualizar el supplier
@@ -769,3 +778,105 @@ class CatalogsAPIController(http.Controller):
             raise Unauthorized('Usuario no autenticado')
         reasons = request.env['ike.event.cancellation.reason'].search_read([('show_supplier', '=', True)], ['id', 'name'])
         return reasons
+
+    # ========================== #
+    #      EVENT/CONCEPTS        #
+    # ========================== #
+    @http.route(
+        '/ike/catalog/additional_concepts', type='json', auth='user', methods=['GET']
+    )
+    def ike_catalog_additional_concepts_get(self, **kw):
+        """
+        Retorna el catalogo de conceptos adicionales disponibles para asignar a eventos.
+
+        Usa SQL directo en lugar del ORM de Odoo por razones de rendimiento:
+        la traduccion del nombre del producto y la UOM requieren acceder al campo
+        JSONB de traducciones (name ->> lang), lo cual es verbose con el ORM
+        pero trivial en SQL. Ademas evita multiples queries que el ORM generaria
+        para resolver los campos relacionados.
+
+        El dominio base se obtiene de product.product.get_concepts_domain(), que
+        centraliza los criterios generales de un "concepto" en el sistema IKE.
+        A ese dominio se le agrega el filtro x_additional_ok = True para restringir
+        solo a los conceptos marcados como disponibles para asignacion adicional.
+
+        La traduccion de nombre y UOM usa COALESCE para caer al idioma 'en_US'
+        si no existe traduccion en el idioma del usuario, evitando nulls en la respuesta.
+
+        Returns:
+            list[dict]: Lista de conceptos, cada uno con la forma:
+                {
+                    "id": <product.product id>,
+                    "name": "<nombre traducido al idioma del usuario>",
+                    "uom_id": [<uom.uom id>, "<nombre de unidad de medida traducido>"]
+                }
+
+        Raises:
+            Unauthorized: Si el usuario no tiene sesion activa.
+        """
+        if not request.env.uid:
+            request.env.cr.rollback()
+            raise Unauthorized('Usuario no autenticado')
+
+        # Construimos el dominio desde el metodo centralizado del modelo,
+        # evitando duplicar criterios de filtrado en multiples lugares.
+        Concept = request.env['product.product']
+        concepts_domain = Concept.get_concepts_domain()
+
+        # x_additional_ok es un campo custom que marca los productos
+        # habilitados especificamente para ser asignados como conceptos adicionales.
+        concepts_domain.append(('x_additional_ok', '=', True))
+
+        # _where_calc traduce el dominio de Odoo a un objeto Query con
+        # from_clause y where_clause listos para embeber en SQL raw,
+        # respetando los permisos de acceso (ir.rule) del usuario.
+        query = Concept._where_calc(concepts_domain)
+
+        # Idioma del usuario para resolver la traduccion de campos JSONB.
+        # Fallback a 'en_US' si el usuario no tiene idioma configurado.
+        lang = request.env.user.lang or 'en_US'
+
+        request.env.cr.execute(
+            SQL(
+                """
+                SELECT
+                    product_product.id AS id,
+
+                    -- Nombre del producto traducido al idioma del usuario.
+                    -- COALESCE garantiza que nunca retorne null:
+                    -- intenta con el idioma del usuario, luego en_US, luego string vacio.
+                    COALESCE(
+                        product_template.name ->> %(lang)s,
+                        product_template.name ->> 'en_US',
+                        ''
+                    ) AS name,
+
+                    -- UOM como array [id, nombre] para que el cliente no necesite
+                    -- un endpoint adicional para resolver la unidad de medida.
+                    json_build_array(
+                        uom.id,
+                        COALESCE(
+                            uom.name ->> %(lang)s,
+                            uom.name ->> 'en_US',
+                            ''
+                        )
+                    ) AS uom_id
+
+                FROM %(from_clause)s
+                INNER JOIN product_template ON product_template.id = product_product.product_tmpl_id
+                INNER JOIN uom_uom uom ON uom.id = product_template.uom_id
+                WHERE %(where_clause)s
+                    -- Excluimos explicitamente productos archivados,
+                    -- aunque el dominio de Odoo normalmente ya lo filtra.
+                    AND product_product.active = true
+                ORDER BY product_product.id ASC
+                """,
+                from_clause=query.from_clause,
+                where_clause=query.where_clause or SQL("TRUE"),
+                lang=lang,
+            )
+        )
+
+        # dictfetchall retorna todas las filas como lista de dicts,
+        # que Odoo serializa directamente a JSON en la respuesta.
+        return request.env.cr.dictfetchall()

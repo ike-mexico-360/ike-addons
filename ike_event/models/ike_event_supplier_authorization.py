@@ -144,10 +144,18 @@ class IkeEvent(models.Model):
         return supplier_with_max_amount
 
     def action_view_ike_event_service_cost(self):
-        supplier_links = self.selected_supplier_ids.mapped('supplier_link_id')
+        supplier_links = self.selected_supplier_ids.filtered(
+            lambda x: x.state not in ['cancel_supplier', 'cancel']).mapped('supplier_link_id')
 
         suppliers = self.env['ike.event.supplier'].browse(supplier_links.ids)
         return suppliers.action_view_ike_event_service_cost()
+
+    def action_view_ike_event_agreement_cost_final(self):
+        supplier_links = self.selected_supplier_ids.filtered(
+            lambda x: x.state not in ['cancel_supplier', 'cancel']).mapped('supplier_link_id')
+
+        suppliers = self.env['ike.event.supplier'].browse(supplier_links.ids)
+        return suppliers.action_view_ike_event_agreement_cost_final()
 
 
 class IkeEventAuthorization(models.Model):

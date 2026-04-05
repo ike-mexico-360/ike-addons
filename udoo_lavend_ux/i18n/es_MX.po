@@ -1,0 +1,434 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* udoo_lavend_ux
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-31 19:12+0000\n"
+"PO-Revision-Date: 2026-03-31 19:12+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: udoo_lavend_ux
+#: model:ir.model.fields,field_description:udoo_lavend_ux.field_ir_ui_menu_group__active
+msgid "Active"
+msgstr "Activo"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Allow Visibility To Groups"
+msgstr ""
+
+#. module: udoo_lavend_ux
+#: model:ir.actions.act_window,name:udoo_lavend_ux.action_app_group
+#: model:ir.ui.menu,name:udoo_lavend_ux.mensidenav_group
+#: model_terms:ir.ui.view,arch_db:udoo_lavend_ux.app_group_view_list
+msgid "App Groups"
+msgstr "Grupos de aplicaciones"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/editor/data_filter.xml:0
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.js:0
+msgid "Apply"
+msgstr "Aplicar"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Apply Changes"
+msgstr "Aplicar cambios"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.js:0
+msgid ""
+"Are you sure you want to restore the default view?\r\n"
+"All columns customization on this view will be lost."
+msgstr ""
+"¿Está seguro de que desea restaurar la vista predeterminada?\r\n"
+"Se perderá toda la personalización de columnas en esta vista."
+
+#. module: udoo_lavend_ux
+#: model:ir.model,name:udoo_lavend_ux.model_web_editor_assets
+msgid "Assets Utils"
+msgstr "Utilidades de activos"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Available columns"
+msgstr "Columnas disponibles"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.js:0
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/editor/data_filter.xml:0
+msgid "Clear"
+msgstr "Limpiar"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.xml:0
+msgid "Clear Filtering"
+msgstr "Limpiar filtros"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.xml:0
+msgid "Clear Grouping"
+msgstr "Limpiar agrupación"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+#: code:addons/udoo_lavend_ux/static/src/cmfb/editor/data_filter.xml:0
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Column Label"
+msgstr "Etiqueta de columna"
+
+#. module: udoo_lavend_ux
+#: model:ir.model.fields,field_description:udoo_lavend_ux.field_ir_ui_menu_group__company_id
+msgid "Company"
+msgstr "Empresa"
+
+#. module: udoo_lavend_ux
+#: model_terms:ir.ui.view,arch_db:udoo_lavend_ux.app_group_view_form
+msgid "Contained Apps"
+msgstr "Aplicaciones incluidas"
+
+#. module: udoo_lavend_ux
+#: model_terms:ir.actions.act_window,help:udoo_lavend_ux.action_app_group
+msgid "Create your first app group!"
+msgstr "¡Crea tu primer grupo de aplicaciones!"
+
+#. module: udoo_lavend_ux
+#: model:ir.model.fields,field_description:udoo_lavend_ux.field_ir_ui_menu_group__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: udoo_lavend_ux
+#: model:ir.model.fields,field_description:udoo_lavend_ux.field_ir_ui_menu_group__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/conf/view.xml:0
+msgid "Customize environment colors"
+msgstr "Personalizar colores del entorno"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.js:0
+msgid "Day"
+msgstr "Dia"
+
+#. module: udoo_lavend_ux
+#: model:ir.model.fields,field_description:udoo_lavend_ux.field_ir_ui_menu_group__description
+msgid "Description"
+msgstr "Descripción"
+
+#. module: udoo_lavend_ux
+#: model:ir.model.fields,field_description:udoo_lavend_ux.field_ir_ui_menu_group__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.js:0
+msgid "Domain is invalid. Please correct it!"
+msgstr "El dominio no es válido. ¡Por favor, corrígelo!
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/list/controller.xml:0
+msgid "Done"
+msgstr "Hecho"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/list/controller.xml:0
+msgid "Edit"
+msgstr "Editar"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/search/control_panel.xml:0
+msgid "Filter Navigation Bar"
+msgstr "Barra de navegación de filtros"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.xml:0
+msgid "Filter by"
+msgstr "Filtrar por"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.js:0
+msgid "Filter by "
+msgstr "Filtrar por "
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Filter columns..."
+msgstr "Filtrar columns..."
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Forbid Visibility To Groups"
+msgstr "Prohibir visibilidad a grupos"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.xml:0
+msgid "Group"
+msgstr "Agrupar"
+
+#. module: udoo_lavend_ux
+#: model:ir.model.fields,field_description:udoo_lavend_ux.field_ir_ui_menu_group__name
+msgid "Group Name"
+msgstr "Nombre del grupo"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.xml:0
+msgid "Group by"
+msgstr "Agrupar por"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.xml:0
+msgid "Hide"
+msgstr "Ocultar"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.js:0
+msgid "Hide by default"
+msgstr "Ocultar por defecto"
+
+#. module: udoo_lavend_ux
+#: model:ir.model.fields,field_description:udoo_lavend_ux.field_ir_ui_menu_group__id
+msgid "ID"
+msgstr ""
+
+#. module: udoo_lavend_ux
+#: model:ir.model.fields,field_description:udoo_lavend_ux.field_ir_ui_menu_group__items
+msgid "Items"
+msgstr "Elementos"
+
+#. module: udoo_lavend_ux
+#: model:ir.model.fields,field_description:udoo_lavend_ux.field_ir_ui_menu_group__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: udoo_lavend_ux
+#: model:ir.model.fields,field_description:udoo_lavend_ux.field_ir_ui_menu_group__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: udoo_lavend_ux
+#: model:res.groups,name:udoo_lavend_ux.group_lvm
+msgid "List View Configuration"
+msgstr "Configuración de vista de lista"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/list/renderer.xml:0
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Manage Columns"
+msgstr "Gestionar columnas"
+
+#. module: udoo_lavend_ux
+#: model:res.groups,comment:udoo_lavend_ux.group_lvm
+msgid "Manage the structure and behavior of backend list views."
+msgstr "Gestiona la estructura y el comportamiento de las vistas de lista del backend."
+
+#. module: udoo_lavend_ux
+#: model:ir.model,name:udoo_lavend_ux.model_ir_ui_menu_group
+msgid "Menu Group"
+msgstr "Grupo de menú"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.js:0
+msgid "Month"
+msgstr "Mes"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.js:0
+msgid "No column filters found."
+msgstr "No se encontraron filtros de columna."
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/search/control_panel.js:0
+msgid "No filters found."
+msgstr "No se econtraron filtros"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Optional Display"
+msgstr "Visualización opcional"
+
+#. module: udoo_lavend_ux
+#: model_terms:ir.actions.act_window,help:udoo_lavend_ux.action_app_group
+msgid "Organize and categorize your apps by creating app groups."
+msgstr "Organiza y categoriza tus aplicaciones creando grupos."
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/conf/view.xml:0
+msgid "Organize your applications"
+msgstr "Organizar tus aplicaciones"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/webclient/navbar/navbar.xml:0
+msgid "Others"
+msgstr "Otros"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.js:0
+msgid "Quarter"
+msgstr "Trimestre"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.xml:0
+msgid "Quick Column Filters"
+msgstr "Filtros rápidos de columna"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Remove"
+msgstr "Eliminar"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Remove column"
+msgstr "Eliminar columna"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/editor/data_filter.xml:0
+msgid "Reset"
+msgstr "Restablecer"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.xml:0
+msgid "Reset Sorting"
+msgstr "Restablecer ordenación"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Restore Defaults"
+msgstr "Restaurar valores predeterminados"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Select column"
+msgstr "Seleccionar columna"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid ""
+"Select which columns are visible for you. To change the column order, drag "
+"and drop the visible columns."
+msgstr ""
+"Selecciona qué columnas serán visibles para ti. Para cambiar el orden de las columnas, arrastra "
+"y suelta las columnas visibles."
+
+#. module: udoo_lavend_ux
+#: model:ir.model.fields,field_description:udoo_lavend_ux.field_ir_ui_menu_group__sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.js:0
+msgid "Show by default"
+msgstr "Mostrar por defecto"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.xml:0
+msgid "Sort Ascending"
+msgstr "Ordenar ascendente"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.xml:0
+msgid "Sort Descending"
+msgstr "Ordenar descendente"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/list/controller.xml:0
+msgid "Toggle Inline Editing"
+msgstr "Activar/desactivar edición en línea"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cman/mod/manager.xml:0
+msgid "Visible columns"
+msgstr "Columna visible"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.js:0
+msgid "Week"
+msgstr "Semana"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.js:0
+msgid "Year"
+msgstr "Año"
+
+#. module: udoo_lavend_ux
+#. odoo-javascript
+#: code:addons/udoo_lavend_ux/static/src/cmfb/patch/list_renderer.xml:0
+msgid "by"
+msgstr "por"
+
+#. module: udoo_lavend_ux
+#: model_terms:ir.ui.view,arch_db:udoo_lavend_ux.app_group_view_form
+msgid "e.g. Contains all finance related applications"
+msgstr "ej: Contiene todas las aplicaciones financieras"
+
+#. module: udoo_lavend_ux
+#: model_terms:ir.ui.view,arch_db:udoo_lavend_ux.app_group_view_form
+msgid "e.g. Finance"
+msgstr "ej: Finanzas"

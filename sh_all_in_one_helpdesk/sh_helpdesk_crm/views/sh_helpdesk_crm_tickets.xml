@@ -47,9 +47,9 @@
                     </div>
                 </button>
             </xpath>
-            <field name="product_ids" position="after">
+            <!-- <field name="product_ids" position="after">
                 <field name="sh_lead_ids" widget="many2many_tags" />
-            </field>
+            </field> -->
         </field>
     </record>
     <record id="sh_helpdesk_tickets_inherited_view_crm_search" model="ir.ui.view">
@@ -57,9 +57,9 @@
         <field name="model">sh.helpdesk.ticket</field>
         <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_search_view" />
         <field name="arch" type="xml">
-            <field name="stage_id" position="after">
+            <!-- <field name="stage_id" position="after">
                 <field name="sh_lead_ids" />
-            </field>
+            </field> -->
             <xpath expr="//filter[last()]" position="after">
                 <filter string="Leads/Opportunities" name="helpdesk_lead" domain="[('sh_lead_ids','!=',False)]" />
             </xpath>

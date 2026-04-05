@@ -1244,7 +1244,7 @@ msgstr "Cuenta"
 #. module: ike_event_membership_authorization
 #: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_membership_authorization_popup_view_form
 msgid "dd/mm/yyyy - dd/mm/yyyy"
-msgstr "dd/mm/yyyy,dd/mm/yyyy"
+msgstr "dd/mm/yyyy - dd/mm/yyyy"
 
 #. module: ike_event_membership_authorization
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__event_id

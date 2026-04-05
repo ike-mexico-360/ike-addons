@@ -127,7 +127,8 @@
                         invisible="check_commercial_authorization or (check_supervisor_authorization and check_commercial_authorization)" 
                         type="object" 
                         groups="!custom_master_catalog.custom_group_event_cabin_supervisor,!custom_master_catalog.custom_group_commercial_supervisor"
-                        class="btn btn-success"/>
+                        class="btn btn-success"
+                        context="{'Autorization_supervisor_cabine': True}"/>
                     
                     <button string="Authorize" 
                         name="action_authorized" 
@@ -155,7 +156,7 @@
                         name="action_authorized" 
                         type="object" 
                         class="btn btn-success"
-                        groups="base.group_system"
+                        groups="base.group_system,!custom_master_catalog.custom_group_event_cabin_supervisor"
                         invisible="check_commercial_authorization or check_membership_authorizer or check_supervisor_authorization"/>
                             
                     <button string="Authorized" 
@@ -163,13 +164,13 @@
                         type="object" 
                         class="btn btn-success"
                         invisible="not check_membership_authorizer or check_commercial_authorization or check_supervisor_authorization"
-                        groups="base.group_system"/>
+                        groups="base.group_system,!custom_master_catalog.custom_group_event_cabin_supervisor"/>
 
                     <button string="Rejected" 
                         name="action_rejected" 
                         type="object" 
                         class="btn btn-danger"
-                        groups="base.group_system"
+                        groups="base.group_system,!custom_master_catalog.custom_group_event_cabin_supervisor"
                         invisible="check_commercial_authorization or check_supervisor_authorization"/>
                     
 

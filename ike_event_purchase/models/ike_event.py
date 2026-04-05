@@ -31,10 +31,38 @@ class IkeEvent(models.Model):
             'target': 'current',
         }
 
-    def action_create_purchase_orders(self):
+    def action_confirm_costs(self):
         self.ensure_one()
         # Cuando el evento esté en concluido
-        if self.stage_ref == 'completed' and len(self.x_purchase_ids) == 0:
+        if self.stage_ref == 'verifying' and len(self.x_purchase_ids) == 0:
+            # * Crear una sola orden de compra por proveedor con todos los conceptos
+            grouped_purchase_by_suppliers = {}
+            for supplier_line in self.selected_supplier_ids:
+                product_ids = supplier_line.supplier_link_id.supplier_product_ids.filtered(
+                    lambda x: x.product_id and x.unit_price > 0
+                )
+                if len(product_ids) == 0:  # Omitir crear RFQ para proveedores sin conceptos
+                    continue
+                if supplier_line.supplier_id.id not in grouped_purchase_by_suppliers:
+                    grouped_purchase_by_suppliers[supplier_line.supplier_id.id] = {
+                        **self.x_get_values_for_purchase_header(supplier_line),
+                        "order_line": []
+                    }
+                for concept_id in product_ids:
+                    grouped_purchase_by_suppliers[supplier_line.supplier_id.id]['order_line'].append(
+                        Command.create(self.x_get_values_for_purchase_line(concept_id))
+                    )
+
+            purchase_ids = self.env['purchase.order'].with_context(dict(ike_event_purchase=True)).create([
+                purchase_vals for purchase_vals in grouped_purchase_by_suppliers.values()
+            ])
+            for purchase in purchase_ids:
+                purchase.action_rfq_send_one_step()
+        self.action_close()
+
+    def action_create_purchase_orders(self):
+        res = super().action_create_purchase_orders()
+        if len(self.x_purchase_ids) == 0:
             # * Crear una sola orden de compra por proveedor con todos los conceptos
             grouped_purchase_by_suppliers = {}
             for supplier_line in self.selected_supplier_ids:
@@ -56,13 +84,14 @@ class IkeEvent(models.Model):
             self.env['purchase.order'].with_context(dict(ike_event_purchase=True)).create([
                 purchase_vals for purchase_vals in grouped_purchase_by_suppliers.values()
             ])
+        return res
 
     def x_get_values_for_purchase_line(self, supplier_product_id):
         return {
             "name": supplier_product_id.product_id.name,
             "product_id": supplier_product_id.product_id.id,
             "product_qty": supplier_product_id.quantity,
-            "price_unit": supplier_product_id.unit_price,
+            "price_unit": supplier_product_id.base_unit_price,
             "currency_id": self.env.company.currency_id.id,
             "x_supplier_product_id": supplier_product_id.id,  # Link to supplier_product_id
             "x_generated_from_event": True,  # To mark the line as generated from event

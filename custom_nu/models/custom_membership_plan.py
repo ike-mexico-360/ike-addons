@@ -64,7 +64,12 @@ class CustomMembershipPlan(models.Model):
     # BrightPattern
     bp_account_ref = fields.Char(
         string='BP Reference',
-        help="BrightPattern service reference value; this value will be used to search for the coverage plan when the call is received at the BrightPattern endpoint.")
+        help=(
+            "BrightPattern service reference value; this value will be "
+            "used to search for the coverage plan when the call is "
+            "received at the BrightPattern endpoint."
+        ),
+    )
 
     _sql_constraints = [(
         'membership_plan_uniq',
@@ -93,7 +98,7 @@ class CustomMembershipPlan(models.Model):
         return super().action_disable(reason)
 
 
-class CustomMembershipPlanProduct(models.Model):
+class CustomMembershipPlanProductLine(models.Model):
     _name = 'custom.membership.plan.product.line'
     _description = 'Membership plan Product Line'
     _rec_name = 'name'
@@ -127,6 +132,11 @@ class CustomMembershipPlanProduct(models.Model):
         'custom.membership.plan.line.product',
         'line_id',
         string='Conceptos'
+    )
+    limit_ids = fields.One2many(
+        'custom.membership.plan.line.limit',
+        'line_id',
+        string='Limits'
     )
     currency_id = fields.Many2one("res.currency", string="Currency", default=_get_default_currency_id)
     considerations_html = fields.Html()
@@ -327,7 +337,25 @@ class CustomMembershipPlanProduct(models.Model):
         }
 
 
-class CustomMembershipPlanProductLine(models.Model):
+class CustomMembershipPlanLineLimit(models.Model):
+    _name = 'custom.membership.plan.line.limit'
+    _description = 'Subservice details for limit line'
+    _sort = 'line_id, limit_coverage_min'
+
+    line_id = fields.Many2one(
+        'custom.membership.plan.product.line',
+        string='Product Line',
+        ondelete='cascade',
+        required=True,
+        index=True
+    )
+    limit_coverage_min = fields.Integer('Limit Coverage min (km)')
+    limit_coverage_max = fields.Integer('Limit Coverage max (km)')
+    amount = fields.Monetary(string='Amount ($)', default=0.0)
+    currency_id = fields.Many2one("res.currency", string="Currency", default=lambda self: self.env.company.currency_id.id)
+
+
+class CustomMembershipPlanLineProduct(models.Model):
     _name = 'custom.membership.plan.line.product'
     _description = 'Subservices details for product line'
 
@@ -345,7 +373,9 @@ class CustomMembershipPlanProductLine(models.Model):
         ondelete='restrict'
     )
     limit_coverage = fields.Float()
-    cost = fields.Float(string='Cost ($)', default=0.0)
+    limit_coverage_min = fields.Integer('Limit Coverage min (km)')
+    limit_coverage_max = fields.Integer('Limit Coverage max (km)')
+    cost = fields.Monetary(string='Amount ($)', default=0.0)
     quantity = fields.Integer(string='Quantity', default=0)
     x_concept_domain = fields.Binary(string="Concept domain", compute="_compute_x_concept_domain")
     coverage_type = fields.Selection([
@@ -353,6 +383,7 @@ class CustomMembershipPlanProductLine(models.Model):
         ('unlimited', 'Unlimited'),
     ])
     mandatory = fields.Boolean(default=False)
+    currency_id = fields.Many2one("res.currency", string="Currency", default=lambda self: self.env.company.currency_id.id)
 
     # === COMPUTE METHODS === #
     @api.depends('product_id', 'line_id', 'line_id.sub_service_ids', 'line_id.detail_ids.product_id')
@@ -362,7 +393,7 @@ class CustomMembershipPlanProductLine(models.Model):
                 rec.x_concept_domain = []
                 continue
 
-            already_added_ids = rec.line_id.detail_ids.mapped('product_id').ids
+            # already_added_ids = rec.line_id.detail_ids.mapped('product_id').ids
 
             # Dominio de productos permitidos
             sub_service_ids = rec.line_id.sub_service_ids.ids or [0]
@@ -390,12 +421,15 @@ class CustomMembershipPlanProductLine(models.Model):
                 '|',
                 ('x_product_id', 'in', sub_service_ids),
                 ('x_product_id', '=', False),
-                ('id', 'not in', already_added_ids),
+                # ('id', 'not in', already_added_ids),
             ]
 
             rec.x_concept_domain = domain
 
     # Evitar duplicados por linea (opcional)
     _sql_constraints = [
-        ('uniq_line_product', 'unique(line_id, product_id)', 'El subservicio ya existe en esta línea.')
+        (
+            'uniq_line_product',
+            'unique(line_id, product_id, limit_coverage_min, limit_coverage_max, cost)',
+            'El subservicio ya existe en esta línea.')
     ]

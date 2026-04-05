@@ -243,8 +243,6 @@ class ShHelpdeskTicketButtonsAndConfig(models.Model):
 
                 # template.send_mail(self.id, force_send=True)
 
-
-
     def action_cancel(self):
         # Ensure there is only one record
         self.ensure_one()

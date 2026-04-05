@@ -13,6 +13,7 @@
         'custom_master_catalog',
         'ike_event',
         'ike_event_membership_authorization',
+        'ike_event_purchase'
     ],
     "data": [
         "data/ike_event_binnacle_data.xml",

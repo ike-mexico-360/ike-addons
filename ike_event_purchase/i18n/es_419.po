@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0-20250918\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-05 21:00+0000\n"
-"PO-Revision-Date: 2026-03-05 21:00+0000\n"
+"POT-Creation-Date: 2026-03-31 18:41+0000\n"
+"PO-Revision-Date: 2026-03-31 18:41+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,9 +16,177 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_orders
+msgid "&amp;nbsp;"
+msgstr ""
+
+#. module: ike_event_purchase
+#: model:mail.template,body_html:ike_event_purchase.ike_event_purchase_proposal_dispute_ticket
+msgid ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"                <table border=\"0\" width=\"100%\" cellpadding=\"0\" bgcolor=\"#ededed\" style=\"padding: 20px; background-color: #ededed; border-collapse:separate;\">\n"
+"                    <tbody>\n"
+"                    <!-- HEADER -->\n"
+"                    <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                        <table width=\"590\" border=\"0\" cellpadding=\"0\" bgcolor=\"#875A7B\" style=\"min-width: 590px; background-color: rgb(135,90,123); padding: 20px; border-collapse:separate;\">\n"
+"                            <tr>\n"
+"                            <td valign=\"middle\">\n"
+"                                <span style=\"font-size:20px; color:white; font-weight: bold;\">\n"
+"                                <!-- {{object.name}} -->\n"
+"                                <t t-out=\"object.name\"/>\n"
+"                                </span>\n"
+"                            </td>\n"
+"\n"
+"                            <td valign=\"middle\" align=\"right\">\n"
+"                                <img t-attf-src=\"/logo.png?company={{ object.company_id.id }}\" style=\"padding: 0px; margin: 0px; height: auto; width: 80px;\" t-att-alt=\"object.company_id.name\"/>\n"
+"                            </td>\n"
+"                            </tr>\n"
+"                        </table>\n"
+"                        </td>\n"
+"                    </tr>\n"
+"\n"
+"                    <!-- CONTENT -->\n"
+"                    <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                        <table width=\"590\" border=\"0\" cellpadding=\"0\" bgcolor=\"#ffffff\" style=\"min-width: 590px; background-color: rgb(255, 255, 255); padding: 20px; border-collapse:separate;\">\n"
+"                            <tbody>\n"
+"                            <td valign=\"top\" style=\"font-family:Arial,Helvetica,sans-serif; color: #555; font-size: 14px;\">\n"
+"                                <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"                                    The supplier\n"
+"                                    <t t-out=\"object.partner_id.name\"/>\n"
+"                                    has opened a dispute.\n"
+"                                    <br/>\n"
+"                                    <br/>\n"
+"                                    Please review the changes.\n"
+"                                    <br/>\n"
+"                                    <br/>\n"
+"                                </p>\n"
+"                                <br/>\n"
+"                                <br/>\n"
+"                                <t t-set=\"orders\" t-value=\"object.sh_purchase_order_ids\"/>\n"
+"                                <t t-if=\"env.context.get('actual_order', False)\">\n"
+"                                    <t t-set=\"actual_order\" t-value=\"env.context.get('actual_order')\"/>\n"
+"                                    <t t-set=\"orders\" t-value=\"orders.filtered(lambda x: x.id == actual_order)\"/>\n"
+"                                </t>\n"
+"                                <t t-foreach=\"orders\" t-as=\"order\">\n"
+"                                    <table>\n"
+"                                        <tbody>\n"
+"                                            <tr><td colspan=\"5\" style=\"font-weight:bolder;text-align:center;\">Order <t t-out=\"order.name\"/></td></tr>\n"
+"                                            <tr>\n"
+"                                                <td style=\"font-weight:bolder;min-width:200px;text-align:left;\">Concept</td>\n"
+"                                                <td style=\"font-weight:bolder;text-align:right;\">Price (Original)</td>\n"
+"                                                <td style=\"font-weight:bolder;text-align:right;\">Quantity (Original)</td>\n"
+"                                                <td style=\"font-weight:bolder;text-align:right;\">Price (Disputed)</td>\n"
+"                                                <td style=\"font-weight:bolder;text-align:right;\">Quantity (Disputed)</td>\n"
+"                                            </tr>\n"
+"                                            <t t-foreach=\"order.order_line\" t-as=\"line\">\n"
+"                                                <tr>\n"
+"                                                    <td style=\"text-align:left;\"><t t-out=\"line.product_id.name\"/></td>\n"
+"                                                    <td style=\"text-align:right;\"><t t-out=\"line.price_unit\"/></td>\n"
+"                                                    <td style=\"text-align:right;\"><t t-out=\"line.product_uom_qty\"/></td>\n"
+"                                                    <td style=\"text-align:right;\"><t t-out=\"line.x_price_unit_dispute\"/></td>\n"
+"                                                    <td style=\"text-align:right;\"><t t-out=\"line.x_product_qty_dispute\"/></td>\n"
+"                                                </tr>\n"
+"                                            </t>\n"
+"                                            <!-- <tr>\n"
+"                                                <td colspan=\"5\">\n"
+"                                                    <div style=\"display:flex;flex-direction:row;justify-content:center;gap:7px;\">\n"
+"                                                        <a t-att-href=\"order.x_get_dispute_url(confirm_type='accept')\" target=\"_blank\"\n"
+"                                                                style=\"background-color:#B3B2B1; padding:5px 10px; text-decoration:none; color:#ffffff; border-radius:5px; font-size:16px; margin-right:7px;\">\n"
+"                                                            Approve dispute\n"
+"                                                        </a>\n"
+"                                                        <a t-att-href=\"order.x_get_dispute_url(confirm_type='decline')\" target=\"_blank\"\n"
+"                                                                style=\"background-color:#ebebef; padding:5px 10px; text-decoration:none; color:#4a5573; border-radius:5px; font-size:16px\">\n"
+"                                                            Reject dispute\n"
+"                                                        </a>\n"
+"                                                    </div>\n"
+"                                                </td>\n"
+"                                            </tr> -->\n"
+"                                        </tbody>\n"
+"                                    </table>\n"
+"                                    <br/>\n"
+"                                </t>\n"
+"                            </td>\n"
+"                            </tbody>\n"
+"                        </table>\n"
+"                        </td>\n"
+"                    </tr>\n"
+"\n"
+"                    <!-- FOOTER -->\n"
+"                    <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                        <table width=\"590\" border=\"0\" cellpadding=\"0\" bgcolor=\"#875A7B\" style=\"min-width: 590px; background-color: rgb(135,90,123); padding: 20px; border-collapse:separate;\">\n"
+"                            <tr>\n"
+"                            <td valign=\"middle\" align=\"left\" style=\"color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;\">\n"
+"                                <t t-out=\"object.company_id.name\"/>\n"
+"                                <br/>\n"
+"                                <t t-out=\"object.company_id.phone or ''\"/>\n"
+"                            </td>\n"
+"                            <td valign=\"middle\" align=\"right\" style=\"color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;\">\n"
+"                                <t t-if=\"object.company_id.email\">\n"
+"                                <a t-attf-href=\"mailto:{{ object.company_id.email }}\" style=\"text-decoration:none; color: white;\">\n"
+"                                    <t t-out=\"object.company_id.email\"/>\n"
+"                                </a>\n"
+"                                </t>\n"
+"                                <br/>\n"
+"                                <t t-if=\"object.company_id.website\">\n"
+"                                <a t-attf-href=\"{{ object.company_id.website }}\" style=\"text-decoration:none; color: white;\">\n"
+"                                    <t t-out=\"object.company_id.website\"/>\n"
+"                                </a>\n"
+"                                </t>\n"
+"                            </td>\n"
+"                            </tr>\n"
+"                        </table>\n"
+"                        </td>\n"
+"                    </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"                </div>\n"
+"            "
+msgstr ""
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_orders
+msgid ""
+"<span class=\"d-none d-md-inline\">Confirmation Date</span>\n"
+"                            <span class=\"d-block d-md-none\">Confirmation</span>"
+msgstr ""
+"<span class=\"d-none d-md-inline\">Fecha de confirmación</span>\n"
+"                            <span class=\"d-block d-md-none\">Confirmación</span>"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_orders
+msgid ""
+"<span class=\"d-none d-md-inline\">Purchase Order #</span>\n"
+"                            <span class=\"d-block d-md-none\">Ref.</span>"
+msgstr ""
+"<span class=\"d-none d-md-inline\">Orden de compra #</span>\n"
+"                            <span class=\"d-block d-md-none\">Ref.</span>"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "<span class=\"o_form_label\">Cost Review</span>"
+msgstr "<span class=\"o_form_label\">Revisión de costos</span>"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid ""
+"<span class=\"text-muted\" invisible=\"not "
+"mail_reminder_confirmed\">(confirmed by vendor)</span>"
+msgstr ""
+"<span class=\"text-muted\" invisible=\"not "
+"mail_reminder_confirmed\">(Confirmado por vendedor)</span>"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.res_config_settings_view_form_purchase_inherit_ike_event_purchase
 msgid "<span> hours</span>"
 msgstr "<span> horas</span>"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "<span>Ask confirmation</span>"
+msgstr "<span>Solicitar confirmación</span>"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -33,15 +201,30 @@ msgid "Accept"
 msgstr "Aceptar"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Add a note"
+msgstr "Agregar una nota"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Add a product"
+msgstr "Agregar producto"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Add a section"
+msgstr "Agregar seccion"
+
+#. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 msgid "Add concept"
 msgstr "Añadir concepto"
 
 #. module: ike_event_purchase
-#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_po_inherited_view_form_inherit_ike_event_purchase
-msgid "Approve dispute"
-msgstr "Aprobar disputa"
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Amount"
+msgstr "Importe"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -60,9 +243,33 @@ msgid "Approved Quantity"
 msgstr "Cantidad aprobada"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid ""
+"Automatically send a confirmation email to the vendor X days before the "
+"expected receipt date, asking him to confirm the exact date."
+msgstr ""
+"Se enviará automáticamente un correo de confirmación al proveedor X días antes "
+"de la fecha prevista de recepción, solicitándole que confirme la fecha exacta."
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Billed"
+msgstr "Facturado"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__biweekly
 msgid "Biweekly"
 msgstr "Cada 14 días"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Catalog"
+msgstr "Catalago"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_change_comments
+msgid "Change comments"
+msgstr "Comentarios de cambios"
 
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_res_company
@@ -76,12 +283,23 @@ msgid "Concept"
 msgstr "Concepto"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_concept_line_id
+msgid "Concept Line"
+msgstr "Línea de concepto"
+
+#. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_res_config_settings
 msgid "Config Settings"
 msgstr "Ajustes de configuración"
 
 #. module: ike_event_purchase
-#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_kpis_tree_inherit_ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_ike_event_screen_inherit_purchase_order_form
+msgid "Confirm Costs"
+msgstr "Confirmar costos"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "Consolidate"
 msgstr "Consolidar"
 
@@ -102,9 +320,10 @@ msgid "Contact"
 msgstr "Contacto"
 
 #. module: ike_event_purchase
-#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_ike_event_screen_inherit_purchase_order_form
-msgid "Create Purchase Order"
-msgstr "Crear orden de compra"
+#. odoo-python
+#: code:addons/ike_event_purchase/models/sh_helpdesk_ticket.py:0
+msgid "Cost Review"
+msgstr "Revision de costos"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__daily
@@ -124,10 +343,14 @@ msgid "Day of Week"
 msgstr "Día de la semana"
 
 #. module: ike_event_purchase
-#. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
-msgid "Discount"
-msgstr "Descuento"
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Define your terms and conditions ..."
+msgstr "Defina sus términos y condiciones…"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Disc.%"
+msgstr "Descuento.%"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_dispute_approved
@@ -135,10 +358,9 @@ msgid "Dispute Approved"
 msgstr "Disputa Aprobada"
 
 #. module: ike_event_purchase
-#. odoo-python
-#: code:addons/ike_event_purchase/models/purchase_order.py:0
-msgid "Dispute Opened"
-msgstr "Disputa Abierta"
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_dispute_iteration_count
+msgid "Dispute Iteration Count"
+msgstr "Recuento de iteraciones de disputa"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -216,6 +438,18 @@ msgid "Error consolidating purchase orders"
 msgstr "Error al consolidar órdenes de compra"
 
 #. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "Error creating SAP order"
+msgstr "Error al crear la orden de SAP"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "Error creating SAP order: %s"
+msgstr "Error al crear la orden de SAP: %s"
+
+#. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 msgid "Error loading complementary data: "
@@ -285,6 +519,11 @@ msgid "Monthly"
 msgstr "Mensual"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Name, TIN, Email, or Reference"
+msgstr "Nombre, RFC, correo electrónico o referencia"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_res_partner__x_consolidation_next_date
 #: model:ir.model.fields,field_description:ike_event_purchase.field_res_users__x_consolidation_next_date
 msgid "Next Consolidation Date"
@@ -307,10 +546,19 @@ msgid "Open"
 msgstr "Abierto"
 
 #. module: ike_event_purchase
-#. odoo-python
-#: code:addons/ike_event_purchase/models/purchase_order.py:0
-msgid "Order Details"
-msgstr "Detalles de la Orden"
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__order_line
+msgid "Order Lines"
+msgstr "Líneas de la orden"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Other Information"
+msgstr "Otra Información"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Preview the reminder email by sending it to yourself."
+msgstr "Previsualiza el correo de recordatorio enviándolo a ti mismo."
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -330,6 +578,11 @@ msgid "Product Variant"
 msgstr "Variante del producto"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Products"
+msgstr "Productos"
+
+#. module: ike_event_purchase
 #: model:mail.template,name:ike_event_purchase.ike_event_purchase_proposal_dispute_ticket
 msgid "Proposal dispute: Send by email"
 msgstr "Propuesta de disputa: Enviar por correo electrónico"
@@ -338,18 +591,19 @@ msgstr "Propuesta de disputa: Enviar por correo electrónico"
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
 #: model:ir.model,name:ike_event_purchase.model_purchase_order
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "Purchase Order"
 msgstr "Orden de compra"
-
-#. module: ike_event_purchase
-#: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__purchase_order_details
-msgid "Purchase Order Details"
-msgstr "Detalles de la Orden de Compra"
 
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_purchase_order_line
 msgid "Purchase Order Line"
 msgstr "Línea de la orden de compra"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Purchase Order Lines"
+msgstr "Líneas de orden de compra"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_ike_event_screen_inherit_purchase_order_form
@@ -381,8 +635,14 @@ msgstr "Cantidad"
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__product_qty
 msgid "Quantity"
 msgstr "Cantidad"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Received"
+msgstr "Recibido"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__rejected
@@ -396,20 +656,30 @@ msgid "Request for Quotation"
 msgstr "Solicitud de Cotización"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_require_change_reason
+msgid "Require change reason"
+msgstr "Requiere motivo de cambio"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__resolved
 msgid "Resolved"
 msgstr "Resuelto"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_ref_sap
+msgid "SAP Reference"
+msgstr "Referencia SAP"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "SAP Reference: %s"
+msgstr "Referencia SAP %s"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__6
 msgid "Saturday"
 msgstr "Sábado"
-
-#. module: ike_event_purchase
-#. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
-msgid "Select UoM"
-msgstr "Seleccionar Unidad de Medida"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -426,6 +696,12 @@ msgstr "Enviar disputa"
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Specify the reason for the change"
+msgstr "Especifica el motivo del cambio"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 msgid "Start Dispute"
 msgstr "Iniciar disputa"
 
@@ -433,11 +709,6 @@ msgstr "Iniciar disputa"
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__state
 msgid "Status"
 msgstr "Estado"
-
-#. module: ike_event_purchase
-#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_po_inherited_view_form_inherit_ike_event_purchase
-msgid "Submit dispute"
-msgstr ""
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__submitted
@@ -460,19 +731,38 @@ msgid "Supplier Product"
 msgstr "Producto del proveedor"
 
 #. module: ike_event_purchase
-#. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
-msgid "Taxes"
-msgstr "Impuestos"
+#: model:ir.actions.server,name:ike_event_purchase.cron_supplier_purchase_consolidate_ir_actions_server
+msgid "Supplier Purchase Consolidate"
+msgstr "Consolidación de compras de proveedores"
 
 #. module: ike_event_purchase
-#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_form_view_inherit_ike_event_purchase
-msgid "Test Scalar"
-msgstr ""
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_generated_from_event
+msgid "Technical: Generated from event"
+msgstr "Técnico: Generado desde evento"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_has_dispute_changes
+msgid "Technical: Has dispute changes"
+msgstr "Técnico: Tiene cambios de disputa"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,help:ike_event_purchase.field_purchase_order_line__x_supplier_product_id
+msgid "Technical: Link to event concept product"
+msgstr "Técnico: Enlace a producto concepto de evento"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,help:ike_event_purchase.field_purchase_order_line__x_concept_line_id
+msgid "Technical: Link to membership plan concept line"
+msgstr "Técnico: Enlace a línea de concepto de plan de membresía"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,help:ike_event_purchase.field_purchase_order__x_dispute_iteration_count
+msgid "Technical: The number of times the order has been send dispute."
+msgstr "Técnico: El número de veces que se ha enviado la disputa."
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
-msgid "Test Ticket Details"
+msgid "Test SAP Sync"
 msgstr ""
 
 #. module: ike_event_purchase
@@ -501,16 +791,9 @@ msgstr "La disputa ha sido enviada."
 msgid ""
 "The following orders have an open or submitted dispute and cannot be consolidated:\n"
 "%s"
-msgstr "Las siguientes órdenes tienen una disputa abierta o enviada y no pueden ser consolidadas:\n%s"
-
-#. module: ike_event_purchase
-#. odoo-python
-#: code:addons/ike_event_purchase/models/purchase_order.py:0
-msgid ""
-"The supplier declined the order. Dispute opened, awaiting supplier proposal."
 msgstr ""
-"El proveedor rechazó la orden. Disputa abierta, esperando la propuesta del "
-"proveedor."
+"Las siguientes órdenes tienen una disputa abierta o enviada y no pueden ser consolidadas:\n"
+"%s"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -523,6 +806,12 @@ msgstr "El proveedor ha enviado su propuesta de disputa en el ticket #%s."
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 msgid "There are fields with invalid values"
 msgstr "Hay campos con valores inválidos"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "There are zero approved values on lines."
+msgstr "No hay valores aprobados en líneas."
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -572,6 +861,11 @@ msgid "To Consolidate"
 msgstr "Para consolidar"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_orders
+msgid "Total"
+msgstr ""
+
+#. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__triweekly
 msgid "Triweekly"
 msgstr "Cada 21 días"
@@ -582,16 +876,27 @@ msgid "Tuesday"
 msgstr "Martes"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "UdM"
+msgstr ""
+
+#. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__price_unit
 msgid "Unit Price"
-msgstr "Precio Unitario"
+msgstr "Precio unitario"
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.js:0
 msgid "Unknown error"
 msgstr "Error desconocido"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_tickets_po_inherited_view_form_inherit_ike_event_purchase
+msgid "View Cost Review"
+msgstr "Ver revisión de costos"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -618,9 +923,21 @@ msgstr "Semanal"
 
 #. module: ike_event_purchase
 #. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order_line.py:0
+msgid "You cannot delete generated lines from event"
+msgstr "No puedes eliminar líneas generadas del evento"
+
+#. module: ike_event_purchase
+#. odoo-python
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "You must propose at least one new price or quantity before submitting."
 msgstr "Debe proponer al menos una nueva cantidad o precio antes de enviar."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "You must specify a reason for the change"
+msgstr "Debe especificar el motivo del cambio"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -630,7 +947,13 @@ msgid "close"
 msgstr "cerrar"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "day(s) before"
+msgstr "día(s) antes"
+
+#. module: ike_event_purchase
 #: model:mail.template,subject:ike_event_purchase.ike_event_purchase_proposal_dispute_ticket
 msgid ""
 "{{object.company_id.name}} Dispute opened (Ref {{object.name or 'n/a' }})"
-msgstr "{{object.company_id.name}} Disputa abierta (Ref {{object.name or 'n/a' }})"
+msgstr ""
+"{{object.company_id.name}} Disputa abierta (Ref {{object.name or 'n/a' }})"

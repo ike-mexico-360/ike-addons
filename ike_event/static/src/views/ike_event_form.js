@@ -113,7 +113,8 @@ export class IkeEventFormController extends FormController {
             return;
         }
         const data = payload.data.find(x => x.id == this.model.root.resId);
-        if (data.length) {
+        if (data) {
+            // console.log("RELOADED");
             await this.model.root.load();
         }
     }

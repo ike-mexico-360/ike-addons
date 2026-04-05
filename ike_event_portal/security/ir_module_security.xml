@@ -16,6 +16,10 @@
         <field name="name">Ike Admin Portal</field>
         <field name="category_id" ref="module_category_custom_ike_portal" />
     </record>
+    <record id="custom_group_portal_finance" model="res.groups">
+        <field name="name">Ike Finance Portal</field>
+        <field name="category_id" ref="module_category_custom_ike_portal" />
+    </record>
     <record id="rule_res_partner_portal_admin_all" model="ir.rule">
         <field name="name">Portal admin: all partners</field>
         <field name="model_id" ref="base.model_res_partner"/>

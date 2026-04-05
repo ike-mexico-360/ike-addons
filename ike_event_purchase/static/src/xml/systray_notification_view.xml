@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="ike_event_purchase.UserNotificationMenu"
+       t-inherit="mail.systray.UserNotificationMenu"
+       t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('o_notification_systray_item')]" position="attributes">
+            <attribute name="class" add="d-none" separator=" "/>
+        </xpath>
+    </t>
+</templates>

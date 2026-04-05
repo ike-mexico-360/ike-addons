@@ -22,6 +22,10 @@
                     invisible="x_event_id == False or state not in ('done', 'purchase') or x_ref_sap != False"/>
                 <button name="x_action_consolidate" type="object" string="Consolidate" invisible="not x_event_id or state != 'to_consolidate'"/>
             </xpath>
+            <xpath expr="//field[@name='project_id']" position="after">
+                <field name="x_require_change_reason" invisible="1" readonly="1"/>
+                <field name="x_change_comments" invisible="not x_require_change_reason" required="x_require_change_reason"/>
+            </xpath>
             <xpath expr="//field[@name='order_line']/list" position="attributes">
                 <attribute name="decoration-danger">x_has_dispute_changes</attribute>
             </xpath>
@@ -32,10 +36,10 @@
                 <attribute name="readonly">parent.x_event_id and id != False</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="after">
-                <field name="x_price_unit_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id"/>
                 <field name="x_product_qty_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id"/>
-                <field name="x_price_unit_approved" optional="show" column_invisible="not parent.x_event_id"/>
+                <field name="x_price_unit_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id"/>
                 <field name="x_product_qty_approved" optional="show" column_invisible="not parent.x_event_id"/>
+                <field name="x_price_unit_approved" optional="show" column_invisible="not parent.x_event_id"/>
                 <field name="x_has_dispute_changes" column_invisible="1" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='fiscal_position_id']" position="after">
@@ -56,4 +60,164 @@
         </field>
     </record>
 
+    <record id="purchase_order_helpdesk_dispute_form" model="ir.ui.view">
+        <field name="name">purchase.order.helpdesk.dispute.form</field>
+        <field name="model">purchase.order</field>
+        <field name="arch" type="xml">
+            <form string="Purchase Order" class="o_purchase_order">
+            <header>
+                <button name="x_syncronize_po_with_sap" type="object" string="Test SAP Sync" groups="base.group_no_one"
+                    invisible="1"/>
+                <button name="x_action_consolidate" type="object" string="Consolidate" invisible="1"/>
+            </header>
+            <sheet>
+                <div class="oe_title">
+                    <span class="o_form_label">Cost Review</span>
+                    <h1 class="d-flex">
+                        <field name="priority" widget="priority" class="me-3"/>
+                        <field name="name" readonly="1"/>
+                    </h1>
+                </div>
+                <group>
+                    <group>
+                        <field name="partner_id" widget="res_partner_many2one" context="{'res_partner_search_mode': 'supplier', 'show_vat': True}"
+                            placeholder="Name, TIN, Email, or Reference"
+                            readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="partner_ref"/>
+                        <field name="sh_purchase_ticket_ids" widget="many2many_tags" />
+                        <field name="x_dispute_state" invisible="1"/>
+                        <field name="x_event_id" readonly="1" invisible="x_event_id == False"
+                            options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                        <field name="currency_id" groups="base.group_multi_currency" force_save="1" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="id" invisible="1"/>
+                        <field name="company_id" invisible="1" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="currency_id" invisible="1" readonly="state in ['cancel', 'done', 'purchase']" groups="!base.group_multi_currency"/>
+                        <field name="tax_calculation_rounding_method" invisible="1"/>
+                    </group>
+                    <group>
+                        <field name="date_order" invisible="state in ('purchase', 'done')" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <label for="date_approve" invisible="state not in ('purchase', 'done')"/>
+                        <div name="date_approve" invisible="state not in ('purchase', 'done')" class="o_row">
+                            <field name="date_approve"/>
+                        </div>
+                        <label for="date_planned"/>
+                        <div name="date_planned_div" class="o_row">
+                            <field name="date_planned" readonly="state not in ('draft', 'sent', 'to approve', 'purchase')"/>
+                            <field name="mail_reminder_confirmed" invisible="1"/>
+                            <span class="text-muted" invisible="not mail_reminder_confirmed">(confirmed by vendor)</span>
+                        </div>
+                        <label for="receipt_reminder_email" class="d-none" groups="purchase.group_send_reminder"/>
+                        <div name="reminder" class="o_row" groups='purchase.group_send_reminder' title="Automatically send a confirmation email to the vendor X days before the expected receipt date, asking him to confirm the exact date.">
+                            <field name="receipt_reminder_email"/>
+                            <span>Ask confirmation</span>
+                            <div class="o_row oe_inline" invisible="not receipt_reminder_email">
+                                <field name="reminder_date_before_receipt" class="oe_inline" style="max-width: 30px;"/>
+                                day(s) before
+                                <widget name='toaster_button' button_name="send_reminder_preview" title="Preview the reminder email by sending it to yourself." invisible="not id"/>
+                            </div>
+                        </div>
+                        <field name="x_require_change_reason" invisible="1" readonly="1"/>
+                        <field name="x_change_comments" invisible="not x_require_change_reason" required="x_require_change_reason"/>
+                    </group>
+                </group>
+                <notebook>
+                    <page string="Products" name="products">
+                        <field name="tax_country_id" invisible="1"/>
+                        <field name="order_line"
+                            widget="product_label_section_and_note_field_o2m"
+                            mode="list"
+                            context="{'default_state': 'draft'}"
+                            readonly="state in ('done', 'cancel')">
+                            <list string="Purchase Order Lines" editable="bottom" decoration-danger="x_has_dispute_changes">
+                                <control>
+                                    <create name="add_product_control" string="Add a product"/>
+                                    <create name="add_section_control" string="Add a section" context="{'default_display_type': 'line_section'}"/>
+                                    <create name="add_note_control" string="Add a note" context="{'default_display_type': 'line_note'}"/>
+                                    <button name="action_add_from_catalog" string="Catalog" type="object" class="px-4 btn-link" context="{'order_id': parent.id}"/>
+                                </control>
+                                <field name="tax_calculation_rounding_method" column_invisible="True"/>
+                                <field name="display_type" column_invisible="True"/>
+                                <field name="company_id" column_invisible="True"/>
+                                <field name="currency_id" column_invisible="True"/>
+                                <field name="state" column_invisible="True"/>
+                                <field name="product_type" column_invisible="True"/>
+                                <field name="product_uom" column_invisible="True" groups="!uom.group_uom"/>
+                                <field name="product_uom_category_id" column_invisible="True"/>
+                                <field name="invoice_lines" column_invisible="True"/>
+                                <field name="sequence" widget="handle"/>
+                                <!-- optional="show" allows name (description) to be editable -->
+                                <field
+                                    name="product_id"
+                                    widget="product_label_section_and_note_field"
+                                    readonly="state in ('purchase', 'to approve', 'done', 'cancel') or is_downpayment"
+                                    required="not display_type and not is_downpayment"
+                                    optional="show"
+                                    context="{'partner_id':parent.partner_id, 'quantity':product_qty, 'company_id': parent.company_id, 'display_default_code': 0,}"
+                                    force_save="1"
+                                    options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                    domain="[('purchase_ok', '=', True), '|', ('company_id', '=', False), ('company_id', 'parent_of', parent.company_id)]"/>
+                                <field name="name" widget="section_and_note_text" optional="show"/>
+                                <field name="date_planned" optional="hide" required="not display_type and not is_downpayment" force_save="1" readonly="is_downpayment"/>
+                                <field name="analytic_distribution" widget="analytic_distribution"
+                                        optional="hide"
+                                        groups="analytic.group_analytic_accounting"
+                                        options="{'product_field': 'product_id', 'business_domain': 'purchase_order', 'amount_field': 'price_subtotal'}"/>
+                                <field name="product_qty" readonly="parent.x_event_id"/>
+                                <field name="qty_received_manual" column_invisible="True"/>
+                                <field name="qty_received_method" column_invisible="True"/>
+                                <field name="qty_received" string="Received" column_invisible="parent.state not in ('purchase', 'done')" readonly="qty_received_method != 'manual' or is_downpayment" optional="show"/>
+                                <field name="qty_invoiced" string="Billed" column_invisible="parent.state not in ('purchase', 'done')" optional="show"/>
+                                <field name="product_uom" string="UdM" groups="uom.group_uom"
+                                    readonly="state in ('purchase', 'done', 'cancel') or is_downpayment"
+                                    required="not display_type and not is_downpayment"
+                                    options="{'no_open': True}"
+                                    force_save="1" optional="show"
+                                    column_invisible="1"/>
+                                <field name="product_packaging_qty" invisible="not product_id or not product_packaging_id" groups="product.group_stock_packaging" optional="show"/>
+                                <field name="product_packaging_id" invisible="not product_id" context="{'default_product_id': product_id, 'list_view_ref':'product.product_packaging_tree_view', 'form_view_ref':'product.product_packaging_form_view'}" groups="product.group_stock_packaging" optional="show"/>
+                                <field name="price_unit" readonly="parent.x_event_id and id != False"/>
+                                <field name="x_product_qty_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id"/>
+                                <field name="x_price_unit_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id"/>
+                                <field name="x_product_qty_approved" optional="show" column_invisible="not parent.x_event_id"/>
+                                <field name="x_price_unit_approved" optional="show" column_invisible="not parent.x_event_id"/>
+                                <field name="x_has_dispute_changes" column_invisible="1" readonly="1"/>
+                                <field name="taxes_id" widget="many2many_tags"
+                                    domain="[('type_tax_use', '=', 'purchase'), ('company_id', 'parent_of', parent.company_id), ('country_id', '=', parent.tax_country_id), ('active', '=', True)]" context="{'default_type_tax_use': 'purchase', 'search_view_ref': 'account.account_tax_view_search'}"
+                                    options="{'no_create': True}"
+                                    optional="hide" readonly="is_downpayment"/>
+                                <field name="discount" string="Disc.%" width="50px" readonly="qty_invoiced != 0" optional="hide"/>
+                                <field name="price_subtotal" string="Amount"/>
+                            </list>
+                        </field>
+                        <group>
+                            <group>
+                                <field colspan="2" name="notes" nolabel="1" placeholder="Define your terms and conditions ..."/>
+                            </group>
+                            <group class="oe_subtotal_footer">
+                                <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" readonly="1"/>
+                            </group>
+                        </group>
+                        <div class="clearfix"/>
+                    </page>
+                    <page string="Other Information" name="purchase_delivery_invoice">
+                        <group>
+                            <group name="other_info">
+                                <field name="user_id" domain="[('share', '=', False)]" widget="many2one_avatar_user"/>
+                                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" readonly="state in ['cancel', 'done', 'purchase']"/>
+                                <field name="origin"/>
+                            </group>
+                            <group name="invoice_info">
+                                <field name="invoice_status" invisible="state in ('draft', 'sent', 'to approve', 'cancel')"/>
+                                <field name="payment_term_id" readonly="invoice_status == 'invoiced' or state == 'done'" options="{'no_create': True}"/>
+                                <field name="fiscal_position_id" options="{'no_create': True}" readonly="invoice_status == 'invoiced' or state == 'done'"/>
+                                <field name="x_ref_sap" readonly="1" invisible="not x_event_id or state not in ('done', 'purchase')"/>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </sheet>
+            <chatter/>
+            </form>
+        </field>
+    </record>
 </odoo>

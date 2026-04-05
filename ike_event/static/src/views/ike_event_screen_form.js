@@ -1,12 +1,12 @@
-import { rpc } from "@web/core/network/rpc";
 import { registry } from "@web/core/registry";
 import { effect } from "@web/core/utils/reactive";
 import { FormController } from '@web/views/form/form_controller';
-import { IkeEventFormController } from "./ike_event_form";
 import { formView } from "@web/views/form/form_view";
 import { View } from "@web/views/view";
+import { IkeEventFormController } from "./ike_event_form";
 
-const { onMounted, status, useState, useRef } = owl;
+import { onMounted, status, useState } from '@odoo/owl';
+
 
 const VIEW_IDS = {
     'ike.service.input.vial': 'service_input_vial_form_id',
@@ -19,6 +19,11 @@ const VIEW_IDS = {
 
 
 export class IkeEventScreenFormController extends IkeEventFormController {
+    static template = "ike_event.IkeEventScreenFormView";
+    static components = {
+        ...FormController.components,
+        View,
+    };
     setup() {
         // console.log("IkeEventScreenForm", this);
         super.setup();
@@ -396,12 +401,6 @@ export class IkeEventScreenFormController extends IkeEventFormController {
     //         console.error('Error guardando datos de sugerencia de vehículos', error);
     //     }
     // }
-};
-
-IkeEventScreenFormController.template = "ike_event.IkeEventScreenFormView";
-IkeEventScreenFormController.components = {
-    ...FormController.components,
-    View,
 };
 
 export const ikeEventScreenFormView = {

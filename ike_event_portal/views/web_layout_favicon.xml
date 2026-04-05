@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <template id="layout_favicon" inherit_id="web.layout" name="Company Favicon">
+            <xpath expr="//link[@rel='shortcut icon']" position="replace">
+                <link type="image/x-icon" rel="shortcut icon"
+                      t-attf-href="/web/image/res.company/#{request.env.company.id}/favicon"/>
+            </xpath>
+            <xpath expr="//title" position="replace">
+                <title t-esc="title or 'Ike 360'"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

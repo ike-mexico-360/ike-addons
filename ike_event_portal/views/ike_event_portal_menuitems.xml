@@ -54,14 +54,14 @@
                 <t t-set="placeholder_count" t-value="'ike_event_service_count'"/>
                 <t t-set="icon" t-value="'/ike_event_portal/static/src/assets/white_service.png'"/>
             </t>
-            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_admin')">
+            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_finance')">
                 <t t-set="title">Requests for Quotation</t>
                 <t t-set="url" t-value="'/my/rfq'"/>
                 <t t-set="text">Follow your Requests for Quotation</t>
                 <t t-set="placeholder_count" t-value="'rfq_count'"/>
                 <t t-set="icon" t-value="'/web/static/img/rfq.svg'"/>
             </t>
-            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_admin')">
+            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_finance')">
                 <t t-set="title">Our Orders</t>
                 <t t-set="url" t-value="'/my/purchase'"/>
                 <t t-set="text">Follow orders you have to fulfill</t>
@@ -77,7 +77,7 @@
         <xpath expr="//div[contains(@t-att-class, 'o_portal_index_card')]" position="attributes">
             <attribute name="t-att-class">
                 'o_portal_index_card ' +
-                ('' if force_show or config_card else 'd-none ') +
+                ('' if force_show or config_card else '') +
                 ('col-12 order-0' if show_count else 'col-md-4 order-2')
             </attribute>
         </xpath>

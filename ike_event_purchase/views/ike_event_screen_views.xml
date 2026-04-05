@@ -5,13 +5,13 @@
         <field name="model">ike.event</field>
         <field name="inherit_id" ref="ike_event.view_ike_event_screen_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//header" position="inside">
+            <xpath expr="//header/button[@name='action_open_duplicate_wizard']" position="after">
                 <button
-                    name="action_create_purchase_orders"
-                    string="Create Purchase Order"
+                    name="action_confirm_costs"
+                    string="Confirm Costs"
                     type="object"
                     class="btn-primary"
-                    invisible="stage_ref != 'completed' or x_purchase_ids_count &gt; 0"
+                    invisible="stage_ref != 'verifying' or x_purchase_ids_count &gt; 0"
                 />
                 <field name="x_purchase_ids_count" invisible="1"/>
             </xpath>

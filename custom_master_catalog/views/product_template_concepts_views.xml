@@ -73,6 +73,8 @@
                                 domain="x_product_concept_domain"/>
                                 <field name="x_additional_ok" readonly="disabled"/>
                                 <field name="x_cost_by_km" readonly="disabled"/>
+                                <field name="x_check_is_armor"/>
+                                <field name="x_armor_level" invisible="not x_check_is_armor"/>
                         </group>
                     </group>
                 </sheet>

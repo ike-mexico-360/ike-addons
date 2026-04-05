@@ -19,7 +19,8 @@
         'views/ike_event_portal_user_views.xml',
         'views/ike_event_portal_services.xml',
         'views/ike_event_public_views.xml',
-        'views/ike_event_views.xml'
+        'views/ike_event_views.xml',
+        'views/web_layout_favicon.xml'
     ],
     'assets': {
         'web.assets_frontend': [

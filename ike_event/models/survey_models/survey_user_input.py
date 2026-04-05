@@ -5,9 +5,6 @@ from markupsafe import Markup
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 
-import logging
-_logger = logging.getLogger(__name__)
-
 
 class SurveyUserInput(models.Model):
     _inherit = 'survey.user_input'

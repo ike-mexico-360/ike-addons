@@ -99,7 +99,11 @@ class CustomerPortal(PurchasePortal):
         csrf=False,
     )
     def x_ike_my_purchase_product_get_matrix_lines(self, product_id, event_id, supplier_id, **kw):
-        matrix_lines = request.env['ike.event'].sudo().browse(event_id)\
-            .get_supplier_product_matrix_lines(supplier_id, [product_id])
-        _logger.warning(f"matrix_lines: {matrix_lines}")
-        return {"success": True, "matrix_lines": matrix_lines}
+        try:
+            matrix_lines = request.env['ike.event'].sudo().browse(event_id)\
+                .get_supplier_product_matrix_lines(supplier_id, [product_id])
+            _logger.warning(f"matrix_lines: {matrix_lines}")
+            return {"success": True, "matrix_lines": matrix_lines.read(['cost'])}
+        except Exception as e:
+            _logger.error(f"Error at get_supplier_product_matrix_lines: {str(e)}")
+            return {"success": False, "message": str(e)}

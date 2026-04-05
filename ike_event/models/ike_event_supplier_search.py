@@ -30,7 +30,7 @@ class IkeEvent_Search(models.Model):
     supplier_search_number = fields.Integer(string='Search Number (Supplier)', default=0, copy=False)
     is_searching = fields.Boolean(default=False, copy=False)
     next_search_uuid = fields.Char(copy=False)
-    use_external_locations = fields.Boolean(default=False)
+    use_external_locations = fields.Boolean(default=True)
 
     # === SUPPLIER SEARCH ACTIONS === #
     def action_search_electronic_suppliers(self):
@@ -66,25 +66,45 @@ class IkeEvent_Search(models.Model):
     def _search_suppliers(self, assignation_type, priority=None):
         """ Function to assign """
         self.ensure_one()
+
         # Algorithm
-        service_suppliers, max_suppliers, max_distance_km = self._search_suppliers_algorithm(assignation_type, priority)
+        service_suppliers, max_suppliers, limit_max_distance_km = self._search_suppliers_algorithm(assignation_type, priority)
 
         if len(service_suppliers):
             # Supplier products with costs
             current_authorization_ids = self.authorization_ids.filtered(lambda x: x.supplier_number <= self.supplier_number)
             # Max Distance by Supplier
             supplier_max_distances = {}
+            max_distance_km: float = 0.0
             for item in service_suppliers:
+                if item['estimated_distance'] > max_distance_km:
+                    max_distance_km = item['estimated_distance']
                 if item['estimated_distance'] > supplier_max_distances.get(item['supplier_id'], 0):
                     supplier_max_distances[item['supplier_id']] = item['estimated_distance']
+
+            # Covered Amount
+            self._set_covered_amount(max_distance_km + (self.destination_distance or 0))
+
+            # Supplies
             for supplier in service_suppliers:
                 supplier_link_id = self.service_supplier_link_ids.filtered(
                     lambda x:
                         x.supplier_id.id == supplier['supplier_id']
                         and x.supplier_number == self.supplier_number,
                 )
+                # Distance km
+                total_distance_km = supplier_max_distances[supplier['supplier_id']] + (self.destination_distance or 0)
+                total_distance_km = int(-(-total_distance_km // 1))
+
+                # Supplier Link
                 if not supplier_link_id:
-                    supplier_products_data = self.get_supplier_products_data(supplier['supplier_id'])
+                    supplier_products_data = self.get_supplier_products_data(supplier['supplier_id'], total_distance_km)
+                    has_zero = any(
+                        d[2].get('product_id', None) and d[2]['base_unit_price'] == 0
+                        for d in supplier_products_data
+                    )
+                    if has_zero:
+                        supplier['ignore'] = True
                     supplier_link_id = self.env['ike.event.supplier.link'].create({
                         'event_id': self.id,
                         'supplier_id': supplier['supplier_id'],
@@ -108,10 +128,9 @@ class IkeEvent_Search(models.Model):
                 # Products cost by km
                 products_cost_by_km = supplier_link_id.supplier_product_ids.filtered(lambda x: x.product_id.x_cost_by_km)
                 if len(products_cost_by_km):
-                    total_distance_km = supplier_max_distances[supplier['supplier_id']] + (self.destination_distance or 0)
-                    total_distance_km = int(-(-total_distance_km // 1))
                     products_cost_by_km.with_context(ignore_authorization=True).quantity = total_distance_km
 
+                # Set link totals
                 supplier['supplier_link_id'] = supplier_link_id.id
                 supplier['estimated_cost'] = supplier_link_id.amount_concept_total
 
@@ -181,66 +200,6 @@ class IkeEvent_Search(models.Model):
                     self._search_suppliers('manual')
 
         self.broadcastSuppliersNotifications()
-
-    # === BROADCASTS === #
-    def broadcastSuppliersNotifications(self):
-        for rec in self:
-            service_supplier_ids = rec.service_supplier_ids.filtered(lambda x: x.search_number == rec.supplier_search_number)
-            if service_supplier_ids:
-                suppliers = service_supplier_ids.mapped('supplier_id.id')
-                for supplier in suppliers:
-                    channel_name = f'ike_channel_supplier_{str(supplier)}'
-                    line_ids = service_supplier_ids.filtered(lambda x: x.supplier_id.id == supplier)
-                    message = {
-                        'event_id': rec.id,
-                        'service_supplier_ids': [
-                            {
-                                'id': x.id,
-                                'state': x.state,
-                            }
-                            for x in line_ids
-                        ],
-                    }
-
-                    self.env['bus.bus']._sendone(
-                        target=channel_name,
-                        notification_type='ike_supplier_event_search',
-                        message=message,
-                    )
-
-    def broadcastSuppliersDeleted(self):
-        for rec in self:
-            if rec.service_supplier_ids:
-                suppliers = rec.service_supplier_ids.mapped('supplier_id.id')
-                for supplier in suppliers:
-                    channel_name = f'ike_channel_supplier_{str(supplier)}'
-                    line_ids = rec.service_supplier_ids.filtered(lambda x: x.supplier_id.id == supplier)
-                    message = {
-                        'event_id': rec.id,
-                        'service_supplier_ids': [
-                            {
-                                'id': x.id,
-                            }
-                            for x in line_ids
-                        ],
-                    }
-
-                    self.env['bus.bus']._sendone(
-                        target=channel_name,
-                        notification_type='ike_supplier_event_deleted',
-                        message=message,
-                    )
-
-    def broadcastEventReload(self, batch_timeout=5):
-        for rec in self:
-            channel_name = f'ike_channel_event_{str(rec.id)}'
-            event_batcher.add_event_notification(
-                self.env.cr.dbname,
-                channel_name,
-                'IKE_EVENT_RELOAD', {
-                    'id': rec.id,
-                    'state_ref': rec.stage_ref,
-                }, batch_timeout)
 
     # === ALGORITHM === #
     def _search_suppliers_algorithm(self, assignation_type, priority=None) -> tuple[list[dict], int, float]:
@@ -382,6 +341,8 @@ class IkeEvent_Search(models.Model):
                 if 'maniobras' in product_tag_names:
                     vehicles_domain.append(('x_maneuvers', '=', True))
 
+            _logger.info("IKE EVENT - DEBUG - 3.5: %s", vehicles_domain)
+
             # Search Vehicles
             service_vehicle_ids = self.env['fleet.vehicle'].search(vehicles_domain, order='x_center_id')
             service_vehicles_data = [{
@@ -458,6 +419,7 @@ class IkeEvent_Search(models.Model):
                     'assignation_type': assignation_type,
                     'name': f"{_('License Plate')}: {vehicle['license_plate']}",
                     'supplier_id': vehicle['x_partner_id'][0],
+                    'supplier_center_id': vehicle['x_center_id'][0],
                     'state': 'available',
                     'priority': vehicle['priority'],
                     'estimated_distance': vehicle['estimated_distance'],
@@ -528,18 +490,42 @@ class IkeEvent_Search(models.Model):
                 ,ga.priority
                 ,su.x_is_special_accounts
                 ,su.x_is_exclusive_accounts
+                ,gap.product_id
             FROM custom_geographical_area ga
             INNER JOIN res_partner su on su.id = ga.parent_id
+            INNER JOIN custom_geographical_area_product_rel gap on gap.geographical_area_id = ga.id
             WHERE
                 ga.municipality_id IN %s
                 AND NOT ga.disabled AND ga.active
                 AND NOT su.disabled AND su.active
+                AND gap.product_id = %s
         """
         supplier_centers_query += assignation_type_conf
-        self._cr.execute(supplier_centers_query, [tuple([x['id'] for x in municipalities_data])])
+
+        municipality_ids = tuple(x['id'] for x in municipalities_data)
+        self._cr.execute(supplier_centers_query, [municipality_ids, self.sub_service_id.id])
         supplier_centers_data = self._cr.dictfetchall()
 
         return supplier_centers_data
+
+    def _set_covered_amount(self, total_max_distance_km):
+        self.ensure_one()
+        membership_service_line_id = self.user_membership_id.membership_plan_id.product_line_ids.filtered(
+            lambda x: self.sub_service_id in x.sub_service_ids)
+        if membership_service_line_id and membership_service_line_id.limit_ids:
+            limit_id = membership_service_line_id.limit_ids.filtered(
+                lambda x:
+                    total_max_distance_km >= x.limit_coverage_min and total_max_distance_km <= x.limit_coverage_max
+                    and x.amount > self.covered_amount
+            )
+            if limit_id:
+                self.sudo().write({
+                    'covered_amount': limit_id[0].amount,
+                })
+                if self.authorized_amount < self.covered_amount:
+                    self.sudo().write({
+                        'authorized_amount': limit_id[0].amount,
+                    })
 
     def get_supplier_products_matrix_line_ids(
         self,
@@ -616,8 +602,8 @@ class IkeEvent_Search(models.Model):
                     ,st.ref AS supplier_status_ref
                 FROM custom_supplier_cost_matrix_line m
                 INNER JOIN custom_supplier_types_statuses st ON st.id = m.supplier_status_id
-                INNER JOIN vacation_schedule_cost_product_rel_id scr ON scr.custom_supplier_cost_product_id = m.id
-                INNER JOIN custom_supplier_cost_product_schedule sc ON scr.custom_supplier_cost_product_schedule_id = sc.id
+                LEFT JOIN vacation_schedule_cost_product_rel_id scr ON scr.custom_supplier_cost_product_id = m.id
+                LEFT JOIN custom_supplier_cost_product_schedule sc ON scr.custom_supplier_cost_product_schedule_id = sc.id
                 WHERE m.active AND NOT m.disabled
                     AND supplier_center_id = %s
                     AND m.subservice_id = %s
@@ -650,6 +636,8 @@ class IkeEvent_Search(models.Model):
             ) AS m ON TRUE
             WHERE p.id = ANY(%s)
         """
+        # query_result = query % params
+        # print(query_result)
 
         self.env.cr.execute(query, params)
         return self.env.cr.dictfetchall()
@@ -672,7 +660,7 @@ class IkeEvent_Search(models.Model):
 
         return self.env['custom.supplier.cost.matrix.line'].browse(concluded_matrix_ids + cancelled_matrix_ids)
 
-    def get_supplier_products_data(self, supplier_id: int):
+    def get_supplier_products_data(self, supplier_id: int, distance_km: int = 1):
         self.ensure_one()
 
         supplier_products_data = []
@@ -696,6 +684,7 @@ class IkeEvent_Search(models.Model):
         current_product_line_ids = self.service_product_ids.filtered(
             lambda x: x.estimated_quantity > 0 and x.supplier_number == self.supplier_number
         )
+
         # Matrix Lines
         matrix_cost_line_ids = self.get_supplier_product_matrix_lines(supplier_id, current_product_line_ids.mapped('product_id.id'))
 
@@ -703,29 +692,87 @@ class IkeEvent_Search(models.Model):
         for product_line_id in current_product_line_ids:
             if not product_line_id.product_id:
                 continue
-            cost_line_id = matrix_cost_line_ids.filtered(
-                lambda x:
-                    x.concept_id.id == product_line_id.product_id.id
-                    and x.supplier_status_id.ref == 'concluded')
-            cancel_cost_line_id = matrix_cost_line_ids.filtered(
-                lambda x:
-                    x.concept_id.id == product_line_id.product_id.id
-                    and x.supplier_status_id.ref == 'cancelled')
+            # Product Boom
+            product_ids = None
+            total_base_unit_price = 0
+            total_base_cancel_price = 0
+            tax_ids: list[int] = product_line_id.product_id.taxes_id.ids
+            if product_line_id.base:
+                product_ids = self._get_boom_product(product_line_id.product_id)
+                tax_ids = product_ids.mapped('taxes_id.id')
+                boom_matrix_cost_line_ids = self.get_supplier_product_matrix_lines(
+                    supplier_id,
+                    product_ids.ids
+                )
+                for product_id in product_ids:
+                    cost_line_id = boom_matrix_cost_line_ids.filtered(
+                        lambda x:
+                            x.concept_id.id == product_id.id
+                            and x.supplier_status_id.ref == 'concluded')
+                    cancel_cost_line_id = boom_matrix_cost_line_ids.filtered(
+                        lambda x:
+                            x.concept_id.id == product_id.id
+                            and x.supplier_status_id.ref == 'cancelled')
+
+                    base_unit_price = cost_line_id[0].cost if cost_line_id else 0
+                    base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
+                    quantity = distance_km if product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1)
+                    total_base_unit_price += (base_unit_price * quantity)
+                    total_base_cancel_price += base_cancel_price
+                    supplier_products_data.append(Command.create({
+                        'product_id': product_id.id,
+                        'base_unit_price': base_unit_price,
+                        'base_cancel_price': base_cancel_price,
+                        'unit_price': base_unit_price,
+                        'estimated_quantity': 1,
+                        'quantity': quantity,
+                        'uom_id': product_id.uom_id.id,
+                        'tax_ids': [Command.set(product_id.taxes_id.ids)],
+                        'sequence': product_line_id.sequence,
+                        'covered': product_line_id.covered,
+                        'cost_matrix_line_id': cost_line_id.id,
+                        'parent_product_id': product_line_id.product_id.id,
+                    }))
+            # Product Base/Additional
+            cost_line_id = None
+            cancel_cost_line_id = None
+            if not product_line_id.base:
+                cost_line_id = matrix_cost_line_ids.filtered(
+                    lambda x:
+                        x.concept_id.id == product_line_id.product_id.id
+                        and x.supplier_status_id.ref == 'concluded')
+                cancel_cost_line_id = matrix_cost_line_ids.filtered(
+                    lambda x:
+                        x.concept_id.id == product_line_id.product_id.id
+                        and x.supplier_status_id.ref == 'cancelled')
+                total_base_unit_price = cost_line_id[0].cost if cost_line_id else 0
+                total_base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
 
             supplier_products_data.append(Command.create({
                 'product_id': product_line_id.product_id.id,
-                'base_unit_price': cost_line_id[0].cost if cost_line_id else 0,
-                'base_cancel_price': cancel_cost_line_id[0].cost if cancel_cost_line_id else 0,
-                'unit_price': cost_line_id.cost,
+                'base_unit_price': total_base_unit_price,
+                'base_cancel_price': total_base_cancel_price,
+                'unit_price': total_base_unit_price,
                 'estimated_quantity': 1,
-                'quantity': (product_line_id.estimated_quantity or 1),
+                'quantity': distance_km if product_line_id.product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1),
                 'uom_id': product_line_id.uom_id.id,
-                'tax_ids': [Command.set(product_line_id.product_id.taxes_id.ids)],
+                'tax_ids': [Command.set(list(set(tax_ids)))],
                 'sequence': product_line_id.sequence,
                 'covered': product_line_id.covered,
+                'cost_matrix_line_id': cost_line_id.id if cost_line_id else None,
             }))
-
         return supplier_products_data
+
+    def _get_boom_product(self, product_id):
+        product_line_id = self.sub_service_id.concept_line_ids.filtered(
+            lambda x:
+                x.base_concept_id.id == product_id.id
+                and x.event_type_id.id == self.event_type_id.id
+        )
+        if product_line_id:
+            return product_line_id[0].concepts_ids
+
+        return product_id
 
     # === PROCESS METHODS === #
     def _process_suppliers_data(self, service_suppliers, assignation_type):
@@ -850,6 +897,66 @@ class IkeEvent_Search(models.Model):
             _logger.error(f"Error geolocation location server: {str(e)}")
         return vehicle_data
 
+    # === BROADCASTS === #
+    def broadcastSuppliersNotifications(self):
+        for rec in self:
+            service_supplier_ids = rec.service_supplier_ids.filtered(lambda x: x.search_number == rec.supplier_search_number)
+            if service_supplier_ids:
+                suppliers = service_supplier_ids.mapped('supplier_id.id')
+                for supplier in suppliers:
+                    channel_name = f'ike_channel_supplier_{str(supplier)}'
+                    line_ids = service_supplier_ids.filtered(lambda x: x.supplier_id.id == supplier)
+                    message = {
+                        'event_id': rec.id,
+                        'service_supplier_ids': [
+                            {
+                                'id': x.id,
+                                'state': x.state,
+                            }
+                            for x in line_ids
+                        ],
+                    }
+
+                    self.env['bus.bus']._sendone(
+                        target=channel_name,
+                        notification_type='ike_supplier_event_search',
+                        message=message,
+                    )
+
+    def broadcastSuppliersDeleted(self):
+        for rec in self:
+            if rec.service_supplier_ids:
+                suppliers = rec.service_supplier_ids.mapped('supplier_id.id')
+                for supplier in suppliers:
+                    channel_name = f'ike_channel_supplier_{str(supplier)}'
+                    line_ids = rec.service_supplier_ids.filtered(lambda x: x.supplier_id.id == supplier)
+                    message = {
+                        'event_id': rec.id,
+                        'service_supplier_ids': [
+                            {
+                                'id': x.id,
+                            }
+                            for x in line_ids
+                        ],
+                    }
+
+                    self.env['bus.bus']._sendone(
+                        target=channel_name,
+                        notification_type='ike_supplier_event_deleted',
+                        message=message,
+                    )
+
+    def broadcastEventReload(self, batch_timeout=5):
+        for rec in self:
+            channel_name = f'ike_channel_event_{str(rec.id)}'
+            event_batcher.add_event_notification(
+                self.env.cr.dbname,
+                channel_name,
+                'IKE_EVENT_RELOAD', {
+                    'id': rec.id,
+                    'state_ref': rec.stage_ref,
+                }, batch_timeout)
+
     # === ACTIONS EXTRA === #
     def action_open_add_manual_supplier_wizard(self):
         self.ensure_one()
@@ -874,40 +981,6 @@ class IkeEvent_Search(models.Model):
         last_line = self.env['ike.event.supplier'].search_read(
             [('event_id', '=', self.id)], ['sequence'], limit=1, order='sequence desc'
         )
-
-        sequence = 1
-        if last_line:
-            sequence = last_line[0]['sequence'] + 1
-
-        current_authorization_ids = self.authorization_ids.filtered(lambda x: x.supplier_number <= self.supplier_number)
-
-        supplier_link_id = self.service_supplier_link_ids.filtered(
-            lambda x:
-                x.supplier_id.id == supplier_id.id
-                and x.supplier_number == self.supplier_number,
-        )
-        # Supplier Link
-        if not supplier_link_id:
-            supplier_products_data = self.get_supplier_products_data(supplier_id.id)
-            supplier_link_id = self.env['ike.event.supplier.link'].create({
-                'event_id': self.id,
-                'supplier_id': supplier_id.id,
-                'supplier_number': self.supplier_number,
-                'supplier_product_ids': supplier_products_data,
-            })
-            # Set Authorization Data
-            authorized = (self.previous_amount + supplier_link_id.estimated_cost) <= self.authorized_amount
-            for product_id in supplier_link_id.supplier_product_ids:
-                if authorized:
-                    product_id.authorization_pending = False
-                    if current_authorization_ids:
-                        product_id.authorization_ids = [Command.create({
-                            'event_authorization_id': current_authorization_ids[0].id,
-                            'quantity': product_id.quantity,
-                            'unit_price': product_id.unit_price,
-                        })]
-                else:
-                    product_id.authorization_pending = True
 
         # Estimated Duration/Distance
         estimated_distance_km = 0.0
@@ -935,12 +1008,51 @@ class IkeEvent_Search(models.Model):
                 2
             )
             estimated_duration_m = self.get_estimated_duration(estimated_distance_km)
+        # Distance km
+        total_distance_km = estimated_distance_km + (self.destination_distance or 0)
+        total_distance_km = int(-(-total_distance_km // 1))
+
+        # Covered Amount
+        self._set_covered_amount(total_distance_km)
+
+        # Generals
+        sequence = 1
+        if last_line:
+            sequence = last_line[0]['sequence'] + 1
+
+        current_authorization_ids = self.authorization_ids.filtered(lambda x: x.supplier_number <= self.supplier_number)
+
+        supplier_link_id = self.service_supplier_link_ids.filtered(
+            lambda x:
+                x.supplier_id.id == supplier_id.id
+                and x.supplier_number == self.supplier_number,
+        )
+        # Supplier Link
+        if not supplier_link_id:
+            supplier_products_data = self.get_supplier_products_data(supplier_id.id, total_distance_km)
+            supplier_link_id = self.env['ike.event.supplier.link'].create({
+                'event_id': self.id,
+                'supplier_id': supplier_id.id,
+                'supplier_number': self.supplier_number,
+                'supplier_product_ids': supplier_products_data,
+            })
+            # Set Authorization Data
+            authorized = (self.previous_amount + supplier_link_id.estimated_cost) <= self.authorized_amount
+            for product_id in supplier_link_id.supplier_product_ids:
+                if authorized:
+                    product_id.authorization_pending = False
+                    if current_authorization_ids:
+                        product_id.authorization_ids = [Command.create({
+                            'event_authorization_id': current_authorization_ids[0].id,
+                            'quantity': product_id.quantity,
+                            'unit_price': product_id.unit_price,
+                        })]
+                else:
+                    product_id.authorization_pending = True
 
         # Products cost by km
         products_cost_by_km = supplier_link_id.supplier_product_ids.filtered(lambda x: x.product_id.x_cost_by_km)
         if len(products_cost_by_km):
-            total_distance_km = estimated_distance_km + (self.destination_distance or 0)
-            total_distance_km = int(-(-total_distance_km // 1))
             products_cost_by_km.with_context(ignore_authorization=True).quantity = total_distance_km
 
         # Create
@@ -951,6 +1063,7 @@ class IkeEvent_Search(models.Model):
             'is_manual': True,
             'name': f"{_('License Plate')}: {vehicle_id.license_plate}",
             'supplier_id': supplier_id.id,
+            'supplier_center_id': vehicle_id.x_center_id.id,
             'state': 'available',
             'priority': supplier_id.priority,
             'estimated_distance': estimated_distance_km,
@@ -967,7 +1080,9 @@ class IkeEvent_Search(models.Model):
 
     def action_delete_suppliers(self):
         self.ensure_one()
-        for supplier_id in self.service_supplier_ids:
+        for supplier_id in self.selected_supplier_ids.filtered(
+            lambda x: x.state not in ('cancel', 'cancel_event', 'cancel_supplier'),
+        ):
             supplier_id.truck_id.x_vehicle_service_state = 'available'
         self.broadcastSuppliersDeleted()
         self.service_supplier_ids.sudo().unlink()
@@ -997,6 +1112,7 @@ class IkeEvent_Search(models.Model):
 
         vehicles = [{
             'vehicle_id': vehicle_id.id,  # Keep real DB ID
+            'vehicle_ref': vehicle_id.x_vehicle_ref,
             'supplier_center_id': vehicle_id.x_center_id.id,
             'latitude': vehicle_id.x_latitude,
             'longitude': vehicle_id.x_longitude,
@@ -1091,6 +1207,7 @@ class IkeEvent_Search(models.Model):
                     )
         except Exception:
             return
+
         if is_searching:
             return
 
@@ -1138,7 +1255,7 @@ class IkeEvent_Search(models.Model):
     # === MULTI SUPPLIERS ACTIONS === #
     def action_add_multi_supplier_product_data(self):
         self.ensure_one()
-        numbers = self.selected_supplier_ids.mapped('supplier_number')
+        numbers = self.service_supplier_ids.mapped('supplier_number')
         self.supplier_number = max(numbers) + 1 if numbers else 1
         self.supplier_search_number += 1
         self.step_number = 2

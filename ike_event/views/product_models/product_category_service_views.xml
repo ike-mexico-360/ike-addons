@@ -14,6 +14,7 @@
                 <field name="x_input_res_model" readonly="disabled" groups="base.group_no_one"/>
                 <field name="x_icon" widget="icon_picker" readonly="disabled" groups="base.group_no_one"/>
                 <field name="x_ref" readonly="disabled" groups="base.group_no_one"/>
+                <field name="x_satisfaction_survey_id" readonly="disabled" groups="base.group_no_one"/>
             </xpath>
         </field>
     </record>

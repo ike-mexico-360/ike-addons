@@ -37,6 +37,7 @@
         "views/res_partner_supplier_views.xml",
         "views/res_partner_supplier_center_views.xml",
         "views/res_partner_company_ike_views.xml",
+        "views/res_users_views.xml",
         "views/fleet_vehicle_model_brand_views.xml",
         "views/fleet_vehicle_model_views.xml",
         "views/fleet_vehicle_views.xml",
@@ -74,6 +75,7 @@
         "wizard/custom_geographic_subservice_wizard.xml",
         "wizard/custom_model_confirm_wizard.xml",
         "views/res_partner_menus.xml",
+        "views/other/res_config_settings_views.xml",
         'security/cleanup_menus.xml',  # TODO Delete in sprint18 or after the client has updated their database with this code
     ],
     'assets': {

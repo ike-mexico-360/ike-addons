@@ -34,6 +34,16 @@ class IkeServiceInput(models.AbstractModel):
     def get_google_api_key(self):
         return self.env['ir.config_parameter'].sudo().get_param('base_geolocalize.google_map_api_key')
 
+    def write(self, vals):
+        # To Fix related and readonly=False. for some kind weird reason is and ike.event field o2m field set not an unlink
+        if 'service_product_ids' in vals:
+            to_delete = [x[1] for x in vals['service_product_ids'] if x[0] == 2]  # 2 == UNLINK
+            others = [x for x in vals['service_product_ids'] if x[0] != 2]
+            vals['service_product_ids'] = others
+            event_product_ids = self.env['ike.event.product'].browse(to_delete)
+            event_product_ids.unlink()
+        return super().write(vals)
+
 
 class IkeServiceInputModel(models.AbstractModel):
     _name = 'ike.service.input.model'

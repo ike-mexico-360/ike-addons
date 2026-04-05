@@ -17,12 +17,15 @@ class PurchaseOrderLine(models.Model):
         'custom.membership.plan.product.line', 'Concept Line', copy=False,
         help="Technical: Link to membership plan concept line")
 
+    # Original fields
+    price_unit = fields.Float(sub_tracking=True)
+    product_qty = fields.Float(sub_tracking=True)
     # Dispute
-    x_price_unit_dispute = fields.Float('Dispute Price', copy=False)
-    x_product_qty_dispute = fields.Float('Dispute Quantity', copy=False)
+    x_price_unit_dispute = fields.Float('Dispute Price', copy=False, sub_tracking=True)
+    x_product_qty_dispute = fields.Float('Dispute Quantity', copy=False, sub_tracking=True)
     # Approved
-    x_price_unit_approved = fields.Float('Approved Price', copy=False)
-    x_product_qty_approved = fields.Float('Approved Quantity', copy=False)
+    x_price_unit_approved = fields.Float('Approved Price', copy=False, sub_tracking=True)
+    x_product_qty_approved = fields.Float('Approved Quantity', copy=False, sub_tracking=True)
 
     def unlink(self):
         generated_lines_from_event = self.filtered(lambda line: line.x_generated_from_event)

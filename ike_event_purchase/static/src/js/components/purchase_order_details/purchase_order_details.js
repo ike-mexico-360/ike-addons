@@ -7,7 +7,6 @@ import { addLoadingEffect } from '@web/core/utils/ui';
 import { registry } from "@web/core/registry";
 import { rpc } from "@web/core/network/rpc";
 
-
 var new_line_id = 0;
 
 export class PurchaseOrderDetails extends Component {
@@ -29,6 +28,7 @@ export class PurchaseOrderDetails extends Component {
             uom_ids: [],
             product_ids: [],
             invalid_lines: new Set(),
+            highlight_change_reason: false,
         });
 
         // Cargar datos de la orden al iniciar el componente
@@ -65,6 +65,7 @@ export class PurchaseOrderDetails extends Component {
                         },
                         x_dispute_state: {},
                         x_dispute_approved: {},
+                        x_change_comments: {},
                         order_line: {
                             fields: {
                                 id: {},
@@ -98,7 +99,8 @@ export class PurchaseOrderDetails extends Component {
                                 x_price_unit_approved: {},
                                 x_product_qty_approved: {},
                             },
-                        }
+                        },
+                        x_dispute_iteration_count: {},
                     }
                 }
             );
@@ -151,6 +153,10 @@ export class PurchaseOrderDetails extends Component {
         }
     }
 
+    get requireChangeReason() {
+        return this.state.order_data.order_line.some((l) => l.x_has_dispute_changes === true);
+    }
+
     getProductImage(line) {
         const img = line.product_id?.image_1024;
         if (!img) return "/web/static/img/placeholder.png";
@@ -163,12 +169,16 @@ export class PurchaseOrderDetails extends Component {
             this.state.order_data.order_line = this.state.order_data.order_line.map((line) => {
                 const new_price = line.x_price_unit_dispute || line.price_unit;
                 const new_qty = line.x_product_qty_dispute || line.product_qty;
-                const changed = new_price !== line.price_unit || new_qty !== line.product_qty;
+
+                // Hubo cambio real si el campo dispute ya tenía un valor distinto al original
+                const changed = (line.x_price_unit_dispute && line.x_price_unit_dispute !== line.price_unit)
+                    || (line.x_product_qty_dispute && line.x_product_qty_dispute !== line.product_qty);
+
                 return {
                     ...line,
                     x_price_unit_dispute: new_price,
                     x_product_qty_dispute: new_qty,
-                    ...(changed && { changed_line: true, x_has_dispute_changes: true }),  // Para que se guarde el cambio en la base de datos
+                    // ...(changed && { x_has_dispute_changes: true }),  // Para que se guarde el cambio en la base de datos
                 };
             });
         }
@@ -183,6 +193,7 @@ export class PurchaseOrderDetails extends Component {
         const disableAcceptBtn = addLoadingEffect(ev.currentTarget);
         try {
             await this.orm.call('purchase.order', 'x_action_accept_prices', [this.props.order_id]);
+            await this.orm.call('purchase.order', 'action_done_ticket', [this.props.order_id]);
             await this._loadOrderData();
         } catch (e) {
             this.notification.add(_t("Error at accept prices: ") + (e?.data?.message || e.message), {
@@ -208,6 +219,7 @@ export class PurchaseOrderDetails extends Component {
             x_price_unit_approved: 0,
             x_product_qty_approved: 0,
             new_line: true,
+            x_has_dispute_changes: true,
         });
     }
 
@@ -229,12 +241,16 @@ export class PurchaseOrderDetails extends Component {
         return true;
     }
 
+    onchange_reasons = async (fieldName, value) => {
+        this.state.order_data.x_change_comments = value;
+    }
+
     // Al cambiar el valor de un campo de línea, actualizar el state.order_data.order_line
     onchange_disputed_value = async (lineId, fieldName, value) => {
         let extra = {};
-
-        // Establecer UoM configurado en el concepto
-        if (fieldName === 'product_id') {
+        const line = this.state.order_data.order_line.find((l) => l.id === lineId);
+        // Establecer UoM configurado en el concepto (solo para líneas nuevas)
+        if (line?.new_line && fieldName === 'product_id' && value) {
             const product = this.state.product_ids.find((p) => p.id === value);
             const event_id = this.state.order_data.x_event_id.id;
             const supplier_id = this.state.order_data.partner_id.id;
@@ -242,15 +258,21 @@ export class PurchaseOrderDetails extends Component {
                 event_id: event_id,
                 supplier_id: supplier_id,
             });
-            console.log("matrix_lines", matrix_lines);
+            let price_unit = 0;
+            let has_matrix_cost = false;
+            if (matrix_lines.success === true && matrix_lines.matrix_lines.length > 0) {
+                console.log("matrix_lines", matrix_lines.matrix_lines);
+                price_unit = matrix_lines.matrix_lines[0].cost;
+                has_matrix_cost = true;
+            }
             if (product?.uom_id) {
-                extra = { price_unit: product.standard_price, product_uom: product.uom_id.id, product_uom_name: product.uom_id.display_name };
+                extra = { price_unit: price_unit, has_matrix_cost: has_matrix_cost, product_uom: product.uom_id.id, product_uom_name: product.uom_id.display_name };
             }
         }
 
         this.state.order_data.order_line = this.state.order_data.order_line.map((l) =>
             l.id === lineId
-                ? { ...l, [fieldName]: value, ...extra, changed_line: true, x_has_dispute_changes: true }
+                ? { ...l, [fieldName]: value, ...extra, x_has_dispute_changes: true }
                 : l
         );
         this._validate_field(lineId, fieldName, value);
@@ -258,8 +280,15 @@ export class PurchaseOrderDetails extends Component {
 
     // Funcionalidad del botón enviar disputa
     send_dispute = async (ev) => {
+        if (this.requireChangeReason && !(this.state.order_data.x_change_comments || '').trim()) {
+            this.notification.add(_t("You must specify a reason for the change"), {
+                type: "warning"
+            });
+            this.state.highlight_change_reason = true;
+            return;
+        }
+        this.state.highlight_change_reason = false;
         const disableBtn = addLoadingEffect(ev.currentTarget);
-
         this.state.invalid_lines = new Set();
         const order_line = this.state.order_data.order_line;
         const dispute_fields = ['x_price_unit_dispute', 'x_product_qty_dispute'];
@@ -304,9 +333,9 @@ export class PurchaseOrderDetails extends Component {
             const vals = {
                 x_price_unit_dispute: line.x_price_unit_dispute,
                 x_product_qty_dispute: line.x_product_qty_dispute,
-                // Establecer los campos aprobados igual a la disputa por default
-                x_price_unit_approved: line.x_price_unit_dispute,
-                x_product_qty_approved: line.x_product_qty_dispute,
+                // Establecer los campos aprobados igual a los campos originales
+                x_price_unit_approved: line.price_unit,
+                x_product_qty_approved: line.product_qty,
                 x_has_dispute_changes: line.x_has_dispute_changes || false,
             };
 
@@ -318,7 +347,7 @@ export class PurchaseOrderDetails extends Component {
                     price_unit: line.price_unit,
                     ...vals,
                 }]);
-            } else if (line.changed_line) {
+            } else {
                 commands.push([1, line.id, vals]);
             }
         }
@@ -330,6 +359,9 @@ export class PurchaseOrderDetails extends Component {
 
         try {
             await this.orm.write("purchase.order", [this.props.order_id], {
+                // Incrementar x_dispute_iteration_count en 1
+                x_dispute_iteration_count: this.state.order_data.x_dispute_iteration_count + 1,
+                x_change_comments: this.state.order_data.x_change_comments,
                 order_line: commands,
             });
             return true;

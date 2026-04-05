@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
     <template id="ike_event_purchase_purchase_order_portal_content" name="Purchase Order Portal Content" inherit_id="purchase.purchase_order_portal_content">
         <xpath expr="//h3[@id='details']" position="after">
             <owl-component
@@ -11,23 +10,31 @@
         <xpath expr="//div[hasclass('table-responsive')]/table" position="attributes">
             <attribute name="class">d-none</attribute>
         </xpath>
-
         <xpath expr="//table/thead/tr/th[4]" position="after">
             <th class="text-end">Dispute Price</th>
             <th class="text-end">Dispute Quantity</th>
             <th class="text-end">Approved Price</th>
             <th class="text-end">Approved Quantity</th>
         </xpath>
-
         <xpath expr="//tbody/t/tr/t/td[4]" position="after">
-            <td class="text-end"><span t-field="line.x_price_unit_dispute"/></td>
-            <td class="text-end"><span t-field="line.x_product_qty_dispute"/></td>
-            <td class="text-end"><span t-field="line.x_price_unit_approved"/></td>
-            <td class="text-end"><span t-field="line.x_product_qty_approved"/></td>
+            <td class="text-end">
+                <span t-field="line.x_price_unit_dispute"/>
+            </td>
+            <td class="text-end">
+                <span t-field="line.x_product_qty_dispute"/>
+            </td>
+            <td class="text-end">
+                <span t-field="line.x_price_unit_approved"/>
+            </td>
+            <td class="text-end">
+                <span t-field="line.x_product_qty_approved"/>
+            </td>
+        </xpath>
+        <xpath expr="//div[@id='total']" position="attributes">
+            <attribute name="t-if" />
         </xpath>
     </template>
-
-    <template id="ike_event_purchase_dispute_view" name="Purchase Order Portal Content Dispute">
+    <template id="ike_event_purchase_dispute_view" name="Purchase Order Portal Content Dispute" >
         <t t-call="portal.portal_layout">
             <owl-component
                 name="ike_event_purchase.purchase_order_dispute"
@@ -35,5 +42,45 @@
             />
         </t>
     </template>
-
+    <template id="ike_event_portal_my_purchase_orders" name="My Purchase Orders" inherit_id="purchase.portal_my_purchase_orders">
+        <xpath expr="//t[1]/t[4]" position="replace">
+            <t t-if="orders" t-call="portal.portal_table">
+                <thead>
+                    <tr class="active">
+                        <th id="order_name_header">
+                            <span class='d-none d-md-inline'>Purchase Order #</span>
+                            <span class='d-block d-md-none'>Ref.</span>
+                        </th>
+                        <th id="order_confirmation_header">
+                            <span class='d-none d-md-inline'>Confirmation Date</span>
+                            <span class='d-block d-md-none'>Confirmation</span>
+                        </th>
+                        <th id="order_total_header">Total</th>
+                    </tr>
+                </thead>
+                <t t-foreach="orders" t-as="order">
+                    <tr>
+                        <td id="order_name">
+                            <a t-att-href="order.get_portal_url()">
+                                <t t-esc="order.name"/>
+                            </a>
+                        </td>
+                        <td id="order_confirmation">
+                            <span t-field="order.date_approve" t-options="{'widget': 'date'}"/>&amp;nbsp;
+                            <span class='d-none d-md-inline' t-field="order.date_approve" t-options="{'time_only': True}"/>
+                        </td>
+                        <td id="order_total">
+                            <span t-field="order.amount_total"/>
+                        </td>
+                    </tr>
+                </t>
+            </t>
+        </xpath>
+    </template>
+    <template id="ike_event_portal_my_purchase_order" name="Purchase Order Detail" inherit_id="purchase.portal_my_purchase_order">
+        <xpath expr="//div[@id='purchase_order_communication']" position="replace">
+            <div id="purchase_order_communication" invisible="1">
+            </div>
+        </xpath>
+    </template>
 </odoo>
