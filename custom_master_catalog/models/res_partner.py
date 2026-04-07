@@ -10,7 +10,7 @@ from phonenumbers.phonenumberutil import NumberParseException
 # from datetime import datetime
 
 
-PARTNER_NAME_PATTER = r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s,\.]+$'
+PARTNER_NAME_PATTER = r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s,\.\(\)\-]+$'
 SUPPLIER_CENTER_NAME_PATTER = r'^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s,\.\(\)]+$'
 
 
@@ -108,18 +108,24 @@ class ResPartner(models.Model):
     @api.constrains('name', 'type')
     def _constrains_x_check_name(self):
         for rec in self:
-            if rec.type == "center":
-                pattern = SUPPLIER_CENTER_NAME_PATTER
-                error_message = (_(
-                    "El nombre no puede contener caracteres especiales. "
-                    "Solo se permiten letras, números, espacios, comas, puntos y paréntesis."
-                ))
-            else:
-                pattern = PARTNER_NAME_PATTER
-                error_message = (_(
-                    "El nombre no puede contener caracteres especiales. "
-                    "El nombre solo puede contener letras, números, espacios, comas y puntos."
-                ))
+            # if rec.type == "center":
+            #     pattern = SUPPLIER_CENTER_NAME_PATTER
+            #     error_message = (_(
+            #         "El nombre no puede contener caracteres especiales. "
+            #         "Solo se permiten letras, números, espacios, comas, puntos y paréntesis."
+            #     ))
+            # else:
+            #     pattern = PARTNER_NAME_PATTER
+            #     error_message = (_(
+            #         "El nombre no puede contener caracteres especiales. "
+            #         "El nombre solo puede contener letras, números, espacios, comas y puntos."
+            #     ))
+            # allow hyphen and parentheses in all res.partner records
+            pattern = PARTNER_NAME_PATTER
+            error_message = (_(
+                "El nombre no puede contener caracteres especiales. "
+                "Solo se permiten letras, números, espacios, comas, puntos, guión medio y paréntesis."
+            ))
             if not re.match(pattern, rec.name):
                 raise ValidationError(error_message)
 

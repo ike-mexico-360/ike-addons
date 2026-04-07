@@ -41,6 +41,8 @@
                 <field name="x_product_qty_approved" optional="show" column_invisible="not parent.x_event_id"/>
                 <field name="x_price_unit_approved" optional="show" column_invisible="not parent.x_event_id"/>
                 <field name="x_has_dispute_changes" column_invisible="1" readonly="1"/>
+                <field name="x_product_qty_event" optional="show" column_invisible="parent.state not in ('to_consolidate', 'consolidated')" readonly="1"/>
+                <field name="x_price_unit_event" optional="show" column_invisible="parent.state not in ('to_consolidate', 'consolidated')" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='fiscal_position_id']" position="after">
                 <field name="x_ref_sap" readonly="1" invisible="not x_event_id or state not in ('done', 'purchase')"/>

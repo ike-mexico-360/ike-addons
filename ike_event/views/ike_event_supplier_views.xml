@@ -55,11 +55,10 @@
                         force_save="1"/>
                 <field name="product_domain" column_invisible="1"/>
                 <field name="name" column_invisible="1"/>
-                <field name="supplier_number" string="Supplier" readonly="1"
+                <field name="supplier_number" string="Supplier" readonly="0"
                     force_save="1"/>
                 <field name="covered" column_invisible="0"/>
                 <field name="base" column_invisible="1" />
-                <field name="additional" column_invisible="1" />
                 <field name="mandatory" column_invisible="1"/>
                 <field name="uom_id" options="{'no_create': 1, 'no_open': 1}"/>
                 <field name="estimated_quantity" />
@@ -77,19 +76,25 @@
                     <create name="add_line_control" string="Add a Concept" />
                 </control>
                 <field name="event_supplier_link_id" column_invisible="1" />
-                <field name="product_domain" column_invisible="1" />
+                <field name="supplier_number" column_invisible="1" />
                 <field name="display_type" column_invisible="1" />
                 <field name="sequence" widget="handle" column_invisible="1" />
                 <field name="covered" column_invisible="1" />
                 <field name="base" column_invisible="1" />
-                <field name="additional" column_invisible="1" />
                 <field name="mandatory" column_invisible="1" />
-                <field name="product_id" required="1" widget="ike_label_section_and_note_field" domain="product_domain"
+                <field name="base_unit_price" column_invisible="1" />
+                <field name="base_cancel_price" column_invisible="1" />
+                <field name="product_id" required="1" widget="ike_label_section_and_note_field"
+                    domain="product_add_domain"
                     context="{
                             'edit': False,
                             'display_default_code': 0,
                             'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'
-                        }" options="{'no_create': 1, 'no_open': 1}" readonly="covered or display_type" />
+                        }"
+                    options="{'no_create': 1, 'no_open': 1}"
+                    readonly="covered or display_type"
+                    force_save="1"/>
+                <field name="product_add_domain" column_invisible="1" />
                 <field name="name" column_invisible="1" />
                 <field name="estimated_quantity" optional="hide"/>
                 <field name="quantity" />
@@ -133,6 +138,8 @@
                             'list_view_ref': 'ike_event.ike_event_supplier_product_detail_list_view',
                             'default_authorization_pending': True,
                             'default_is_manual': True,
+                            'default_supplier_number': supplier_number,
+                            'from_internal': True,
                         }"/>
                     <group class="oe_subtotal_footer oe_right">
                         <field name="amount_concept_subtotal"/>

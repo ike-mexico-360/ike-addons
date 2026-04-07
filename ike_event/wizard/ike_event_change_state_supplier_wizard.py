@@ -220,7 +220,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             self.on_route_to_start_comment = False
         if (
             self.on_route_to_user_start_date
-            and self.supplier_id.assignation_date
+            and self.assignation_date
             and self.on_route_to_user_start_date <= self.assignation_date
         ):
             self.on_route_to_user_start_date = False
@@ -241,7 +241,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             self.on_route_to_end_comment = False
         if (
             self.on_route_to_user_end_date
-            and self.supplier_id.on_route_to_user_start_date
+            and self.on_route_to_user_start_date
             and self.on_route_to_user_end_date <= self.on_route_to_user_start_date
         ):
             self.on_route_to_user_end_date = False
@@ -262,7 +262,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             self.contacted_comment = False
         if (
             self.contacted_date
-            and self.supplier_id.on_route_to_user_end_date
+            and self.on_route_to_user_end_date
             and self.contacted_date <= self.on_route_to_user_end_date
         ):
             self.contacted_date = False
@@ -284,7 +284,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
 
         if (
             self.on_route_to_destination_start_date
-            and self.supplier_id.contacted_date
+            and self.contacted_date
             and self.on_route_to_destination_start_date <= self.contacted_date
         ):
             self.on_route_to_destination_start_date = False
@@ -305,7 +305,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             self.on_route_to_destination_end_comment = False
         if (
             self.on_route_to_destination_end_date
-            and self.supplier_id.on_route_to_destination_start_date
+            and self.on_route_to_destination_start_date
             and self.on_route_to_destination_end_date <= self.on_route_to_destination_start_date
         ):
             self.on_route_to_destination_end_date = False
@@ -326,11 +326,11 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             self.finalized_comment = False
         if (
             self.finalized_date
-            and self.supplier_id.on_route_to_destination_end_date
-            and self.finalized_date <= self.supplier_id.on_route_to_destination_end_date
+            and self.on_route_to_destination_end_date
+            and self.finalized_date <= self.on_route_to_destination_end_date
         ):
             self.finalized_date = False
-            date = fields.Datetime.context_timestamp(self, self.supplier_id.on_route_to_destination_end_date).strftime('%Y-%m-%d %H:%M:%S')
+            date = fields.Datetime.context_timestamp(self, self.on_route_to_destination_end_date).strftime('%Y-%m-%d %H:%M:%S')
             return {'warning': {
                 'title': _('Invalid date'),
                 'message': _(

@@ -63,7 +63,7 @@
                                         <t t-esc="truck.x_vehicle_type ? truck.x_vehicle_type[1] : 'N/A'"/>
                                     </td>
                                     <td>
-                                        <t t-esc="truck.x_vehicle_service_state ? truck.x_vehicle_service_state : 'N/A'"/>
+                                        <t t-esc="truck.x_vehicle_service_state ? truck.x_vehicle_service_state_label : 'N/A'"/>
                                     </td>
                                     <td>
                                         <button class="btn btn-primary" t-on-click.prevent="() => this.showDetails(truck.id)">Ver detalles</button>

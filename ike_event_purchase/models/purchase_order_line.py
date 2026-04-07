@@ -26,6 +26,9 @@ class PurchaseOrderLine(models.Model):
     # Approved
     x_price_unit_approved = fields.Float('Approved Price', copy=False, sub_tracking=True)
     x_product_qty_approved = fields.Float('Approved Quantity', copy=False, sub_tracking=True)
+    # Event values
+    x_price_unit_event = fields.Float('Event Price', related='x_supplier_product_id.base_unit_price')
+    x_product_qty_event = fields.Integer('Event Quantity', related='x_supplier_product_id.quantity')
 
     def unlink(self):
         generated_lines_from_event = self.filtered(lambda line: line.x_generated_from_event)

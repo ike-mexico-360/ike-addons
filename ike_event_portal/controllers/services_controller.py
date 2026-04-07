@@ -50,7 +50,7 @@ class PortalUserAccount(CustomerPortal):
         to avoid N+1 queries.
         """
         try:
-            supplier_lines = request.env["ike.event.supplier.public"].search(
+            supplier_lines = request.env["ike.event.supplier.public"].sudo().search(
                 [
                     ("supplier_id", "=", supplier_id),
                     ("state", "in", ["notified", "accepted", "assigned"]),
@@ -117,7 +117,7 @@ class PortalUserAccount(CustomerPortal):
                             ),
                             "sub_service_id_label": sub_service_name,
                             "stage_id_label": stage_name,
-                            "stage": supplier_line.stage_ref,
+                            "stage": supplier_line.stage_id.name if supplier_line.stage_id else ""
                         }
                     )
                 return {"success": True, "suppliers_events": results}
@@ -378,7 +378,7 @@ class PortalUserAccount(CustomerPortal):
         methods=["POST"],
         csrf=False,
     )
-    def create_concept(self, event_id, supplier_id, product_id, quantity, **kw):
+    def create_concept(self, event_id, supplier_id, product_id, quantity, supplier_link_id, **kw):
         """
         Create a new concept/product for an event supplier and apply onchange logic
         """
@@ -389,21 +389,11 @@ class PortalUserAccount(CustomerPortal):
                     "error": "event_id, supplier_id and product_id are required",
                 }
 
-            EventSupplierLink = request.env["ike.event.supplier.link"].sudo()
             EventSupplierProduct = request.env["ike.event.supplier.product"].sudo()
             Product = request.env["product.product"].sudo()
 
-            # Find the event_supplier_link
-            event_supplier_link = EventSupplierLink.search(
-                [
-                    ("event_id", "=", event_id),
-                    ("supplier_id", "=", supplier_id),
-                ],
-                limit=1,
-            )
-
-            if not event_supplier_link:
-                return {"success": False, "error": "Event supplier link not found"}
+            if not supplier_link_id:
+                return {"success": False, "error": "Supplier link ID is required"}
 
             # Get the product
             product = Product.browse(product_id)
@@ -413,7 +403,7 @@ class PortalUserAccount(CustomerPortal):
             # Create the supplier product record with basic fields
             new_concept = EventSupplierProduct.create(
                 {
-                    "event_supplier_link_id": event_supplier_link.id,
+                    "event_supplier_link_id": supplier_link_id,
                     "event_id": event_id,
                     "supplier_id": supplier_id,
                     "product_id": product_id,
@@ -427,13 +417,13 @@ class PortalUserAccount(CustomerPortal):
             new_concept._onchange_product_id()
 
             # Retrieve full record data
-            concept_data = request.env["ike.event.supplier.product"].search(
-                [
-                    ("id", "=", new_concept.id),
-                ],
-                limit=1,
-            )
-            concept_data._onchange_product_id()
+            # concept_data = request.env["ike.event.supplier.product"].search(
+            #     [
+            #         ("id", "=", new_concept.id),
+            #     ],
+            #     limit=1,
+            # )
+            # concept_data._onchange_product_id()
 
             _logger.info(
                 f"Created concept {new_concept.id} for event {event_id}, supplier {supplier_id}, product {product_id}"

@@ -13,8 +13,8 @@
         <xpath expr="//table/thead/tr/th[4]" position="after">
             <th class="text-end">Dispute Price</th>
             <th class="text-end">Dispute Quantity</th>
-            <th class="text-end">Approved Price</th>
             <th class="text-end">Approved Quantity</th>
+             <th class="text-end">Approved Price</th>
         </xpath>
         <xpath expr="//tbody/t/tr/t/td[4]" position="after">
             <td class="text-end">
@@ -24,10 +24,10 @@
                 <span t-field="line.x_product_qty_dispute"/>
             </td>
             <td class="text-end">
-                <span t-field="line.x_price_unit_approved"/>
+                <span t-field="line.x_product_qty_approved"/>
             </td>
             <td class="text-end">
-                <span t-field="line.x_product_qty_approved"/>
+                <span t-field="line.x_price_unit_approved"/>
             </td>
         </xpath>
         <xpath expr="//div[@id='total']" position="attributes">

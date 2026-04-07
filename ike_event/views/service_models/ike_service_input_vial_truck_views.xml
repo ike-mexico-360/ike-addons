@@ -198,56 +198,18 @@
                     </group>
                     <group>
                         <group string="Concepts" colspan="2" invisible="not sections.get('product_data')">
-                            <field name="supplier_number" invisible="1"/>
+                            <field name="event_supplier_number" invisible="0"/>
                             <field name="service_product_ids" widget="ike_section_and_note_field_o2m" nolabel="1" colspan="2"
                                     context="{
                                         'list_view_ref': 'ike_event.ike_event_product_list_view',
-                                        'default_supplier_number': supplier_number,
+                                        'default_supplier_number': event_supplier_number,
                                         'default_event_id': event_id,
+                                        'from_internal': True,
                                     }"
                                     options="{
                                         'field_columns': ['product_id'],
                                         'delete_condition_field': 'mandatory',
                                     }"/>
-                            <!-- <field name="service_product_ids" widget="ike_section_and_note_field_o2m" nolabel="1" colspan="2"
-                                context="{
-                                    'default_supplier_number': supplier_number,
-                                    'default_event_id': event_id
-                                }"
-                                options="{
-                                    'field_columns': ['product_id'],
-                                    'delete_condition_field': 'mandatory',
-                                }">
-                                <list editable="bottom">
-                                    <control>
-                                        <create name="add_line_control" string="Add a Concept" />
-                                    </control>
-                                    <field name="display_type" column_invisible="1" />
-                                    <field name="sequence" widget="handle" column_invisible="1" />
-
-                                    <field name="event_id" column_invisible="1" />
-                                    <field name="event_supplier_number" column_invisible="1" />
-
-                                    <field name="product_id" required="1"
-                                            widget="ike_label_section_and_note_field"
-                                            domain="product_domain"
-                                            context="{
-                                                'edit': 0,
-                                                'display_default_code': 0,
-                                                'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list',
-                                            }"
-                                            options="{'no_create': 1, 'no_open': 1}"
-                                            placeholder="Search a concept"
-                                            readonly="covered or display_type"/>
-                                    <field name="product_domain" column_invisible="1" />
-                                    <field name="name" column_invisible="1" />
-                                    <field name="supplier_number" string="Supplier"/>
-                                    <field name="covered" />
-                                    <field name="mandatory"/>
-                                    <field name="uom_id" options="{'no_create': 1, 'no_open': 1}"/>
-                                    <field name="estimated_quantity" />
-                                </list>
-                            </field> -->
                         </group>
                     </group>
                     <group invisible="not sections.get('user_sub_service_data')">

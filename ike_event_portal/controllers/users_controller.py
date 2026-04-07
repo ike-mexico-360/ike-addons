@@ -51,103 +51,6 @@ class PortalUserAccount(CustomerPortal):
         values.update({"users": users, "pager": pager, "page_name": "users_list"})
         return request.render("ike_event_portal.portal_ike_event_users_list", values)
 
-    # ------------------------------------------------------------
-    # CREATE NEW USER (FORM)
-    # ------------------------------------------------------------
-    @http.route(["/provider/portal/user/new"], type="http", auth="user", website=True)
-    def portal_new_user_form(self, **kw):
-        values = {
-            "page_name": "new_user",
-            "countries": request.env["res.country"].search([]),
-        }
-        return request.render("ike_event_portal.portal_ike_event_user_new", values)
-
-    @http.route(
-        ["/provider/portal/user/create"],
-        type="http",
-        auth="user",
-        website=True,
-        methods=["POST"],
-    )
-    def portal_create_system_user(self, **kw):
-        """
-        Creates a res.users record.
-        """
-        # 1. Extract basic data
-        name = kw.get("name")
-        email = kw.get("email")  # Login is usually the email
-        password = "P@ssw0rd123"  # You might want to generate a random password or get it from the form
-        role = kw.get("x_user_role")
-
-        # 2. Validate
-        if not name or not email or not password:
-            return request.render(
-                "ike_event_portal.portal_ike_event_user_new",
-                {"error_message": "Name, Email, and Password are required."},
-            )
-
-        # Map radio value to group XML IDs
-        role_group_xml = {
-            "admin": "ike_event_portal.custom_group_portal_admin",
-            "supervisor": "ike_event_portal.custom_group_portal_supervisor",
-            "operator": "ike_event_portal.custom_group_portal_operator",
-        }
-        role_xml_id = role_group_xml.get(role)
-
-        # Resolve group IDs
-        portal_group_id = request.env.ref("base.group_portal").id
-        role_group_id = request.env.ref(role_xml_id).id
-
-        # Assign groups: Portal + role group
-        groups = [portal_group_id, role_group_id]
-
-        try:
-            # 3. Create the User (res.users)
-            # Odoo will automatically create the related res.partner
-            new_user = (
-                request.env["res.users"]
-                .sudo()
-                .create(
-                    {
-                        "name": name,
-                        "login": email,
-                        "password": password,
-                        "email": email,
-                        # Assign a group (e.g., Portal User)
-                        "groups_id": [(6, 0, groups)],
-                        # Optional: Link to a specific company if needed
-                        # 'company_id': request.env.company.id,
-                    }
-                )
-            )
-
-            # Optional: Update extra partner fields if you have them in the form
-            new_user.partner_id.sudo().write(
-                {
-                    "phone": kw.get("phone"),
-                    "street": kw.get("street"),
-                    "city": kw.get("city"),
-                    "country_id": (
-                        int(kw.get("country_id")) if kw.get("country_id") else False
-                    ),
-                    "zip": kw.get("zip"),
-                    "street2": kw.get("street2"),
-                    "vat": kw.get("x_license_number"),
-                }
-            )
-
-            return request.redirect(f"/provider/portal/user/{new_user.partner_id.id}")
-
-        except Exception as e:
-            # Handle errors (e.g., login already exists)
-            return request.render(
-                "ike_event_portal.portal_ike_event_user_new",
-                {
-                    "error_message": f"Error creating user: {str(e)}",
-                    "default_values": kw,
-                },
-            )
-
     @http.route(
         ["/provider/portal/user/<int:user_id>"], type="http", auth="user", website=True
     )
@@ -183,16 +86,15 @@ class PortalUserAccount(CustomerPortal):
         Returns: {'success': True/False, 'user_id': id, 'message': str}
         """
         try:
-            print("AAAAAAAAAAAAAAAAAAAAAAAAAA")
             # 1. Extract and validate data
             name = kw.get("name")
             email = kw.get("email") or kw.get("login")
             password = kw.get("password", "P@ssw0rd123")
 
             user_type = kw.get("user_type")
-            if user_type == "administrator":
+            if user_type == "financial":
                 groups_id = request.env.ref(
-                    "ike_event_portal.custom_group_portal_admin"
+                    "ike_event_portal.custom_group_portal_finance"
                 ).id
             if user_type == "supervisor":
                 groups_id = request.env.ref(
@@ -203,7 +105,7 @@ class PortalUserAccount(CustomerPortal):
                     "ike_event_portal.custom_group_portal_operator"
                 ).id
 
-            _logger.info(f"Creating user with data: name={name}, email={email}")
+            _logger.info(f"Creating user with data: name={name}, email={email}, groups_id={groups_id}, user_type={user_type}")
 
             # Validate required fields
             if not name or not email:

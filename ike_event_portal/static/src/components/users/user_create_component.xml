@@ -52,9 +52,9 @@
                                 <div class="mb-3 mt-4">
                                     <label class="form-label small fw-bold text-uppercase text-muted mb-2">Tipo de Usuario</label>
                                     <div class="form-check mb-2">
-                                        <input class="form-check-input" type="radio" name="userType" id="typeAdmin"
-                                       value="admin" t-model="state.formData.user_type"/>
-                                        <label class="form-check-label fw-bold" for="typeAdmin">Administrador</label>
+                                        <input class="form-check-input" type="radio" name="userType" id="typeFinancial"
+                                       value="financial" t-model="state.formData.user_type"/>
+                                        <label class="form-check-label fw-bold" for="typeFinancial">Financieros (Administrativo)</label>
                                     </div>
                                     <div class="form-check mb-2">
                                         <input class="form-check-input" type="radio" name="userType" id="typeSupervisor"

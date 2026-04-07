@@ -114,13 +114,16 @@
                                                             </div>
                                                         </td>
                                                         <td class="py-3 px-3 text-end">
-                                                            $<t t-esc="formatCurrency(item.cost)"/>
+                                                            $
+                                                            <t t-esc="formatCurrency(item.cost)"/>
                                                         </td>
                                                         <td class="py-3 px-3 text-end">
-                                                            $<t t-esc="formatCurrency(item.iva)"/>
+                                                            $
+                                                            <t t-esc="formatCurrency(item.iva)"/>
                                                         </td>
                                                         <td class="py-3 px-3 text-end">
-                                                            $<t t-esc="formatCurrency(item.subtotal)"/>
+                                                            $
+                                                            <t t-esc="formatCurrency(item.subtotal)"/>
                                                         </td>
                                                     </tr>
                                                 </t>
@@ -161,55 +164,6 @@
                                     <div class="alert alert-info mb-0">
                                         <i class="fa fa-info-circle me-2"/>
                                         No hay costos registrados para este servicio.
-                                    </div>
-                                </t>
-                                <!-- Adding concept when no costs exist -->
-                                <t t-if="!state.serviceCostsData and !state.isLoadingCosts and state.isAddingConcept">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 class="fw-bold text-primary mb-0">
-                                            <i class="fa fa-calculator me-2"/>Costos del Servicio
-                                        </h6>
-                                    </div>
-                                    <!-- New concept form -->
-                                    <div class="card bg-success bg-opacity-10 border-success mb-3">
-                                        <div class="card-body py-3">
-                                            <div class="row g-2 align-items-center">
-                                                <div class="col-md-5">
-                                                    <label class="form-label small text-muted mb-1">Concepto</label>
-                                                    <select class="form-select form-select-sm"
-                                                            t-on-change="onNewConceptProductChange">
-                                                        <option value="">Seleccionar concepto...</option>
-                                                        <t t-foreach="state.availableProducts" t-as="product" t-key="product.id">
-                                                            <option t-att-value="product.id" t-esc="product.name"/>
-                                                        </t>
-                                                    </select>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label class="form-label small text-muted mb-1">Cantidad</label>
-                                                    <input type="number"
-                                                           class="form-control form-control-sm text-center"
-                                                           t-att-value="state.newConcept.quantity"
-                                                           min="1"
-                                                           step="1"
-                                                           t-on-change="(ev) => this.onNewConceptQuantityChange('quantity', ev)"/>
-                                                </div>
-                                                <div class="col-md-3 text-end">
-                                                    <label class="form-label small text-muted mb-1 d-block">&amp;nbsp;</label>
-                                                    <button type="button"
-                                                            class="btn btn-success btn-sm me-1"
-                                                            t-on-click="onSaveNewConcept"
-                                                            title="Guardar">
-                                                        <i class="fa fa-check me-1"/>Guardar
-                                                    </button>
-                                                    <button type="button"
-                                                            class="btn btn-outline-secondary btn-sm"
-                                                            t-on-click="onCancelAddConcept"
-                                                            title="Cancelar">
-                                                        <i class="fa fa-times me-1"/>Cancelar
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </div>
                                     </div>
                                 </t>
                             </div>

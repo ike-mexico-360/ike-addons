@@ -70,15 +70,39 @@ export class TrucksComponent extends Component {
         // ... (loadTrucks method remains the same)
         this.state.isLoading = true;
         const userLang = this.user.lang || 'es_MX';
+        let selectionMapping = {};
         try {
+            // 1. Call to obtain the translations of the Selection
+            const fieldsData = await this.orm.call('fleet.vehicle', 'fields_get', [['x_vehicle_service_state']], {
+                attributes: ['selection'],
+                context: { lang: userLang }
+            });
+
+            // We verify that the response has what we expect.
+            if (fieldsData && fieldsData.x_vehicle_service_state && fieldsData.x_vehicle_service_state.selection) {
+                fieldsData.x_vehicle_service_state.selection.forEach(([key, label]) => {
+                    selectionMapping[key] = label;
+                });
+            }
+            console.log(' selectionMapping...',  selectionMapping);
             const trucksData = await this.orm.searchRead(
                 'fleet.vehicle',
                 [],
                 ['name', 'license_plate', 'model_id', 'x_partner_id', 'vehicle_type', 'brand_id', 'driver_id', 'x_vehicle_service_state', 'x_vehicle_type'],
                 { context: { Lang: userLang }}
             );
-            console.log('Trucks...', trucksData.filter(x => x.x_partner_id && x.x_partner_id.includes(this.supplier_id)));
-            this.state.trucks = trucksData.filter(x => x.x_partner_id && x.x_partner_id.includes(this.supplier_id));
+
+            this.state.trucks = trucksData
+                .filter(x => x.x_partner_id && x.x_partner_id.includes(this.supplier_id))
+                .map(truck => {
+                    return {
+                        ...truck,
+                        x_vehicle_service_state_label: selectionMapping[truck.x_vehicle_service_state] || truck.x_vehicle_service_state
+                    };
+                });
+            console.log('Trucks...', this.state.trucks);
+            // console.log('Trucks...', trucksData.filter(x => x.x_partner_id && x.x_partner_id.includes(this.supplier_id)));
+            // this.state.trucks = trucksData.filter(x => x.x_partner_id && x.x_partner_id.includes(this.supplier_id));
         } catch (e) {
             console.error("Failed to load trucks:", e);
         } finally {

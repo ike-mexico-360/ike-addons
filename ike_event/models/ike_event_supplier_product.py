@@ -7,11 +7,12 @@ from odoo.exceptions import UserError, ValidationError
 class IkeEventProduct(models.Model):
     _name = 'ike.event.product'
     _description = 'Event Concept'
+    _order = 'sequence, id'
 
     event_id = fields.Many2one('ike.event', required=True)
     supplier_number = fields.Integer(default=1, required=True)
 
-    sequence = fields.Integer(default=500)
+    sequence = fields.Integer(default=5)
     name = fields.Text(string='Description')
     product_id = fields.Many2one('product.product', string='Concept')
     product_domain = fields.Binary(compute='_compute_product_domain')
@@ -23,7 +24,6 @@ class IkeEventProduct(models.Model):
         readonly=True)
     estimated_quantity = fields.Integer(default=1)
     base = fields.Boolean(default=False)
-    additional = fields.Boolean(default=True)
     covered = fields.Boolean(default=False)
     mandatory = fields.Boolean(help='Can not be removed', default=False)
     is_manual = fields.Boolean(default=False)
@@ -33,7 +33,34 @@ class IkeEventProduct(models.Model):
             ('line_note', "Note"),
         ], default=False)
 
-    event_supplier_number = fields.Integer(related='event_id.supplier_number', string='Event Supplier Number')
+    event_supplier_number = fields.Integer(related='event_id.supplier_number', string='Event Supplier Number', readonly=True)
+
+    # === ONCHANGES === #
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        if self.product_id:
+            self._set_fields_onchange_product_id()
+        else:
+            self.covered = False
+            self.mandatory = False
+            self.base = False
+
+    def _set_fields_onchange_product_id(self):
+        # Base/Covered/Mandatory
+        self.set_is_base()
+        self.set_is_covered()
+        if self.event_id._is_base_supplier():
+            self.mandatory = self.base
+
+        # Sequence
+        current_siblings = self.event_id.service_product_ids.filtered(
+            lambda x:
+                x.id != self.id and x._origin
+                and x.supplier_number == self.supplier_number
+                and not x.display_type
+        )
+        sequences = current_siblings.filtered(lambda x: x.covered == self.covered).mapped('sequence')
+        self.sequence = max(sequences, default=1 if self.covered else 1001) + 1
 
     # === COMPUTES === #
     @api.depends('product_id')
@@ -75,54 +102,46 @@ class IkeEventProduct(models.Model):
 
             rec.product_domain = domain
 
+    # === SET METHODS === #
+    def set_is_covered(self, no_update=False):
+        for rec in self:
+            if not rec.product_id or no_update and rec.covered:
+                continue
+            # Not supplier base then is not covered
+            if rec.event_id.base_supplier_number != rec.supplier_number:
+                continue
+
+            plan_product_ids = (
+                rec.event_id.user_membership_id.membership_plan_id
+                .product_line_ids.filtered(
+                    lambda x:
+                        x.service_id.id == rec.event_id.service_id.id
+                        and rec.event_id.sub_service_id.id in x.sub_service_ids.ids
+                ).mapped('detail_ids.product_id.id')
+            )
+            rec.covered = rec.product_id.id in plan_product_ids
+
+    def set_is_base(self, no_update=False):
+        for rec in self:
+            if not rec.product_id or no_update and rec.base:
+                continue
+            concept_line_id = rec.event_id.sub_service_id.concept_line_ids.filtered(
+                lambda x:
+                    not x.disabled
+                    and x.base_concept_id.id == rec.product_id.id
+                    and x.event_type_id.id == rec.event_id.event_type_id.id
+            )
+
+            rec.base = True if concept_line_id else False
+
     # === OVERRIDE === #
     @api.model_create_multi
     def create(self, vals_list):
-        for vals in vals_list:
-            if vals.get('event_id') and not vals.get('display_type'):
-                event_id = self.env['ike.event'].browse(vals['event_id'])
-
-                product_base = event_id.sub_service_id.concept_line_ids.filtered(
-                    lambda x: x.event_type_id == event_id.event_type_id
-                ).mapped('base_concept_id').ids
-
-                product_plan = (
-                    event_id.user_membership_id.membership_plan_id
-                    .product_line_ids.filtered(
-                        lambda x: x.service_id.id == event_id.service_id.id
-                    ).mapped('detail_ids.product_id').ids
-                )
-
-                # Base
-                if vals.get('product_id') in product_base:
-                    vals['base'] = True
-                    vals['covered'] = True
-                    vals['mandatory'] = True
-                # Plan covered
-                if vals.get('product_id') in product_plan:
-                    vals['covered'] = True
-
-                # Sequence
-                existing = event_id.service_product_ids.filtered(
-                    lambda x:
-                        x.supplier_number == vals.get('supplier_number', 1)
-                        and not x.display_type
-                )
-
-                if vals.get('covered'):
-                    covered_seqs = existing.filtered(
-                        lambda x: x.covered
-                    ).mapped('sequence')
-                    last_seq = max(covered_seqs) if covered_seqs else 1
-                    vals['sequence'] = min(last_seq + 1, 1000)
-                else:
-                    not_covered_seqs = existing.filtered(
-                        lambda x: not x.covered
-                    ).mapped('sequence')
-                    last_seq = max(not_covered_seqs) if not_covered_seqs else 1001
-                    vals['sequence'] = last_seq + 1
-
-        return super().create(vals_list)
+        res = super().create(vals_list)
+        if not self.env.context.get('from_internal', False):
+            res.set_is_base()
+            res.set_is_covered()
+        return res
 
 
 class IkeEventSupplierProduct(models.Model):
@@ -166,6 +185,32 @@ class IkeEventSupplierProduct(models.Model):
         string='Authorization')
     type_authorization_id = fields.Many2one(related='authorization_id.event_authorization_id.type_authorization_id', store=True)
     authorizer_name = fields.Char(related='authorization_id.event_authorization_id.authorizer', string='Authorized', store=True)
+
+    product_add_domain = fields.Binary(compute='_compute_product_add_domain')
+
+    # === ONCHANGES === #
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
+        if self.product_id:
+            self._set_fields_onchange_product_id()
+        else:
+            self.covered = False
+            self.mandatory = False
+            self.base = False
+            self.tax_ids = False
+            self.base_unit_price = 0
+            self.base_cancel_price = 0
+
+    def _set_fields_onchange_product_id(self):
+        # Covered/Base/Mandatory/Sequence
+        super()._set_fields_onchange_product_id()
+        # Prices
+        self.set_base_prices()
+        for rec in self:
+            # Taxes
+            rec.tax_ids = rec.product_id.taxes_id
+            # Unit Price
+            rec.unit_price = rec.base_unit_price
 
     # === COMPUTES === #
     @api.depends('quantity', 'unit_price', 'tax_ids')
@@ -212,20 +257,33 @@ class IkeEventSupplierProduct(models.Model):
             else:
                 rec.authorization_id = None
 
-    # === METHODS ONCHANGE === #
-    @api.onchange('product_id')
-    def _onchange_product_id(self):
+    @api.depends('product_id')
+    def _compute_product_add_domain(self):
         for rec in self:
-            if rec.product_id:
-                # Taxes
-                rec.tax_ids = rec.product_id.taxes_id
-                # Cost
-                base_unit_price, base_cancel_price = self.event_supplier_link_id.get_product_cost(rec.product_id.id)
-                rec.base_unit_price = base_unit_price
-                rec.base_cancel_price = base_cancel_price
-                rec.unit_price = base_unit_price
-            else:
-                rec.tax_ids = False
+            domain = [
+                ('active', '=', True),
+                ('disabled', '=', False),
+                ('x_additional_ok', '=', True),
+                '|',
+                ('x_apply_all_services_subservices', '=', True),
+                ('x_categ_id', 'in', [rec.event_id.service_id.id, False]),
+                '|',
+                ('x_product_id', 'in', [rec.event_id.sub_service_id.id, False]),
+                ('x_product_id', '=', False),
+            ]
+
+            if rec.event_id:
+                print(rec.event_supplier_link_id.event_id)
+                excluded = rec.event_supplier_link_id.supplier_product_ids.filtered(
+                    lambda x:
+                        x.id != rec.id
+                        and x.supplier_number == rec.supplier_number
+                ).mapped('product_id.id')
+
+                if excluded:
+                    domain.append(('id', 'not in', excluded))
+
+            rec.product_add_domain = domain
 
     # === ACTIONS === #
     def action_view_matrix_cost_lines(self):
@@ -260,35 +318,30 @@ class IkeEventSupplierProduct(models.Model):
             }
         }
 
+    # === SET METHODS === #
+    def set_base_prices(self):
+        for rec in self:
+            if not rec.product_id:
+                continue
+            base_unit_price, base_cancel_price = rec.event_supplier_link_id.get_product_cost(rec.product_id.id)
+            rec.base_unit_price = base_unit_price
+            rec.base_cancel_price = base_cancel_price
+
     # === OVERRIDE === #
     @api.model_create_multi
     def create(self, vals_list):
-        for vals in vals_list:
-            if not vals.get('event_id') and vals.get('event_supplier_link_id'):
-                link = self.env['ike.event.supplier.link'].browse(vals['event_supplier_link_id'])
-                vals['event_id'] = link.event_id.id
-
-            if not vals.get('display_type', None) and ('base_unit_price' not in vals or 'unit_price' not in vals):
-                event_supplier_link_id = self.env['ike.event.supplier.link'].sudo().browse(vals['event_supplier_link_id'])
-                base_unit_price, base_cancel_price = event_supplier_link_id.sudo().get_product_cost(vals['product_id'])
-                vals['base_unit_price'] = base_unit_price
-                vals['base_cancel_price'] = base_cancel_price
-
-                if vals.get('unit_price', None) in (None, 0) and base_unit_price:
-                    vals['unit_price'] = base_unit_price
-
-        return super().create(vals_list)
+        res = super().create(vals_list)
+        if not self.env.context.get('from_internal', False):
+            res.set_base_prices()
+            if not res.unit_price:
+                res.unit_price = res.base_unit_price
+        return res
 
     def write(self, vals):
-        if not self.env.context.get('ignore_authorization'):
-            quantity = vals.get('quantity', self.quantity)
-            unit_price = vals.get('unit_price', self.unit_price)
-            if quantity > self.quantity or unit_price > self.unit_price:
-                vals['authorization_pending'] = True
-        return super().write(vals)
+        if not vals.get('authorization_pending', False) and 'subtotal' in vals and vals['subtotal'] > self.subtotal:
+            vals['authorization_pending'] = True
 
-    def unlink(self):
-        return super().unlink()
+        return super().write(vals)
 
 
 class IkeEventSupplierProductAuthorization(models.Model):

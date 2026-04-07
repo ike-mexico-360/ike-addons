@@ -228,7 +228,7 @@
 
     <!-- Action custom.membership.plan -->
     <record id="action_custom_membership_plan" model="ir.actions.act_window">
-        <field name="name">Custom Membership Plan</field>
+        <field name="name">Custom Membership Plans</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">custom.membership.plan</field>
         <field name="view_mode">list,form</field>

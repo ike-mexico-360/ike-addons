@@ -318,7 +318,7 @@ class IkeEventSupplierSelection(models.Model):
                     line_ids = rec._notify_next_siblings(rec.assignation_type, rec.priority)
                     if not line_ids:
                         next_priority = int(rec.priority) - 1
-                        if next_priority >= 0:
+                        if next_priority >= 1:
                             # rec._notify_next_siblings(rec.assignation_type, str(next_priority))
                             next_uuid = uuid4()
                             rec.event_id.next_search_uuid = next_uuid
@@ -396,7 +396,10 @@ class IkeEventSupplierSelection(models.Model):
 
             # Vehicle State
             rec.truck_id.x_vehicle_service_state = 'available'
-        # ? ToImp: assign base concepts to next supplier
+
+            # Update next base supplier number
+            if rec.supplier_number == rec.event_id.base_supplier_number:
+                rec.event_id.base_supplier_number = rec.event_id.supplier_number + 1
         # Common
         self_filtered.cancel_date = fields.Datetime.now()
         self_filtered.state = state

@@ -223,12 +223,19 @@ class IkeEventSupplier(models.Model):
                         """
 
                 # Location section
-                location_fields = ['location_label', 'destination_label', 'destination_distance']
+                location_fields = ['location_label', 'destination_label', 'destination_distance', 'destination_duration']
                 location_record_fields = rec.event_id.fields_get(location_fields)
                 location_record_data = rec.event_id.read(location_fields)[0]
                 for field in location_fields:  # Location details
                     if field == 'destination_distance':  # Formatear distancia
                         location_record_data[field] = f"{round(location_record_data[field], 3)} km"
+                    if field == 'destination_duration':
+                        destination_duration_minutes, destination_duration_seconds =\
+                            self.decimal_minutes_to_time(location_record_data[field])
+                        location_record_fields[field] = {'string': _('Estimated Duration Destination')}
+
+                        location_record_data[field] = (
+                            _("%s minutes %s seconds") % (destination_duration_minutes, destination_duration_seconds))
                     event_summary_supplier_data += f"""
                         <div><span style='font-weight: bold;'>{location_record_fields[field]['string']}: </span>
                         <span>{location_record_data[field] or ''}</span></div>
@@ -237,20 +244,17 @@ class IkeEventSupplier(models.Model):
                 # Supplier section
                 event_summary_supplier_data += "<h3 class='mt-3'>%s</h3>" % _('Assigned supplier')
 
-                supplier_fields = ['supplier_id', 'assigned', 'estimated_duration', 'assignation_type', 'truck_id', 'truck_plate']
+                supplier_fields = [
+                    'supplier_id',
+                    'assigned',
+                    'estimated_distance',
+                    'estimated_duration',
+                    'assignation_type',
+                    'truck_id',
+                    'truck_plate'
+                ]
                 supplier_record_fields = rec.fields_get(supplier_fields)
                 supplier_record_data = rec.read(supplier_fields)[0]
-
-                # Estimated duration to destination
-                # Insertar clave 'estimated_duration_destination' después de 'estimated_duration' y calcular
-                fe_index = supplier_fields.index('estimated_duration') + 1
-                supplier_fields.insert(fe_index, 'estimated_duration_destination')
-                supplier_record_fields['estimated_duration_destination'] = {'string': _('Estimated Duration Destination')}
-                # Simular campo virtual
-                estimated_duration_destination_minutes, estimated_duration_destination_seconds =\
-                    self.decimal_minutes_to_time(rec.event_id.destination_duration)
-                supplier_record_data['estimated_duration_destination'] = (
-                    "%s minutes %s seconds" % (estimated_duration_destination_minutes, estimated_duration_destination_seconds))
 
                 if rec.acceptance_date and rec.event_id.supplier_search_date:
                     # Assignation Duration
@@ -286,6 +290,8 @@ class IkeEventSupplier(models.Model):
                             supplier_record_data[field] = ''
                     if field == 'assigned':  # Hack, cambiar etiqueta para que tome la traducción anterior
                         supplier_record_fields[field]['string'] = _('Operator')
+                    if field == 'estimated_distance':
+                        supplier_record_data[field] = f"{round(supplier_record_data[field], 3)} km"
                     if field == 'estimated_duration':
                         estimated_duration_minutes, estimated_duration_seconds =\
                             self.decimal_minutes_to_time(supplier_record_data[field])
@@ -447,7 +453,8 @@ class IkeEventSupplier(models.Model):
                 **self.env.context,
                 'create': False,
                 'edit': True,
-                'from_add_concept': self.selected is True or self.is_manual and self.state == 'available'
+                'from_add_concept': self.selected is True or self.is_manual and self.state == 'available',
+                'from_internal': True,
             },
             'target': 'new',
         }
@@ -464,6 +471,7 @@ class IkeEventSupplier(models.Model):
             'views': [(view_id, 'form')],
             'context': {
                 **self.env.context,
+                'from_internal': True,
             },
             'target': 'new',
         }

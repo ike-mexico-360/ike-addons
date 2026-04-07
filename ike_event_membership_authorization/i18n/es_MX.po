@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-19 14:46+0000\n"
-"PO-Revision-Date: 2026-03-19 14:46+0000\n"
+"POT-Creation-Date: 2026-04-06 23:03+0000\n"
+"PO-Revision-Date: 2026-04-06 23:03+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1154,6 +1154,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__authorizer_id
 msgid "Supervisor authorizer"
 msgstr "Supervisor atorizador"
+
+#. module: ike_event_membership_authorization
+#. odoo-python
+#: code:addons/ike_event_membership_authorization/wizard/ike_event_add_affiliation_user_wizard.py:0
+msgid "The phone number is already assigned to another user."
+msgstr "El número de teléfono ya esta asignado a otro usuario."
 
 #. module: ike_event_membership_authorization
 #. odoo-python

@@ -92,10 +92,9 @@ export class ServicesMainComponent extends Component {
             'ike.event.supplier.product',
             [
                 ['event_supplier_link_id', '=', supplier_link_id],
-                ['display_type', 'not in', ['line_section', 'line_note']],
-                ['parent_product_id', '=', false],
             ],
-            []
+            [],
+            { context: { lang: this.user.lang || 'es_MX' } }
         ));
         return await this.orm.searchRead(
             'ike.event.supplier.product',
@@ -104,7 +103,8 @@ export class ServicesMainComponent extends Component {
                 ['display_type', 'not in', ['line_section', 'line_note']],
                 ['parent_product_id', '=', false],
             ],
-            []
+            [],
+            { context: { lang: this.user.lang || 'es_MX' } }
         );
     }
 
@@ -746,6 +746,7 @@ export class ServicesMainComponent extends Component {
             this.state.link_supplier_id = event_supplier.supplier_link_id;
             this.state.isLoadingCosts = true;
             this.state.serviceCostsData = null;
+            console.log("Loading concepts for supplier link ID:", event_supplier.supplier_link_id);
             const rawCostsData = await this.loadConceptsByEventSupplierId(event_supplier.supplier_link_id);
             this.state.serviceCostsData = this.transformCostsData(rawCostsData);
 
@@ -919,7 +920,7 @@ export class ServicesMainComponent extends Component {
             });
             return;
         }
-
+        console.log("Saving new concept with data:", this.state.link_supplier_id);
         try {
             // Call backend endpoint to create concept with proper pricing
             const result = await rpc('/provider/portal/services/create_concept', {
@@ -927,6 +928,7 @@ export class ServicesMainComponent extends Component {
                 supplier_id: this.state.currentSupplierId,
                 product_id: this.state.newConcept.product_id,
                 quantity: this.state.newConcept.quantity,
+                supplier_link_id: this.state.link_supplier_id
             });
 
             if (!result.success) {
@@ -1134,7 +1136,6 @@ export class ServicesMainComponent extends Component {
         try {
             this.state.currentEventId = event_id;
             this.state.currentSupplierId = supplier_id;
-
             // Call backend to get products with proper domain
             const result = await rpc('/provider/portal/services/get_available_concepts', {
                 event_id: event_id,

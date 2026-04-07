@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-31 17:16+0000\n"
-"PO-Revision-Date: 2026-03-31 17:16+0000\n"
+"POT-Creation-Date: 2026-04-07 01:44+0000\n"
+"PO-Revision-Date: 2026-04-07 01:44+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -137,12 +137,6 @@ msgstr "Titular de la cuenta"
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_flow_detail__detail_type__action
 msgid "Action"
 msgstr "Acción"
-
-#. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
-msgid "Action \"%s\" not found on supplier model"
-msgstr "Acción \"%s\" no encontrada en el modelo del proveedor"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_needaction
@@ -554,6 +548,18 @@ msgid "Assigned supplier"
 msgstr "Proveedor asignado"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__ike_event_coordinator_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__ike_event_coordinator_ids
+msgid "Assigned to"
+msgstr "Asignado a"
+
+#. module: ike_event
+#: model:ir.actions.act_window,name:ike_event.action_assignment_wizard
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_assignment_wizard_view_form
+msgid "Assignment"
+msgstr "Asignación"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_assignment_type__sequence
 msgid "Assignment Order"
 msgstr "Orden de asignación"
@@ -562,6 +568,11 @@ msgstr "Orden de asignación"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_assignment_type__name
 msgid "Assignment Type"
 msgstr "Tipo de asignación"
+
+#. module: ike_event
+#: model:ir.model,name:ike_event.model_ike_event_assignment_wizard
+msgid "Assignment event wizard"
+msgstr "wizard asignación de evento"
 
 #. module: ike_event
 #: model:ike.event.stage,name:ike_event.ike_event_stage_completed
@@ -722,6 +733,7 @@ msgstr "No se puede eliminar"
 #. odoo-python
 #: code:addons/ike_event/models/ike_event.py:0
 #: code:addons/ike_event/models/ike_event_supplier_selection.py:0
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_assignment_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_change_state_supplier_wizard_form
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_duplicate_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
@@ -984,6 +996,7 @@ msgid "Configuration"
 msgstr "Configuración"
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_assignment_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_change_state_supplier_wizard_form
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_duplicate_wizard_view_form
 msgid "Confirm"
@@ -1081,6 +1094,11 @@ msgid "Control Panel"
 msgstr "Mesa de control"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__coordinator_domain
+msgid "Coordinator Domain"
+msgstr "Dominio del coordinador"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__event_cost
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__cost_price
 msgid "Cost"
@@ -1130,6 +1148,7 @@ msgstr "Monto cubierto"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__create_uid
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_authorization__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__create_uid
@@ -1167,6 +1186,7 @@ msgstr "Creado por"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__create_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_confirm_wizard__create_date
@@ -1383,6 +1403,7 @@ msgstr "Máscara de visualización"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__display_name
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_authorization__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__display_name
@@ -1936,6 +1957,16 @@ msgid "Events Of Period"
 msgstr "Eventos del período"
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_assignment_wizard_view_form
+msgid "Events assign"
+msgstr "Eventos asignados"
+
+#. module: ike_event
+#: model:ir.ui.menu,name:ike_event.ike_menu_event_event_assignment
+msgid "Events assignment"
+msgstr "Eventos asignación"
+
+#. module: ike_event
 #: model:ir.ui.menu,name:ike_event.ike_menu_event_event_authorization
 msgid "Events authorization"
 msgstr "Eventos autorización"
@@ -1946,9 +1977,20 @@ msgid "Events in capturing details"
 msgstr "Eventos en captura de detalles"
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_assignment_wizard_view_form
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__event_not_assign_ids
+msgid "Events not assigned"
+msgstr "Eventos no asignados"
+
+#. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
 msgid "Events searching for supplier"
 msgstr "Eventos en búsqueda de proveedores"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__event_assign_ids
+msgid "Events to assign"
+msgstr "Eventos para asignar"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__service_evidence_ids
@@ -2314,6 +2356,7 @@ msgstr "¿Cómo calificas el servicio vial?"
 #. odoo-javascript
 #: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_authorization__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__id
@@ -2695,6 +2738,7 @@ msgstr "Última etapa"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__write_uid
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_authorization__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__write_uid
@@ -2732,6 +2776,7 @@ msgstr "Última actualización por"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__write_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_authorization__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__write_date
@@ -3588,6 +3633,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__priority
 msgid "Priority"
 msgstr "Prioridad"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__product_add_domain
+msgid "Product Add Domain"
+msgstr "Dominio producto adicional"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_product__product_domain

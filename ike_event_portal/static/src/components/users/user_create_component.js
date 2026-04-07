@@ -52,8 +52,6 @@ export class UserCreateComponent extends Component {
 
             const [countries] = await Promise.all([countriesPromise]);
 
-            console.log("rrrrrrrrrrrrrrrrrrrrcountries", countries);
-
             this.state.countries = countries;
             const mexico = this.state.countries.find(c => c.name === 'Mexico' || c.name === 'México');
             if (mexico) {
@@ -115,7 +113,7 @@ export class UserCreateComponent extends Component {
 
             // Map the radio selection to the XML name suffix
             const roleXmlMap = {
-                'administrator': 'administrator',
+                'financial': 'financial',
                 'supervisor': 'supervisor',
                 'operator': 'operator',
             };

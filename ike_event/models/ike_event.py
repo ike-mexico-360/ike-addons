@@ -4,7 +4,7 @@ import json
 import logging
 import requests
 
-from odoo import models, fields, api, _
+from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.safe_eval import safe_eval
 from .other_models.ike_event_batcher import event_batcher
@@ -233,6 +233,16 @@ class IkeEvent(models.Model):
     @api.onchange('location_latitude', 'location_longitude', 'destination_latitude', 'destination_longitude')
     def _onchange_location(self):
         self.destination_route_change = True
+
+    @api.onchange('nu_name')
+    def _onchange_nu_name(self):
+        original_nu_name = self.user_id.x_decrypt_aes256(self.user_id.name)
+        if original_nu_name and self.nu_name and original_nu_name.replace(" ", "") != self.nu_name.replace(" ", ""):
+            self.user_by = 'by_other'
+            self.user_additional_name = self.nu_name
+        else:
+            self.user_by = 'by_id'
+            self.user_additional_name = ''
 
     # === COMPUTE === #
     def _compute_service_input_ref(self):
@@ -637,130 +647,92 @@ class IkeEvent(models.Model):
 
     def action_set_products_covered(self):
         """Algorithm to create service_product_ids"""
-
         for rec in self:
-            concept_ids = rec.service_product_ids.filtered(lambda x: x.supplier_number == rec.supplier_number)
-
+            # Current
+            concept_ids = rec.service_product_ids.filtered(
+                lambda x: x.supplier_number == rec.supplier_number or x.display_type
+            )
+            # Sections
             section_covered = concept_ids.filtered(
                 lambda p: p.display_type == 'line_section' and p.name == _('Concepts in coverage')
             )
             section_not_covered = concept_ids.filtered(
                 lambda p: p.display_type == 'line_section' and p.name == _('Concepts out of coverage')
             )
-
             if not section_covered:
                 section_covered = self.env['ike.event.product'].create({
                     'event_id': rec.id,
                     'name': _('Concepts in coverage'),
                     'display_type': 'line_section',
-                    'supplier_number': rec.supplier_number,
-                    'covered': True,
                     'mandatory': True,
                     'sequence': 1,
                 })
-            else:
-                section_covered.write({'sequence': 1, 'covered': True, 'mandatory': True})
-
             if not section_not_covered:
                 section_not_covered = self.env['ike.event.product'].create({
                     'event_id': rec.id,
                     'name': _('Concepts out of coverage'),
                     'display_type': 'line_section',
-                    'supplier_number': rec.supplier_number,
-                    'covered': True,
                     'mandatory': True,
                     'sequence': 1001,
                 })
-            else:
-                section_not_covered.write({'sequence': 1001, 'covered': True, 'mandatory': True})
 
-            membership_plan = rec.user_membership_id.membership_plan_id
+            # Base Supplier
+            if rec._is_base_supplier():
+                # Current Products
+                current_product_ids: set[int] = set(concept_ids.filtered(lambda x: x.product_id).mapped('product_id.id'))
+                # Subservice Products
+                subservice_product_ids: set[int] = set(rec.sub_service_id.concept_line_ids.filtered(
+                    lambda x: x.event_type_id == rec.event_type_id
+                ).mapped('base_concept_id.id'))
 
-            # ToDo: Implement algorithm or IA for products in coverage
-            # Plan Concepts
-            plan_product_ids = set(
-                membership_plan.product_line_ids.filtered(
-                    lambda x: x.service_id == rec.service_id and rec.sub_service_id in x.sub_service_ids
-                ).mapped('detail_ids.product_id.id')
-            )
-            # Subservice Concepts
-            concept_line_ids = rec.sub_service_id.concept_line_ids.filtered(
-                lambda x: x.event_type_id == rec.event_type_id
-            )
-            base_concept_ids = concept_line_ids.mapped('base_concept_id').ids
-            subservice_product_ids = set(base_concept_ids)
-
-            # Suggestion Concepts IA
-            ia_product_ids = set(rec.ia_suggestion_product_ids or [])
-
-            current_products = concept_ids.filtered(lambda p: not p.display_type)
-            current_product_ids = set(current_products.mapped('product_id.id'))
-
-            # 1. Add subservice concepts (always required)
-            products_to_add = subservice_product_ids - current_product_ids
-            if rec.supplier_number == 1:
+                # Add Base Products
+                products_to_add = subservice_product_ids - current_product_ids
                 for product_id in products_to_add:
-                    product = self.env['product.product'].browse(product_id)
-                    self.env['ike.event.product'].create({
+                    self.env['ike.event.product'].with_context(from_internal=True).create({
                         'event_id': rec.id,
                         'product_id': product_id,
-                        'uom_id': product.uom_id.id,
-                        'mandatory': True,  # Subservice always required
-                        'additional': False,
+                        'mandatory': True,
                         'base': True,
-                        'covered': True,
                         'supplier_number': rec.supplier_number,
                     })
 
-            # 2. Adding IA concepts compared to a coverage plan
-            products_ia_to_add = ia_product_ids - current_product_ids - subservice_product_ids
-            if rec.supplier_number == 1:
+                # Suggestion Products IA
+                ia_product_ids = set(rec.ia_suggestion_product_ids or [])
+
+                # Add IA Products
+                products_ia_to_add = ia_product_ids - current_product_ids - subservice_product_ids
                 for product_id in products_ia_to_add:
-                    product = self.env['product.product'].browse(product_id)
-                    self.env['ike.event.product'].create({
+                    self.env['ike.event.product'].with_context(from_internal=True).create({
                         'event_id': rec.id,
                         'product_id': product_id,
-                        'uom_id': product.uom_id.id,
-                        'additional': False,
-                        'base': False,
-                        'mandatory': False,
-                        'covered': product_id in plan_product_ids,  # True if it's on the coverage plan
                         'supplier_number': rec.supplier_number,
                     })
 
-            # 3. Update all products: covered=True if in the plan or subservice, False if not
-            for event_product in current_products:
-                is_subservice = event_product.product_id.id in subservice_product_ids
-                is_covered = is_subservice or event_product.product_id.id in plan_product_ids
+                product_ids = rec.service_product_ids.filtered(lambda x: x.supplier_number == rec.supplier_number)
+                product_ids.set_is_covered(no_update=True)
+                product_ids.set_is_base(no_update=True)
 
-                if event_product.covered != is_covered:
-                    event_product.write({'covered': is_covered, 'additional': event_product.additional})
+                concept_ids = rec.service_product_ids.filtered(
+                    lambda x: x.supplier_number == rec.supplier_number and not x.display_type
+                )
 
-                if event_product.mandatory != is_subservice:
-                    event_product.write({'mandatory': is_subservice, 'additional': event_product.additional})
+                covered_products = concept_ids.filtered(lambda p: p.covered).sorted('id')
 
-                if event_product.base != is_subservice:
-                    event_product.write({'base': is_subservice, 'additional': event_product.additional})
+                seq = 1
+                for prod in covered_products:
+                    prod.sequence = seq
+                    seq += 1
 
-            concept_ids = rec.service_product_ids.filtered(
-                lambda x: x.supplier_number == rec.supplier_number
-            )
+                not_covered_products = concept_ids.filtered(lambda p: not p.covered).sorted('id')
 
-            covered_products = concept_ids.filtered(
-                lambda p: p.covered and not p.display_type).sorted('id')
+                seq = 1001
+                for prod in not_covered_products:
+                    prod.sequence = seq
+                    seq += 1
 
-            seq = 2
-            for prod in covered_products:
-                prod.write({'sequence': seq})
-                seq += 1
-
-            not_covered_products = concept_ids.filtered(
-                lambda p: not p.covered and not p.display_type).sorted('id')
-
-            seq = 1002
-            for prod in not_covered_products:
-                prod.write({'sequence': seq})
-                seq += 1
+    def _is_base_supplier(self):
+        self.ensure_one()
+        return self.supplier_number == self.base_supplier_number
 
     def action_set_product_data(self):
         pass

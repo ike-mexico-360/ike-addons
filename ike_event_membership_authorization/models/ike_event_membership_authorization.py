@@ -347,6 +347,7 @@ class IkeEventMembershipAuthorization(models.Model):
             rec.write({
                 'state': 'authorized'
             })
+            rec.action_ike_event_reload()
         if self.check_is_event_commercial:
             return {
                 'type': 'ir.actions.act_window',

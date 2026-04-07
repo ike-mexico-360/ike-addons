@@ -92,6 +92,23 @@
         </field>
     </record>
 
+    <!-- View ike.event assignment View List -->
+    <record id="view_ike_event_assignment_list" model="ir.ui.view">
+        <field name="name">view.ike.event.assignment.list</field>
+        <field name="model">ike.event</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" duplicate="false" delete="false">
+                <field name="name"/>
+                <field name="ike_event_coordinator_id"/>
+                <field name="service_id"/>
+                <field name="sub_service_id"/>
+                <field name="event_type_id"/>
+                <field name="stage_id"/>
+            </list>
+        </field>
+    </record>
+
+
     <!-- View ike.event form -->
     <record id="view_ike_event_form" model="ir.ui.view">
         <field name="name">view.ike.event.form</field>
@@ -113,7 +130,7 @@
                             type="object" class="btn-danger"
                             context="{'ike_event_supplier_cancel': True}"
                             invisible="not id or stage_ref in ['completed', 'cancel', 'cancel_subsequently']"/>
-                    <button name="action_testing_reload" type="object" string="RELOAD"/>
+                    <button name="action_testing_reload" type="object" string="RELOAD" invisible="1"/>
                     <field name="stage_id" widget="statusbar_duration" options="{'clickable': 1, 'fold_field': 'fold'}"/>
                 </header>
                 <sheet>
@@ -277,10 +294,12 @@
                                 <field name="service_product_ids" widget="ike_section_and_note_field_o2m" nolabel="1" colspan="2"
                                     context="{
                                         'list_view_ref': 'ike_event.ike_event_product_list_view',
-                                        'default_supplier_number': supplier_number
+                                        'default_supplier_number': supplier_number,
+                                        'from_internal': True,
                                     }"
                                     options="{
                                         'field_columns': ['product_id'],
+                                        'delete_condition_field': 'mandatory',
                                     }"/>
                             </group>
                         </page>

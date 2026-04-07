@@ -101,34 +101,6 @@ class PurchaseOrder(models.Model):
                 )
         return result
 
-    # # - - - - - - - - - - - -  #
-    # #     Detect changes       #
-    # # - - - - - - - - - - - -  #
-    # def write(self, vals):
-    #     """ Open pop-up to confirm and detail changes """
-    #     watch_fields = [
-    #         'price_unit', 'product_qty', 'x_price_unit_dispute', 'x_product_qty_dispute',
-    #         'x_price_unit_approved', 'x_product_qty_approved'
-    #     ]
-    #     show_popup = False
-    #     if 'order_line' in vals:
-    #         for line in vals['order_line']:
-    #             for field in watch_fields:
-    #                 if field in line:
-    #                     show_popup = True
-    #     if show_popup:
-    #         return {
-    #             'type': 'ir.actions.act_window',
-    #             'view_mode': 'form',
-    #             'res_model': 'purchase.order',
-    #             'res_id': self.id,
-    #             'target': 'new',
-    #             'context': {
-    #                 'default_order_line': vals['order_line'],
-    #             },
-    #         }
-    #     return super().write(vals)
-
     # - - - - - - - - - - - - #
     #    Dispute workflow     #
     # - - - - - - - - - - - - #
@@ -159,7 +131,10 @@ class PurchaseOrder(models.Model):
                     'state': 'customer_replied',
                     'partner_id': self.partner_id.id,
                     'sh_purchase_order_ids': [(6, 0, [self.id])],
+                    'state': 'customer_replied',
                 })
+            # Cuando se mande la disputa, marcar en el ticket como "Proveedor respondió"
+            ticket_id.write({'state': 'customer_replied'})
 
     def x_get_dispute_url(self, confirm_type=None):
         """Create url for confirm or reject purchase dispute
@@ -178,11 +153,19 @@ class PurchaseOrder(models.Model):
         if self.x_dispute_state not in ('none', 'resolved'):
             raise UserError(_('There is a dispute on this order.'))
 
-        for line in self.order_line:
-            line.write({
-                'x_price_unit_approved': line.price_unit,
-                'x_product_qty_approved': line.product_qty,
-            })
+        # Ejecutar asignación solo cuando la iteración sea la primera
+        if self.x_dispute_iteration_count == 0:
+            for line in self.order_line:
+                line.write({
+                    'x_price_unit_approved': line.price_unit,
+                    'x_product_qty_approved': line.product_qty,
+                })
+        else:
+            for line in self.order_line:
+                line.write({
+                    'price_unit': line.x_price_unit_approved,
+                    'product_qty': line.x_product_qty_approved,
+                })
 
         self.x_action_start_consolidation()
 
@@ -320,11 +303,17 @@ class PurchaseOrder(models.Model):
             })
             compose_wizard.action_send_mail()
 
-    def action_done_ticket(self):
+    def x_action_done_ticket(self):
         """Done ticket"""
         self.ensure_one()
         for ticket in self.sh_purchase_ticket_ids:
             ticket.action_done()
+
+    def x_action_close_ticket(self):
+        """Close ticket"""
+        self.ensure_one()
+        for ticket in self.sh_purchase_ticket_ids:
+            ticket.action_closed()
 
     # - - - - - - - - - - - - - #
     #      Consolidation        #

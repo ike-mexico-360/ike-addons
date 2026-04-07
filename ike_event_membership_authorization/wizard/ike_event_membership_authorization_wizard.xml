@@ -89,7 +89,15 @@
                 </group>
                 <group>
                     <group>
-                        <field name="image" widget="image" options="{'size': [200, 300], 'zoom': true}"/>
+                        <field name="image" 
+                            widget="image" options="{'size': [200, 300], 'zoom': true}"
+                            groups="!custom_master_catalog.custom_group_commercial_supervisor"
+                            invisible="check_commercial_authorization"
+                            required="not check_commercial_authorization"/>
+                        <field name="image" 
+                            widget="image" options="{'size': [200, 300], 'zoom': true}"
+                            groups="!base.group_system,!custom_master_catalog.custom_group_event_cabin_supervisor,!custom_master_catalog.custom_group_event_coordinator"
+                            required="check_commercial_authorization"/>
                     </group>
                 </group>
                 <footer>

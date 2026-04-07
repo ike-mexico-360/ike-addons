@@ -16,6 +16,7 @@ class ResPartnerSupplierUsersRel(models.Model):
             ('operator', 'Operator'),
             ('supervisor', 'Supervisor'),
             ('administrator', 'Administrator'),
+            ('financial', 'Financial')
         ], string='User Type', required=True, default='operator')
     center_of_attention_id = fields.Many2one(
         'res.partner', string='Center of Attention', ondelete='cascade', tracking=True, required=True, copy=True)

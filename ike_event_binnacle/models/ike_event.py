@@ -238,10 +238,10 @@ class IkeEvent(models.Model):
         }
 
     # Search Supplier
-    def _process_suppliers_data(self, service_suppliers, assignation_type):
-        result = super()._process_suppliers_data(service_suppliers, assignation_type)
+    def _process_suppliers_data(self, service_suppliers, assignation_type, priority=None):
+        result = super()._process_suppliers_data(service_suppliers, assignation_type, priority)
         for rec in self:
-            self._create_message_binnacle([
+            self.with_context(search_priority=priority)._create_message_binnacle([
                 "ike_event_binnacle.ike_binnacle_stage_5_6"
             ])
         return result
@@ -449,6 +449,28 @@ class IkeEventSupplier(models.Model):
             )._create_message_binnacle([
                 "ike_event_binnacle.ike_binnacle_stage_11_1"
             ])
+            return result
+
+    def action_notify_operator(self):
+        result = super().action_notify_operator()
+        for rec in self:
+            rec.event_id.with_context(
+                supplier_id=rec.supplier_id.id,
+                truck_id=rec.truck_id.id
+            )._create_message_binnacle([
+                "ike_event_binnacle.ike_binnacle_stage_11_1"
+            ])
+        return result
+
+    class IkeEventSupplierPublic(models.Model):
+        _inherit = 'ike.event.supplier.public'
+
+        def action_supplier_cancel(self, cancel_reason_id=None, reason_text=None):
+            result = super().action_supplier_cancel(cancel_reason_id, reason_text)
+            for rec in self:
+                rec.event_id._create_message_binnacle([
+                    "ike_event_binnacle.ike_binnacle_stage_8_3"
+                ])
             return result
 
     class IkeEventSupplierLink(models.Model):

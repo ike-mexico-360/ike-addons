@@ -53,11 +53,11 @@ class ShHelpdeskTicket(models.Model):
                 email_formatted = tools.formataddr((self.team_id.name or u"False", email))
 
                 # Search for a mail server with the same SMTP user as the team's alias email
-                mail_server_id = self.env['ir.mail_server'].search([('smtp_user', '=', email)], limit=1)
+                mail_server_id = self.env['ir.mail_server'].sudo().search([('smtp_user', '=', email)], limit=1)
 
                 # If no mail server is found, use the first active mail server
                 if not mail_server_id:
-                    mail_server_id = self.env['ir.mail_server'].search([('active', '=', True), ('sequence', '>', 0)], order="sequence", limit=1)
+                    mail_server_id = self.env['ir.mail_server'].sudo().search([('active', '=', True), ('sequence', '>', 0)], order="sequence", limit=1)
 
                     # Update the result with the email_from and mail_server_id
                 if mail_server_id:

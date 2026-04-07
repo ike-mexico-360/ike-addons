@@ -192,8 +192,13 @@ export class PurchaseOrderDetails extends Component {
     accept_prices = async (ev) => {
         const disableAcceptBtn = addLoadingEffect(ev.currentTarget);
         try {
+            // Aceptar los precios aprobados
             await this.orm.call('purchase.order', 'x_action_accept_prices', [this.props.order_id]);
-            await this.orm.call('purchase.order', 'action_done_ticket', [this.props.order_id]);
+            // Marcar ticket como hecho
+            await this.orm.call('purchase.order', 'x_action_done_ticket', [this.props.order_id]);
+            // Cerrar ticket
+            await this.orm.call('purchase.order', 'x_action_close_ticket', [this.props.order_id]);
+            // Actualizar datos de la orden
             await this._loadOrderData();
         } catch (e) {
             this.notification.add(_t("Error at accept prices: ") + (e?.data?.message || e.message), {
@@ -328,16 +333,20 @@ export class PurchaseOrderDetails extends Component {
     // Guardar los cambios e la base de datos
     _saveDispute = async (order_line) => {
         const commands = [];
+        const iterationCount = this.state.order_data.x_dispute_iteration_count;
 
         for (const line of order_line) {
             const vals = {
                 x_price_unit_dispute: line.x_price_unit_dispute,
                 x_product_qty_dispute: line.x_product_qty_dispute,
-                // Establecer los campos aprobados igual a los campos originales
-                x_price_unit_approved: line.price_unit,
-                x_product_qty_approved: line.product_qty,
                 x_has_dispute_changes: line.x_has_dispute_changes || false,
             };
+
+            // Establecer los campos aprobados igual a los campos originales, solo en la primer iteración
+            if (iterationCount === 0) {
+                vals.x_price_unit_approved = line.price_unit;
+                vals.x_product_qty_approved = line.product_qty;
+            }
 
             if (line.new_line) {
                 commands.push([0, 0, {

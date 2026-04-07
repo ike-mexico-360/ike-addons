@@ -28,6 +28,7 @@ class IkeEvent_Search(models.Model):
         ('manual_manual', 'Manual Added'),
     ], default='electronic', string="Search Type (Supplier)", copy=False)
     supplier_search_number = fields.Integer(string='Search Number (Supplier)', default=0, copy=False)
+    base_supplier_number = fields.Integer(default=1, copy=False)
     is_searching = fields.Boolean(default=False, copy=False)
     next_search_uuid = fields.Char(copy=False)
     use_external_locations = fields.Boolean(default=True)
@@ -99,13 +100,16 @@ class IkeEvent_Search(models.Model):
                 # Supplier Link
                 if not supplier_link_id:
                     supplier_products_data = self.get_supplier_products_data(supplier['supplier_id'], total_distance_km)
+                    for product_data in supplier_products_data:
+                        product_data[2]['supplier_number'] = self.supplier_number
+
                     has_zero = any(
                         d[2].get('product_id', None) and d[2]['base_unit_price'] == 0
                         for d in supplier_products_data
                     )
                     if has_zero:
                         supplier['ignore'] = True
-                    supplier_link_id = self.env['ike.event.supplier.link'].create({
+                    supplier_link_id = self.env['ike.event.supplier.link'].with_context(from_internal=True).create({
                         'event_id': self.id,
                         'supplier_id': supplier['supplier_id'],
                         'supplier_number': self.supplier_number,
@@ -126,7 +130,9 @@ class IkeEvent_Search(models.Model):
                             product_id.authorization_pending = True
 
                 # Products cost by km
-                products_cost_by_km = supplier_link_id.supplier_product_ids.filtered(lambda x: x.product_id.x_cost_by_km)
+                products_cost_by_km = supplier_link_id.supplier_product_ids.filtered(
+                    lambda x: x.product_id.x_cost_by_km and not x.parent_product_id
+                )
                 if len(products_cost_by_km):
                     products_cost_by_km.with_context(ignore_authorization=True).quantity = total_distance_km
 
@@ -172,7 +178,7 @@ class IkeEvent_Search(models.Model):
         self.supplier_search_type = assignation_type
 
         # Save Supplier Lines
-        self._process_suppliers_data(service_suppliers, assignation_type)
+        self._process_suppliers_data(service_suppliers, assignation_type, priority)
 
         # Check Lines
         line_ids = self.service_supplier_ids.filtered(
@@ -193,7 +199,7 @@ class IkeEvent_Search(models.Model):
                 self._search_suppliers('publication', '3')
             elif assignation_type == 'publication':
                 priority = int(priority or 0)
-                if priority > 0:
+                if priority > 1:
                     next_priority = str(priority - 1)
                     self._search_suppliers('publication', next_priority)
                 else:
@@ -631,7 +637,8 @@ class IkeEvent_Search(models.Model):
                     date_init DESC,
                     date_end,
                     mm.in_time DESC,
-                    mm.holiday_applies DESC
+                    mm.holiday_applies DESC,
+                    mm.id DESC
                 LIMIT 1
             ) AS m ON TRUE
             WHERE p.id = ANY(%s)
@@ -775,7 +782,7 @@ class IkeEvent_Search(models.Model):
         return product_id
 
     # === PROCESS METHODS === #
-    def _process_suppliers_data(self, service_suppliers, assignation_type):
+    def _process_suppliers_data(self, service_suppliers, assignation_type, priority=None):
         self.ensure_one()
 
         if len(service_suppliers) <= 0:
@@ -1030,7 +1037,7 @@ class IkeEvent_Search(models.Model):
         # Supplier Link
         if not supplier_link_id:
             supplier_products_data = self.get_supplier_products_data(supplier_id.id, total_distance_km)
-            supplier_link_id = self.env['ike.event.supplier.link'].create({
+            supplier_link_id = self.env['ike.event.supplier.link'].with_context(from_internal=True).create({
                 'event_id': self.id,
                 'supplier_id': supplier_id.id,
                 'supplier_number': self.supplier_number,
@@ -1051,7 +1058,9 @@ class IkeEvent_Search(models.Model):
                     product_id.authorization_pending = True
 
         # Products cost by km
-        products_cost_by_km = supplier_link_id.supplier_product_ids.filtered(lambda x: x.product_id.x_cost_by_km)
+        products_cost_by_km = supplier_link_id.supplier_product_ids.filtered(
+            lambda x: x.product_id.x_cost_by_km and not x.parent_product_id
+        )
         if len(products_cost_by_km):
             products_cost_by_km.with_context(ignore_authorization=True).quantity = total_distance_km
 
@@ -1259,6 +1268,8 @@ class IkeEvent_Search(models.Model):
         self.supplier_number = max(numbers) + 1 if numbers else 1
         self.supplier_search_number += 1
         self.step_number = 2
+        if self._is_base_supplier():
+            self.action_set_products_covered()
 
     def action_add_multi_supplier_supplier_data(self):
         self.ensure_one()

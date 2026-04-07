@@ -579,8 +579,8 @@ msgstr "Afiliaciones"
 #. module: custom_nu
 #: model:ir.actions.act_window,name:custom_nu.action_custom_membership_plan
 #: model:ir.model,name:custom_nu.model_custom_membership_plan
-msgid "Custom Membership Plan"
-msgstr "Plan de cobertura"
+msgid "Custom Membership Plans"
+msgstr "Planes de cobertura"
 
 #. module: custom_nu
 #: model:ir.model,name:custom_nu.model_custom_nus_address
@@ -1081,8 +1081,8 @@ msgstr "Afiliaciones"
 
 #. module: custom_nu
 #: model:ir.ui.menu,name:custom_nu.custom_membership_plan_menu
-msgid "Membership Plan"
-msgstr "Plan de cobertura"
+msgid "Membership Plans"
+msgstr "Planes de cobertura"
 
 #. module: custom_nu
 #: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_considerations_html_form

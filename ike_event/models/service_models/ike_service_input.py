@@ -12,7 +12,7 @@ class IkeServiceInput(models.AbstractModel):
     event_id = fields.Many2one('ike.event', required=True, ondelete='cascade', index=True)
     stage_ref = fields.Char(related='event_id.stage_ref')
     step_number = fields.Integer(related='event_id.step_number')
-    supplier_number = fields.Integer(related='event_id.supplier_number')
+    event_supplier_number = fields.Integer(related='event_id.supplier_number', readonly=True)
     sections = fields.Json(related='event_id.sections')
     service_id = fields.Many2one(related='event_id.service_id')
     sub_service_id = fields.Many2one(related='event_id.sub_service_id')

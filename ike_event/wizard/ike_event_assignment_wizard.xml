@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ike_event_assignment_wizard_view_form" model="ir.ui.view">
+        <field name="name">ike.event.assignment.wizard.view.form</field>
+        <field name="model">ike.event.assignment.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Assignment">
+                <group>
+                    <field name="coordinator_domain" invisible="1"/>
+                </group>
+                <notebook>
+                    <page string="Events not assigned">
+                        <group>
+                            <field name="ike_event_coordinator_id"
+                                required="1"
+                                domain="coordinator_domain"
+                                context="{
+                                    'search_view_ref': 'custom_master_catalog.custom_view_users_search',
+                                    'list_view_ref': 'custom_master_catalog.custom_view_users_list',
+                                }"/>
+                        </group>
+                        <field name="event_not_assign_ids"
+                            options="{'no_open': True, 'no_create': True}"
+                            context="{
+                                'list_view_ref': 'ike_event.view_ike_event_assignment_list',
+                                'search_view_ref': 'ike_event.view_ike_event_search'
+                            }"/>
+                    </page>
+                    <page string="Events assign">
+                        <group>
+                            <field name="ike_event_coordinator_ids"
+                                widget="many2many_tags"
+                                domain="coordinator_domain"
+                                options="{'no_open': True, 'no_create': True}"/>
+                        </group>
+                        <field name="event_assign_ids" nolabel="1" readonly="1"
+                            options="{'no_open': True, 'no_create': True}"
+                            context="{'list_view_ref': 'ike_event.view_ike_event_assignment_list'}"/>
+                    </page>
+                </notebook>
+
+                <footer>
+                    <button string="Confirm"
+                        name="action_assignment_event"
+                        type="object"
+                        class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_assignment_wizard" model="ir.actions.act_window">
+        <field name="name">Assignment</field>
+        <field name="res_model">ike.event.assignment.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

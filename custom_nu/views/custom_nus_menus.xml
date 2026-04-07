@@ -12,7 +12,7 @@
                 groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client"
                 sequence="15"/>
             <menuitem id="custom_membership_plan_menu"
-                name="Membership Plan"
+                name="Membership Plans"
                 action="action_custom_membership_plan"
                 groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client"
                 sequence="20"/>

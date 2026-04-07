@@ -23,4 +23,13 @@
     <record id="custom_master_catalog.custom_group_event_coordinator" model="res.groups">
         <field name="implied_ids" eval="[(4, ref('group_custom_nus_admin'))]"/>
     </record>
+    <record id="custom_master_catalog.custom_group_ccc_boss" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_custom_nus_user'))]"/>
+    </record>
+    <record id="custom_master_catalog.custom_group_ccc_coordinator" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_custom_nus_user'))]"/>
+    </record>
+    <record id="custom_master_catalog.custom_group_commercial_supervisor" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_custom_nus_user'))]"/>
+    </record>
 </odoo>

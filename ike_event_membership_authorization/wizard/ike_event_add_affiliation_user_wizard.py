@@ -1,4 +1,5 @@
 from odoo import models, fields, api, _
+from odoo.exceptions import ValidationError
 from datetime import datetime
 import re
 
@@ -76,12 +77,32 @@ class IkeEventAffiliationUser(models.TransientModel):
 
     # ONCHANGE
     @api.onchange('phone', 'phone_alternative')
-    def _onchange_phone_only_numbers(self):
+    def _onchange_phone_format(self):
         for field in ['phone', 'phone_alternative']:
             valor = self[field] or ''
             numbers = re.sub(r'[^0-9]', '', valor)
             if valor != numbers:
                 self[field] = numbers
+
+    @api.onchange('phone')
+    def _onchange_phone_search(self):
+        self.name = ''
+
+        if not self.phone:
+            return
+
+        phone_input = str(self.phone).strip()
+
+        nus_users = self.env['custom.nus'].search([
+            ('disabled', '=', False)
+        ])
+
+        for user in nus_users:
+            nu_phone = user.x_decrypt_aes256(user.phone)
+
+            if nu_phone and str(nu_phone).strip() == phone_input:
+                self.name = user.x_decrypt_aes256(user.name)
+                break
 
     @api.onchange('key_primary')
     def _onchange_key(self):
@@ -333,24 +354,33 @@ class IkeEventAffiliationUser(models.TransientModel):
         return
 
     def _find_existing_user(self):
-        """Buscar usuario existente por nombre o teléfono"""
-        if not self.name and not self.phone:
+        """Buscar usuario por teléfono y validar nombre"""
+        if not self.phone:
             return False
 
-        nus_users = self.env['custom.nus'].search([])
+        phone_input = str(self.phone).strip()
+        name_input = str(self.name).strip() if self.name else ''
+
+        nus_users = self.env['custom.nus'].search([
+            ('disabled', '=', False)
+        ])
 
         for user in nus_users:
-            name_decrypted = self._get_name(user.name)
             phone_decrypted = self._get_phone(user.phone)
 
-            if self.name and name_decrypted:
-                if str(name_decrypted).strip() == str(self.name).strip():
-                    return user
+            if not phone_decrypted:
+                continue
 
-            if self.phone and phone_decrypted:
-                if str(phone_decrypted).strip() == str(self.phone).strip():
-                    return user
+            if str(phone_decrypted).strip() == phone_input:
 
+                name_decrypted = user.x_decrypt_aes256(user.name)
+
+                if name_decrypted and str(name_decrypted).strip() != name_input:
+                    raise ValidationError(
+                        _("The phone number is already assigned to another user.")
+                    )
+
+                return user
         return False
 
     def _create_affiliation(self, user_id):
