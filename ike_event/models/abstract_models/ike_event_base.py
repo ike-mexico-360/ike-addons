@@ -23,7 +23,7 @@ class IkeEventBase(models.AbstractModel):
     parent_id = fields.Many2one('ike.event', readonly=True, copy=False)
 
     # Flow fields
-    stage_id = fields.Many2one('ike.event.stage', index=True, copy=False, tracking=True)
+    stage_id = fields.Many2one('ike.event.stage', index=True, copy=False)
     stage_ref = fields.Char(related='stage_id.ref', string='Stage Reference')
     step_number = fields.Integer(default=1, copy=False)
 

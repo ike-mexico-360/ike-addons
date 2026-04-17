@@ -43,6 +43,7 @@ export class IkeEventServiceAssistviewController extends FormController {
             if (message?.model) vals.model = message.model;
             if (message?.plate) vals.plate = message.plate;
             if (message?.color) vals.color = message.color;
+            if (message?.year) vals.year = message.year;
             if (message?.location) {
                 if (message.location.address) vals.address = message.location.address;
                 if (message.location.latitude) vals.latitude = String(message.location.latitude);

@@ -42,6 +42,20 @@
         </field>
     </record>
 
+    <record id="res_partner_supplier_directory_center_view_list" model="ir.ui.view">
+        <field name="name">res.partner.supplier.directory.center.view.list</field>
+        <field name="model">res.partner</field>
+        <field name="priority" eval="60"/>
+        <field name="arch" type="xml">
+            <list  create="0" delete="0" edit="0" duplicate="0" expand="1">
+                <field name="parent_id" string="Supplier"/>
+                <field name="name" string="Center of attention"/>
+                <field name="responsible_name"/>
+                <field name="phone"/>
+            </list>
+        </field>
+    </record>
+
     <!-- Form View -->
     <record id="res_partner_supplier_center_view_form" model="ir.ui.view">
         <field name="name">res.partner.supplier.center.view.form</field>
@@ -170,6 +184,82 @@
                                     <field name="users_domain" column_invisible="1"/>
                                 </list>
                             </field>
+                        </page>
+                        <page name="" string="Other phones">
+                            <group>
+                                <group>
+                                    <label for="x_phone_p1"/>
+                                    <div class="o_row">
+                                        <field name="x_phone_p1" widget="phone"
+                                            options="{'enable_sms': False, 'enable_call': False}"
+                                            readonly="disabled"
+                                        />
+                                        <field name="x_phone_p1_classification_id"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="Classification of telephone"
+                                            required="x_phone_p1 != False"
+                                            domain="[('disabled', '=', False)]"
+                                            readonly="disabled"
+                                        />
+                                    </div>
+                                    <label for="x_phone_p2"/>
+                                    <div class="o_row">
+                                        <field name="x_phone_p2" widget="phone"
+                                            options="{'enable_sms': False, 'enable_call': False}"
+                                            readonly="disabled"
+                                        />
+                                        <field name="x_phone_p2_classification_id"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="Classification of telephone"
+                                            required="x_phone_p2 != False"
+                                            domain="[('disabled', '=', False)]"
+                                            readonly="disabled"
+                                        />
+                                    </div>
+                                    <label for="x_phone_p3"/>
+                                    <div class="o_row">
+                                        <field name="x_phone_p3" widget="phone"
+                                            options="{'enable_sms': False, 'enable_call': False}"
+                                            readonly="disabled"
+                                        />
+                                        <field name="x_phone_p3_classification_id"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="Classification of telephone"
+                                            required="x_phone_p3 != False"
+                                            domain="[('disabled', '=', False)]"
+                                            readonly="disabled"
+                                        />
+                                    </div>
+                                    <label for="x_phone_p4"/>
+                                    <div class="o_row">
+                                        <field name="x_phone_p4" widget="phone"
+                                            options="{'enable_sms': False, 'enable_call': False}"
+                                            readonly="disabled"
+                                        />
+                                        <field name="x_phone_p4_classification_id"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="Classification of telephone"
+                                            required="x_phone_p4 != False"
+                                            domain="[('disabled', '=', False)]"
+                                            readonly="disabled"
+                                        />
+                                    </div>
+                                    <label for="x_phone_p5"/>
+                                    <div class="o_row">
+                                        <field name="x_phone_p5" widget="phone"
+                                            options="{'enable_sms': False, 'enable_call': False}"
+                                            readonly="disabled"
+                                        />
+                                        <field name="x_phone_p5_classification_id"
+                                            options="{'no_create': True, 'no_open': True}"
+                                            placeholder="Classification of telephone"
+                                            required="x_phone_p5 != False"
+                                            domain="[('disabled', '=', False)]"
+                                            readonly="disabled"
+                                        />
+                                    </div>
+                                </group>
+                            </group>
                         </page>
                     </notebook>
                 </sheet>

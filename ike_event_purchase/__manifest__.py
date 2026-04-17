@@ -16,6 +16,7 @@
         'custom_o2m_track',
     ],
     "data": [
+        'security/ir_module_security.xml',
         'security/ir.model.access.csv',
         "data/purchase_email_data.xml",
         "data/ike_event_purchase_data.xml",

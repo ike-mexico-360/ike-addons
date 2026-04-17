@@ -5,18 +5,18 @@
         parent="custom_master_catalog.res_partner_menu_suppliers"
         action="custom_supplier_upload_cost_matrix_configuration_action"
         name="Supplier Cost Matrix Configuration"
-        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_procurement"
+        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_procurement,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support"
         sequence="25"/>
 
     <menuitem id="custom_general_menu_root"
         name="General"
         parent="custom_master_catalog.configuration_menu_root"
-        groups="base.group_system,custom_master_catalog.custom_group_supplier_admin_system"
+        groups="base.group_system,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support"
         sequence="20">
         <menuitem id="custom_supplier_cost_product_schedule_menu"
             name="Opening Hours"
             action="custom_supplier_cost_product_schedule_action"
-            groups="base.group_system,custom_master_catalog.custom_group_supplier_admin_system"
+            groups="base.group_system,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support"
             sequence="5"/>
         <menuitem id="custom_supplier_cost_matrix_line_action_menu"
             name="Matrix Cost Confirmed"

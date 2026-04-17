@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="rule_purchase_order_portal_finance" model="ir.rule">
+        <field name="name">Portal Finance: Limited Supplier PO</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_finance'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">
+            [('partner_id', 'in',
+                user.env['res.partner.supplier_users.rel'].search([
+                    ('user_id', '=', user.id)
+                ]).mapped('supplier_id.id')
+            )]
+        </field>
+    </record>
+
+    <record id="rule_purchase_order_ccc_staff" model="ir.rule">
+        <field name="name">CCC Staff: Full Access (No Delete)</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="groups" eval="[
+            (4, ref('custom_master_catalog.custom_group_ccc_coordinator')),
+            (4, ref('custom_master_catalog.custom_group_ccc_analyst'))
+        ]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">[(1, '=', 1)]</field> </record>
+
+    <record id="rule_purchase_order_system_admin" model="ir.rule">
+        <field name="name">System Admin: Delete Power</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="rule_purchase_order_line_portal_finance" model="ir.rule">
+        <field name="name">Portal Finance: See assigned PO lines</field>
+        <field name="model_id" ref="purchase.model_purchase_order_line"/>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_finance'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">
+            [('order_id.partner_id', 'in',
+                user.env['res.partner.supplier_users.rel'].search([
+                    ('user_id', '=', user.id)
+                ]).mapped('supplier_id.id')
+            )]
+        </field>
+    </record>
+
+    <record id="rule_purchase_order_line_ccc_staff" model="ir.rule">
+        <field name="name">CCC Staff: Full Access PO Lines (No Delete)</field>
+        <field name="model_id" ref="purchase.model_purchase_order_line"/>
+        <field name="groups" eval="[
+            (4, ref('custom_master_catalog.custom_group_ccc_coordinator')),
+            (4, ref('custom_master_catalog.custom_group_ccc_analyst'))
+        ]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="rule_purchase_order_line_system_admin" model="ir.rule">
+        <field name="name">System Admin: Delete Power on PO Lines</field>
+        <field name="model_id" ref="purchase.model_purchase_order_line"/>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+</odoo>

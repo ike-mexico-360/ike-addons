@@ -549,5 +549,95 @@
             <field name="detail_type">summary_top</field>
             <field name="event_flow_id" ref="ike_event_flow_completed_1"/>
         </record>
+
+        <!-- Verifying 1 -->
+        <record id="ike_event_flow_verifying_1" model="ike.event.flow">
+            <field name="name">Verifying</field>
+            <field name="note"></field>
+            <field name="sequence">17</field>
+            <field name="stage_id" ref="ike_event_stage_verifying"/>
+            <field name="step_number">1</field>
+        </record>
+        <record id="ike_event_flow_verifying_1_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_verifying_1"/>
+        </record>
+        <record id="ike_event_flow_verifying_1_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_verifying_1"/>
+        </record>
+        <record id="ike_event_flow_verifying_1_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_verifying_1"/>
+        </record>
+        <record id="ike_event_flow_verifying_1_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_sub_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_verifying_1"/>
+        </record>
+        <record id="ike_event_flow_verifying_1_detail_summary_top_5" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_verifying_1"/>
+        </record>
+        <record id="ike_event_flow_verifying_1_detail_summary_top_6" model="ike.event.flow.detail">
+            <field name="name">event_summary_supplier_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_verifying_1"/>
+        </record>
+
+        <!-- Concluded 1 -->
+        <record id="ike_event_flow_concluded_1" model="ike.event.flow">
+            <field name="name">Concluded</field>
+            <field name="note"></field>
+            <field name="sequence">18</field>
+            <field name="stage_id" ref="ike_event_stage_closed"/>
+            <field name="step_number">1</field>
+        </record>
+        <record id="ike_event_flow_concluded_1_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_concluded_1"/>
+        </record>
+        <record id="ike_event_flow_concluded_1_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_concluded_1"/>
+        </record>
+        <record id="ike_event_flow_concluded_1_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_concluded_1"/>
+        </record>
+        <record id="ike_event_flow_concluded_1_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_sub_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_concluded_1"/>
+        </record>
+        <record id="ike_event_flow_concluded_1_detail_summary_top_5" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_concluded_1"/>
+        </record>
+        <record id="ike_event_flow_concluded_1_detail_summary_top_6" model="ike.event.flow.detail">
+            <field name="name">event_summary_supplier_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_concluded_1"/>
+        </record>
     </data>
 </odoo>

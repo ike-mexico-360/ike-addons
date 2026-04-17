@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-07 01:44+0000\n"
-"PO-Revision-Date: 2026-04-07 01:44+0000\n"
+"POT-Creation-Date: 2026-04-16 22:48+0000\n"
+"PO-Revision-Date: 2026-04-16 22:48+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -405,17 +405,18 @@ msgstr "Tiempo de llegada"
 
 #. module: ike_event
 #: model:ike.service.stage,name:ike_event.ike_service_stage_arrived
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_end_comment
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_user_end_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_end_user_id
 msgid "Arrived"
 msgstr "Llegó"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_end_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_end_comment
 msgid "Arrived (comment)"
 msgstr "Llegó (comentario)"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_user_end_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_user_end_date
 msgid "Arrived (datetime)"
 msgstr "Llegó (fecha y hora)"
@@ -440,7 +441,6 @@ msgstr "Llegó (primer usuario)"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_end_user_id
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_end_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_end_user_id
 msgid "Arrived (user)"
 msgstr "Llegó (usuario)"
@@ -493,20 +493,22 @@ msgstr "Tipo de Asignación"
 #: code:addons/ike_event/models/ike_event_summary.py:0
 #: model:ike.event.stage,name:ike_event.ike_event_stage_assigned
 #: model:ike.service.stage,name:ike_event.ike_service_stage_assigned
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__assignation_comment
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__assignation_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_assignation_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__assigned
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__state__assigned
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_base__state__assigned
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_public__state__assigned
 msgid "Assigned"
 msgstr "Asignado"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__assignation_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__assignation_comment
 msgid "Assigned (comment)"
 msgstr "Asignado (comentario)"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__assignation_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__assignation_date
 msgid "Assigned (datetime)"
 msgstr "Asignado (fecha)"
@@ -531,7 +533,6 @@ msgstr "Asignado (primer usuario)"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__assignation_user_id
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_assignation_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__assignation_user_id
 msgid "Assigned (user)"
 msgstr "Asignado (usuario)"
@@ -549,9 +550,13 @@ msgstr "Proveedor asignado"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__ike_event_coordinator_id
+msgid "Assigned to user"
+msgstr "Asignado a usuario"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__ike_event_coordinator_ids
-msgid "Assigned to"
-msgstr "Asignado a"
+msgid "Assigned to users"
+msgstr "Asignado a usuarios"
 
 #. module: ike_event
 #: model:ir.actions.act_window,name:ike_event.action_assignment_wizard
@@ -1030,17 +1035,18 @@ msgstr "Tipo de consulta"
 
 #. module: ike_event
 #: model:ike.service.stage,name:ike_event.ike_service_stage_contacted
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__contacted_comment
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__contacted_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_contacted_user_id
 msgid "Contacted"
 msgstr "Contactado"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__contacted_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__contacted_comment
 msgid "Contacted (comment)"
 msgstr "Contactado (comentario)"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__contacted_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__contacted_date
 msgid "Contacted (datetime)"
 msgstr "Contactado (fecha y hora)"
@@ -1065,7 +1071,6 @@ msgstr "Contactado (primer usuario)"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__contacted_user_id
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_contacted_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__contacted_user_id
 msgid "Contacted (user)"
 msgstr "Contactado (usuario)"
@@ -1378,6 +1383,13 @@ msgstr "Detalles"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__event_ids
 msgid "Details membership"
 msgstr "Detalles de afiliación"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event.py:0
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
+msgid "Directories center attention"
+msgstr "Directorios centro de atención"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__disabled
@@ -1938,6 +1950,11 @@ msgid "Event cancellation reason"
 msgstr "Motivo de cancelación"
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
+msgid "Event type"
+msgstr "Tipo de evento"
+
+#. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_medical_form
 msgid "Event..."
 msgstr "Evento..."
@@ -2100,17 +2117,18 @@ msgstr "Finalizar"
 
 #. module: ike_event
 #: model:ike.service.stage,name:ike_event.ike_service_stage_finalized
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__finalized_comment
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__finalized_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_finalized_user_id
 msgid "Finalized"
 msgstr "Finalizado"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__finalized_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__finalized_comment
 msgid "Finalized (comment)"
 msgstr "Finalizado (comentario)"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__finalized_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__finalized_date
 msgid "Finalized (datetime)"
 msgstr "Finalizado (fecha y hora)"
@@ -2135,7 +2153,6 @@ msgstr "Finalizado (primer usuario)"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__finalized_user_id
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_finalized_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__finalized_user_id
 msgid "Finalized (user)"
 msgstr "Finalizado (usuario)"
@@ -2296,17 +2313,18 @@ msgid "Has Message"
 msgstr "Tiene un mensaje"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_end_comment
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_end_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_destination_end_user_id
 msgid "He arrived at his destination"
 msgstr "Llegó al destino"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_end_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_end_comment
 msgid "He arrived at his destination (comment)"
 msgstr "Llegó al destino (comentario)"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_end_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_end_date
 msgid "He arrived at his destination (datetime)"
 msgstr "Llegó al destino (fecha y hora)"
@@ -2331,7 +2349,6 @@ msgstr "Llegó al destino (primer usuario)"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_end_user_id
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_destination_end_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_end_user_id
 msgid "He arrived at his destination (user)"
 msgstr "Llegó al destino"
@@ -2727,8 +2744,13 @@ msgstr "Lenguaje"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
+msgid "Last 20 minutes"
+msgstr "Últimos 20 minutos"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
 msgid "Last 7 days"
-msgstr "Ultimos 7 días"
+msgstr "Últimos 7 días"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_stage__last_stage
@@ -3104,7 +3126,12 @@ msgstr "Mis eventos"
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
 msgid "My events active last 7 days"
-msgstr "Mis eventos activos últimos 7 días."
+msgstr "Mis eventos activos últimos 7 días"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
+msgid "My events last 20 minutes"
+msgstr "Mis eventos últimos 20 minutos"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__authorization_by_nu
@@ -3423,17 +3450,18 @@ msgid "On Route to Destiny"
 msgstr "En ruta al destino"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_start_comment
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_user_start_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_start_user_id
 msgid "On route"
 msgstr "En ruta"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_start_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_start_comment
 msgid "On route (comment)"
 msgstr "En ruta (comentario)"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_user_start_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_user_start_date
 msgid "On route (datetime)"
 msgstr "En ruta (fecha y hora)"
@@ -3458,7 +3486,6 @@ msgstr "En ruta (primer usuario)"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_start_user_id
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_start_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_start_user_id
 msgid "On route (user)"
 msgstr "En ruta (usuario)"
@@ -3829,17 +3856,18 @@ msgid "Route Data"
 msgstr "Datos de la ruta"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_start_comment
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_start_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_destination_start_user_id
 msgid "Route to destination"
 msgstr "En ruta al destino"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_start_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_start_comment
 msgid "Route to destination (comment)"
 msgstr "En ruta al destino (comentario)"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_start_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_start_date
 msgid "Route to destination (datetime)"
 msgstr "En ruta al destino (fecha y hora)"
@@ -3864,7 +3892,6 @@ msgstr "En ruta al destino (primer usuario)"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_start_user_id
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_destination_start_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_start_user_id
 msgid "Route to destination (user)"
 msgstr "En ruta al destino (usuario)"
@@ -4334,6 +4361,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__service_type_id
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_service_type_view_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
 msgid "Service type"
 msgstr "Tipo de servicio"
 
@@ -5292,6 +5320,11 @@ msgstr "Tipo de vehículo"
 #: model:ike.event.stage,name:ike_event.ike_event_stage_verifying
 msgid "Verifying"
 msgstr "Verificación CCC"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
+msgid "Verifying Events"
+msgstr "Eventos en verificación"
 
 #. module: ike_event
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event__service_input_ref__ike_service_input_vial

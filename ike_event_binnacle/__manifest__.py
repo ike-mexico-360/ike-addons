@@ -17,11 +17,13 @@
     ],
     "data": [
         "data/ike_event_binnacle_data.xml",
+        "data/ike_event_default_supplier_comment_data.xml",
         "security/ir.model.access.csv",
         "views/ike_event_binnacle_category_views.xml",
         "views/ike_event_binnacle_views.xml",
         "views/ike_event_screen_views.xml",
         "views/mail_message_views.xml",
+        "views/ike_event_default_supplier_comment_views.xml",
         "wizard/ike_event_comment_wizard_views.xml",
         "views/ike_menus.xml",
         'security/cleanup_menus.xml',  # TODO Delete in sprint18 or after the client has updated their database with this code

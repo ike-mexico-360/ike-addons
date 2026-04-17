@@ -13,9 +13,9 @@ class CustomMembershipPlan(models.Model):
     name = fields.Char(required=True, tracking=True)
     commercial_name = fields.Char(string='Commercial Name')
     x_validation_pattern = fields.Char(string='Validation pattern', related="account_id.x_validation_pattern")
+    x_validation_pattern_second = fields.Char(string='Second validation pattern', related="account_id.x_validation_pattern_second")
     x_display_mask = fields.Char(string='Display mask', related="account_id.x_display_mask")
-    x_validation_pattern_second = fields.Char(string='Validation pattern', related="account_id.x_validation_pattern_second")
-    x_display_mask_second = fields.Char(string='Display mask', related="account_id.x_display_mask_second")
+    x_display_mask_second = fields.Char(string='Second display mask', related="account_id.x_display_mask_second")
 
     account_type_id = fields.Many2one(
         related='account_id.x_account_type_id',

@@ -32,4 +32,54 @@
     <record id="custom_master_catalog.custom_group_ccc_coordinator" model="res.groups">
         <field name="implied_ids" eval="[(4, ref('group_ike_event_user'))]"/>
     </record>
+    <record id="custom_master_catalog.custom_group_supplier_contralory" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_ike_event_user'))]"/>
+    </record>
+    <record id="custom_master_catalog.custom_group_supplier_support" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_ike_event_user'))]"/>
+    </record>
+
+    <record id="rule_ike_event_analyst_read_all" model="ir.rule">
+        <field name="name">Ike Event: Analyst can read all</field>
+        <field name="model_id" ref="model_ike_event"/>
+        <field name="groups" eval="[(4, ref('custom_master_catalog.custom_group_ccc_analyst'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_ike_event_analyst_write_verifying" model="ir.rule">
+        <field name="name">Ike Event: Analyst can write only in verifying</field>
+        <field name="model_id" ref="model_ike_event"/>
+        <field name="groups" eval="[(4, ref('custom_master_catalog.custom_group_ccc_analyst'))]"/>
+        <field name="domain_force">[('stage_id', '=', user.env.ref('ike_event.ike_event_stage_verifying').id)]</field>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_ike_event_system_all" model="ir.rule">
+        <field name="name">Ike Event: Systemn Full Access</field>
+        <field name="model_id" ref="model_ike_event"/>
+        <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="True"/>
+    </record>
+
+    <record id="rule_ike_event_admin" model="ir.rule">
+        <field name="name">Ike Event: Admin Access</field>
+        <field name="model_id" ref="model_ike_event"/>
+        <field name="groups" eval="[(4, ref('group_ike_event_admin'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
 </odoo>

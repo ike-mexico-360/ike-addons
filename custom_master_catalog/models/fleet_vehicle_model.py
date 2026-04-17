@@ -14,6 +14,14 @@ class FleetVehicleModel(models.Model):
         'Weight Category',
         domain="[('disabled', '=', False)]",
         tracking=True)
+    x_category_id = fields.Many2one(
+        'fleet.vehicle.model.category',
+        string="Vehicle category",
+        domain="[('disabled', '=', False)]")
+    x_weigth = fields.Float(string="Vehicle weight", digits=(16, 2))
+    x_length = fields.Float(string="Vehicle length", digits=(16, 2))
+    x_high_value = fields.Boolean(string="High Value")
+    x_connectable = fields.Boolean(string="Connectable")
 
     @api.constrains('name', 'brand_id')
     def _check_unique_vehicle_model(self):

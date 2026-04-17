@@ -133,11 +133,4 @@ action = model.get_subservices_view_action()
         </field>
     </record>
 
-    <!-- Menus Subservice-->
-    <menuitem id="product_category_subservices_menu_subservices"
-        name="Subservices"
-        parent="product_category_services_menu"
-        action="x_subservice_product_template_view_action_server"
-        groups="base.group_system,custom_group_supplier_admin_system"
-        sequence="2"/>
 </odoo>

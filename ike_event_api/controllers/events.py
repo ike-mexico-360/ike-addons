@@ -43,7 +43,10 @@ class EventAPIController(http.Controller):
 
             brand = vehicle.get("brand", "")
             model = vehicle.get("model", "")
-            plates = vehicle.get("license_plate", False)
+            year = card.get("fields", {}).get("model_year", "")
+            plates = vehicle_analysis.get("plate_crop_meta", {}).get("detected_text", False)
+            if not plates:
+                plates = vehicle_analysis.get("license_plate", False)
             if not plates:
                 plates = card.get("plate", "")
             color = vehicle.get("color", "")
@@ -68,14 +71,31 @@ class EventAPIController(http.Controller):
 
             # Descargar imagenes del vehículo
             vehicle_images_encoded = {}
+            temporal_front_image = None
+            first_image = None
+            i = 0
             for key, url_image in vehicle_images.items():
                 b64 = self._x_ike_assistview_download_image_b64(url_image)
                 if b64:
                     vehicle_images_encoded[key] = b64
+                    # Guardar imagen frente para usar en lugar de recorte de placa si no hay
+                    if key == 'frente':
+                        temporal_front_image = b64
+                    # Si no hay clave 'frente' usar primer imagen
+                    if i == 0:
+                        first_image = b64
+                    i += 1
+            # Colocar imagen con clave 'frente' si no hay recorte de placa
+            if not plate_image_encoded:
+                plate_image_encoded = temporal_front_image
+            # Si no hay imagen con clave 'frente' usar primer imagen
+            if not plate_image_encoded:
+                plate_image_encoded = first_image
 
             message = {
                 "id": event_id, "brand": brand, "model": model, "plate": plates, "color": color, "location": location,
                 "plate_image": plate_image_encoded, "vehicle_images": vehicle_images_encoded, "answers": answers,
+                "year": year,
             }
             _logger.info(f"/ike/event/assistview/{event_id}")
 
@@ -133,9 +153,13 @@ class EventAPIController(http.Controller):
         ]
 
         supplier = Supplier.search(domain, limit=1)
+        if not supplier:
+            raise NotFound(f"No se encontró el proveedor {vehicle_id} para el evento {event_id}")
 
         try:
             supplier.action_accept()
+            # Integrar el envío de ruta, cambia a asignado
+            supplier.action_notify_operator()
             # ToDo: Cómo integrar esto? Se necesita guardar la fecha y hora recibida
             supplier.write({'acceptance_date': accepted_datetime})
             return {
@@ -422,8 +446,7 @@ class EventAPIController(http.Controller):
         domain = [
             ('event_id', '=', event_id),
             ('truck_id.x_vehicle_ref', '=', vehicle_id),
-            ('state', 'in', ('accepted', 'assigned')),
-            ('selected', '=', True),
+            ('state', '=', 'notified'),
         ]
 
         supplier = Supplier.search(domain, limit=1)

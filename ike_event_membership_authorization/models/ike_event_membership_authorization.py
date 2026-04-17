@@ -45,7 +45,7 @@ class IkeEventMembershipAuthorization(models.Model):
 
     # === FIELDS ACCOUNT=== #
     name = fields.Char(string="name", compute='_compute_name')
-    account_id = fields.Many2one(related="nus_membership_id.membership_plan_id.account_id", string="Account", store=False)
+    account_id = fields.Many2one(related="nus_membership_id.membership_plan_id.account_id", string="Account ", store=False)
     account = fields.Char(related="nus_membership_id.membership_plan_id.account_id.name", string="Account")
     key_identification = fields.Char(string="Key identification")
     second_key_identification = fields.Char(string="Second key identification")

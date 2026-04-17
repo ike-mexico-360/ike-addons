@@ -94,7 +94,7 @@ class PurchaseOrder(models.Model):
         result = super().write(vals)
         if comments:
             for rec in self.filtered('x_event_id'):
-                rec.message_post(
+                rec.sudo().message_post(
                     body=Markup(f"<strong style='font-weight: 500;'>Cambio en líneas de compra</strong><br/>{comments}"),
                     message_type='comment',
                     subtype_xmlid='mail.mt_note',
@@ -146,7 +146,7 @@ class PurchaseOrder(models.Model):
             return f"/my/purchase/{self.id}/dispute?access_token={self._portal_ensure_token()}&{param}"
         return self.get_portal_url()
 
-    def x_action_accept_prices(self):
+    def x_portal_action_accept_prices(self):
         """El acepta los pecios tal cual están portal."""
         self.ensure_one()
 
@@ -167,12 +167,16 @@ class PurchaseOrder(models.Model):
                     'product_qty': line.x_product_qty_approved,
                 })
 
+        # Cerrar tickets
+        for ticket in self.sh_purchase_ticket_ids:
+            ticket.sudo().with_context(is_portal=True).action_done()
+
         self.x_action_start_consolidation()
 
     def x_action_submit_dispute(self):
         """El proveedor confirma su propuesta de disputa desde el portal."""
         self.ensure_one()
-        self._x_action_start_dispute()
+        self.sudo()._x_action_start_dispute()
 
         if self.x_dispute_state != 'open':
             raise UserError(_('There is no open dispute on this order.'))
@@ -186,20 +190,20 @@ class PurchaseOrder(models.Model):
         if self.x_dispute_state == 'submitted':
             raise UserError(_('This order already has a dispute submitted.'))
 
-        self._x_start_sh_helpdesk_ticket()
-        template = self.env.ref('ike_event_purchase.ike_event_purchase_proposal_dispute_ticket')
-        ticket_ids_sudo = self.sudo().sh_purchase_ticket_ids
-        for ticket in ticket_ids_sudo:
-            template.sudo().with_context(dict(self._context, actual_order=self.id)).send_mail(ticket.id, force_send=True)
-            self.message_post(
-                body=_('The supplier has submitted their dispute proposal on ticket #%s.') % ticket.name,
-                message_type='notification',
-                subtype_xmlid='mail.mt_note',
-            )
+        self.sudo()._x_start_sh_helpdesk_ticket()
+        # template = self.sudo().env.ref('ike_event_purchase.ike_event_purchase_proposal_dispute_ticket')
+        # ticket_ids_sudo = self.sudo().sh_purchase_ticket_ids
+        # for ticket in ticket_ids_sudo:
+        #     template.sudo().with_context(dict(self._context, actual_order=self.id)).send_mail(ticket.id, force_send=True)
+        #     self.sudo().message_post(
+        #         body=_('The supplier has submitted their dispute proposal on ticket #%s.') % ticket.name,
+        #         message_type='notification',
+        #         subtype_xmlid='mail.mt_note',
+        #     )
         self.x_dispute_state = 'submitted'
 
     def x_action_approve_dispute(self):
-        """ Comprador acepta la propuesta del proveedor. """
+        """ Comprador acepta la propuesta del proveedor desde el ticket. """
         self.ensure_one()
         for line in self.order_line:
             vals = {}
@@ -303,17 +307,11 @@ class PurchaseOrder(models.Model):
             })
             compose_wizard.action_send_mail()
 
-    def x_action_done_ticket(self):
-        """Done ticket"""
-        self.ensure_one()
-        for ticket in self.sh_purchase_ticket_ids:
-            ticket.action_done()
-
     def x_action_close_ticket(self):
         """Close ticket"""
         self.ensure_one()
         for ticket in self.sh_purchase_ticket_ids:
-            ticket.action_closed()
+            ticket.sudo().action_closed()
 
     # - - - - - - - - - - - - - #
     #      Consolidation        #

@@ -22,6 +22,9 @@
                             confirm="Are you sure?"
                             type="object" class="btn-danger"
                             invisible="not id or stage_ref in ['completed', 'cancel', 'cancel_subsequently']"/>
+                    <button name="action_directory_center_attention" string="Directories center attention"
+                            type="object" class="btn-primary"
+                            invisible="stage_ref in ['draft', 'capturing', 'cancel', 'cancel_subsequently']"/>
                     <field name="stage_id" widget="ike_statusbar_duration" options="{'clickable': 0, 'fold_field': 'fold'}"/>
                 </header>
                 <sheet class="ike-sheet">
@@ -344,21 +347,28 @@
                     </group>
                     <group name="agreement_cost_final" invisible="stage_ref not in ('verifying')">
                         <group>
+                            <field name="service_supplier_ids" nolabel="1" colspan="2" widget="ike_selected_suppliers_info"/>
+                        </group>
+                        <group>
                             <field name="ike_event_coordinator_id"
+                                groups="base.group_system,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss"
                                 context="{
                                     'search_view_ref': 'custom_master_catalog.custom_view_users_search',
                                     'list_view_ref': 'custom_master_catalog.custom_view_users_list',
                                 }"
-                                options="{'no_create': 1, 'no_open': 1}" required="stage_ref in ('verifying')"/>
-                        </group>
-                        <group>
+                                options="{'no_create': 1, 'no_open': 1}"
+                                required="stage_ref in ('verifying')"/>
+                            <field name="ike_event_coordinator_id"
+                                groups="custom_master_catalog.custom_group_ccc_coordinator,!base.group_system,!custom_master_catalog.custom_group_ccc_analyst,!custom_master_catalog.custom_group_ccc_boss"
+                                readonly="1"
+                                options="{'no_open': 1}"/>
                             <div class="d-flex flex-column align-items-center">
                                 <button name="action_view_ike_event_agreement_cost_final"
                                     string="View agreement cost details"
                                     type="object"
                                     invisible="stage_ref != 'verifying'"
                                     class="btn btn-primary rounded-4 py-1"
-                                    groups="custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds"/>
+                                    groups="base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss"/>
                             </div>
                         </group>
                     </group>

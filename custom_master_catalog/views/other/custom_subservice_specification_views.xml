@@ -31,7 +31,8 @@
                 <field name="subservice_ids"
                     widget="many2many_tags"
                     context="{'display_default_code': 0}"/>
-                <field name="vehicle_category_id"/>
+                <field name="vehicle_category_ids"
+                    widget="many2many_tags"/>
             </list>
         </field>
     </record>
@@ -67,7 +68,8 @@
                                 context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list', 'display_default_code': 0}"/>
                         </group>
                         <group>
-                            <field name="vehicle_category_id" readonly="disabled"
+                            <field name="vehicle_category_ids" readonly="disabled"
+                                widget="many2many_tags"
                                 options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
                                 context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_category_view_list'}"/>
                             <field name="create_date" invisible="1"/>

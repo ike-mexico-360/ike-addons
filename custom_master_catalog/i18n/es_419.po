@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-30 18:34+0000\n"
-"PO-Revision-Date: 2026-03-30 18:34+0000\n"
+"POT-Creation-Date: 2026-04-16 18:50+0000\n"
+"PO-Revision-Date: 2026-04-16 18:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -18,6 +18,11 @@ msgstr ""
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_data_source__separator__tab
 msgid " TAB"
+msgstr ""
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_config_settings__events_allow_send_whatsapp
+msgid "(Custom) Send whatsapp notifications"
 msgstr ""
 
 #. module: custom_master_catalog
@@ -36,6 +41,12 @@ msgstr ""
 "<span class=\"badge rounded-pill text-bg-info\" invisible=\"not x_is_client\">Cliente</span>\n"
 "                    <span class=\"badge rounded-pill text-bg-info\" invisible=\"not x_is_supplier\">Proveedor</span>\n"
 "                    <span class=\"badge rounded-pill text-bg-info\" invisible=\"not x_is_account\">Cuenta</span>"
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_model_view_form
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_fleet_vehicle_model_form_inherit_weight_category_form
+msgid "<span>Kg</span>"
+msgstr ""
 
 #. module: custom_master_catalog
 #. odoo-python
@@ -396,6 +407,11 @@ msgid "All subservices"
 msgstr "Todos los subservicios"
 
 #. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form
+msgid "Allow users to send whatsapp notifications"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_allowed_account_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_allowed_account_ids
 msgid "Allowed account"
@@ -596,9 +612,9 @@ msgid "Care centers"
 msgstr "Centros de atención"
 
 #. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__vehicle_category_id
-msgid "Category"
-msgstr "Categoría"
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__vehicle_category_ids
+msgid "Categories"
+msgstr "Categorías"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_categ_domain
@@ -631,6 +647,7 @@ msgstr "Centro de atención"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_search
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_directory_center_view_list
 msgid "Center of attention"
 msgstr "Centro de atención"
 
@@ -659,6 +676,7 @@ msgid "City"
 msgstr "Ciudad"
 
 #. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
 msgid "Classification of telephone"
 msgstr "Clasificación de teléfonos"
@@ -826,6 +844,11 @@ msgid "Concepts"
 msgstr "Conceptos"
 
 #. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_res_config_settings
+msgid "Config Settings"
+msgstr "Ajustes de configuración"
+
+#. module: custom_master_catalog
 #: model:ir.ui.menu,name:custom_master_catalog.configuration_menu_root
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_menu_clientes_config
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_menu_suppliers_config
@@ -860,6 +883,11 @@ msgstr "Subservicios configurados"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_model_confirm_wizard_view_form
 msgid "Confirm"
 msgstr "Confirmar"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model__x_connectable
+msgid "Connectable"
+msgstr "Conectable"
 
 #. module: custom_master_catalog
 #: model:product.template,name:custom_master_catalog.ike_product_product_medical_consultation_product_template
@@ -1220,7 +1248,6 @@ msgstr "Descripción"
 #: code:addons/custom_master_catalog/models/other/custom_subservice_specification.py:0
 #: code:addons/custom_master_catalog/models/other/custom_supplier_coverage_configuration.py:0
 #: code:addons/custom_master_catalog/models/other/custom_supplier_type.py:0
-#: code:addons/custom_master_catalog/models/other/custom_supplier_types_statuses.py:0
 #: code:addons/custom_master_catalog/models/other/custom_vehicle_type.py:0
 #: code:addons/custom_master_catalog/models/other/res_country.py:0
 #: code:addons/custom_master_catalog/models/other/res_country_state.py:0
@@ -1273,7 +1300,6 @@ msgstr "Descripción"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_model_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_search
-#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_geographical_area_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_accessories_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_accessories_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concept_product_template_filter
@@ -1451,16 +1477,8 @@ msgstr ""
 #. odoo-python
 #: code:addons/custom_master_catalog/models/res_partner.py:0
 msgid ""
-"El nombre no puede contener caracteres especiales. El nombre solo puede "
-"contener letras, números, espacios, comas y puntos."
-msgstr ""
-
-#. module: custom_master_catalog
-#. odoo-python
-#: code:addons/custom_master_catalog/models/res_partner.py:0
-msgid ""
 "El nombre no puede contener caracteres especiales. Solo se permiten letras, "
-"números, espacios, comas, puntos y paréntesis."
+"números, espacios, comas, puntos, guión medio y paréntesis."
 msgstr ""
 
 #. module: custom_master_catalog
@@ -1669,6 +1687,11 @@ msgid "Filename Pattern"
 msgstr "Patrón"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner_supplier_users_rel__user_type__financial
+msgid "Financial"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.custom_fleet_vehicle_model_action
 msgid "Fleet Vehicle Model"
 msgstr "Modelo de vehículo"
@@ -1836,6 +1859,11 @@ msgstr "Tiene portal"
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__priority__3
 msgid "High"
 msgstr "Alta"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model__x_high_value
+msgid "High Value"
+msgstr "Alto valor"
 
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.action_custom_holidays
@@ -2680,6 +2708,7 @@ msgid "Origin Type"
 msgstr "Tipo de origen"
 
 #. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
 msgid "Other phones"
 msgstr "Otros teléfonos"
@@ -3089,6 +3118,11 @@ msgid "Send config"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form
+msgid "Send whatsapp notifications"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__separator
 msgid "Separator"
 msgstr "Separador"
@@ -3114,7 +3148,6 @@ msgstr "Secuencia"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_mapping__categ_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__service_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__service_id
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__x_service_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__x_service_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_product_category_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model_category__x_service_id
@@ -3125,7 +3158,6 @@ msgstr "Secuencia"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_subservice_specification_view_search
-#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_types_statuses_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_vehicle_type_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.product_category_service_view_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.product_category_service_view_search
@@ -3148,7 +3180,6 @@ msgstr "Descripción del servicio"
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__x_categ_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__x_service_domain
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__x_categ_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__x_categ_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model_category__x_categ_domain
 msgid "Service domain"
@@ -3372,6 +3403,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_search
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_directory_center_view_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_drivers_rel_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_users_rel_view_search
 msgid "Supplier"
@@ -3503,6 +3535,11 @@ msgid "Suppliers (Admin System)"
 msgstr "Proveedores (Administración del sistema)"
 
 #. module: custom_master_catalog
+#: model:res.groups,name:custom_master_catalog.custom_group_supplier_contralory
+msgid "Suppliers (Contralory)"
+msgstr "Proveedores (Contraloría)"
+
+#. module: custom_master_catalog
 #: model:res.groups,name:custom_master_catalog.custom_group_supplier_operational
 msgid "Suppliers (Operational management)"
 msgstr "Proveedor (Gestión Operativa)"
@@ -3511,6 +3548,11 @@ msgstr "Proveedor (Gestión Operativa)"
 #: model:res.groups,name:custom_master_catalog.custom_group_supplier_procurement
 msgid "Suppliers (Procurement)"
 msgstr "Proveedores (Procurement)"
+
+#. module: custom_master_catalog
+#: model:res.groups,name:custom_master_catalog.custom_group_supplier_support
+msgid "Suppliers (Support)"
+msgstr "Proveedores (Soporte y monitoreo)"
 
 #. module: custom_master_catalog
 #: model:res.groups,name:custom_master_catalog.custom_group_contact_admin_supplier
@@ -3532,6 +3574,11 @@ msgstr ""
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_data_source__origin_type__txt
 msgid "TXT"
 msgstr ""
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_model_view_form
+msgid "Technical Information"
+msgstr "Información técnica"
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_account_view_form
@@ -3725,6 +3772,7 @@ msgstr "Actualizados"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__user_id
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_view_users_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_users_rel_view_search
 msgid "User"
 msgstr "Usuario"
@@ -3751,6 +3799,7 @@ msgstr "Usuario interno"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__user_ids
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_view_users_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
 msgid "Users"
@@ -3795,6 +3844,11 @@ msgid "Vehicle Category"
 msgstr "Categoría del modelo"
 
 #. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_model_view_form
+msgid "Vehicle Information"
+msgstr "Informacion del vehiculo"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_vehicle_service_state
 msgid "Vehicle Service State"
 msgstr "Estado de la unidad"
@@ -3825,6 +3879,16 @@ msgid "Vehicle categories"
 msgstr "Categorías de vehículos"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model__x_category_id
+msgid "Vehicle category"
+msgstr "Categoría de vehículo"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model__x_length
+msgid "Vehicle length"
+msgstr "Largo del vehículo"
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_vehicle_type_view_search
 msgid "Vehicle type"
 msgstr "Tipo de vehículo"
@@ -3833,6 +3897,11 @@ msgstr "Tipo de vehículo"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_vehicle_type_view_form
 msgid "Vehicle type name"
 msgstr "Nombre del tipo de vehículo"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model__x_weigth
+msgid "Vehicle weight"
+msgstr "Peso del vehículo"
 
 #. module: custom_master_catalog
 #: model:ir.ui.menu,name:custom_master_catalog.vehicles_menu_root
@@ -3926,11 +3995,6 @@ msgstr "Categorías de pesos"
 #: model:ir.actions.act_window,name:custom_master_catalog.custom_vehicle_weight_category_action
 msgid "Weight Category vehicles"
 msgstr "Categorías de pesos"
-
-#. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_armor_level
-msgid "X Armor Level"
-msgstr "Nivel de blindaje"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_phone_p1_classification_id

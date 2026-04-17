@@ -44,7 +44,7 @@ class IkeServiceInputVialBase(models.AbstractModel):
                 # ('x_subservice_id', '=', rec.event_id.sub_service_id.id), # ToDo delete after test change to x_subservice_ids
                 ('x_subservice_ids', 'in', [rec.event_id.sub_service_id.id]),
                 ('x_service_id', '=', rec.event_id.service_id.id),
-                ('subservice_specification_ids.vehicle_category_id', '=', vehicle_category_id),
+                ('subservice_specification_ids.vehicle_category_ids', 'in', [vehicle_category_id]),
             ]
 
             suggested_records = self.env['custom.vehicle.type'].search(

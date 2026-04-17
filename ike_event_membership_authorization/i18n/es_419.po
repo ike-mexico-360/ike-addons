@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-06 23:03+0000\n"
-"PO-Revision-Date: 2026-04-06 23:03+0000\n"
+"POT-Creation-Date: 2026-04-14 18:50+0000\n"
+"PO-Revision-Date: 2026-04-14 18:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -451,14 +451,24 @@ msgstr ""
 "            "
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__account_name
+#: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_add_nu_user_view_form
+msgid "<span class=\"text-danger\" invisible=\"not account_id\">*</span>"
+msgstr ""
+
+#. module: ike_event_membership_authorization
+#: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_add_nu_user_view_form
+msgid "<span class=\"text-danger\" invisible=\"not check_second_key\">*</span>"
+msgstr ""
+
+#. module: ike_event_membership_authorization
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__account_name
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__account
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__account_id
 msgid "Account"
 msgstr "Cuenta"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__account_identification_id
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__account_identification_id
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__account_identification_id
 msgid "Account Identification"
 msgstr "Identificación de cuenta"
@@ -489,7 +499,7 @@ msgid "Activity Type Icon"
 msgstr "Icono de tipo de actividad"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model,name:ike_event_membership_authorization.model_ike_add_affiliation_nu
+#: model:ir.model,name:ike_event_membership_authorization.model_ike_add_affiliation_nu_wizard
 msgid "Add NU User to Event"
 msgstr ""
 
@@ -529,7 +539,7 @@ msgstr "Número de archivos adjuntos"
 #. odoo-python
 #: code:addons/ike_event_membership_authorization/models/ike_event_membership_authorization.py:0
 #: model:ir.actions.act_window,name:ike_event_membership_authorization.action_membership_commercial_authorization_popup
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__authorization
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__authorization
 #: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_membership_authorization_popup_view_form
 #: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.view_ike_event_screen_membership_authorization_form
 msgid "Authorization"
@@ -592,7 +602,7 @@ msgid "Authorizer"
 msgstr "Autorizador"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__user_authorization_affiliation_id
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__user_authorization_affiliation_id
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__user_authorization_commercial_affiliation_id
 #: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_add_nu_user_view_form
 msgid "Authorizing responsible"
@@ -629,13 +639,13 @@ msgid "Check Membership Authorizer"
 msgstr ""
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__clause_primary
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__clause_primary
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__clause_primary
 msgid "Clause"
 msgstr "Inciso"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__check_clause
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__check_clause
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__check_clause
 msgid "Clause "
 msgstr "Inciso"
@@ -646,7 +656,7 @@ msgid "Comment"
 msgstr "Comentario"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__contact_preference
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__contact_preference
 msgid "Contact Preference"
 msgstr "Preferencia de contacto"
 
@@ -662,13 +672,13 @@ msgid "Continue"
 msgstr "Continuar"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__create_uid
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__create_uid
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__create_uid
 msgid "Created by"
 msgstr "Creado por"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__create_date
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__create_date
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__create_date
 msgid "Created on"
 msgstr "Creado el"
@@ -684,19 +694,29 @@ msgid "Date range"
 msgstr "Rango de fecha"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__display_name
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__display_key_primary_clause
+msgid "Display Key Primary Clause"
+msgstr ""
+
+#. module: ike_event_membership_authorization
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__display_key_second_clause_second
+msgid "Display Key Second Clause Second"
+msgstr ""
+
+#. module: ike_event_membership_authorization
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__display_name
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__display_name
 msgid "Display Name"
 msgstr "Nombre en pantalla"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__x_display_mask
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__x_display_mask
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__x_display_mask
 msgid "Display mask"
 msgstr "Mascara de visualización"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__check_second_key
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__check_second_key
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__check_second_key
 msgid "Do you have a second key?"
 msgstr "Tiene segunda clave?"
@@ -734,7 +754,7 @@ msgid "Expedient"
 msgstr "Expediente"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__fields_readonly
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__fields_readonly
 msgid "Fields Readonly"
 msgstr ""
 
@@ -774,7 +794,7 @@ msgid "Has Message"
 msgstr "Tiene un mensaje"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__id
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__id
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__id
 msgid "ID"
 msgstr ""
@@ -829,29 +849,29 @@ msgid "Is Follower"
 msgstr "Es un seguidor"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__is_policy_account
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__is_policy_account
 msgid "Is Policy Account"
 msgstr ""
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__check_is_fleet
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__check_is_fleet
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__check_is_fleet
 msgid "Is fleet"
 msgstr "Es flotilla"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__check_is_special
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__check_is_special
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__check_is_special
 msgid "Is special"
 msgstr "Es especial"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__key_primary
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__key_primary
 msgid "Key Primary"
 msgstr "Primera clave"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__key_second
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__key_second
 msgid "Key Second"
 msgstr "Segunda clave"
 
@@ -863,19 +883,19 @@ msgid "Key identification"
 msgstr "Clave de identificación"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__label_identification_second
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__label_identification_second
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__label_identification_second
 msgid "Label"
 msgstr ""
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__write_uid
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__write_uid
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__write_date
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__write_date
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__write_date
 msgid "Last Updated on"
 msgstr "Última actualización en"
@@ -896,7 +916,7 @@ msgid "Membership Authorization"
 msgstr "Autorización de membresía"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields.selection,name:ike_event_membership_authorization.selection__ike_add_affiliation_nu__contact_preference__message
+#: model:ir.model.fields.selection,name:ike_event_membership_authorization.selection__ike_add_affiliation_nu_wizard__contact_preference__message
 #: model:ir.model.fields.selection,name:ike_event_membership_authorization.selection__ike_event_membership_authorization__preference_contact__message
 msgid "Message"
 msgstr "Mensaje"
@@ -942,7 +962,7 @@ msgid "NUs Name"
 msgstr ""
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__name
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__name
 #: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_membership_authorization_view_form
 msgid "Name"
 msgstr "Nombre"
@@ -1003,13 +1023,13 @@ msgid "Pending Commercial Authorization"
 msgstr "Pendiente por comercial"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__phone
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__phone
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__phone_nu
 msgid "Phone"
 msgstr "Teléfono"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__phone_alternative
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__phone_alternative
 msgid "Phone Alternative"
 msgstr "Teléfono alternativo"
 
@@ -1102,25 +1122,25 @@ msgid "Screenshot"
 msgstr ""
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__check_clause_second
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__check_clause_second
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__check_clause_second
 msgid "Second Clause"
 msgstr "Segundo inciso"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__clause_second
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__clause_second
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__clause_second
 msgid "Second clause"
 msgstr "Segundo inciso"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__x_display_mask_second
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__x_display_mask_second
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__x_second_display_mask
 msgid "Second display mask"
 msgstr "Segunda mascara de visualización"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__account_identification_second_id
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__account_identification_second_id
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__account_identification_second_id
 msgid "Second identifier"
 msgstr "Segundo identificador"
@@ -1131,7 +1151,7 @@ msgid "Second key identification"
 msgstr "Segunda clave de identificación"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__x_validation_pattern_second
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__x_validation_pattern_second
 msgid "Second validation pattern"
 msgstr "Segundo patrón de validación "
 
@@ -1192,7 +1212,7 @@ msgid "User register"
 msgstr "Registro"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__x_validation_pattern
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__x_validation_pattern
 msgid "Validation pattern"
 msgstr ""
 
@@ -1212,13 +1232,13 @@ msgid "Website communication history"
 msgstr "Historial de comunicación del website"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__vehicle_weight_category_id
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__vehicle_weight_category_id
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__vehicle_weight_category_id
 msgid "Weight Category"
 msgstr "Categoría de peso"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields.selection,name:ike_event_membership_authorization.selection__ike_add_affiliation_nu__contact_preference__whatsapp
+#: model:ir.model.fields.selection,name:ike_event_membership_authorization.selection__ike_add_affiliation_nu_wizard__contact_preference__whatsapp
 msgid "WhatsApp"
 msgstr ""
 
@@ -1228,7 +1248,7 @@ msgid "Whatsapp"
 msgstr ""
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__x_domain_authorization_affiliation
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__x_domain_authorization_affiliation
 msgid "X Domain Authorization Affiliation"
 msgstr ""
 
@@ -1243,7 +1263,7 @@ msgid "X Domain Authorization Supervisor Affiliation"
 msgstr ""
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__account_id
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__account_id
 msgid "account"
 msgstr "Cuenta"
 
@@ -1253,12 +1273,12 @@ msgid "dd/mm/yyyy - dd/mm/yyyy"
 msgstr "dd/mm/yyyy - dd/mm/yyyy"
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__event_id
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__event_id
 msgid "event"
 msgstr ""
 
 #. module: ike_event_membership_authorization
-#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu__label_identification_primary
+#: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__label_identification_primary
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__label_identification_primary
 msgid "label"
 msgstr ""

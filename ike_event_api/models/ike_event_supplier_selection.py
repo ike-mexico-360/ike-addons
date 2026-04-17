@@ -12,15 +12,15 @@ class IkeEventSupplierSelection(models.Model):
     _inherit = 'ike.event.supplier'
 
     SEARCH_TYPE_MAP = {
-        'electronic': {'code': 1, 'name': 'Electrónica'},
-        'publication': {'code': 2, 'name': 'Publicación'},
-        'manual': {'code': 3, 'name': 'Manual'},
-        'manual_manual': {'code': 3, 'name': 'Manual'},
+        'electronic': {'code': 1, 'name': 'GEO'},
+        'publication': {'code': 2, 'name': 'PUB'},
+        'manual': {'code': 3, 'name': 'MAN'},
+        'manual_manual': {'code': 3, 'name': 'MAN'},
     }
     # Necesario para mapear los sub_servicios antes de entrar a la lógica de la notificaciíon y filtrar
     SUB_SERVICE_REF_MAP = {
-        'town_truck': {'code': 211, 'name': 'Arrastre de Grua'},
-        'fuel_supply': {'code': 213, 'name': 'Suministro de Gasolina'},
+        'town_truck': {'code': 211, 'name': 'Arrastre de grúa'},
+        'fuel_supply': {'code': 213, 'name': 'Suministro de gasolina'},
         'battery_charge': {'code': 214, 'name': 'Paso de corriente'},
         'tire_change': {'code': 215, 'name': 'Cambio de llanta'},
     }
@@ -354,13 +354,20 @@ class IkeEventSupplierSelection(models.Model):
 
         self_filtered = self.filtered(lambda x: x.state == 'accepted' and not x.notification_sent_to_app)
 
-        supplier_responses = []  # ToDo: Manejar errores en caso de haber, qué se hará si hay error en alguno?
-        tracking_responses = []  # ToDo: Manejar errores en caso de haber, qué se hará si hay error en alguno?
-        url_notifications = self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.notification')
-        url_route_tracking = "https://pli43l7mc2.execute-api.us-east-2.amazonaws.com/planned-route"
+        supplier_responses = []
+        IrConfig = self.env['ir.config_parameter'].sudo()
+        url_notifications = IrConfig.get_param('ike_event.app.url.notification')
+        if not url_notifications:
+            _logger.warning("No se ha configurado la URL para las notificaciones")
+
         if url_notifications and not self._is_db_neutralized():  # No ejecutar si está neutralizado
             for s in self_filtered:
                 if s.truck_id.driver_id and s.supplier_id.x_has_portal is True:
+
+                    # Hack, saltar si el proveedor maneja notificación externa
+                    if s.supplier_id.x_has_external_notification:
+                        continue
+
                     try:
                         response = self.operator_app_notify(
                             url=url_notifications,
@@ -385,7 +392,7 @@ class IkeEventSupplierSelection(models.Model):
                             s.notification_sent_to_app = True
                     except Exception as e:
                         _logger.error(f"Error en notificación: {str(e)}")
-            for response in supplier_responses:  # ToDo: Quitar esto, solo se utiliza para verificar que se envíe
+            for response in supplier_responses:
                 _logger.info(f"Notified by portal: {response}")
                 # En el log debemos ver algo como:
                 # {
@@ -396,89 +403,98 @@ class IkeEventSupplierSelection(models.Model):
                 #     'request_id': '71e29af8-24a5-4fec-b821-a2563b8e2473'
                 # }
 
-        # ToDo: Prueba temporal, unificar con el bloque anterior
+        tracking_responses = []
+        url_route_tracking = IrConfig.get_param('ike_event_api.url.send_route')
+        if not url_route_tracking:
+            _logger.warning("No se ha configurado la URL para el envío de rutas")
         if url_route_tracking and not self._is_db_neutralized():  # No ejecutar si está neutralizado
             for s in self_filtered:
                 if not s.route:
                     continue
-                if s.truck_id.driver_id:
-                    _logger.info(f"Preparando ruta para {s.truck_id.license_plate}")
-                    origin = {
-                        "lat": s.event_id.location_latitude,
-                        "lng": s.event_id.location_longitude,
-                        "label": s.event_id.location_label,
-                    }
-                    destination = {
-                        "lat": s.event_id.destination_latitude,
-                        "lng": s.event_id.destination_longitude,
-                        "label": s.event_id.destination_label,
-                    }
+                # if s.truck_id.driver_id:
+                _logger.info(f"Preparando ruta para {s.truck_id.license_plate}")
+                origin = {
+                    "lat": s.event_id.location_latitude,
+                    "lng": s.event_id.location_longitude,
+                    "label": s.event_id.location_label,
+                }
+                destination = {
+                    "lat": s.event_id.destination_latitude,
+                    "lng": s.event_id.destination_longitude,
+                    "label": s.event_id.destination_label,
+                }
 
-                    # Si route_to_user es string
-                    if s.route:
-                        if isinstance(s.route, str):
-                            route_to_user = json.loads(s.route)
-                        else:
-                            route_to_user = s.route  # Ya es lista
+                # Si route_to_user es string
+                if s.route:
+                    if isinstance(s.route, str):
+                        route_to_user = json.loads(s.route)
                     else:
-                        route_to_user = []
-                    # Si route_to_destination es string
-                    if s.event_id.destination_route:
-                        if isinstance(s.event_id.destination_route, str):
-                            route_to_destination = json.loads(s.event_id.destination_route)
-                        else:
-                            route_to_destination = s.event_id.destination_route  # Ya es lista
+                        route_to_user = s.route  # Ya es lista
+                else:
+                    route_to_user = []
+                # Si route_to_destination es string
+                if s.event_id.destination_route:
+                    if isinstance(s.event_id.destination_route, str):
+                        route_to_destination = json.loads(s.event_id.destination_route)
                     else:
-                        route_to_destination = []
+                        route_to_destination = s.event_id.destination_route  # Ya es lista
+                else:
+                    route_to_destination = []
 
-                    try:
-                        tracking_response = self.send_route_tracking(
-                            url=url_route_tracking,
-                            service_id=str(s.event_id.id),
-                            vehicle_id=str(s.truck_id.x_vehicle_ref),
-                            origin=origin,
-                            destination=destination,
-                            route_to_user=route_to_user,
-                            route_to_destination=route_to_destination,
-                        )
-                        tracking_responses.append(tracking_response)
-                    except Exception as e:
-                        _logger.error(f"Error en ruta: {str(e)}")
-            for response in tracking_responses:  # ToDo: Quitar esto, solo se utiliza para verificar que se envíe
+                try:
+                    tracking_response = self.send_route_tracking(
+                        url=url_route_tracking,
+                        service_id=str(s.event_id.id),
+                        vehicle_id=str(s.truck_id.x_vehicle_ref),
+                        origin=origin,
+                        destination=destination,
+                        route_to_user=route_to_user,
+                        route_to_destination=route_to_destination,
+                    )
+                    tracking_responses.append(tracking_response)
+                except Exception as e:
+                    _logger.error(f"Error en ruta: {str(e)}")
+            for response in tracking_responses:
                 _logger.info(f"Tracking route: {response}")
 
-        # IMP - Send user code to Whatsapp
-        # ToDO: Remove try block, for test
-        # -- Al asignar proveedor, se notifica por whatsapp
-        try:
-            wp_access_token = self.x_get_whatsapp_token()
-
-            if not wp_access_token:
-                _logger.error("WP Send user code: Error al obtener el token de acceso")
-
-            if wp_access_token:
-                decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
-                phone_number = decrypt_encrypt_utility_sudo.decrypt_aes256(self.event_id.user_id.phone or '')
-
-                # parameter = f"{self.truck_id.name} Matrícula {self.truck_id.license_plate} , Deberá proporcionar {self.event_id.user_code}"
-                parameter = f"de su servicio ha iniciado, el vehículo asignado es {self.truck_id.name},"\
-                    f" con matrícula {self.truck_id.license_plate}. Deberá proporcionar el siguiente"\
-                    f" código #{self.event_id.user_code} a"
-                successfully_sent = self.x_send_whatsapp_template(
-                    access_token=wp_access_token,
-                    event_id=str(self.event_id.id),
-                    template=71,  # CodigoVerificador
-                    phone_number=phone_number,
-                    parameter=parameter,
-                )
-                if successfully_sent:
-                    _logger.info(f"WP Send user code: {parameter}")
-                else:
-                    _logger.error("WP Send user code: Error al enviar el código de usuario")
-        except Exception as e:
-            _logger.error(f"WP Send user code: Error al enviar el código de usuario: {str(e)}")
-
         return super().action_notify_operator()
+
+    def action_accept(self):
+        res = super().action_accept()
+        # IMP - Send user code to Whatsapp
+        # -- Al asignar proveedor, se notifica por whatsapp
+
+        # Enviar solo 1 vez, si es el primero que se acepta
+        selected_suppliers = self.filtered(lambda x: x.selected)
+        if not selected_suppliers:
+            try:
+                wp_access_token = self.x_get_whatsapp_token()
+
+                if not wp_access_token:
+                    _logger.error("WP Send user code: Error al obtener el token de acceso")
+
+                if wp_access_token:
+                    supplier = self[0]
+                    decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
+                    phone_number = decrypt_encrypt_utility_sudo.decrypt_aes256(supplier.event_id.user_id.phone or '')
+
+                    parameter = f"de su servicio ha iniciado, el vehículo asignado es {supplier.truck_id.name},"\
+                        f" con matrícula {supplier.truck_id.license_plate}. Deberá proporcionar el siguiente"\
+                        f" código #{supplier.event_id.user_code} a"
+                    successfully_sent = self.x_send_whatsapp_template(
+                        access_token=wp_access_token,
+                        event_id=str(supplier.event_id.id),
+                        template=71,  # CodigoVerificador
+                        phone_number=phone_number,
+                        parameter=parameter,
+                    )
+                    if successfully_sent:
+                        _logger.info(f"WP Send user code: {parameter}")
+                    else:
+                        _logger.error("WP Send user code: Error al enviar el código de usuario")
+            except Exception as e:
+                _logger.error(f"WP Send user code: Error al enviar el código de usuario: {str(e)}")
+        return res
 
     def action_cancel(self, cancel_reason_id: int, reason_text=None):
         # Implement: Notify cancel from internal to app

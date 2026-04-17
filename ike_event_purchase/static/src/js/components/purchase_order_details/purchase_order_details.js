@@ -16,6 +16,8 @@ export class PurchaseOrderDetails extends Component {
         order_id: { type: Number, optional: false },
     };
 
+    translate(str) { return _t(str); }
+
     setup() {
         this.orm = useService("orm");
         this.notification = useService("notification");
@@ -192,13 +194,7 @@ export class PurchaseOrderDetails extends Component {
     accept_prices = async (ev) => {
         const disableAcceptBtn = addLoadingEffect(ev.currentTarget);
         try {
-            // Aceptar los precios aprobados
-            await this.orm.call('purchase.order', 'x_action_accept_prices', [this.props.order_id]);
-            // Marcar ticket como hecho
-            await this.orm.call('purchase.order', 'x_action_done_ticket', [this.props.order_id]);
-            // Cerrar ticket
-            await this.orm.call('purchase.order', 'x_action_close_ticket', [this.props.order_id]);
-            // Actualizar datos de la orden
+            await this.orm.call('purchase.order', 'x_portal_action_accept_prices', [this.props.order_id]);
             await this._loadOrderData();
         } catch (e) {
             this.notification.add(_t("Error at accept prices: ") + (e?.data?.message || e.message), {

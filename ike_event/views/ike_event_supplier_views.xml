@@ -232,14 +232,15 @@
                 <field name="mandatory" column_invisible="1" />
                 <field name="product_id" widget="ike_label_section_and_note_field" readonly="1"
                     options="{'no_open': 1}" />
-                <field name="name" column_invisible="1" />
+                <field name="name" />
                 <field name="quantity"/>
-                <field name="uom_id" readonly="1" options="{'no_open': 1}" />
+                <!-- <field name="uom_id" readonly="1" options="{'no_open': 1}" /> -->
                 <field name="base_unit_price" />
+                <field name="cost_price" readonly="1" />
                 <field name="base_cost_price" readonly="1" />
-                <field name="base_vat" readonly="1" />
+                <!-- <field name="base_vat" readonly="1" /> -->
                 <field name="tax_ids" column_invisible="1" widget="many2many_tags" optional="hide" readonly="1"/>
-                <field name="base_subtotal" readonly="1" />
+                <!-- <field name="base_subtotal" readonly="1" /> -->
                 <field name="is_manual" column_invisible="1"/>
             </list>
         </field>
@@ -260,10 +261,11 @@
                         context="{
                             'list_view_ref': 'ike_event.ike_event_supplier_product_detail_base_costs_list_view',
                         }"/>
+                    <separator/>
                     <group class="oe_subtotal_footer oe_right">
                         <field name="base_amount_concept_subtotal"/>
-                        <field name="base_amount_concept_vat"/>
-                        <field name="base_amount_concept_total" class="oe_subtotal_footer_separator"/>
+                        <!-- <field name="base_amount_concept_vat"/>
+                        <field name="base_amount_concept_total" class="oe_subtotal_footer_separator"/> -->
                     </group>
                 </sheet>
             </form>
@@ -388,12 +390,13 @@
                     options="{'no_open': 1}" />
                 <field name="name" column_invisible="1" />
                 <field name="quantity" />
-                <field name="uom_id" readonly="1" options="{'no_open': 1}" />
+                <!-- <field name="uom_id" readonly="1" options="{'no_open': 1}" /> -->
                 <field name="base_unit_price" />
+                <field name="cost_price" />
                 <field name="base_cost_price" readonly="1" sum="Agreement Cost"/>
-                <field name="base_vat" readonly="1" sum="Agreement Vat"/>
+                <!-- <field name="base_vat" readonly="1" sum="Agreement Vat"/> -->
                 <field name="tax_ids" column_invisible="1" widget="many2many_tags" optional="hide" readonly="1"/>
-                <field name="base_subtotal" readonly="1" sum="Agreement Subtotal"/>
+                <!-- <field name="base_subtotal" readonly="1" sum="Agreement Subtotal"/> -->
                 <field name="is_manual" column_invisible="1"/>
             </list>
         </field>

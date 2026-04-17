@@ -18,7 +18,11 @@ class ShHelpdeskTicket(models.Model):
         self.ensure_one()
         if self.sh_purchase_order_ids:
             for order in self.sh_purchase_order_ids:
-                order.x_action_approve_dispute()
+                # Si se cierra desde el portal, se omite este proceso
+                # Si se da clic desde el ticket, se ejecutará
+                if self._context.get('is_portal', False) is False:
+                    order.x_action_approve_dispute()
+
                 order.x_action_start_consolidation()
         return super().action_done()
 

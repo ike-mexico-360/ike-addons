@@ -3,32 +3,32 @@
     <t t-name="ike_event_purchase.PurchaseOrderDispute">
         <t t-if="state.order_data">
             <h2 class="my-0 mb-3">
-                <t t-if="state.order_data.state in ['draft', 'sent']">Request for Quotation</t>
+                <t t-if="state.order_data.state in ['draft', 'sent']">Solicitud de Cotización</t>
                 <t t-else="1">
-                    Purchase Order
+                    Orden de compra
                 </t>
                 <em t-esc="state.order_data.name"/>
             </h2>
 
             <div t-if="state.sending_request" class="alert alert-info alert-dismissible d-print-none" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
-                <strong>Wait a moment, processing...</strong>
+                <strong>Espere un momento, procesando...</strong>
             </div>
 
             <div t-if="(state.order_data.x_dispute_state == 'resolved' and state.order_data.x_dispute_approved) || state.show_approved_banner" class="alert alert-success alert-dismissible d-print-none" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
-                <strong>The dispute has been approved.</strong>
+                <strong>La disputa ha sido aprobada.</strong>
             </div>
 
             <div t-if="state.order_data.x_dispute_state == 'rejected' || state.show_declined_banner" class="alert alert-danger alert-dismissible d-print-none" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
-                <strong>The dispute has been rejected.</strong>
+                <strong>La disputa ha sido rechazada.</strong>
             </div>
         </t>
         <t t-else="">
             <!-- Spinner loader -->
             <div class="text-center py-4">
-                <i class="fa fa-spinner fa-spin"/> Loading...
+                <i class="fa fa-spinner fa-spin"/> Cargando...
             </div>
         </t>
     </t>

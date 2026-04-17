@@ -188,6 +188,8 @@ class IkeEventSupplierProduct(models.Model):
 
     product_add_domain = fields.Binary(compute='_compute_product_add_domain')
 
+    from_portal = fields.Boolean(default=False, readonly=True)
+
     # === ONCHANGES === #
     @api.onchange('product_id')
     def _onchange_product_id(self):

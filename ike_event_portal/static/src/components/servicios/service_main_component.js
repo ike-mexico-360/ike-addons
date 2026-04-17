@@ -979,6 +979,30 @@ export class ServicesMainComponent extends Component {
         }
     }
 
+    async onDeleteConcept(itemId) {
+        this.dialog.add(ConfirmationDialog, {
+            title: 'Eliminar concepto',
+            body: '¿Estás seguro de que deseas eliminar este concepto?',
+            confirm: async () => {
+                try {
+                    const result = await rpc('/provider/portal/services/delete_concept', { concept_id: itemId });
+                    if (!result.success) {
+                        throw new Error(result.error);
+                    }
+                    const rawCostsData = await this.loadConceptsByEventSupplierId(this.state.link_supplier_id);
+                    this.state.serviceCostsData = this.transformCostsData(rawCostsData);
+                    await this.loadAvailableProducts(this.state.currentEventId, this.state.currentSupplierId);
+                } catch (err) {
+                    console.error("Error deleting concept:", err);
+                    this.showNotification({
+                        message: 'Error al eliminar el concepto',
+                        type: 'danger',
+                    });
+                }
+            },
+        });
+    }
+
     removeServiceById(eventSupplierId) {
         /**
          * Remove a service from the state.services array by event_supplier_id
@@ -1109,6 +1133,7 @@ export class ServicesMainComponent extends Component {
             cost: item.cost_price || 0,
             iva: item.vat || 0,
             subtotal: item.subtotal || 0,
+            from_portal: item.from_portal || false,
         }));
 
         const totalCost = items.reduce((sum, item) => sum + item.cost, 0);

@@ -23,6 +23,7 @@ class IkeEventServiceAssistView(models.TransientModel):
     model = fields.Char(string='Model')
     plate = fields.Char(string='Plate')
     color = fields.Char(string='Color')
+    year = fields.Char(string='Year')
     latitude = fields.Char(string='Latitude')
     longitude = fields.Char(string='Longitude')
     address = fields.Char(string='Address')
@@ -34,7 +35,7 @@ class IkeEventServiceAssistView(models.TransientModel):
 
     # Notificar al usuario que se recibió la información
     def write(self, vals):
-        if 'plate_image' in vals and 'latitude' in vals and 'longitude' in vals:
+        if 'latitude' in vals and 'longitude' in vals:
             for rec in self:
                 rec.send_whatsapp_confirmation()
         return super().write(vals)
@@ -61,6 +62,7 @@ class IkeEventServiceAssistView(models.TransientModel):
                 'vehicle_plate': self.plate,
                 'vehicle_color': self.color,
                 'vehicle_plate_image': self.plate_image,
+                'vehicle_year': self.year,
             })
             event_data = {}
             change_latitude_or_longitude = False
@@ -98,6 +100,6 @@ class IkeEventServiceAssistViewImage(models.TransientModel):
     _name = 'ike.event.service.assistview.image'
     _description = 'Service Assist View Image'
 
-    assistview_id = fields.Many2one('ike.event.service.assistview', string='Assist View', required=True)
+    assistview_id = fields.Many2one('ike.event.service.assistview', string='Assist View', required=True, ondelete='cascade')
     image = fields.Image(string='Image')
     image_name = fields.Char(string='Image Name')

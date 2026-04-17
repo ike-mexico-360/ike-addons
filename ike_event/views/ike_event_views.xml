@@ -8,48 +8,73 @@
             <search>
                 <field name="name"/>
                 <field name="stage_id"/>
-                <filter string="My Events" name="my_events" domain="[('write_uid', '=', uid)]"/>
-                <filter string="My events active last 7 days"
-                    name="my_events_active_last_7_days"
-                    domain="[
-                        ('stage_ref', 'in', ['capturing', 'searching', 'assigned', 'in_progress', 'completed', 'close']),
-                        ('write_uid', '=', uid),
-                        ('create_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
-                <filter string="Last 7 days"
-                    name="last_7_days"
-                    domain="[('create_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
-                <separator/>
-                <filter string="VIP Users" name="filter_vip_users"
-                domain="[('vip_user', '=', True)]"/>
-                <separator/>
-                <filter string="Active Events" name="all_active" domain="[('stage_id.ref', 'in', ['capturing', 'searching', 'assigned', 'in_progress', 'completed', 'close'])]"/>
-                <filter string="Draft Events" name="all_draft" domain="[('stage_id.ref', '=', 'draft')]"/>
-                <filter string="Events in capturing details" name="filter_capturing"
-                    domain="[('stage_id.ref', '=', 'capturing')]"/>
-                <filter string="Events searching for supplier" name="filter_searching"
-                    domain="[('stage_id.ref', '=', 'searching')]"/>
-                <filter string="Assigned Events" name="filter_assigned"
-                    domain="[('stage_id.ref', '=', 'assigned')]"/>
-                <filter string="In Progress Events" name="filter_in_progress"
-                    domain="[('stage_id.ref', '=', 'in_progress')]"/>
-                <filter string="Completed Events" name="filter_completed"
-                    domain="[('stage_id.ref', '=', 'completed')]"/>
-                <filter string="Close Events" name="filter_close"
-                    domain="[('stage_id.ref', '=', 'close')]"/>
-                <filter string="Cancelled Events" name="filter_cancelled"
-                    domain="[('stage_id.ref', '=', 'cancel')]"/>
-                <separator />
-                <filter string="Electronic search" name="filter_search_electronic"
-                    domain="[('supplier_search_type', '=', 'electronic')]"/>
-                <filter string="Search by publication" name="filter_search_publication"
-                    domain="[('supplier_search_type', '=', 'publication')]"/>
-                <filter string="Manual search" name="filter_search_manual"
-                    domain="[('supplier_search_type', '=', 'manual')]"/>
+                <field name="user_membership_id"/>
+                <group name="my_events">
+                    <filter string="My Events" name="my_events" domain="[('write_uid', '=', uid)]"/>
+                    <filter string="My events active last 7 days"
+                        name="my_events_active_last_7_days"
+                        domain="[
+                            ('stage_ref', 'in', ['capturing', 'searching', 'assigned', 'in_progress', 'completed', 'close']),
+                            ('write_uid', '=', uid),
+                            ('create_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="My events last 20 minutes"
+                        name="my_events_last_20_minutes"
+                        domain="[
+                            ('write_uid', '=', uid),
+                            ('create_date', '>=', (datetime.datetime.now() - datetime.timedelta(minutes=20)).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                </group>
+                <group name="events_time">
+                    <filter string="Last 7 days"
+                        name="last_7_days"
+                        domain="[('create_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
+                    <filter string="Last 20 minutes"
+                        name="events_last_20_minutes"
+                        domain="[('create_date', '>=', (datetime.datetime.now() - datetime.timedelta(minutes=20)).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                </group>
+                <group name="user_vip">
+                    <filter string="VIP Users"
+                        name="filter_vip_users"
+                        domain="[('vip_user', '=', True)]"/>
+                </group>
+                <group name="events_active">
+                    <filter string="Active Events"
+                        name="all_active"
+                        domain="[('stage_id.ref', 'in', ['capturing', 'searching', 'assigned', 'in_progress', 'completed', 'close'])]"/>
+                </group>
+                <group name="events_stage">
+                    <filter string="Draft Events" name="all_draft" domain="[('stage_id.ref', '=', 'draft')]"/>
+                    <filter string="Events in capturing details" name="filter_capturing"
+                        domain="[('stage_id.ref', '=', 'capturing')]"/>
+                    <filter string="Events searching for supplier" name="filter_searching"
+                        domain="[('stage_id.ref', '=', 'searching')]"/>
+                    <filter string="Assigned Events" name="filter_assigned"
+                        domain="[('stage_id.ref', '=', 'assigned')]"/>
+                    <filter string="In Progress Events" name="filter_in_progress"
+                        domain="[('stage_id.ref', '=', 'in_progress')]"/>
+                    <filter string="Completed Events" name="filter_completed"
+                        domain="[('stage_id.ref', '=', 'completed')]"/>
+                    <filter string="Verifying Events" name="filter_verifying"
+                        domain="[('stage_id.ref', '=', 'verifying')]"/>
+                    <filter string="Close Events" name="filter_close"
+                        domain="[('stage_id.ref', '=', 'close')]"/>
+                    <filter string="Cancelled Events" name="filter_cancelled"
+                        domain="[('stage_id.ref', '=', 'cancel')]"/>
+                </group>
+                <group name="type_search">
+                    <filter string="Electronic search" name="filter_search_electronic"
+                        domain="[('supplier_search_type', '=', 'electronic')]"/>
+                    <filter string="Search by publication" name="filter_search_publication"
+                        domain="[('supplier_search_type', '=', 'publication')]"/>
+                    <filter string="Manual search" name="filter_search_manual"
+                        domain="[('supplier_search_type', '=', 'manual')]"/>
+                </group>
                 <group expand="1" string="Group By">
                     <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/>
                     <filter string="Stage" name="stage" domain="[]" context="{'group_by':'stage_id'}"/>
                     <filter string="Service" name="service" domain="[]" context="{'group_by':'service_id'}"/>
                     <filter string="Subservice" name="subservice" domain="[]" context="{'group_by':'sub_service_id'}"/>
+                    <filter string="Event type" name="event_type" domain="[]" context="{'group_by':'event_type_id'}"/>
+                    <filter string="Service type" name="service_type" domain="[]" context="{'group_by':'service_type_id'}"/>
                 </group>
             </search>
         </field>
@@ -216,6 +241,7 @@
                                     <field name="current_amount"/>
                                     <field name="authorization_required"/>
                                     <field name="uncovered_authorization_required"/>
+                                    <field name="use_external_locations" widget="boolean_toggle"/>
                                     <div class="o_row" colspan="2">
                                         <button string="Add Supplier" name="action_add_multi_supplier_product_data" type="object" class="btn-primary"/>
                                         <button string="View Vehicles Data" name="action_view_vehicles_info" type="object" class="btn-info"/>

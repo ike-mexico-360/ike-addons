@@ -32,4 +32,10 @@
     <record id="custom_master_catalog.custom_group_commercial_supervisor" model="res.groups">
         <field name="implied_ids" eval="[(4, ref('group_custom_nus_user'))]"/>
     </record>
+    <record id="custom_master_catalog.custom_group_supplier_contralory" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_custom_nus_user'))]"/>
+    </record>
+    <record id="custom_master_catalog.custom_group_supplier_support" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_custom_nus_user'))]"/>
+    </record>
 </odoo>

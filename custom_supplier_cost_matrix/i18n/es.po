@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-06 22:40+0000\n"
-"PO-Revision-Date: 2026-03-06 22:40+0000\n"
+"POT-Creation-Date: 2026-04-14 15:46+0000\n"
+"PO-Revision-Date: 2026-04-14 15:46+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,11 +19,6 @@ msgstr ""
 #: model:custom.supplier.cost.product.schedule,name:custom_supplier_cost_matrix.custom_supplier_cost_product_schedule_24_hours
 msgid "24 hours"
 msgstr "24 horas"
-
-#. module: custom_supplier_cost_matrix
-#: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_upload_mattrix_decline_view_form
-msgid "<span>¿Estás seguro que deseas rechazar la importación?</span>"
-msgstr ""
 
 #. module: custom_supplier_cost_matrix
 #. odoo-python
@@ -81,7 +76,6 @@ msgstr "Número de archivos adjuntos"
 
 #. module: custom_supplier_cost_matrix
 #: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_cost_product_view_form_popup
-#: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_upload_mattrix_decline_view_form
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -156,7 +150,6 @@ msgstr "Estado"
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__create_uid
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product_schedule__create_uid
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__create_uid
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_mattrix_decline__create_uid
 msgid "Created by"
 msgstr "Creado por"
 
@@ -165,7 +158,6 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__create_date
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product_schedule__create_date
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__create_date
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_mattrix_decline__create_date
 msgid "Created on"
 msgstr "Creado el"
 
@@ -173,11 +165,6 @@ msgstr "Creado el"
 #: model:ir.model,name:custom_supplier_cost_matrix.model_custom_supplier_cost_product_schedule
 msgid "Custom Schedules"
 msgstr "Horario"
-
-#. module: custom_supplier_cost_matrix
-#: model:ir.model,name:custom_supplier_cost_matrix.model_custom_supplier_upload_mattrix_decline
-msgid "Custom Supplier Upload Cost Matrix Decline"
-msgstr "Rechazo de carga matriz de costos"
 
 #. module: custom_supplier_cost_matrix
 #: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_cost_matrix_line_view_search
@@ -220,22 +207,16 @@ msgstr "Diurno"
 #. odoo-python
 #: code:addons/custom_supplier_cost_matrix/models/custom_supplier_upload_cost_matrix.py:0
 #: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_upload_cost_matrix_view_form
-#: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_upload_mattrix_decline_view_form
 msgid "Decline"
 msgstr "Rechazar"
 
 #. module: custom_supplier_cost_matrix
-#. odoo-python
-#: code:addons/custom_supplier_cost_matrix/models/custom_supplier_upload_cost_matrix.py:0
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__disabled
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product_schedule__disabled
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__disabled
 #: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_cost_matrix_line_view_form
 #: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_cost_matrix_line_view_search
 #: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_cost_product_schedule_view_form
 #: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_cost_product_schedule_view_search
-#: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_upload_cost_matrix_view_form
-#: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_upload_cost_matrix_view_search
 msgid "Disabled"
 msgstr "Deshabilitado"
 
@@ -244,7 +225,6 @@ msgstr "Deshabilitado"
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__display_name
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product_schedule__display_name
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__display_name
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_mattrix_decline__display_name
 msgid "Display Name"
 msgstr "Nombre a mostrar"
 
@@ -256,7 +236,6 @@ msgstr "Borrador"
 #. module: custom_supplier_cost_matrix
 #: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_cost_matrix_line_view_search
 #: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_cost_product_schedule_view_search
-#: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_upload_cost_matrix_view_search
 msgid "Enabled"
 msgstr "Habilitado"
 
@@ -353,7 +332,6 @@ msgstr "Días festivos"
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__id
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product_schedule__id
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__id
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_mattrix_decline__id
 msgid "ID"
 msgstr ""
 
@@ -397,7 +375,6 @@ msgstr "Es seguidor"
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__write_uid
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product_schedule__write_uid
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__write_uid
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_mattrix_decline__write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
@@ -406,7 +383,6 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__write_date
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product_schedule__write_date
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__write_date
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_mattrix_decline__write_date
 msgid "Last Updated on"
 msgstr "Última actualización el"
 
@@ -558,9 +534,11 @@ msgid "Products To Confirm Count"
 msgstr "Lineas a confirmar (contador)"
 
 #. module: custom_supplier_cost_matrix
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_mattrix_decline__reason
-msgid "Reason"
-msgstr "Razón"
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__rating_ids
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product_schedule__rating_ids
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__rating_ids
+msgid "Ratings"
+msgstr ""
 
 #. module: custom_supplier_cost_matrix
 #. odoo-python
@@ -618,6 +596,12 @@ msgid "Subservice"
 msgstr "Subservicio"
 
 #. module: custom_supplier_cost_matrix
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__subservice_specification_id
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__subservice_specification_id
+msgid "Subservice Specification"
+msgstr "Especificación de subservicio"
+
+#. module: custom_supplier_cost_matrix
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__custom_supplier_cost_product_id
 msgid "Suplier cost matrix product"
 msgstr ""
@@ -653,7 +637,6 @@ msgstr "Costo producto proveedores"
 #. module: custom_supplier_cost_matrix
 #: model:ir.actions.act_window,name:custom_supplier_cost_matrix.custom_supplier_upload_cost_matrix_configuration_action
 #: model:ir.model,name:custom_supplier_cost_matrix.model_custom_supplier_upload_cost_matrix
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_mattrix_decline__supplier_upload_cost_matrix_id
 msgid "Supplier Upload Cost Matrix"
 msgstr "Carga matriz de costos"
 
@@ -692,3 +675,8 @@ msgstr "Mensajes del sitio web"
 #: model:ir.model.fields,help:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__website_message_ids
 msgid "Website communication history"
 msgstr "Historial de comunicaciones del sitio web"
+
+#. module: custom_supplier_cost_matrix
+#: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_upload_cost_matrix_view_form
+msgid "¿Estás seguro?"
+msgstr ""

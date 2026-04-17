@@ -18,7 +18,7 @@ class IkeEvent(models.Model):
         help="Technical (BP): This field will temporarily store the value received from BrightPattern when there is no record matching the phone number.")
     temporary_key_indentification = fields.Char(
         string="Temporary key identification", copy=False,
-        hel="Technical (BP): Field that temporarily stores the value received from Bright Pattern when there is no record matching the identification key.")
+        help="Technical (BP): Field that temporarily stores the value received from Bright Pattern when there is no record matching the identification key.")
     temporary_membership_plan_id = fields.Many2one(
         'custom.membership.plan', string="Temporary account", copy=False,
         help="Technical (BP): Field that temporarily stores the coverage plan value corresponding to the BrightPattern call")

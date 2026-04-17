@@ -41,11 +41,12 @@ patch(IkeEventScreenFormController.prototype, {
         const { resModel: surveyResModel, resId: surveyResId } = this.state.subServiceSurveyInputViewProps;
         const eventId = this.props.resId;
         const { service_id, sub_service_id } = this.model.root.data;
-        const service_data = await this.orm.searchRead(serviceResModel, [['id', '=', serviceResId]], ['vehicle_brand', 'vehicle_model']);
+        const service_data = await this.orm.searchRead(serviceResModel, [['id', '=', serviceResId]], ['vehicle_brand', 'vehicle_model', 'vehicle_category_id']);
         const vehicle = {
             brand: service_data[0]['vehicle_brand'],
             model: service_data[0]['vehicle_model'],
         };
+        const vehicleCategory = service_data[0]['vehicle_category_id'];
         // Survey Data
         const { records: survey_data } = await this.orm.webSearchRead(
             surveyResModel, [['id', '=', surveyResId]], {
@@ -85,6 +86,11 @@ patch(IkeEventScreenFormController.prototype, {
         // Fleet extra data
         const accessories_domain = await this.orm.call('product.product', 'get_accessories_domain', []);
 
+        const specIds = await this.orm.search(
+            "custom.subservice.specification",
+            [["vehicle_category_ids", "in", [vehicleCategory[0]]]]
+        );
+
         const [concepts, accessories, vehicle_types] = await Promise.all([
             this.orm.searchRead(
                 "product.product", [["x_product_id", "=", sub_service_id[0]]], ["id", "name", "x_check_is_armor", "x_armor_level"]),
@@ -93,7 +99,11 @@ patch(IkeEventScreenFormController.prototype, {
             this.orm.searchRead(
                 // ToDo delete after test change to x_subservice_ids
                 // "custom.vehicle.type", [["x_subservice_id", "=", sub_service_id[0]]], ["id", "name"]),
-                "custom.vehicle.type", [["x_subservice_ids", "in", [sub_service_id[0]]],["disabled", "=", false]], ["id", "name"]),
+                "custom.vehicle.type", [
+                    ["x_subservice_ids", "in", [sub_service_id[0]]],
+                    ["disabled", "=", false],
+                    ["subservice_specification_ids", "in", specIds]
+                ], ["id", "name"]),
         ]);
 
         // IA Data
@@ -149,24 +159,42 @@ patch(IkeEventScreenFormController.prototype, {
             console.error('Error en la petición:', error);
         }
         try {
-            await this.orm.write(
-                subServiceResModel,
-                [subServiceResId],
-                {
-                    suggested_accessories: suggestedAccessories.map(a => a.id),
-                    service_accessory_ids: [[6, 0, suggestedAccessories.map(a => a.id)]],
+            const hasAccessories = suggestedAccessories?.length > 0;
+            const hasVehicleTypes = suggestedVehicleTypes?.length > 0;
+            const hasConcepts = suggestedConcepts?.length > 0;
+
+            // Validar ID antes de intentar escribir en el sub-servicio
+            if (subServiceResId) {
+                if (hasAccessories) {
+                    await this.orm.write(
+                        subServiceResModel,
+                        [subServiceResId],
+                        {
+                            suggested_accessories: suggestedAccessories.map(a => a.id),
+                            service_accessory_ids: [[6, 0, suggestedAccessories.map(a => a.id)]],
+                        }
+                    );
                 }
-            );
-            await this.orm.write(
-                subServiceResModel,
-                [subServiceResId],
-                {
-                    suggested_vehicle_types: suggestedVehicleTypes.map(v => v.name.toUpperCase()),
-                    service_vehicle_type_ids: [[6, 0, suggestedVehicleTypes.map(v => v.id)]],
+
+                if (hasVehicleTypes) {
+                    await this.orm.write(
+                        subServiceResModel,
+                        [subServiceResId],
+                        {
+                            suggested_vehicle_types: suggestedVehicleTypes.map(v => v.name.toUpperCase()),
+                            service_vehicle_type_ids: [[6, 0, suggestedVehicleTypes.map(v => v.id)]],
+                        }
+                    );
                 }
-            );
+            } else {
+                console.warn('subServiceResId inválido, omitiendo escritura del sub-servicio:', subServiceResId);
+            }
+
+            // ia_suggestion_done siempre se guarda, independiente de si hay conceptos
             await this.orm.write("ike.event", [eventId], {
-                ia_suggestion_product_ids: suggestedConcepts?.map(c => c.id),
+                ...(hasConcepts && {
+                    ia_suggestion_product_ids: suggestedConcepts?.map(c => c.id),
+                }),
                 ia_suggestion_done: true,
             });
         } catch (error) {

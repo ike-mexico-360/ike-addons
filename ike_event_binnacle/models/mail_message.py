@@ -5,6 +5,7 @@ from odoo import models, fields, api
 class MailMessage(models.Model):
     _inherit = 'mail.message'
 
+    supplier = fields.Char()
     event_binnacle_id = fields.Many2one('ike.event.binnacle')
 
     @api.onchange('event_binnacle_id')

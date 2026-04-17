@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ike_event_default_supplier_comment_view_search" model="ir.ui.view">
+        <field name="name">ike_event_default_supplier_comment.view.search</field>
+        <field name="model">ike.event.default.supplier_comment</field>
+        <field name="arch" type="xml">
+            <search string="">
+                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="ike_event_default_supplier_comment_view_list" model="ir.ui.view">
+        <field name="name">ike_event_default_supplier_comment.view.list</field>
+        <field name="model">ike.event.default.supplier_comment</field>
+        <field name="arch" type="xml">
+            <list string="" editable="bottom">
+                <field name="name"/>
+                <field name="disabled" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="ike_event_default_supplier_comment_action" model="ir.actions.act_window">
+        <field name="name">Supplier Logbook Catalog</field>
+        <field name="res_model">ike.event.default.supplier_comment</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'search_default_filter_enabled': 1}</field>
+    </record>
+
+</odoo>

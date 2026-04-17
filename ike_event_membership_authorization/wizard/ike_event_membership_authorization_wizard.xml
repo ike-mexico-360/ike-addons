@@ -57,6 +57,7 @@
                         <field name="user_authorization_commercial_affiliation_id" 
                             domain="x_domain_authorization_commercial_affiliation"
                             options="{'no_create': True, 'no_open': True, 'no_edit': True}"
+                            context="{'edit': False}"
                             invisible="not check_commercial_authorization"
                             groups="!custom_master_catalog.custom_group_commercial_supervisor"
                             required="1"/>
@@ -74,6 +75,7 @@
                         <field name="authorizer_id" 
                             domain="x_domain_authorization_supervisor_affiliation"
                             options="{'no_create': True, 'no_open': True, 'no_edit': True}"
+                            context="{'edit': False}"
                             invisible="check_commercial_authorization "
                             groups="!custom_master_catalog.custom_group_event_cabin_supervisor,!custom_master_catalog.custom_group_commercial_supervisor"
                             required="1"/>

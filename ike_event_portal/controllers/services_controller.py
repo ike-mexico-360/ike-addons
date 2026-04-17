@@ -410,6 +410,7 @@ class PortalUserAccount(CustomerPortal):
                     "estimated_quantity": quantity or 1,
                     "quantity": quantity or 1,
                     "uom_id": product.uom_id.id if product.uom_id else False,
+                    "from_portal": True,  # Flag to indicate it was created from the portal
                 }
             )
 
@@ -437,6 +438,24 @@ class PortalUserAccount(CustomerPortal):
 
         except Exception as e:
             _logger.error(f"Error creating concept: {str(e)}")
+            return {"success": False, "error": str(e)}
+
+    @http.route(
+        ["/provider/portal/services/delete_concept"],
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=False,
+    )
+    def delete_concept(self, concept_id, **kw):
+        try:
+            concept = request.env["ike.event.supplier.product"].sudo().browse(concept_id)
+            if not concept.exists():
+                return {"success": False, "error": "Concept not found"}
+            concept.unlink()
+            return {"success": True}
+        except Exception as e:
+            _logger.error(f"Error deleting concept: {str(e)}")
             return {"success": False, "error": str(e)}
 
     @http.route(

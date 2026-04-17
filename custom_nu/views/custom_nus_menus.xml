@@ -3,23 +3,23 @@
         <menuitem id="res_partner_menu_clients"
             name="Nus"
             parent="custom_master_catalog.res_partner_menu_clients_root"
-            groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_account"
+            groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support"
             sequence="2">
 
             <menuitem id="custom_nus_menu"
                 name="NUs"
                 action="action_custom_nus"
-                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support"
                 sequence="15"/>
             <menuitem id="custom_membership_plan_menu"
                 name="Membership Plans"
                 action="action_custom_membership_plan"
-                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support"
                 sequence="20"/>
             <menuitem id="custom_membership_nus_menu"
                 name="Membership NUs"
                 action="action_custom_membership_nus"
-                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client"
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support"
                 sequence="25"/>
             <menuitem id="custom_nus_vehicle_menu"
                 name="Vehicles NUs"

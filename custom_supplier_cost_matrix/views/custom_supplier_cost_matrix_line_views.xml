@@ -13,7 +13,7 @@
                 <field name="geographical_area_id"/>
                 <field name="type_event_id"/>
                 <field name="concept_id"/>
-                <field name="vehicle_category_id"/>
+                <field name="subservice_specification_id"/>
                 <field name="disabled"/>
                 <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
@@ -41,7 +41,7 @@
                 <field name="geographical_area_id"/>
                 <field name="type_event_id"/>
                 <field name="concept_id"/>
-                <field name="vehicle_category_id"/>
+                <field name="subservice_specification_id"/>
                 <field name="cost"/>
                 <field name="account_id"/>
                 <field name="holiday_date_applies"/>
@@ -86,8 +86,8 @@
                                 domain="[('disabled', '=', False)]"/>
                             <field name="concept_id" options='{"no_open": True, "no_create": True}' readonly="disabled"
                                 domain="[('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'}"/>
-                            <field name="vehicle_category_id" options='{"no_open": True, "no_create": True}' readonly="disabled"
-                                domain="[('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_category_view_list'}"/>
+                            <field name="subservice_specification_id" options='{"no_open": True, "no_create": True}' readonly="disabled"
+                                domain="[('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_subservice_specification_view_list'}"/>
                         </group>
                         <group>
                             <field name="cost" readonly="disabled"/>

@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- TODO Delete in sprint18 or after the client has updated their database with this code -->
-    <record id="custom_fleet_vehicle_model_weight_category_menu" model="ir.ui.menu">
-        <field name="groups_id" eval="[(3, ref('custom_master_catalog.custom_group_supplier_admin_system'))]"/>
+    <!-- TODO Delete in sprint22 or after the client has updated their database with this code -->
+    <record id="res_partner_account_menu_account" model="ir.ui.menu">
+        <field name="groups_id" eval="[(3, ref('custom_group_ccc_coordinator')),(3, ref('custom_group_ccc_analyst'))]"/>
     </record>
 
-    <record id="res_menu_country_group" model="ir.ui.menu">
-        <field name="groups_id" eval="[(3, ref('custom_master_catalog.custom_group_supplier_admin_system'))]"/>
+    <record id="res_partner_menu_clients" model="ir.ui.menu">
+        <field name="groups_id" eval="[(3, ref('custom_group_ccc_coordinator')),(3, ref('custom_group_ccc_analyst'))]"/>
     </record>
 
-    <record id="custom_subservice_specification_action_menu" model="ir.ui.menu">
-        <field name="groups_id" eval="[(3, ref('custom_master_catalog.custom_group_supplier_admin_system'))]"/>
+    <record id="res_partner_menu_clients_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(3, ref('custom_group_ccc_coordinator')),(3, ref('custom_group_ccc_analyst'))]"/>
     </record>
 
 </odoo>

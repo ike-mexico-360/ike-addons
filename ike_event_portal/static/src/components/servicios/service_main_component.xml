@@ -81,7 +81,8 @@
                                                     <th class="py-3 px-3 text-end">Precio unitario</th>
                                                     <th class="py-3 px-3 text-end">Costo</th>
                                                     <th class="py-3 px-3 text-end">IVA</th>
-                                                    <th class="py-3 px-3 text-end rounded-end">Subtotal</th>
+                                                    <th class="py-3 px-3 text-end">Subtotal</th>
+                                                    <th class="py-3 px-3 text-center rounded-end"></th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -124,6 +125,15 @@
                                                         <td class="py-3 px-3 text-end">
                                                             $
                                                             <t t-esc="formatCurrency(item.subtotal)"/>
+                                                        </td>
+                                                        <td class="py-3 px-3 text-center">
+                                                            <button t-if="item.from_portal"
+                                                                    type="button"
+                                                                    class="btn btn-outline-danger btn-sm"
+                                                                    title="Eliminar concepto"
+                                                                    t-on-click="() => this.onDeleteConcept(item.id)">
+                                                                <i class="fa fa-trash"/>
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                 </t>

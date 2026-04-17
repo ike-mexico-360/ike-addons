@@ -4,17 +4,17 @@
         <t t-if="state.order_data">
             <div t-if="state.order_data.x_dispute_state == 'submitted'" class="alert alert-warning alert-dismissible d-print-none" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
-                <strong>The dispute has been submitted.</strong>
+                <strong><t t-out="translate('The dispute has been submitted.')"/></strong>
             </div>
 
             <div t-if="state.order_data.x_dispute_state == 'resolved' and state.order_data.x_dispute_approved" class="alert alert-success alert-dismissible d-print-none" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
-                <strong>The dispute has been approved.</strong>
+                <strong><t t-out="translate('The dispute has been approved.')"/></strong>
             </div>
 
             <div t-if="state.order_data.x_dispute_state == 'rejected'" class="alert alert-danger alert-dismissible d-print-none" role="alert">
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
-                <strong>The dispute has been rejected.</strong>
+                <strong><t t-out="translate('The dispute has been rejected.')"/></strong>
             </div>
 
             <div class="row" t-if="state.order_data.state == 'sent'">
@@ -22,13 +22,13 @@
                     <div class="d-flex flex-row justify-content-end">
                         <!-- ToDo: Mostrar también cuando ya se aprobó los cambios -->
                         <button class="btn text-white bg-success bg-opacity-10 rounded-pill px-3 shadow-sm me-2 mb-2" t-on-click="accept_prices" t-if="!state.show_dispute_fields &amp;&amp; ['none', 'resolved'].includes(state.order_data.x_dispute_state)">
-                            Accept
+                            <t t-out="translate('Accept')"/>
                         </button>
                         <button class="btn text-white bg-danger bg-opacity-10 rounded-pill px-3 me-2 mb-2" t-on-click="toggle_dispute_fields" t-if="!state.show_dispute_fields &amp;&amp; ['none', 'resolved'].includes(state.order_data.x_dispute_state)">
-                            Start Dispute
+                            <t t-out="translate('Start Dispute')"/>
                         </button>
                         <button class="btn text-white bg-danger bg-opacity-10 rounded-pill px-3 me-2 mb-2" t-on-click="toggle_dispute_fields" disabled="disabled" t-if="state.show_dispute_fields &amp;&amp; ['none', 'resolved'].includes(state.order_data.x_dispute_state)">
-                            Start Dispute
+                            <t t-out="translate('Start Dispute')"/>
                         </button>
                     </div>
                 </div>
@@ -41,17 +41,13 @@
                 <t t-set="show_dispute_values" t-value="['submitted', 'resolved', 'rejected'].includes(state.order_data.x_dispute_state) &amp;&amp; !state.show_dispute_fields"/>
                 <thead>
                     <tr class="bg-primary text-white">
-                        <th class="py-3 px-3 rounded-start">Concept</th>
-                        <th class="py-3 px-3 text-end">Quantity</th>
-                        <th class="py-3 px-3 text-end">Unit Price</th>
-                        <th t-if="show_dispute_columns" class="py-3 px-3 text-end" style="width: 100px; max-width: 150px;">
-                            Dispute Quantity
-                        </th>
-                        <th t-if="show_dispute_columns" class="py-3 px-3 text-end" style="width: 150px; max-width: 200px;">
-                            Dispute Price
-                        </th>
-                        <th t-if="show_approved_columns" class="py-3 px-3 text-end" style="width: 150px; max-width: 200px;">Approved Price</th>
-                        <th t-if="show_approved_columns" class="py-3 px-3 text-end" style="width: 100px; max-width: 150px;">Approved Quantity</th>
+                        <th class="py-3 px-3 rounded-start"><t t-out="translate('Concept')"/></th>
+                        <th class="py-3 px-3 text-end"><t t-out="translate('Quantity')"/></th>
+                        <th class="py-3 px-3 text-end"><t t-out="translate('Unit Price')"/></th>
+                        <th t-if="show_dispute_columns" class="py-3 px-3 text-end" style="width: 100px; max-width: 150px;"><t t-out="translate('Dispute Quantity')"/></th>
+                        <th t-if="show_dispute_columns" class="py-3 px-3 text-end" style="width: 150px; max-width: 200px;"><t t-out="translate('Dispute Price')"/></th>
+                        <th t-if="show_approved_columns" class="py-3 px-3 text-end" style="width: 150px; max-width: 200px;"><t t-out="translate('Approved Price')"/></th>
+                        <th t-if="show_approved_columns" class="py-3 px-3 text-end" style="width: 100px; max-width: 150px;"><t t-out="translate('Approved Quantity')"/></th>
                         <th class="py-3 px-3 rounded-end"></th>
                     </tr>
                 </thead>
@@ -74,7 +70,7 @@
                                         t-att-style="state.invalid_lines.has(line.id + '_product_id') ? 'border: 1px solid red' : ''"
                                         t-on-change="(ev) => onchange_disputed_value(line.id, 'product_id', +ev.target.value)"
                                     >
-                                        <option value="">Select a product</option>
+                                        <option value=""><t t-out="translate('Select a product')"/></option>
                                         <t t-foreach="state.product_ids" t-as="product" t-key="product_index">
                                             <option t-att-value="product.id" t-out="product.name"/>
                                         </t>
@@ -142,11 +138,11 @@
             <div class="row text-center mb-3" t-if="state.show_dispute_fields">
                 <div class="col-12 mb-3">
                     <button class="btn text-white bg-primary bg-opacity-10 rounded-pill px-3" t-on-click="add_line">
-                        Add concept
+                        <t t-out="translate('Add concept')"/>
                     </button>
                 </div>
                 <div class="col-12 mb-3" t-if="requireChangeReason">
-                    <span>Specify the reason for the change</span>
+                    <span><t t-out="translate('Specify the reason for the change')"/></span>
                     <input t-if="state.show_dispute_fields" type="text" class="form-control text-start"
                         t-att-value="state.order_data.x_change_comments" required="true" t-ref="x_change_comments"
                         t-on-change="(ev) => onchange_reasons('x_change_comments', ev.target.value)"
@@ -155,7 +151,7 @@
                 </div>
                 <div class="col-12">
                     <button class="btn text-white bg-success bg-opacity-10 rounded-pill px-3 shadow-sm me-2" t-on-click="send_dispute" t-if="state.show_dispute_fields">
-                        Send Dispute
+                        <t t-out="translate('Send Dispute')"/>
                     </button>
                 </div>
             </div>
@@ -163,7 +159,7 @@
         <t t-else="">
             <!-- Spinner loader -->
             <div class="text-center py-4">
-                <i class="fa fa-spinner fa-spin"/> Loading...
+                <i class="fa fa-spinner fa-spin"/> <t t-out="translate('Loading...')"/>
             </div>
         </t>
 

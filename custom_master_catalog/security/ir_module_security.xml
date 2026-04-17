@@ -61,6 +61,15 @@
         <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
         <field name="implied_ids" eval="[(4, ref('base.group_user'))]" />
     </record>
+    <record id="custom_group_supplier_contralory" model="res.groups">
+        <field name="name">Suppliers (Contralory)</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+        <!-- <field name="implied_ids" eval="[(4, ref('base.group_user'))]" /> -->
+    </record>
+    <record id="custom_group_supplier_support" model="res.groups">
+        <field name="name">Suppliers (Support)</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+    </record>
     <record id="custom_group_commercial_supervisor" model="res.groups">
         <field name="name">Commercial Supervisor</field>
         <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
@@ -93,6 +102,17 @@
             <field name="perm_create" eval="True" />
             <field name="perm_unlink" eval="True" />
             <field name="domain_force">['|', ('x_is_client', '=', True), ('x_is_account', '=', True)]</field>
+        </record>
+
+        <record id="custom_contact_admin_supplier_contralory_modify_rule" model="ir.rule">
+            <field name="name">Suppliers Contralory Admin Modify Rule</field>
+            <field name="model_id" ref="model_res_partner" />
+            <field name="groups" eval="[(4, ref('custom_group_supplier_contralory'))]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_unlink" eval="False" />
+            <field name="domain_force">[(1, '=', 1)]</field>
         </record>
 
         <record id="custom_contact_admin_supplier_read_rule" model="ir.rule">

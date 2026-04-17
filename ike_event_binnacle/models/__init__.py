@@ -5,3 +5,4 @@ from . import ike_event_binnacle_category
 from . import ike_event_binnacle
 from . import mail_message
 from . import ike_event_supplier
+from . import ike_event_default_supplier_comment

@@ -52,7 +52,7 @@
         'views/ike_event_service_type.xml',
         'views/ike_event_fleet_views.xml',
         'views/ike_menus.xml',
-        'security/cleanup_menus.xml',  # TODO Delete in sprint18 or after the client has updated their database with this code
+        'security/cleanup_menus.xml',  # TODO Delete in sprint22 or after the client has updated their database with this code
         'templates/ike_event_supplier_portal_template.xml',
     ],
     'assets': {

@@ -29,7 +29,7 @@ class IkeEventDuplicateWizard(models.TransientModel):
         related="user_membership_id.membership_plan_id.account_identification_id")
     second_account_identification_id = fields.Many2one(
         related="user_membership_id.membership_plan_id.second_account_identification_id")
-    label_account_identification = fields.Char(related="account_identification_id.label", stirng="Account identification")
+    label_account_identification = fields.Char(related="account_identification_id.label", string="Account identification")
     second_label_account_identification = fields.Char(
         related="second_account_identification_id.label",
         string="Second account identification")

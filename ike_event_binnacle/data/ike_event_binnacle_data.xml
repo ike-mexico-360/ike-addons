@@ -708,31 +708,31 @@
             <field name="model_id" ref="ike_event.model_ike_event"/>
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
-                    <t>
-                        <strong>Covered concepts:</strong>
+                <t>
+                    <strong>Covered concepts:</strong>
 
-                        <t t-set="lines" t-value="object.service_product_ids"/>
+                    <t t-set="lines" t-value="object.service_product_ids"/>
 
-                        <t t-if="lines">
-                            <t t-set="printed" t-value="0"/>
+                    <t t-if="lines">
+                        <t t-set="has_lines" t-value="0"/>
 
-                            <t t-foreach="lines" t-as="line" t-index="i">
+                        <ul>
+                            <t t-foreach="lines" t-as="line">
                                 <t t-if="not line.display_type and line.covered">
-                                    <t t-if="printed &gt; 0"> | </t>
-
-                                    <t t-out="line.product_id.name or line.name"/>
-
-                                    <t t-set="printed" t-value="printed + 1"/>
+                                    <li>
+                                        <t t-out="line.product_id.name or line.name"/>
+                                    </li>
+                                    <t t-set="has_lines" t-value="1"/>
                                 </t>
                             </t>
+                        </ul>
 
-                            <t t-if="printed &gt; 0">.</t>
-                            <t t-else="">
-                                <em>No covered concepts available.</em>
-                            </t>
+                        <t t-if="not has_lines">
+                            <em>No covered concepts available.</em>
                         </t>
                     </t>
-                </field>
+                </t>
+            </field>
         </record>
         <record id="ike_binnacle_stage_4_3" model="ike.event.binnacle">
             <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
@@ -747,27 +747,24 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <strong>Has beed added:</strong>
+                    <strong>Has been added:</strong>
 
                     <t t-set="lines" t-value="object.service_product_ids"/>
 
                     <t t-if="lines">
-                        <t t-set="printed" t-value="0"/>
-
-                        <t t-foreach="lines" t-as="line">
-                            <t t-if="not line.display_type and not line.covered">
-                                <t t-if="printed &gt; 0"> | </t>
-
-                                <t t-out="line.product_id.name or line.name"/>
-
-                                <t t-set="printed" t-value="printed + 1"/>
+                        <ul>
+                            <t t-foreach="lines" t-as="line">
+                                <t t-if="not line.display_type and not line.covered">
+                                    <li>
+                                        <t t-out="line.product_id.name or line.name"/>
+                                    </li>
+                                </t>
                             </t>
-                        </t>
+                        </ul>
+                    </t>
 
-                        <t t-if="printed &gt; 0">.</t>
-                        <t t-else="">
-                            <em>No out-of-coverage concepts.</em>
-                        </t>
+                    <t t-else="">
+                        <em>No out-of-coverage concepts</em>
                     </t>
                 </t>
             </field>
@@ -1030,7 +1027,7 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <strong>Authorization was requested.</strong>
+                    <strong>Authorization was requested</strong>
                 </t>
             </field>
         </record>
@@ -1047,7 +1044,7 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t> 
-                    <strong>Notification sent to the supplier.</strong>
+                    <strong>Notification sent to the supplier</strong>
                 </t>
             </field>
         </record>
@@ -1124,13 +1121,13 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <t t-set="supplier" t-value="object.env['res.partner'].browse(ctx.get('supplier_id'))"/>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
                     <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
 
                     <t t-if="supplier">
                         <div>
                             <strong>Supplier:</strong>
-                            <t t-out="supplier.name"/>
+                            <t t-out="supplier"/>
                         </div>
                     </t>
                      <t t-if="truck">
@@ -1158,47 +1155,41 @@
             <field name="model_id" ref="ike_event.model_ike_event"/>
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
-                <t>
-                    <!-- Obtener supplier desde contexto -->
-                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+               <t>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
+                    <t t-set="first_date" t-value="ctx.get('first_date')"/>
+                    <t t-set="current_date" t-value="ctx.get('current_date')"/>
+                    <t t-set="comment" t-value="ctx.get('comment')"/>
+                    <t t-set="plate" t-value="ctx.get('plate')"/>
 
-                    <!-- Buscar supplier -->
-                    <t t-set="supplier"
-                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
+                    <div t-if="supplier">
+                        <strong>Supplier:</strong>
+                        <t t-out="supplier"/>
+                    </div>
 
-                    <!-- Validar supplier -->
-                    <t t-if="supplier and supplier[0]">
-                        <t t-set="supplier" t-value="supplier[0]"/>
+                    <div t-if="plate">
+                        <strong>Plates:</strong>
+                        <t t-out="plate"/>
+                    </div>
 
-                        <div>
-                            <strong>Supplier:</strong>
-                            <t t-out="supplier.supplier_id.name"/>
-                        </div>
-                        
-                        <div t-if="supplier.truck_id and supplier.truck_id.license_plate">
-                            <strong>Plates:</strong>
-                            <t t-out="supplier.truck_id.license_plate"/>
-                        </div>
+                    <div>
+                        <strong>State:</strong> On rute
+                    </div>
 
-                        <div>
-                            <strong>State:</strong> On route
-                        </div>
+                    <div t-if="first_date">
+                        <strong>Previous date:</strong>
+                        <t t-out="format_datetime(first_date)"/>
+                    </div>
 
-                        <div t-if="supplier.first_on_route_to_user_start_date">
-                            <strong>Previous date:</strong>
-                            <t t-out="format_datetime(supplier.first_on_route_to_user_start_date)"/>
-                        </div>
-                        
-                        <div t-if="supplier.on_route_to_user_start_date">
-                            <strong>Current date:</strong>
-                            <t t-out="format_datetime(supplier.on_route_to_user_start_date)"/>
-                        </div>
+                    <div t-if="current_date">
+                        <strong>Current date:</strong>
+                        <t t-out="format_datetime(current_date)"/>
+                    </div>
 
-                        <div t-if="supplier.on_route_to_start_comment">
-                            <strong>Comment:</strong>
-                            <t t-out="supplier.on_route_to_start_comment"/>
-                        </div>
-                    </t>
+                    <div t-if="comment">
+                        <strong>Comment:</strong>
+                        <t t-out="comment"/>
+                    </div>
                 </t>
             </field>
         </record>
@@ -1215,42 +1206,39 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
+                    <t t-set="first_date" t-value="ctx.get('first_date')"/>
+                    <t t-set="current_date" t-value="ctx.get('current_date')"/>
+                    <t t-set="comment" t-value="ctx.get('comment')"/>
+                    <t t-set="plate" t-value="ctx.get('plate')"/>
 
-                    <t t-set="supplier"
-                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
-
-                    <t t-if="supplier">
-                        <t t-set="supplier" t-value="supplier[0]"/>
-
-                        <div>
-                            <strong>Supplier:</strong>
-                            <t t-out="supplier.supplier_id.name"/>
-                        </div>
-                    </t>
-
-                    <div t-if="supplier.truck_id and supplier.truck_id.license_plate">
-                        <strong>Plates:</strong>
-                        <t t-out="supplier.truck_id.license_plate"/>
+                    <div t-if="supplier">
+                        <strong>Supplier:</strong>
+                        <t t-out="supplier"/>
                     </div>
-                    
+
+                    <div t-if="plate">
+                        <strong>Plates:</strong>
+                        <t t-out="plate"/>
+                    </div>
+
                     <div>
                         <strong>State:</strong> Arrived
                     </div>
 
-                    <div t-if="supplier.first_on_route_to_user_end_date">
+                    <div t-if="first_date">
                         <strong>Previous date:</strong>
-                        <t t-out="format_datetime(supplier.first_on_route_to_user_end_date)"/>
-                    </div>
-                    
-                    <div t-if="supplier.on_route_to_user_end_date">
-                        <strong>Current date:</strong>
-                        <t t-out="format_datetime(supplier.on_route_to_user_end_date)"/>
+                        <t t-out="format_datetime(first_date)"/>
                     </div>
 
-                    <div t-if="supplier.on_route_to_end_comment">
+                    <div t-if="current_date">
+                        <strong>Current date:</strong>
+                        <t t-out="format_datetime(current_date)"/>
+                    </div>
+
+                    <div t-if="comment">
                         <strong>Comment:</strong>
-                        <t t-out="supplier.on_route_to_end_comment"/>
+                        <t t-out="comment"/>
                     </div>
                 </t>
             </field>
@@ -1268,42 +1256,39 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                <t>
-                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
+                    <t t-set="first_date" t-value="ctx.get('first_date')"/>
+                    <t t-set="current_date" t-value="ctx.get('current_date')"/>
+                    <t t-set="comment" t-value="ctx.get('comment')"/>
+                    <t t-set="plate" t-value="ctx.get('plate')"/>
 
-                    <t t-set="supplier"
-                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
-
-                    <t t-if="supplier">
-                        <t t-set="supplier" t-value="supplier[0]"/>
-
-                        <div>
-                            <strong>Supplier:</strong>
-                            <t t-out="supplier.supplier_id.name"/>
-                        </div>
-                    </t>
-
-                    <div t-if="supplier.truck_id and supplier.truck_id.license_plate">
-                        <strong>Plates:</strong>
-                        <t t-out="supplier.truck_id.license_plate"/>
+                    <div t-if="supplier">
+                        <strong>Supplier:</strong>
+                        <t t-out="supplier"/>
                     </div>
-                    
+
+                    <div t-if="plate">
+                        <strong>Plates:</strong>
+                        <t t-out="plate"/>
+                    </div>
+
                     <div>
                         <strong>State:</strong> Contacted
                     </div>
-                    
-                    <div t-if="supplier.first_contacted_date">
+
+                    <div t-if="first_date">
                         <strong>Previous date:</strong>
-                        <t t-out="format_datetime(supplier.first_contacted_date)"/>
-                    </div>
-                    
-                    <div t-if="supplier.contacted_date">
-                        <strong>Current date:</strong>
-                        <t t-out="format_datetime(supplier.contacted_date)"/>
+                        <t t-out="format_datetime(first_date)"/>
                     </div>
 
-                    <div t-if="supplier.contacted_comment">
+                    <div t-if="current_date">
+                        <strong>Current date:</strong>
+                        <t t-out="format_datetime(current_date)"/>
+                    </div>
+
+                    <div t-if="comment">
                         <strong>Comment:</strong>
-                        <t t-out="supplier.contacted_comment"/>
+                        <t t-out="comment"/>
                     </div>
                 </t>
             </field>
@@ -1320,43 +1305,40 @@
             <field name="model_id" ref="ike_event.model_ike_event"/>
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
-               <t>
-                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+                <t>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
+                    <t t-set="first_date" t-value="ctx.get('first_date')"/>
+                    <t t-set="current_date" t-value="ctx.get('current_date')"/>
+                    <t t-set="comment" t-value="ctx.get('comment')"/>
+                    <t t-set="plate" t-value="ctx.get('plate')"/>
 
-                    <t t-set="supplier"
-                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
+                    <div t-if="supplier">
+                        <strong>Supplier:</strong>
+                        <t t-out="supplier"/>
+                    </div>
 
-                    <t t-if="supplier">
-                        <t t-set="supplier" t-value="supplier[0]"/>
-
-                        <div>
-                            <strong>Supplier:</strong>
-                            <t t-out="supplier.supplier_id.name"/>
-                        </div>
-                    </t>
-
-                    <div t-if="supplier.truck_id and supplier.truck_id.license_plate">
+                    <div t-if="plate">
                         <strong>Plates:</strong>
-                        <t t-out="supplier.truck_id.license_plate"/>
+                        <t t-out="plate"/>
                     </div>
-                    
+
                     <div>
-                        <strong>State:</strong> On route to destination
+                        <strong>State:</strong> On rute to destination
                     </div>
 
-                    <div t-if="supplier.first_on_route_to_destination_start_date">
+                    <div t-if="first_date">
                         <strong>Previous date:</strong>
-                        <t t-out="format_datetime(supplier.first_on_route_to_destination_start_date)"/>
-                    </div>
-                    
-                    <div t-if="supplier.on_route_to_destination_start_date">
-                        <strong>Current date:</strong>
-                        <t t-out="format_datetime(supplier.on_route_to_destination_start_date)"/>
+                        <t t-out="format_datetime(first_date)"/>
                     </div>
 
-                    <div t-if="supplier.on_route_to_destination_start_comment">
+                    <div t-if="current_date">
+                        <strong>Current date:</strong>
+                        <t t-out="format_datetime(current_date)"/>
+                    </div>
+
+                    <div t-if="comment">
                         <strong>Comment:</strong>
-                        <t t-out="supplier.on_route_to_destination_start_comment"/>
+                        <t t-out="comment"/>
                     </div>
                 </t>
             </field>
@@ -1373,43 +1355,40 @@
             <field name="model_id" ref="ike_event.model_ike_event"/>
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
-               <t>
-                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+                <t>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
+                    <t t-set="first_date" t-value="ctx.get('first_date')"/>
+                    <t t-set="current_date" t-value="ctx.get('current_date')"/>
+                    <t t-set="comment" t-value="ctx.get('comment')"/>
+                    <t t-set="plate" t-value="ctx.get('plate')"/>
 
-                    <t t-set="supplier"
-                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
-
-                    <t t-if="supplier">
-                        <t t-set="supplier" t-value="supplier[0]"/>
-
-                        <div>
-                            <strong>Supplier:</strong>
-                            <t t-out="supplier.supplier_id.name"/>
-                        </div>
-                    </t>
-
-                    <div t-if="supplier.truck_id and supplier.truck_id.license_plate">
-                        <strong>Plates:</strong>
-                        <t t-out="supplier.truck_id.license_plate"/>
+                    <div t-if="supplier">
+                        <strong>Supplier:</strong>
+                        <t t-out="supplier"/>
                     </div>
-                    
+
+                    <div t-if="plate">
+                        <strong>Plates:</strong>
+                        <t t-out="plate"/>
+                    </div>
+
                     <div>
                         <strong>State:</strong> Arrived to destination
                     </div>
 
-                    <div t-if="supplier.first_on_route_to_destination_end_date">
+                    <div t-if="first_date">
                         <strong>Previous date:</strong>
-                        <t t-out="format_datetime(supplier.first_on_route_to_destination_end_date)"/>
-                    </div>
-                    
-                    <div t-if="supplier.on_route_to_destination_end_date">
-                        <strong>Current date:</strong>
-                        <t t-out="format_datetime(supplier.on_route_to_destination_end_date)"/>
+                        <t t-out="format_datetime(first_date)"/>
                     </div>
 
-                    <div t-if="supplier.on_route_to_destination_end_comment">
+                    <div t-if="current_date">
+                        <strong>Current date:</strong>
+                        <t t-out="format_datetime(current_date)"/>
+                    </div>
+
+                    <div t-if="comment">
                         <strong>Comment:</strong>
-                        <t t-out="supplier.on_route_to_destination_end_comment"/>
+                        <t t-out="comment"/>
                     </div>
                 </t>
             </field>
@@ -1427,42 +1406,39 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <t t-set="current_supplier_id" t-value="ctx.get('current_supplier_id')"/>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
+                    <t t-set="first_date" t-value="ctx.get('first_date')"/>
+                    <t t-set="current_date" t-value="ctx.get('current_date')"/>
+                    <t t-set="comment" t-value="ctx.get('comment')"/>
+                    <t t-set="plate" t-value="ctx.get('plate')"/>
 
-                    <t t-set="supplier"
-                    t-value="current_supplier_id and object.service_supplier_ids.filtered(lambda s: s.id == current_supplier_id)[:1] or False"/>
-
-                    <t t-if="supplier">
-                        <t t-set="supplier" t-value="supplier[0]"/>
-
-                        <div>
-                            <strong>Supplier:</strong>
-                            <t t-out="supplier.supplier_id.name"/>
-                        </div>
-                    </t>
-
-                    <div t-if="supplier.truck_id and supplier.truck_id.license_plate">
-                        <strong>Plates:</strong>
-                        <t t-out="supplier.truck_id.license_plate"/>
+                    <div t-if="supplier">
+                        <strong>Supplier:</strong>
+                        <t t-out="supplier"/>
                     </div>
-                    
+
+                    <div t-if="plate">
+                        <strong>Plates:</strong>
+                        <t t-out="plate"/>
+                    </div>
+
                     <div>
                         <strong>State:</strong> Finalized
                     </div>
 
-                    <div t-if="supplier.first_finalized_date">
+                    <div t-if="first_date">
                         <strong>Previous date:</strong>
-                        <t t-out="format_datetime(supplier.first_finalized_date)"/>
-                    </div>
-                    
-                    <div t-if="supplier.finalized_date">
-                        <strong>Current date:</strong>
-                        <t t-out="format_datetime(supplier.finalized_date)"/>
+                        <t t-out="format_datetime(first_date)"/>
                     </div>
 
-                    <div t-if="supplier.finalized_comment">
+                    <div t-if="current_date">
+                        <strong>Current date:</strong>
+                        <t t-out="format_datetime(current_date)"/>
+                    </div>
+
+                    <div t-if="comment">
                         <strong>Comment:</strong>
-                        <t t-out="supplier.finalized_comment"/>
+                        <t t-out="comment"/>
                     </div>
                 </t>
             </field>
@@ -1481,31 +1457,53 @@
             <field name="subject">  Reference {{ object.name or 'n/a' }} </field>
             <field name="body_html" type="html">
                 <t>
-                    <strong>Account:</strong>
-                    <t t-out="object.membership_authorization_id.account"/>
-                    <br/>
-                    <strong><t t-out="object.membership_authorization_id.label_identification_primary or 'Primary key'"/>:</strong>
-                    <t t-out="object.membership_authorization_id.masked_key_identification"/>
-                    <br/>
+                    <t t-if="object.membership_authorization_id.account">
+                        <strong>Account:</strong>
+                        <t t-out="object.membership_authorization_id.account"/>
+                        <br/>
+                    </t>
+
+                    <t t-if="object.membership_authorization_id.masked_key_identification">
+                        <strong><t t-out="object.membership_authorization_id.label_identification_primary or 'Primary key'"/>:</strong>
+                        <t t-out="object.membership_authorization_id.masked_key_identification"/>
+                        <br/>
+                    </t>
+
                     <t t-if="object.membership_authorization_id.second_key_identification">
                         <strong><t t-out="object.membership_authorization_id.label_identification_second or 'Second key'"/>:</strong>
                         <t t-out="object.membership_authorization_id.masked_second_key_identification"/>
                         <br/>
                     </t>
-                    <strong>Titular user name:</strong>
-                    <t t-out="object.membership_authorization_id.nus_name"/>
-                    <br/>
-                    <strong>Phone:</strong>
-                    <t t-out="object.membership_authorization_id.phone_nu"/>
-                    <br/>
-                    <strong>Alternative phone:</strong>
-                    <t t-out="object.membership_authorization_id.nu_alternative or '-'"/>
-                    <br/>
-                    <strong>Preference contact:</strong>
-                    <t t-out="dict(object._fields['preference_contact'].get_description(object.env)['selection']).get(object.preference_contact, '')"/>
-                    <br/>
-                    <strong>Responsible authorizer:</strong>
-                    <t t-out="object.membership_authorization_id.authorizer_id.name or '-'"/>
+
+                    <t t-if="object.membership_authorization_id.nus_name">
+                        <strong>Titular user name:</strong>
+                        <t t-out="object.membership_authorization_id.nus_name"/>
+                        <br/>
+                    </t>
+
+                    <t t-if="object.membership_authorization_id.phone_nu">
+                        <strong>Phone:</strong>
+                        <t t-out="object.membership_authorization_id.phone_nu"/>
+                        <br/>
+                    </t>
+
+                    <t t-if="object.membership_authorization_id.nu_alternative">
+                        <strong>Alternative phone:</strong>
+                        <t t-out="object.membership_authorization_id.nu_alternative"/>
+                        <br/>
+                    </t>
+
+                    <t t-if="object.preference_contact">
+                        <strong>Preference contact:</strong>
+                        <t t-out="dict(object._fields['preference_contact'].get_description(object.env)['selection']).get(object.preference_contact, '')"/>
+                        <br/>
+                    </t>
+
+                    <t t-if="object.membership_authorization_id.authorizer_id.name">
+                        <strong>Responsible authorizer:</strong>
+                        <t t-out="object.membership_authorization_id.authorizer_id.name"/>
+                        <br/>
+                    </t>
                 </t>
             </field>
         </record>
@@ -1779,35 +1777,38 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <strong>Supplier Canceled:</strong>
-                    <br/>
-                    <ul>
-                        <t t-foreach="object.service_supplier_ids.filtered(lambda s: s.cancelled)" t-as="supplier">
-                            <li>
-                                <strong>
-                                    <t t-out="supplier.supplier_id.name"/>
-                                </strong>
-                                <br/>
+                    <t t-if="object.service_supplier_ids.filtered(lambda s: s.cancelled)">
+                        <!-- Tomar el último supplier cancelado -->
+                        <t t-set="supplier" t-value="object.service_supplier_ids.filtered(lambda s: s.cancelled).sorted(key=lambda s: s.write_date)[-1]"/>
+                        
+                        <div>
+                            <strong>Canceled supplier:</strong>
+                            <br/>
+                            <ul>
+                                <li>
+                                    <strong><t t-out="supplier.supplier_id.name"/></strong><br/>
+                                    
+                                    <t t-if="supplier.truck_id">
+                                        <strong>Plates:</strong>
+                                        <t t-out="supplier.truck_id.license_plate"/><br/>
+                                    </t>
 
-                                <t t-if="supplier.cancel_reason_id">
-                                    <strong>Reason:</strong>
-                                    <t t-out="supplier.cancel_reason_id.name"/>
-                                    <br/>
-                                </t>
+                                    <t t-if="supplier.cancel_reason_id">
+                                        <strong>Reason:</strong> <t t-out="supplier.cancel_reason_id.name"/><br/>
+                                    </t>
+                                    
 
-                                <t t-if="supplier.cancel_reason_text">
-                                   <strong>Comment:</strong>
-                                    <t t-out="supplier.cancel_reason_text"/>
-                                    <br/>
-                                </t>
+                                    <t t-if="supplier.cancel_reason_text">
+                                        <strong>Comment:</strong> <t t-out="supplier.cancel_reason_text"/><br/>
+                                    </t>
 
-                                <t t-if="supplier.cancel_user_id">
-                                    <strong>Canceled by:</strong>
-                                    <t t-out="supplier.cancel_user_id.name"/>
-                                </t>
-                            </li>
-                        </t>
-                    </ul>
+                                    <t t-if="supplier.cancel_user_id">
+                                        <strong>Canceled by:</strong> <t t-out="supplier.cancel_user_id.name"/>
+                                    </t>
+                                </li>
+                            </ul>
+                        </div>
+                    </t>
                 </t>
             </field>
         </record>
@@ -1979,12 +1980,71 @@
             <field name="body_html" type="html">
                 <t>
                     <p>
-                        <strong>Confirmed costs</strong><br/>
+                        <strong>Agreement costs</strong><br/>
+
                         <t t-if="object.ike_event_coordinator_id">
-                            <strong>Cordinator CCC: </strong><t t-out="object.ike_event_coordinator_id.name or 'N/A'"/>
+                            <strong>Coordinator CCC: </strong>
+                            <t t-out="object.ike_event_coordinator_id.name or 'N/A'"/>
                         </t>
-                        
                     </p>
+
+                    <br/>
+
+                    <!-- Suppliers válidos -->
+                    <t t-set="valid_suppliers"
+                    t-value="object.selected_supplier_ids.filtered(
+                        lambda s: s.state not in ['cancel', 'cancel_supplier', 'cancel_event']
+                    )"/>
+
+                    <!-- SOLO líneas -->
+                    <t t-set="lines"
+                    t-value="env['ike.event.supplier.product'].search([
+                        ('event_id', '=', object.id),
+                        ('display_type', '=', False),
+                        ('parent_product_id', '=', False),
+                        ('event_supplier_link_id', 'in', valid_suppliers.mapped('supplier_link_id').ids)
+                    ])"/>
+
+                    <table style="width:100%; border: 1px; solid: black; font-size:13px;">
+                        <thead>
+                            <tr>
+                                <th style="border:1px solid #000; padding:6px;">Concept</th>
+                                <th style="border:1px solid #000; padding:6px;">quantity</th>
+                                <th style="border:1px solid #000; padding:6px;">Unit Price</th>
+                                <th style="border:1px solid #000; padding:6px;">Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <t t-foreach="lines" t-as="line">
+                                <tr>
+                                    <td style="border:1px solid #000; padding:6px;">
+                                        <t t-out="line.product_id.display_name"/>
+                                    </td>
+                                    <td style="border:1px solid #000; padding:6px;">
+                                        <t t-out="line.quantity"/>
+                                    </td>
+                                    <td style="border:1px solid #000; padding:6px;">
+                                        <t t-out="line.base_unit_price"/>
+                                    </td>
+                                    <td style="border:1px solid #000; padding:6px;">
+                                        <t t-out="line.base_cost_price"/>
+                                    </td>
+                                </tr>
+                            </t>
+
+                            <!-- TOTAL -->
+                            <tr style="font-weight:bold; background-color:#f5f5f5;">
+                                <td colspan="3" style="border:1px solid #000; padding:6px; text-align:right;">
+                                    TOTAL
+                                </td>
+                                <td style="border:1px solid #000; padding:6px;">
+                                    <t t-out="sum(lines.mapped('base_cost_price'))"/>
+                                </td>
+                            </tr>
+
+                        </tbody>
+                    </table>
                 </t>
             </field>
         </record>
@@ -2003,12 +2063,12 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <t t-set="supplier" t-value="object.env['res.partner'].browse(ctx.get('supplier_id'))"/>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
                     <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
 
                     <p>
                         <strong>Notification sent to operator: </strong><br/>
-                        <strong>Supplier: </strong><t t-out="supplier.name"></t><br/>
+                        <strong>Supplier: </strong><t t-out="supplier"></t><br/>
                         <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
 
                     </p>
@@ -2030,12 +2090,12 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <t t-set="supplier" t-value="object.env['res.partner'].browse(ctx.get('supplier_id'))"/>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
                     <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
 
                     <p>
                         <strong>Notification rejected: </strong><br/>
-                        <strong>Supplier: </strong><t t-out="supplier.name"></t><br/>
+                        <strong>Supplier: </strong><t t-out="supplier"></t><br/>
                         <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
 
                     </p>
@@ -2056,12 +2116,12 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <t t-set="supplier" t-value="object.env['res.partner'].browse(ctx.get('supplier_id'))"/>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
                     <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
 
                     <p>
                         <strong>Notification timeout: </strong><br/>
-                        <strong>Supplier: </strong><t t-out="supplier.name"></t><br/>
+                        <strong>Supplier: </strong><t t-out="supplier"></t><br/>
                         <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
 
                     </p>
@@ -2082,12 +2142,12 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <t t-set="supplier" t-value="object.env['res.partner'].browse(ctx.get('supplier_id'))"/>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
                     <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
 
                     <p>
                         <strong>Notification accepted: </strong><br/>
-                        <strong>Supplier: </strong><t t-out="supplier.name"></t><br/>
+                        <strong>Supplier: </strong><t t-out="supplier"></t><br/>
                         <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
 
                     </p>
@@ -2108,12 +2168,12 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <t t-set="supplier" t-value="object.env['res.partner'].browse(ctx.get('supplier_id'))"/>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
                     <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
 
                     <p>
                         <strong>Notification asigned: </strong><br/>
-                        <strong>Supplier: </strong><t t-out="supplier.name"></t><br/>
+                        <strong>Supplier: </strong><t t-out="supplier"></t><br/>
                         <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
 
                     </p>
@@ -2126,6 +2186,27 @@
             <field name="step_number">11</field>
             <field name="sequence">5</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_11_5"/>
+        </record>
+
+        <!-- API Message workflow -->
+        <!-- Parent -->
+        <record id="ike_binnacle_category_api_parent" model="ike.event.binnacle.category">
+            <field name="name">API Category</field>
+        </record>
+        <record id="ike_binnacle_category_api" model="ike.event.binnacle.category">
+            <field name="name">API Message</field>
+            <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_api_parent"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_api_msg" model="mail.template">
+            <field name="name">Binnacle template API message</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html"><t t-out="ctx.get('body_html_content', '')"/></field>
+        </record>
+        <record id="ike_binnacle_api_msg" model="ike.event.binnacle">
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_api"/>
+            <field name="sequence">90</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_api_msg"/>
         </record>
     </data>
 </odoo>

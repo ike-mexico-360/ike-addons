@@ -15,5 +15,20 @@
             action="action_ike_event_binnacle_category"
             parent="ike_event.ike_menu_configuration"
             groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+
+        <!-- Catálogo de comentarios por defecto de proveedores -->
+        <menuitem
+            id="supplier_setings_catalogs_container_menu"
+            name="Catalogs"
+            sequence="40"
+            parent="custom_master_catalog.res_partner_menu_suppliers_config"/>
+
+        <menuitem
+            id="ike_event_default_supplier_comment_menu"
+            name="Supplier Logbook Catalog"
+            sequence="10"
+            parent="ike_event_binnacle.supplier_setings_catalogs_container_menu"
+            action="ike_event_binnacle.ike_event_default_supplier_comment_action"
+            groups="base.group_system"/>
     </data>
 </odoo>

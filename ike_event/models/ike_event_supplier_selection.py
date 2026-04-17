@@ -146,9 +146,10 @@ class IkeEventSupplierSelection(models.Model):
                     )
                 )
                 if destination_route:
-                    rec.estimated_distance = (destination_distance_m or rec.estimated_distance) / 1000
-                    rec.estimated_duration = (destination_duration_s or rec.estimated_duration) / 60
                     rec.route = destination_route
+                    if not rec.estimated_distance or not rec.osrm:
+                        rec.estimated_distance = (destination_distance_m or rec.estimated_distance) / 1000
+                        rec.estimated_duration = (destination_duration_s or rec.estimated_duration) / 60
         self_filtered._notify_expiration()
         # self_filtered.broadcastReload()
 

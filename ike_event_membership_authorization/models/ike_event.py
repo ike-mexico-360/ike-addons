@@ -66,7 +66,7 @@ class IkeEvent(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': 'Registro de usuario',
-            'res_model': 'ike.add.affiliation.nu',
+            'res_model': 'ike.add.affiliation.nu.wizard',
             'view_mode': 'form',
             'target': 'new',
             'context': ctx

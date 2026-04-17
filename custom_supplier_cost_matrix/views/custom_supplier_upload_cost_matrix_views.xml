@@ -8,9 +8,6 @@
         <field name="arch" type="xml">
             <search>
                 <field name="supplier_id"/>
-                <field name="disabled"/>
-                <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
-                <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 <group expand="1" string="Group By">
                     <filter string="Center of attention" name="group_by_supplier_center_id" domain="[]" context="{'group_by':'supplier_center_id'}"/>
                     <filter string="Supplier" name="group_by_supplier_id" domain="[]" context="{'group_by':'supplier_id'}"/>
@@ -34,7 +31,6 @@
                 <field name="date_confirm"/>
                 <field name="state"/>
                 <field name="active" column_invisible="1"/>
-                <field name="disabled" column_invisible="1"/>
             </list>
         </field>
     </record>
@@ -47,26 +43,25 @@
             <form delete="0">
                 <header>
                     <button name="action_confirm" string="Confirm" type="object" class="btn-primary"
-                            invisible="state != 'draft' or disabled == True or product_ids_count == 0"
+                            invisible="state != 'draft' or product_ids_count == 0"
                             confirm="¿Estás seguro?"/>
                     <button name="action_decline" string="Decline" type="object" class="btn-danger"
-                            invisible="state != 'draft' or disabled == True or product_ids_count == 0"/>
+                            invisible="state != 'draft' or product_ids_count == 0"/>
                     <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,refused"/>
                 </header>
                 <sheet>
                     <div class="oe_button_box" name="button_box"/>
                     <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
-                    <widget name="web_ribbon" title="Disabled" bg_color="text-bg-secondary" invisible="not disabled or not active"/>
                     <widget name="web_ribbon" title="Refused" bg_color="text-bg-danger" invisible="state != 'refused'"/>
                     <widget name="web_ribbon" title="Confirmed" bg_color="text-bg-success" invisible="state != 'confirmed' or products_to_confirm_count == 0"/>
                     <widget name="web_ribbon" title="Nothing to confirm" bg_color="text-bg-warning" invisible="products_to_confirm_count &gt; 0"/>
                     <group>
                         <group>
-                            <field name="supplier_center_id" readonly="context.get('from_supplier_center', False) or disabled == True or state != 'draft'" required="1"
+                            <field name="supplier_center_id" readonly="context.get('from_supplier_center', False) or state != 'draft'" required="1"
                                 options='{"no_open": True, "no_create": True}' context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_center_view_list'}"/>
                             <field name="supplier_id" readonly="1" required="1" force_save="1"
                                 options='{"no_open": True, "no_create": True}' context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list'}"/>
-                            <field name="service_id" readonly="disabled == True or state != 'draft'" required="1" options='{"no_open": True, "no_create": True}'
+                            <field name="service_id" readonly="state != 'draft'" required="1" options='{"no_open": True, "no_create": True}'
                                 context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list'}"
                                 domain="service_domain"/>
                             <field name="service_domain" invisible="1"/>
@@ -86,7 +81,6 @@
                             <field name="file_name" invisible="1"/>
                             <field name="file_type" invisible="1"/>
                             <!-- <field name="x_state" readonly="disabled"/> -->
-                            <field name="disabled" invisible="1"/>
                             <field name="active" invisible="1"/>
                             <field name="id" invisible="1"/>
                             <field name="product_ids_count" invisible="1"/>
@@ -99,7 +93,7 @@
                                 <button name="view_records_with_missing_values" string="View records with missing values" type="object" class="btn-link" colspan="2" icon="fa-search"/>
                             </div>
                             <group>
-                                <field name="cost_product_ids" nolabel="1" mode="list" readonly="disabled == True or state != 'draft'">
+                                <field name="cost_product_ids" nolabel="1" mode="list" readonly="state != 'draft'">
                                     <list string="Products" editable="bottom" limit="20" no_open="1" decoration-danger="missing_value == True" decoration-muted="not_confirm == True" decoration-info="not_confirm == False and parent.state == 'confirmed'" create="0">
                                         <field name="service_id" column_invisible="1"/>
                                         <field name="country_id" column_invisible="1"/>
@@ -116,8 +110,8 @@
                                             domain="[('disabled', '=', False)]"/>
                                         <field name="concept_id" options='{"no_open": True, "no_create": True}' required="1"
                                             domain="[('id', 'in', mapping_product_ids),('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'}"/>
-                                        <field name="vehicle_category_id" options='{"no_open": True, "no_create": True}' required="1"
-                                            domain="[('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_category_view_list'}"/>
+                                        <field name="subservice_specification_id" options='{"no_open": True, "no_create": True}' required="1"
+                                            domain="[('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_subservice_specification_view_list'}"/>
                                         <field name="cost" required="1"/>
                                         <field name="account_id" options='{"no_open": True, "no_create": True}'
                                             domain="[('disabled', '=', False)]"
@@ -164,8 +158,8 @@
                     domain="[('disabled', '=', False)]"/>
                 <field name="concept_id" options='{"no_open": True, "no_create": True}' required="1"
                     domain="[('id', 'in', mapping_product_ids),('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'}"/>
-                <field name="vehicle_category_id" options='{"no_open": True, "no_create": True}' required="1"
-                    domain="[('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_category_view_list'}"/>
+                <field name="subservice_specification_id" options='{"no_open": True, "no_create": True}' required="1"
+                    domain="[('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_subservice_specification_view_list'}"/>
                 <field name="cost" required="1"/>
                 <field name="account_id" options='{"no_open": True, "no_create": True}'
                     domain="[('disabled', '=', False)]"
@@ -211,7 +205,7 @@
         <field name="res_model">custom.supplier.upload.cost.matrix</field>
         <field name="view_mode">list,form</field>
         <field name="domain">[]</field>
-        <field name="context">{'search_default_filter_enabled': 1,}</field>
+        <field name="context">{}</field>
     </record>
 
 </odoo>

@@ -34,7 +34,7 @@ class IkeEventSupplierBase(models.AbstractModel):
         ('cancel_event', 'Cancelled by Event'),
         ('cancel_supplier', 'Cancelled by Supplier'),
     ], default='available', readonly=True, copy=False)
-    stage_id = fields.Many2one('ike.service.stage', ondelete='set null', copy=False, tracking=True)
+    stage_id = fields.Many2one('ike.service.stage', ondelete='set null', copy=False)
     stage_ref = fields.Char(related='stage_id.ref', string='Stage Ref')
 
     # Assignation supplier fields

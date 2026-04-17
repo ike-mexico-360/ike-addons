@@ -22,4 +22,30 @@
         <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
     </record>
 
+    <record id="sh_all_in_one_helpdesk.helpdesk_main_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account'),ref('custom_master_catalog.custom_group_ccc_coordinator'),ref('custom_master_catalog.custom_group_ccc_analyst')])]"/>
+    </record>
+    <record id="sh_all_in_one_helpdesk.helpdesk_reporting_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
+    <record id="sh_all_in_one_helpdesk.helpdesk_config_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
+    <record id="sh_all_in_one_helpdesk.helpdesk_dashboard_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account'),ref('custom_master_catalog.custom_group_ccc_coordinator'),ref('custom_master_catalog.custom_group_ccc_analyst')])]"/>
+    </record>
+    <record id="sh_all_in_one_helpdesk.menu_helpdesk_sla_analysis" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
+    <record id="sh_all_in_one_helpdesk.menu_helpdesk_stage_change_analysis" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
+
+    <!-- Rol CCC -->
+    <record id="custom_master_catalog.custom_group_ccc_coordinator" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('sh_all_in_one_helpdesk.group_helpdesk_alarm')),(4, ref('sh_all_in_one_helpdesk.sh_helpdesk_ticket_po')),(4, ref('sh_all_in_one_helpdesk.sh_helpdesk_ticket_repair')),(4, ref('sh_all_in_one_helpdesk.helpdesk_group_user'))]"/>
+    </record>
+    <record id="custom_master_catalog.custom_group_ccc_analyst" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('sh_all_in_one_helpdesk.group_helpdesk_alarm')),(4, ref('sh_all_in_one_helpdesk.sh_helpdesk_ticket_po')),(4, ref('sh_all_in_one_helpdesk.sh_helpdesk_ticket_repair')),(4, ref('sh_all_in_one_helpdesk.helpdesk_group_user')),(4, ref('sh_all_in_one_helpdesk.helpdesk_group_manager'))]"/>
+    </record>
 </odoo>

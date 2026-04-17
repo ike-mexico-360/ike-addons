@@ -23,27 +23,27 @@
         name="Clients"
         sequence="20"
         web_icon="custom_master_catalog,static/description/client.png"
-        groups="base.group_system,custom_group_contact_admin_client,custom_group_contact_admin_account,custom_group_supplier_operational,custom_group_ccc_analyst,custom_group_ccc_coordinator,custom_group_supplier_admin_system"/>
+        groups="base.group_system,custom_group_contact_admin_client,custom_group_contact_admin_account,custom_group_supplier_operational,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support,custom_group_supplier_support"/>
 
     <!-- Sub-menu Clients -->
     <menuitem id="res_partner_menu_clients"
         name="Clients"
         parent="res_partner_menu_clients_root"
-        groups="base.group_system,custom_group_contact_admin_client,custom_group_contact_admin_account,custom_group_supplier_operational,custom_group_ccc_analyst,custom_group_ccc_coordinator"
+        groups="base.group_system,custom_group_contact_admin_client,custom_group_contact_admin_account,custom_group_supplier_operational,custom_group_supplier_contralory,custom_group_supplier_support"
         sequence="1">
         <menuitem id="res_partner_client_menu_clients"
             name="Clients"
             action="res_partner_client_action_window"
-            groups="base.group_system,custom_group_contact_admin_client"
+            groups="base.group_system,custom_group_contact_admin_client,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="1"/>
         <menuitem id="res_partner_account_menu_account"
             name="Accounts"
             action="res_partner_account_action_window"
-            groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_operational,custom_group_ccc_analyst,custom_group_ccc_coordinator"
+            groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_operational,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="2"/>
         <!-- <menuitem id="res_partner_account_menu_account_readonly"
             name="Accounts"
-            action="action_res_partner_account_supplier_operational"
+            action="action_res_partner_account_supplier_readonly"
             groups="custom_group_supplier_operational"
             sequence="10"/> -->
     </menuitem>
@@ -52,7 +52,7 @@
     <menuitem id="res_partner_menu_clientes_config"
         name="Configuration"
         parent="res_partner_menu_clients_root"
-        groups="base.group_system,custom_group_contact_admin_client,custom_group_contact_admin_account,custom_group_supplier_admin_system"
+        groups="base.group_system,custom_group_contact_admin_client,custom_group_contact_admin_account,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
         sequence="3"/>
 
     <menuitem id="res_partner_company_ike_menu"
@@ -64,29 +64,30 @@
     <menuitem id="res_partner_menu_account_config"
         name="Accounts"
         parent="res_partner_menu_clientes_config"
-        groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_admin_system"
+        groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
         sequence="2">
         <menuitem id="res_partner_menu_account_type_config"
             name="Accounts Types"
             action="custom_account_type_action"
-            groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="1"/>
         <menuitem id="res_partner_menu_account_identification_config"
             name="Accounts Identifications"
             action="custom_account_identification_action"
-            groups="base.group_system,custom_group_contact_admin_account"
+            groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="2"/>
         <menuitem
             id="custom_data_source_menu"
             action="custom_data_source_action"
             name="Data Sources"
+            groups="base.group_system,custom_group_contact_admin_account"
             sequence="20"/>
     </menuitem>
 
     <!-- Menu Suppliers -->
     <menuitem id="menu_suppliers"
         name="Suppliers"
-        groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement"
+        groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement,custom_group_supplier_contralory,custom_group_supplier_support"
         sequence="21"
         web_icon="custom_master_catalog,static/description/supplier.png"/>
 
@@ -94,27 +95,27 @@
     <menuitem id="res_partner_menu_suppliers"
         name="Suppliers"
         parent="menu_suppliers"
-        groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement"
+        groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement,custom_group_supplier_contralory,custom_group_supplier_support"
         sequence="5">
         <menuitem id="res_partner_submenu_suppliers"
             action="res_partner_supplier_action_window"
             name="Suppliers"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="5"/>
         <menuitem id="res_partner_menu_supplier_centers"
             name="Care centers"
             action="res_partner_supplier_center_action_window"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="10"/>
         <menuitem id="custom_supplier_coverage_configuration_menu"
             action="custom_supplier_coverage_configuration_action"
             name="Configuration of Services and Subservices"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="15"/>
         <menuitem id="custom_fleet_vehicle_menu"
             action="custom_fleet_vehicle_action"
             name="Vehicles of service"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="20"/>
     </menuitem>
 
@@ -122,57 +123,57 @@
     <menuitem id="res_partner_menu_suppliers_config"
         name="Configuration"
         parent="menu_suppliers"
-        groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement"
+        groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement,custom_group_supplier_contralory,custom_group_supplier_support"
         sequence="10">
         <menuitem id="res_partner_menu_supplier_type"
             action="custom_master_catalog.custom_supplier_type_action"
             name="Supplier Types"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="5"/>
         <menuitem id="res_partner_menu_payment_term"
             action="custom_payment_type_action"
             name="Payment Types"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="10"/>
         <menuitem id="custom_vehicle_type_menu"
             name="Types of service vehicles"
             action="custom_vehicle_type_action"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="15"/>
         <menuitem id="custom_supplier_types_statuses_menu"
             name="Types of supplier status"
             action="custom_supplier_types_statuses_action"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="17"/>
         <menuitem id="custom_ike_concepts_product_view_menu"
             name="Concepts"
             action="custom_ike_concepts_product_action_server"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="20"/>
         <menuitem id="custom_vehicle_accessories_menu"
             name="Accessories"
             action="custom_ike_accessories_product_action_server"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="25"/>
         <menuitem id="custom_vehicle_phone_classification_menu"
             name="Phone classification"
             action="custom_ike_phone_classification_action"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="30"/>
         <menuitem id="custom_additional_cost_authorization_menu"
             name="Reasons of authorizing"
             action="custom_reason_authorizing_additional_costs_action"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="35"/>
         <menuitem id="custom_additional_concept_authorizer_type_menu"
             name="Additional concept authorizer types"
             action="custom_additional_concept_authorizer_type_action"
-            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="45"/>
         <menuitem id="res_partner_supplier_users_rel_menu"
             name="Users - Supplier"
             action="res_partner_supplier_users_rel_action"
-            groups="base.group_system,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="60"/>
     </menuitem>
 
@@ -181,23 +182,23 @@
         name="Vehicles"
         sequence="23"
         web_icon="custom_master_catalog,static/description/vehicle.png"
-        groups="base.group_system,custom_group_supplier_admin_system"/>
+        groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"/>
 
     <!-- Sub-menu Config -->
     <menuitem id="vehicles_config_menu"
         name="Configuration catalogs"
         parent="vehicles_menu_root"
-        groups="base.group_system,custom_group_supplier_admin_system"
+        groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
         sequence="5">
         <menuitem id="res_partner_menu_fleet_vehicle_models"
             action="custom_fleet_vehicle_model_action"
             name="Fleet Vehicle Models"
-            groups="base.group_system,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="5"/>
         <menuitem id="custom_fleet_vehicle_model_category_menu"
             name="Vehicle categories"
             action="custom_fleet_vehicle_model_category_action"
-            groups="base.group_system,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="10"/>
         <menuitem id="custom_fleet_vehicle_model_weight_category_menu"
             name="Weight Category Vehicles"
@@ -211,30 +212,30 @@
         name="Configuration"
         sequence="24"
         web_icon="custom_master_catalog,static/description/configuration.png"
-        groups="base.group_system,custom_group_supplier_admin_system"/>
+        groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"/>
 
     <menuitem id="res_partner_menu_type_event"
         action="custom_type_event_action"
         name="Types Events"
         parent="configuration_menu_root"
-        groups="base.group_system,custom_group_supplier_admin_system"
+        groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
         sequence="5"/>
 
     <!-- Sub-menu Config -->
     <menuitem id="res_partner_menu_geographical_zones"
         name="Geographical Zones"
         parent="configuration_menu_root"
-        groups="base.group_system,custom_group_supplier_admin_system"
+        groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
         sequence="10">
         <menuitem id="res_menu_country"
             name="Countries"
             action="custom_ike_action_country"
-            groups="base.group_system,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="5"/>
         <menuitem id="res_menu_country_state"
             name="States"
             action="custom_ike_action_country_state"
-            groups="base.group_system,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="10"/>
         <menuitem id="res_menu_country_group"
             name="Country group"
@@ -244,12 +245,12 @@
         <menuitem id="custom_state_municipality_menu"
             name="Geographical Zones"
             action="custom_state_municipality_action"
-            groups="base.group_system,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
             sequence="20"/>
         <menuitem id="custom_import_postal_codes_sepomex_menu"
             name="Import Postal Codes"
             action="custom_import_postal_codes_action"
-            groups="base.group_system,custom_group_supplier_admin_system"
+            groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory"
             sequence="25"/>
     </menuitem>
     <menuitem id="custom_subservice_specification_action_menu"
@@ -259,4 +260,29 @@
         groups="base.group_system"
         sequence="21"/>
 
+    <!-- Menu Service-->
+    <menuitem id="product_category_services_menu_root"
+        name="Services"
+        sequence="22"
+        web_icon="custom_master_catalog,static/description/service.png"
+        groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"/>
+
+    <!-- Sub-menus Service-->
+    <menuitem id="product_category_services_menu"
+        name="Services"
+        parent="product_category_services_menu_root"
+        groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
+        sequence="1">
+        <menuitem id="product_category_services_menu_services"
+            name="Services"
+            action="product_category_service_action_window"
+            groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
+            sequence="1"/>
+        <!-- Menus Subservice-->
+        <menuitem id="product_category_subservices_menu_subservices"
+            name="Subservices"
+            action="x_subservice_product_template_view_action_server"
+            groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support"
+            sequence="2"/>
+    </menuitem>
 </odoo>

@@ -3,7 +3,7 @@
 
     <record id="ike_event_add_nu_user_view_form" model="ir.ui.view">
     <field name="name">ike.add.user.wizard.form</field>
-    <field name="model">ike.add.affiliation.nu</field>
+    <field name="model">ike.add.affiliation.nu.wizard</field>
     <field name="arch" type="xml">
             <form>
                 <!-- Key Identification -->
@@ -82,7 +82,9 @@
                     <field name="user_authorization_affiliation_id"
                         domain="x_domain_authorization_affiliation"
                         required="authorization"
-                        options="{'no_open': True, 'no_create': True, 'no_edit': True}"/>
+                        options="{'no_open': True, 'no_create': True, 'no_edit': True}"
+                        context="{'edit': False}"
+/>
                 </group>
 
                 <footer>
@@ -98,7 +100,7 @@
 
     <record id="action_ike_register_user_wizard" model="ir.actions.act_window">
         <field name="name">User register</field>
-        <field name="res_model">ike.add.affiliation.nu</field>
+        <field name="res_model">ike.add.affiliation.nu.wizard</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="ike_event_add_nu_user_view_form"/>
         <field name="target">new</field>

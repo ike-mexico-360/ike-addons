@@ -23,13 +23,27 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     first_state_user_id = fields.Many2one(related='supplier_id.first_state_user_id')
     first_comment = fields.Text(related='supplier_id.first_comment')
 
-    supplier_assignation_user_id = fields.Many2one(related='supplier_id.assignation_user_id')
-    supplier_on_route_to_start_user_id = fields.Many2one(related='supplier_id.on_route_to_start_user_id')
-    supplier_on_route_to_end_user_id = fields.Many2one(related='supplier_id.on_route_to_end_user_id')
-    supplier_contacted_user_id = fields.Many2one(related='supplier_id.contacted_user_id')
-    supplier_on_route_to_destination_start_user_id = fields.Many2one(related='supplier_id.on_route_to_destination_start_user_id')
-    supplier_on_route_to_destination_end_user_id = fields.Many2one(related='supplier_id.on_route_to_destination_end_user_id')
-    supplier_finalized_user_id = fields.Many2one(related='supplier_id.finalized_user_id')
+    supplier_assignation_user_id = fields.Many2one(
+        related='supplier_id.assignation_user_id',
+        string='Assigned')
+    supplier_on_route_to_start_user_id = fields.Many2one(
+        related='supplier_id.on_route_to_start_user_id',
+        string='On route')
+    supplier_on_route_to_end_user_id = fields.Many2one(
+        related='supplier_id.on_route_to_end_user_id',
+        string='Arrived')
+    supplier_contacted_user_id = fields.Many2one(
+        related='supplier_id.contacted_user_id',
+        string='Contacted')
+    supplier_on_route_to_destination_start_user_id = fields.Many2one(
+        related='supplier_id.on_route_to_destination_start_user_id',
+        string='Route to destination')
+    supplier_on_route_to_destination_end_user_id = fields.Many2one(
+        related='supplier_id.on_route_to_destination_end_user_id',
+        string='He arrived at his destination')
+    supplier_finalized_user_id = fields.Many2one(
+        related='supplier_id.finalized_user_id',
+        string='Finalized')
 
     stage_selected_id = fields.Many2one(
         'ike.service.stage',
@@ -42,91 +56,91 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     first_assignation_user_id = fields.Many2one(related='supplier_id.first_assignation_user_id')
     first_assignation_comment = fields.Text(related='supplier_id.first_assignation_comment')
 
-    assignation_date = fields.Datetime(string='Assigned')
+    assignation_date = fields.Datetime(string='Assigned (datetime)')
     assignation_user_id = fields.Many2one(
         'res.users',
         string='Assigned (user)',
         default=lambda self: self.env.user
     )
-    assignation_comment = fields.Text(string='Assigned')
+    assignation_comment = fields.Text(string='Assigned (comment)')
 
     # === ON ROUTE ===
     first_on_route_to_user_start_date = fields.Datetime(related='supplier_id.first_on_route_to_user_start_date')
     first_on_route_to_start_user_id = fields.Many2one(related='supplier_id.first_on_route_to_start_user_id')
     first_on_route_to_start_comment = fields.Text(related='supplier_id.first_on_route_to_start_comment')
 
-    on_route_to_user_start_date = fields.Datetime(string='On route')
+    on_route_to_user_start_date = fields.Datetime(string='On route (datetime)')
     on_route_to_start_user_id = fields.Many2one(
         'res.users',
         string='On route (user)',
         default=lambda self: self.env.user
     )
-    on_route_to_start_comment = fields.Text(string='On route')
+    on_route_to_start_comment = fields.Text(string='On route (comment)')
 
     # === ARRIVED ===
     first_on_route_to_user_end_date = fields.Datetime(related='supplier_id.first_on_route_to_user_end_date')
     first_on_route_to_end_user_id = fields.Many2one(related='supplier_id.first_on_route_to_end_user_id')
     first_on_route_to_end_comment = fields.Text(related='supplier_id.first_on_route_to_end_comment')
 
-    on_route_to_user_end_date = fields.Datetime(string='Arrived')
+    on_route_to_user_end_date = fields.Datetime(string='Arrived (datetime)')
     on_route_to_end_user_id = fields.Many2one(
         'res.users',
         string='Arrived (user)',
         default=lambda self: self.env.user
     )
-    on_route_to_end_comment = fields.Text(string='Arrived')
+    on_route_to_end_comment = fields.Text(string='Arrived (comment)')
 
     # === CONTACTED ===
     first_contacted_date = fields.Datetime(related='supplier_id.first_contacted_date')
     first_contacted_user_id = fields.Many2one(related='supplier_id.first_contacted_user_id')
     first_contacted_comment = fields.Text(related='supplier_id.first_contacted_comment')
 
-    contacted_date = fields.Datetime(string='Contacted')
+    contacted_date = fields.Datetime(string='Contacted (datetime)')
     contacted_user_id = fields.Many2one(
         'res.users',
         string='Contacted (user)',
         default=lambda self: self.env.user
     )
-    contacted_comment = fields.Text(string='Contacted')
+    contacted_comment = fields.Text(string='Contacted (comment)')
 
     # === ROUTE TO DESTINATION ===
     first_on_route_to_destination_start_date = fields.Datetime(related='supplier_id.first_on_route_to_destination_start_date')
     first_on_route_to_destination_start_user_id = fields.Many2one(related='supplier_id.first_on_route_to_destination_start_user_id')
     first_on_route_to_destination_start_comment = fields.Text(related='supplier_id.first_on_route_to_destination_start_comment')
 
-    on_route_to_destination_start_date = fields.Datetime(string='Route to destination')
+    on_route_to_destination_start_date = fields.Datetime(string='Route to destination (datetime)')
     on_route_to_destination_start_user_id = fields.Many2one(
         'res.users',
         string='Route to destination (user)',
         default=lambda self: self.env.user
     )
-    on_route_to_destination_start_comment = fields.Text(string='Route to destination')
+    on_route_to_destination_start_comment = fields.Text(string='Route to destination (comment)')
 
     # === HE ARRIVED DESTINATION ===
     first_on_route_to_destination_end_date = fields.Datetime(related='supplier_id.first_on_route_to_destination_end_date')
     first_on_route_to_destination_end_user_id = fields.Many2one(related='supplier_id.first_on_route_to_destination_end_user_id')
     first_on_route_to_destination_end_comment = fields.Text(related='supplier_id.first_on_route_to_destination_end_comment')
 
-    on_route_to_destination_end_date = fields.Datetime(string='He arrived at his destination')
+    on_route_to_destination_end_date = fields.Datetime(string='He arrived at his destination (datetime)')
     on_route_to_destination_end_user_id = fields.Many2one(
         'res.users',
         string='He arrived at his destination (user)',
         default=lambda self: self.env.user
     )
-    on_route_to_destination_end_comment = fields.Text(string='He arrived at his destination')
+    on_route_to_destination_end_comment = fields.Text(string='He arrived at his destination (comment)')
 
     # === FINALIZED ===
     first_finalized_date = fields.Datetime(related='supplier_id.first_finalized_date')
     first_finalized_user_id = fields.Many2one(related='supplier_id.first_finalized_user_id')
     first_finalized_comment = fields.Text(related='supplier_id.first_finalized_comment')
 
-    finalized_date = fields.Datetime(string='Finalized')
+    finalized_date = fields.Datetime(string='Finalized (datetime)')
     finalized_user_id = fields.Many2one(
         'res.users',
         string='Finalized (user)',
         default=lambda self: self.env.user
     )
-    finalized_comment = fields.Text(string='Finalized')
+    finalized_comment = fields.Text(string='Finalized (comment)')
 
     # === COMPUTED FIELDS === #
     is_assigned_editable = fields.Boolean(compute='_compute_editable_fields')
@@ -504,14 +518,20 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             'on_route_to_start_user_id': user,
             'on_route_to_start_comment': comment,
         })
+        first_date = supplier.first_on_route_to_user_start_date or datetime
         if not supplier.first_on_route_to_user_start_date:
             vals.update({
                 'first_on_route_to_user_start_date': datetime or fields.Datetime.now(),
                 'first_on_route_to_start_user_id': user,
                 'first_on_route_to_start_comment': comment,
             })
+            first_date = datetime
 
-        supplier.action_on_route()
+        supplier.with_context(
+            binnacle_first_date=first_date,
+            binnacle_current_date=datetime,
+            binnacle_comment=comment,
+        ).action_on_route()
 
     def _action_arrived(self, supplier, vals, datetime, user, comment):
         vals.update({
@@ -519,14 +539,20 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             'on_route_to_end_user_id': user,
             'on_route_to_end_comment': comment,
         })
+        first_date = supplier.first_on_route_to_user_end_date or datetime
         if not supplier.first_on_route_to_user_end_date:
             vals.update({
                 'first_on_route_to_user_end_date': datetime or fields.Datetime.now(),
                 'first_on_route_to_end_user_id': user,
                 'first_on_route_to_end_comment': comment,
             })
+            first_date = datetime
 
-        supplier.action_arrive()
+        supplier.with_context(
+            binnacle_first_date=first_date,
+            binnacle_current_date=datetime,
+            binnacle_comment=comment,
+        ).action_arrive()
 
     def _action_contacted(self, supplier, vals, datetime, user, comment):
         vals.update({
@@ -534,14 +560,20 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             'contacted_user_id': user,
             'contacted_comment': comment,
         })
+        first_date = supplier.first_contacted_date or datetime
         if not supplier.first_contacted_date:
             vals.update({
                 'first_contacted_date': datetime or fields.Datetime.now(),
                 'first_contacted_user_id': user,
                 'first_contacted_comment': comment,
             })
+            first_date = datetime
 
-        supplier.action_contact()
+        supplier.with_context(
+            binnacle_first_date=first_date,
+            binnacle_current_date=datetime,
+            binnacle_comment=comment,
+        ).action_contact()
 
     def _action_on_route_2(self, supplier, vals, datetime, user, comment):
         vals.update({
@@ -549,14 +581,20 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             'on_route_to_destination_start_user_id': user,
             'on_route_to_destination_start_comment': comment,
         })
+        first_date = supplier.first_on_route_to_destination_start_date or datetime
         if not supplier.first_on_route_to_destination_start_date:
             vals.update({
                 'first_on_route_to_destination_start_date': datetime or fields.Datetime.now(),
                 'first_on_route_to_destination_start_user_id': user,
                 'first_on_route_to_destination_start_comment': comment,
             })
+            first_date = datetime
 
-        supplier.action_on_route_to_the_destination()
+        supplier.with_context(
+            binnacle_first_date=first_date,
+            binnacle_current_date=datetime,
+            binnacle_comment=comment,
+        ).action_on_route_to_the_destination()
 
     def _action_arrived_2(self, supplier, vals, datetime, user, comment):
         vals.update({
@@ -564,13 +602,20 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             'on_route_to_destination_end_user_id': user,
             'on_route_to_destination_end_comment': comment,
         })
+        first_date = supplier.first_on_route_to_destination_end_date or datetime
         if not supplier.first_on_route_to_destination_end_date:
             vals.update({
                 'first_on_route_to_destination_end_date': datetime or fields.Datetime.now(),
                 'first_on_route_to_destination_end_user_id': user,
                 'first_on_route_to_destination_end_comment': comment,
             })
-        supplier.action_arrive_to_the_destination()
+            first_date = datetime
+
+        supplier.with_context(
+            binnacle_first_date=first_date,
+            binnacle_current_date=datetime,
+            binnacle_comment=comment,
+        ).action_arrive_to_the_destination()
 
     def _action_finalized(self, supplier, vals, datetime, user, comment):
         vals.update({
@@ -578,11 +623,17 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             'finalized_user_id': user,
             'finalized_comment': comment,
         })
+        first_date = supplier.first_finalized_date or datetime
         if not supplier.first_finalized_date:
             vals.update({
                 'first_finalized_date': datetime or fields.Datetime.now(),
                 'first_finalized_user_id': user,
                 'first_finalized_comment': comment,
             })
+            first_date = datetime
 
-        supplier.action_finalize()
+        supplier.with_context(
+            binnacle_first_date=first_date,
+            binnacle_current_date=datetime,
+            binnacle_comment=comment,
+        ).action_finalize()

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-31 18:41+0000\n"
-"PO-Revision-Date: 2026-03-31 18:41+0000\n"
+"POT-Creation-Date: 2026-04-15 22:53+0000\n"
+"PO-Revision-Date: 2026-04-15 22:53+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -162,6 +162,15 @@ msgid ""
 "                            <span class=\"d-block d-md-none\">Ref.</span>"
 msgstr ""
 "<span class=\"d-none d-md-inline\">Orden de compra #</span>\n"
+"                            <span class=\"d-block d-md-none\">Ref.</span>"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
+msgid ""
+"<span class=\"d-none d-md-inline\">Request for Quotation #</span>\n"
+"                            <span class=\"d-block d-md-none\">Ref.</span>"
+msgstr ""
+"<span class=\"d-none d-md-inline\">Solicitud de cotización #</span>\n"
 "                            <span class=\"d-block d-md-none\">Ref.</span>"
 
 #. module: ike_event_purchase
@@ -320,6 +329,11 @@ msgid "Contact"
 msgstr "Contacto"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_product_product__standard_price
+msgid "Cost"
+msgstr "Costo"
+
+#. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/sh_helpdesk_ticket.py:0
 msgid "Cost Review"
@@ -475,6 +489,16 @@ msgid "Event"
 msgstr "Evento"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_price_unit_event
+msgid "Event Price"
+msgstr "Precio evento"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_product_qty_event
+msgid "Event Quantity"
+msgstr "Cantidad evento"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__5
 msgid "Friday"
 msgstr "Viernes"
@@ -489,6 +513,16 @@ msgstr "Tiene consolidación"
 #: model:ir.model,name:ike_event_purchase.model_sh_helpdesk_ticket
 msgid "Helpdesk Ticket"
 msgstr "Ticket de Ayuda"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
+msgid "Ike price"
+msgstr "Precio iké"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
+msgid "Ike quantity"
+msgstr "Cantidad iké"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -544,6 +578,11 @@ msgstr "No hay cambios para guardar"
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__open
 msgid "Open"
 msgstr "Abierto"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
+msgid "Order Deadline"
+msgstr "Fecha límite de la orden"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__order_line
@@ -862,8 +901,9 @@ msgstr "Para consolidar"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_orders
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__triweekly
@@ -892,6 +932,17 @@ msgstr "Precio unitario"
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.js:0
 msgid "Unknown error"
 msgstr "Error desconocido"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,help:ike_event_purchase.field_product_product__standard_price
+msgid ""
+"Value of the product (automatically computed in AVCO).\n"
+"        Used to value the product when the purchase cost is not known (e.g. inventory adjustment).\n"
+"        Used to compute margins on sale orders."
+msgstr ""
+"El valor del producto (calculado de forma automática con AVCO).\n"
+"        Se utiliza para valorar el producto cuando se desconoce el costo de compra (por ejemplo, en un ajuste de inventario).\n"
+"        Se utiliza para calcular los márgenes de las órdenes de venta."
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_tickets_po_inherited_view_form_inherit_ike_event_purchase

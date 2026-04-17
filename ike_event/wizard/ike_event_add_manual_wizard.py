@@ -33,7 +33,10 @@ class IkeEventManualSupplierWizard(models.TransientModel):
     @api.depends('event_id', 'supplier_id')
     def _compute_truck_domain(self):
         for rec in self:
-            domain = [('disabled', '=', False)]
+            domain = [
+                ('disabled', '=', False),
+                ('x_vehicle_service_state', '=', 'available')
+            ]
 
             if rec.supplier_id:
                 domain.append(('x_partner_id', '=', rec.supplier_id.id))

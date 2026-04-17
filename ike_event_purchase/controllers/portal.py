@@ -1,12 +1,16 @@
 from odoo import http
 from odoo.http import request
 from odoo.addons.purchase.controllers.portal import CustomerPortal as PurchasePortal
+
 from odoo.exceptions import AccessError, MissingError
+from odoo.tools.translate import _
 import logging
 _logger = logging.getLogger(__name__)
 
 
 class CustomerPortal(PurchasePortal):
+
+    items_per_page = 2
 
     # Contar solo los rfq's del proveedoral que pertenece el usuario
     def _prepare_home_portal_values(self, counters):
@@ -49,6 +53,40 @@ class CustomerPortal(PurchasePortal):
             template, page, date_begin, date_end, sortby,
             filterby, domain, searchbar_filters, default_filter,
             url, history, page_name, key
+        )
+
+    @http.route(['/my/rfq', '/my/rfq/page/<int:page>'], type='http', auth="user", website=True)
+    def portal_my_requests_for_quotation(self, page=1, date_begin=None, date_end=None, sortby=None, filterby=None, **kw):
+        return self._render_portal(
+            "purchase.portal_my_purchase_rfqs",
+            page, date_begin, date_end, sortby, filterby,
+            [('state', 'in', ['sent', 'to_consolidate', 'consolidated'])],
+            {},
+            None,
+            "/my/rfq",
+            'my_rfqs_history',
+            'rfq',
+            'rfqs'
+        )
+
+    @http.route(['/my/purchase', '/my/purchase/page/<int:page>'], type='http', auth="user", website=True)
+    def portal_my_purchase_orders(self, page=1, date_begin=None, date_end=None, sortby=None, filterby=None, **kw):
+        self._items_per_page = 10
+        return self._render_portal(
+            "purchase.portal_my_purchase_orders",
+            page, date_begin, date_end, sortby, filterby,
+            [],
+            {
+                'all': {'label': _('All'), 'domain': [('state', 'in', ['purchase', 'done', 'cancel'])]},
+                'purchase': {'label': _('Purchase Order'), 'domain': [('state', '=', 'purchase')]},
+                'cancel': {'label': _('Cancelled'), 'domain': [('state', '=', 'cancel')]},
+                'done': {'label': _('Locked'), 'domain': [('state', '=', 'done')]},
+            },
+            'all',
+            "/my/purchase",
+            'my_purchases_history',
+            'purchase',
+            'orders'
         )
 
     @http.route(['/my/purchase/<int:order_id>'], type='http', auth="public", website=True)

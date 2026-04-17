@@ -22,6 +22,7 @@ class IkeEvent(models.Model):
 
     # Flow fields
     sections = fields.Json(compute='_compute_sections', store=True, copy=False)
+    stage_id = fields.Many2one(tracking=True)
 
     # nu fields
     nu_name = fields.Char('Nu user name')
@@ -357,7 +358,7 @@ class IkeEvent(models.Model):
         self.action_create_satisfaction_survey()
 
     def action_verify(self):
-        total_amount = sum(self.selected_supplier_ids.mapped('base_amount_concept_total'))
+        total_amount = sum(self.selected_supplier_ids.mapped('base_amount_concept_subtotal'))
         if total_amount <= self.covered_amount:
             self.action_close()
         else:
@@ -1009,6 +1010,43 @@ class IkeEvent(models.Model):
             'target': 'new',
             'context': {
                 'default_event_id': self.id
+            }
+        }
+
+    # === ACTION DIRECTORIES CENTER ATTENTION === #
+    def action_directory_center_attention(self):
+        self.ensure_one()
+        view = self.env.ref('custom_master_catalog.res_partner_supplier_directory_center_view_list')
+        search_view = self.env.ref('custom_master_catalog.res_partner_supplier_center_view_search')
+
+        zip = self.location_zip_code
+
+        municipality = self.env['custom.state.municipality'].search([
+            ('active', '=', True),
+            ('disabled', '=', False),
+            ('code_ids', '=', zip)
+        ])
+
+        if not municipality:
+            return []
+
+        return {
+            'name': _('Directories center attention'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'res.partner',
+            'view_mode': 'list',
+            'views': [(view.id, 'list')],
+            'search_view_id': (search_view.id, search_view.name),
+            'target': 'new',
+            'domain': [
+                ('active', '=', True),
+                ('disabled', '=', False),
+                ('is_company', '=', True),
+                ('type', '=', 'center'),
+                ('x_geographical_area_ids.municipality_id', '=', municipality.id)
+            ],
+            'context': {
+                'group_by': 'parent_id',
             }
         }
 

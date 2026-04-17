@@ -34,6 +34,7 @@ class IkeEventSupplier(models.Model):
     latitude = fields.Char(copy=False)
     longitude = fields.Char(copy=False)
     route = fields.Json(copy=False)
+    osrm = fields.Boolean(default=False, copy=False)
 
     # === AUTHORIZATION FIELDS === #
     type_authorization_id = fields.Many2one(related='supplier_link_id.type_authorization_id', readonly=False)

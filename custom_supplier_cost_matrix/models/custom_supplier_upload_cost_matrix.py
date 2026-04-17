@@ -17,6 +17,18 @@ from odoo.exceptions import UserError
 _logger = logging.getLogger(__name__)
 
 
+REQUIRED_LINE_FIELDS = [
+    'subservice_id',
+    'state_id',
+    'type_event_id',
+    'concept_id',
+    # 'vehicle_category_id',
+    'cost',
+    'supplier_status_id',
+    'date_init'
+]
+
+
 class CustomSupplierUploadCostMatrix(models.Model):
     _name = 'custom.supplier.upload.cost.matrix'
     _description = 'Supplier Upload Cost Matrix'
@@ -44,7 +56,6 @@ class CustomSupplierUploadCostMatrix(models.Model):
         ], ondelete='restrict', tracking=True)
 
     active = fields.Boolean(default=True)
-    disabled = fields.Boolean(default=False, tracking=True)
     service_id = fields.Many2one(
         comodel_name='product.category', string='Service',
         domain=[('disabled', '=', False)], tracking=True)
@@ -132,8 +143,9 @@ class CustomSupplierUploadCostMatrix(models.Model):
                 'name': 'concept_id', 'required': True,
                 'domain': self.env['product.product'].get_concepts_domain() + [('disabled', '=', False)]
             },
+            # * Cambia 'vehicle_category_id' por 'subservice_specification_id'
             'Categoría': {
-                'name': 'vehicle_category_id', 'required': True, 'domain': [('disabled', '=', False)]
+                'name': 'subservice_specification_id', 'required': False, 'domain': [('disabled', '=', False)]
             },
             'Costo': {
                 'name': 'cost', 'required': True, 'domain': False
@@ -167,15 +179,18 @@ class CustomSupplierUploadCostMatrix(models.Model):
         # Read File
         rows, rows_count, uploaded_file, file_size = self._read_file(self.file, self.file_name, self.file_type)
         # Validate File Data
-        columns = MATCH_FIELDS.keys()
-        self._validate_columns(header=rows[0], required_columns=columns)
+        all_columns = MATCH_FIELDS.keys()
+        required_columns = [col for col, cfg in MATCH_FIELDS.items() if cfg['required']]
+        self._validate_columns(header=rows[0], required_columns=required_columns)
         # Get File Records
-        records_data: list[dict] = self._convert_import_data_to_json(rows, columns)
+        records_data: list[dict] = self._convert_import_data_to_json(rows, all_columns)
         _logger.info("Iniciando importacion de %s con %d registros", self.file_name, len(records_data))
         normalized_data, missing_required_fields = self._normalize_data(records_data, MATCH_FIELDS)
         self._save_processed_data(normalized_data)
         self.date_upload = fields.Datetime.now()
         _logger.info("Finalizando importacion de %s con %d registros", self.file_name, len(normalized_data))
+        # Necesario para validar requeridos visualmente al importar
+        self.cost_product_ids._onchange_required_fields()
         return True
 
     def action_confirm(self):
@@ -300,7 +315,7 @@ class CustomSupplierUploadCostMatrix(models.Model):
     def _normalize_data(self, records_data, match_fields):
         """ Normalizar datos, convertir nombres del excel a su correspondiente en Odoo, obtener valores de campos m2o. """
         if not len(records_data):
-            return []
+            return [], []
 
         def _validate_required_fields(match_fields, rec):
             for field, value in rec.items():
@@ -421,7 +436,12 @@ class CustomSupplierUploadCostMatrix(models.Model):
                     try:
                         value = datetime.datetime.strptime(value, '%d-%m-%Y').date()
                     except ValueError:
-                        value = datetime.datetime.strptime(value, '%d/%m/%Y').date()
+                        try:
+                            value = datetime.datetime.strptime(value, '%d/%m/%Y').date()
+                        except ValueError:
+                            _logger.error("Formato de fecha no reconocido: '%s' para campo %s", value, field_data['name'])
+                            missing_value = True
+                            value = False
             # * datetime field =========================================================================
             elif field_data['ttype'] == 'datetime':  # ! Importante: Se tratará como Date, ya que en el excel debe venir solo fecha  # noqa: E501
                 try:
@@ -430,7 +450,12 @@ class CustomSupplierUploadCostMatrix(models.Model):
                     try:
                         value = datetime.datetime.strptime(value, '%d-%m-%Y').date()
                     except ValueError:
-                        value = datetime.datetime.strptime(value, '%d/%m/%Y').date()
+                        try:
+                            value = datetime.datetime.strptime(value, '%d/%m/%Y').date()
+                        except ValueError:
+                            _logger.error("Formato de fecha no reconocido: '%s' para campo %s", value, field_data['name'])
+                            missing_value = True
+                            value = False
             if required and not value:
                 missing_value = True
             return value, missing_value
@@ -450,15 +475,15 @@ class CustomSupplierUploadCostMatrix(models.Model):
             return value
 
         field_names = [x['name'] for x in match_fields.values()]
-        fields = self.env['ir.model.fields'].search_read([
+        model_fields = self.env['ir.model.fields'].search_read([
             ('model', '=', 'custom.supplier.cost.product'),
             ('name', 'in', field_names),
         ], ['name', 'field_description', 'ttype', 'relation'])
-        fields_hashmap = {field['name']: field for field in fields}
+        fields_hashmap = {field['name']: field for field in model_fields}
 
         normalized_records = []
         missing_fields_records = []
-        stored_values = {x['name']: {} for x in fields if x['relation']}
+        stored_values = {x['name']: {} for x in model_fields if x['relation']}
 
         for rec in records_data:
             is_valid = _validate_required_fields(match_fields, rec)
@@ -516,13 +541,10 @@ class CustomSupplierUploadCostMatrix(models.Model):
     # === CONFIRM PRIVATE METH0DS === #
     def _create_supplier_cost_matrix_lines(self):
         # Validar campos requeridos antes de guardar
-        required_fields = [
-            'subservice_id', 'type_event_id', 'concept_id', 'vehicle_category_id',
-            'cost', 'supplier_status_id', 'date_init'
-        ]
+        required_fields = REQUIRED_LINE_FIELDS
         consider_duplicate_fields = required_fields + [
-            'account_id', 'state_id', 'geographical_area_id',
-            'holiday_date_applies', 'high_risk_area', 'active_agreement', 'date_end', 'vacation_schedule_ids'
+            'account_id', 'geographical_area_id', 'holiday_date_applies', 'active_agreement', 'date_end',
+            'vacation_schedule_ids', 'subservice_specification_id'
         ]
         lines_to_import = defaultdict(list)
 
@@ -535,6 +557,8 @@ class CustomSupplierUploadCostMatrix(models.Model):
                 return tuple(sorted(val))  # Many2many: convertir lista a tupla ordenada
             return val
 
+        key_fields = [f for f in consider_duplicate_fields if f != 'cost']
+
         for line in self.cost_product_ids:
             to_check_duplicate_data = line.read(consider_duplicate_fields)
             if to_check_duplicate_data:
@@ -543,10 +567,8 @@ class CustomSupplierUploadCostMatrix(models.Model):
                 if not all(list(line_data.values())):
                     raise UserError(_("Missing required fields, please review the lines marked in red."))
                 aux_line_data = to_check_duplicate_data.copy()
-                aux_line_data.pop('id')
-                aux_line_data.pop('cost')
                 # Normalizar valores antes de crear la clave
-                record_key = tuple(normalize_value(v) for v in aux_line_data.values())
+                record_key = tuple(normalize_value(aux_line_data[f]) for f in key_fields if f in aux_line_data)
                 lines_to_import[record_key].append(to_check_duplicate_data)
 
         # Validar por duplicados, si hay, desactivar el existente y crear el nuevo
@@ -558,10 +580,8 @@ class CustomSupplierUploadCostMatrix(models.Model):
         odoo_data = defaultdict(list)
         for rec in exist_records:
             aux_rec = rec.copy()
-            aux_rec.pop('id')
-            aux_rec.pop('cost')
             # Normalizar valores antes de crear la clave
-            odoo_record_key = tuple(normalize_value(v) for v in aux_rec.values())
+            odoo_record_key = tuple(normalize_value(aux_rec[f]) for f in key_fields if f in aux_rec)
             odoo_data[odoo_record_key].append(rec)
 
         # Manejo de duplicados importados y existentes
@@ -573,7 +593,7 @@ class CustomSupplierUploadCostMatrix(models.Model):
             if len(import_lines) > 1:
                 dup_ids = [x['id'] for x in import_lines[1:]]
                 self.env['custom.supplier.cost.product'].sudo().browse(dup_ids).write({'not_confirm': True})
-                _logger.error("[IMPORT] %d duplicados descartados para %s", len(import_lines) - 1, import_key)
+                _logger.warning("[IMPORT] %d duplicados descartados para %s", len(import_lines) - 1, import_key)
                 line = import_lines[0]
             else:
                 line = import_lines[0]
@@ -627,20 +647,20 @@ class CustomSupplierUploadCostMatrix(models.Model):
             "custom_supplier_cost_product_id": line.id,
             "supplier_center_id": self.supplier_center_id.id,
             "subservice_id": line.subservice_id.id,
-            "state_id": line.state_id.id,
+            "state_id": line.state_id.id if line.state_id else False,
             "geographical_area_id": line.geographical_area_id.id if line.geographical_area_id else False,  # FIX
             "type_event_id": line.type_event_id.id,
             "concept_id": line.concept_id.id,
-            "vehicle_category_id": line.vehicle_category_id.id,
+            "subservice_specification_id": line.subservice_specification_id.id if line.subservice_specification_id else False,
+            # "vehicle_category_id": line.vehicle_category_id.id if line.vehicle_category_id else False,
             "account_id": line.account_id.id if line.account_id else False,  # FIX
             "cost": line.cost,
             "holiday_date_applies": line.holiday_date_applies,
-            "high_risk_area": line.high_risk_area,
             "active_agreement": line.active_agreement,
             "supplier_status_id": line.supplier_status_id.id,
             "date_init": line.date_init,
             "date_end": line.date_end,
-            "vacation_schedule_ids": [x.id for x in line.vacation_schedule_ids],
+            "vacation_schedule_ids": [(6, 0, line.vacation_schedule_ids.ids)],
         }
         return vals
 
@@ -668,6 +688,9 @@ class CustomSupplierCostProduct(models.Model):
         compute='_compute_mapping_product_ids')
     concept_id = fields.Many2one(
         comodel_name='product.product', string='Concept', sub_tracking=True, ondelete='restrict')
+    subservice_specification_id = fields.Many2one(
+        'custom.subservice.specification', string='Subservice Specification', tracking=True, index=True)
+    # ToDo: Remove vehicle_category_id
     vehicle_category_id = fields.Many2one(
         'fleet.vehicle.model.category', string='Category', sub_tracking=True, ondelete='restrict')
     account_id = fields.Many2one(
@@ -703,24 +726,14 @@ class CustomSupplierCostProduct(models.Model):
                 parent_ids = matching_records.mapped('parent_id').ids
                 rec.mapping_product_ids = [(6, 0, parent_ids)]
 
-    @api.onchange(
-        'subservice_id', 'state_id', 'geographical_area_id', 'type_event_id', 'concept_id', 'vehicle_category_id', 'cost',
-        'supplier_status_id', 'date_init')
+    @api.onchange(*REQUIRED_LINE_FIELDS)
     def _onchange_required_fields(self):
-        self.ensure_one()
-        required_fields = [
-            'subservice_id', 'state_id', 'geographical_area_id', 'type_event_id', 'concept_id', 'vehicle_category_id',
-            'cost', 'supplier_status_id', 'date_init'
-        ]
-        line_data = self.read(required_fields)
-        line_data = line_data[0]
-        missing = False
-        for field in required_fields:
-            _logger.debug("%s: %s", field, line_data[field])
-            if not line_data[field]:
-                missing = True
-                break
-        self.missing_value = missing
+        """ Validar en batch si los campos requeridos están completos """
+        required_fields = REQUIRED_LINE_FIELDS
+        all_data = self.read(required_fields)
+        for line, line_data in zip(self, all_data):
+            missing = any(not line_data[f] for f in required_fields)
+            line.missing_value = missing
 
     def action_open_missing_values(self):
         self.ensure_one()
@@ -763,7 +776,10 @@ class CustomSupplierCostMatrixLine(models.Model):
             ('sale_ok', '=', False), ('purchase_ok', '=', True),
             ('x_concept_ok', '=', True), ('type', '=', 'service')
         ], index=True)
-    vehicle_category_id = fields.Many2one('fleet.vehicle.model.category', string='Category', required=True, tracking=True, index=True)
+    subservice_specification_id = fields.Many2one(
+        'custom.subservice.specification', string='Subservice Specification', tracking=True, index=True)
+    # ToDo: Remove vehicle_category_id
+    vehicle_category_id = fields.Many2one('fleet.vehicle.model.category', string='Category', tracking=True, index=True)
     account_id = fields.Many2one(
         comodel_name='res.partner',
         string='Account',

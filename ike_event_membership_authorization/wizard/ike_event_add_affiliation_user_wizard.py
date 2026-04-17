@@ -5,7 +5,7 @@ import re
 
 
 class IkeEventAffiliationUser(models.TransientModel):
-    _name = 'ike.add.affiliation.nu'
+    _name = 'ike.add.affiliation.nu.wizard'
     _description = 'Add NU User to Event'
 
     # Event
@@ -86,7 +86,6 @@ class IkeEventAffiliationUser(models.TransientModel):
 
     @api.onchange('phone')
     def _onchange_phone_search(self):
-        self.name = ''
 
         if not self.phone:
             return

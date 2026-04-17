@@ -58,7 +58,7 @@ class IkeEvent(models.Model):
             ])
             for purchase in purchase_ids:
                 purchase.action_rfq_send_one_step()
-        self.action_close()
+        self.sudo().action_close()
 
     def action_create_purchase_orders(self):
         res = super().action_create_purchase_orders()

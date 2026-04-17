@@ -17,15 +17,18 @@ class CustomSubserviceSpecification(models.Model):
         required=True,
         domain="[('disabled', '=', False)]",
         tracking=True)
-    vehicle_category_id = fields.Many2one(
+    vehicle_category_ids = fields.Many2many(
         'fleet.vehicle.model.category',
-        'Category',
+        'custom_subservice_specification_vehicle_category_rel',
+        'subservice_specification_id',
+        'vehicle_category_id',
+        'Categories',
         domain="[('disabled', '=', False), ('x_service_id', '=', service_id)]",
         tracking=True)
     all_subservice = fields.Boolean('All subservices', default=False, tracking=True)
     subservice_ids = fields.Many2many(
         'product.product',
-        'subservice_subservice_specification_rel',
+        'custom_subservice_specification_subservice_rel',
         'subservice_specification_id',
         'subservice_id',
         'Subservice',

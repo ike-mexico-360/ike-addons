@@ -90,24 +90,4 @@
         </record>
     </data>
 
-    <!-- Menu Service-->
-    <menuitem id="product_category_services_menu_root"
-        name="Services"
-        sequence="22"
-        web_icon="custom_master_catalog,static/description/service.png"
-        groups="base.group_system,custom_group_supplier_admin_system"/>
-
-    <!-- Sub-menus Service-->
-    <menuitem id="product_category_services_menu"
-        name="Services"
-        parent="product_category_services_menu_root"
-        groups="base.group_system,custom_group_supplier_admin_system"
-        sequence="1">
-        <menuitem id="product_category_services_menu_services"
-            name="Services"
-            action="product_category_service_action_window"
-            groups="base.group_system,custom_group_supplier_admin_system"
-            sequence="1"/>
-    </menuitem>
-
 </odoo>

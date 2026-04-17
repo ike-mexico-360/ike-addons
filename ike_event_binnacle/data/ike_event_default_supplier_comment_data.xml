@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ike_event_default_supplier_comment_more_time" model="ike.event.default.supplier_comment">
+            <field name="name">Supplier requests more contact time</field>
+            <field name="disabled">False</field>
+        </record>
+        <record id="ike_event_default_supplier_comment_arrive_location" model="ike.event.default.supplier_comment">
+            <field name="name">Supplier arrives at location</field>
+            <field name="disabled">False</field>
+        </record>
+        <record id="ike_event_default_supplier_comment_request_conference" model="ike.event.default.supplier_comment">
+            <field name="name">Supplier requests conference call with NU</field>
+            <field name="disabled">False</field>
+        </record>
+        <record id="ike_event_default_supplier_comment_crane_problems" model="ike.event.default.supplier_comment">
+            <field name="name">Supplier cancels service due to crane problems</field>
+            <field name="disabled">False</field>
+        </record>
+        <record id="ike_event_default_supplier_comment_vehicle_alone" model="ike.event.default.supplier_comment">
+            <field name="name">The supplier arrives at the location and the vehicle is alone.</field>
+            <field name="disabled">False</field>
+        </record>
+        <record id="ike_event_default_supplier_comment_necessary_tool" model="ike.event.default.supplier_comment">
+            <field name="name">The supplier does not have the necessary tool</field>
+            <field name="disabled">False</field>
+        </record>
+        <record id="ike_event_default_supplier_comment_changing_tire" model="ike.event.default.supplier_comment">
+            <field name="name">Supplier does not have a safety lug nut for changing the tire</field>
+            <field name="disabled">False</field>
+        </record>
+        <record id="ike_event_default_supplier_comment_appropiate_crane" model="ike.event.default.supplier_comment">
+            <field name="name">Supplier does not send the appropriate crane</field>
+            <field name="disabled">False</field>
+        </record>
+        <record id="ike_event_default_supplier_comment_contact_time" model="ike.event.default.supplier_comment">
+            <field name="name">Supplier gives contact time</field>
+            <field name="disabled">False</field>
+        </record>
+        <record id="ike_event_default_supplier_comment_term_and_cost" model="ike.event.default.supplier_comment">
+            <field name="name">Supplier provides term and cost</field>
+            <field name="disabled">False</field>
+        </record>
+        <record id="ike_event_default_supplier_comment_tolerance" model="ike.event.default.supplier_comment">
+            <field name="name">The allotted time (tolerance) begins to run</field>
+            <field name="disabled">False</field>
+        </record>
+        <record id="ike_event_default_supplier_comment_cancelation" model="ike.event.default.supplier_comment">
+            <field name="name">NU requests cancellation of service</field>
+            <field name="disabled">False</field>
+        </record>
+        <record id="ike_event_default_supplier_comment_supplier_inline" model="ike.event.default.supplier_comment">
+            <field name="name">In line with the provider</field>
+            <field name="disabled">False</field>
+        </record>
+
+    </data>
+</odoo>

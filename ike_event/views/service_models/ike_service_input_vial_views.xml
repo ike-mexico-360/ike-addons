@@ -140,21 +140,21 @@
                             <!-- <field name="service_date"/> -->
                             <group colspan="6">
                                 <field name="vehicle_brand"
-                                   widget="ike_char" nolabel="1" colspan="2" readonly="identification_type == 'link'"/>
+                                   widget="ike_char" required="identification_type in ['manual', 'manual_manual']" nolabel="1" colspan="2" readonly="identification_type == 'link'"/>
                                 <field name="vehicle_year"
-                                   widget="ike_char" nolabel="1" colspan="2" readonly="identification_type == 'link'" options="{'regex': '^[0-9]{1,4}$'}"/>
+                                   widget="ike_char" required="identification_type in ['manual', 'manual_manual']" nolabel="1" colspan="2" readonly="identification_type == 'link'" options="{'regex': '^[0-9]{1,4}$'}"/>
                                 <field name="vehicle_color"
-                                   widget="ike_char" nolabel="1" colspan="2" readonly="identification_type == 'link'"/>
+                                   widget="ike_char" required="identification_type in ['manual', 'manual_manual']" nolabel="1" colspan="2" readonly="identification_type == 'link'"/>
                             </group>
                             <group colspan="6">
                                 <field name="vehicle_model"
-                                   widget="ike_char" nolabel="1" colspan="2" readonly="identification_type == 'link'"/>
+                                   widget="ike_char" required="identification_type in ['manual', 'manual_manual']" nolabel="1" colspan="2" readonly="identification_type == 'link'"/>
                                 <field name="vehicle_category_id"
-                                    widget="ike_many2one" nolabel="1" colspan="2" readonly="identification_type == 'link'"
+                                    widget="ike_many2one" required="identification_type in ['manual', 'manual_manual']" nolabel="1" colspan="2" readonly="identification_type == 'link'"
                                     options="{'no_open': True, 'no_create': True}"
                                     context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_category_view_list'}"/>
                                 <field name="vehicle_plate"
-                                   widget="ike_char" nolabel="1" colspan="2" readonly="identification_type == 'link'"/>
+                                   widget="ike_char" required="identification_type in ['manual', 'manual_manual']" nolabel="1" colspan="2" readonly="identification_type == 'link'"/>
                             </group>
 							<separator/>
                             <group colspan="12">

@@ -70,7 +70,7 @@ class ProductProduct(models.Model):
         'subservice_id',
         'concept_id',
         string='Concepts')
-    x_concepts_domain = fields.Binary(string="Concept domain", compute="_compute_x_concepts_domain")
+    x_concepts_domain = fields.Binary(string="Concept domain ", compute="_compute_x_concepts_domain")
     concept_line_ids = fields.One2many(
         'custom.subservice.concept.line', 'subservice_id',
         string='Concept line')
@@ -147,16 +147,14 @@ class CustomSubserviceConceptLine(models.Model):
     subservice_id = fields.Many2one(
         'product.product',
         'Subservice',
-        domain="[('disabled', '=', False)]",
-        tracking=True
+        domain="[('disabled', '=', False)]"
     )
 
     categ_id = fields.Many2one('product.category', related="subservice_id.categ_id")
     event_type_id = fields.Many2one(
         'custom.type.event',
         'Event type',
-        domain="[('disabled', '=', False)]",
-        tracking=True
+        domain="[('disabled', '=', False)]"
     )
     concepts_ids = fields.Many2many(
         'product.product',
@@ -167,7 +165,7 @@ class CustomSubserviceConceptLine(models.Model):
     base_concept_id = fields.Many2one('product.product', string='Base Concept')
     concepts_domain = fields.Binary(string="Concept domain", compute="_compute_concepts_domain")
     active = fields.Boolean(default=True)
-    disabled = fields.Boolean(default=False, tracking=True)
+    disabled = fields.Boolean(default=False)
 
     @api.depends('concepts_ids')
     def _compute_concepts_domain(self):

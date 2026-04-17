@@ -12,8 +12,18 @@
                             placeholder="Write your comment here..."
                             widget="text"
                             nolabel="1"/>
+                        <field name="is_supplier"/>
+                        <field name="x_supplier_message_binnacle_domain" invisible="1"/>
+                        <field name="x_supplier_message_id" 
+                            domain="x_supplier_message_binnacle_domain"
+                            options="{'no_open': True, 'no_create': True, 'no_edit': True}"
+                            context="{'edit': False}"
+                            readonly="count_supplier == 1"
+                            force_save="1"
+                            invisible="not is_supplier"/>
                         <field name="event_id" invisible="1"/>
                         <field name="event_binnacle_id" invisible="1"/>
+                        
                     </group>
                 </sheet>
                 <footer>

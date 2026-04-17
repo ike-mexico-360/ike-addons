@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-30 20:03+0000\n"
-"PO-Revision-Date: 2026-03-30 20:03+0000\n"
+"POT-Creation-Date: 2026-04-16 22:05+0000\n"
+"PO-Revision-Date: 2026-04-16 22:05+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -279,6 +279,7 @@ msgstr "Administrador"
 
 #. module: custom_nu
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_limit__amount
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__cost
 msgid "Amount ($)"
 msgstr "Monto ($)"
 
@@ -374,6 +375,11 @@ msgid "Check Is Special"
 msgstr "Es especial"
 
 #. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__check_clause
+msgid "Check clause"
+msgstr "Inciso"
+
+#. module: custom_nu
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__check_second_key
 msgid "Check second key"
 msgstr "Verifique la segunda clave"
@@ -390,7 +396,6 @@ msgid "City"
 msgstr "Ciudad"
 
 #. module: custom_nu
-#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__check_clause
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__clause
 msgid "Clause"
 msgstr "Inciso"
@@ -480,11 +485,6 @@ msgstr "Consideraciones"
 #: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_exclusions_html_form
 msgid "Content"
 msgstr "Contenido"
-
-#. module: custom_nu
-#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_line_product__cost
-msgid "Cost ($)"
-msgstr "Monto ($)"
 
 #. module: custom_nu
 #: model:ir.model,name:custom_nu.model_res_country
@@ -577,8 +577,12 @@ msgid "Custom Membership Nus"
 msgstr "Afiliaciones"
 
 #. module: custom_nu
-#: model:ir.actions.act_window,name:custom_nu.action_custom_membership_plan
 #: model:ir.model,name:custom_nu.model_custom_membership_plan
+msgid "Custom Membership Plan"
+msgstr "Planes de cobertura"
+
+#. module: custom_nu
+#: model:ir.actions.act_window,name:custom_nu.action_custom_membership_plan
 msgid "Custom Membership Plans"
 msgstr "Planes de cobertura"
 
@@ -735,7 +739,6 @@ msgstr "Nombre a mostrar"
 #. module: custom_nu
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__x_display_mask
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__x_display_mask
-#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__x_display_mask_second
 msgid "Display mask"
 msgstr "Máscara de visualización"
 
@@ -1080,11 +1083,6 @@ msgid "Membership NUs"
 msgstr "Afiliaciones"
 
 #. module: custom_nu
-#: model:ir.ui.menu,name:custom_nu.custom_membership_plan_menu
-msgid "Membership Plans"
-msgstr "Planes de cobertura"
-
-#. module: custom_nu
 #: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_considerations_html_form
 msgid "Membership Plan Product Considerations"
 msgstr "Consideraciones del producto del plan de cobertura"
@@ -1098,6 +1096,11 @@ msgstr "Exclusiones del producto del plan de cobertura"
 #: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_plan_product_form
 msgid "Membership Plan Product Line"
 msgstr ""
+
+#. module: custom_nu
+#: model:ir.ui.menu,name:custom_nu.custom_membership_plan_menu
+msgid "Membership Plans"
+msgstr "Planes de cobertura"
 
 #. module: custom_nu
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__membership_plan_id
@@ -1249,6 +1252,11 @@ msgstr "Nacional"
 #: code:addons/custom_nu/models/custom_membership_nus.py:0
 msgid "New"
 msgstr "Nuevo"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
 
 #. module: custom_nu
 #: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__activity_date_deadline
@@ -1544,11 +1552,12 @@ msgstr "Segunda clave de identifición"
 
 #. module: custom_nu
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__second_check_clause
-msgid "Second clause"
+msgid "Second check clause"
 msgstr "Inciso"
 
 #. module: custom_nu
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__x_display_mask_second
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__x_display_mask_second
 msgid "Second display mask"
 msgstr "Máscara de visualización"
 
@@ -1556,6 +1565,11 @@ msgstr "Máscara de visualización"
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__second_key_identification
 msgid "Second key identification"
 msgstr "Segunda clave de identificación"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__x_validation_pattern_second
+msgid "Second validation pattern"
+msgstr "Patrón de validación"
 
 #. module: custom_nu
 #: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_nus_form
@@ -1769,7 +1783,6 @@ msgstr "Validar Teléfono"
 #. module: custom_nu
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__x_validation_pattern
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__x_validation_pattern
-#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__x_validation_pattern_second
 msgid "Validation pattern"
 msgstr "Patrón de validación"
 

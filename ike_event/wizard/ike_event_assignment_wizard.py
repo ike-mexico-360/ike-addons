@@ -7,8 +7,8 @@ class IkeEventAssignmentWizard(models.TransientModel):
     _name = "ike.event.assignment.wizard"
     _description = "Assignment event wizard"
 
-    ike_event_coordinator_ids = fields.Many2many('res.users', string='Assigned to')
-    ike_event_coordinator_id = fields.Many2one('res.users', string='Assigned to')
+    ike_event_coordinator_ids = fields.Many2many('res.users', string='Assigned to users')
+    ike_event_coordinator_id = fields.Many2one('res.users', string='Assigned to user')
     coordinator_domain = fields.Binary(compute='_compute_coordinator_domain')
     event_not_assign_ids = fields.Many2many(
         'ike.event',

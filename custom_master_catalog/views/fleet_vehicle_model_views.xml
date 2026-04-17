@@ -24,6 +24,7 @@
             <list string="" delete="0" edit="0" duplicate="0">
                 <field name="name"/>
                 <field name="brand_id"/>
+                <field name="x_connectable" />
             </list>
         </field>
     </record>
@@ -45,15 +46,39 @@
                         <h1>
                             <field name="name" placeholder="e.g. Model S" readonly="disabled"/>
                         </h1>
-                        <label for="brand_id" class="o_form_label_required"/>
-                        <h2>
-                            <field name="brand_id" placeholder="e.g. Tesla" readonly="disabled" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
-                                context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_brand_view_tree', 'form_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_brand_view_form'}"/>
-                        </h2>
-                        <label for="x_vehicle_weight_category_id"/>
-                        <h3>
-                            <field name="x_vehicle_weight_category_id" readonly="disabled" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
-                        </h3>
+                        <group>
+                            <group>
+                                <field name="brand_id" placeholder="e.g. Tesla" readonly="disabled" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                    context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_brand_view_tree', 'form_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_brand_view_form'}"/>
+                            </group>
+                            <group>
+                                <field name="x_category_id" 
+                                    readonly="disabled" 
+                                    options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                    context="{'edit': False}"/>
+                            </group>
+                        </group>
+                       
+                        <group>
+                            <group string="Vehicle Information">
+                                <field name="x_vehicle_weight_category_id" readonly="disabled" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                                <label for="x_weigth"/>
+                                <div class="o_row">
+                                    <field name="x_weigth" /><span>Kg</span>
+                                </div>
+                                <label for="x_length"/>
+                                <div class="o_row">
+                                    <field name="x_length" /><span>Kg</span>
+                                </div>
+                                <field name="x_high_value"/>
+                            </group>
+                            <group string="Technical Information">
+                                <field name="default_fuel_type"/>
+                                <field name="transmission"/>
+                                <field name="x_connectable"/>
+                            </group>
+                        </group>
+                        
                     </div>
                     <group invisible="1">
                         <field name="create_date" invisible="1"/>
@@ -73,6 +98,22 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='category_id']" position="after">
                 <field name="x_vehicle_weight_category_id" readonly="disabled" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+            </xpath>
+
+            <xpath expr="//field[@name='trailer_hook']" position="after">
+                <label for="x_weigth"/>
+                <div class="o_row">
+                    <field name="x_weigth" /><span>Kg</span>
+                </div>
+                <label for="x_length"/>
+                <div class="o_row">
+                    <field name="x_length" /><span>Kg</span>
+                </div>
+                <field name="x_high_value"/>
+            </xpath>
+
+            <xpath expr="//field[@name='default_fuel_type']" position="after">
+                <field name="x_connectable"/>
             </xpath>
         </field>
     </record>

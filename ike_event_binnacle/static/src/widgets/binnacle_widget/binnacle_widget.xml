@@ -26,7 +26,9 @@
                             <tr t-att-class="rec.is_highlight ? 'bg-success bg-opacity-25' : ''">
                                 <td t-esc="rec.date_time"/>
                                 <td t-att-class="rec.is_highlight ? 'fw-bolder' : ''" t-esc="rec.category"/>
-                                <td/>
+                                <td>
+                                    <t t-out="rec.supplier"/>
+                                </td>
                                 <td t-esc="rec.author"/>
                                 <td class="binnacle-cell-html">
                                     <t t-out="rec.comments"/>

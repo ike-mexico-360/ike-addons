@@ -54,6 +54,7 @@ export class IkeBinnacleButtonWidget extends Component {
                     id: {},
                     create_date: {},
                     body: {},
+                    supplier: {},
                     message_type: {},
                     author_id: { fields: { display_name: {} } },
                     event_binnacle_id: {
@@ -94,6 +95,7 @@ export class IkeBinnacleButtonWidget extends Component {
                 id: msg.id,
                 date_time: date_time,
                 category: category?.name || "",
+                supplier: msg.supplier || "",
                 author: msg.author_id?.display_name || "",
                 comments: markup(msg.body || ""),
                 is_highlight: !category?.parent_id && msg.message_type !== 'comment',

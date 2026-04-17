@@ -26,6 +26,7 @@
                             <field name="model"/>
                             <field name="plate"/>
                             <field name="color"/>
+                            <field name="year"/>
                         </group>
                         <group>
                             <field name="address"/>

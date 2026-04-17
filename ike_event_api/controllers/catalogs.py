@@ -198,18 +198,11 @@ class CatalogsAPIController(http.Controller):
                     AND ies.ref IN ('assigned', 'in_progress')
                     AND supplier.state = 'assigned'
                     AND supplier.notification_sent_to_app = true
-                    AND supplier.stage_id != (
-                        SELECT res_id
-                        FROM ir_model_data
-                        WHERE module = 'ike_event'
-                            AND name   = 'ike_service_stage_finalized'
-                            AND model  = 'ike.service.stage'
-                        LIMIT 1
-                    )
                     AND vehicle.x_vehicle_ref = %(vehicle_id)s
             )
             SELECT * FROM events_data
-            WHERE progress_state != '-1'
+            -- Excluimos etapas no mapeadas
+            WHERE progress_state NOT IN ('-1', '6')
             ORDER BY event_date DESC;
         """.format(
             select_progress_state=select_progress_state,
@@ -265,6 +258,7 @@ class CatalogsAPIController(http.Controller):
                     AND vehicle.x_vehicle_ref = %(vehicle_id)s
             )
             SELECT * FROM events_data
+            -- Excluimos etapas no mapeadas
             WHERE progress_state != '-1'
             ORDER BY event_date DESC
             LIMIT 5;
@@ -321,7 +315,8 @@ class CatalogsAPIController(http.Controller):
                     AND vehicle.x_vehicle_ref = %(vehicle_id)s
             )
             SELECT * FROM events_data
-            WHERE progress_state NOT IN ('-1', '0')
+            -- Excluimos etapas no mapeadas, asignado y finalizado
+            WHERE progress_state NOT IN ('-1', '0', '6')
             ORDER BY event_date DESC
             LIMIT 1;
         """.format(
@@ -697,6 +692,7 @@ class CatalogsAPIController(http.Controller):
     def ike_catalog_vehicle_set_state(self, **kw):
         vehicle_id = kw.get('vehicle_id', False)
         state = kw.get('state', False)
+        external_supplier = kw.get('external_supplier', False)
 
         if not vehicle_id or not state:
             return BadRequest(_("Missing parameters"))
@@ -712,23 +708,24 @@ class CatalogsAPIController(http.Controller):
         if not vehicle_sudo:
             raise NotFound(_('Vehicle not found'))
 
-        # Validar que el vehículo no esté asignado a otro usuario
-        if vehicle_sudo.driver_id and vehicle_sudo.driver_id.id != request.env.user.partner_id.id:
-            raise Forbidden(_('Vehicle is assigned to another user'))
+        if not external_supplier:
+            # Validar que el vehículo no esté asignado a otro usuario
+            if vehicle_sudo.driver_id and vehicle_sudo.driver_id.id != request.env.user.partner_id.id:
+                raise Forbidden(_('Vehicle is assigned to another user'))
 
-        # Validar que el usuario actual, sea un conductor del proveedor al que pertenece el vehículo recibido
-        request.env.cr.execute("""
-            SELECT supplier_id AS id
-            FROM res_partner_supplier_users_rel
-            WHERE partner_id = %s;
-        """ % (request.env.user.partner_id.id,))
+            # Validar que el usuario actual, sea un conductor del proveedor al que pertenece el vehículo recibido
+            request.env.cr.execute("""
+                SELECT supplier_id AS id
+                FROM res_partner_supplier_users_rel
+                WHERE partner_id = %s;
+            """ % (request.env.user.partner_id.id,))
 
-        supplier_id = request.env.cr.fetchone()
-        if not supplier_id:
-            raise Forbidden(_('User is not a conductor of the supplier'))
-        supplier_id = supplier_id[0]
-        if vehicle_sudo.x_partner_id.id != supplier_id:
-            raise Forbidden(_('Vehicle is not assigned to the current supplier'))
+            supplier_id = request.env.cr.fetchone()
+            if not supplier_id:
+                raise Forbidden(_('User is not a conductor of the supplier'))
+            supplier_id = supplier_id[0]
+            if vehicle_sudo.x_partner_id.id != supplier_id:
+                raise Forbidden(_('Vehicle is not assigned to the current supplier'))
 
         # 'available', - Ya hizo checkin
         # 'not_available', - La grua no está habilitada, no está laborando
@@ -750,13 +747,15 @@ class CatalogsAPIController(http.Controller):
             driver_change = True
             driver = False
 
-        if driver_change:
-            vehicles_assigned = request.env['fleet.vehicle'].sudo().search_count([
-                ('driver_id', '=', request.env.user.partner_id.id)
-            ])
-            if vehicles_assigned > 0:
-                raise Forbidden(_('User is assigned to other vehicles'))
-            new_data['driver_id'] = driver
+        if not external_supplier:
+            if driver_change:
+                vehicles_assigned = request.env['fleet.vehicle'].sudo().search_count([
+                    ('driver_id', '=', request.env.user.partner_id.id)
+                ])
+                if vehicles_assigned > 0:
+                    raise Forbidden(_('User is assigned to other vehicles'))
+                new_data['driver_id'] = driver
+
         vehicle_sudo.write(new_data)
 
         return {'success': True}

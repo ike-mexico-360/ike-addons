@@ -163,9 +163,10 @@ class IkeEvent_Search(models.Model):
                         )
                     )
                     if destination_route:
-                        supplier['estimated_distance'] = (destination_distance_m or supplier['estimated_distance']) / 1000.00
-                        supplier['estimated_duration'] = (destination_duration_s or supplier['estimated_duration']) / 60.00
                         supplier['route'] = destination_route
+                        if not supplier['estimated_distance'] or not supplier.get('osrm'):
+                            supplier['estimated_distance'] = (destination_distance_m or supplier['estimated_distance']) / 1000.00
+                            supplier['estimated_duration'] = (destination_duration_s or supplier['estimated_duration']) / 60.00
 
         # Search Number
         search_number = 0
@@ -253,7 +254,8 @@ class IkeEvent_Search(models.Model):
             municipalities_data.append({'id': municipality.id, 'name': municipality.name})
         if not len(municipalities_data):
             # ? Raise 1
-            raise UserError(_("There are no municipalities with postal code: %s.", zip_code))
+            # raise UserError(_("There are no municipalities with postal code: %s.", zip_code))
+            return [], max_suppliers, max_radius_km
 
         # * LOGGER 2: Municipalities
         municipalities_text = ','.join([f'{x['id']}.{x['name']}' for x in municipalities_data])
@@ -263,10 +265,11 @@ class IkeEvent_Search(models.Model):
         supplier_centers_data = self._get_supplier_centers(assignation_type_conf, municipalities_data)
         if not len(supplier_centers_data):
             # ? Raise 2
-            raise UserError(_(
-                "There are no geographic areas configured for this municipality: %s (%s).",
-                municipalities_text, zip_code,
-            ))
+            # raise UserError(_(
+            #     "There are no geographic areas configured for this municipality: %s (%s).",
+            #     municipalities_text, zip_code,
+            # ))
+            return [], max_suppliers, max_radius_km
 
         supplier_centers_data = [x for x in supplier_centers_data if not priority or x['priority'] == priority]
         if not len(supplier_centers_data):
@@ -384,6 +387,7 @@ class IkeEvent_Search(models.Model):
                             service_vehicles_data[i]['x_longitude'] = data.get('lng', None)
                             service_vehicles_data[i]['estimated_distance'] = data.get('distance_m', 0) / 1000
                             service_vehicles_data[i]['estimated_duration'] = data.get('duration_s', 0) / 60
+                            service_vehicles_data[i]['osrm'] = True
 
             # Get Estimated Duration/Distance and priority
             supplier_center_data = {'supplier_center_id': 0}
@@ -414,7 +418,7 @@ class IkeEvent_Search(models.Model):
             # Filter vehicles max distance/duration
             service_vehicles_data = [
                 x for x in service_vehicles_data
-                if x['estimated_distance'] <= max_radius_km and x['estimated_duration'] <= max_arrived_time_m
+                if x.get('osrm') or (x['estimated_distance'] <= max_radius_km and x['estimated_duration'] <= max_arrived_time_m)
             ]
             service_vehicles_len = len(service_vehicles_data)
 
@@ -431,6 +435,7 @@ class IkeEvent_Search(models.Model):
                     'estimated_distance': vehicle['estimated_distance'],
                     'estimated_duration': vehicle['estimated_duration'],
                     'timer_duration': timer_duration_s,
+                    'osrm': vehicle.get('osrm'),
                     'is_manual': False,
                     'truck_id': vehicle['id'],  # Set the correct db ID
                     'assigned': vehicle['driver_id'][1] if vehicle['driver_id'] else "",
@@ -606,15 +611,18 @@ class IkeEvent_Search(models.Model):
                     ,m.holiday_date_applies::int = %s as holiday_applies
                     ,m.holiday_date_applies
                     ,st.ref AS supplier_status_ref
+                    ,svc.vehicle_category_id
                 FROM custom_supplier_cost_matrix_line m
                 INNER JOIN custom_supplier_types_statuses st ON st.id = m.supplier_status_id
+                INNER JOIN custom_subservice_specification_vehicle_category_rel svc ON
+                    svc.subservice_specification_id = m.subservice_specification_id
                 LEFT JOIN vacation_schedule_cost_product_rel_id scr ON scr.custom_supplier_cost_product_id = m.id
                 LEFT JOIN custom_supplier_cost_product_schedule sc ON scr.custom_supplier_cost_product_schedule_id = sc.id
                 WHERE m.active AND NOT m.disabled
                     AND supplier_center_id = %s
                     AND m.subservice_id = %s
                     AND m.type_event_id = %s
-                    AND m.vehicle_category_id = %s
+                    AND svc.vehicle_category_id = %s
                     AND st.ref = %s
             )
             SELECT
@@ -981,6 +989,15 @@ class IkeEvent_Search(models.Model):
     def add_manual_suppliers_wizard(self, supplier_id, vehicle_id):
         self.ensure_one()
 
+        self.service_supplier_ids.filtered(lambda x: x.state == 'notified').action_expire()
+
+        current_selected = self.selected_supplier_ids.filtered(
+            lambda x: x.supplier_number == self.supplier_number
+        )
+
+        if current_selected:
+            self.supplier_number += 1
+
         if self.supplier_search_type != 'manual_manual':
             self.supplier_search_type = 'manual_manual'
             self.supplier_search_number += 1
@@ -992,6 +1009,7 @@ class IkeEvent_Search(models.Model):
         # Estimated Duration/Distance
         estimated_distance_km = 0.0
         estimated_duration_m = 0.0
+        osrm = False
         if self.use_external_locations:
             vehicles_location_data = self._get_external_vehicles_location(
                 float(self.location_latitude),
@@ -1004,6 +1022,7 @@ class IkeEvent_Search(models.Model):
                 vehicle_id.x_longitude = data.get('lng', None)
                 estimated_distance_km = data.get('distance_m', 0) / 1000
                 estimated_duration_m = data.get('duration_s', 0) / 60
+                osrm = True
         if not estimated_distance_km and vehicle_id.x_latitude and vehicle_id.x_longitude:
             estimated_distance_km = round(
                 self.haversine_distance_km(
@@ -1069,6 +1088,7 @@ class IkeEvent_Search(models.Model):
             'event_id': self.id,
             'assignation_type': 'manual_manual',
             'search_number': self.supplier_search_number,
+            'supplier_number': self.supplier_number,
             'is_manual': True,
             'name': f"{_('License Plate')}: {vehicle_id.license_plate}",
             'supplier_id': supplier_id.id,
@@ -1077,6 +1097,7 @@ class IkeEvent_Search(models.Model):
             'priority': supplier_id.priority,
             'estimated_distance': estimated_distance_km,
             'estimated_duration': estimated_duration_m,
+            'osrm': osrm,
             'timer_duration': 600,
             'truck_id': vehicle_id.id,  # Use real DB ID
             'assigned': vehicle_id.driver_id.display_name,
