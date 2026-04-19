@@ -8,7 +8,7 @@
     'license': 'LGPL-3',
     'category': '',
     'depends': [
-        'ike_event', 'ike_event_api', 'custom_master_catalog', 'portal', 'web'
+        'ike_event', 'ike_event_api', 'custom_master_catalog', 'portal', 'web', 'fleet'
     ],
     'data': [
         'security/ir_module_security.xml',

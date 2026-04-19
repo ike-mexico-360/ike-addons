@@ -1,0 +1,48 @@
+<template id="ike_carrusel_image" name="Ike Carrusel Image">
+    <t t-name="ike_event.IkeCarouselImage" owl="1">
+
+        <t t-if="!state.loaded">
+            <div class="ike-carousel-placeholder">
+                <img
+                    t-att-src="getImageLoaded()"
+                    class="ike-carousel-placeholder-img"
+                    alt="Cargando..."
+                />
+            </div>
+        </t>
+        <t t-elif="state.images.length === 0">
+            <div class="ike-carousel-placeholder">
+                <img
+                    t-att-src="getImageLoaded()"
+                    class="ike-carousel-placeholder-img"
+                    alt="Sin imágenes"
+                />
+            </div>
+        </t>
+        <t t-else="">
+            <div class="ike-carousel">
+                <div class="ike-carousel-track">
+                    <t t-foreach="state.images" t-as="img" t-key="img.id">
+                        <img
+                            t-att-src="getImageUrl(img)"
+                            t-att-class="'ike-carousel-slide' + (img_index === state.currentIndex ? ' active' : '')"
+                            t-if="img_index === state.currentIndex"
+                        />
+                    </t>
+                </div>
+                <t t-if="hasMultiple">
+                    <button class="ike-carousel-btn prev" t-on-click="prev">‹</button>
+                    <button class="ike-carousel-btn next" t-on-click="next">›</button>
+                    <div class="ike-carousel-dots">
+                        <t t-foreach="state.images" t-as="dot" t-key="dot.id">
+                            <span
+                                t-att-class="'ike-carousel-dot' + (dot_index === state.currentIndex ? ' active' : '')"
+                            />
+                        </t>
+                    </div>
+                </t>
+            </div>
+        </t>
+
+    </t>
+</template>

@@ -381,7 +381,7 @@ class IkeEvent(models.Model):
                 })
                 rec.satisfaction_survey_input_id = user_input_id.id
                 rec.satisfaction_survey_input_url = (
-                    f'/survey/{service_satisfaction_survey_id.access_token}/{user_input_id.access_token}'
+                    f'{service_satisfaction_survey_id.get_base_url()}/survey/{service_satisfaction_survey_id.access_token}/{user_input_id.access_token}'
                 )
 
     def action_testing_reload(self):

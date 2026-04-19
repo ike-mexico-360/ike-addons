@@ -734,6 +734,10 @@ class IkeEvent_Search(models.Model):
                     quantity = distance_km if product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1)
                     total_base_unit_price += (base_unit_price * quantity)
                     total_base_cancel_price += base_cancel_price
+                    sequence = product_line_id.sequence
+                    if not product_line_id.covered and sequence < 1000:
+                        sequence += 1000
+
                     supplier_products_data.append(Command.create({
                         'product_id': product_id.id,
                         'base_unit_price': base_unit_price,
@@ -743,7 +747,7 @@ class IkeEvent_Search(models.Model):
                         'quantity': quantity,
                         'uom_id': product_id.uom_id.id,
                         'tax_ids': [Command.set(product_id.taxes_id.ids)],
-                        'sequence': product_line_id.sequence,
+                        'sequence': sequence,
                         'covered': product_line_id.covered,
                         'cost_matrix_line_id': cost_line_id.id,
                         'parent_product_id': product_line_id.product_id.id,
@@ -763,6 +767,10 @@ class IkeEvent_Search(models.Model):
                 total_base_unit_price = cost_line_id[0].cost if cost_line_id else 0
                 total_base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
 
+            sequence = product_line_id.sequence
+            if not product_line_id.covered and sequence < 1000:
+                sequence += 1000
+
             supplier_products_data.append(Command.create({
                 'product_id': product_line_id.product_id.id,
                 'base_unit_price': total_base_unit_price,
@@ -772,7 +780,7 @@ class IkeEvent_Search(models.Model):
                 'quantity': distance_km if product_line_id.product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1),
                 'uom_id': product_line_id.uom_id.id,
                 'tax_ids': [Command.set(list(set(tax_ids)))],
-                'sequence': product_line_id.sequence,
+                'sequence': sequence,
                 'covered': product_line_id.covered,
                 'cost_matrix_line_id': cost_line_id.id if cost_line_id else None,
             }))

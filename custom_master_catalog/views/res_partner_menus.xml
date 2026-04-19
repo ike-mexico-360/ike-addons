@@ -34,18 +34,23 @@
         <menuitem id="res_partner_client_menu_clients"
             name="Clients"
             action="res_partner_client_action_window"
-            groups="base.group_system,custom_group_contact_admin_client,custom_group_supplier_contralory,custom_group_supplier_support"
+            groups="base.group_system,custom_group_contact_admin_client,custom_group_supplier_support"
             sequence="1"/>
         <menuitem id="res_partner_account_menu_account"
             name="Accounts"
             action="res_partner_account_action_window"
-            groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_operational,custom_group_supplier_contralory,custom_group_supplier_support"
-            sequence="2"/>
-        <!-- <menuitem id="res_partner_account_menu_account_readonly"
+            groups="base.group_system,custom_group_contact_admin_account,custom_group_supplier_operational,custom_group_supplier_support"
+            sequence="5"/>
+        <menuitem id="res_partner_client_menu_readonly"
+            name="Clients"
+            action="action_res_partner_client_readonly"
+            groups="custom_group_supplier_contralory"
+            sequence="10"/>
+        <menuitem id="res_partner_account_menu_readonly"
             name="Accounts"
-            action="action_res_partner_account_supplier_readonly"
-            groups="custom_group_supplier_operational"
-            sequence="10"/> -->
+            action="action_res_partner_account_readonly"
+            groups="custom_group_supplier_contralory"
+            sequence="15"/>
     </menuitem>
 
     <!-- Sub-menu Config -->

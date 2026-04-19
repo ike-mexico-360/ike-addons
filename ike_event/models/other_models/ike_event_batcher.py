@@ -104,7 +104,7 @@ class IkeEventBatcher:
                         notification_type=notification_type,
                         message=batch_data,
                     )
-                    print("SENDED:", len(data))
+                    # print("SENDED:", len(data))
             except Exception as e:
                 print("ERROR:", str(e))
                 for item in reversed(data):

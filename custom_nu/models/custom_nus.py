@@ -335,7 +335,7 @@ class CustomNus(models.Model):
         phone_number = encryption_util.decrypt_aes256(self.phone) if self.phone else False
         phone_number_list = [phone_number] if phone_number else []
 
-        print(phone_number_list)
+        # print(phone_number_list)
 
         if not phone_number:
             raise UserError(_("No phone number available for SMS"))

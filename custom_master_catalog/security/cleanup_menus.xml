@@ -13,4 +13,11 @@
         <field name="groups_id" eval="[(3, ref('custom_group_ccc_coordinator')),(3, ref('custom_group_ccc_analyst'))]"/>
     </record>
 
+    <record id="res_partner_account_menu_account" model="ir.ui.menu">
+        <field name="groups_id" eval="[(3, ref('custom_group_supplier_contralory'))]"/>
+    </record>
+
+    <record id="res_partner_client_menu_clients" model="ir.ui.menu">
+        <field name="groups_id" eval="[(3, ref('custom_group_supplier_contralory'))]"/>
+    </record>
 </odoo>

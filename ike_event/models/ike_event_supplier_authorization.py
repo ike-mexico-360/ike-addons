@@ -101,6 +101,25 @@ class IkeEvent(models.Model):
             event_id.current_amount = current_amount
 
     # === SUPPLIER AUTHORIZATION ACTIONS === #
+    def accept_authorization(self, event_authorization_id: int):
+        self.ensure_one()
+        for link_id in self.service_supplier_link_ids.filtered(
+            lambda x: x.supplier_number <= self.supplier_number
+        ):
+            for product_id in link_id.supplier_product_ids:
+                if product_id.authorization_pending:
+                    product_id.authorization_ids = [
+                        Command.create(
+                            {
+                                'event_authorization_id': event_authorization_id,
+                                'quantity': product_id.quantity,
+                                'unit_price': product_id.unit_price,
+                                'amount': product_id.subtotal,
+                            }
+                        )
+                    ]
+                    product_id.authorization_pending = False
+
     def action_open_request_authorization(self):
         supplier_with_max_amount = self.get_most_expensive_supplier()
         return supplier_with_max_amount.action_view_products()

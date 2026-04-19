@@ -219,7 +219,7 @@
             </xpath>
         </field>
     </record>
-    <record id="action_res_partner_account_supplier_readonly" model="ir.actions.act_window">
+    <record id="action_res_partner_account_readonly" model="ir.actions.act_window">
         <field name="name">Account</field>
         <field name="res_model">res.partner</field>
         <field name="view_mode">list,form</field>

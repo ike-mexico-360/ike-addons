@@ -72,10 +72,12 @@ class CustomerPortal(PurchasePortal):
     @http.route(['/my/purchase', '/my/purchase/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_purchase_orders(self, page=1, date_begin=None, date_end=None, sortby=None, filterby=None, **kw):
         self._items_per_page = 10
+        search = kw.get('search', '').strip()
+        base_domain = [('name', 'ilike', search)] if search else []
         return self._render_portal(
             "purchase.portal_my_purchase_orders",
             page, date_begin, date_end, sortby, filterby,
-            [],
+            base_domain,
             {
                 'all': {'label': _('All'), 'domain': [('state', 'in', ['purchase', 'done', 'cancel'])]},
                 'purchase': {'label': _('Purchase Order'), 'domain': [('state', '=', 'purchase')]},

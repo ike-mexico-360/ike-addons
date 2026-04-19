@@ -12,7 +12,7 @@ class IkeEventProduct(models.Model):
     event_id = fields.Many2one('ike.event', required=True)
     supplier_number = fields.Integer(default=1, required=True)
 
-    sequence = fields.Integer(default=5)
+    sequence = fields.Integer(default=1050)
     name = fields.Text(string='Description')
     product_id = fields.Many2one('product.product', string='Concept')
     product_domain = fields.Binary(compute='_compute_product_domain')
@@ -275,7 +275,7 @@ class IkeEventSupplierProduct(models.Model):
             ]
 
             if rec.event_id:
-                print(rec.event_supplier_link_id.event_id)
+                # print(rec.event_supplier_link_id.event_id)
                 excluded = rec.event_supplier_link_id.supplier_product_ids.filtered(
                     lambda x:
                         x.id != rec.id

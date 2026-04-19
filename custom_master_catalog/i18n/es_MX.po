@@ -176,7 +176,7 @@ msgid "Accessory created"
 msgstr "Accesorio creado"
 
 #. module: custom_master_catalog
-#: model:ir.actions.act_window,name:custom_master_catalog.action_res_partner_account_supplier_operational
+#: model:ir.actions.act_window,name:custom_master_catalog.action_res_partner_account_readonly
 #: model:ir.actions.act_window,name:custom_master_catalog.res_partner_account_action_window
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__account_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_is_account
@@ -231,6 +231,7 @@ msgstr "Cuenta especial"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_account_child_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_account_child_ids
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_account_menu_account
+#: model:ir.ui.menu,name:custom_master_catalog.res_partner_account_menu_readonly
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_menu_account_config
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_client_view_form
 msgid "Accounts"
@@ -693,6 +694,7 @@ msgid "Click false to hide."
 msgstr "Haga clic en falso para ocultar"
 
 #. module: custom_master_catalog
+#: model:ir.actions.act_window,name:custom_master_catalog.action_res_partner_client_readonly
 #: model:ir.actions.act_window,name:custom_master_catalog.res_partner_client_action_window
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__is_client
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__client_id
@@ -720,6 +722,7 @@ msgstr "RFC del cliente"
 
 #. module: custom_master_catalog
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_client_menu_clients
+#: model:ir.ui.menu,name:custom_master_catalog.res_partner_client_menu_readonly
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_menu_clients
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_menu_clients_root
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_res_partner_filter_inherit_x_client

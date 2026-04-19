@@ -706,8 +706,8 @@ class IkeEventSupplierLink(models.Model):
             if self.authorization_by_nu
             else self.authorizer_id.display_name
         )
-        self.event_id.authorized_amount = authorized_amount
-        event_authorization_id = self.env['ike.event.authorization'].create({
+        self.sudo().event_id.authorized_amount = authorized_amount
+        event_authorization_id = self.sudo().env['ike.event.authorization'].create({
             'event_id': self.event_id.id,
             'supplier_id': self.supplier_id.id,
             'supplier_number': self.supplier_number,
@@ -718,19 +718,10 @@ class IkeEventSupplierLink(models.Model):
             'authorizer_id': self.authorizer_id and self.authorizer_id.id,
             'authorizer': authorizer,
         })
-
-        for product_id in self.supplier_product_ids:
-            if product_id.authorization_pending:
-                product_id.authorization_ids = [Command.create({
-                    'event_authorization_id': event_authorization_id.id,
-                    'quantity': product_id.quantity,
-                    'unit_price': product_id.unit_price,
-                    'amount': product_id.subtotal,
-                })]
-                product_id.authorization_pending = False
+        self.sudo().event_id.accept_authorization(event_authorization_id.id)
 
         # Start automatic notifications
-        self.event_id.action_start_notifications()
+        self.sudo().event_id.action_start_notifications()
 
     def action_reject_authorization(self):
         self.ensure_one()

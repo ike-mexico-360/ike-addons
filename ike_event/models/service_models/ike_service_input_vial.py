@@ -18,6 +18,7 @@ class IkeServiceVial(models.Model):
         ('manual', 'Manual'),
     ], default='link')
     vehicle_plate_image = fields.Binary()
+    service_evidence_ids = fields.One2many(related="event_id.service_evidence_ids")
     vehicle_brand = fields.Char(string='Brand')
     vehicle_model = fields.Char(string='Subbrand')
     vehicle_year = fields.Char(string='Year')
@@ -166,11 +167,11 @@ class IkeServiceVial(models.Model):
 
         self.vehicle_plate_image = image_base64
 
-        self.vehicle_brand = 'Mazda'
-        self.vehicle_model = 'CX-3'
-        self.vehicle_year = '2020'
-        self.vehicle_plate = 'A00-AAA'
-        self.vehicle_color = 'Gris'
+        # self.vehicle_brand = 'Mazda'
+        # self.vehicle_model = 'CX-3'
+        # self.vehicle_year = '2020'
+        # self.vehicle_plate = 'A00-AAA'
+        # self.vehicle_color = 'Gris'
         vehicle_category_id = self.env['fleet.vehicle.model.category'].search([
-            ('name', '=ilike', 'Auto')], limit=1)
+            ('name', '=ilike', 'Automóvil')], limit=1)
         self.vehicle_category_id = vehicle_category_id and vehicle_category_id.id or False

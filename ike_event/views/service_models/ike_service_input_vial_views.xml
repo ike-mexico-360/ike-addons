@@ -131,10 +131,26 @@
                                 <button name="action_identification_manual" string="Identification Manual"
                                         type="object" class="btn-primary" icon="fa-pencil"/>
                             </div>
-                            <field name="vehicle_plate_image" widget="image" nolabel="1" colspan="2"/>
-                            <button name="action_identification_whatsapp" string="Send Link by Whatsapp"
-                                    type="object" class="btn-whatsapp" icon="fa-whatsapp"
-                                    invisible="identification_type != 'link'"/>
+                            <group colspan="2">
+                                <field name="service_evidence_ids"
+                                    widget="ike_carousel_image"
+                                    nolabel="1">
+                                    <list>
+                                        <field name="evidence_type"/>
+                                        <field name="detail_ids"/>
+                                    </list>
+ 
+                                </field>
+                            </group>
+ 
+                            <div colspan="2">
+                                <button name="action_identification_whatsapp"
+                                        string="Send Link by Whatsapp"
+                                        type="object"
+                                        class="btn-whatsapp"
+                                        icon="fa-whatsapp"
+                                        invisible="identification_type != 'link'"/>
+                            </div>
                         </group>
                         <group string="Vehicle Data" name="vehicle_data" class="ike-group" col="12">
                             <!-- <field name="service_date"/> -->
@@ -152,7 +168,8 @@
                                 <field name="vehicle_category_id"
                                     widget="ike_many2one" required="identification_type in ['manual', 'manual_manual']" nolabel="1" colspan="2" readonly="identification_type == 'link'"
                                     options="{'no_open': True, 'no_create': True}"
-                                    context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_category_view_list'}"/>
+                                    domain="[('disabled', '=', False)]"
+                                    context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_category_view_list', 'hide_disabled_enabled_filters': 1}"/>
                                 <field name="vehicle_plate"
                                    widget="ike_char" required="identification_type in ['manual', 'manual_manual']" nolabel="1" colspan="2" readonly="identification_type == 'link'"/>
                             </group>

@@ -166,10 +166,11 @@ class IkeEvent(models.Model):
                 template=70,  # terminó
                 phone_number=phone_number,
             )
+            survey_url = self.satisfaction_survey_input_url
             self.env['ike.event.supplier'].x_send_whatsapp_template(
                 access_token=wp_access_token,
                 event_id=str(self.id),
                 template=73,  # encuestaUser
                 phone_number=phone_number,
-                parameter="https://qaike360.alsiba.mx/survey/start/a2e7faf4-1a63-47d5-8975-3bf06f41d989"
+                parameter=survey_url
             )

@@ -43,7 +43,7 @@
 
                 <field name="product_id" required="1"
                         widget="ike_label_section_and_note_field"
-                        domain="product_domain"
+
                         context="{
                             'edit': 0,
                             'display_default_code': 0,
@@ -85,7 +85,7 @@
                 <field name="base_unit_price" column_invisible="1" />
                 <field name="base_cancel_price" column_invisible="1" />
                 <field name="product_id" required="1" widget="ike_label_section_and_note_field"
-                    domain="product_add_domain"
+
                     context="{
                             'edit': False,
                             'display_default_code': 0,

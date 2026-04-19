@@ -95,7 +95,7 @@
     <data noupdate="0">
         <record id="custom_contact_admin_client_modify_rule" model="ir.rule">
             <field name="name">Clients Admin Modify Rule</field>
-            <field name="model_id" ref="model_res_partner" />
+            <field name="model_id" ref="base.model_res_partner" />
             <field name="groups" eval="[(4, ref('custom_group_contact_admin_client'))]" />
             <field name="perm_read" eval="False" />
             <field name="perm_write" eval="True" />
@@ -104,10 +104,21 @@
             <field name="domain_force">['|', ('x_is_client', '=', True), ('x_is_account', '=', True)]</field>
         </record>
 
-        <record id="custom_contact_admin_supplier_contralory_modify_rule" model="ir.rule">
-            <field name="name">Suppliers Contralory Admin Modify Rule</field>
-            <field name="model_id" ref="model_res_partner" />
+        <record id="custom_contact_admin_supplier_contralory_read_rule" model="ir.rule">
+            <field name="name">Suppliers Contralory Read Rule</field>
+            <field name="model_id" ref="base.model_res_partner" />
             <field name="groups" eval="[(4, ref('custom_group_supplier_contralory'))]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="False" />
+            <field name="perm_create" eval="False" />
+            <field name="perm_unlink" eval="False" />
+            <field name="domain_force">[(1, '=', 1)]</field>
+        </record>
+
+        <record id="custom_contact_admin_supplier_support_modify_rule" model="ir.rule">
+            <field name="name">Suppliers Support Admin Modify Rule</field>
+            <field name="model_id" ref="base.model_res_partner" />
+            <field name="groups" eval="[(4, ref('custom_group_supplier_support'))]" />
             <field name="perm_read" eval="True" />
             <field name="perm_write" eval="False" />
             <field name="perm_create" eval="False" />
@@ -117,7 +128,7 @@
 
         <record id="custom_contact_admin_supplier_read_rule" model="ir.rule">
             <field name="name">Suppliers Admin Read Rule</field>
-            <field name="model_id" ref="model_res_partner" />
+            <field name="model_id" ref="base.model_res_partner" />
             <field name="groups" eval="[(4, ref('custom_group_contact_admin_supplier'))]" />
             <field name="perm_read" eval="True" />
             <field name="perm_write" eval="False" />
@@ -127,7 +138,7 @@
         </record>
         <record id="custom_contact_admin_supplier_modify_rule" model="ir.rule">
             <field name="name">Suppliers Admin Modify Rule</field>
-            <field name="model_id" ref="model_res_partner" />
+            <field name="model_id" ref="base.model_res_partner" />
             <field name="groups" eval="[(4, ref('custom_group_contact_admin_supplier'))]" />
             <field name="perm_read" eval="False" />
             <field name="perm_write" eval="True" />
@@ -138,7 +149,7 @@
 
         <record id="custom_contact_admin_account_modify_rule" model="ir.rule">
             <field name="name">Accounts Admin Modify Rule</field>
-            <field name="model_id" ref="model_res_partner" />
+            <field name="model_id" ref="base.model_res_partner" />
             <field name="groups" eval="[(4, ref('custom_group_contact_admin_account'))]" />
             <field name="perm_read" eval="False" />
             <field name="perm_write" eval="True" />
@@ -149,7 +160,7 @@
 
         <record id="custom_contact_erp_manager_rule" model="ir.rule">
             <field name="name">ERP Manager Rule</field>
-            <field name="model_id" ref="model_res_partner" />
+            <field name="model_id" ref="base.model_res_partner" />
             <field name="groups" eval="[(4, ref('base.group_erp_manager'))]" />
             <field name="perm_read" eval="True" />
             <field name="perm_write" eval="True" />

@@ -489,11 +489,15 @@ msgid "Event"
 msgstr "Evento"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_price_unit_event
 msgid "Event Price"
 msgstr "Precio evento"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_product_qty_event
 msgid "Event Quantity"
 msgstr "Cantidad evento"
@@ -719,6 +723,16 @@ msgstr "Referencia SAP %s"
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__6
 msgid "Saturday"
 msgstr "Sábado"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_orders
+msgid "Search"
+msgstr "Buscar"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_orders
+msgid "Search by Purchase Order #..."
+msgstr "Buscar por Orden de compra #..."
 
 #. module: ike_event_purchase
 #. odoo-javascript

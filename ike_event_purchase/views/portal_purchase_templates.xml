@@ -57,10 +57,25 @@
                 <t t-call="portal.portal_searchbar">
                     <t t-set="title">Purchase Orders</t>
                 </t>
+                <form method="get" action="/my/purchase" class="row g-2 mb-3">
+                    <div class="col-auto">
+                        <input type="text" id="portal_po_search" name="search"
+                               class="form-control" placeholder="Search by Purchase Order #..."/>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </form>
+                <script>
+                    (function () {
+                        var params = new URLSearchParams(window.location.search);
+                        var val = params.get('search');
+                        if (val) { document.getElementById('portal_po_search').value = val; }
+                    })();
+                </script>
                 <t t-if="not orders">
                     <p class="o_view_nocontent_smiling_face">No purchase orders yet.</p>
                 </t>
-                <t t-call='portal.record_pager'/>
                 <t t-if="orders" t-call="portal.portal_table">
                     <thead>
                         <tr class="active">

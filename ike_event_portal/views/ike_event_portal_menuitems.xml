@@ -97,4 +97,13 @@
         <xpath expr="//a[@href='/my/account']" position="replace"/>
     </template>
 
+    <!-- Hidden: promotion message -->
+    <template id="brand_promotion_message_hide" inherit_id="web.brand_promotion_message">
+        <xpath expr="." position="replace">
+            <t t-name="web.brand_promotion_message"/>
+        </xpath>
+    </template>
+    <template id="hide_survey_brand" inherit_id="survey.layout">
+        <xpath expr="//div[hasclass('o_survey_brand_message')]" position="replace"/>
+    </template>
 </odoo>

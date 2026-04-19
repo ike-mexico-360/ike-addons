@@ -946,7 +946,7 @@ msgstr "Empresa"
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_evidence__evidence_type__completed
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 msgid "Completed"
-msgstr "Asistencia concluida"
+msgstr "Concluido"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search

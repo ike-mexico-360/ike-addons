@@ -24,7 +24,7 @@
                     groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator" />
                 <menuitem id="ike_menu_event_event_authorization" name="Events authorization" sequence="4"
                     action="ike_event_authorization_action"
-                    groups="base.group_system,custom_master_catalog.custom_group_commercial_supervisor" />
+                    groups="base.group_system,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support" />
                 <menuitem id="ike_menu_event_event_assignment" name="Events assignment" sequence="5"
                     action="action_assignment_wizard"
                     groups="base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss" />

@@ -1,0 +1,109 @@
+/* ── Carrusel contenedor ─────────────────────────────────────── */
+.ike-carousel {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    margin-top: 10px;
+    overflow: hidden;
+    background: #f0f0f0;
+    border-radius: 6px;
+    user-select: none;
+}
+
+/* ── Track (apila todas las slides) ─────────────────────────── */
+.ike-carousel-track {
+    width: 100%;
+    height: 100%;
+}
+
+/* ── Slides ──────────────────────────────────────────────────── */
+.ike-carousel-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    pointer-events: none;   /* evita interferir con los botones */
+}
+
+.ike-carousel-slide.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ── Botones de navegación ───────────────────────────────────── */
+.ike-carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;           
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    font-size: 1rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: background 0.2s;
+}
+
+.ike-carousel-btn:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+.ike-carousel-btn.prev { left:  8px; }
+.ike-carousel-btn.next { right: 8px; }
+
+/* ── Dots indicadores ────────────────────────────────────────── */
+.ike-carousel-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    gap: 6px;
+}
+
+.ike-carousel-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.55);
+    cursor: default;
+    transition: background 0.2s;
+}
+
+.ike-carousel-dot.active {
+    background: #fff;
+}
+
+/* ── Placeholder (sin imágenes / cargando) ───────────────────── */
+.ike-carousel-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 300px;
+    max-width: 400px;        
+    margin: 10px;
+    background: #f8f8f8;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    color: #c0c0c0;
+    font-size: 0.9rem;
+    overflow: hidden;        
+    position: relative;      
+}
+
+.ike-carousel-placeholder-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}

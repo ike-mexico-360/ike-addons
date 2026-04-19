@@ -100,6 +100,8 @@ export class PurchaseOrderDetails extends Component {
                                 x_product_qty_dispute: {},
                                 x_price_unit_approved: {},
                                 x_product_qty_approved: {},
+                                x_product_qty_event: {},
+                                x_price_unit_event: {},
                             },
                         },
                         x_dispute_iteration_count: {},

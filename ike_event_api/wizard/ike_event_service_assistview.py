@@ -95,6 +95,12 @@ class IkeEventServiceAssistView(models.TransientModel):
                 'detail_ids': evidences,
             })
 
+    def action_cancel(self):
+        self.ensure_one()
+        service_id = self.env['ike.service.input.vial'].browse(self.service_res_id)
+        service_id.action_identification_manual()
+        return {'type': 'ir.actions.act_window_close'}
+
 
 class IkeEventServiceAssistViewImage(models.TransientModel):
     _name = 'ike.event.service.assistview.image'
