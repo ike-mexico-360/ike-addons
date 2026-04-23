@@ -835,24 +835,6 @@ class EventsAPIController(http.Controller):
         response = self._ike_api_v1_create_partner(kwargs, 'supplier')
         return response
 
-    # ToDo: Quitar cuando Charly notifique que ya no lo ocupa
-    @http.route('/api/v1/meta', type='http', auth='public', methods=['POST'], csrf=False)
-    def ike_api_v1_meta(self, **kwargs):
-        """
-        Endpoint público: recibe un JSON y lo devuelve tal cual. Pruebas de Charly
-        """
-        try:
-            json_data = request.get_json_data() or {}
-            return request.make_json_response(
-                json_data,
-                status=200
-            )
-        except (ValueError, TypeError):
-            return request.make_json_response(
-                {"error": "Invalid JSON"},
-                status=400
-            )
-
     def _ike_api_v1_create_partner(self, kwargs, partner_type=None):
         def _validate_rfc(rfc):
             """Validar formato de RFC mexicano"""

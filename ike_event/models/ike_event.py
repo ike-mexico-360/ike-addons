@@ -152,7 +152,7 @@ class IkeEvent(models.Model):
     ia_suggestion_done = fields.Boolean(default=False, copy=False)
     ia_suggestion_product_ids = fields.Json(string="AI Suggested Concepts", copy=False, default=lambda self: [])
 
-    ike_event_coordinator_id = fields.Many2one(
+    assigned_user_id = fields.Many2one(
         'res.users',
         string='Assign',
         copy=False,
@@ -355,17 +355,19 @@ class IkeEvent(models.Model):
     # === STAGE ACTIONS === #
     def action_completed(self):
         self.stage_id = self.env.ref('ike_event.ike_event_stage_completed').id
-        self.action_create_satisfaction_survey()
+        # self.action_create_satisfaction_survey()
 
     def action_verify(self):
         total_amount = sum(self.selected_supplier_ids.mapped('base_amount_concept_subtotal'))
         if total_amount <= self.covered_amount:
             self.action_close()
         else:
+            self.assigned_user_id = False
             self.stage_id = self.env.ref('ike_event.ike_event_stage_verifying').id
 
     def action_close(self):
         self.stage_id = self.env.ref('ike_event.ike_event_stage_closed').id
+        self.action_create_satisfaction_survey()
         self.action_create_purchase_orders()
 
     def action_create_purchase_orders(self):
@@ -381,7 +383,8 @@ class IkeEvent(models.Model):
                 })
                 rec.satisfaction_survey_input_id = user_input_id.id
                 rec.satisfaction_survey_input_url = (
-                    f'{service_satisfaction_survey_id.get_base_url()}/survey/{service_satisfaction_survey_id.access_token}/{user_input_id.access_token}'
+                    f'{service_satisfaction_survey_id.get_base_url()}'
+                    f'/survey/{service_satisfaction_survey_id.access_token}/{user_input_id.access_token}'
                 )
 
     def action_testing_reload(self):
@@ -587,6 +590,8 @@ class IkeEvent(models.Model):
     def action_set_user_data(self):
         for rec in self:
             rec.count_json = rec._build_sub_service_counter_json()
+            if not rec.assigned_user_id:
+                rec.assigned_user_id = rec.create_uid
             if not rec.event_summary_id:
                 event_summary_id = self.env['ike.event.summary'].create({
                     'event_id': rec.id,
@@ -915,7 +920,7 @@ class IkeEvent(models.Model):
         self.ensure_one()
         view = self.env.ref('ike_event.ike_event_history_view_list')
         search_view = self.env.ref('ike_event.ike_event_history_view_search')
-        completed_stage = self.env.ref('ike_event.ike_event_stage_completed')
+        closed_stage = self.env.ref('ike_event.ike_event_stage_closed')
         return {
             'name': _('Service history'),
             'type': 'ir.actions.act_window',
@@ -928,7 +933,7 @@ class IkeEvent(models.Model):
                 ('id', '!=', self.id),
                 ('user_id', '=', self.user_id.id),
                 ('sub_service_id', '=', self.sub_service_id.id),
-                ('stage_id', '=', completed_stage.id),
+                ('stage_id', '=', closed_stage.id),
             ],
         }
 

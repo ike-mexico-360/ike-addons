@@ -3,6 +3,7 @@
 import json
 import logging
 import requests
+from odoo.tools import html2plaintext
 from odoo import models, fields
 
 _logger = logging.getLogger(__name__)
@@ -12,17 +13,33 @@ class IkeEventSupplierSelection(models.Model):
     _inherit = 'ike.event.supplier'
 
     SEARCH_TYPE_MAP = {
-        'electronic': {'code': 1, 'name': 'GEO'},
-        'publication': {'code': 2, 'name': 'PUB'},
-        'manual': {'code': 3, 'name': 'MAN'},
-        'manual_manual': {'code': 3, 'name': 'MAN'},
+        "electronic": {"code": 1, "name": "GEO"},
+        "publication": {"code": 2, "name": "PUB"},
+        "manual": {"code": 3, "name": "MAN"},
+        "manual_manual": {"code": 3, "name": "MAN"},
     }
     # Necesario para mapear los sub_servicios antes de entrar a la lógica de la notificaciíon y filtrar
     SUB_SERVICE_REF_MAP = {
-        'town_truck': {'code': 211, 'name': 'Arrastre de grúa'},
-        'fuel_supply': {'code': 213, 'name': 'Suministro de gasolina'},
-        'battery_charge': {'code': 214, 'name': 'Paso de corriente'},
-        'tire_change': {'code': 215, 'name': 'Cambio de llanta'},
+        "town_truck": {
+            "id": "f2c193e7-8517-4c16-a5e3-deb0944fc78b",
+            "code": 211,
+            "description": "Arrastre de grúa"
+        },
+        "battery_charge": {
+            "id": "4bf0fbe9-dc04-4f1a-b1c5-832379b24542",
+            "code": 212,
+            "description": "Paso de corriente"
+        },
+        "tire_change": {
+            "id": "67fc3526-57a1-433e-ae6f-96363f77289d",
+            "code": 213,
+            "description": "Cambio de llanta"
+        },
+        "fuel_supply": {
+            "id": "0442653b-e0cf-4860-a110-97c0a62dbeb5",
+            "code": 214,
+            "description": "Suministro de gasolina"
+        },
     }
 
     # === Private methdos === #
@@ -38,10 +55,30 @@ class IkeEventSupplierSelection(models.Model):
             return {}
 
         service_id = self.env[self.event_id.service_res_model].browse(self.event_id.service_res_id)
+
         sub_service_id = self.env[self.event_id.sub_service_res_model].browse(self.event_id.sub_service_res_id)
+        sub_service_valid_fields = list(sub_service_id._fields.keys())
+        needed_fields = [
+            'destination_zip_code',
+            'state_id',
+            'municipality_id',
+            'colony',
+            'street',
+            'street_number',
+            'street2',
+            'street_ref',
+            'destination_latitude',
+            'destination_longitude'
+        ]
+        fields_to_read = [f for f in needed_fields if f in sub_service_valid_fields]
+        subservice_data = sub_service_id.read(fields_to_read)
+        subservice_data = subservice_data[0]
+
         rangehigh = False
         if service_id.vehicle_category_id:
             rangehigh = bool(service_id.vehicle_category_id.name.strip().lower().replace(' ', '') == 'altagama')
+
+        service_details = self._get_service_details(self.event_id.sub_service_survey_input_id)
 
         body = {
             "id": str(self.event_id.id),
@@ -54,16 +91,13 @@ class IkeEventSupplierSelection(models.Model):
                 "rangehigh": rangehigh,
                 "rangetype": service_id.vehicle_category_id.name or ''
             },
+            # Servicio se envía estático, solo se notifica en Asistencia vial
             "service": {
-                "code": "1",  # ToDo: queda fijo, se cambiará al definirse el origen
-                "description": "Asistencia Vial",  # ToDo: queda fijo, se cambiará al definirse el origen
-                "id": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"  # ToDo: queda fijo, se cambiará al definirse el origen
+                "code": "1",
+                "description": "Asistencia Vial",
+                "id": "81485957-cff2-4db0-8722-12c666d23b65"
             },
-            "subservice": {
-                "id": "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX",
-                "code": self.SUB_SERVICE_REF_MAP.get(self.event_id.sub_service_id.default_code)['code'],
-                "description": self.SUB_SERVICE_REF_MAP.get(self.event_id.sub_service_id.default_code)['name']
-            },
+            "subservice": self.SUB_SERVICE_REF_MAP.get(self.event_id.sub_service_id.default_code, {}),
             "origin": {
                 "postalCode": service_id.location_zip_code or '',
                 "state": service_id.state_id.name or '',
@@ -76,15 +110,15 @@ class IkeEventSupplierSelection(models.Model):
                 "longitude": service_id.location_longitude or '',
             },
             "destino": {
-                "postalCode": sub_service_id.destination_zip_code or '',
-                "state": sub_service_id.state_id.name or '',
-                "municipality": sub_service_id.municipality_id.name or '',
-                "neighborhood": sub_service_id.colony or '',
-                "street": f"{sub_service_id.street} {sub_service_id.street_number}" or '',
-                "betweenStreets": sub_service_id.street2 or '',
-                "visualReference": sub_service_id.street_ref or '',
-                "latitude": sub_service_id.destination_latitude or '',
-                "longitude": sub_service_id.destination_longitude or '',
+                "postalCode": subservice_data.get('destination_zip_code', ''),
+                "state": subservice_data['state_id'][1] if subservice_data.get('state_id', False) else '',
+                "municipality": subservice_data['municipality_id'][1] if subservice_data.get('municipality_id', False) else '',
+                "neighborhood": subservice_data.get('colony', ''),
+                "street": f"{subservice_data['street']} {subservice_data['street_number']}" if subservice_data.get('street', False) and subservice_data.get('street_number', False) else '',
+                "betweenStreets": subservice_data.get('street2', ''),
+                "visualReference": subservice_data.get('street_ref', ''),
+                "latitude": subservice_data.get('destination_latitude', ''),
+                "longitude": subservice_data.get('destination_longitude', ''),
             },
             # ToDo: Validar que el tipo de asignación sea el mismo para el grupo de vehículos que se enviará en la lista ids
             "typeAssignment": {
@@ -94,25 +128,7 @@ class IkeEventSupplierSelection(models.Model):
                 # "ids": [str(supplier.truck_id.x_vehicle_ref) for supplier in self]
                 "id": str(self.truck_id.x_vehicle_ref) if self.truck_id.x_vehicle_ref else '',
             },
-            # ToDo: Mapear con las respuestas de la encuesta
-            "serviceDetails": {
-                "reasonFailure": {
-                    "id": 0,
-                    "description": "NU no sabe",
-                    "code": 7
-                },
-                "accompaniesTransfer": {
-                    "id": 0,
-                    "description": "Nuestro Usuario",
-                    "code": 1
-                },
-                "typeFaul": {
-                    "id": 0,
-                    "description": "MECANICA",
-                    "code": 1
-                },
-                "peopleVehicle": 1
-            },
+            "serviceDetails": service_details,
         }
 
         # handle status
@@ -124,6 +140,24 @@ class IkeEventSupplierSelection(models.Model):
             }
         })
         return body
+
+    def _get_service_details(self, survey_input_id):
+        survey = []
+
+        for input_id in survey_input_id.user_input_line_ids:
+            question_id = input_id.question_id
+            title = question_id.title or ''
+            description = html2plaintext(question_id.description) or ''
+            answer = input_id.display_name or ''
+            survey.append({
+                "title": title,
+                "description": description,
+                "type": question_id.question_type,
+                "answer": answer,
+                "required": question_id.constr_mandatory,
+            })
+
+        return survey
 
     # === AUXILIAR METHODS === #
     def operator_app_notify(
@@ -168,7 +202,6 @@ class IkeEventSupplierSelection(models.Model):
             route_to_destination = []
         if not url:
             return False
-        # ToDo: Escenario para sub-servicios de un solo punto, está bien así?
         dest_lat = destination.get('lat', False)
         dest_lng = destination.get('lng', False)
         if not dest_lat and not dest_lng:
@@ -205,12 +238,18 @@ class IkeEventSupplierSelection(models.Model):
         # ToDo: IMP: Agrupar por evento para enviar los batchs
         headers = {"Content-Type": "application/json"}
         body = self._prepare_body_for_external_notification()
+        _logger.warning(f"Sending external notification: {body}")
         external_response = requests.post(
             url,
             headers=headers,
             json=body,
         )
-        return external_response.json()
+        try:
+            return external_response.json()
+        except Exception as e:
+            _logger.error(f"Error al enviar notificación: {str(e)}")
+            _logger.error(f"Error al enviar notificación: {external_response.text}")
+            return False
 
     def x_get_whatsapp_token(self):
         # ToDo: Implementar expiración de token
@@ -466,7 +505,7 @@ class IkeEventSupplierSelection(models.Model):
 
         # Enviar solo 1 vez, si es el primero que se acepta
         selected_suppliers = self.filtered(lambda x: x.selected)
-        if not selected_suppliers:
+        if len(selected_suppliers) == 1:
             try:
                 wp_access_token = self.x_get_whatsapp_token()
 

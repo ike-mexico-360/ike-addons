@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-26 00:40+0000\n"
-"PO-Revision-Date: 2026-02-26 00:40+0000\n"
+"POT-Creation-Date: 2026-04-20 23:14+0000\n"
+"PO-Revision-Date: 2026-04-20 23:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -36,19 +36,30 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
-#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
 msgid "Accesorios"
 msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
-msgid "Aceptar Servicio"
-msgstr ""
+msgid "Actions"
+msgstr "Acciones"
 
 #. module: ike_event_portal
 #. odoo-javascript
-#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Accept"
+msgstr "Aceptar"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Accept Service"
+msgstr "Aceptar Servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
 msgid "Administrador"
 msgstr ""
 
@@ -57,6 +68,12 @@ msgstr ""
 #: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
 msgid "Agregar Nuevo Usuario"
 msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Add Concept"
+msgstr "Añadir Concepto"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -73,6 +90,12 @@ msgstr "Tipo de asignación"
 #: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__assigned
 msgid "Assigned"
 msgstr "Asignado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Buscar expediente..."
+msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -108,22 +131,41 @@ msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
-#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
-#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
-#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
-msgid "Cancelar"
+#: code:addons/ike_event_portal/static/src/components/dialogs/cancel_service_dialog.xml:0
+msgid "Cancelando..."
 msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
-msgid "Cancelar Servicio"
-msgstr ""
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Cancelar"
+msgstr "Cancel"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Cancel Service"
+msgstr "Cancelar Servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Quantity"
+msgstr "Cantidad"
 
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
 msgid "Cargando choferes disponibles..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Cargando costos del servicio..."
 msgstr ""
 
 #. module: ike_event_portal
@@ -134,6 +176,26 @@ msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/cancel_service_dialog.xml:0
+msgid "Cargando motivos de cancelación..."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Loading services"
+msgstr "Cargando servicios"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/cancel_service_dialog.xml:0
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Cargando"
+msgstr "Loading"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
 msgid "Centro de Atención"
 msgstr ""
@@ -148,9 +210,11 @@ msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/cancel_service_dialog.xml:0
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
-msgid "Cerrar"
-msgstr ""
+msgid "Close"
+msgstr "Cerrar"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -182,6 +246,12 @@ msgid "Colonia"
 msgstr ""
 
 #. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/cancel_service_dialog.xml:0
+msgid "Comentarios adicionales (opcional):"
+msgstr ""
+
+#. module: ike_event_portal
 #: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__company_id
 msgid "Company"
 msgstr "Compañía"
@@ -189,9 +259,15 @@ msgstr "Compañía"
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Concept"
+msgstr "Concepto"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
-msgid "Conductor"
-msgstr ""
+msgid "Driver"
+msgstr "Conductor"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -200,9 +276,27 @@ msgid "Conductor..."
 msgstr ""
 
 #. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/cancel_service_dialog.xml:0
+msgid "Confirmar Cancelación"
+msgstr ""
+
+#. module: ike_event_portal
 #: model:ir.model,name:ike_event_portal.model_res_partner
 msgid "Contact"
 msgstr "Contacto"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Cost"
+msgstr "Costo"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Service Costs"
+msgstr "Costos del servicio"
 
 #. module: ike_event_portal
 #: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__covered_amount
@@ -238,6 +332,12 @@ msgid "Datos del Usuario"
 msgstr ""
 
 #. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/cancel_service_dialog.xml:0
+msgid "Debe seleccionar un motivo de cancelación"
+msgstr ""
+
+#. module: ike_event_portal
 #: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__name
 msgid "Description"
 msgstr "Descripción"
@@ -264,6 +364,12 @@ msgstr "Código postal de destino"
 
 #. module: ike_event_portal
 #. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Details"
+msgstr "Detalles"
+
+#. module: ike_event_portal
+#. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
 msgid "Detalles de la grúa"
@@ -278,8 +384,8 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
-msgid "Detalles del Servicio"
-msgstr ""
+msgid "Service Details"
+msgstr "Detalles del servicio"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -321,11 +427,29 @@ msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Delete concept"
+msgstr "Eliminar concepto"
+
+#. module: ike_event_portal
+#. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
 #: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_ike_event_suppliers
 msgid "Email"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Send request for additional concepts"
+msgstr "Enviar solicitud de conceptos adicionales"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/cancel_service_dialog.xml:0
+msgid "Escriba aquí los detalles de la cancelación..."
 msgstr ""
 
 #. module: ike_event_portal
@@ -356,14 +480,20 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
-msgid "Estado evento"
-msgstr ""
+msgid "Event Status"
+msgstr "Estado evento"
 
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
-msgid "Estado proveedor"
-msgstr ""
+msgid "Supplier Stauts"
+msgstr "Estado proveedor"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Route Status"
+msgstr "Estado ruta"
 
 #. module: ike_event_portal
 #: model:ir.model,name:ike_event_portal.model_ike_event
@@ -405,14 +535,14 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
-msgid "Expediente"
-msgstr ""
+msgid "Expedient"
+msgstr "Expediente"
 
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
-msgid "Fecha"
-msgstr ""
+msgid "Date"
+msgstr "Fecha"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -422,8 +552,26 @@ msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "From Date"
+msgstr "Fecha desde"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "To Date"
+msgstr "Fecha hasta"
+
+#. module: ike_event_portal
+#. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
 msgid "Filtrar por:"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+msgid "Financieros (Administrativo)"
 msgstr ""
 
 #. module: ike_event_portal
@@ -463,14 +611,14 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
-msgid "Grúa"
-msgstr ""
+msgid "Crane"
+msgstr "Grúa"
 
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
-msgid "Grúas"
-msgstr ""
+msgid "Cranes"
+msgstr "Grúas"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -482,10 +630,11 @@ msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
-msgid "Guardar"
-msgstr ""
+msgid "Save"
+msgstr "Guardar"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -503,6 +652,12 @@ msgstr ""
 #: model:ir.module.category,name:ike_event_portal.module_category_custom_ike_portal
 msgid "IKE Portal"
 msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "VAT"
+msgstr "IVA"
 
 #. module: ike_event_portal
 #: model:res.groups,name:ike_event_portal.custom_group_portal_admin
@@ -566,14 +721,14 @@ msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
-#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
-msgid "Loading Truck Details..."
-msgstr ""
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Clean filters"
+msgstr "Limpiar filtros"
 
 #. module: ike_event_portal
 #. odoo-javascript
-#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
-msgid "Loading services..."
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Loading Truck Details..."
 msgstr ""
 
 #. module: ike_event_portal
@@ -610,10 +765,15 @@ msgstr "Código postal de ubicación"
 
 #. module: ike_event_portal
 #. odoo-javascript
-#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
 msgid "Login"
 msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "New services will appear here automatically"
+msgstr "Los nuevos servicios aparecerán aquí automáticamente"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -666,13 +826,23 @@ msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/pagination/pagination_component.xml:0
+msgid "Mostrando"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/pagination/pagination_component.xml:0
+msgid "Mostrar"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
 msgid "Municipio"
 msgstr ""
 
 #. module: ike_event_portal
-#. odoo-javascript
-#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
 #: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_ike_event_suppliers
 msgid "Name"
 msgstr ""
@@ -682,6 +852,18 @@ msgstr ""
 #: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
 msgid "No disponible"
 msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "There are no listed costs for this service"
+msgstr "No hay costos registrados para este servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "No available services"
+msgstr "No hay servicios disponibles"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -702,6 +884,7 @@ msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/users/user_read_component.xml:0
 msgid "Nombre"
 msgstr ""
@@ -715,8 +898,14 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
-msgid "Notificar Servicio"
-msgstr ""
+msgid "Notify"
+msgstr "Notificar"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Notify Service"
+msgstr "Notificar Servicio"
 
 #. module: ike_event_portal
 #: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__notification_sent_to_app
@@ -756,6 +945,7 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
 msgid "Operador"
 msgstr ""
 
@@ -765,14 +955,14 @@ msgid "Our Orders"
 msgstr "Nuestras órdenes"
 
 #. module: ike_event_portal
-#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__parent_id
-msgid "Parent"
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/pagination/pagination_component.xml:0
+msgid "Paginación"
 msgstr ""
 
 #. module: ike_event_portal
-#. odoo-javascript
-#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
-msgid "Partner"
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__parent_id
+msgid "Parent"
 msgstr ""
 
 #. module: ike_event_portal
@@ -790,9 +980,27 @@ msgid "Placas federales"
 msgstr ""
 
 #. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/cancel_service_dialog.xml:0
+msgid "Por favor, seleccione el motivo de la cancelación:"
+msgstr ""
+
+#. module: ike_event_portal
 #. odoo-python
 #: code:addons/ike_event_portal/models/ike_event.py:0
 msgid "Portal Extras"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Unit Price"
+msgstr "Precio Unitario"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/pagination/pagination_component.xml:0
+msgid "Primera página"
 msgstr ""
 
 #. module: ike_event_portal
@@ -804,9 +1012,33 @@ msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
-#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
-msgid "Rechazar Servicio"
+#: code:addons/ike_event_portal/static/src/components/pagination/pagination_component.xml:0
+msgid "Página"
 msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/pagination/pagination_component.xml:0
+msgid "Página anterior"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/pagination/pagination_component.xml:0
+msgid "Página siguiente"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Reject"
+msgstr "Rechazar"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Reject Service"
+msgstr "Rechazar Servicio"
 
 #. module: ike_event_portal
 #: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__service_ref
@@ -838,6 +1070,12 @@ msgstr "Tipo de búsqueda (Proveedor)"
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
 msgid "Seleccionar Chofer"
 msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Select concept"
+msgstr "Seleccionar concepto"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -899,8 +1137,8 @@ msgstr "Portal servicios"
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
-msgid "Servicio"
-msgstr ""
+msgid "Service"
+msgstr "Servicio"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -922,12 +1160,6 @@ msgstr "Tipo de token de registro"
 
 #. module: ike_event_portal
 #. odoo-javascript
-#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
-msgid "Sin accesorios"
-msgstr ""
-
-#. module: ike_event_portal
-#. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.xml:0
 msgid "Sin chofer asignado"
 msgstr ""
@@ -939,12 +1171,19 @@ msgid "Sin grupos"
 msgstr ""
 
 #. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Sin subservicios"
+msgstr ""
+
+#. module: ike_event_portal
 #: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_public__stage_id
 #: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__stage_id
 msgid "Stage"
 msgstr ""
 
 #. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__event_stage_ref
 #: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__stage_ref
 msgid "Stage Ref"
 msgstr ""
@@ -973,19 +1212,41 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Subservice"
+msgstr "Subservicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
-msgid "Subservicio"
+msgid "Subservicios asociados"
 msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Amount"
+msgstr "Subtotal"
+
+#. module: ike_event_portal
+#. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
 msgid "Supervisor"
 msgstr ""
 
 #. module: ike_event_portal
 #: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__supplier_id
 msgid "Supplier"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__supplier_center_id
+msgid "Supplier Center"
+msgstr ""
+
+#. module: ike_event_portal
+#: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__supplier_link_id
+msgid "Supplier Link"
 msgstr ""
 
 #. module: ike_event_portal
@@ -1008,6 +1269,12 @@ msgstr ""
 #. module: ike_event_portal
 #: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_ike_event_suppliers
 msgid "There are currently no suppliers to show."
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
+msgid "Tipo"
 msgstr ""
 
 #. module: ike_event_portal
@@ -1039,7 +1306,19 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
-msgid "Ubicación"
+msgid "All"
+msgstr "Todos"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Location"
+msgstr "Ubicación"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "UdM"
 msgstr ""
 
 #. module: ike_event_portal
@@ -1073,7 +1352,13 @@ msgstr ""
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
-msgid "Ver detalles"
+msgid "View details"
+msgstr "Ver detalles"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/cancel_service_dialog.xml:0
+msgid "Volver"
 msgstr ""
 
 #. module: ike_event_portal
@@ -1088,6 +1373,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_layout_account_name
 msgid "Welcome"
 msgstr "Bienvenido"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/pagination/pagination_component.xml:0
+msgid "de"
+msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -1110,8 +1401,31 @@ msgstr ""
 
 #. module: ike_event_portal
 #. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/pagination/pagination_component.xml:0
+msgid "registros"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "service(s) found"
+msgstr "servicio(s) encontrado(s)"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "servicios"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/users/user_create_component.xml:0
 #: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
 msgid "usuarios"
+msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/pagination/pagination_component.xml:0
+msgid "Última página"
 msgstr ""

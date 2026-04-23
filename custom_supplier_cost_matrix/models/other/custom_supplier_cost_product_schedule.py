@@ -26,3 +26,10 @@ class CustomSupplierCostProductSchedules(models.Model):
                 raise ValidationError(_('A record with the same name already exists.'))
             elif self.search_count(domain + [('disabled', '=', True)]) > 0:
                 raise ValidationError(_('A record with the same name already exists. It is disabled.'))
+
+    @api.model
+    def get_can_be_disabled(self):
+        res = super(CustomSupplierCostProductSchedules, self).get_can_be_disabled()
+        if not self.env.user.has_group('base.group_system'):
+            return False
+        return res

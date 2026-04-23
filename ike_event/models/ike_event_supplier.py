@@ -26,6 +26,8 @@ class IkeEventSupplier(models.Model):
     estimated_distance = fields.Float(help='Estimated distance to reach the user, in kilometers.', default=0.0)
     estimated_duration = fields.Float(help='Estimated duration to arrive to the user, in minutes.', default=0.0)
     estimated_cost = fields.Float(related='supplier_link_id.estimated_cost', store=True, readonly=False)
+    real_distance = fields.Float(default=0.0)
+    real_duration = fields.Float(default=0.0)
 
     # Assignation supplier fields
     ranking = fields.Integer(string='Ranking', default=0, readonly=True)
@@ -392,7 +394,9 @@ class IkeEventSupplier(models.Model):
                     else:
                         finalized_suppliers.append(False)
                 if all(finalized_suppliers):
-                    rec.event_id.action_forward()
+                    # Se cambia a usar el action_completed en lugar de action_forward por indicaciones de Neftalí el día 26.04.22
+                    # rec.event_id.action_forward()
+                    rec.event_id.action_completed()
                     rec.broadcastReload(event_reload=True)
 
     def action_from_progress_state(self, progress_state):

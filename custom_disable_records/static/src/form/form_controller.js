@@ -41,9 +41,17 @@ patch(FormController.prototype, {
             cancel: () => { },
         };
     },
-    get disableEnabled() {
+    get disableActivated() {
         return "disabled" in this.model.root.activeFields
             ? !this.props.fields.disabled.readonly
+            : false;
+    },
+    get canBeDisabled()  {
+        return "can_be_disabled" in this.model.root.activeFields ? this.model.root.data.can_be_disabled : true;
+    },
+    get disableEnabled() {
+        return "disabled" in this.model.root.activeFields
+            ? !this.props.fields.disabled.readonly && this.canBeDisabled
             : false;
     },
     /** Overwrite */
@@ -54,6 +62,6 @@ patch(FormController.prototype, {
                 ? !this.props.fields.x_active.readonly
                 : false;
 
-        return res && !this.disableEnabled;
+        return res && !this.canBeDisabled;
     }
 });

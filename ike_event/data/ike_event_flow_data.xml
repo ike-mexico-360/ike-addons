@@ -639,5 +639,273 @@
             <field name="detail_type">summary_top</field>
             <field name="event_flow_id" ref="ike_event_flow_concluded_1"/>
         </record>
+
+        <!-- Cancelled 1 -->
+        <record id="ike_event_flow_cancelled_1" model="ike.event.flow">
+            <field name="name">Cancelled step 1</field>
+            <field name="note"></field>
+            <field name="sequence">19</field>
+            <field name="stage_id" ref="ike_event_stage_cancelled"/>
+            <field name="step_number">1</field>
+        </record>
+        <record id="ike_event_flow_cancelled_1_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_1"/>
+        </record>
+        <record id="ike_event_flow_cancelled_1_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_1"/>
+        </record>
+        <record id="ike_event_flow_cancelled_1_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_1"/>
+        </record>
+        <record id="ike_event_flow_cancelled_1_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_sub_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_1"/>
+        </record>
+        <record id="ike_event_flow_cancelled_1_detail_summary_top_5" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_1"/>
+        </record>
+        <record id="ike_event_flow_cancelled_1_detail_summary_top_6" model="ike.event.flow.detail">
+            <field name="name">event_summary_supplier_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_1"/>
+        </record>
+
+        <!-- Cancelled 2 -->
+        <record id="ike_event_flow_cancelled_2" model="ike.event.flow">
+            <field name="name">Cancelled step 2</field>
+            <field name="note"></field>
+            <field name="sequence">20</field>
+            <field name="stage_id" ref="ike_event_stage_cancelled"/>
+            <field name="step_number">2</field>
+        </record>
+        <record id="ike_event_flow_cancelled_2_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_2"/>
+        </record>
+        <record id="ike_event_flow_cancelled_2_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_2"/>
+        </record>
+        <record id="ike_event_flow_cancelled_2_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_2"/>
+        </record>
+        <record id="ike_event_flow_cancelled_2_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_sub_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_2"/>
+        </record>
+        <record id="ike_event_flow_cancelled_2_detail_summary_top_5" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_2"/>
+        </record>
+        <record id="ike_event_flow_cancelled_2_detail_summary_top_6" model="ike.event.flow.detail">
+            <field name="name">event_summary_supplier_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_2"/>
+        </record>
+
+        <!-- Cancelled 3 -->
+        <record id="ike_event_flow_cancelled_3" model="ike.event.flow">
+            <field name="name">Cancelled step 3</field>
+            <field name="note"></field>
+            <field name="sequence">21</field>
+            <field name="stage_id" ref="ike_event_stage_cancelled"/>
+            <field name="step_number">3</field>
+        </record>
+        <record id="ike_event_flow_cancelled_3_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_3"/>
+        </record>
+        <record id="ike_event_flow_cancelled_3_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_3"/>
+        </record>
+        <record id="ike_event_flow_cancelled_3_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_3"/>
+        </record>
+        <record id="ike_event_flow_cancelled_3_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_sub_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_3"/>
+        </record>
+        <record id="ike_event_flow_cancelled_3_detail_summary_top_5" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_3"/>
+        </record>
+        <record id="ike_event_flow_cancelled_3_detail_summary_top_6" model="ike.event.flow.detail">
+            <field name="name">event_summary_supplier_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancelled_3"/>
+        </record>
+        <!-- Cancelled Subsequently 1 -->
+        <record id="ike_event_flow_cancel_subsequently_1" model="ike.event.flow">
+            <field name="name">Cancelled Subsequently step 1</field>
+            <field name="note"></field>
+            <field name="sequence">22</field>
+            <field name="stage_id" ref="ike_event_stage_cancelled_subsequently"/>
+            <field name="step_number">1</field>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_1_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_1"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_1_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_1"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_1_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_1"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_1_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_sub_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_1"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_1_detail_summary_top_5" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_1"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_1_detail_summary_top_6" model="ike.event.flow.detail">
+            <field name="name">event_summary_supplier_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_1"/>
+        </record>
+
+        <!-- Cancelled Subsequently 2 -->
+        <record id="ike_event_flow_cancel_subsequently_2" model="ike.event.flow">
+            <field name="name">Cancelled Subsequently step 2</field>
+            <field name="note"></field>
+            <field name="sequence">23</field>
+            <field name="stage_id" ref="ike_event_stage_cancelled_subsequently"/>
+            <field name="step_number">2</field>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_2_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_2"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_2_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_2"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_2_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_2"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_2_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_sub_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_2"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_2_detail_summary_top_5" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_2"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_2_detail_summary_top_6" model="ike.event.flow.detail">
+            <field name="name">event_summary_supplier_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_2"/>
+        </record>
+                <!-- Cancelled Subsequently 3 -->
+        <record id="ike_event_flow_cancel_subsequently_3" model="ike.event.flow">
+            <field name="name">Cancelled Subsequently step 3</field>
+            <field name="note"></field>
+            <field name="sequence">24</field>
+            <field name="stage_id" ref="ike_event_stage_cancelled_subsequently"/>
+            <field name="step_number">3</field>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_3_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">1</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_3"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_3_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">2</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_3"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_3_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">3</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_3"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_3_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_sub_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_3"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_3_detail_summary_top_5" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_3"/>
+        </record>
+        <record id="ike_event_flow_cancel_subsequently_3_detail_summary_top_6" model="ike.event.flow.detail">
+            <field name="name">event_summary_supplier_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_cancel_subsequently_3"/>
+        </record>
     </data>
 </odoo>

@@ -64,7 +64,6 @@
                         <field name="phone_alternative" widget="phone" options="{'enable_sms': False, 'enable_call': False}"/>
                     </group>
                     <group string="Affiliation" invisible="not fields_readonly">
-                        <field name="vehicle_weight_category_id" readonly="1" options="{'no_open': True, 'no_create': True, 'no_edit': True}"/>
                         <field name="check_is_fleet" readonly="1" force_save="1" />
                         <field name="check_is_special" readonly="1" force_save="1"/>
                     </group>

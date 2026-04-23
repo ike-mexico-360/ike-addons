@@ -67,10 +67,10 @@
                             groups="custom_master_catalog.custom_group_commercial_supervisor"
                             required="1"/>
                         <field name="comment_authorizer" 
+                            groups="!base.group_system,custom_master_catalog.custom_group_commercial_supervisor"
                             invisible="not check_commercial_authorization"/>
 
                         <!-- Supervisor -->
-                        <!-- <field name="check_supervisor_authorization" readonly="check_commercial_authorization" groups="!custom_master_catalog.custom_group_event_cabin_supervisor,!custom_master_catalog.custom_group_commercial_supervisor"/> -->
                         <field name="x_domain_authorization_supervisor_affiliation" invisible="1"/>
                         <field name="authorizer_id" 
                             domain="x_domain_authorization_supervisor_affiliation"
@@ -85,7 +85,7 @@
                             groups="custom_master_catalog.custom_group_event_cabin_supervisor"
                             required="1"/>
                         <field name="comment_authorizer" 
-                            groups="custom_master_catalog.custom_group_event_cabin_supervisor"
+                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,!custom_master_catalog.custom_group_commercial_supervisor"
                             invisible="check_commercial_authorization"/>
                     </group>
                 </group>

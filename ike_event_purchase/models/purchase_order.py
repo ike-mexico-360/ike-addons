@@ -48,6 +48,10 @@ class PurchaseOrder(models.Model):
         store=False,
     )
 
+    amount_untaxed_dispute = fields.Monetary(string='Untaxed Amount Dispute', store=True, readonly=True, compute='_x_amount_all_dispute', tracking=True)
+    amount_untaxed_approved = fields.Monetary(string='Untaxed Amount Approved', store=True, readonly=True, compute='_x_amount_all_approved', tracking=True)
+    amount_untaxed_event = fields.Monetary(string='Untaxed Amount Event', store=True, readonly=True, compute='_x_amount_all_event', tracking=True)
+
     @api.onchange('order_line')
     def _onchange_order_line_check_reason(self):
         self.ensure_one()
@@ -104,6 +108,26 @@ class PurchaseOrder(models.Model):
     # - - - - - - - - - - - - #
     #    Dispute workflow     #
     # - - - - - - - - - - - - #
+
+    # Depends methods
+    @api.depends('order_line.x_price_subtotal_dispute')
+    def _x_amount_all_dispute(self):
+        for order in self:
+            order_lines = order.order_line.filtered(lambda x: not x.display_type)
+            order.amount_untaxed_dispute = sum(order_lines.mapped('x_price_subtotal_dispute'))
+
+    @api.depends('order_line.x_price_subtotal_approved')
+    def _x_amount_all_approved(self):
+        for order in self:
+            order_lines = order.order_line.filtered(lambda x: not x.display_type)
+            order.amount_untaxed_approved = sum(order_lines.mapped('x_price_subtotal_approved'))
+
+    @api.depends('order_line.x_price_subtotal_event')
+    def _x_amount_all_event(self):
+        for order in self:
+            order_lines = order.order_line.filtered(lambda x: not x.display_type)
+            order.amount_untaxed_event = sum(order_lines.mapped('x_price_subtotal_event'))
+
     # Auxiliar methods
     def _x_action_start_dispute(self):
         """ Proveedor no acepta propuesta de comprador, se inicia disputa desde el portal """
@@ -247,12 +271,12 @@ class PurchaseOrder(models.Model):
         if self.x_dispute_state != 'submitted':
             raise UserError(_('There is no submitted dispute on this order.'))
         # Validar que no hay campos aprobados en 0
-        empty_vals = []
-        for line in self.order_line:
-            if line.x_price_unit_approved == 0 or line.x_product_qty_approved == 0:
-                empty_vals.append(line.id)
-        if empty_vals:
-            raise UserError(_('There are zero approved values on lines.'))
+        # empty_vals = []
+        # for line in self.order_line:
+        #     if line.x_price_unit_approved == 0 or line.x_product_qty_approved == 0:
+        #         empty_vals.append(line.id)
+        # if empty_vals:
+        #     raise UserError(_('There are zero approved values on lines.'))
         self.write({'x_dispute_state': 'resolved'})
 
     def x_action_reject_dispute(self):

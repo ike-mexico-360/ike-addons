@@ -94,7 +94,7 @@ class IkeEvent_Search(models.Model):
                         and x.supplier_number == self.supplier_number,
                 )
                 # Distance km
-                total_distance_km = supplier_max_distances[supplier['supplier_id']] + (self.destination_distance or 0)
+                total_distance_km = supplier_max_distances.get(supplier['supplier_id'], 0) + (self.destination_distance or 0)
                 total_distance_km = int(-(-total_distance_km // 1))
 
                 # Supplier Link
@@ -163,10 +163,14 @@ class IkeEvent_Search(models.Model):
                         )
                     )
                     if destination_route:
+                        distance_km = (destination_distance_m or supplier['estimated_distance']) / 1000.00
+                        duration_m = (destination_duration_s or supplier['estimated_duration']) / 60.00
                         supplier['route'] = destination_route
+                        supplier['real_distance'] = distance_km
+                        supplier['real_duration'] = duration_m
                         if not supplier['estimated_distance'] or not supplier.get('osrm'):
-                            supplier['estimated_distance'] = (destination_distance_m or supplier['estimated_distance']) / 1000.00
-                            supplier['estimated_duration'] = (destination_duration_s or supplier['estimated_duration']) / 60.00
+                            supplier['estimated_distance'] = distance_km
+                            supplier['estimated_duration'] = duration_m
 
         # Search Number
         search_number = 0
@@ -214,6 +218,9 @@ class IkeEvent_Search(models.Model):
         self.ensure_one()
         service_suppliers = []
 
+        # * LOGGER 0: Start
+        _logger.info(f"IKE EVENT - DEBUG - 0: {assignation_type} {str(priority)}")
+
         # Global Variables
         sequence_conf = 1
         # To Filter supplier geographical areas
@@ -246,7 +253,9 @@ class IkeEvent_Search(models.Model):
         service_vehicle_type_ids, service_accessory_ids = self._get_event_sub_service_variables()
 
         # * LOGGER 1: Event Variables
-        _logger.info(f"IKE EVENT - DEBUG - 1: {account_id}, {zip_code}, {latitude}, {longitude}, {str(service_vehicle_type_ids)}")
+        _logger.info(
+            f"IKE EVENT - DEBUG - 1: {account_id}, {zip_code}, {latitude}, {longitude}, {str(service_vehicle_type_ids)}"
+        )
 
         # Get Municipalities
         municipalities_data = self._get_municipalities(zip_code)
@@ -350,7 +359,8 @@ class IkeEvent_Search(models.Model):
                 if 'maniobras' in product_tag_names:
                     vehicles_domain.append(('x_maneuvers', '=', True))
 
-            _logger.info("IKE EVENT - DEBUG - 3.5: %s", vehicles_domain)
+            # * LOGGER 4: Vehicles Domain
+            _logger.info("IKE EVENT - DEBUG - 4: %s", vehicles_domain)
 
             # Search Vehicles
             service_vehicle_ids = self.env['fleet.vehicle'].search(vehicles_domain, order='x_center_id')
@@ -411,14 +421,27 @@ class IkeEvent_Search(models.Model):
                     vehicle['estimated_distance'] = estimated_distance_km
                     vehicle['estimated_duration'] = self.get_estimated_duration(estimated_distance_km)
 
-            # * LOGGER 4: Trucks
-            vehicles_text = ", ".join([f"{x['id']}.{x['license_plate']} ({x['estimated_distance']})" for x in service_vehicles_data])
-            _logger.info(f"IKE EVENT - DEBUG - 4: {vehicles_text}")
+            # * LOGGER 5: Service Vehicles
+            vehicles_text = ", ".join([
+                f"{x['id']}.{x['license_plate']} ({str(x['estimated_distance'])}, {str(x['estimated_duration'])})"
+                for x in service_vehicles_data
+            ])
+            _logger.info(f"IKE EVENT - DEBUG - 5: ({str(max_radius_km)}, {str(max_arrived_time_m)}), {vehicles_text}")
 
             # Filter vehicles max distance/duration
             service_vehicles_data = [
                 x for x in service_vehicles_data
-                if x.get('osrm') or (x['estimated_distance'] <= max_radius_km and x['estimated_duration'] <= max_arrived_time_m)
+                if (
+                    (
+                        x.get('osrm')
+                        and x['estimated_distance'] <= (max_radius_km * 1.5)
+                        and x['estimated_duration'] <= (max_arrived_time_m * 1.5)
+                    )
+                    or (
+                        x['estimated_distance'] <= max_radius_km
+                        and x['estimated_duration'] <= max_arrived_time_m
+                    )
+                )
             ]
             service_vehicles_len = len(service_vehicles_data)
 
@@ -443,6 +466,8 @@ class IkeEvent_Search(models.Model):
                     'longitude': vehicle['x_longitude'],
                 })
 
+        # * LOGGER 6: Service suppliers
+        _logger.info(f"IKE EVENT - DEBUG - 6: {service_suppliers}")
         return service_suppliers, max_suppliers, max_radius_km
 
     def _get_search_configuration(self, sequence_conf):

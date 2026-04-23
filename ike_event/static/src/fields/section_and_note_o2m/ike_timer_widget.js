@@ -50,6 +50,7 @@ export class IkeTimerWidget extends Component {
             this.notification_date = record.data.notification_date;
             this.acceptance_date = record.data.acceptance_date;
             this.rejection_date = record.data.rejection_date;
+            this.elapsed_time_s = record.data.elapsed_time_s;
 
             if (changed) {
                 switch (this.state.current_state) {
@@ -100,12 +101,15 @@ export class IkeTimerWidget extends Component {
     }
 
     calculateElapsedTime() {
-        if (this.notification_date) {
-            const notificationDate = this.notification_date ? this.notification_date.toJSDate() : null;
-            const currentTime = this.processed_date || Date.now();
-            const elapsed = Math.floor((currentTime - notificationDate) / 1000);
-            this.state.seconds = elapsed;
+        if (this.elapsed_time_s) {
+            this.state.seconds = this.elapsed_time_s;
         }
+        // if (this.notification_date) {
+        //     const notificationDate = this.notification_date ? this.notification_date.toJSDate() : null;
+        //     const currentTime = this.processed_date || Date.now();
+        //     const elapsed = Math.floor((currentTime - notificationDate) / 1000);
+        //     this.state.seconds = elapsed;
+        // }
     }
     startTimer() {
         // console.log("startTimer", this.interval);
@@ -243,7 +247,7 @@ export class IkeTimerWidget extends Component {
         return odoo.debug && !['available', 'notified'].includes(this.state.current_state);
     }
     get showNotification() {
-        return this.state.current_state == 'available' && (odoo.debug || this.state.is_manual || this.state.assignation_type == 'manual');
+        return this.state.current_state == 'available' && (this.state.is_manual || this.state.assignation_type == 'manual');
     }
 };
 

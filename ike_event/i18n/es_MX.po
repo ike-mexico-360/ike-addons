@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-16 22:48+0000\n"
-"PO-Revision-Date: 2026-04-16 22:48+0000\n"
+"POT-Creation-Date: 2026-04-23 15:35+0000\n"
+"PO-Revision-Date: 2026-04-23 15:35+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -469,7 +469,7 @@ msgid "Arrived to destination"
 msgstr "Llegó al destino"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event__ike_event_coordinator_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event__assigned_user_id
 msgid "Assign"
 msgstr "Asignar"
 
@@ -498,6 +498,7 @@ msgstr "Tipo de Asignación"
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__state__assigned
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_base__state__assigned
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_public__state__assigned
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "Assigned"
 msgstr "Asignado"
 
@@ -543,18 +544,23 @@ msgid "Assigned Events"
 msgstr "Eventos asignados"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__assigned_user_domain
+msgid "Assigned User Domain"
+msgstr ""
+
+#. module: ike_event
 #. odoo-python
 #: code:addons/ike_event/models/ike_event_supplier.py:0
 msgid "Assigned supplier"
 msgstr "Proveedor asignado"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__ike_event_coordinator_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__assigned_user_id
 msgid "Assigned to user"
 msgstr "Asignado a usuario"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__ike_event_coordinator_ids
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__assigned_user_ids
 msgid "Assigned to users"
 msgstr "Asignado a usuarios"
 
@@ -836,6 +842,11 @@ msgstr "Cancelado por el evento"
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_base__state__cancel_supplier
 msgid "Cancelled by Supplier"
 msgstr "Cancelado por el proveedor"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
+msgid "Cancelled subsequently Events"
+msgstr "Eventos Cancelado posterior"
 
 #. module: ike_event
 #: model:ike.event.stage,name:ike_event.ike_event_stage_capturing
@@ -3925,7 +3936,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:ike_event.field_product_category__x_satisfaction_survey_id
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 msgid "Satisfaction Survey"
-msgstr "Encusta de satisfacción"
+msgstr "Encuesta de satisfacción"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__satisfaction_survey_input_id

@@ -9,7 +9,7 @@
                         <div class="modal-content border-0 shadow-lg rounded-4">
                             <div class="modal-header bg-primary text-white rounded-top-4">
                                 <h5 class="modal-title">
-                                    <i class="fa fa-file-text me-2"/>Detalles del Servicio
+                                    <i class="fa fa-file-text me-2"/><t t-out="translate('Service Details')"/>
                                 </h5>
                                 <button type="button" class="btn-close btn-close-white" aria-label="Close" t-on-click="closeServiceSummaryModal"/>
                             </div>
@@ -25,13 +25,13 @@
                                 <t t-if="state.serviceCostsData">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h6 class="fw-bold text-primary mb-0">
-                                            <i class="fa fa-calculator me-2"/>Costos del Servicio
+                                            <i class="fa fa-calculator me-2"/><t t-out="translate('Service Costs')"/>
                                         </h6>
                                         <button t-if="!state.isAddingConcept"
                                             type="button"
                                             class="btn btn-success btn-sm rounded-pill px-3"
                                             t-on-click="onAddConceptClick">
-                                            <i class="fa fa-plus me-1"/>Agregar concepto
+                                            <i class="fa fa-plus me-1"/><t t-out="translate('Add Concept')"/>
                                         </button>
                                     </div>
                                     <!-- New concept row (when adding) - ABOVE TABLE -->
@@ -40,17 +40,17 @@
                                             <div class="card-body py-3">
                                                 <div class="row g-2 align-items-center">
                                                     <div class="col-md-5">
-                                                        <label class="form-label small text-muted mb-1">Concepto</label>
+                                                        <label class="form-label small text-muted mb-1"><t t-out="translate('Concept')"/></label>
                                                         <select class="form-select form-select-sm"
                                                                 t-on-change="onNewConceptProductChange">
-                                                            <option value="">Seleccionar concepto...</option>
+                                                            <option value=""><t t-out="translate('Select concept')"/>...</option>
                                                             <t t-foreach="state.availableProducts" t-as="product" t-key="product.id">
-                                                                <option t-att-value="product.id" t-esc="product.name"/>
+                                                                <option t-att-value="product.id" t-out="product.name"/>
                                                             </t>
                                                         </select>
                                                     </div>
                                                     <div class="col-md-2">
-                                                        <label class="form-label small text-muted mb-1">Cantidad</label>
+                                                        <label class="form-label small text-muted mb-1"><t t-out="translate('Quantity')"/></label>
                                                         <input type="number"
                                                                class="form-control form-control-sm text-center"
                                                                t-att-value="state.newConcept.quantity"
@@ -62,8 +62,8 @@
                                                         <button type="button"
                                                                 class="btn btn-success btn-sm me-1"
                                                                 t-on-click="onSaveNewConcept"
-                                                                title="Guardar">
-                                                            <i class="fa fa-check me-1"/>Guardar
+                                                                t-att-title="translate('Save')">
+                                                            <i class="fa fa-check me-1"/><t t-out="translate('Save')"/>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -75,13 +75,13 @@
                                         <table class="table align-middle mb-0">
                                             <thead>
                                                 <tr class="bg-primary text-white">
-                                                    <th class="py-3 px-3 rounded-start">Concepto</th>
-                                                    <th class="py-3 px-3 text-center">Cantidad</th>
+                                                    <th class="py-3 px-3 rounded-start"><t t-out="translate('Concept')"/></th>
+                                                    <th class="py-3 px-3 text-center"><t t-out="translate('Quantity')"/></th>
                                                     <th class="py-3 px-3 text-center">UdM</th>
-                                                    <th class="py-3 px-3 text-end">Precio unitario</th>
-                                                    <th class="py-3 px-3 text-end">Costo</th>
-                                                    <th class="py-3 px-3 text-end">IVA</th>
-                                                    <th class="py-3 px-3 text-end">Subtotal</th>
+                                                    <th class="py-3 px-3 text-end"><t t-out="translate('Unit Price')"/></th>
+                                                    <th class="py-3 px-3 text-end"><t t-out="translate('Cost')"/></th>
+                                                    <th class="py-3 px-3 text-end"><t t-out="translate('VAT')"/></th>
+                                                    <th class="py-3 px-3 text-end"><t t-out="translate('Amount')"/></th>
                                                     <th class="py-3 px-3 text-center rounded-end"></th>
                                                 </tr>
                                             </thead>
@@ -89,7 +89,7 @@
                                                 <t t-foreach="state.serviceCostsData.items" t-as="item" t-key="item.id">
                                                     <tr class="border-bottom">
                                                         <td class="py-3 px-3">
-                                                            <t t-esc="item.concept"/>
+                                                            <t t-out="item.concept"/>
                                                         </td>
                                                         <td class="py-3 px-3 text-center">
                                                             <input type="number"
@@ -101,7 +101,7 @@
                                                                    t-on-change="(ev) => this.onCostItemFieldChange(item.id, 'quantity', ev)"/>
                                                         </td>
                                                         <td class="py-3 px-3 text-center">
-                                                            <t t-esc="item.uom"/>
+                                                            <t t-out="item.uom"/>
                                                         </td>
                                                         <td class="py-3 px-3 text-end">
                                                             <div class="input-group input-group-sm" style="width: 120px; margin-left: auto;">
@@ -116,21 +116,21 @@
                                                         </td>
                                                         <td class="py-3 px-3 text-end">
                                                             $
-                                                            <t t-esc="formatCurrency(item.cost)"/>
+                                                            <t t-out="formatCurrency(item.cost)"/>
                                                         </td>
                                                         <td class="py-3 px-3 text-end">
                                                             $
-                                                            <t t-esc="formatCurrency(item.iva)"/>
+                                                            <t t-out="formatCurrency(item.iva)"/>
                                                         </td>
                                                         <td class="py-3 px-3 text-end">
                                                             $
-                                                            <t t-esc="formatCurrency(item.subtotal)"/>
+                                                            <t t-out="formatCurrency(item.subtotal)"/>
                                                         </td>
                                                         <td class="py-3 px-3 text-center">
                                                             <button t-if="item.from_portal"
                                                                     type="button"
                                                                     class="btn btn-outline-danger btn-sm"
-                                                                    title="Eliminar concepto"
+                                                                    t-att-title="translate('Delete concept')"
                                                                     t-on-click="() => this.onDeleteConcept(item.id)">
                                                                 <i class="fa fa-trash"/>
                                                             </button>
@@ -145,41 +145,23 @@
                                         <button type="button"
                                                 class="btn btn-primary rounded-pill px-4"
                                                 t-on-click="onSendAdditionalConceptsRequest">
-                                            <i class="fa fa-paper-plane me-2"/>Enviar solicitud de conceptos adicionales
+                                            <i class="fa fa-paper-plane me-2"/><t t-out="translate('Send request for additional concepts')"/>
                                         </button>
-                                    </div>
-                                </t>
-                                <!-- New concept row (when adding) -->
-                                <!-- Loading state for costs -->
-                                <t t-if="state.isLoadingCosts">
-                                    <div class="text-center py-4">
-                                        <div class="spinner-border text-primary" role="status">
-                                            <span class="visually-hidden">Cargando...</span>
-                                        </div>
-                                        <p class="text-muted mt-2">Cargando costos del servicio...</p>
                                     </div>
                                 </t>
                                 <!-- No costs message -->
                                 <t t-if="!state.serviceCostsData and !state.isLoadingCosts and !state.isAddingConcept">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 class="fw-bold text-primary mb-0">
-                                            <i class="fa fa-calculator me-2"/>Costos del Servicio
-                                        </h6>
-                                        <button type="button"
-                                                class="btn btn-success btn-sm rounded-pill px-3"
-                                                t-on-click="onAddConceptClick">
-                                            <i class="fa fa-plus me-1"/>Agregar concepto
-                                        </button>
                                     </div>
                                     <div class="alert alert-info mb-0">
                                         <i class="fa fa-info-circle me-2"/>
-                                        No hay costos registrados para este servicio.
+                                        <t t-out="translate('There are no listed costs for this service')"/>.
                                     </div>
                                 </t>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary rounded-pill px-4" t-on-click="closeServiceSummaryModal">
-                                    <i class="fa fa-times me-1"/>Cerrar
+                                    <i class="fa fa-times me-1"/> <t t-out="translate('Close')"/>
                                 </button>
                             </div>
                         </div>
@@ -193,7 +175,7 @@
                      style="position:fixed; top:20px; right:20px; z-index:9999; max-width:420px; animation: slideInRight 0.3s ease;">
                     <div class="d-flex align-items-center">
                         <i t-attf-class="fa fa-{{state.notification.type == 'warning' ? 'exclamation-triangle' : state.notification.type == 'danger' ? 'times-circle' : 'info-circle'}} me-2 fa-lg"/>
-                        <strong t-esc="state.notification.message"/>
+                        <strong t-out="state.notification.message"/>
                     </div>
                     <button type="button" class="btn-close" aria-label="Close" t-on-click="closeNotification"/>
                 </div>
@@ -201,14 +183,14 @@
             <!-- Error Alert -->
             <div t-if="state.error" class="alert alert-danger border-0 rounded-3 shadow-sm d-flex align-items-center">
                 <i class="fa fa-exclamation-triangle me-2 fa-lg"/>
-                <t t-esc="state.error"/>
+                <t t-out="state.error"/>
             </div>
             <!-- Loading State -->
             <div t-if="state.isLoading" class="d-flex flex-column align-items-center justify-content-center py-5">
                 <div class="spinner-border text-primary mb-3" style="width:3rem; height:3rem;" role="status">
-                    <span class="visually-hidden">Cargando...</span>
+                    <span class="visually-hidden"><t t-out="translate('Loading')"/>...</span>
                 </div>
-                <p class="text-muted fs-6">Cargando servicios...</p>
+                <p class="text-muted fs-6"><t t-out="translate('Loading services')"/>...</p>
             </div>
             <t t-else="">
                 <!-- MODE 1: CREATE -->
@@ -235,9 +217,9 @@
                                     <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="servicios" style="width:28px;"/>
                                 </div>
                                 <div>
-                                    <h2 class="fw-bold mb-0 text-dark">Servicios</h2>
+                                    <h2 class="fw-bold mb-0 text-dark"><t t-out="translate('Services')"/></h2>
                                     <small class="text-muted">
-                                        <t t-esc="state.services.length"/> servicio(s) encontrado(s)
+                                        <t t-out="state.services.length"/> <t t-out="translate('service(s) found')"/>
                                     </small>
                                 </div>
                             </div>
@@ -249,7 +231,7 @@
                                     <!-- Search by Expediente -->
                                     <div class="col-md-3">
                                         <label class="form-label small text-muted fw-semibold mb-1">
-                                            <i class="fa fa-search me-1"/>Expediente
+                                            <i class="fa fa-search me-1"/><t t-out="translate('Expedient')"/>
                                         </label>
                                         <input type="text"
                                             class="form-control form-control-sm rounded-pill"
@@ -260,7 +242,7 @@
                                     <!-- Filter by Fecha desde -->
                                     <div class="col-md-2">
                                         <label class="form-label small text-muted fw-semibold mb-1">
-                                            <i class="fa fa-calendar me-1"/>Fecha desde
+                                            <i class="fa fa-calendar me-1"/><t t-out="translate('From Date')"/>
                                         </label>
                                         <input type="date"
                                             class="form-control form-control-sm rounded-pill"
@@ -270,7 +252,7 @@
                                     <!-- Filter by Fecha hasta -->
                                     <div class="col-md-2">
                                         <label class="form-label small text-muted fw-semibold mb-1">
-                                            <i class="fa fa-calendar me-1"/>Fecha hasta
+                                            <i class="fa fa-calendar me-1"/><t t-out="translate('To Date')"/>
                                         </label>
                                         <input type="date"
                                             class="form-control form-control-sm rounded-pill"
@@ -280,34 +262,34 @@
                                     <!-- Filter by Servicio -->
                                     <div class="col-md-2">
                                         <label class="form-label small text-muted fw-semibold mb-1">
-                                            <i class="fa fa-cog me-1"/>Servicio
+                                            <i class="fa fa-cog me-1"/><t t-out="translate('Service')"/>
                                         </label>
                                         <select class="form-select form-select-sm rounded-pill"
                                             t-att-value="state.filters.service"
                                             t-on-change="(ev) => this.onFilterChange('service', ev.target.value)">
-                                            <option value="">Todos</option>
+                                            <option value=""><t t-out="translate('All')"/></option>
                                             <t t-foreach="serviceOptions" t-as="option" t-key="option">
-                                                <option t-att-value="option" t-esc="option"/>
+                                                <option t-att-value="option" t-out="option"/>
                                             </t>
                                         </select>
                                     </div>
                                     <!-- Filter by Subservicio -->
                                     <div class="col-md-2">
                                         <label class="form-label small text-muted fw-semibold mb-1">
-                                            <i class="fa fa-wrench me-1"/>Subservicio
+                                            <i class="fa fa-wrench me-1"/><t t-out="translate('Subservice')"/>
                                         </label>
                                         <select class="form-select form-select-sm rounded-pill"
                                             t-on-change="(ev) => this.onFilterChange('subservice', ev.target.value)">
-                                            <option value="">Todos</option>
+                                            <option value=""><t t-out="translate('All')"/></option>
                                             <t t-foreach="subserviceOptions" t-as="option" t-key="option">
-                                                <option t-att-value="option" t-esc="option"/>
+                                                <option t-att-value="option" t-out="option"/>
                                             </t>
                                         </select>
                                     </div>
                                     <!-- Clear Filters -->
                                     <div class="col-md-1 d-flex align-items-end">
                                         <button class="btn btn-sm btn-outline-secondary rounded-pill w-100"
-                                            title="Limpiar filtros"
+                                            t-att-title="translate('Clean filters')"
                                             t-on-click="clearFilters">
                                             <i class="fa fa-times"/>
                                         </button>
@@ -319,9 +301,9 @@
                             <!-- Loading inside list -->
                             <div t-if="state.isLoading and filteredServices.length > 0" class="d-flex flex-column align-items-center justify-content-center py-5">
                                 <div class="spinner-border text-primary mb-3" style="width:3rem; height:3rem;" role="status">
-                                    <span class="visually-hidden">Cargando...</span>
+                                    <span class="visually-hidden"><t t-out="translate('Loading')"/>...</span>
                                 </div>
-                                <p class="text-muted fs-6">Cargando servicios...</p>
+                                <p class="text-muted fs-6"><t t-out="translate('Loading services')"/>...</p>
                             </div>
                             <!-- Services Table -->
                             <PaginationComponent pagination="pagination">
@@ -329,17 +311,17 @@
                                     <table class="table table-hover table table-striped align-middle mb-0" style="border-collapse: separate; border-spacing: 0;">
                                         <thead>
                                             <tr class="bg-dark text-white">
-                                                <th class="text-nowrap py-3 px-3 border-0">Expediente</th>
-                                                <th class="text-nowrap py-3 px-3 border-0">Fecha</th>
-                                                <th class="text-nowrap py-3 px-3 border-0">Servicio</th>
-                                                <th class="text-nowrap py-3 px-3 border-0">Grúa</th>
-                                                <th class="text-nowrap py-3 px-3 border-0">Conductor</th>
-                                                <th class="text-nowrap py-3 px-3 border-0">Subservicio</th>
-                                                <th class="py-3 px-3 border-0">Ubicación</th>
-                                                <th class="text-nowrap py-3 px-3 border-0 text-center">Estado evento</th>
-                                                <th class="text-nowrap py-3 px-3 border-0 text-center">Estado proveedor</th>
-                                                <th class="text-nowrap py-3 px-3 border-0 text-center">Estado ruta</th>
-                                                <th class="text-nowrap py-3 px-3 border-0 text-center">Acciones</th>
+                                                <th class="text-nowrap py-3 px-3 border-0"><t t-out="translate('Expedient')"/></th>
+                                                <th class="text-nowrap py-3 px-3 border-0"><t t-out="translate('Date')"/></th>
+                                                <th class="text-nowrap py-3 px-3 border-0"><t t-out="translate('Service')"/></th>
+                                                <th class="text-nowrap py-3 px-3 border-0"><t t-out="translate('Crane')"/></th>
+                                                <th class="text-nowrap py-3 px-3 border-0"><t t-out="translate('Driver')"/></th>
+                                                <th class="text-nowrap py-3 px-3 border-0"><t t-out="translate('Subservice')"/></th>
+                                                <th class="py-3 px-3 border-0"><t t-out="translate('Location')"/></th>
+                                                <th class="text-nowrap py-3 px-3 border-0 text-center"><t t-out="translate('Event Status')"/></th>
+                                                <th class="text-nowrap py-3 px-3 border-0 text-center"><t t-out="translate('Supplier Status')"/></th>
+                                                <th class="text-nowrap py-3 px-3 border-0 text-center"><t t-out="translate('Route Status')"/></th>
+                                                <th class="text-nowrap py-3 px-3 border-0 text-center"><t t-out="translate('Actions')"/></th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -348,26 +330,26 @@
                                                     <!-- Expediente -->
                                                     <td class="text-nowrap py-3 px-3 border-0">
                                                         <span class="fw-semibold text-primary">
-                                                            <t t-esc="service.name"/>
+                                                            <t t-out="service.name"/>
                                                         </span>
                                                     </td>
                                                     <!-- Fecha -->
                                                     <td class="text-nowrap py-3 px-3 border-0">
                                                         <small class="text-muted">
                                                             <i class="fa fa-calendar me-1"/>
-                                                            <t t-esc="service.event_date"/>
+                                                            <t t-out="service.event_date"/>
                                                         </small>
                                                     </td>
                                                     <!-- Servicio -->
                                                     <td class="text-nowrap py-3 px-3 border-0">
-                                                        <t t-esc="service.service_id"/>
+                                                        <t t-out="service.service_id"/>
                                                     </td>
                                                     <!-- Grúa -->
                                                     <td class="py-3 px-3 border-0">
                                                         <div class="d-flex align-items-center justify-content-center">
                                                             <i class="fa fa-truck text-muted me-2"/>
                                                             <small>
-                                                                <t t-esc="service.truck_name"/>
+                                                                <t t-out="service.truck_name"/>
                                                             </small>
                                                         </div>
                                                     </td>
@@ -376,13 +358,13 @@
                                                         <div class="d-flex align-items-center justify-content-center">
                                                             <i class="fa fa-user text-muted me-2"/>
                                                             <small>
-                                                                <t t-esc="service.driver_name"/>
+                                                                <t t-out="service.driver_name"/>
                                                             </small>
                                                         </div>
                                                     </td>
                                                     <!-- Subservicio -->
                                                     <td class="py-3 px-3 border-0">
-                                                        <t t-esc="service.sub_service_id"/>
+                                                        <t t-out="service.sub_service_id"/>
                                                     </td>
                                                     <!-- Ubicación -->
                                                     <td class="py-3 px-3 border-0" style="min-width:200px; max-width:280px;">
@@ -394,7 +376,7 @@
                                                     <!-- Estado evento -->
                                                     <td class="text-nowrap py-3 px-3 border-0 text-center">
                                                         <span class="badge rounded-pill bg-info bg-opacity-10 px-3 py-2">
-                                                            <t t-esc="service.stage_id_label"/>
+                                                            <t t-out="service.stage_id_label"/>
                                                         </span>
                                                     </td>
                                                     <!-- Estado proveedor -->
@@ -411,12 +393,12 @@
                                                               service.event_supplier_state == 'rejected' ? 'fa-times-circle' :
                                                               service.event_supplier_state == 'assigned' ? 'fa-user-check' :
                                                               'fa-circle'}"/>
-                                                            <t t-esc="service.event_supplier_state_label"/>
+                                                            <t t-out="service.event_supplier_state_label"/>
                                                         </span>
                                                     </td>
                                                     <td class="text-nowrap py-3 px-3 border-0 text-center">
                                                         <span class="badge rounded-pill bg-info bg-opacity-10 px-3 py-2">
-                                                            <t t-esc="service.stage"/>
+                                                            <t t-out="service.stage"/>
                                                         </span>
                                                     </td>
                                                     <!-- Acciones -->
@@ -424,32 +406,32 @@
                                                         <div class="d-flex gap-2 justify-content-center flex-nowrap">
                                                             <button t-if="service.event_supplier_state=='notified' and service.stage_id_label != 'Asistencia concluida'"
                                                             class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm"
-                                                            title="Aceptar Servicio"
+                                                            t-att-title="translate('Accept Service')"
                                                             t-on-click="() => this.onAcceptClick(service.event_supplier_id)">
-                                                                <i class="fa fa-check me-1"/>Aceptar
+                                                                <i class="fa fa-check me-1"/><t t-out="translate('Accept')"/>
                                                             </button>
                                                             <button t-if="service.event_supplier_state=='notified' and service.stage_id_label != 'Asistencia concluida'"
                                                             class="btn btn-sm btn-outline-danger rounded-pill px-3"
-                                                            title="Rechazar Servicio"
+                                                            t-att-title="translate('Reject Service')"
                                                             t-on-click="() => this.onRejectClick(service.event_supplier_id)">
-                                                                <i class="fa fa-times me-1"/>Rechazar
+                                                                <i class="fa fa-times me-1"/><t t-out="translate('Reject')"/>
                                                             </button>
                                                             <button t-if="service.event_supplier_state=='accepted' and service.stage_id_label != 'Asistencia concluida'"
                                                             class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm"
-                                                            title="Notificar Servicio"
+                                                            t-att-title="translate('Notify Service')"
                                                             t-on-click="() => this.onAcceptNotify(service.event_supplier_id)">
-                                                                <i class="fa fa-bell me-1"/>Notificar
+                                                                <i class="fa fa-bell me-1"/><t t-out="translate('Notify')"/>
                                                             </button>
                                                             <button class="btn btn-sm btn-outline-secondary rounded-pill px-3"
-                                                            title="Ver detalles"
+                                                            t-att-title="translate('View Details')"
                                                             t-on-click="() => this.openServiceSummaryModal(service.event_supplier_id)">
-                                                                <i class="fa fa-eye me-1"/>Detalles
+                                                                <i class="fa fa-eye me-1"/><t t-out="translate('Details')"/>
                                                             </button>
                                                             <button t-if="(service.event_supplier_state=='accepted' or service.event_supplier_state=='assigned') and service.stage_id_label != 'Asistencia concluida'"
                                                             class="btn btn-sm btn-outline-dark rounded-pill px-3"
-                                                            title="Cancelar Servicio"
+                                                            t-att-title="translate('Cancel Service')"
                                                             t-on-click="() => this.onCancelService(service.event_supplier_id)">
-                                                                <i class="fa fa-ban me-1"/>Cancelar
+                                                                <i class="fa fa-ban me-1"/><t t-out="translate('Cancel')"/>
                                                             </button>
                                                         </div>
                                                     </td>
@@ -464,8 +446,8 @@
                                 <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center mb-4" style="width:80px; height:80px;">
                                     <i class="fa fa-inbox fa-2x text-muted"/>
                                 </div>
-                                <h5 class="text-muted fw-normal">No hay servicios disponibles</h5>
-                                <p class="text-muted small">Los nuevos servicios aparecerán aquí automáticamente</p>
+                                <h5 class="text-muted fw-normal"><t t-out="translate('No available services')"/></h5>
+                                <p class="text-muted small"><t t-out="translate('New services will appear here automatically')"/></p>
                             </div>
                         </div>
                     </div>

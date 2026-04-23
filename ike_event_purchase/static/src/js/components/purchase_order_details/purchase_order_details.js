@@ -68,6 +68,10 @@ export class PurchaseOrderDetails extends Component {
                         x_dispute_state: {},
                         x_dispute_approved: {},
                         x_change_comments: {},
+                        amount_untaxed: {},
+                        amount_untaxed_dispute: {},
+                        amount_untaxed_approved: {},
+                        amount_untaxed_event: {},
                         order_line: {
                             fields: {
                                 id: {},

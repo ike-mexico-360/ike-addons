@@ -52,10 +52,10 @@
                                 <t t-out="translate('Event Price')"/>
                             </th>
                             <th class="py-3 px-3 text-end">
-                                <t t-out="translate('Quantity')"/>
+                                <t t-out="translate('IKE Quantity')"/>
                             </th>
                             <th class="py-3 px-3 text-end">
-                                <t t-out="translate('Unit Price')"/>
+                                <t t-out="translate('IKE Price')"/>
                             </th>
                             <th t-if="show_dispute_columns" class="py-3 px-3 text-end" style="width: 100px; max-width: 150px;">
                                 <t t-out="translate('Dispute Quantity')"/>
@@ -63,11 +63,11 @@
                             <th t-if="show_dispute_columns" class="py-3 px-3 text-end" style="width: 150px; max-width: 200px;">
                                 <t t-out="translate('Dispute Price')"/>
                             </th>
-                            <th t-if="show_approved_columns" class="py-3 px-3 text-end" style="width: 150px; max-width: 200px;">
-                                <t t-out="translate('Approved Price')"/>
-                            </th>
                             <th t-if="show_approved_columns" class="py-3 px-3 text-end" style="width: 100px; max-width: 150px;">
                                 <t t-out="translate('Approved Quantity')"/>
+                            </th>
+                            <th t-if="show_approved_columns" class="py-3 px-3 text-end" style="width: 150px; max-width: 200px;">
+                                <t t-out="translate('Approved Price')"/>
                             </th>
                             <th class="py-3 px-3 rounded-end"></th>
                         </tr>
@@ -78,13 +78,6 @@
                             <tr>
                                 <!-- Concept -->
                                 <td class="align-content-center">
-                                    <img
-                                    t-att-src="getProductImage(line)"
-                                    alt="Product"
-                                    class="d-none d-lg-inline me-2"
-                                    style="width:48px; height:48px; object-fit:contain;"
-                                    t-if="!is_new_line"
-                                />
                                     <span t-out="line.display_name" t-if="!is_new_line"/>
                                     <t t-if="is_new_line">
                                         <select class="form-control" name="product_id"
@@ -103,7 +96,7 @@
                                 <td class="text-end align-content-center">
                                     <t t-out="line.x_product_qty_event" t-if="!is_new_line" />
                                 </td>
-                                <td class="text-end align-content-center" t-if="show_approved_columns">
+                                <td class="text-end align-content-center">
                                     <t t-out="line.x_price_unit_event" t-if="!is_new_line"/>
                                 </td>
                                 <!-- Quantity -->
@@ -111,9 +104,6 @@
                                     <div t-if="!is_new_line">
                                         <span t-out="line.product_qty"/>
                                     </div>
-                                    <t t-if="is_new_line">
-                                        <span t-out="line.product_qty"/>
-                                    </t>
                                 </td>
                                 <!-- Price -->
                                 <td class="text-end align-content-center">
@@ -142,10 +132,6 @@
                                     t-att-style="state.invalid_lines.has(line.id + '_x_price_unit_dispute') ? 'border: 1px solid red' : ''"
                                 />
                                 </td>
-                                <!-- Approved fields -->
-                                <td class="text-end align-content-center" t-if="show_approved_columns">
-                                    <t t-out="line.x_price_unit_approved" t-if="!is_new_line"/>
-                                </td>
                                 <td class="text-end align-content-center" t-if="show_approved_columns">
                                     <t t-out="line.x_product_qty_approved" t-if="!is_new_line"/>
                                 </td>
@@ -154,8 +140,37 @@
                                         <i class="fa fa-trash"/>
                                     </button>
                                 </td>
+                                <td class="text-end align-content-center" t-if="show_approved_columns">
+                                    <t t-out="line.x_price_unit_approved" t-if="!is_new_line"/>
+                                </td>
                             </tr>
                         </t>
+                        <tr class="border-top-3 fw-bold" style="border-top: 3px solid #000;">
+                            <td class="py-3 px-3">
+                                <t t-out="translate('Subtotal')"/>
+                            </td>
+                            <td class="py-3 px-3 text-end">
+                            </td>
+                            <td class="py-3 px-3 text-end">
+                                <span t-out="state.order_data.amount_untaxed_event"/>
+                            </td>
+                            <td class="py-3 px-3 text-end">
+                            </td>
+                            <td class="py-3 px-3 text-end">
+                                <span t-out="state.order_data.amount_untaxed"/>
+                            </td>
+                            <td t-if="show_dispute_columns" class="py-3 px-3 text-end">
+                            </td>
+                            <td t-if="show_dispute_columns" class="py-3 px-3 text-end">
+                                <span t-out="state.order_data.amount_untaxed_dispute"/>
+                            </td>
+                            <td t-if="show_approved_columns" class="py-3 px-3 text-end">
+                            </td>
+                            <td t-if="show_approved_columns" class="py-3 px-3 text-end">
+                                <span t-out="state.order_data.amount_untaxed_approved"/>
+                            </td>
+                            <td class="py-3 px-3"></td>
+                        </tr>
                     </tbody>
                 </table>
             </div>

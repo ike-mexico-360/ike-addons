@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="survey_survey_view_form_inherit_ike_event" model="ir.ui.view">
+        <field name="name">survey_survey_view_form.inherit.ike_event</field>
+        <field name="model">survey.survey</field>
+        <field name="inherit_id" ref="survey.survey_survey_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='scoring_type']" position="after">
+                <field name="x_show_final_score" invisible="scoring_type == 'scoring_without_answers'"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -6,5 +6,5 @@ class CustomMembershipNus(models.Model):
 
     # integración con servidor externo
     x_service_counter_validation = fields.Boolean(
-        string='Service counter validation', default=False,
+        string='Service counter validation', default=True,
         help="Flag to determine whether the counters in service will be queried on the endpoint defined in the coverage plan")

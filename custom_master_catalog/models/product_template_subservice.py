@@ -74,6 +74,12 @@ class ProductProduct(models.Model):
     concept_line_ids = fields.One2many(
         'custom.subservice.concept.line', 'subservice_id',
         string='Concept line')
+    x_min_required_photos_assistview = fields.Integer(
+        string="Minimum Required Photos (Assistview)",
+        default=0,
+        help="Evidence photos required for this subservice (Assistview)."
+    )
+    active = fields.Boolean(readonly=True)
 
     @api.constrains('name', 'sale_ok', 'sh_product_subscribe', 'purchase_ok', 'x_accessory_ok', 'categ_id', 'uom_id')
     def _check_unique_subservice(self):
@@ -110,6 +116,10 @@ class ProductProduct(models.Model):
         ctx.update({
             'default_uom_id': service_uom_id.id,
         })
+        if not self.env.user.has_group('base.group_system'):
+            readonly_view = self.env.ref('custom_master_catalog.view_product_product_form_readonly')
+            list_readonly_view = self.env.ref('custom_master_catalog.view_x_subservice_product_template_list')
+            action['views'] = [(list_readonly_view.id, 'list'), (readonly_view.id, 'form')]
         action.update({'domain': self.get_subservices_domain(), 'context': ctx})
         return action
 

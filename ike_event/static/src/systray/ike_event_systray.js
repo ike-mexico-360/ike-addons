@@ -21,7 +21,7 @@ export class IkeEventSystray extends Component {
     static template = "ike_event.IkeEventSystray";
 
     setup() {
-        console.log("IkeEventSystray", this, this.env.services);
+        // console.log("IkeEventSystray", this, this.env.services);
         this.busService = this.env.services.bus_service;
         this.notification = this.env.services.notification;
 

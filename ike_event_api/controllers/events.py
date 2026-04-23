@@ -37,54 +37,54 @@ class EventAPIController(http.Controller):
         # event_type 1 = All
         # event_type 2 = Only location
         try:
-            card = results.get("circulation_card", {}).get("document", {})
-            vehicle_analysis = results.get("vehicle_analysis", {})
-            vehicle = vehicle_analysis.get("vehicle", {})
+            openai_data = results.get("openai", {})
+            card = openai_data.get("circulation_card", {}).get("data", {})
+            vehicle_data = openai_data.get("vehicle_photos", {}).get("data", {})
 
-            brand = vehicle.get("brand", "")
-            model = vehicle.get("model", "")
-            year = card.get("fields", {}).get("model_year", "")
-            plates = vehicle_analysis.get("plate_crop_meta", {}).get("detected_text", False)
-            if not plates:
-                plates = vehicle_analysis.get("license_plate", False)
+            brand = vehicle_data.get("brand", "")
+            model = vehicle_data.get("model", "")
+            year = card.get("model_year", "")
+            plates = vehicle_data.get("license_plate", False)
             if not plates:
                 plates = card.get("plate", "")
-            color = vehicle.get("color", "")
-            location = vehicle_analysis.get("location_center", {})
-            plate_image = vehicle_analysis.get("plate_crop_url", "")
-            vehicle_images = vehicle_analysis.get("image_urls", {})
+            color = vehicle_data.get("color", "")
+            location = kw.get("location", {})
+
+            vehicle_images = kw.get("downloads", {}).get("images", [])
             answers = {
-                "movement_obstruction": vehicle.get("movement_obstruction", False),
-                "movement_obstruction_description": vehicle.get("movement_obstruction_description", ""),
-                "visible_damage": vehicle.get("visible_damage", False),
-                "damage_description": vehicle.get("damage_description", ""),
+                "movement_obstruction": vehicle_data.get("movement_obstruction", False),
+                "movement_obstruction_description": vehicle_data.get("movement_obstruction_description", ""),
+                "visible_damage": vehicle_data.get("visible_damage", False),
+                "damage_description": vehicle_data.get("damage_description", ""),
             }
 
             # Descargar imágenes del vehículo en base64
             plate_image_encoded = None
 
-            # Descargar imagen de placa
-            if plate_image:
-                b64 = self._x_ike_assistview_download_image_b64(plate_image)
-                if b64:
-                    plate_image_encoded = b64
-
             # Descargar imagenes del vehículo
+            plate_image_encoded = None
             vehicle_images_encoded = {}
             temporal_front_image = None
             first_image = None
             i = 0
-            for key, url_image in vehicle_images.items():
-                b64 = self._x_ike_assistview_download_image_b64(url_image)
+            for image_data in vehicle_images:
+                b64 = self._x_ike_assistview_download_image_b64(image_data['presigned_url'])
                 if b64:
+                    key = image_data['label']
                     vehicle_images_encoded[key] = b64
+                    # Guardar imagen de la placa al iterar
+                    if key == 'placa_recorte':
+                        plate_image_encoded = b64
+
                     # Guardar imagen frente para usar en lugar de recorte de placa si no hay
                     if key == 'frente':
                         temporal_front_image = b64
                     # Si no hay clave 'frente' usar primer imagen
                     if i == 0:
                         first_image = b64
+
                     i += 1
+
             # Colocar imagen con clave 'frente' si no hay recorte de placa
             if not plate_image_encoded:
                 plate_image_encoded = temporal_front_image

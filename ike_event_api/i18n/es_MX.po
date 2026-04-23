@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-18 13:05+0000\n"
-"PO-Revision-Date: 2026-03-18 13:05+0000\n"
+"POT-Creation-Date: 2026-04-22 15:28+0000\n"
+"PO-Revision-Date: 2026-04-22 15:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -45,6 +45,11 @@ msgstr "Llegado al primer destino"
 #: model:ir.model.fields.selection,name:ike_event_api.selection__ike_event__event_progress_state__5
 msgid "Arrived at second destination"
 msgstr "Llegó al segundo destino"
+
+#. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview_image__assistview_id
+msgid "Assist View"
+msgstr ""
 
 #. module: ike_event_api
 #: model_terms:ir.ui.view,arch_db:ike_event_api.report_ike_event_end_service_document
@@ -93,7 +98,13 @@ msgid "Confirmation code: #"
 msgstr "Código de confirmación: #"
 
 #. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__created_lambda_session
+msgid "Created Lambda Session"
+msgstr "Sesión Lambda Creada"
+
+#. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__create_uid
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview_image__create_uid
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_supplier_elapsed_time__create_uid
 msgid "Created by"
 msgstr "Creado por"
@@ -105,6 +116,7 @@ msgstr "Creado desde BP"
 
 #. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__create_date
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview_image__create_date
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_supplier_elapsed_time__create_date
 msgid "Created on"
 msgstr "Creado en"
@@ -117,7 +129,7 @@ msgstr "Afiliaciones"
 #. module: ike_event_api
 #: model:ir.model,name:ike_event_api.model_custom_membership_plan
 msgid "Custom Membership Plan"
-msgstr "Plan de cobertura"
+msgstr "Planes de cobertura"
 
 #. module: ike_event_api
 #: model_terms:ir.ui.view,arch_db:ike_event_api.report_ike_event_end_service_document
@@ -131,6 +143,7 @@ msgstr "Destino:"
 
 #. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__display_name
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview_image__display_name
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_supplier_elapsed_time__display_name
 msgid "Display Name"
 msgstr "Nombre a mostrar"
@@ -185,27 +198,9 @@ msgstr ""
 
 #. module: ike_event_api
 #. odoo-python
-#: code:addons/ike_event_api/controllers/events.py:0
-msgid "Event Supplier not found"
-msgstr ""
-
-#. module: ike_event_api
-#. odoo-python
-#: code:addons/ike_event_api/controllers/events.py:0
-msgid "Event Supplier not notified to accept"
-msgstr ""
-
-#. module: ike_event_api
-#. odoo-python
 #: code:addons/ike_event_api/controllers/catalogs.py:0
 #: code:addons/ike_event_api/controllers/events.py:0
 msgid "Event not found"
-msgstr ""
-
-#. module: ike_event_api
-#. odoo-python
-#: code:addons/ike_event_api/controllers/events.py:0
-msgid "Event not in assigned stage"
 msgstr ""
 
 #. module: ike_event_api
@@ -266,9 +261,20 @@ msgstr "Hora:"
 
 #. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__id
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview_image__id
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_supplier_elapsed_time__id
 msgid "ID"
 msgstr ""
+
+#. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview_image__image
+msgid "Image"
+msgstr "Imagen"
+
+#. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview_image__image_name
+msgid "Image Name"
+msgstr "Nombre de la imagen"
 
 #. module: ike_event_api
 #: model:ir.model.fields,help:ike_event_api.field_ike_event__event_progress_state
@@ -301,18 +307,21 @@ msgstr "Estado inválido"
 
 #. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__write_uid
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview_image__write_uid
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_supplier_elapsed_time__write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
 
 #. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__write_date
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview_image__write_date
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_supplier_elapsed_time__write_date
 msgid "Last Updated on"
 msgstr "Última actualización en"
 
 #. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__latitude
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_supplier_elapsed_time__latitude
 msgid "Latitude"
 msgstr "Latitud"
 
@@ -324,6 +333,7 @@ msgstr "Ubicación por lotes"
 
 #. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__longitude
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_supplier_elapsed_time__longitude
 msgid "Longitude"
 msgstr "Longitud"
 
@@ -354,7 +364,7 @@ msgstr ""
 #. module: ike_event_api
 #: model:ir.model,name:ike_event_api.model_ike_event_membership_authorization
 msgid "NUs Membership Authorization"
-msgstr "Autorización de membresía"
+msgstr "Autorización de membrecía"
 
 #. module: ike_event_api
 #. odoo-python
@@ -390,11 +400,21 @@ msgid "Plate"
 msgstr "Placas"
 
 #. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__plate_image
+msgid "Plate Image"
+msgstr "Imagen de la placa"
+
+#. module: ike_event_api
 #: model_terms:ir.ui.view,arch_db:ike_event_api.ike_event_service_assistview_view_form
 msgid ""
 "Por favor no cierre esta ventana hasta tener los datos completos, de lo "
 "contrario, tendrá que iniciar el proceso"
 msgstr ""
+
+#. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__received_assistview
+msgid "Received Assistview"
+msgstr "Assistview recibido"
 
 #. module: ike_event_api
 #: model_terms:ir.ui.view,arch_db:ike_event_api.view_ike_event_form_inherit_event_api
@@ -417,6 +437,16 @@ msgid "Saved external totals"
 msgstr "Totales externos guardados"
 
 #. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__sended_whatsapp_confirmation
+msgid "Sended Whatsapp Confirmation"
+msgstr "Mensaje de confirmación enviado Whatsapp"
+
+#. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__sended_whatsapp_message
+msgid "Sended Whatsapp Message"
+msgstr "Mensaje enviado Whatsapp"
+
+#. module: ike_event_api
 #: model:ir.model.fields.selection,name:ike_event_api.selection__ike_event__event_progress_state__4
 msgid "Sent second form"
 msgstr "Envió segundo formulario"
@@ -430,6 +460,11 @@ msgstr "Servicio"
 #: model:ir.model,name:ike_event_api.model_ike_event_service_assistview
 msgid "Service Assist View"
 msgstr ""
+
+#. module: ike_event_api
+#: model:ir.model,name:ike_event_api.model_ike_event_service_assistview_image
+msgid "Service Assist View Image"
+msgstr "Imagen de servicio Assistview"
 
 #. module: ike_event_api
 #: model:ir.model,name:ike_event_api.model_ike_service_input_vial
@@ -468,6 +503,12 @@ msgid "Servicio cancelado correctamente"
 msgstr ""
 
 #. module: ike_event_api
+#. odoo-python
+#: code:addons/ike_event_api/controllers/events.py:0
+msgid "Servicio rechazado correctamente"
+msgstr ""
+
+#. module: ike_event_api
 #: model:ir.model.fields,field_description:ike_event_api.field_ike_event_supplier_elapsed_time__stage_id
 msgid "Stage"
 msgstr ""
@@ -485,13 +526,28 @@ msgid "Supplier not found"
 msgstr "Proveedor no encontrado"
 
 #. module: ike_event_api
+#. odoo-python
+#: code:addons/ike_event_api/controllers/catalogs.py:0
+msgid "Supplier stage not found"
+msgstr "Etapa de proveedor no encontrada"
+
+#. module: ike_event_api
 #: model:ir.model.fields,help:ike_event_api.field_ike_event__temporary_membership_plan_id
 msgid ""
 "Technical (BP): Field that temporarily stores the coverage plan value "
 "corresponding to the BrightPattern call"
 msgstr ""
-"Técnico (BP): Campo que temporalmente almacena el valor del plan de cobertura "
-"correspondiente a la llamada de BrightPattern"
+"Técnico (BP): Campo que temporalmente almacena el valor del plan de "
+"cobertura correspondiente a la llamada de BrightPattern"
+
+#. module: ike_event_api
+#: model:ir.model.fields,help:ike_event_api.field_ike_event__temporary_key_indentification
+msgid ""
+"Technical (BP): Field that temporarily stores the value received from Bright"
+" Pattern when there is no record matching the identification key."
+msgstr ""
+"Técnico (BP): Campo que temporalmente almacena el valor recibido de "
+"BrightPattern cuando no hay registro que coincida con la clave de identificación."
 
 #. module: ike_event_api
 #: model:ir.model.fields,help:ike_event_api.field_ike_event__created_from_bp
@@ -599,6 +655,17 @@ msgid "Vehicle"
 msgstr "Vehículo"
 
 #. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__vehicle_images
+#: model_terms:ir.ui.view,arch_db:ike_event_api.ike_event_service_assistview_view_form
+msgid "Vehicle Images"
+msgstr "Imágenes del vehículo"
+
+#. module: ike_event_api
+#: model_terms:ir.ui.view,arch_db:ike_event_api.ike_event_service_assistview_view_form
+msgid "Vehicle Plate"
+msgstr "Placa del vehículo"
+
+#. module: ike_event_api
 #. odoo-python
 #: code:addons/ike_event_api/controllers/catalogs.py:0
 msgid "Vehicle is assigned to another user"
@@ -615,3 +682,8 @@ msgstr "El vehículo no está asignado al proveedor actual"
 #: code:addons/ike_event_api/controllers/catalogs.py:0
 msgid "Vehicle not found"
 msgstr "Vehículo no encontrado"
+
+#. module: ike_event_api
+#: model:ir.model.fields,field_description:ike_event_api.field_ike_event_service_assistview__year
+msgid "Year"
+msgstr "Año"

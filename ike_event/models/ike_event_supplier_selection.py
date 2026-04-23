@@ -22,6 +22,7 @@ class IkeEventSupplierSelection(models.Model):
     acceptance_date = fields.Datetime(tracking=True, copy=False)
     acceptance_duration = fields.Float(help='Time it took to accept the service, in seconds.', copy=False)
     rejection_date = fields.Datetime(tracking=True, copy=False)
+    elapsed_time_s = fields.Integer(compute='_compute_elapsed_time_s')
     # === STAGE FIELDS FIRST === #
     first_state_date = fields.Datetime(string='First state datetime', tracking=True, copy=False)
     first_state_user_id = fields.Many2one(
@@ -98,6 +99,15 @@ class IkeEventSupplierSelection(models.Model):
     timer_duration = fields.Integer(help='Maximum timer duration, in seconds.', default=600, copy=False)
     is_manual = fields.Boolean(default=True)
 
+    # === COMPUTES === #
+    def _compute_elapsed_time_s(self):
+        now = fields.Datetime.now()
+        for rec in self:
+            if rec.state == 'notified':
+                rec.elapsed_time_s = max((now - rec.notification_date).total_seconds(), 0)
+            else:
+                rec.elapsed_time_s = 0
+
     # === ACTIONS === #
     def action_reset(self):
         self.state = 'available'
@@ -147,9 +157,14 @@ class IkeEventSupplierSelection(models.Model):
                 )
                 if destination_route:
                     rec.route = destination_route
-                    if not rec.estimated_distance or not rec.osrm:
-                        rec.estimated_distance = (destination_distance_m or rec.estimated_distance) / 1000
-                        rec.estimated_duration = (destination_duration_s or rec.estimated_duration) / 60
+                    distance_km = (destination_distance_m or rec.estimated_distance) / 1000
+                    duration_m = (destination_duration_s or rec.estimated_duration) / 60
+                    rec.real_distance = distance_km
+                    rec.real_duration = duration_m
+                    if not rec.estimated_distance:
+                        rec.estimated_distance = distance_km
+                        rec.estimated_duration = duration_m
+
         self_filtered._notify_expiration()
         # self_filtered.broadcastReload()
 
@@ -202,19 +217,20 @@ class IkeEventSupplierSelection(models.Model):
         action_from = self.env.context.get('ike_event_action_from', 'internal')
         for rec in self:
             channel_name = f'ike_channel_event_{str(rec.event_id.id)}'
+            data = {
+                'id': rec.id,
+                'state': rec.state,
+                'stage_ref': rec.stage_ref,
+                'folio': rec.folio,
+                'event_id': [rec.event_id.id, rec.event_id.name],
+                'supplier_id': [rec.supplier_id.id, rec.supplier_id.name],
+                'action_from': action_from,
+                'event_reload': event_reload,
+            }
             event_batcher.add_event_notification(
                 self.env.cr.dbname,
                 channel_name,
-                'ike_event_supplier_reload', {
-                    'id': rec.id,
-                    'state': rec.state,
-                    'stage_ref': rec.stage_ref,
-                    'folio': rec.folio,
-                    'event_id': [rec.event_id.id, rec.event_id.name],
-                    'supplier_id': [rec.supplier_id.id, rec.supplier_id.name],
-                    'action_from': action_from,
-                    'event_reload': event_reload,
-                }, batch_timeout=2)
+                'ike_event_supplier_reload', data, batch_timeout=2)
         self.broadcastReloadForSupplier(action_from)
 
     def broadcastCancel(self, event_reload=False):

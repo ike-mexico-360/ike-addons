@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-16 18:50+0000\n"
-"PO-Revision-Date: 2026-04-16 18:50+0000\n"
+"POT-Creation-Date: 2026-04-23 04:29+0000\n"
+"PO-Revision-Date: 2026-04-23 04:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1445,6 +1445,11 @@ msgid "ERP Odoo"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_economic_number
+msgid "Economic Number"
+msgstr "Número económico"
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_form
 msgid "Edit Sub-Services"
 msgstr "Editar subservicio"
@@ -1546,6 +1551,11 @@ msgstr "Entidad"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__event_type_id
 msgid "Event type"
 msgstr "Tipo de evento"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_product_product__x_min_required_photos_assistview
+msgid "Evidence photos required for this subservice (Assistview)."
+msgstr "Evidencias de fotografías requeridas para este sub-servicio (Assistview)."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_product_product__x_min_required_photos
@@ -2358,6 +2368,11 @@ msgstr "México"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_min_required_photos
 msgid "Minimum Required Photos"
 msgstr "Mínimo requerido de fotografías"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_min_required_photos_assistview
+msgid "Minimum Required Photos (Assistview)"
+msgstr "Mínimo requerido de fotografías (Assistview)"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__mobile
@@ -3751,6 +3766,11 @@ msgstr "Tipos de estado proveedor"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source_field__field_un_search
 msgid "UN Search"
 msgstr "Campo búsqueda UN"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_fleet_vehicle__x_economic_number
+msgid "Unit identifier in the supplier's system (internal value)"
+msgstr "Identificador de la unidad en el sistema del proveedor (valor interno)"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__uom_id

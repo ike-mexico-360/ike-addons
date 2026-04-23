@@ -9,7 +9,7 @@ class ProductCategory(models.Model):
     _description = 'Services'
 
     # === FIELDS === #
-    active = fields.Boolean('Active', default=True, tracking=True)
+    active = fields.Boolean('Active', default=True, tracking=True, readonly=True)
     disabled = fields.Boolean('Disabled', default=False, tracking=True)
 
     # Redefinition of 'name' to enable change tracking
@@ -88,3 +88,10 @@ class ProductCategory(models.Model):
                     message_type='notification',
                     body_is_html=True)
         return super().action_disable(reason)
+
+    @api.model
+    def get_can_be_disabled(self):
+        res = super(ProductCategory, self).get_can_be_disabled()
+        if not self.env.user.has_group('base.group_system'):
+            return False
+        return res

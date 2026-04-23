@@ -5,6 +5,7 @@ import { user } from "@web/core/user";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { rpc } from "@web/core/network/rpc";
 import { deserializeDateTime, formatDateTime } from "@web/core/l10n/dates";
+import { _t } from "@web/core/l10n/translation";
 // Import pagination - use the @module_name path
 import { usePagination } from "../pagination/pagination_service";
 import { PaginationComponent } from "../pagination/pagination_component";
@@ -15,6 +16,7 @@ const IKE_SUPPLIER_CHANNEL = "ike_channel_supplier_";
 export class ServicesMainComponent extends Component {
     static template = "ike_event_portal.ServicesMainComponent";
     static components = { PaginationComponent, CancelServiceDialog };
+    translate(str) { return _t(str); }
 
     setup() {
         this.orm = useService("orm");
@@ -750,7 +752,7 @@ export class ServicesMainComponent extends Component {
             const rawCostsData = await this.loadConceptsByEventSupplierId(event_supplier.supplier_link_id);
             this.state.serviceCostsData = this.transformCostsData(rawCostsData);
 
-            await this.loadAvailableProducts(event_supplier.event_id, event_supplier.supplier_id);
+            await this.loadAvailableProducts(event_supplier.event_id, event_supplier.supplier_id, event_supplier.supplier_link_id);
         }
         catch (err) {
             if (err.data?.name === "odoo.exceptions.ValidationError") {
@@ -951,7 +953,7 @@ export class ServicesMainComponent extends Component {
             this.state.serviceCostsData = this.transformCostsData(rawCostsData);
 
             // Reload available products (to exclude the newly added one)
-            await this.loadAvailableProducts(this.state.currentEventId, this.state.currentSupplierId);
+            await this.loadAvailableProducts(this.state.currentEventId, this.state.currentSupplierId, this.state.link_supplier_id);
 
             // Reset the adding state
             this.state.isAddingConcept = false;
@@ -991,7 +993,7 @@ export class ServicesMainComponent extends Component {
                     }
                     const rawCostsData = await this.loadConceptsByEventSupplierId(this.state.link_supplier_id);
                     this.state.serviceCostsData = this.transformCostsData(rawCostsData);
-                    await this.loadAvailableProducts(this.state.currentEventId, this.state.currentSupplierId);
+                    await this.loadAvailableProducts(this.state.currentEventId, this.state.currentSupplierId, this.state.link_supplier_id);
                 } catch (err) {
                     console.error("Error deleting concept:", err);
                     this.showNotification({
@@ -1157,14 +1159,15 @@ export class ServicesMainComponent extends Component {
         });
     }
 
-    async loadAvailableProducts(event_id, supplier_id) {
+    async loadAvailableProducts(event_id, supplier_id, supplier_link_id) {
         try {
             this.state.currentEventId = event_id;
             this.state.currentSupplierId = supplier_id;
             // Call backend to get products with proper domain
             const result = await rpc('/provider/portal/services/get_available_concepts', {
                 event_id: event_id,
-                supplier_id: supplier_id
+                supplier_id: supplier_id,
+                supplier_link_id: supplier_link_id
             });
 
             if (result.success) {

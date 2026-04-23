@@ -39,7 +39,7 @@
             </td>
         </xpath>
         <xpath expr="//div[@id='total']" position="attributes">
-            <attribute name="t-if" />
+            <attribute name="t-if">False</attribute>
         </xpath>
     </template>
     <template id="ike_event_purchase_dispute_view" name="Purchase Order Portal Content Dispute" >
@@ -128,7 +128,8 @@
                         </th>
                         <th class="text-start"></th>
                         <th class="text-start">Order Deadline</th>
-                        <th class="text-start">Total</th>
+                        <th class="text-start">Untaxed Amount Dispute</th>
+                        <th class="text-start">Untaxed Amount Approved</th>
 
                     </tr>
                 </thead>
@@ -152,9 +153,11 @@
                             <span class='d-none d-md-inline' t-field="rfq.date_order" t-options="{'time_only': True}"/>
                         </td>
                         <td class="text-start">
-                            <span t-field="rfq.amount_total"/>
+                            <span t-field="rfq.amount_untaxed_dispute"/>
                         </td>
-
+                        <td class="text-start">
+                            <span t-field="rfq.amount_untaxed_approved"/>
+                        </td>
                     </tr>
                 </t>
             </t>

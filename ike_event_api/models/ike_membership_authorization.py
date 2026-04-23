@@ -22,8 +22,9 @@ class IkeMembershipAuthorization(models.Model):
             _logger.warning(f"{rec.key_identification} {rec.account_id.name} {rec.affiliation_date_start.isoformat()} {rec.affiliation_date_end.isoformat()} {url} {connect_to_external} {decrypt_encrypt_utility_sudo.decrypt_aes256(affiliation_id.name)}")
             if (rec.key_identification and rec.account_id and rec.affiliation_date_start and rec.affiliation_date_end
                     and url and connect_to_external and len(affiliation_detail_ids) > 0):
+                policy = f"{rec.key_identification.strip()}-{rec.clause_primary.strip() if rec.clause_primary else '0'}"
                 payload = {
-                    "poliza": rec.key_identification,
+                    "poliza": policy,
                     "fecha_inicial": rec.affiliation_date_start.isoformat(),
                     "fecha_final": rec.affiliation_date_end.isoformat(),
                 }
@@ -39,7 +40,7 @@ class IkeMembershipAuthorization(models.Model):
                     )
                     data = response.json()
                     details = data.get('detalle', [])
-                    matching_details = [r for r in details if r['poliza'].strip() == rec.key_identification.strip()]
+                    matching_details = [r for r in details if r['poliza'].strip() == policy]
                     _logger.warning(f"{matching_details}")
 
                     for detail in matching_details:

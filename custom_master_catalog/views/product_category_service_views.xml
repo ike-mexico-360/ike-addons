@@ -56,6 +56,7 @@
                             <field name="x_color" widget="color_picker" readonly="disabled"/>
                             <field name="create_date" invisible="1"/>
                             <field name="disabled" invisible="1" />
+                            <field name="can_be_disabled" invisible="1" />
                             <field name="active" invisible="1" />
                         </group>
                     </group>

@@ -31,15 +31,17 @@ class IkeEvent(models.Model):
             'target': 'current',
         }
 
+    # ToDo: Unificar código repetido, crear método compartido para generar las órdenes de compra
     def action_confirm_costs(self):
         self.ensure_one()
         # Cuando el evento esté en concluido
         if self.stage_ref == 'verifying' and len(self.x_purchase_ids) == 0:
+            # ToDo: =============================================================================================
             # * Crear una sola orden de compra por proveedor con todos los conceptos
             grouped_purchase_by_suppliers = {}
             for supplier_line in self.selected_supplier_ids:
                 product_ids = supplier_line.supplier_link_id.supplier_product_ids.filtered(
-                    lambda x: x.product_id and x.unit_price > 0
+                    lambda x: x.product_id
                 )
                 if len(product_ids) == 0:  # Omitir crear RFQ para proveedores sin conceptos
                     continue
@@ -56,6 +58,7 @@ class IkeEvent(models.Model):
             purchase_ids = self.env['purchase.order'].with_context(dict(ike_event_purchase=True)).create([
                 purchase_vals for purchase_vals in grouped_purchase_by_suppliers.values()
             ])
+            # ToDo: =============================================================================================
             for purchase in purchase_ids:
                 purchase.action_rfq_send_one_step()
         self.sudo().action_close()
@@ -63,11 +66,12 @@ class IkeEvent(models.Model):
     def action_create_purchase_orders(self):
         res = super().action_create_purchase_orders()
         if len(self.x_purchase_ids) == 0:
+            # ToDo: =============================================================================================
             # * Crear una sola orden de compra por proveedor con todos los conceptos
             grouped_purchase_by_suppliers = {}
             for supplier_line in self.selected_supplier_ids:
                 product_ids = supplier_line.supplier_link_id.supplier_product_ids.filtered(
-                    lambda x: x.product_id and x.unit_price > 0
+                    lambda x: x.product_id
                 )
                 if len(product_ids) == 0:  # Omitir crear RFQ para proveedores sin conceptos
                     continue
@@ -84,6 +88,7 @@ class IkeEvent(models.Model):
             self.env['purchase.order'].with_context(dict(ike_event_purchase=True)).create([
                 purchase_vals for purchase_vals in grouped_purchase_by_suppliers.values()
             ])
+            # ToDo: =============================================================================================
         return res
 
     def x_get_values_for_purchase_line(self, supplier_product_id):

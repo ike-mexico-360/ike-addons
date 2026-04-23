@@ -1,7 +1,10 @@
 import { _t } from "@web/core/l10n/translation";
+import { user } from "@web/core/user";
+import { patch } from "@web/core/utils/patch";
 import { ListController } from "@web/views/list/list_controller";
 import { CustomConfirmationDialog } from "../confirmation_dialog/confirmation_dialog";
-import { patch } from "@web/core/utils/patch";
+
+import { onWillStart } from "@odoo/owl";
 
 patch(ListController.prototype, {
     setup(){
@@ -13,6 +16,13 @@ patch(ListController.prototype, {
                 : false;
         // Overwrite
         this.archiveEnabled &= !this.disableEnabled;
+
+        onWillStart(async () => {
+            const canBeDisabled = await this.model.orm.call(this.props.resModel, "get_can_be_disabled", [], {
+            });
+            this.disableEnabled &= canBeDisabled;
+            this.archiveEnabled &= canBeDisabled;
+        });
     },
     getStaticActionMenuItems() {
         let res = super.getStaticActionMenuItems();

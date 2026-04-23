@@ -500,7 +500,7 @@
                 <t>
                     <strong> 
                         <t t-if="object.requires_federal_plates"> requires federal plates</t>
-                        <t t-else=""> does not require federal plates</t> 
+                        <t t-else=""> does not require federal plates</t>
                     </strong>
                 </t>
             </field>
@@ -553,16 +553,16 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <t t-set="service" t-value="object.env[object.sub_service_res_model].browse(object.sub_service_res_id)"/>                    
+                    <t t-set="service" t-value="object.env[object.sub_service_res_model].browse(object.sub_service_res_id)"/>
                     <strong>Destination location:</strong><br/>
-                    
+
                     <t t-if="service">
-                        
+
                         <t t-if="service.destination_latitude">
                             <strong>Latitude:</strong>
                             <t t-out="service.destination_latitude"/><br/>
                         </t>
-                        
+
                         <t t-if="service.destination_longitude">
                             <strong>Longitude:</strong>
                             <t t-out="service.destination_longitude"/><br/>
@@ -572,7 +572,7 @@
                             <strong>Reference:</strong>
                             <t t-out="service.street_ref"/><br/>
                         </t>
-                        
+
                         <t t-if="service.street2">
                             <strong>Street ref:</strong>
                             <t t-out="service.street2"/><br/>
@@ -597,7 +597,7 @@
                             <strong>City:</strong>
                             <t t-out="service.city"/><br/>
                         </t>
-                        
+
                         <t t-if="service.colony">
                             <strong>Colony:</strong>
                             <t t-out="service.colony"/><br/>
@@ -612,7 +612,7 @@
                             <strong>Street:</strong>
                             <t t-out="service.street"/><br/>
                         </t>
-                        
+
                         <t t-if="service.destination_zip_code">
                             <strong>CP:</strong>
                             <t t-out="service.destination_zip_code"/><br/>
@@ -747,18 +747,26 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <strong>Has been added:</strong>
+                    <strong>Non-covered concepts:</strong>
 
-                    <t t-set="lines" t-value="object.service_product_ids"/>
+                    <!-- Obtener el último supplier_number -->
+                    <t t-set="last_supplier"
+                    t-value="max(object.service_product_ids.mapped('supplier_number') or [0])"/>
+
+                    <!-- Filtrar líneas SOLO de ese proveedor -->
+                    <t t-set="lines"
+                    t-value="object.service_product_ids.filtered(
+                        lambda l: l.supplier_number == object.supplier_number
+                        and not l.display_type
+                        and not l.covered
+                    )"/>
 
                     <t t-if="lines">
                         <ul>
                             <t t-foreach="lines" t-as="line">
-                                <t t-if="not line.display_type and not line.covered">
-                                    <li>
-                                        <t t-out="line.product_id.name or line.name"/>
-                                    </li>
-                                </t>
+                                <li>
+                                    <t t-out="line.product_id.name or line.name"/>
+                                </li>
                             </t>
                         </ul>
                     </t>
@@ -814,42 +822,7 @@
             <field name="sequence">2</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_2"/>
         </record>
-        <record id="ike_binnacle_stage_mail_template_5_6" model="mail.template">
-            <field name="name">Binnacle stage mail template 5 6</field>
-            <field name="model_id" ref="ike_event.model_ike_event"/>
-            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
-            <field name="body_html" type="html">
-                <strong>Search type:</strong>
-                <t t-out="object._fields['supplier_search_type'].convert_to_export(object.supplier_search_type, object) "/>
-                <t t-if="ctx.get('search_priority')">
-                    <strong>Priority:</strong>
-                    <t t-out="ctx.get('search_priority')"/>
-                </t>
-                <br/>
-                <strong>Recommended supplier:</strong>
-                <t t-set="last_search"
-                t-value="max(object.service_supplier_ids.mapped('search_number') or [0])"/>
-                <br/>
-                <ol>
-                    <t t-foreach="object.service_supplier_ids" t-as="line">
-                        <t t-if="line.search_number == last_search and not line.display_type">
-                            <li>
-                                <strong><t t-out="line.supplier_id.name"/></strong><br/>
-                                <t t-out="line.name"/>
-                            </li>
-                        </t>
-                    </t>
-                </ol>
-            </field>
-        </record>
-        <record id="ike_binnacle_stage_5_6" model="ike.event.binnacle">
-            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
-            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
-            <field name="step_number">5</field>
-            <field name="sequence">6</field>
-            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_6"/>
-        </record>
-        <record id="ike_binnacle_stage_mail_template_5_3" model="mail.template">
+         <record id="ike_binnacle_stage_mail_template_5_3" model="mail.template">
             <field name="name">Binnacle stage mail template 5 3</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
@@ -916,6 +889,96 @@
             <field name="sequence">5</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_5"/>
         </record>
+        <record id="ike_binnacle_stage_mail_template_5_6" model="mail.template">
+            <field name="name">Binnacle stage mail template 5 6</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <strong>Search type:</strong>
+                <t t-out="object._fields['supplier_search_type'].convert_to_export(object.supplier_search_type, object) "/>
+
+                <t t-if="ctx.get('search_priority')">
+                    <strong>Priority:</strong>
+                    <t t-out="ctx.get('search_priority')"/>
+                </t>
+
+                <br/>
+                <strong>Recommended supplier:</strong>
+
+                <t t-set="last_search"
+                t-value="max(object.service_supplier_ids.mapped('search_number') or [0])"/>
+
+                <!-- Filtrar proveedores válidos -->
+                <t t-set="suppliers"
+                t-value="object.service_supplier_ids.filtered(lambda l: l.search_number == last_search and not l.display_type)"/>
+
+                <br/>
+
+                <!-- Si hay proveedores -->
+                <t t-if="suppliers">
+                    <ol>
+                        <t t-foreach="suppliers" t-as="line">
+                            <li>
+                                <strong><t t-out="line.supplier_id.name"/></strong><br/>
+                                <t t-out="line.name"/>
+                            </li>
+                        </t>
+                    </ol>
+                </t>
+
+                <!-- Si no hay -->
+                <t t-else="">
+                    <p>No supplier was found</p>
+                </t>
+
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_5_6" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">5</field>
+            <field name="sequence">6</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_6"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_5_7" model="mail.template">
+            <field name="name">Binnacle stage mail template 5 7</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <div>
+                    <strong>Type accessories selected:</strong>
+
+                    <t t-if="object.sub_service_res_model and object.sub_service_res_id">
+
+                        <t t-set="service"
+                        t-value="object.env[object.sub_service_res_model].browse(object.sub_service_res_id)"/>
+
+                        <t t-if="service.exists() and 'service_accessory_ids' in service._fields and service.service_accessory_ids">
+                            <ul>
+                                <t t-foreach="service.service_accessory_ids" t-as="accesiories">
+                                    <li>
+                                        <t t-out="accesiories.name"/>
+                                    </li>
+                                </t>
+                            </ul>
+                        </t>
+
+                        <t t-else="">
+                            <em>No accessories selected.</em>
+                        </t>
+
+                    </t>
+                </div>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_5_7" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">5</field>
+            <field name="sequence">7</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_7"/>
+        </record>
+       
         <record id="ike_binnacle_stage_mail_template_7_1" model="mail.template">
             <field name="name">Binnacle stage mail template 7_1</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
@@ -945,28 +1008,30 @@
                 t-value="object.service_supplier_link_ids.filtered(lambda l: l.id == ctx.get('supplier_link_id'))[:1]"/>
 
                 <t t-if="link">
-                <t t-set="link" t-value="link[0]"/>
+                    <t t-set="link" t-value="link[0]"/>
 
-                    <!-- CONCEPTS ADDITIONALS -->
+                    <!-- CONCEPTS PENDING AUTHORIZATION -->
                     <strong>Concepts additionals:</strong>
 
-                    <t t-set="new_ids" t-value="link.new_concept_ids or []"/>
-
-                    <t t-set="outside_lines"
+                    <t t-set="pending_lines"
                         t-value="link.supplier_product_ids.filtered(
-                            lambda l: not l.display_type and not l.covered and l.id in new_ids
+                            lambda l: not l.display_type and l.authorization_pending
                         )"/>
 
-                    <t t-if="outside_lines">
-                        <t t-foreach="outside_lines" t-as="line">
-                            <br/>• <t t-out="line.product_id.display_name"/>
-                        </t>
+                    <t t-if="pending_lines">
+                        <ul>
+                            <t t-foreach="pending_lines" t-as="line">
+                                <li>
+                                    <t t-out="line.product_id.display_name or line.name"/>
+                                </li>
+                            </t>
+                        </ul>
                     </t>
                     <t t-else="">
-                        <br/><em>No additional concepts.</em>
+                        <em>No concepts pending authorization.</em>
                     </t>
 
-                    <br/><br/>
+                    <br/>
 
                     <!-- AUTHORIZATION TYPE -->
                     <strong>Authorization type:</strong>
@@ -984,7 +1049,7 @@
                     <strong>Responsible authorizator:</strong>
 
                     <t t-set="responsible_name"
-                        t-value="link.nu_user_id.display_name if link.authorization_by_nu else link.authorizer_id.display_name"/>
+                    t-value="link.nu_user_id.display_name if link.authorization_by_nu else link.authorizer_id.display_name"/>
 
                     <t t-if="responsible_name">
                         <t t-out="responsible_name"/>
@@ -1007,7 +1072,6 @@
 
                 </t>
 
-                <!-- Si por alguna razón no llega el contexto -->
                 <t t-else="">
                     <em>No supplier information available.</em>
                 </t>
@@ -1043,7 +1107,7 @@
             <field name="model_id" ref="ike_event.model_ike_event"/>
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
-                <t> 
+                <t>
                     <strong>Notification sent to the supplier</strong>
                 </t>
             </field>
@@ -1060,7 +1124,7 @@
             <field name="model_id" ref="ike_event.model_ike_event"/>
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
-                <t> 
+                <t>
                     <strong>Responsible authorizator:</strong>
 
                     <t t-set="printed_resp" t-value="0"/>
@@ -1105,7 +1169,7 @@
                     <strong>Authorization approved</strong>
                 </t>
             </field>
-        </record>        
+        </record>
         <record id="ike_binnacle_stage_7_13_1" model="ike.event.binnacle">
             <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
             <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_progress_summary_concepts_additionals"/>
@@ -1666,10 +1730,17 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <t t-if="object.membership_authorization_id">
-                        <p>
-                            <strong>Authorization aproved</strong>
-                        </p>
+                    <t>
+                        <t t-if="object.membership_authorization_id">
+                            <p>
+                                <strong>Authorization approved</strong>
+                                <br/>
+                                <t t-if="object.membership_authorization_id.comment_authorizer">
+                                    <strong>Comment: </strong>
+                                    <t t-out="object.membership_authorization_id.comment_authorizer"/>
+                                </t>
+                            </p>
+                        </t>
                     </t>
                 </t>
             </field>
@@ -1787,7 +1858,7 @@
                             <ul>
                                 <li>
                                     <strong><t t-out="supplier.supplier_id.name"/></strong><br/>
-                                    
+
                                     <t t-if="supplier.truck_id">
                                         <strong>Plates:</strong>
                                         <t t-out="supplier.truck_id.license_plate"/><br/>
@@ -1796,7 +1867,7 @@
                                     <t t-if="supplier.cancel_reason_id">
                                         <strong>Reason:</strong> <t t-out="supplier.cancel_reason_id.name"/><br/>
                                     </t>
-                                    
+
 
                                     <t t-if="supplier.cancel_reason_text">
                                         <strong>Comment:</strong> <t t-out="supplier.cancel_reason_text"/><br/>
@@ -1844,7 +1915,7 @@
                                     <t t-if="supplier.cancel_reason_id">
                                         <strong>Reason:</strong> <t t-out="supplier.cancel_reason_id.name"/><br/>
                                     </t>
-                                    
+
 
                                     <t t-if="supplier.cancel_reason_text">
                                         <strong>Comment:</strong> <t t-out="supplier.cancel_reason_text"/><br/>
@@ -1897,7 +1968,7 @@
                  <t>
                     <strong>Duplicate event</strong><br/>
 
-                    <strong>Origin Event:</strong><span t-out="object._context.get('original_event_name', 'N/A')"/> 
+                    <strong>Origin Event:</strong><span t-out="object._context.get('original_event_name', 'N/A')"/>
                     <br/>
                     <t t-if="object._context.get('reason_name')">
                         <strong>Reason:</strong> <span t-out="object._context.get('reason_name')"/>
@@ -1982,9 +2053,9 @@
                     <p>
                         <strong>Agreement costs</strong><br/>
 
-                        <t t-if="object.ike_event_coordinator_id">
+                        <t t-if="object.assigned_user_id">
                             <strong>Coordinator CCC: </strong>
-                            <t t-out="object.ike_event_coordinator_id.name or 'N/A'"/>
+                            <t t-out="object.assigned_user_id.name or 'N/A'"/>
                         </t>
                     </p>
 
@@ -2067,7 +2138,7 @@
                     <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
 
                     <p>
-                        <strong>Notification sent to operator: </strong><br/>
+                        <strong>Notification sent to supplier: </strong><br/>
                         <strong>Supplier: </strong><t t-out="supplier"></t><br/>
                         <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
 

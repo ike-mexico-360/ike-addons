@@ -7,54 +7,10 @@ _logger = logging.getLogger(__name__)
 class IkeServiceInputVial(models.Model):
     _inherit = 'ike.service.input.vial'
 
-    def x_test_template1(self):
-        # Inicio
-        phone_number = "5564146854"
-        assistview_data = self._x_ike_create_assistview()
-        request_lambda_session = assistview_data['request_lambda_session']
-        request_whatsapp_message = assistview_data['request_whatsapp_message']
-        self.x_send_request_to_create_session(
-            event_id=str(self.event_id.id),
-            assistview_id=assistview_data['id'],
-            request_lambda_session=request_lambda_session,
-            request_whatsapp_message=request_whatsapp_message,
-            template=66,
-            phone_number=phone_number
-        )
-
-    def x_test_template2(self):
-        # Coordenadas
-        phone_number = "5564146854"
-        assistview_data = self._x_ike_create_assistview()
-        request_lambda_session = assistview_data['request_lambda_session']
-        request_whatsapp_message = assistview_data['request_whatsapp_message']
-        self.x_send_request_to_create_session(
-            event_id=str(self.event_id.id),
-            assistview_id=assistview_data['id'],
-            request_lambda_session=request_lambda_session,
-            request_whatsapp_message=request_whatsapp_message,
-            template=67,
-            phone_number=phone_number
-        )
-
-    def x_test_template3(self):
-        # Confirmación
-        phone_number = "5564146854"
-        assistview_data = self._x_ike_create_assistview()
-        request_lambda_session = assistview_data['request_lambda_session']
-        request_whatsapp_message = assistview_data['request_whatsapp_message']
-        self.x_send_request_to_create_session(
-            event_id=str(self.event_id.id),
-            assistview_id=assistview_data['id'],
-            request_lambda_session=request_lambda_session,
-            request_whatsapp_message=request_whatsapp_message,
-            template=68,
-            phone_number=phone_number
-        )
-
     def x_send_request_to_create_session(
         self,
         event_id: str,
+        min_required_photos: int,
         assistview_id,
         request_lambda_session: bool,
         request_whatsapp_message: bool,
@@ -78,6 +34,7 @@ class IkeServiceInputVial(models.Model):
                 "template_id": template,
                 "type_id": 1,
                 "nombre": encryption_util.decrypt_aes256(self.event_id.user_id.name),
+                "min_required_photos": min_required_photos,
             }
 
             send_whatsapp_message = False
@@ -138,9 +95,11 @@ class IkeServiceInputVial(models.Model):
                 assistview_data = self._x_ike_create_assistview()
                 _logger.info(f"Assistview: {assistview_data}")
                 request_lambda_session = assistview_data['request_lambda_session']
+                min_required_photos = self.event_id.sub_service_id.x_min_required_photos_assistview
                 request_whatsapp_message = assistview_data['request_whatsapp_message']
                 sended = self.x_send_request_to_create_session(
                     event_id=str(self.event_id.id),
+                    min_required_photos=min_required_photos,
                     assistview_id=assistview_data['id'],
                     request_lambda_session=request_lambda_session,
                     request_whatsapp_message=request_whatsapp_message,

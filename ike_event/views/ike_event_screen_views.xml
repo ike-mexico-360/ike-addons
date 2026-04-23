@@ -9,7 +9,7 @@
                 <header>
                     <button name="action_verify" string="Conclude"
                             confirm="Are you sure?"
-                            type="object" class="btn-primary" invisible="stage_ref != 'completed'"
+                            type="object" class="btn-primary" invisible="stage_ref not in ['completed']"
                             groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds"/>
                     <button name="action_close" string="Close"
                             confirm="Are you sure?"
@@ -21,7 +21,7 @@
                     <button name="open_cancel_wizard" string="Cancel"
                             confirm="Are you sure?"
                             type="object" class="btn-danger"
-                            invisible="not id or stage_ref in ['completed', 'cancel', 'cancel_subsequently']"/>
+                            invisible="not id or stage_ref in ['close', 'cancel', 'cancel_subsequently']"/>
                     <button name="action_directory_center_attention" string="Directories center attention"
                             type="object" class="btn-primary"
                             invisible="stage_ref in ['draft', 'capturing', 'cancel', 'cancel_subsequently']"/>
@@ -177,6 +177,17 @@
                                         class="ike-select"
                                         placeholder="Select option"/>
                                 </div>
+                                <separator class="col-12 my-1" string="Assigned"/>
+                                <div class="col-12 mt-3">
+                                    <field name="assigned_user_id" nolabel="1"
+                                        readonly="1"
+                                        context="{
+                                            'search_view_ref': 'custom_master_catalog.custom_view_users_search',
+                                            'list_view_ref': 'custom_master_catalog.custom_view_users_list',
+                                        }"
+                                        options="{'no_create': 1, 'no_open': 1}"
+                                        class="ike-select"/>
+                                </div>
 
                                 <div class="d-flex justify-content-end gap-1">
                                     <button name="action_backward" string="Return"
@@ -257,7 +268,8 @@
                                 <field name="notification_date" optional="hide" readonly="1"/>
                                 <field name="acceptance_date" optional="hide" readonly="1"/>
                                 <field name="rejection_date" optional="hide" readonly="1"/>
-                                <field name="timer_duration" optional="hide" readonly="1"/>
+                                <field name="timer_duration" column_invisible="1"/>
+                                <field name="elapsed_time_s" column_invisible="1"/>
                                 <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
                                 <button name="action_view_products" string="View Details" type="object" class="btn-link"/>
                             </list>
@@ -350,7 +362,7 @@
                             <field name="service_supplier_ids" nolabel="1" colspan="2" widget="ike_selected_suppliers_info"/>
                         </group>
                         <group>
-                            <field name="ike_event_coordinator_id"
+                            <field name="assigned_user_id"
                                 groups="base.group_system,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss"
                                 context="{
                                     'search_view_ref': 'custom_master_catalog.custom_view_users_search',
@@ -358,7 +370,7 @@
                                 }"
                                 options="{'no_create': 1, 'no_open': 1}"
                                 required="stage_ref in ('verifying')"/>
-                            <field name="ike_event_coordinator_id"
+                            <field name="assigned_user_id"
                                 groups="custom_master_catalog.custom_group_ccc_coordinator,!base.group_system,!custom_master_catalog.custom_group_ccc_analyst,!custom_master_catalog.custom_group_ccc_boss"
                                 readonly="1"
                                 options="{'no_open': 1}"/>
@@ -370,6 +382,16 @@
                                     class="btn btn-primary rounded-4 py-1"
                                     groups="base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss"/>
                             </div>
+                        </group>
+                    </group>
+                    <group name="event_concluded" invisible="stage_ref not in ('close')">
+                        <group>
+                            <field name="service_supplier_ids" nolabel="1" colspan="2" widget="ike_selected_suppliers_info"/>
+                        </group>
+                    </group>
+                    <group name="event_cancel_subsequently" invisible="stage_ref not in ('cancel_subsequently')">
+                        <group>
+                            <field name="service_supplier_ids" nolabel="1" colspan="2" widget="ike_selected_suppliers_info"/>
                         </group>
                     </group>
                 </sheet>

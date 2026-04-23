@@ -7,9 +7,9 @@ class IkeEventAssignmentWizard(models.TransientModel):
     _name = "ike.event.assignment.wizard"
     _description = "Assignment event wizard"
 
-    ike_event_coordinator_ids = fields.Many2many('res.users', string='Assigned to users')
-    ike_event_coordinator_id = fields.Many2one('res.users', string='Assigned to user')
-    coordinator_domain = fields.Binary(compute='_compute_coordinator_domain')
+    assigned_user_ids = fields.Many2many('res.users', string='Assigned to users')
+    assigned_user_id = fields.Many2one('res.users', string='Assigned to user')
+    assigned_user_domain = fields.Binary(compute='_compute_assigned_user_domain')
     event_not_assign_ids = fields.Many2many(
         'ike.event',
         'ike_event_assignment_wizard_not_assign_rel',
@@ -17,7 +17,7 @@ class IkeEventAssignmentWizard(models.TransientModel):
         'event_id',
         string='Events not assigned',
         domain=[
-            ('ike_event_coordinator_id', '=', False),
+            ('assigned_user_id', '=', False),
             ('stage_ref', '=', 'verifying')
         ]
     )
@@ -31,8 +31,8 @@ class IkeEventAssignmentWizard(models.TransientModel):
     )
 
     # === COMPUTES === #
-    @api.depends('ike_event_coordinator_ids', 'ike_event_coordinator_id')
-    def _compute_coordinator_domain(self):
+    @api.depends('assigned_user_ids', 'assigned_user_id')
+    def _compute_assigned_user_domain(self):
         for rec in self:
             domain = [
                 ('active', '=', True),
@@ -43,23 +43,23 @@ class IkeEventAssignmentWizard(models.TransientModel):
                 ])
             ]
 
-            rec.coordinator_domain = domain
+            rec.assigned_user_domain = domain
 
-    @api.depends('ike_event_coordinator_ids')
+    @api.depends('assigned_user_ids')
     def _compute_event_assign_ids(self):
         for rec in self:
-            if rec.ike_event_coordinator_ids:
+            if rec.assigned_user_ids:
                 rec.event_assign_ids = self.env['ike.event'].search([
                     ('stage_ref', '=', 'verifying'),
-                    ('ike_event_coordinator_id', 'in', rec.ike_event_coordinator_ids.ids)
+                    ('assigned_user_id', 'in', rec.assigned_user_ids.ids)
                 ])
             else:
                 rec.event_assign_ids = False
 
     def action_assignment_event(self):
-        if not self.ike_event_coordinator_id:
+        if not self.assigned_user_id:
             return
 
         self.event_not_assign_ids.write({
-            'ike_event_coordinator_id': self.ike_event_coordinator_id.id
+            'assigned_user_id': self.assigned_user_id.id
         })

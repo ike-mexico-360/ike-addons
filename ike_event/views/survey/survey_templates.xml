@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="hide_final_score_survey_fill_form_done" name="Survey: finished (hide final score)" inherit_id="survey.survey_fill_form_done">
+            <xpath expr="//a[hasclass('o_survey_review')]/.." position="attributes">
+                <attribute name="t-if">survey.scoring_type != 'scoring_without_answers' and survey.x_show_final_score</attribute>
+            </xpath>
+        </template>
+
+    </data>
+</odoo>

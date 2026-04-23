@@ -316,7 +316,7 @@ class PortalUserAccount(CustomerPortal):
         methods=["POST"],
         csrf=False,
     )
-    def get_available_concepts(self, event_id, supplier_id, **kw):
+    def get_available_concepts(self, event_id, supplier_id, supplier_link_id=None, **kw):
         """
         Get available concepts/products for an event based on the concepts domain
         """
@@ -346,10 +346,10 @@ class PortalUserAccount(CustomerPortal):
             )
 
             # Get existing product IDs for this event/supplier to exclude
-            existing_products = request.env["ike.event.supplier.product"].sudo().search([
-                ('event_id', '=', event_id),
-                ('supplier_id', '=', supplier_id),
-            ])
+            existing_domain = [('event_id', '=', event_id), ('supplier_id', '=', supplier_id)]
+            if supplier_link_id:
+                existing_domain.append(('event_supplier_link_id', '=', supplier_link_id))
+            existing_products = request.env["ike.event.supplier.product"].sudo().search(existing_domain)
             existing_product_ids = existing_products.mapped('product_id').ids
 
             if existing_product_ids:

@@ -51,6 +51,8 @@ class FleetVehicle(models.Model):
         ('disabled', 'Disabled'),
     ], string="Vehicle Service State", tracking=True, default="not_available")
     x_driver_domain = fields.Binary(string='Driver Domain', compute='_compute_x_driver_domain')
+    x_economic_number = fields.Char(
+        string='Economic Number', tracking=True, help="Unit identifier in the supplier's system (internal value)")
 
     @api.depends('driver_id', 'x_partner_id')
     def _compute_x_driver_domain(self):

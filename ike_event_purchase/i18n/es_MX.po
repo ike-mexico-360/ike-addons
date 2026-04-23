@@ -271,6 +271,19 @@ msgid "Biweekly"
 msgstr "Cada 14 días"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ir_http__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event_purchase.field_product_product__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_company__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_config_settings__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_partner__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__can_be_disabled
+msgid "Can Be Disabled"
+msgstr "Puede ser deshabilitado"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "Catalog"
 msgstr "Catalago"
@@ -337,7 +350,7 @@ msgstr "Costo"
 #. odoo-python
 #: code:addons/ike_event_purchase/models/sh_helpdesk_ticket.py:0
 msgid "Cost Review"
-msgstr "Revision de costos"
+msgstr "Revisión de costos"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__daily
@@ -610,6 +623,11 @@ msgid "Price"
 msgstr "Precio"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:purchase.purchase_order_form
+msgid "Print RFQ"
+msgstr "Imprimir revisión de costos"
+
+#. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 msgid "Product"
@@ -695,8 +713,27 @@ msgstr "Rechazada"
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
+#: code:addons/purchase/models/purchase_order.py:0
+#: model:ir.actions.report,name:purchase.report_purchase_quotation
+#: model_terms:ir.ui.view,arch_db:purchase.purchase_order_portal_content
+#: model_terms:ir.ui.view,arch_db:purchase.report_purchasequotation_document
 msgid "Request for Quotation"
-msgstr "Solicitud de Cotización"
+msgstr "Revisión de costos"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:purchase.portal_my_purchase_rfqs
+msgid "Requests For Quotation"
+msgstr "Revisión de costos"
+
+#. module: ike_event_purchase
+#: model:ir.actions.act_window,name:purchase.action_rfq_form
+#: model:ir.actions.act_window,name:purchase.purchase_rfq
+#: model:ir.ui.menu,name:purchase.menu_purchase_rfq
+#: model_terms:ir.ui.view,arch_db:purchase.portal_my_home_menu_purchase
+#: model_terms:ir.ui.view,arch_db:purchase.portal_my_home_purchase
+#: model_terms:ir.ui.view,arch_db:purchase.view_purchase_order_search
+msgid "Requests for Quotation"
+msgstr "Revisión de costos"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_require_change_reason
@@ -707,6 +744,18 @@ msgstr "Requiere motivo de cambio"
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__resolved
 msgid "Resolved"
 msgstr "Resuelto"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:purchase.selection__purchase_order__state__draft
+msgid "RFQ"
+msgstr "Revisión de costos"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:purchase.selection__purchase_order__state__sent
+#: model:ir.model.fields.selection,name:purchase.selection__purchase_report__state__sent
+#: model:mail.message.subtype,name:purchase.mt_rfq_sent
+msgid "RFQ Sent"
+msgstr "Revisión de costos enviada"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_ref_sap
@@ -772,6 +821,21 @@ msgstr "Enviada"
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_sub_service_id
 msgid "Subservice"
 msgstr "Subservicio"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_price_subtotal_approved
+msgid "Subtotal approved"
+msgstr "Subtotal aprobado"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_price_subtotal_dispute
+msgid "Subtotal dispute"
+msgstr "Subtotal disputa"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_price_subtotal_event
+msgid "Subtotal event"
+msgstr "Subtotal evento"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__0
@@ -948,6 +1012,28 @@ msgid "Unknown error"
 msgstr "Error desconocido"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:purchase.field_purchase_order__amount_untaxed
+msgid "Untaxed Amount"
+msgstr "Subtotal iké"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__amount_untaxed_approved
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
+msgid "Untaxed Amount Approved"
+msgstr "Subtotal aprobado"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__amount_untaxed_dispute
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
+msgid "Untaxed Amount Dispute"
+msgstr "Subtotal disputado"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__amount_untaxed_event
+msgid "Untaxed Amount Event"
+msgstr "Subtotal evento"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_product_product__standard_price
 msgid ""
 "Value of the product (automatically computed in AVCO).\n"
@@ -1003,6 +1089,24 @@ msgstr "Debe proponer al menos una nueva cantidad o precio antes de enviar."
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 msgid "You must specify a reason for the change"
 msgstr "Debe especificar el motivo del cambio"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "IKE Price"
+msgstr "Precio IKE"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "IKE Quantity"
+msgstr "Cantidad IKE"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "Subtotal"
+msgstr "Subtotal"
 
 #. module: ike_event_purchase
 #. odoo-javascript

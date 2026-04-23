@@ -144,7 +144,6 @@ class IkeEvent(models.Model):
 
         # Si cambia a en progreso, se envía template 72, con el enlace de seguimiento
         if stage_ref == 'in_progress':
-            # ToDo: Se envía el mapa del primer proveedor en ruta
             on_route_supplier_stage = self.env.ref('ike_event.ike_service_stage_on_route')
             on_route_suppliers = self.selected_supplier_ids.filtered(lambda x: x.stage_id.id == on_route_supplier_stage.id)
             if on_route_suppliers:
@@ -166,6 +165,7 @@ class IkeEvent(models.Model):
                 template=70,  # terminó
                 phone_number=phone_number,
             )
+
             survey_url = self.satisfaction_survey_input_url
             self.env['ike.event.supplier'].x_send_whatsapp_template(
                 access_token=wp_access_token,
@@ -174,3 +174,14 @@ class IkeEvent(models.Model):
                 phone_number=phone_number,
                 parameter=survey_url
             )
+
+    def action_verify(self):
+        """ Overrride action_verify to add 1 event to the event_count_detail_ids """
+        res = super().action_verify()
+        sub_service_id = self.sub_service_id
+        matching_detail_ids = self.user_membership_id.event_count_detail_ids.filtered(lambda x: sub_service_id.id in x.sub_service_ids.ids)
+        for detail in matching_detail_ids:
+            detail.write({
+                'events_of_period': detail.events_of_period + 1,
+            })
+        return res

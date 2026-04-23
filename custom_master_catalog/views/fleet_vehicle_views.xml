@@ -81,8 +81,9 @@
                                 context="{'form_view_ref': 'custom_master_catalog.res_partner_supplier_view_form', 'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list', 'search_view_ref': 'custom_master_catalog.res_partner_supplier_view_search', 'hide_disabled_enabled_filters': 1}"
                                 readonly="disabled" required="1"/>
                             <field name="x_ref_supplier" readonly="1" />
-                            <!-- ToDo: Probablemente este campo deba ser readonly ya que es el equivalente a carane uuid, se habilita para pruebas -->
+                            <!-- ToDo: Probablemente este campo deba ser readonly ya que es el equivalente a crane uuid, se habilita para pruebas -->
                             <field name="x_vehicle_ref" readonly="disabled" />
+                            <field name="x_economic_number" readonly="disabled" />
                             <field name="x_center_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}" invisible="x_partner_id == False"
                                 domain="[('disabled', '=', False), ('parent_id', '=', x_partner_id)]" string="Center of attention"  context="{'edit': False}" required="1"/>
                             <field name="x_vehicle_type" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"

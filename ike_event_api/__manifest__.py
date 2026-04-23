@@ -20,7 +20,6 @@
         "views/custom_membership_plan_views.xml",
         "views/custom_membership_nus_views.xml",
         "views/ike_event_service_count_views.xml",
-        "views/ike_service_input_vial_views.xml",
         "wizard/ike_event_service_assistview_views.xml",
         "report/ike_event_end_service_report.xml",
     ],

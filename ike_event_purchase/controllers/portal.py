@@ -57,6 +57,7 @@ class CustomerPortal(PurchasePortal):
 
     @http.route(['/my/rfq', '/my/rfq/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_requests_for_quotation(self, page=1, date_begin=None, date_end=None, sortby=None, filterby=None, **kw):
+        self._items_per_page = 10
         return self._render_portal(
             "purchase.portal_my_purchase_rfqs",
             page, date_begin, date_end, sortby, filterby,

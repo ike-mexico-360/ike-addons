@@ -71,6 +71,15 @@
             <xpath expr="//field[@name='order_line']/list/field[@name='price_subtotal'][2]" position="attributes">
                 <attribute name="column_invisible">1</attribute>
             </xpath>
+            <xpath expr="//group[hasclass('oe_subtotal_footer')]" position="replace">
+                <group class="oe_subtotal_footer">
+                    <field name="amount_untaxed_event" readonly="1"/>
+                    <field name="amount_untaxed" readonly="1"/>
+                    <field name="amount_untaxed_dispute" readonly="1"/>
+                    <field name="amount_untaxed_approved" readonly="1"/>
+                    <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" readonly="1" invisible="1"/>
+                </group>
+            </xpath>
         </field>
     </record>
 
@@ -222,7 +231,11 @@
                                 <field colspan="2" name="notes" nolabel="1" placeholder="Define your terms and conditions ..."/>
                             </group>
                             <group class="oe_subtotal_footer">
-                                <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" readonly="1"/>
+                                <field name="amount_untaxed_event" readonly="1"/>
+                                <field name="amount_untaxed" readonly="1"/>
+                                <field name="amount_untaxed_dispute" readonly="1"/>
+                                <field name="amount_untaxed_approved" readonly="1"/>
+                                <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" readonly="1" invisible="1"/>
                             </group>
                         </group>
                         <div class="clearfix"/>
