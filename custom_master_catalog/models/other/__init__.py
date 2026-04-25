@@ -24,3 +24,4 @@ from . import custom_data_source
 from . import custom_subservice_specification
 from . import custom_vehicle_weight_category
 from . import custom_holidays
+from . import mail_thread

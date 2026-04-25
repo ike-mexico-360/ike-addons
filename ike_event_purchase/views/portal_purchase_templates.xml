@@ -83,6 +83,10 @@
                                 <span class='d-none d-md-inline'>Purchase Order #</span>
                                 <span class='d-block d-md-none'>Ref.</span>
                             </th>
+                            <th id="order_event_header">
+                                <span class='d-none d-md-inline'>Event</span>
+                                <span class='d-block d-md-none'>Event</span>
+                            </th>
                             <th id="order_confirmation_header">
                                 <span class='d-none d-md-inline'>Confirmation Date</span>
                                 <span class='d-block d-md-none'>Confirmation</span>
@@ -97,9 +101,12 @@
                                     <t t-esc="order.name"/>
                                 </a>
                             </td>
+                            <td id="order_event">
+                                <span t-field="order.x_event_id.name"/>
+                            </td>
                             <td id="order_confirmation">
-                                <span t-field="order.date_approve" t-options="{'widget': 'date'}"/>&amp;nbsp;
-                                <span class='d-none d-md-inline' t-field="order.date_approve" t-options="{'time_only': True}"/>
+                                <span t-field="order.date_approve" t-options="{'widget': 'date'}"/>
+                                <span class='d-none d-md-inline' t-field="order.date_approve" t-options="{'format': 'HH:mm'}"/>
                             </td>
                             <td id="order_total">
                                 <span t-field="order.amount_total"/>
@@ -111,6 +118,9 @@
         </xpath>
     </template>
     <template id="ike_event_portal_my_purchase_order" name="Purchase Order Detail" inherit_id="purchase.portal_my_purchase_order">
+        <xpath expr="//t[@t-set='title']//h2[@t-field='order.amount_total']" position="attributes">
+            <attribute name="t-field">order.amount_untaxed</attribute>
+        </xpath>
         <xpath expr="//div[@id='purchase_order_communication']" position="replace">
             <div id="purchase_order_communication" invisible="1">
             </div>
@@ -126,8 +136,10 @@
                             <span class='d-none d-md-inline'>Request for Quotation #</span>
                             <span class='d-block d-md-none'>Ref.</span>
                         </th>
+                        <th class="text-start">Event</th>
                         <th class="text-start"></th>
                         <th class="text-start">Order Deadline</th>
+                        <th class="text-start">IKE Price</th>
                         <th class="text-start">Untaxed Amount Dispute</th>
                         <th class="text-start">Untaxed Amount Approved</th>
 
@@ -141,6 +153,9 @@
                             </a>
                         </td>
                         <td class="text-start">
+                            <span t-field="rfq.x_event_id.name"/>
+                        </td>
+                        <td class="text-start">
                             <t t-if="rfq.state == 'to_consolidate'">
                                 <span class="badge bg-success">Aceptado</span>
                             </t>
@@ -149,8 +164,11 @@
                             </t>
                         </td>
                         <td class="text-start">
-                            <span t-field="rfq.date_order" t-options="{'widget': 'date'}"/>&amp;nbsp;
-                            <span class='d-none d-md-inline' t-field="rfq.date_order" t-options="{'time_only': True}"/>
+                            <span t-field="rfq.date_order" t-options="{'widget': 'date'}"/>
+                            <span class='d-none d-md-inline' t-field="rfq.date_order" t-options="{'format': 'HH:mm'}"/>
+                        </td>
+                        <td class="text-start">
+                            <span t-field="rfq.amount_untaxed"/>
                         </td>
                         <td class="text-start">
                             <span t-field="rfq.amount_untaxed_dispute"/>

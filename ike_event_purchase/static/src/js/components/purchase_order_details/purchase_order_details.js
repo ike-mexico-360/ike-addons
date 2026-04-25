@@ -189,6 +189,8 @@ export class PurchaseOrderDetails extends Component {
                     // ...(changed && { x_has_dispute_changes: true }),  // Para que se guarde el cambio en la base de datos
                 };
             });
+            // Calculate initial dispute total when showing dispute fields
+            this._calculateAmountUntaxedDispute();
         }
         this.state.show_dispute_fields = !this.state.show_dispute_fields;
     }
@@ -228,6 +230,8 @@ export class PurchaseOrderDetails extends Component {
             new_line: true,
             x_has_dispute_changes: true,
         });
+        // Recalculate dispute total after adding new line
+        this._calculateAmountUntaxedDispute();
     }
 
     // Eliminar la linea del state.order_data.order_line
@@ -235,6 +239,8 @@ export class PurchaseOrderDetails extends Component {
         this.state.order_data.order_line = this.state.order_data.order_line.filter(
             (l) => l.id !== lineId
         );
+        // Recalculate dispute total after removing line
+        this._calculateAmountUntaxedDispute();
     }
 
     // Validar campos de línea sin valor
@@ -246,6 +252,17 @@ export class PurchaseOrderDetails extends Component {
         }
         this.state.invalid_lines.delete(key);
         return true;
+    }
+
+    // Calculate amount_untaxed_dispute based on dispute values
+    _calculateAmountUntaxedDispute = () => {
+        let total = 0;
+        for (const line of this.state.order_data.order_line) {
+            const price = line.x_price_unit_dispute || 0;
+            const qty = line.x_product_qty_dispute || 0;
+            total += price * qty;
+        }
+        this.state.order_data.amount_untaxed_dispute = total;
     }
 
     onchange_reasons = async (fieldName, value) => {
@@ -283,6 +300,11 @@ export class PurchaseOrderDetails extends Component {
                 : l
         );
         this._validate_field(lineId, fieldName, value);
+
+        // Recalculate amount_untaxed_dispute when dispute fields change
+        if (fieldName === 'x_price_unit_dispute' || fieldName === 'x_product_qty_dispute') {
+            this._calculateAmountUntaxedDispute();
+        }
     }
 
     // Funcionalidad del botón enviar disputa

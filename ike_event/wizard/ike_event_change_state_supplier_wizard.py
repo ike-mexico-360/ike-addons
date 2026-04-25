@@ -449,8 +449,8 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 self.finalized_comment
             )
 
-        if not vals:
-            raise ValidationError(_('Invalid stage.'))
+        # if not vals:
+        #     raise ValidationError(_('Invalid stage.'))
 
         if not supplier.first_state_date:
             vals.update({
@@ -499,25 +499,55 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         self.finalized_comment = supplier.finalized_comment
 
     def _action_assign(self, supplier, vals, datetime, user, comment):
+        already_assigned = bool(supplier.assignation_user_id or supplier.assignation_date)
+
+        if already_assigned:
+            supplier.write({
+                'assignation_date': datetime,
+                'assignation_user_id': user,
+                'assignation_comment': comment,
+            })
+            return
+
         vals.update({
             'assignation_date': datetime,
             'assignation_user_id': user,
             'assignation_comment': comment,
         })
+
+        first_date = supplier.first_assignation_date or datetime
         if not supplier.first_assignation_date:
             vals.update({
                 'first_assignation_date': datetime or fields.Datetime.now(),
                 'first_assignation_user_id': user,
                 'first_assignation_comment': comment,
             })
-        supplier.action_assign()
+            first_date = datetime
+
+        supplier.with_context(
+            binnacle_first_date=first_date,
+            binnacle_current_date=datetime,
+            binnacle_comment=comment,
+        ).action_assign()
 
     def _action_on_route(self, supplier, vals, datetime, user, comment):
+        already_on_route = bool(supplier.on_route_to_start_user_id or supplier.on_route_to_user_start_date)
+
+        if already_on_route:
+            supplier.write({
+                'on_route_to_user_start_date': datetime,
+                'on_route_to_start_user_id': user,
+                'on_route_to_start_comment': comment,
+            })
+            return  # ← No ejecuta action_on_route()
+
+        # Primera vez — flujo normal
         vals.update({
             'on_route_to_user_start_date': datetime,
             'on_route_to_start_user_id': user,
             'on_route_to_start_comment': comment,
         })
+
         first_date = supplier.first_on_route_to_user_start_date or datetime
         if not supplier.first_on_route_to_user_start_date:
             vals.update({
@@ -534,11 +564,22 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         ).action_on_route()
 
     def _action_arrived(self, supplier, vals, datetime, user, comment):
+        already_arrived = bool(supplier.on_route_to_end_user_id or supplier.on_route_to_user_end_date)
+
+        if already_arrived:
+            supplier.write({
+                'on_route_to_user_end_date': datetime,
+                'on_route_to_end_user_id': user,
+                'on_route_to_end_comment': comment,
+            })
+            return
+
         vals.update({
             'on_route_to_user_end_date': datetime,
             'on_route_to_end_user_id': user,
             'on_route_to_end_comment': comment,
         })
+
         first_date = supplier.first_on_route_to_user_end_date or datetime
         if not supplier.first_on_route_to_user_end_date:
             vals.update({
@@ -555,11 +596,22 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         ).action_arrive()
 
     def _action_contacted(self, supplier, vals, datetime, user, comment):
+        already_contacted = bool(supplier.contacted_user_id or supplier.contacted_date)
+
+        if already_contacted:
+            supplier.write({
+                'contacted_date': datetime,
+                'contacted_user_id': user,
+                'contacted_comment': comment,
+            })
+            return
+
         vals.update({
             'contacted_date': datetime,
             'contacted_user_id': user,
             'contacted_comment': comment,
         })
+
         first_date = supplier.first_contacted_date or datetime
         if not supplier.first_contacted_date:
             vals.update({
@@ -576,11 +628,22 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         ).action_contact()
 
     def _action_on_route_2(self, supplier, vals, datetime, user, comment):
+        already_on_route = bool(supplier.on_route_to_destination_start_user_id or supplier.on_route_to_destination_start_date)
+
+        if already_on_route:
+            supplier.write({
+                'on_route_to_destination_start_date': datetime,
+                'on_route_to_destination_start_user_id': user,
+                'on_route_to_destination_start_comment': comment,
+            })
+            return
+
         vals.update({
             'on_route_to_destination_start_date': datetime,
             'on_route_to_destination_start_user_id': user,
             'on_route_to_destination_start_comment': comment,
         })
+
         first_date = supplier.first_on_route_to_destination_start_date or datetime
         if not supplier.first_on_route_to_destination_start_date:
             vals.update({
@@ -597,11 +660,22 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         ).action_on_route_to_the_destination()
 
     def _action_arrived_2(self, supplier, vals, datetime, user, comment):
+        already_arrived = bool(supplier.on_route_to_destination_end_user_id or supplier.on_route_to_destination_end_date)
+
+        if already_arrived:
+            supplier.write({
+                'on_route_to_destination_end_date': datetime,
+                'on_route_to_destination_end_user_id': user,
+                'on_route_to_destination_end_comment': comment,
+            })
+            return
+
         vals.update({
             'on_route_to_destination_end_date': datetime,
             'on_route_to_destination_end_user_id': user,
             'on_route_to_destination_end_comment': comment,
         })
+
         first_date = supplier.first_on_route_to_destination_end_date or datetime
         if not supplier.first_on_route_to_destination_end_date:
             vals.update({
@@ -618,11 +692,22 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         ).action_arrive_to_the_destination()
 
     def _action_finalized(self, supplier, vals, datetime, user, comment):
+        already_finalized = bool(supplier.finalized_user_id or supplier.finalized_date)
+
+        if already_finalized:
+            supplier.write({
+                'finalized_date': datetime,
+                'finalized_user_id': user,
+                'finalized_comment': comment,
+            })
+            return
+
         vals.update({
             'finalized_date': datetime,
             'finalized_user_id': user,
             'finalized_comment': comment,
         })
+
         first_date = supplier.first_finalized_date or datetime
         if not supplier.first_finalized_date:
             vals.update({

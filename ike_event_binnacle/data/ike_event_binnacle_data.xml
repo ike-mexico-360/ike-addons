@@ -801,7 +801,7 @@
             <field name="sequence">1</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_1"/>
         </record>
-        <record id="ike_binnacle_stage_mail_template_5_2" model="mail.template">
+        <!-- <record id="ike_binnacle_stage_mail_template_5_2" model="mail.template">
             <field name="name">Binnacle stage mail template 5 2</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
@@ -821,20 +821,65 @@
             <field name="step_number">5</field>
             <field name="sequence">2</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_2"/>
-        </record>
-         <record id="ike_binnacle_stage_mail_template_5_3" model="mail.template">
+        </record> -->
+        <record id="ike_binnacle_stage_mail_template_5_3" model="mail.template">
             <field name="name">Binnacle stage mail template 5 3</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <strong>Best suppliers:</strong>
+                    <t t-set="last_supplier"
+                    t-value="max(object.service_product_ids.mapped('supplier_number') or [0])"/>
+
+
+                    <strong>Type assignation:</strong>
+                    <t t-set="supplier" t-value="object.service_supplier_ids[:1]"/>
+                    <t t-if="supplier and supplier.assignation_type">
+                        <t t-out="dict(supplier._fields['assignation_type']._description_selection(object.env)).get(supplier.assignation_type, '')"/>
+                        <br/>
+                    </t>
+                    <br/>
+
+                    <!-- Validar que exista subservicio -->
+                    <t t-if="object.sub_service_res_model and object.sub_service_res_id">
+
+                        <!-- Obtener el registro dinámico -->
+                        <t t-set="sub_service"
+                        t-value="object.env[object.sub_service_res_model].browse(object.sub_service_res_id)"/>
+
+                        <!-- Validar existencia y vehículos -->
+                        <t t-if="sub_service.exists() and sub_service.service_vehicle_type_ids">
+
+                            <strong>Vehicle selected:</strong>
+
+                            <ul>
+                                <t t-foreach="sub_service.service_vehicle_type_ids" t-as="vehicle">
+                                    <li>
+                                        <t t-out="vehicle.display_name"/>
+                                    </li>
+                                </t>
+                            </ul>
+
+                        </t>
+
+                        <t t-else="">
+                            <em>No vehicle selected.</em>
+                        </t>
+
+                    </t>
+
+                    <t t-else="">
+                        <em>No vehicle selected.</em>
+                    </t>
+                    <br/>
+
+                    <strong>supplier assigned:</strong>
 
                     <t t-set="suppliers" t-value="object.service_supplier_ids"/>
 
                     <t t-if="suppliers">
                         <ul>
-                            <t t-foreach="suppliers" t-as="supplier">
+                            <t t-foreach="suppliers.filtered(lambda s: s.supplier_number == last_supplier)" t-as="supplier">
                                 <t t-if="supplier.state == 'accepted' and supplier.selected">
                                     <li t-out="supplier.supplier_id.name"/>
                                 </t>
@@ -844,6 +889,89 @@
 
                     <t t-else="">
                         <em>No accepted suppliers selected.</em>
+                    </t>
+                    <br/>
+                    <strong>Concepts:</strong>
+
+                    <!-- Líneas sin cobertura del proveedor actual -->
+                    <t t-set="lines"
+                    t-value="object.service_product_ids.filtered(
+                        lambda l: l.supplier_number == object.supplier_number
+                        and not l.display_type
+                    )"/>
+
+                    <t t-set="valid_suppliers"
+                    t-value="object.selected_supplier_ids.filtered(
+                        lambda s: s.state not in ['cancel', 'cancel_supplier', 'cancel_event']
+                    )"/>
+
+                    <!-- Líneas con precio -->
+                    <t t-set="supplier_lines"
+                    t-value="env['ike.event.supplier.product'].search([
+                        ('event_id', '=', object.id),
+                        ('display_type', '=', False),
+                        ('parent_product_id', '=', False),
+                        ('event_supplier_link_id', 'in', valid_suppliers.mapped('supplier_link_id').ids)
+                    ])"/>
+
+                    <t t-if="lines">
+
+                        <!-- Inicializar subtotal -->
+                        <t t-set="subtotal" t-value="0"/>
+
+                        <table style="width:100%; border: 1px solid black; font-size:13px;">
+                            <thead style="background-color:#4a90e2; color:white;">
+                                <tr>
+                                    <th style="border:1px solid #000; padding:6px;" align="left">Concept</th>
+                                    <th style="border:1px solid #000; padding:6px;" align="right">Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="lines" t-as="line">
+
+                                    <!-- Cruzar por product_id -->
+                                    <t t-set="sl"
+                                    t-value="supplier_lines.filtered(
+                                        lambda x: x.product_id.id == line.product_id.id
+                                    ) and supplier_lines.filtered(
+                                        lambda x: x.product_id.id == line.product_id.id
+                                    )[0]"/>
+
+                                    <!-- Precio -->
+                                    <t t-set="price" t-value="sl.base_unit_price if sl else 0"/>
+
+                                    <!-- Acumular -->
+                                    <t t-set="subtotal" t-value="subtotal + price"/>
+
+                                    <tr>
+                                        <td style="border:1px solid #000; padding:6px;">
+                                            <t t-out="line.product_id.name or line.name"/>
+                                        </td >
+                                        <td style="border:1px solid #000; padding:6px;" align="right">
+                                            <t t-out="'${:,.2f}'.format(price)"/>
+                                        </td>
+                                    </tr>
+
+                                </t>
+
+                                <!-- SUBTOTAL -->
+                                <tr style="font-weight:bold; background-color:#f5f5f5;">
+                                    <td style="border:1px solid #000; padding:6px;" align="right">
+                                        <strong>Subtotal</strong>
+                                    </td>
+                                    <td style="border:1px solid #000; padding:6px;" align="right">
+                                        <strong>
+                                            <t t-out="'${:,.2f}'.format(subtotal)"/>
+                                        </strong>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-else="">
+                        <em>No out-of-coverage concepts</em>
                     </t>
                 </t>
             </field>
@@ -2077,7 +2205,7 @@
                     ])"/>
 
                     <table style="width:100%; border: 1px; solid: black; font-size:13px;">
-                        <thead>
+                        <thead style="background-color:#4a90e2; color:white;">
                             <tr>
                                 <th style="border:1px solid #000; padding:6px;">Concept</th>
                                 <th style="border:1px solid #000; padding:6px;">quantity</th>

@@ -295,4 +295,4 @@ export const systrayItem = {
     Component: UserNotificationMenu,
 };
 
-registry.category("systray").add("UserNotificationMenu", systrayItem);
+// registry.category("systray").add("UserNotificationMenu", systrayItem);

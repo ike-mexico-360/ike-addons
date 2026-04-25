@@ -9,7 +9,7 @@ class IkeEventProduct(models.Model):
     _description = 'Event Concept'
     _order = 'sequence, id'
 
-    event_id = fields.Many2one('ike.event', required=True)
+    event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
     supplier_number = fields.Integer(default=1, required=True)
 
     sequence = fields.Integer(default=1050)
@@ -340,7 +340,13 @@ class IkeEventSupplierProduct(models.Model):
         return res
 
     def write(self, vals):
-        if not vals.get('authorization_pending', False) and 'subtotal' in vals and vals['subtotal'] > self.subtotal:
+        if (
+            ('authorization_pending' not in vals or not vals['authorization_pending'])
+            and (
+                'subtotal' in vals and vals['subtotal'] < self.subtotal
+                or vals.get('quantity', self.quantity) * vals.get('unit_price', self.unit_price) > vals.get('subtotal', self.subtotal)
+            )
+        ):
             vals['authorization_pending'] = True
 
         return super().write(vals)

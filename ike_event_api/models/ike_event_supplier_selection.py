@@ -1,10 +1,14 @@
 # -*- coding: utf-8 -*-
 
+import time
 import json
 import logging
 import requests
+import threading
+
+from odoo import models, fields, api, SUPERUSER_ID
+from odoo.modules.registry import Registry
 from odoo.tools import html2plaintext
-from odoo import models, fields
 
 _logger = logging.getLogger(__name__)
 
@@ -25,7 +29,7 @@ class IkeEventSupplierSelection(models.Model):
             "code": 211,
             "description": "Arrastre de grúa"
         },
-        "battery_charge": {
+        "battery_jump": {
             "id": "4bf0fbe9-dc04-4f1a-b1c5-832379b24542",
             "code": 212,
             "description": "Paso de corriente"
@@ -42,7 +46,7 @@ class IkeEventSupplierSelection(models.Model):
         },
     }
 
-    # === Private methdos === #
+    # === PRIVATE METHODS === #
     def _is_db_neutralized(self):
         return self.env['ir.config_parameter'].sudo().get_param('database.is_neutralized')
 
@@ -159,7 +163,7 @@ class IkeEventSupplierSelection(models.Model):
 
         return survey
 
-    # === AUXILIAR METHODS === #
+    # === AUX METHODS === #
     def operator_app_notify(
         self, url: str, user_id: str, vehicle_id: str, service_id: str, ca_id: str, lat: str, lng: str, dst_lat: str,
         dst_lng: str, control: str, assignation_type: str, status: str, event_supplier_id: str, user_code: str,
@@ -335,7 +339,7 @@ class IkeEventSupplierSelection(models.Model):
             return False
 
     # === Override methods === #
-    def action_notify_cancelation_to_app(self, url: str, origin: str = 'internal'):
+    def action_notify_cancellation_to_app(self, url: str, origin: str = 'internal'):
         for rec in self:
             headers = {"Content-Type": "application/json"}
             body = {
@@ -498,29 +502,83 @@ class IkeEventSupplierSelection(models.Model):
 
         return super().action_notify_operator()
 
-    def action_accept(self):
-        res = super().action_accept()
-        # IMP - Send user code to Whatsapp
-        # -- Al asignar proveedor, se notifica por whatsapp
+    def _async_send_notification(self, db_name, record_ids, action_name, *args):
+        """Thread to send notification"""
+        db_registry = Registry(db_name)
+        with db_registry.cursor() as cr:
+            env = api.Environment(cr, SUPERUSER_ID, {})
 
-        # Enviar solo 1 vez, si es el primero que se acepta
+            records = env['ike.event.supplier'].browse(record_ids).sudo()
+            method = getattr(records, action_name, None)
+            if callable(method):
+                method(*args)
+
+    def action_accept(self):
+        """OVERRIDE: send user notification"""
+        res = super().action_accept()
         selected_suppliers = self.filtered(lambda x: x.selected)
+        # FixMe: check len == 1 makes no sense.
         if len(selected_suppliers) == 1:
+            threading.Thread(
+                target=self._async_send_notification,
+                args=(self.env.cr.dbname, selected_suppliers.ids, '_send_notification_accept'),
+                daemon=True
+            ).start()
+        return res
+
+    def _send_notification_accept(self):
+        try:
+            time.sleep(30)
+            wp_access_token = self.x_get_whatsapp_token()
+
+            if not wp_access_token:
+                _logger.error("WP Send user code: Error al obtener el token de acceso")
+
+            if wp_access_token:
+                supplier = self[0]
+                decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
+                phone_number = decrypt_encrypt_utility_sudo.decrypt_aes256(supplier.event_id.user_id.phone or '')
+
+                parameter = f"de su servicio ha iniciado, el vehículo asignado es {supplier.truck_id.name},"\
+                    f" con matrícula {supplier.truck_id.license_plate}. Deberá proporcionar el siguiente"\
+                    f" código #{supplier.event_id.user_code} a"
+                successfully_sent = supplier.x_send_whatsapp_template(
+                    access_token=wp_access_token,
+                    event_id=str(supplier.event_id.id),
+                    template=71,  # CodigoVerificador
+                    phone_number=phone_number,
+                    parameter=parameter,
+                )
+                if successfully_sent:
+                    _logger.info(f"WP Send user code: {parameter}")
+                else:
+                    _logger.error("WP Send user code: Error al enviar el código de usuario")
+        except Exception as e:
+            _logger.error(f"WP Send user code: Error al enviar el código de usuario: {str(e)}")
+
+    def _send_notification_accept_backup(self, db_name, record_ids):
+        """Thread to send notification: accept"""
+        db_registry = Registry(db_name)
+        with db_registry.cursor() as cr:
+            env = api.Environment(cr, SUPERUSER_ID, {})
+
+            records = env['ike.event.supplier'].browse(record_ids).sudo()
+
             try:
-                wp_access_token = self.x_get_whatsapp_token()
+                wp_access_token = records.x_get_whatsapp_token()
 
                 if not wp_access_token:
                     _logger.error("WP Send user code: Error al obtener el token de acceso")
 
                 if wp_access_token:
-                    supplier = self[0]
-                    decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
+                    supplier = records[0]
+                    decrypt_encrypt_utility_sudo = records.env['custom.encryption.utility'].sudo()
                     phone_number = decrypt_encrypt_utility_sudo.decrypt_aes256(supplier.event_id.user_id.phone or '')
 
                     parameter = f"de su servicio ha iniciado, el vehículo asignado es {supplier.truck_id.name},"\
                         f" con matrícula {supplier.truck_id.license_plate}. Deberá proporcionar el siguiente"\
                         f" código #{supplier.event_id.user_code} a"
-                    successfully_sent = self.x_send_whatsapp_template(
+                    successfully_sent = supplier.x_send_whatsapp_template(
                         access_token=wp_access_token,
                         event_id=str(supplier.event_id.id),
                         template=71,  # CodigoVerificador
@@ -533,7 +591,6 @@ class IkeEventSupplierSelection(models.Model):
                         _logger.error("WP Send user code: Error al enviar el código de usuario")
             except Exception as e:
                 _logger.error(f"WP Send user code: Error al enviar el código de usuario: {str(e)}")
-        return res
 
     def action_cancel(self, cancel_reason_id: int, reason_text=None):
         # Implement: Notify cancel from internal to app
@@ -544,7 +601,7 @@ class IkeEventSupplierSelection(models.Model):
         if not global_app_notification_url:
             _logger.warning("No se ha configurado la URL de notificación global a la app")
         if self_filtered and global_app_notification_url:
-            self_filtered.action_notify_cancelation_to_app(global_app_notification_url, 'internal')
+            self_filtered.action_notify_cancellation_to_app(global_app_notification_url, 'internal')
         return res
 
     def action_event_cancel(self, cancel_reason_id: int, reason_text=None):
@@ -556,7 +613,7 @@ class IkeEventSupplierSelection(models.Model):
         if not global_app_notification_url:
             _logger.warning("No se ha configurado la URL de notificación global a la app")
         if self_filtered and global_app_notification_url:
-            self_filtered.action_notify_cancelation_to_app(global_app_notification_url, 'event')
+            self_filtered.action_notify_cancellation_to_app(global_app_notification_url, 'event')
         return res
 
     def action_supplier_cancel(self, cancel_reason_id: int, reason_text=None):
@@ -571,7 +628,7 @@ class IkeEventSupplierSelection(models.Model):
         if not global_app_notification_url:
             _logger.warning("No se ha configurado la URL de notificación global a la app")
         if self_filtered and global_app_notification_url:
-            self_filtered.action_notify_cancelation_to_app(global_app_notification_url, 'portal')
+            self_filtered.action_notify_cancellation_to_app(str(global_app_notification_url), 'portal')
         return res
 
 
@@ -579,7 +636,7 @@ class IkeEventSupplierElapsedTime(models.Model):
     _name = 'ike.event.supplier.elapsed_time'
     _description = 'Event Supplier Elapsed Time'
 
-    event_id = fields.Many2one('ike.event', required=True)
+    event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
     vehicle_id = fields.Many2one('fleet.vehicle', required=True)
     stage_id = fields.Many2one('ike.service.stage', required=True)
     app_timestamp = fields.Datetime(required=True)

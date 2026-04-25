@@ -196,7 +196,7 @@ class IkeEventSupplier(models.Model):
     def _compute_event_supplier_summary_data(self):
         for rec in self:
             event_summary_supplier_data = ""
-            states = ('searching', 'assigned', 'in_progress', 'completed', 'cancel')
+            states = ('searching', 'assigned', 'in_progress', 'completed', 'verifying', 'close', 'cancel', 'cancel_subsequently')
             if rec.event_id.service_ref == 'vial' and rec.event_id.stage_ref in states:
                 # Modelo de detalles del vehículo al que se le dará el servicio
                 vial_res_model = rec.event_id.service_res_model
@@ -556,7 +556,7 @@ class IkeEventSupplierLink(models.Model):
     _name = 'ike.event.supplier.link'
     _description = 'Event Supplier Link'
 
-    event_id = fields.Many2one('ike.event', required=True)
+    event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
     supplier_id = fields.Many2one('res.partner', required=True, index=True, readonly=True)
     supplier_number = fields.Integer(required=True, readonly=True, default=1)
 
@@ -704,13 +704,14 @@ class IkeEventSupplierLink(models.Model):
 
     def action_accept_authorization(self):
         self.ensure_one()
-        authorized_amount = self.event_id.previous_amount + self.event_id.current_amount
+        event_id = self.event_id.sudo()
+        authorized_amount = max(event_id.previous_amount + event_id.current_amount, event_id.covered_amount)
         authorizer = (
             self.nu_user_id.display_name
             if self.authorization_by_nu
             else self.authorizer_id.display_name
         )
-        self.sudo().event_id.authorized_amount = authorized_amount
+        event_id.authorized_amount = authorized_amount
         event_authorization_id = self.sudo().env['ike.event.authorization'].create({
             'event_id': self.event_id.id,
             'supplier_id': self.supplier_id.id,
@@ -722,10 +723,10 @@ class IkeEventSupplierLink(models.Model):
             'authorizer_id': self.authorizer_id and self.authorizer_id.id,
             'authorizer': authorizer,
         })
-        self.sudo().event_id.accept_authorization(event_authorization_id.id)
+        event_id.accept_authorization(event_authorization_id.id)
 
         # Start automatic notifications
-        self.sudo().event_id.action_start_notifications()
+        event_id.action_start_notifications()
 
     def action_reject_authorization(self):
         self.ensure_one()

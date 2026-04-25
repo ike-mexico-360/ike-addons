@@ -184,7 +184,7 @@ class IkeEventAuthorization(models.Model):
     _order = 'id desc'
 
     # === KEY FIELDS === #
-    event_id = fields.Many2one('ike.event', required=True)
+    event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
     supplier_id = fields.Many2one('res.partner', required=True)
     supplier_number = fields.Integer(default=1, required=True)
 

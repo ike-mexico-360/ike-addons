@@ -20,7 +20,7 @@ class IkeEventBase(models.AbstractModel):
         readonly=True,
         index=True,
         default=lambda self: self.env.company)
-    parent_id = fields.Many2one('ike.event', readonly=True, copy=False)
+    parent_id = fields.Many2one('ike.event', ondelete='cascade', readonly=True, copy=False)
 
     # Flow fields
     stage_id = fields.Many2one('ike.event.stage', index=True, copy=False)

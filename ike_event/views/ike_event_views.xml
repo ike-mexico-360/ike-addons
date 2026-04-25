@@ -89,7 +89,7 @@
         <field name="arch" type="xml">
             <!-- class="ike-show-table-buttons" is used to show the buttons in the list view -->
             <!-- js_class="ike_event_screen_list" is used to use the custom renderer -->
-            <list js_class="ike_event_screen_list" class="ike-show-table-buttons" edit="false" duplicate="false" delete="false">
+            <list js_class="ike_event_screen_list" class="ike-show-table-buttons" edit="0" duplicate="0" delete="0">
                 <header>
                 </header>
                 <field name="name"/>

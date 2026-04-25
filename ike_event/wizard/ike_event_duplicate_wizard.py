@@ -8,7 +8,7 @@ class IkeEventDuplicateWizard(models.TransientModel):
     _description = "Duplicate event wizard"
 
     # EVENT ID
-    event_id = fields.Many2one('ike.event')
+    event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
     duplicate_reason_id = fields.Many2one('ike.event.duplicate.reason', domain="[('disabled', '=', False)]")
 
     # NU FIELDS

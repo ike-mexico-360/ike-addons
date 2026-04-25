@@ -7,7 +7,7 @@ class IkeEventVehicleWizard(models.TransientModel):
     _name = 'ike.event.vehicle.wizard'
     _description = 'Event Vehicle Info Wizard'
 
-    event_id = fields.Many2one('ike.event', readonly=True)
+    event_id = fields.Many2one('ike.event', ondelete='cascade', required=True, readonly=True)
     latitude = fields.Char(related='event_id.location_latitude')
     longitude = fields.Char(related='event_id.location_longitude')
 

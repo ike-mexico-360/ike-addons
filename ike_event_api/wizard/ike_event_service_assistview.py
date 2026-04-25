@@ -7,7 +7,7 @@ class IkeEventServiceAssistView(models.TransientModel):
     _name = 'ike.event.service.assistview'
     _description = 'Service Assist View'
 
-    event_id = fields.Many2one('ike.event', string='Event', required=True)
+    event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
     # service_id = fields.Many2one('ike.service', string='Service', required=True)
     service_res_model = fields.Char(string='Service Resource Model')
     service_res_id = fields.Integer(string='Service Resource ID')

@@ -119,18 +119,24 @@ class IkeEventSupplierSelection(models.Model):
 
     def action_notify(self):
         self_filtered = self.filtered(lambda x: x.state == 'available')
+        if not self_filtered:
+            return
         self_filtered.state = 'notified'
         self_filtered.notification_date = fields.Datetime.now()
         self_filtered.broadcastReload()
 
     def action_notify_operator(self):
         self_filtered = self.filtered(lambda x: x.state == 'accepted')
+        if not self_filtered:
+            return
         self_filtered.state = 'assigned'
         self_filtered.assignation_date = fields.Datetime.now()
         self_filtered.broadcastReload()
 
     def action_accept(self):
         self_filtered = self.filtered(lambda x: x.state == 'notified')
+        if not self_filtered:
+            return
         self_filtered.state = 'accepted'
         self_filtered.selected = True
         self_filtered.acceptance_date = fields.Datetime.now()
@@ -191,6 +197,8 @@ class IkeEventSupplierSelection(models.Model):
 
     def action_reject(self):
         self_filtered = self.filtered(lambda x: x.state == 'notified')
+        if not self_filtered:
+            return
         self_filtered.state = 'rejected'
         self_filtered.rejection_date = fields.Datetime.now()
         self_filtered.broadcastReload()
@@ -199,6 +207,8 @@ class IkeEventSupplierSelection(models.Model):
 
     def action_timeout(self):
         self_filtered = self.filtered(lambda x: x.state == 'notified')
+        if not self_filtered:
+            return
         self_filtered.state = 'timeout'
         self_filtered.rejection_date = fields.Datetime.now()
         self_filtered.broadcastReload()
@@ -207,6 +217,8 @@ class IkeEventSupplierSelection(models.Model):
 
     def action_expire(self):
         self_filtered = self.filtered(lambda x: x.state == 'notified')
+        if not self_filtered:
+            return
         self_filtered.state = 'expired'
         self_filtered.rejection_date = fields.Datetime.now()
         self_filtered.broadcastReload()

@@ -98,7 +98,7 @@ export class IkeEventSystray extends Component {
         this.subscriptions = {};
         for (let subscription in SUBSCRIPTIONS) {
             this.subscriptions[subscription] = (payload, { id }) => {
-                // console.log(subscription, payload, id);
+                console.log(subscription, payload, id);
                 this["broadcast" + subscription](payload);
             };
             this.busService.subscribe(SUBSCRIPTIONS[subscription], this.subscriptions[subscription]);

@@ -27,7 +27,7 @@ class IkeEventAffiliationUser(models.TransientModel):
         related='account_id.account_id.x_second_key_identification_id',
         readonly=True
     )
-    key_primary = fields.Char(required=True)
+    key_primary = fields.Char(required=False)
     key_second = fields.Char()
     label_identification_primary = fields.Char(related="account_identification_id.label", string="label")
     label_identification_second = fields.Char(related="account_identification_second_id.label")

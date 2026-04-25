@@ -7,7 +7,7 @@ class IkeEventSupplierBase(models.AbstractModel):
     _description = 'Event Supplier Base'
 
     # Key Fields
-    event_id = fields.Many2one('ike.event', required=True)
+    event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
     event_stage_ref = fields.Char(related='event_id.stage_ref', string='Stage Ref')
     sequence = fields.Integer(default=5, required=True)
     folio = fields.Char(readonly=True, copy=False)

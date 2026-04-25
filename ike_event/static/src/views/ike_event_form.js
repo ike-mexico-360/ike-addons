@@ -38,6 +38,7 @@ export class IkeEventFormController extends FormController {
         });
     }
     async broadcastSupplierReload(payload) {
+        console.log("broadcastSupplierReload", payload);
         if (!payload || !payload.data || !payload.data.length) {
             return;
         }

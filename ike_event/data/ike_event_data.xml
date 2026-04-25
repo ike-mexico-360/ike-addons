@@ -193,37 +193,39 @@
         <field name="last_stage">True</field>
     </record>
     <!-- Configuration -->
-    <record id="ike_supplier_assignment_electronic" model="ike.event.supplier.assignment.type">
-        <field name="name">Electronic</field>
-        <field name="sequence">1</field>
-        <field name="wait_time">40</field>
-        <field name="geofence_radius_meters">3500</field>
-        <field name="geofence_radius">3.5</field>
-        <field name="arrival_duration">35</field>
-        <field name="max_suppliers">6</field>
-        <field name="by_priority">False</field>
-        <field name="total_assignment_time">240</field>
-    </record>
-    <record id="ike_supplier_assignment_publication" model="ike.event.supplier.assignment.type">
-        <field name="name">Publication</field>
-        <field name="sequence">2</field>
-        <field name="wait_time">80</field>
-        <field name="geofence_radius_meters">5000</field>
-        <field name="geofence_radius">5</field>
-        <field name="arrival_duration">40</field>
-        <field name="max_suppliers">0</field>
-        <field name="by_priority">True</field>
-        <field name="total_assignment_time">80</field>
-    </record>
-    <record id="ike_supplier_assignment_manual" model="ike.event.supplier.assignment.type">
-        <field name="name">Manual</field>
-        <field name="sequence">3</field>
-        <field name="wait_time">0</field>
-        <field name="geofence_radius_meters">8000</field>
-        <field name="geofence_radius">8</field>
-        <field name="arrival_duration">50</field>
-        <field name="max_suppliers">0</field>
-        <field name="by_priority">False</field>
-        <field name="total_assignment_time">0</field>
-    </record>
+    <data noupdate="0">
+        <record id="ike_supplier_assignment_electronic" model="ike.event.supplier.assignment.type">
+            <field name="name">Electronic</field>
+            <field name="sequence">1</field>
+            <field name="wait_time">400</field>
+            <field name="geofence_radius_meters">3500</field>
+            <field name="geofence_radius">3.5</field>
+            <field name="arrival_duration">35</field>
+            <field name="max_suppliers">6</field>
+            <field name="by_priority">False</field>
+            <field name="total_assignment_time">240</field>
+        </record>
+        <record id="ike_supplier_assignment_publication" model="ike.event.supplier.assignment.type">
+            <field name="name">Publication</field>
+            <field name="sequence">2</field>
+            <field name="wait_time">800</field>
+            <field name="geofence_radius_meters">5000</field>
+            <field name="geofence_radius">5</field>
+            <field name="arrival_duration">40</field>
+            <field name="max_suppliers">0</field>
+            <field name="by_priority">True</field>
+            <field name="total_assignment_time">80</field>
+        </record>
+        <record id="ike_supplier_assignment_manual" model="ike.event.supplier.assignment.type">
+            <field name="name">Manual</field>
+            <field name="sequence">3</field>
+            <field name="wait_time">0</field>
+            <field name="geofence_radius_meters">8000</field>
+            <field name="geofence_radius">8</field>
+            <field name="arrival_duration">50</field>
+            <field name="max_suppliers">0</field>
+            <field name="by_priority">False</field>
+            <field name="total_assignment_time">0</field>
+        </record>
+    </data>
 </odoo>

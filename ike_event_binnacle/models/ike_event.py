@@ -318,6 +318,7 @@ class IkeEvent(models.Model):
             if rec.stage_id != previous_stage:
                 if rec.stage_id == self.env.ref('ike_event.ike_event_stage_closed'):
                     rec._create_message_binnacle([
+                        "ike_event_binnacle.ike_binnacle_stage_10_4",
                         "ike_event_binnacle.ike_binnacle_stage_10_2"
                     ])
                 elif rec.stage_id == self.env.ref('ike_event.ike_event_stage_verifying'):
@@ -343,7 +344,7 @@ class IkeEventSupplier(models.Model):
     def action_assign(self):
         result = super(IkeEventSupplier, self).action_assign()
         for rec in self:
-            rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_2"])
+            # rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_2"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_3"])
             # rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_4"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_5"])
@@ -428,6 +429,11 @@ class IkeEventSupplier(models.Model):
                 current_date=ctx.get('binnacle_current_date') or rec.finalized_date,
                 comment=ctx.get('binnacle_comment') or rec.finalized_comment,
             )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_22"])
+
+            if rec.event_id.stage_ref == 'completed':
+                rec.event_id._create_message_binnacle([
+                    "ike_event_binnacle.ike_binnacle_stage_10_1"
+                ])
         return result
 
     def action_reject(self):
@@ -453,7 +459,6 @@ class IkeEventSupplier(models.Model):
         return result
 
     def action_accept(self):
-        result = super().action_accept()
         for rec in self:
             rec.event_id.with_context(
                 supplier=rec.supplier_id.name,
@@ -461,10 +466,11 @@ class IkeEventSupplier(models.Model):
             )._create_message_binnacle([
                 "ike_event_binnacle.ike_binnacle_stage_11_4"
             ])
-            rec.event_id.with_context(
-                supplier=rec.supplier_id.name,
-                truck_id=rec.truck_id.id
-            )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_2"])
+        result = super().action_accept()
+        self.event_id.with_context(
+            supplier=self.supplier_id.name,
+            truck_id=self.truck_id.id
+        )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_2"])
         return result
 
     def action_notify(self):

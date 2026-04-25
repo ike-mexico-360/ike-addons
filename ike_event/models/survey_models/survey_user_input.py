@@ -9,7 +9,7 @@ from odoo.exceptions import UserError
 class SurveyUserInput(models.Model):
     _inherit = 'survey.user_input'
 
-    event_id = fields.Many2one('ike.event', readonly=True)
+    event_id = fields.Many2one('ike.event', ondelete='set null', readonly=True)
 
     def set_event_summary_survey_data(self):
         """Survey Data"""

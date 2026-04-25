@@ -49,7 +49,7 @@
                     </group>
 
                     <group>
-                        <field name="clause_primary" invisible="not check_clause"  required="check_clause"/>
+                        <field name="clause_primary" invisible="not check_clause"  required="0"/>
                         <field name="clause_second" invisible="not check_clause_second" required="check_clause_second"/>
                     </group>
                 </group>

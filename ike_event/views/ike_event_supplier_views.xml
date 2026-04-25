@@ -285,10 +285,13 @@
                             <h3 colspan="2"><field name="subservice_id" nolabel="1" readonly="1" options="{'no_open': True, 'no_create': True}" context="{'display_default_code': 0}"/></h3>
                         </group>
                         <group class="text-end" colspan="8">
-                            <button string="Watches" class="btn btn-primary fa-clock" type="object" name="open_change_state_supplier_wizard"
-                            invisible="stage_ref in ['cancel', 'preparing'] or
-                                event_stage_ref in ['cancel', 'cancel_subsequently', 'close'] or cancelled"/>
-                            <button string="Cancel supplier" class="btn btn-danger" type="object" name="open_cancel_wizard" invisible="cancelled"/>
+                            <div class="d-flex justify-content-between w-100">
+                                <button string="Watches" class="btn btn-primary fa-clock" type="object" name="open_change_state_supplier_wizard"
+                                    invisible="stage_ref in ['cancel', 'preparing'] or
+                                        event_stage_ref in ['verifying', 'cancel', 'cancel_subsequently', 'close'] or cancelled"/>
+                                <button string="Cancel supplier" class="btn btn-danger ms-auto" type="object" name="open_cancel_wizard"
+                                    invisible="event_stage_ref in ['completed', 'verifying','cancel', 'cancel_subsequently', 'close'] or cancelled"/>
+                            </div>
                         </group>
                     </group>
                     <group>
@@ -298,7 +301,8 @@
                                 <button
                                     name="action_view_products"
                                     string="Additional concepts"
-                                    invisible="stage_ref not in ['contacted', 'arrived_2', 'arrived']"
+                                    invisible="stage_ref not in ['contacted', 'arrived_2', 'arrived'] or
+                                        event_stage_ref in ['verifying', 'cancel', 'cancel_subsequently', 'close'] or cancelled"
                                     context="{'from_event_authorization': True}"
                                     type="object" class="btn btn-primary rounded-4 py-1"
                                 />

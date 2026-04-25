@@ -121,15 +121,14 @@ class IkeEvent(models.Model):
     def _check_to_send_whatsapp_notification(self):
         """Send whatsapp notifications"""
         in_progress_stage_ref = self.env.ref('ike_event.ike_event_stage_in_progress').ref
-        end_stage_ref = self.env.ref('ike_event.ike_event_stage_completed').ref
+        close_stage_ref = self.env.ref('ike_event.ike_event_stage_closed').ref
         for rec in self:
             try:
                 # Evento en progreso
                 if rec.stage_ref == in_progress_stage_ref and rec.step_number == 1:
                     rec._ike_event_send_whatsapp_notification('in_progress')
-                # Evento concluido
-                elif rec.stage_ref == end_stage_ref and rec.step_number == 1:
-                    rec._ike_event_send_whatsapp_notification('completed')
+                elif rec.stage_ref == close_stage_ref:
+                    rec._ike_event_send_whatsapp_notification('close')
             except Exception as e:
                 _logger.error(f'Error al enviar notificación WhatsApp: {str(e)}', exc_info=True)
 
@@ -157,7 +156,7 @@ class IkeEvent(models.Model):
                 )
 
         # Si cambia a concluido, se envían 70 y 73
-        elif stage_ref == 'completed':
+        elif stage_ref == 'close':
             wp_access_token = self.env['ike.event.supplier'].x_get_whatsapp_token()
             self.env['ike.event.supplier'].x_send_whatsapp_template(
                 access_token=wp_access_token,

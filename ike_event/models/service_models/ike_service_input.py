@@ -9,7 +9,7 @@ class IkeServiceInput(models.AbstractModel):
     _description = 'Service Input'
 
     name = fields.Char(copy=False)
-    event_id = fields.Many2one('ike.event', required=True, ondelete='cascade', index=True)
+    event_id = fields.Many2one('ike.event', ondelete='cascade', required=True, index=True)
     stage_ref = fields.Char(related='event_id.stage_ref')
     step_number = fields.Integer(related='event_id.step_number')
     event_supplier_number = fields.Integer(related='event_id.supplier_number', readonly=True)

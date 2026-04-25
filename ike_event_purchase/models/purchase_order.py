@@ -19,7 +19,7 @@ class PurchaseOrder(models.Model):
         ('consolidated', 'Consolidated'),
         ('purchase',),  # Ancla de posición
     ])
-    x_event_id = fields.Many2one('ike.event', 'Event')
+    x_event_id = fields.Many2one('ike.event', string='Event', ondelete='set null')
     x_sub_service_id = fields.Many2one('product.product', string='Subservice')
     x_membership_plan_id = fields.Many2one('custom.membership.plan', string='Membership Plan')
     x_dispute_state = fields.Selection([
@@ -634,3 +634,28 @@ class PurchaseOrder(models.Model):
                 _logger.warning(f'PO-SAP: Error al crear la orden en SAP: {str(e)}')
                 purchase_reponses.append(empty_response)
         return purchase_reponses
+
+    @api.model
+    def _cron_done_tickets_from_draft_po(self):
+        """
+        Search for draft Purchase Orders based and process their associated helpdesk tickets.
+        """
+        # Get the current date relative to the user/server context
+        today = fields.Date.context_today(self)
+
+        domain = [
+            ('state', '=', 'draft'),
+            ('x_event_id', '!=', False),
+            ('date_planned', '<=', today),
+            ('sh_purchase_ticket_ids', '!=', False)
+        ]
+
+        orders = self.search(domain)
+        _logger.info("Found %s Purchase Orders to process for ticket completion", len(orders))
+        for order in orders:
+            try:
+                order.x_portal_action_accept_prices()
+            except Exception as e:
+                _logger.error("Failed to process tickets for PO %s: %s", order.name, str(e))
+
+        return True

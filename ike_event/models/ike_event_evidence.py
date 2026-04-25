@@ -11,7 +11,7 @@ class IkeEventEvidence(models.Model):
     _description = 'Event Evidence'
     _rec_name = 'event_id'
 
-    event_id = fields.Many2one('ike.event', required=True)
+    event_id = fields.Many2one('ike.event', required=True, ondelete='cascade')
     event_supplier_id = fields.Many2one('ike.event.supplier', ondelete='set null')
 
     evidence_type = fields.Selection([

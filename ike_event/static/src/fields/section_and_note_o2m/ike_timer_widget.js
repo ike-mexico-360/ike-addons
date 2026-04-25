@@ -180,12 +180,12 @@ export class IkeTimerWidget extends Component {
     async onTimeout() {
         this.stopTimer();
         await this._executeAction(this.props.record, "action_timeout");
-        const msg = this.props.record.data.name;
-        this.notification.add(msg, {
-            title: _t("Timeout"),
-            type: "info",
-            sticky: false,
-        });
+        // const msg = this.props.record.data.name;
+        // this.notification.add(msg, {
+        //     title: _t("Timeout"),
+        //     type: "info",
+        //     sticky: false,
+        // });
     }
 
     formatTime(seconds) {
@@ -247,7 +247,7 @@ export class IkeTimerWidget extends Component {
         return odoo.debug && !['available', 'notified'].includes(this.state.current_state);
     }
     get showNotification() {
-        return this.state.current_state == 'available' && (this.state.is_manual || this.state.assignation_type == 'manual');
+        return this.state.current_state == 'available' && (this.state.is_manual || ['manual'].includes(this.state.assignation_type));
     }
 };
 

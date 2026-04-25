@@ -108,8 +108,8 @@ class IkeEvent(models.Model):
 
     # Authorization
     event_cost = fields.Char(string='Cost', default='$0.00', copy=False)
-    covered_amount = fields.Float(tracking=True, copy=False)
-    authorized_amount = fields.Float(tracking=True, copy=False)
+    covered_amount = fields.Float(copy=False)
+    authorized_amount = fields.Float(copy=False)
 
     # Event Summary
     event_summary_id = fields.Many2one('ike.event.summary', copy=False)

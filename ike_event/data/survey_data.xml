@@ -4,10 +4,12 @@
         <!-- Surveys Services -->
         <record id="survey_vial" model="survey.survey">
             <field name="title">Survey Vial Test</field>
+            <field name="active">0</field>
         </record>
 
         <record id="survey_medical" model="survey.survey">
             <field name="title">Survey Medical Test</field>
+            <field name="active">0</field>
         </record>
         <record id="survey_medical_question_1" model="survey.question">
             <field name="title">Is a Human?</field>
@@ -36,18 +38,22 @@
 
         <record id="survey_home" model="survey.survey">
             <field name="title">Survey Home Test</field>
+            <field name="active">0</field>
         </record>
 
         <record id="survey_legal" model="survey.survey">
             <field name="title">Survey Legal Test</field>
+            <field name="active">0</field>
         </record>
 
         <record id="survey_pets" model="survey.survey">
             <field name="title">Survey Pets Test</field>
+            <field name="active">0</field>
         </record>
 
         <record id="survey_vial_truck" model="survey.survey">
             <field name="title">Survey Vial Truck Test</field>
+            <field name="active">0</field>
         </record>
         <record id="survey_vial_truck_question_1" model="survey.question">
             <field name="title">Armored</field>
@@ -177,6 +183,7 @@
 
         <record id="survey_vial_tire" model="survey.survey">
             <field name="title">Survey Vial Tire Change Test</field>
+            <field name="active">0</field>
         </record>
         <record id="survey_vial_tire_question_1" model="survey.question">
             <field name="title">Spare Tire</field>
@@ -209,6 +216,7 @@
 
         <record id="survey_medical_consultation" model="survey.survey">
             <field name="title">Survey Medical Consultation Test</field>
+            <field name="active">0</field>
         </record>
         <record id="survey_medical_consultation_question_1" model="survey.question">
             <field name="title">Question 01?</field>

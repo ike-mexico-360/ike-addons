@@ -1098,8 +1098,8 @@ class IkeEvent_Search(models.Model):
             # Set Authorization Data
             authorized = (self.previous_amount + supplier_link_id.estimated_cost) <= self.authorized_amount
             for product_id in supplier_link_id.supplier_product_ids:
-                if authorized:
-                    product_id.authorization_pending = False
+                if authorized and product_id.subtotal > 0:
+                    product_id.authorization_pending = False or not product_id.covered
                     if current_authorization_ids:
                         product_id.authorization_ids = [Command.create({
                             'event_authorization_id': current_authorization_ids[0].id,

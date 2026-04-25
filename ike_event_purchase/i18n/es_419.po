@@ -170,7 +170,7 @@ msgid ""
 "<span class=\"d-none d-md-inline\">Request for Quotation #</span>\n"
 "                            <span class=\"d-block d-md-none\">Ref.</span>"
 msgstr ""
-"<span class=\"d-none d-md-inline\">Solicitud de cotización #</span>\n"
+"<span class=\"d-none d-md-inline\">Revisión de Costos #</span>\n"
 "                            <span class=\"d-block d-md-none\">Ref.</span>"
 
 #. module: ike_event_purchase
@@ -1093,6 +1093,7 @@ msgstr "Debe especificar el motivo del cambio"
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
 msgid "IKE Price"
 msgstr "Precio IKE"
 
@@ -1120,7 +1121,10 @@ msgstr "cerrar"
 msgid "day(s) before"
 msgstr "día(s) antes"
 
-
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
+msgid "Event"
+msgstr "Evento"
 
 #. module: ike_event_purchase
 #: model:mail.template,subject:ike_event_purchase.ike_event_purchase_proposal_dispute_ticket

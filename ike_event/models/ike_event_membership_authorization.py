@@ -9,7 +9,7 @@ class IkeEventMembershipAuthorization(models.Model):
     _order = 'id desc'
 
     # === KEY FIELDS === #
-    event_id = fields.Many2one('ike.event', required=True)
+    event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
     nus_membership_id = fields.Many2one('custom.membership.nus', required=True)
 
     # === FIELDS === #
