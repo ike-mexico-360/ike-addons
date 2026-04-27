@@ -362,7 +362,7 @@
                                         type="object"
                                         invisible="stage_ref != 'verifying'"
                                         class="btn btn-primary rounded-4 py-1"
-                                        groups="custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds"/>
+                                        groups="base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_boss"/>
                                 </div>
                                 <div class="mb-2">
                                     <button class="btn btn-primary rounded-4 py-1" >Send whatsapp info</button>

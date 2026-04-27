@@ -318,7 +318,7 @@ class PurchaseOrder(models.Model):
     def action_rfq_send_one_step(self):
         """Sends the RFQ email by executing the mail composer wizard."""
         self.ensure_one()
-        if self.state in ['draft', 'sent']:
+        if self.state in ['draft', 'sent'] and not self.env.user.has_group('custom_master_catalog.custom_group_event_coordinator'):
             action_data = self.action_rfq_send()
             ctx = action_data.get('context', {})
             ir_model_data = self.env['ir.model.data']
@@ -647,7 +647,8 @@ class PurchaseOrder(models.Model):
             ('state', '=', 'draft'),
             ('x_event_id', '!=', False),
             ('date_planned', '<=', today),
-            ('sh_purchase_ticket_ids', '!=', False)
+            ('sh_purchase_ticket_ids', '!=', False),
+            ('x_dispute_state', '=', 'none'),
         ]
 
         orders = self.search(domain)

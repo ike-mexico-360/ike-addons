@@ -366,8 +366,8 @@ class IkeEvent(models.Model):
             self.stage_id = self.env.ref('ike_event.ike_event_stage_verifying').id
 
     def action_close(self):
-        self.stage_id = self.env.ref('ike_event.ike_event_stage_closed').id
         self.action_create_satisfaction_survey()
+        self.stage_id = self.env.ref('ike_event.ike_event_stage_closed').id
         self.action_create_purchase_orders()
 
     def action_create_purchase_orders(self):
@@ -590,8 +590,7 @@ class IkeEvent(models.Model):
     def action_set_user_data(self):
         for rec in self:
             rec.count_json = rec._build_sub_service_counter_json()
-            if not rec.assigned_user_id:
-                rec.assigned_user_id = rec.create_uid
+            rec.assigned_user_id = rec.user_assigned()  # type: ignore
             if not rec.event_summary_id:
                 event_summary_id = self.env['ike.event.summary'].create({
                     'event_id': rec.id,

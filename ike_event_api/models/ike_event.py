@@ -55,13 +55,6 @@ class IkeEvent(models.Model):
         ('4', 'Sent second form'),
         ('5', 'Arrived at second destination'),
         ('6', 'Finalized')
-        # ('0', 'Not assigned'),
-        # ('1', 'Service started'),
-        # ('2', 'Arrived at first destination'),
-        # ('3', 'Submitted the first form'),
-        # ('4', 'Arrived at second destination'),
-        # ('5', 'Sent second form'),
-        # ('6', 'Finalized')
     ], string="Event progress state", default='0', required=True,
         help="Indicates the current progress of the event in the app.")
     user_code = fields.Char(

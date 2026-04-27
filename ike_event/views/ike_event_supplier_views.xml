@@ -199,18 +199,20 @@
                     <button name="action_accept_authorization" string="Authorize"
                             type="object" class="btn-primary"
                             invisible="not context.get('from_event_authorization', False)"
-                            groups="base.group_erp_manager,custom_master_catalog.custom_group_supervisor_cds"/>
+                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
                     <button name="action_reject_authorization" string="Reject"
                             type="object" class="btn-primary"
                             invisible="not context.get('from_event_authorization', False)"
-                            groups="base.group_erp_manager,custom_master_catalog.custom_group_supervisor_cds"/>
+                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
 
                     <button name="action_accept_authorization" string="Authorize"
                             type="object" class="btn-primary"
-                            invisible="not context.get('from_authorizer', False)"/>
+                            invisible="not context.get('from_authorizer', False)"
+                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
                     <button name="action_reject_authorization" string="Reject"
                             type="object" class="btn-primary"
-                            invisible="not context.get('from_authorizer', False)"/>
+                            invisible="not context.get('from_authorizer', False)"
+                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
 
                     <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
@@ -233,10 +235,10 @@
                 <field name="product_id" widget="ike_label_section_and_note_field" readonly="1"
                     options="{'no_open': 1}" />
                 <field name="name" />
-                <field name="quantity"/>
+                <field name="quantity" readonly="1"/>
+                <field name="cost_price" readonly="1" />
                 <!-- <field name="uom_id" readonly="1" options="{'no_open': 1}" /> -->
                 <field name="base_unit_price" />
-                <field name="cost_price" readonly="1" />
                 <field name="base_cost_price" readonly="1" />
                 <!-- <field name="base_vat" readonly="1" /> -->
                 <field name="tax_ids" column_invisible="1" widget="many2many_tags" optional="hide" readonly="1"/>
@@ -393,10 +395,10 @@
                 <field name="product_id" readonly="1"
                     options="{'no_open': 1}" />
                 <field name="name" column_invisible="1" />
-                <field name="quantity" />
+                <field name="quantity" readonly="1"/>
+                <field name="cost_price" />
                 <!-- <field name="uom_id" readonly="1" options="{'no_open': 1}" /> -->
                 <field name="base_unit_price" />
-                <field name="cost_price" />
                 <field name="base_cost_price" readonly="1" sum="Agreement Cost"/>
                 <!-- <field name="base_vat" readonly="1" sum="Agreement Vat"/> -->
                 <field name="tax_ids" column_invisible="1" widget="many2many_tags" optional="hide" readonly="1"/>

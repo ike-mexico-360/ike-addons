@@ -64,6 +64,9 @@
                     class="btn-success"
                     invisible="membership_authorization_status in ['authorized', 'rejected', False] or stage_ref not in ['draft', 'capturing']"
                     groups="base.group_system,custom_master_catalog.custom_group_commercial_supervisor"/>
+                <field name="membership_authorization_status" column_invisible="1"/>
+                <field name="required_commercial_authorizer" column_invisible="1"/>
+                <field name="event_coverage_authorizer" column_invisible="1"/>
             </xpath>
         </field>
     </record>

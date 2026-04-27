@@ -32,14 +32,23 @@ class IkeEventManualSupplierWizard(models.TransientModel):
     # === COMPUTE METHODS === #
     @api.depends('event_id', 'supplier_id')
     def _compute_truck_domain(self):
+        sub_res_id = self.env[self.event_id.sub_service_res_model].browse(self.event_id.sub_service_res_id)
         for rec in self:
+            service_vehicle_type_ids = []
+            service_vehicle_type_ids = sub_res_id.service_vehicle_type_ids.ids  # type: ignore
+
             domain = [
                 ('disabled', '=', False),
-                ('x_vehicle_service_state', '=', 'available')
+                ('x_vehicle_service_state', '=', 'available'),
+                ('x_vehicle_type', 'in', service_vehicle_type_ids),
+                ('x_partner_id', '=', rec.supplier_id.id),
+                ('x_subservice_ids', '=', [rec.event_id.sub_service_id.id])
             ]
 
-            if rec.supplier_id:
-                domain.append(('x_partner_id', '=', rec.supplier_id.id))
+            if rec.event_id.requires_federal_plates:
+                domain.append(
+                    ('x_federal_license_plates', '=', True),
+                )
 
             if rec.event_id:
                 trucks_used = rec.event_id.service_supplier_ids.mapped('truck_id').ids

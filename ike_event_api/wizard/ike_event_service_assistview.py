@@ -36,8 +36,10 @@ class IkeEventServiceAssistView(models.TransientModel):
     # Notificar al usuario que se recibió la información
     def write(self, vals):
         if 'latitude' in vals and 'longitude' in vals:
-            for rec in self:
-                rec.send_whatsapp_confirmation()
+            for rec in self.filtered(lambda x: x.sended_whatsapp_confirmation is False):
+                sended = rec.send_whatsapp_confirmation()
+                if sended:
+                    rec.sended_whatsapp_confirmation = True
         return super().write(vals)
 
     def send_whatsapp_confirmation(self):

@@ -263,9 +263,6 @@ class IkeEvent(models.Model):
     def action_set_user_service_data(self):
         result = super(IkeEvent, self).action_set_user_service_data()
         for rec in self:
-            # rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_2"])
-            # rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_3"])
-            # rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_4"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_5"])
         return result
 
@@ -336,6 +333,26 @@ class IkeEvent(models.Model):
                 'ike_event_binnacle.ike_binnacle_stage_10_4',
                 'ike_event_binnacle.ike_binnacle_stage_10_2'])
         return result
+
+    def user_assigned(self):
+        self.ensure_one()
+        binnacle_category = self.env.ref('ike_event_binnacle.ike_binnacle_stage_3_1')
+
+        message = self.env['mail.message'].search([
+            ('model', '=', 'ike.event'),
+            ('res_id', '=', self.id),
+            ('event_binnacle_id', '=', binnacle_category.id)
+        ], limit=1)
+
+        if not message or not message.author_id:
+            return False
+
+        user = self.env['res.users'].search(
+            [('partner_id', '=', message.author_id.id)],
+            limit=1
+        )
+
+        return user.id if user else False
 
 
 class IkeEventSupplier(models.Model):

@@ -16,13 +16,14 @@ _logger = logging.getLogger(__name__)
 class IkeEventSupplierSelection(models.Model):
     _inherit = 'ike.event.supplier'
 
+    # Mapeo de valors para el tipo de búsqueda, Odoo -> iké
     SEARCH_TYPE_MAP = {
         "electronic": {"code": 1, "name": "GEO"},
         "publication": {"code": 2, "name": "PUB"},
         "manual": {"code": 3, "name": "MAN"},
         "manual_manual": {"code": 3, "name": "MAN"},
     }
-    # Necesario para mapear los sub_servicios antes de entrar a la lógica de la notificaciíon y filtrar
+    # Mapeo de subservicios equivalencias Odoo -> iké
     SUB_SERVICE_REF_MAP = {
         "town_truck": {
             "id": "f2c193e7-8517-4c16-a5e3-deb0944fc78b",
@@ -51,6 +52,7 @@ class IkeEventSupplierSelection(models.Model):
         return self.env['ir.config_parameter'].sudo().get_param('database.is_neutralized')
 
     def _prepare_body_for_external_notification(self):
+        # Mapeo de estados Odoo -> iké
         def get_status(ref):
             if ref in ('preparing', 'assigned', 'on_route', 'arrived', 'contacted', 'on_route_2', 'arrived_2'):
                 return {'code': 1, 'name': 'Abierto'}
@@ -60,6 +62,8 @@ class IkeEventSupplierSelection(models.Model):
 
         service_id = self.env[self.event_id.service_res_model].browse(self.event_id.service_res_id)
 
+        # Para subsevicios que no tienen todos los campos necesarios para notificar... aplicar read para obtener
+        # solo los existentes necesarios
         sub_service_id = self.env[self.event_id.sub_service_res_model].browse(self.event_id.sub_service_res_id)
         sub_service_valid_fields = list(sub_service_id._fields.keys())
         needed_fields = [
@@ -78,14 +82,18 @@ class IkeEventSupplierSelection(models.Model):
         subservice_data = sub_service_id.read(fields_to_read)
         subservice_data = subservice_data[0]
 
+        # Es gama alta? Considerar posibles formas más seguras en lugar de validar con texto
         rangehigh = False
         if service_id.vehicle_category_id:
             rangehigh = bool(service_id.vehicle_category_id.name.strip().lower().replace(' ', '') == 'altagama')
 
         service_details = self._get_service_details(self.event_id.sub_service_survey_input_id)
+        decrypt_utility = self.env['custom.encryption.utility'].sudo()
 
         body = {
             "id": str(self.event_id.id),
+            "user": decrypt_utility.decrypt_aes256(self.event_id.user_id.name or ''),
+            "placeEvent": self.event_id.event_type_id.name or '',
             "car": {
                 "yearCar": service_id.vehicle_year or '',
                 "typeCar": service_id.vehicle_model or '',
@@ -124,12 +132,9 @@ class IkeEventSupplierSelection(models.Model):
                 "latitude": subservice_data.get('destination_latitude', ''),
                 "longitude": subservice_data.get('destination_longitude', ''),
             },
-            # ToDo: Validar que el tipo de asignación sea el mismo para el grupo de vehículos que se enviará en la lista ids
             "typeAssignment": {
                 "code": self.SEARCH_TYPE_MAP.get(self.assignation_type)['code'],
                 "description": self.SEARCH_TYPE_MAP.get(self.assignation_type)['name'],
-                # ToDo: Se enviará un array bajo la clave ids, array de uid's
-                # "ids": [str(supplier.truck_id.x_vehicle_ref) for supplier in self]
                 "id": str(self.truck_id.x_vehicle_ref) if self.truck_id.x_vehicle_ref else '',
             },
             "serviceDetails": service_details,
@@ -146,20 +151,37 @@ class IkeEventSupplierSelection(models.Model):
         return body
 
     def _get_service_details(self, survey_input_id):
+        """ Get the service details from the survey input """
         survey = []
 
+        group_multiple_choice = {}
         for input_id in survey_input_id.user_input_line_ids:
             question_id = input_id.question_id
             title = question_id.title or ''
             description = html2plaintext(question_id.description) or ''
             answer = input_id.display_name or ''
+            question_type = question_id.question_type
+            if question_type == 'multiple_choice':
+                if title not in group_multiple_choice:
+                    group_multiple_choice[title] = []
+                group_multiple_choice[title].append(answer)
+                continue
             survey.append({
                 "title": title,
                 "description": description,
-                "type": question_id.question_type,
+                "type": question_type,
                 "answer": answer,
                 "required": question_id.constr_mandatory,
             })
+        if group_multiple_choice:
+            for key, value in group_multiple_choice.items():
+                survey.append({
+                    "title": key,
+                    "description": key,
+                    "type": "multiple_choice",
+                    "answer": value,
+                    "required": False,
+                })
 
         return survey
 
@@ -239,7 +261,6 @@ class IkeEventSupplierSelection(models.Model):
         if not url:
             return False
 
-        # ToDo: IMP: Agrupar por evento para enviar los batchs
         headers = {"Content-Type": "application/json"}
         body = self._prepare_body_for_external_notification()
         _logger.warning(f"Sending external notification: {body}")
@@ -363,6 +384,30 @@ class IkeEventSupplierSelection(models.Model):
             else:
                 _logger.warning(f"Error sending notification ({origin}): {service_data}")
 
+    def action_notify_cancellation_to_external(self, url: str, cancel_reason_id, reason_text, origin: str = 'internal'):
+        for supplier in self:
+            headers = {"Content-Type": "application/json"}
+            body = {
+                "folio": str(supplier.event_id.id),
+                "craneId": str(supplier.truck_id.x_vehicle_ref),
+                "motivo": cancel_reason_id,
+                "observaciones": reason_text if reason_text else ""
+            }
+            _logger.warning(f"Sending external notification: {body}")
+            external_notification_response = requests.post(
+                url,
+                headers=headers,
+                json=body,
+            )
+            try:
+                notification_data = external_notification_response.json()
+                if notification_data.get('error', True):
+                    _logger.info(f"External notification sent successfully ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data}")
+                else:
+                    _logger.warning(f"Error sending external notification ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data}")
+            except Exception as e:
+                _logger.warning(f"Error sending external notification ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data.text}")
+
     def action_notify(self):
         # Override
         res = super().action_notify()
@@ -380,7 +425,6 @@ class IkeEventSupplierSelection(models.Model):
             and x.supplier_id.x_has_external_notification  # Que tenga notificación externa
             and x.truck_id.x_vehicle_ref  # Que tenga uid el vehiculo
         )
-        # ToDo: Enviar por batch
         for rec in self_filtered:
             response = False
             try:
@@ -453,6 +497,7 @@ class IkeEventSupplierSelection(models.Model):
         if url_route_tracking and not self._is_db_neutralized():  # No ejecutar si está neutralizado
             for s in self_filtered:
                 if not s.route:
+                    _logger.warning(f"Route not found for {s.truck_id.license_plate}")
                     continue
                 # if s.truck_id.driver_id:
                 _logger.info(f"Preparando ruta para {s.truck_id.license_plate}")
@@ -593,27 +638,77 @@ class IkeEventSupplierSelection(models.Model):
                 _logger.error(f"WP Send user code: Error al enviar el código de usuario: {str(e)}")
 
     def action_cancel(self, cancel_reason_id: int, reason_text=None):
-        # Implement: Notify cancel from internal to app
-        global_app_notification_url =\
-            self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.global_notification')
+        # Filtrar los operadores a notificar cancelación
         self_filtered = self.filtered(lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized')
+        self_filtered_app = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is False)
+        self_filtered_external = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is True)
         res = super().action_supplier_cancel(cancel_reason_id, reason_text)
-        if not global_app_notification_url:
-            _logger.warning("No se ha configurado la URL de notificación global a la app")
-        if self_filtered and global_app_notification_url:
-            self_filtered.action_notify_cancellation_to_app(global_app_notification_url, 'internal')
+
+        # Lógica para notificar la cancelación a la app
+        if self_filtered_app:
+            global_app_notification_url =\
+                self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.global_notification')
+            if not global_app_notification_url:
+                _logger.warning("No se ha configurado la URL de notificación global a la app")
+            if global_app_notification_url:
+                try:
+                    self_filtered_app.action_notify_cancellation_to_app(global_app_notification_url, 'internal')
+                except Exception as e:
+                    _logger.error(f"Error sending global notification to app: {str(e)}")
+
+        # Lógica para notificar cancelación a proveedor externo
+        if self_filtered_external:
+            cancel_external_notification_url =\
+                self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.cancel_external_notification')
+            if not cancel_external_notification_url:
+                _logger.warning("No se ha configurado la URL de notificación a proveedores externos")
+            if cancel_external_notification_url:
+                try:
+                    self_filtered_external.action_notify_cancellation_to_external(
+                        cancel_external_notification_url,
+                        cancel_reason_id,
+                        reason_text,
+                        'portal'
+                    )
+                except Exception as e:
+                    _logger.error(f"Error sending external notification to external suppliers: {str(e)}")
         return res
 
     def action_event_cancel(self, cancel_reason_id: int, reason_text=None):
-        # Implement: Notify cancel from internal to app
-        global_app_notification_url =\
-            self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.global_notification')
+        # Filtrar los operadores a notificar cancelación
         self_filtered = self.filtered(lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized')
+        self_filtered_app = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is False)
+        self_filtered_external = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is True)
         res = super().action_supplier_cancel(cancel_reason_id, reason_text)
-        if not global_app_notification_url:
-            _logger.warning("No se ha configurado la URL de notificación global a la app")
-        if self_filtered and global_app_notification_url:
-            self_filtered.action_notify_cancellation_to_app(global_app_notification_url, 'event')
+
+        # Lógica para notificar la cancelación a la app
+        if self_filtered_app:
+            global_app_notification_url =\
+                self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.global_notification')
+            if not global_app_notification_url:
+                _logger.warning("No se ha configurado la URL de notificación global a la app")
+            if global_app_notification_url:
+                try:
+                    self_filtered_app.action_notify_cancellation_to_app(global_app_notification_url, 'internal')
+                except Exception as e:
+                    _logger.error(f"Error sending global notification to app: {str(e)}")
+
+        # Lógica para notificar cancelación a proveedor externo
+        if self_filtered_external:
+            cancel_external_notification_url =\
+                self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.cancel_external_notification')
+            if not cancel_external_notification_url:
+                _logger.warning("No se ha configurado la URL de notificación a proveedores externos")
+            if cancel_external_notification_url:
+                try:
+                    self_filtered_external.action_notify_cancellation_to_external(
+                        cancel_external_notification_url,
+                        cancel_reason_id,
+                        reason_text,
+                        'portal'
+                    )
+                except Exception as e:
+                    _logger.error(f"Error sending external notification to external suppliers: {str(e)}")
         return res
 
     def action_supplier_cancel(self, cancel_reason_id: int, reason_text=None):
