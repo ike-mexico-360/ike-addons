@@ -1022,11 +1022,7 @@
                         or str(l.priority) == str(ctx.get('search_priority'))
                     )
                 ).sorted(
-                    key=lambda l: (
-                        int(l.priority), 
-                        l.estimated_duration, 
-                        l.estimated_cost
-                    )
+                    key=lambda l: l.sequence
                 )"/>
 
                 <!-- Si hay proveedores -->

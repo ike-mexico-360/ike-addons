@@ -98,7 +98,7 @@ class IkeEventSupplierSelection(models.Model):
         res = super().action_accept()
         selected_suppliers = self.filtered(lambda x: x.selected)
         # FixMe: check len == 1 ?
-        if len(selected_suppliers) == 1 and self._is_db_neutralized():
+        if len(selected_suppliers) == 1 and not self._is_db_neutralized():
             @self.env.cr.postcommit.add
             def send_notifications_with_new_cursor():
                 threading.Thread(

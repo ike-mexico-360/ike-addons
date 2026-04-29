@@ -454,6 +454,7 @@ class IkeEventSupplier(models.Model):
         return result
 
     def action_reject(self):
+        result = super().action_reject()
         for rec in self:
             rec.event_id.with_context(
                 supplier=rec.supplier_id.name,
@@ -461,10 +462,10 @@ class IkeEventSupplier(models.Model):
             )._create_message_binnacle([
                 "ike_event_binnacle.ike_binnacle_stage_11_2"
             ])
-        result = super().action_reject()
         return result
 
     def action_timeout(self):
+        result = super().action_timeout()
         for rec in self:
             rec.event_id.with_context(
                 supplier=rec.supplier_id.name,
@@ -472,7 +473,6 @@ class IkeEventSupplier(models.Model):
             )._create_message_binnacle([
                 "ike_event_binnacle.ike_binnacle_stage_11_3"
             ])
-        result = super().action_timeout()
         return result
 
     def action_accept(self):
@@ -491,6 +491,7 @@ class IkeEventSupplier(models.Model):
         return result
 
     def action_notify(self):
+        result = super().action_notify()
         for rec in self:
             rec.event_id.with_context(
                 supplier=rec.supplier_id.name,
@@ -498,7 +499,6 @@ class IkeEventSupplier(models.Model):
             )._create_message_binnacle([
                 "ike_event_binnacle.ike_binnacle_stage_11_1"
             ])
-        result = super().action_notify()
         return result
 
     def action_notify_operator(self):

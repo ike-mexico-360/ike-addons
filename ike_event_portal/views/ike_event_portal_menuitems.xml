@@ -54,7 +54,7 @@
                 <t t-set="placeholder_count" t-value="'ike_event_service_count'"/>
                 <t t-set="icon" t-value="'/ike_event_portal/static/src/assets/white_service.png'"/>
             </t>
-            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_finance')">
+            <t t-call="portal.portal_docs_entry">
                 <t t-set="title">Requests for Quotation</t>
                 <t t-set="url" t-value="'/my/rfq'"/>
                 <t t-set="text">Follow your Requests for Quotation</t>
