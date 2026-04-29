@@ -32,8 +32,8 @@ class IkeEventManualSupplierWizard(models.TransientModel):
     # === COMPUTE METHODS === #
     @api.depends('event_id', 'supplier_id')
     def _compute_truck_domain(self):
-        sub_res_id = self.env[self.event_id.sub_service_res_model].browse(self.event_id.sub_service_res_id)
         for rec in self:
+            sub_res_id = self.env[rec.event_id.sub_service_res_model].browse(rec.event_id.sub_service_res_id)
             service_vehicle_type_ids = []
             service_vehicle_type_ids = sub_res_id.service_vehicle_type_ids.ids  # type: ignore
 

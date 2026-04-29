@@ -84,6 +84,7 @@ export class IkeTimerWidget extends Component {
 
         onWillUnmount(() => {
             if (this.interval) {
+                // console.log("onWillUnmount");
                 this.env.bus.trigger("IKE_EVENT_SYSTRAY:SUPPLIER_TIMEOUT", {
                     payload: {
                         line_id: this.resId,
@@ -127,7 +128,7 @@ export class IkeTimerWidget extends Component {
         }
     }
     stopTimer() {
-        // console.log("stopTimer", this.interval);
+        // console.log("stopTimer", this.resId);
         if (this.interval) {
             clearInterval(this.interval);
             this.interval = null;
@@ -180,6 +181,7 @@ export class IkeTimerWidget extends Component {
     async onTimeout() {
         this.stopTimer();
         await this._executeAction(this.props.record, "action_timeout");
+        // console.log("onTimeout", this.resId);
         // const msg = this.props.record.data.name;
         // this.notification.add(msg, {
         //     title: _t("Timeout"),

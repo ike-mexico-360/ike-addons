@@ -13,22 +13,28 @@
                 <i class="fa fa-undo cursor-pointer" t-on-click="onReset" title="Reset" />
             </t>
             <!-- Notification -->
-            <t t-if="showNotification">
-                <i class="fa fa-clock-o fw-bold cursor-pointer"
-                    t-att-class="{'text-muted': state.blocked}" t-on-click="onNotify"
-                    title="Notify" />
+            <t t-if="!state.is_manual">
+                <t t-if="showNotification">
+                    <i class="fa fa-clock-o fw-bold cursor-pointer"
+                        t-att-class="{'text-muted': state.blocked}" t-on-click="onNotify"
+                        title="Notify" />
+                </t>
+                <t t-else="">
+                    <i class="fa fa-clock-o" />
+                </t>
+                <!-- Timer -->
+                <span t-out="formatTime(state.seconds)" />
             </t>
-            <t t-else="">
-                <i class="fa fa-clock-o" />
-            </t>
-            <!-- Timer -->
-            <span t-out="formatTime(state.seconds)" />
             <!-- Accept/Reject -->
             <t t-if="state.current_state == 'notified' and !state.blocked">
                 <i class="fa fa-check cursor-pointer"
                     t-on-click="onAccept" title="Accept" />
                 <i class="fa fa-times cursor-pointer"
                     t-on-click="onReject" title="Reject" />
+            </t>
+            <t t-if="state.current_state == 'available' and state.is_manual and !state.blocked">
+                <i class="fa fa-check cursor-pointer" t-on-click="onAccept" title="Accept" />
+                Accept
             </t>
         </div>
     </t>

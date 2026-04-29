@@ -271,7 +271,7 @@
                                     options="{'field_columns': ['supplier_id']}"
                                     context="{'default_search_number': supplier_search_number}"
                                     readonly="supplier_search_type not in ['manual', 'manual_manual']">
-                                    <list create="0" delete="0">
+                                    <list create="0" delete="0" editable="bottom">
                                         <field name="display_type" column_invisible="1" />
                                         <field name="sequence" column_invisible="1"/>
 
@@ -284,13 +284,15 @@
                                         <field name="supplier_id"
                                             widget="ike_label_section_and_note_field"
                                             options="{'no_create': 1, 'no_open': 1}"
-                                            readonly="assignation_type not in ['manual', 'manual_manual'] or display_type"
+                                            readonly="assignation_type not in ['manual_manual'] or display_type"
                                             width="200px"/>
-                                        <field name="truck_id" domain="[('x_partner_id', '=', supplier_id)]"
+                                        <field name="truck_id"
+                                            domain="truck_domain"
                                             options="{'no_create': 1, 'no_open': 1}"
                                             column_invisible="parent.supplier_search_type not in ['manual', 'manual_manual']"
                                             optional="show"
                                             readonly="assignation_type not in ['manual', 'manual_manual'] or display_type"/>
+                                        <field name="truck_domain" column_invisible="1"/>
                                         <field name="supplier_phone"
                                             column_invisible="parent.supplier_search_type not in ['manual', 'manual_manual']"
                                             readonly="1"/>

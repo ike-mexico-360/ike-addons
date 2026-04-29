@@ -34,6 +34,7 @@ export class IkeEventSystray extends Component {
             listChannel: null,
         });
         this._updateFromAction = this._updateFromAction.bind(this);
+        this.currentTimeoutIds = {};
 
         // Life cycle
         onMounted(() => {
@@ -81,16 +82,20 @@ export class IkeEventSystray extends Component {
             const { payload, sender } = event.detail;
 
             if (payload?.line_id && payload?.timer_duration) {
-                const timeoutId = setTimeout(() => {
-                    try {
-                        this._timeouts.delete(timeoutId);
-                        this._executeTimeoutLine(payload.line_id);
-                    } catch (err) {
-                        console.err("timer_systray", err);
-                    }
-                }, (payload.timer_duration + 5) * 1000);
+                console.log("SUPPLIER_TIMEOUT", payload?.line_id);
+                if (!this.currentTimeoutIds[payload.line_id]) {
+                    const timeoutId = setTimeout(() => {
+                        try {
+                            this._timeouts.delete(timeoutId);
+                            this._executeTimeoutLine(payload.line_id);
+                        } catch (err) {
+                            console.err("timer_systray", err);
+                        }
+                    }, (payload.timer_duration + 5) * 1000);
 
-                this._timeouts.add(timeoutId);
+                    this._timeouts.add(timeoutId);
+                    this.currentTimeoutIds[payload.line_id] = true;
+                }
             }
         });
 

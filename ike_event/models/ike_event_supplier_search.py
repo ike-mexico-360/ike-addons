@@ -77,11 +77,11 @@ class IkeEvent_Search(models.Model):
             # Max Distance by Supplier
             supplier_max_distances = {}
             max_distance_km: float = 0.0
-            for item in service_suppliers:
-                if item['estimated_distance'] > max_distance_km:
-                    max_distance_km = item['estimated_distance']
-                if item['estimated_distance'] > supplier_max_distances.get(item['supplier_id'], 0):
-                    supplier_max_distances[item['supplier_id']] = item['estimated_distance']
+            for supplier in service_suppliers:
+                if supplier['estimated_distance'] > max_distance_km:
+                    max_distance_km = supplier['estimated_distance']
+                if supplier['estimated_distance'] > supplier_max_distances.get(supplier['supplier_id'], 0):
+                    supplier_max_distances[supplier['supplier_id']] = supplier['estimated_distance']
 
             # Covered Amount
             self._set_covered_amount(max_distance_km + (self.destination_distance or 0))
@@ -149,6 +149,13 @@ class IkeEvent_Search(models.Model):
                 [item for item in service_suppliers if not item.get('ignore')],
                 key=lambda x: (x['estimated_duration'], x['estimated_cost'], -int(x['priority']))
             )
+            # Filter manual: first of each supplier
+            if assignation_type == 'manual':
+                seen = set()
+                service_suppliers = [
+                    x for x in service_suppliers
+                    if not (x["supplier_id"] in seen or seen.add(x["supplier_id"]))
+                ]
             service_suppliers = service_suppliers[:max_suppliers]
 
             # Set Google Route
@@ -461,7 +468,7 @@ class IkeEvent_Search(models.Model):
                     'estimated_duration': vehicle['estimated_duration'],
                     'timer_duration': timer_duration_s,
                     'osrm': vehicle.get('osrm'),
-                    'is_manual': False,
+                    'is_manual': bool(assignation_type == 'manual'),
                     'truck_id': vehicle['id'],  # Set the correct db ID
                     'assigned': vehicle['driver_id'][1] if vehicle['driver_id'] else "",
                     'latitude': vehicle['x_latitude'],
@@ -672,8 +679,8 @@ class IkeEvent_Search(models.Model):
             ) AS m ON TRUE
             WHERE p.id = ANY(%s)
         """
-        # query_result = query % params
-        # print(query_result)
+        query_result = query % params
+        print(query_result)
 
         self.env.cr.execute(query, params)
         return self.env.cr.dictfetchall()
@@ -1266,7 +1273,6 @@ class IkeEvent_Search(models.Model):
                         (self.id,)
                     )
         except Exception:
-            print("ERROR")
             return
 
         if is_searching:

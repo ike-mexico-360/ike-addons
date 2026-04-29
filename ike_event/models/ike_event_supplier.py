@@ -16,6 +16,8 @@ class IkeEventSupplier(models.Model):
         ('line_note', "Note"),
     ], default=False)
 
+    truck_domain = fields.Binary(compute='_compute_truck_domain')
+
     # Related Fields
     event_search_number = fields.Integer(related='event_id.supplier_search_number', string='Search Number (Event)')
     destination_duration = fields.Float(related="event_id.destination_duration")
@@ -165,6 +167,28 @@ class IkeEventSupplier(models.Model):
     def _compute_display_name(self):
         for rec in self:
             rec.display_name = f'{rec.supplier_id.name}, {rec.name}'
+
+    @api.depends('supplier_id')
+    def _compute_truck_domain(self):
+        for rec in self:
+            sub_res_id = self.env[rec.event_id.sub_service_res_model].browse(rec.event_id.sub_service_res_id)
+            service_vehicle_type_ids = []
+            service_vehicle_type_ids = sub_res_id.service_vehicle_type_ids.ids  # type: ignore
+
+            domain = [
+                ('disabled', '=', False),
+                ('x_vehicle_service_state', '=', 'available'),
+                ('x_vehicle_type', 'in', service_vehicle_type_ids),
+                ('x_partner_id', '=', rec.supplier_id.id),
+                ('x_subservice_ids', '=', [rec.event_id.sub_service_id.id])
+            ]
+
+            if rec.event_id.requires_federal_plates:
+                domain.append(
+                    ('x_federal_license_plates', '=', True),
+                )
+
+            rec.truck_domain = domain
 
     @api.depends('type_authorization_id', 'authorizer_id')
     def _compute_authorizer_domain(self):
@@ -591,7 +615,7 @@ class IkeEventSupplierLink(models.Model):
     # === EXCEEDS COVERAGE FIELDS === #
     exceeds_coverage = fields.Boolean(compute='_compute_exceeds_coverage')
 
-    # === COMPUTED === #
+    # === COMPUTE METHODS === #
     @api.depends('supplier_product_ids.subtotal', 'supplier_product_ids.vat')
     def _compute_amount_supplier_product(self):
         for rec in self:
