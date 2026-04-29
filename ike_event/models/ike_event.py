@@ -1088,6 +1088,14 @@ class IkeEvent(models.Model):
             except Exception as e:
                 _logger.warning(f"Error decrypting complete_phone: {str(e)}")
 
+    def get_service_model(self):
+        self.ensure_one()
+        return self.env[self.service_res_model].browse(self.service_res_id)
+
+    def get_sub_service_model(self):
+        self.ensure_one()
+        return self.env[self.sub_service_res_model].browse(self.sub_service_res_id)
+
     def get_destination_route(
         self,
         location_latitude,

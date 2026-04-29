@@ -1,4 +1,5 @@
 from datetime import timedelta
+import pytz
 
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
@@ -220,137 +221,37 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     # assigned
     @api.onchange('assignation_date')
     def _onchange_assignation_date(self):
-        if self.assignation_date and not self.assignation_user_id:
-            self.assignation_user_id = self.env.user
-        if self.assignation_date != self._origin.assignation_date:
-            self.assignation_comment = False
+        return self._validate_and_set_date('assignation_date', 'assignation_user_id', 'assignation_comment')
 
-    # on rute
+    # on route
     @api.onchange('on_route_to_user_start_date')
     def _onchange_on_route_to_user_start_date(self):
-        if self.on_route_to_user_start_date and not self.on_route_to_start_user_id:
-            self.on_route_to_start_user_id = self.env.user
-        if self.on_route_to_user_start_date != self._origin.on_route_to_user_start_date:
-            self.on_route_to_start_comment = False
-        if (
-            self.on_route_to_user_start_date
-            and self.assignation_date
-            and self.on_route_to_user_start_date <= self.assignation_date
-        ):
-            self.on_route_to_user_start_date = False
-            date = fields.Datetime.context_timestamp(self, self.assignation_date).strftime('%Y-%m-%d %H:%M:%S')
-            return {'warning': {
-                'title': _('Invalid date'),
-                'message': _(
-                    'On route date cannot be earlier than or equal to '
-                    'Assigned date (%s).', date),
-            }}
+        return self._validate_and_set_date('on_route_to_user_start_date', 'on_route_to_start_user_id', 'on_route_to_start_comment')
 
     # arrived
     @api.onchange('on_route_to_user_end_date')
     def _onchange_on_route_to_user_end_date(self):
-        if self.on_route_to_user_end_date and not self.on_route_to_end_user_id:
-            self.on_route_to_end_user_id = self.env.user
-        if self.on_route_to_user_end_date != self._origin.on_route_to_user_end_date:
-            self.on_route_to_end_comment = False
-        if (
-            self.on_route_to_user_end_date
-            and self.on_route_to_user_start_date
-            and self.on_route_to_user_end_date <= self.on_route_to_user_start_date
-        ):
-            self.on_route_to_user_end_date = False
-            date = fields.Datetime.context_timestamp(self, self.on_route_to_user_start_date).strftime('%Y-%m-%d %H:%M:%S')
-            return {'warning': {
-                'title': _('Invalid date'),
-                'message': _(
-                    'Arrived date cannot be earlier than or equal to '
-                    'On route date (%s).', date),
-            }}
+        return self._validate_and_set_date('on_route_to_user_end_date', 'on_route_to_end_user_id', 'on_route_to_end_comment')
 
     # contacted
     @api.onchange('contacted_date')
     def _onchange_contacted_date(self):
-        if self.contacted_date and not self.contacted_user_id:
-            self.contacted_user_id = self.env.user
-        if self.contacted_date != self._origin.contacted_date:
-            self.contacted_comment = False
-        if (
-            self.contacted_date
-            and self.on_route_to_user_end_date
-            and self.contacted_date <= self.on_route_to_user_end_date
-        ):
-            self.contacted_date = False
-            date = fields.Datetime.context_timestamp(self, self.on_route_to_user_end_date).strftime('%Y-%m-%d %H:%M:%S')
-            return {'warning': {
-                'title': _('Invalid date'),
-                'message': _(
-                    'Contacted date cannot be earlier than or equal to '
-                    'Arrived date (%s).', date),
-            }}
+        return self._validate_and_set_date('contacted_date', 'contacted_user_id', 'contacted_comment')
 
-    # rute to destination
+    # route to destination
     @api.onchange('on_route_to_destination_start_date')
     def _onchange_on_route_to_destination_start_date(self):
-        if self.on_route_to_destination_start_date and not self.on_route_to_destination_start_user_id:
-            self.on_route_to_destination_start_user_id = self.env.user
-        if self.on_route_to_destination_start_date != self._origin.on_route_to_destination_start_date:
-            self.on_route_to_destination_start_comment = False
-
-        if (
-            self.on_route_to_destination_start_date
-            and self.contacted_date
-            and self.on_route_to_destination_start_date <= self.contacted_date
-        ):
-            self.on_route_to_destination_start_date = False
-            date = fields.Datetime.context_timestamp(self, self.contacted_date).strftime('%Y-%m-%d %H:%M:%S')
-            return {'warning': {
-                'title': _('Invalid date'),
-                'message': _(
-                    'On route to destination date cannot be earlier than or equal to '
-                    'Contacted date (%s).', date),
-            }}
+        return self._validate_and_set_date('on_route_to_destination_start_date', 'on_route_to_destination_start_user_id', 'on_route_to_destination_start_comment')
 
     # he arrived destination
     @api.onchange('on_route_to_destination_end_date')
     def _onchange_on_route_to_destination_end_date(self):
-        if self.on_route_to_destination_end_date and not self.on_route_to_destination_end_user_id:
-            self.on_route_to_destination_end_user_id = self.env.user
-        if self.on_route_to_destination_end_date != self._origin.on_route_to_destination_end_date:
-            self.on_route_to_destination_end_comment = False
-        if (
-            self.on_route_to_destination_end_date
-            and self.on_route_to_destination_start_date
-            and self.on_route_to_destination_end_date <= self.on_route_to_destination_start_date
-        ):
-            self.on_route_to_destination_end_date = False
-            date = fields.Datetime.context_timestamp(self, self.on_route_to_destination_start_date).strftime('%Y-%m-%d %H:%M:%S')
-            return {'warning': {
-                'title': _('Invalid date'),
-                'message': _(
-                    'Arrived at destination date cannot be earlier than or equal to '
-                    'On route to destination date (%s).', date),
-            }}
+        return self._validate_and_set_date('on_route_to_destination_end_date', 'on_route_to_destination_end_user_id', 'on_route_to_destination_end_comment')
 
     # finalized
     @api.onchange('finalized_date')
     def _onchange_finalized_date(self):
-        if self.finalized_date and not self.finalized_user_id:
-            self.finalized_user_id = self.env.user
-        if self.finalized_date != self._origin.finalized_date:
-            self.finalized_comment = False
-        if (
-            self.finalized_date
-            and self.on_route_to_destination_end_date
-            and self.finalized_date <= self.on_route_to_destination_end_date
-        ):
-            self.finalized_date = False
-            date = fields.Datetime.context_timestamp(self, self.on_route_to_destination_end_date).strftime('%Y-%m-%d %H:%M:%S')
-            return {'warning': {
-                'title': _('Invalid date'),
-                'message': _(
-                    'Finalized date cannot be earlier than or equal to '
-                    'Arrived at destination date (%s).', date),
-            }}
+        return self._validate_and_set_date('finalized_date', 'finalized_user_id', 'finalized_comment')
 
     # === ACTION === #
     def action_confirm(self):
@@ -381,30 +282,38 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             )
 
         if stage_ref == 'arrived':
-            self._action_on_route(
-                supplier,
-                vals,
-                self.on_route_to_user_end_date - timedelta(minutes=1),
-                self.on_route_to_start_user_id.id,
-                f'{supplier.display_name} - {self.on_route_to_user_end_date - timedelta(minutes=1)}'
-            )
+            if self.on_route_to_user_end_date <= self.event_id.event_date:
+                event_date = fields.Datetime.context_timestamp(self, self.event_id.event_date).strftime('%d-%m-%Y %H:%M:%S')
+                raise ValidationError(_('Arrived date cannot be earlier than or equal to event date (%s)', event_date))
+            else:
+                self._action_on_route(
+                    supplier,
+                    vals,
+                    self.on_route_to_user_end_date - timedelta(minutes=1),
+                    self.on_route_to_start_user_id.id,
+                    f'{supplier.display_name} - {self.on_route_to_user_end_date - timedelta(minutes=1)}'
+                )
 
-            self._action_arrived(
-                supplier,
-                vals,
-                self.on_route_to_user_end_date,
-                self.on_route_to_end_user_id.id,
-                self.on_route_to_end_comment
-            )
+                self._action_arrived(
+                    supplier,
+                    vals,
+                    self.on_route_to_user_end_date,
+                    self.on_route_to_end_user_id.id,
+                    self.on_route_to_end_comment
+                )
 
         if stage_ref == 'contacted':
-            self._action_contacted(
-                supplier,
-                vals,
-                self.contacted_date,
-                self.contacted_user_id.id,
-                self.contacted_comment
-            )
+            if self.contacted_date <= self.event_id.event_date:
+                event_date = fields.Datetime.context_timestamp(self, self.event_id.event_date).strftime('%d-%m-%Y %H:%M:%S')
+                raise ValidationError(_('Contacted date cannot be earlier than or equal to event date (%s)', event_date))
+            else:
+                self._action_contacted(
+                    supplier,
+                    vals,
+                    self.contacted_date,
+                    self.contacted_user_id.id,
+                    self.contacted_comment
+                )
 
         if stage_ref == 'on_route_2':
             self._action_on_route_2(
@@ -425,29 +334,33 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             )
 
         if stage_ref == 'finalized':
-            self._action_on_route_2(
-                supplier,
-                vals,
-                self.finalized_date - timedelta(minutes=2),
-                self.finalized_user_id.id,
-                f'{supplier.display_name} - {self.finalized_date - timedelta(minutes=2)}'
-            )
+            if self.finalized_date <= self.event_id.event_date:
+                event_date = fields.Datetime.context_timestamp(self, self.event_id.event_date).strftime('%d-%m-%Y %H:%M:%S')
+                raise ValidationError(_('Finalized date cannot be earlier than or equal to event date (%s)', event_date))
+            else:
+                self._action_on_route_2(
+                    supplier,
+                    vals,
+                    self.finalized_date - timedelta(minutes=2),
+                    self.finalized_user_id.id,
+                    f'{supplier.display_name} - {self.finalized_date - timedelta(minutes=2)}'
+                )
 
-            self._action_arrived_2(
-                supplier,
-                vals,
-                self.finalized_date - timedelta(minutes=1),
-                self.finalized_user_id.id,
-                f'{supplier.display_name} - {self.finalized_date - timedelta(minutes=1)}'
-            )
+                self._action_arrived_2(
+                    supplier,
+                    vals,
+                    self.finalized_date - timedelta(minutes=1),
+                    self.finalized_user_id.id,
+                    f'{supplier.display_name} - {self.finalized_date - timedelta(minutes=1)}'
+                )
 
-            self._action_finalized(
-                supplier,
-                vals,
-                self.finalized_date,
-                self.finalized_user_id.id,
-                self.finalized_comment
-            )
+                self._action_finalized(
+                    supplier,
+                    vals,
+                    self.finalized_date,
+                    self.finalized_user_id.id,
+                    self.finalized_comment
+                )
 
         # if not vals:
         #     raise ValidationError(_('Invalid stage.'))
@@ -465,6 +378,85 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         supplier.write(vals)
 
         return supplier.open_change_state_supplier_wizard()
+
+    def _validate_and_set_date(self, field_name, user_field, comment_field):
+        date_value = self[field_name]
+
+        if date_value and not self[user_field]:
+            self[user_field] = self.env.user
+
+        if date_value != self._origin[field_name]:
+            self[comment_field] = False
+
+        last_date = self._get_last_captured_date(field_name)
+
+        date_value = fields.Datetime.to_datetime(date_value)
+        last_date = fields.Datetime.to_datetime(last_date)
+
+        if not date_value or not last_date:
+            return
+
+        if date_value <= last_date:
+            self[field_name] = False
+
+            user_tz = self.env.user.tz or 'UTC'
+            tz = pytz.timezone(user_tz)
+
+            def fmt(dt):
+                if not dt:
+                    return ('')
+                dt_aware = fields.Datetime.to_datetime(dt)
+                if not dt_aware:
+                    return ('')
+                return pytz.utc.localize(dt_aware).astimezone(tz).strftime('%d/%m/%Y %H:%M')
+
+            last_date_display = pytz.utc.localize(last_date).astimezone(tz).strftime('%d/%m/%Y %H:%M')
+
+            return {
+                'warning': {
+                    'title': _('Invalid date'),
+                    'message': _(
+                        'Date cannot be earlier than or equal to last captured date (%s).\n'
+                        'Assignation: %s\n'
+                        'On route: %s\n'
+                        'Arrived: %s\n'
+                        'Contacted: %s\n'
+                        'On route to destination: %s\n'
+                        'He arrived destination: %s\n'
+                        'Finalized: %s',
+                        last_date_display,
+                        fmt(self.supplier_id.assignation_date),
+                        fmt(self.supplier_id.on_route_to_user_start_date),
+                        fmt(self.supplier_id.on_route_to_user_end_date),
+                        fmt(self.supplier_id.contacted_date),
+                        fmt(self.supplier_id.on_route_to_destination_start_date),
+                        fmt(self.supplier_id.on_route_to_destination_end_date),
+                        fmt(self.supplier_id.finalized_date),
+                    ),
+                }
+            }
+
+    def _get_last_captured_date(self, current_field: str):
+        dates_supplier = {
+            'assignation_date': {'sequence': 1, 'date': self.assignation_date},
+            'on_route_to_user_start_date': {'sequence': 2, 'date': self.on_route_to_user_start_date},
+            'on_route_to_user_end_date': {'sequence': 3, 'date': self.on_route_to_user_end_date},
+            'contacted_date': {'sequence': 4, 'date': self.contacted_date},
+            'on_route_to_destination_start_date': {'sequence': 5, 'date': self.on_route_to_destination_start_date},
+            'on_route_to_destination_end_date': {'sequence': 6, 'date': self.on_route_to_destination_end_date},
+            'finalized_date': {'sequence': 7, 'date': self.finalized_date},
+        }
+
+        current_sequence = dates_supplier[current_field]['sequence']
+
+        filtered = [
+            (v['sequence'], v['date'])
+            for k, v in dates_supplier.items()
+            if v['sequence'] < current_sequence and v['date']
+        ]
+        previous_dates = sorted(filtered, key=lambda x: x[0], reverse=True)
+
+        return previous_dates[0][1] if previous_dates else False
 
     def _reload_fields_from_stage_supplier(self):
         supplier = self.supplier_id
@@ -539,9 +531,8 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 'on_route_to_start_user_id': user,
                 'on_route_to_start_comment': comment,
             })
-            return  # ← No ejecuta action_on_route()
+            return
 
-        # Primera vez — flujo normal
         vals.update({
             'on_route_to_user_start_date': datetime,
             'on_route_to_start_user_id': user,

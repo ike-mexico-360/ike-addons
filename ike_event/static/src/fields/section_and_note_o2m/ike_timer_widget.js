@@ -247,7 +247,7 @@ export class IkeTimerWidget extends Component {
         return odoo.debug && !['available', 'notified'].includes(this.state.current_state);
     }
     get showNotification() {
-        return this.state.current_state == 'available' && (this.state.is_manual || ['manual'].includes(this.state.assignation_type));
+        return this.state.current_state == 'available' && (odoo.debug || this.state.is_manual || ['manual'].includes(this.state.assignation_type));
     }
 };
 

@@ -1117,14 +1117,24 @@ msgid "close"
 msgstr "cerrar"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "day(s) before"
+msgstr "día(s) antes"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
 msgid "Event"
 msgstr "Evento"
 
 #. module: ike_event_purchase
-#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
-msgid "day(s) before"
-msgstr "día(s) antes"
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_orders
+msgid "No purchase orders yet"
+msgstr "Aún no hay órdenes de compra"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_purchase_purchase_order_portal_content
+msgid "Receipt Date:"
+msgstr "Fecha de recepción:"
 
 #. module: ike_event_purchase
 #: model:mail.template,subject:ike_event_purchase.ike_event_purchase_proposal_dispute_ticket

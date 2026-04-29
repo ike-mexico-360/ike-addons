@@ -41,6 +41,15 @@
         <xpath expr="//div[@id='total']" position="attributes">
             <attribute name="t-if">False</attribute>
         </xpath>
+        <xpath expr="//span[@t-field='order.date_order']" position="attributes">
+            <attribute name="t-field">order.create_date</attribute>
+        </xpath>
+        <xpath expr="//span[@t-field='order.date_planned']/preceding-sibling::strong[1]" position="replace">
+            <strong t-if="order.state not in ('sent')">Receipt Date:</strong>
+        </xpath>
+        <xpath expr="//span[@t-field='order.date_planned']" position="attributes">
+            <attribute name="t-if">order.state not in ('sent')</attribute>
+        </xpath>
     </template>
     <template id="ike_event_purchase_dispute_view" name="Purchase Order Portal Content Dispute" >
         <t t-call="portal.portal_layout">
@@ -106,7 +115,6 @@
                             </td>
                             <td id="order_confirmation">
                                 <span t-field="order.date_approve" t-options="{'widget': 'date'}"/>
-                                <span class='d-none d-md-inline' t-field="order.date_approve" t-options="{'format': 'HH:mm'}"/>
                             </td>
                             <td id="order_total">
                                 <span t-field="order.amount_total"/>
@@ -165,7 +173,6 @@
                         </td>
                         <td class="text-start">
                             <span t-field="rfq.date_order" t-options="{'widget': 'date'}"/>
-                            <span class='d-none d-md-inline' t-field="rfq.date_order" t-options="{'format': 'HH:mm'}"/>
                         </td>
                         <td class="text-start">
                             <span t-field="rfq.amount_untaxed"/>

@@ -605,7 +605,7 @@ class EventsAPIController(http.Controller):
                 'user_membership_id': affiliation_data['id'] if affiliation_data else False,
                 # ToDo: Se encriptarán estos valores?
                 'temporary_phone': phone if not nu_data else '',
-                'temporary_key_indentification': key if not affiliation_data else '',
+                'temporary_key_identification': key if not affiliation_data else '',
                 'temporary_membership_plan_id': plan_data['id'] if not affiliation_data else False,
             })
 

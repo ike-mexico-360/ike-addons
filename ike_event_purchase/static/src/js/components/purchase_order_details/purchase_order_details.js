@@ -246,7 +246,7 @@ export class PurchaseOrderDetails extends Component {
     // Validar campos de línea sin valor
     _validate_field = (lineId, fieldName, value) => {
         const key = `${lineId}_${fieldName}`;
-        if (value <= 0 || value == null) {
+        if (value < 0 || value == null) {
             this.state.invalid_lines.add(key);
             return false;
         }

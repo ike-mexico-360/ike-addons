@@ -11,6 +11,7 @@ class CustomMembershipNus(models.Model):
     _name = 'custom.membership.nus'
     _description = 'Custom Membership NUs'
     _inherit = ['mail.thread']
+    _order = 'id desc'
 
     # Use name for rec_name (it will be automatically decrypted in name_get)
     _rec_name = 'name'

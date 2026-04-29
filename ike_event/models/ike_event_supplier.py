@@ -342,6 +342,7 @@ class IkeEventSupplier(models.Model):
         assign_stage = self.env.ref('ike_event.ike_service_stage_assigned')
         for rec in self:
             rec.stage_id = assign_stage.id
+            rec.assignation_date = fields.Datetime.now()
 
     def action_on_route(self):
         supplier_on_route_stage = self.env.ref('ike_event.ike_service_stage_on_route')

@@ -118,8 +118,8 @@ class IkeEvent_Search(models.Model):
                     # Set Authorization Data
                     authorized = (self.previous_amount + supplier_link_id.estimated_cost) <= self.authorized_amount
                     for product_id in supplier_link_id.supplier_product_ids:
-                        if authorized:
-                            product_id.authorization_pending = False or not product_id.covered
+                        if authorized and product_id.covered and product_id.subtotal > 0:
+                            product_id.authorization_pending = False
                             if current_authorization_ids:
                                 product_id.authorization_ids = [Command.create({
                                     'event_authorization_id': current_authorization_ids[0].id,
@@ -339,8 +339,6 @@ class IkeEvent_Search(models.Model):
                 ('driver_id', '!=', False),
                 ('x_vehicle_type', 'in', service_vehicle_type_ids),
                 ('x_vehicle_service_state', '=', 'available'),
-                ('x_latitude', '!=', False),
-                ('x_longitude', '!=', False),
             ]
 
             # Federal Plates
@@ -398,7 +396,11 @@ class IkeEvent_Search(models.Model):
                             service_vehicles_data[i]['estimated_distance'] = data.get('distance_m', 0) / 1000
                             service_vehicles_data[i]['estimated_duration'] = data.get('duration_s', 0) / 60
                             service_vehicles_data[i]['osrm'] = True
-
+            else:
+                service_vehicles_data = [
+                    x for x in service_vehicles_data
+                    if x['x_latitude'] and x['x_longitude']
+                ]
             # Get Estimated Duration/Distance and priority
             supplier_center_data = {'supplier_center_id': 0}
             for vehicle in service_vehicles_data:
@@ -498,7 +500,7 @@ class IkeEvent_Search(models.Model):
 
     def _get_event_service_variables(self):
         res_id = self.env[self.service_res_model].browse(self.service_res_id)
-        vehicle_category_id = res_id.vehicle_nus_id.vehicle_category_id.id  # type: ignore
+        vehicle_category_id = res_id.vehicle_category_id.id  # type: ignore
         municipality = res_id.municipality_id  # type: ignore
         return municipality, vehicle_category_id
 
@@ -576,12 +578,6 @@ class IkeEvent_Search(models.Model):
 
         if not municipality:
             return []
-
-        if not vehicle_category_id:
-            vehicle_category = self.env['fleet.vehicle.model.category'].search([
-                ('name', '=', 'Auto'),
-            ])
-            vehicle_category_id = vehicle_category.id
 
         area_id = self.env['custom.geographical.area'].search([
             ('municipality_id', '=', municipality.id),
@@ -926,6 +922,7 @@ class IkeEvent_Search(models.Model):
                 "max_distance_m": max_distance_m,
                 "max_gps_age_min": max_gps_age_min,
             }
+            _logger.info(f"Nearest Vehicles - Payload: {payload}")
             response = requests.post(
                 url,
                 headers=headers, data=json.dumps(payload))
@@ -1098,8 +1095,8 @@ class IkeEvent_Search(models.Model):
             # Set Authorization Data
             authorized = (self.previous_amount + supplier_link_id.estimated_cost) <= self.authorized_amount
             for product_id in supplier_link_id.supplier_product_ids:
-                if authorized and product_id.subtotal > 0:
-                    product_id.authorization_pending = False or not product_id.covered
+                if authorized and product_id.covered and product_id.subtotal > 0:
+                    product_id.authorization_pending = False
                     if current_authorization_ids:
                         product_id.authorization_ids = [Command.create({
                             'event_authorization_id': current_authorization_ids[0].id,
@@ -1252,7 +1249,7 @@ class IkeEvent_Search(models.Model):
         try:
             with self.env.cr.savepoint():
                 self.env.cr.execute(
-                    "SELECT id FROM %s WHERE id = %%s FOR UPDATE" % self._table,
+                    "SELECT id FROM %s WHERE id = %%s AND is_searching = false FOR UPDATE" % self._table,
                     (self.id,)
                 )
                 self.env.cr.execute(
@@ -1269,6 +1266,7 @@ class IkeEvent_Search(models.Model):
                         (self.id,)
                     )
         except Exception:
+            print("ERROR")
             return
 
         if is_searching:

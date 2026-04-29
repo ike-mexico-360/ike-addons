@@ -8,7 +8,6 @@ import threading
 
 from odoo import models, fields, api, SUPERUSER_ID
 from odoo.modules.registry import Registry
-from odoo.tools import html2plaintext
 
 _logger = logging.getLogger(__name__)
 
@@ -23,6 +22,7 @@ class IkeEventSupplierSelection(models.Model):
         "manual": {"code": 3, "name": "MAN"},
         "manual_manual": {"code": 3, "name": "MAN"},
     }
+
     # Mapeo de subservicios equivalencias Odoo -> iké
     SUB_SERVICE_REF_MAP = {
         "town_truck": {
@@ -47,11 +47,469 @@ class IkeEventSupplierSelection(models.Model):
         },
     }
 
+    # === OVERRIDE ACTIONS === #
+    def action_notify(self):
+        """OVERRIDE: send unknown? notification"""
+        # SUPER
+        with self.env.cr.savepoint():
+            res = super().action_notify()
+        # Async Notification
+        if not self._is_db_neutralized():
+            self_filtered = self.filtered(
+                lambda x: x.state == 'notified'
+                and x.notification_date
+                and x.event_id.service_id.x_ref == 'vial'
+                and x.event_id.sub_service_id.default_code in self.SUB_SERVICE_REF_MAP.keys()
+                and x.supplier_id.x_has_external_notification
+                and x.truck_id.x_vehicle_ref
+            )
+            if not self_filtered:
+                return
+
+            @self.env.cr.postcommit.add
+            def send_notifications_with_new_cursor():
+                threading.Thread(
+                    target=self._async_send_notification,
+                    args=(self.env.cr.dbname, self_filtered.ids, 'send_external_notification'),
+                    # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_external_notification'),  # ? TESTING
+                    daemon=True,
+                ).start()
+        return res
+
+    def action_notify_operator(self):
+        """OVERRIDE: send operator notification"""
+        self_filtered = self.filtered(lambda x: x.state == 'accepted')
+        if not self_filtered:
+            return
+        # Async Notification
+        if not self._is_db_neutralized():
+            threading.Thread(
+                target=self._async_send_notification,
+                args=(self.env.cr.dbname, self_filtered.ids, 'send_operator_notification'),
+                # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_operator_notification'),  # ? TESTING
+                daemon=True,
+            ).start()
+        # SUPER
+        res = super().action_notify_operator()
+        return res
+
+    def action_accept(self):
+        """OVERRIDE: send user notification"""
+        res = super().action_accept()
+        selected_suppliers = self.filtered(lambda x: x.selected)
+        # FixMe: check len == 1 ?
+        if len(selected_suppliers) == 1 and self._is_db_neutralized():
+            @self.env.cr.postcommit.add
+            def send_notifications_with_new_cursor():
+                threading.Thread(
+                    target=self._async_send_notification,
+                    args=(self.env.cr.dbname, selected_suppliers.ids, 'send_accept_notification'),
+                    # args=(self.env.cr.dbname, selected_suppliers.ids, '_testing_async_method', 'send_accept_notification'),  # ? TEST
+                    daemon=True
+                ).start()
+        return res
+
+    # def action_reject(self):
+    # def action_timeout(self):
+    # def action_expire(self):
+
+    def action_cancel(self, cancel_reason_id: int, reason_text=None):
+        """OVERRIDE: send user notification"""
+        # Filtrar los operadores a notificar cancelación
+        self_filtered = self.filtered(lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized')
+        self_filtered_app = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is False)
+        self_filtered_external = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is True)
+
+        res = super().action_supplier_cancel(cancel_reason_id, reason_text)
+
+        # Lógica para notificar la cancelación a la app
+        if self_filtered_app and not self._is_db_neutralized():
+            try:
+                @self.env.cr.postcommit.add
+                def send_notifications_with_new_cursor():
+                    threading.Thread(
+                        target=self._async_send_notification,
+                        args=(self.env.cr.dbname, self_filtered_app.ids, 'send_cancel_notification', 'internal'),
+                        # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_cancel_notification'),  # ? TEST
+                        daemon=True,
+                    ).start()
+            except Exception as e:
+                _logger.error(f"Error sending global notification to app: {str(e)}")
+
+        if self_filtered_external and not self._is_db_neutralized():
+            try:
+                @self.env.cr.postcommit.add
+                def send_notifications_with_new_cursor_external():
+                    threading.Thread(
+                        target=self._async_send_notification,
+                        args=(
+                            self.env.cr.dbname,
+                            self_filtered_external.ids,
+                            'send_cancel_notification_to_external',
+                            cancel_reason_id,
+                            reason_text,
+                            'external'
+                        ),
+                        daemon=True,
+                    ).start()
+            except Exception as e:
+                _logger.error(f"Error sending cancel notification to external: {str(e)}")
+
+        return res
+
+    def action_event_cancel(self, cancel_reason_id: int, reason_text=None):
+        """OVERRIDE: send user notification"""
+        # Filtrar los operadores a notificar cancelación
+        self_filtered = self.filtered(lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized')
+        self_filtered_app = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is False)
+        self_filtered_external = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is True)
+
+        res = super().action_supplier_cancel(cancel_reason_id, reason_text)
+
+        if self_filtered_app and not self._is_db_neutralized():
+            try:
+                @self.env.cr.postcommit.add
+                def send_notifications_with_new_cursor():
+                    threading.Thread(
+                        target=self._async_send_notification,
+                        args=(self.env.cr.dbname, self_filtered_app.ids, 'send_cancel_notification', 'event'),
+                        # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_cancel_notification'),  # ? TEST
+                        daemon=True,
+                    ).start()
+            except Exception as e:
+                _logger.error(f"Error sending global notification to app: {str(e)}")
+
+            if self_filtered_external and not self._is_db_neutralized():
+                try:
+                    @self.env.cr.postcommit.add
+                    def send_notifications_with_new_cursor_external():
+                        threading.Thread(
+                            target=self._async_send_notification,
+                            args=(
+                                self.env.cr.dbname,
+                                self_filtered_external.ids,
+                                'send_cancel_notification_to_external',
+                                cancel_reason_id,
+                                reason_text,
+                                'external'
+                            ),
+                            daemon=True,
+                        ).start()
+                except Exception as e:
+                    _logger.error(f"Error sending cancel notification to external: {str(e)}")
+
+        return res
+
+    def action_supplier_cancel(self, cancel_reason_id: int, reason_text=None):
+        """OVERRIDE: send user notification"""
+        self_filtered = self.filtered(lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized')
+        res = super().action_supplier_cancel(cancel_reason_id, reason_text)
+
+        if not self._is_db_neutralized():
+            @self.env.cr.postcommit.add
+            def send_notifications_with_new_cursor():
+                threading.Thread(
+                    target=self._async_send_notification,
+                    args=(self.env.cr.dbname, self_filtered.ids, 'send_cancel_notification', 'portal'),
+                    # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_cancel_notification'),  # ? TESTING
+                    daemon=True,
+                ).start()
+
+        return res
+
+    # === ASYNC EXECUTION === #
+    def _async_send_notification(self, db_name, record_ids, action_name, *args):
+        """Thread to send notification"""
+        db_registry = Registry(db_name)
+        with db_registry.cursor() as cr:
+            env = api.Environment(cr, SUPERUSER_ID, {})
+
+            records = env['ike.event.supplier'].browse(record_ids).sudo()
+            # print(records.ids, records.name)
+            method = getattr(records, action_name, None)
+            if callable(method):
+                method(*args)
+
+    def _testing_async_method(self, real_action_name: str):
+        time.sleep(10)
+        print("ASYNC TEST DONE", real_action_name)
+
+    # === SEND EXTERNAL NOTIFICATIONS === #
+    def send_external_notification(self):
+        url = self.env['ir.config_parameter'].sudo().get_param('ike_event.url.send_external_supplier')
+        if not url:
+            _logger.warning("No se ha configurado la URL de notificación a proveedores externos")
+            return
+
+        # ? ToImprove: Bulk/Batch send improve
+        headers = {"Content-Type": "application/json"}
+        notification_responses = []
+        for rec in self:
+            try:
+                body = rec._prepare_body_for_external_notification()
+                # _logger.warning(f"Sending external notification: {body}")
+                external_response = requests.post(
+                    str(url),
+                    headers=headers,
+                    json=body,
+                )
+                if external_response:
+                    notification_responses.append(external_response.json())
+            except Exception as e:
+                _logger.error(f"Sending external notification Error: {str(e)}")
+                return None
+        # for response in notification_responses:
+        #     _logger.info(f"External notification: {response}")
+
+    def send_operator_notification(self):
+        # Supplier Notification
+        supplier_responses = []
+        IrConfig = self.env['ir.config_parameter'].sudo()
+        notification_url = IrConfig.get_param('ike_event.app.url.notification')
+        if notification_url:
+            # Request
+            headers = {
+                "Content-Type": "application/json",
+                "User-Agent": "Python-IoT-Test/1.0",
+            }
+
+            for rec in self:
+                if rec.supplier_id.x_has_external_notification:
+                    continue
+                if rec.truck_id.driver_id and rec.supplier_id.x_has_portal is True:
+                    try:
+                        notification_response = requests.post(
+                            str(notification_url),
+                            headers=headers,
+                            params={
+                                "user_id": str(rec.truck_id.driver_id.user_ids[0].id),
+                                "vehicle_id": str(rec.truck_id.x_vehicle_ref),
+                            },
+                            json={
+                                "service_id": str(rec.event_id.id),
+                                "ca_id": str(rec.truck_id.x_center_id.id),
+                                "lng": str(rec.event_id.location_latitude),
+                                "lat": str(rec.event_id.location_longitude),
+                                "dst_lng": str(rec.event_id.destination_latitude),
+                                "dst_lat": str(rec.event_id.destination_longitude),
+                                "control": "1",  # mesa de control
+                                "assignation_type": str(rec.assignation_type),
+                                "estatus": str(rec.state),
+                                "event_supplier_id": str(rec.id),
+                                "user_code": str(rec.event_id.user_code),
+                                "DB": self.env.cr.dbname,  # Base de datos para distinguir de donde provienen las notificaciones
+                            },
+                        )
+                        if notification_response:
+                            response_json = notification_response.json()
+                            supplier_responses.append(response_json)
+                            topic = response_json.get("topic", False)
+                            if topic and topic == f"vehiculos/{rec.truck_id.driver_id.user_ids[0].id}/{rec.truck_id.x_vehicle_ref}":
+                                # rec.notification_sent_to_app = True
+                                query = """
+                                    UPDATE ike_event_supplier
+                                    SET notification_sent_to_app = true
+                                    WHERE id = %
+                                """
+                                params = (rec.id)
+                                self.env.cr.execute(query, params)
+                    except Exception as e:
+                        _logger.error(f"Error en notificación: {str(e)}")
+
+            # for response in supplier_responses:
+            #     _logger.info(f"Notified by portal: {response}")
+            # En el log debemos ver algo como:
+            # {
+            #     'success': True,
+            #     'message': 'Event published to IoT Core',
+            #     'topic': 'vehiculos/2/27',
+            #     'method': 'default_endpoint',
+            #     'request_id': '71e29af8-24a5-4fec-b821-a2563b8e2473'
+            # }
+        else:
+            _logger.warning("No se ha configurado la URL para las notificaciones")
+
+        # Route Notification
+        tracking_responses = []
+        route_tracking_url = IrConfig.get_param('ike_event_api.url.send_route')
+        if route_tracking_url:
+            headers = {
+                "Content-Type": "application/json",
+                "User-Agent": "Python-IoT-Test/1.0",
+            }
+            for rec in self:
+                if not rec.route:
+                    continue
+
+                origin = {
+                    "lat": rec.event_id.location_latitude,
+                    "lng": rec.event_id.location_longitude,
+                    "label": rec.event_id.location_label,
+                }
+                destination = {
+                    "lat": rec.event_id.destination_latitude,
+                    "lng": rec.event_id.destination_longitude,
+                    "label": rec.event_id.destination_label,
+                }
+
+                # Si route_to_user es string
+                if rec.route:
+                    if isinstance(rec.route, str):
+                        route_to_user = json.loads(rec.route)
+                    else:
+                        route_to_user = rec.route  # Ya es lista
+                else:
+                    route_to_user = []
+                # Si route_to_destination es string
+                if rec.event_id.destination_route:
+                    if isinstance(rec.event_id.destination_route, str):
+                        route_to_destination = json.loads(rec.event_id.destination_route)
+                    else:
+                        route_to_destination = rec.event_id.destination_route  # Ya es lista
+                else:
+                    route_to_destination = []
+
+                try:
+                    if route_to_user is None:
+                        route_to_user = []
+                    if route_to_destination is None:
+                        route_to_destination = []
+                    dest_lat = destination.get('lat', False)
+                    dest_lng = destination.get('lng', False)
+                    if not dest_lat and not dest_lng:
+                        destination = origin
+                        origin = {
+                            "lat": False,
+                            "lng": False,
+                            "label": False,
+                        }
+                    routes = [route_to_user, route_to_destination]
+                    json_data = {
+                        "serviceId": str(rec.event_id.id),
+                        "vehicleId": str(rec.event_id.id),
+                        "origin": origin,
+                        "destination": destination,
+                        "routes": routes,
+                        "DB": self.env.cr.dbname,  # Base de datos para distinguir el ambiente de donde se envía
+                    }
+                    tracking_response = requests.post(
+                        str(route_tracking_url),
+                        headers=headers,
+                        json=json_data,
+                    )
+                    if tracking_response:
+                        tracking_responses.append(tracking_response.json())
+                except Exception as e:
+                    _logger.error(f"Error en ruta: {str(e)}")
+            # for response in tracking_responses:
+            #     _logger.info(f"Tracking route: {response}")
+        else:
+            _logger.warning("No se ha configurado la URL para el envío de rutas")
+
+    def send_accept_notification(self):
+        try:
+            time.sleep(30)
+            wp_access_token = self.x_get_whatsapp_token()
+
+            if wp_access_token:
+                # FixMe: self[0]?
+                supplier = self[0]
+                decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
+                phone_number = decrypt_encrypt_utility_sudo.decrypt_aes256(supplier.event_id.user_id.phone or '')
+
+                parameter = f"de su servicio ha iniciado, el vehículo asignado es {supplier.truck_id.name},"\
+                    f" con matrícula {supplier.truck_id.license_plate}. Deberá proporcionar el siguiente"\
+                    f" código #{supplier.event_id.user_code} a"
+                successfully_sent = supplier.x_send_whatsapp_template(
+                    access_token=wp_access_token,
+                    event_id=str(supplier.event_id.id),
+                    template=71,  # Código verificador
+                    phone_number=phone_number,
+                    parameter=parameter,
+                )
+                if successfully_sent:
+                    _logger.info(f"WP Send user code: {parameter}")
+                else:
+                    _logger.error("WP Send user code: Error al enviar el código de usuario")
+            else:
+                _logger.error("WP Send user code: Error al obtener el token de acceso")
+        except Exception as e:
+            _logger.error(f"WP Send user code: Error al enviar el código de usuario: {str(e)}")
+
+    def send_cancel_notification(self, origin):
+        app_notification_url =\
+            self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.global_notification')
+        if not app_notification_url:
+            _logger.warning("No se ha configurado la URL de notificación global a la app")
+            return
+        app_notification_url = str(app_notification_url)
+
+        notification_responses = []
+        headers = {"Content-Type": "application/json"}
+        for rec in self:
+            try:
+                body = {
+                    "vehicleId": str(rec.truck_id.x_vehicle_ref),
+                    "userId": None,
+                    "payload": {
+                        "type": "TRAVEL_CANCELATION",
+                        "details": {
+                            "serviceId": str(rec.event_id.id),
+                        }
+                    }
+                }
+                response = requests.post(
+                    app_notification_url,
+                    headers=headers,
+                    json=body,
+                )
+                notification_responses.append(response.json)
+            except Exception as e:
+                _logger.error(f"Error sending notification: {str(e)}")
+        # for response in notification_responses:
+        #     if 'ok' in response:
+        #         _logger.info(f"Notification sent successfully ({origin}): {response}")
+        #     else:
+        #         _logger.warning(f"Error sending notification ({origin}): {response}")
+
+    def send_cancel_notification_to_external(self, str, cancel_reason_id, reason_text, origin: str = 'internal'):
+        external_supplier_notification_url =\
+            self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.cancel_external_notification')
+        if not external_supplier_notification_url:
+            _logger.warning("No se ha configurado la URL de notificación a proveedores externos")
+            return
+        external_supplier_notification_url = str(external_supplier_notification_url)
+        for supplier in self:
+            headers = {"Content-Type": "application/json"}
+            body = {
+                "folio": str(supplier.event_id.id),
+                "craneId": str(supplier.truck_id.x_vehicle_ref),
+                "motivo": cancel_reason_id,
+                "observaciones": reason_text if reason_text else ""
+            }
+            _logger.warning(f"Sending external notification: {body}")
+            external_notification_response = requests.post(
+                external_supplier_notification_url,
+                headers=headers,
+                json=body,
+            )
+            try:
+                notification_data = external_notification_response.json()
+                if notification_data.get('error', True):
+                    _logger.info(f"External notification sent successfully ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data}")
+                else:
+                    _logger.warning(f"Error sending external notification ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data}")
+            except Exception as e:
+                _logger.warning(f"Error sending external notification ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data.text}")
+
     # === PRIVATE METHODS === #
     def _is_db_neutralized(self):
-        return self.env['ir.config_parameter'].sudo().get_param('database.is_neutralized')
+        # return self.env['ir.config_parameter'].sudo().get_param('database.is_neutralized')
+        return False
 
     def _prepare_body_for_external_notification(self):
+        self.ensure_one()
+
         # Mapeo de estados Odoo -> iké
         def get_status(ref):
             if ref in ('preparing', 'assigned', 'on_route', 'arrived', 'contacted', 'on_route_2', 'arrived_2'):
@@ -60,12 +518,12 @@ class IkeEventSupplierSelection(models.Model):
                 return {'code': 2, 'name': 'Cerrado'}
             return {}
 
-        service_id = self.env[self.event_id.service_res_model].browse(self.event_id.service_res_id)
+        service_model_id = self.event_id.get_service_model()
 
         # Para subsevicios que no tienen todos los campos necesarios para notificar... aplicar read para obtener
         # solo los existentes necesarios
-        sub_service_id = self.env[self.event_id.sub_service_res_model].browse(self.event_id.sub_service_res_id)
-        sub_service_valid_fields = list(sub_service_id._fields.keys())
+        sub_service_model_id = self.event_id.get_sub_service_model()
+        sub_service_valid_fields = list(sub_service_model_id._fields.keys())
         needed_fields = [
             'destination_zip_code',
             'state_id',
@@ -79,15 +537,14 @@ class IkeEventSupplierSelection(models.Model):
             'destination_longitude'
         ]
         fields_to_read = [f for f in needed_fields if f in sub_service_valid_fields]
-        subservice_data = sub_service_id.read(fields_to_read)
+        subservice_data = sub_service_model_id.read(fields_to_read)
         subservice_data = subservice_data[0]
 
-        # Es gama alta? Considerar posibles formas más seguras en lugar de validar con texto
-        rangehigh = False
-        if service_id.vehicle_category_id:
-            rangehigh = bool(service_id.vehicle_category_id.name.strip().lower().replace(' ', '') == 'altagama')
+        range_high = False
+        if service_model_id.vehicle_category_id:  # type: ignore
+            range_high = bool(service_model_id.vehicle_category_id.name.strip().lower().replace(' ', '') == 'altagama')  # type: ignore
 
-        service_details = self._get_service_details(self.event_id.sub_service_survey_input_id)
+        survey_input_data = self.event_id.get_survey_input_data()
         decrypt_utility = self.env['custom.encryption.utility'].sudo()
 
         body = {
@@ -95,13 +552,13 @@ class IkeEventSupplierSelection(models.Model):
             "user": decrypt_utility.decrypt_aes256(self.event_id.user_id.name or ''),
             "placeEvent": self.event_id.event_type_id.name or '',
             "car": {
-                "yearCar": service_id.vehicle_year or '',
-                "typeCar": service_id.vehicle_model or '',
-                "brandCar": service_id.vehicle_brand or '',
-                "colorCar": service_id.vehicle_color or '',
-                "platesCar": service_id.vehicle_plate or '',
-                "rangehigh": rangehigh,
-                "rangetype": service_id.vehicle_category_id.name or ''
+                "yearCar": service_model_id.vehicle_year or '',  # type: ignore
+                "typeCar": service_model_id.vehicle_model or '',  # type: ignore
+                "brandCar": service_model_id.vehicle_brand or '',  # type: ignore
+                "colorCar": service_model_id.vehicle_color or '',  # type: ignore
+                "platesCar": service_model_id.vehicle_plate or '',  # type: ignore
+                "rangehigh": range_high,
+                "rangetype": service_model_id.vehicle_category_id.name or '',  # type: ignore
             },
             # Servicio se envía estático, solo se notifica en Asistencia vial
             "service": {
@@ -111,33 +568,37 @@ class IkeEventSupplierSelection(models.Model):
             },
             "subservice": self.SUB_SERVICE_REF_MAP.get(self.event_id.sub_service_id.default_code, {}),
             "origin": {
-                "postalCode": service_id.location_zip_code or '',
-                "state": service_id.state_id.name or '',
-                "municipality": service_id.municipality_id.name or '',
-                "neighborhood": service_id.colony or '',
-                "street": f"{service_id.street} {service_id.street_number}" or '',
-                "betweenStreets": service_id.street2 or '',
-                "visualReference": service_id.street_ref or '',
-                "latitude": service_id.location_latitude or '',
-                "longitude": service_id.location_longitude or '',
+                "postalCode": service_model_id.location_zip_code or '',  # type: ignore
+                "state": service_model_id.state_id.name or '',  # type: ignore
+                "municipality": service_model_id.municipality_id.name or '',  # type: ignore
+                "neighborhood": service_model_id.colony or '',  # type: ignore
+                "street": f"{service_model_id.street} {service_model_id.street_number}" or '',  # type: ignore
+                "betweenStreets": service_model_id.street2 or '',  # type: ignore
+                "visualReference": service_model_id.street_ref or '',  # type: ignore
+                "latitude": service_model_id.location_latitude or '',  # type: ignore
+                "longitude": service_model_id.location_longitude or '',  # type: ignore
             },
             "destino": {
                 "postalCode": subservice_data.get('destination_zip_code', ''),
                 "state": subservice_data['state_id'][1] if subservice_data.get('state_id', False) else '',
                 "municipality": subservice_data['municipality_id'][1] if subservice_data.get('municipality_id', False) else '',
                 "neighborhood": subservice_data.get('colony', ''),
-                "street": f"{subservice_data['street']} {subservice_data['street_number']}" if subservice_data.get('street', False) and subservice_data.get('street_number', False) else '',
+                "street": (
+                    f"{subservice_data['street']} {subservice_data['street_number']}"
+                    if subservice_data.get('street', False) and subservice_data.get('street_number', False)
+                    else ''
+                ),
                 "betweenStreets": subservice_data.get('street2', ''),
                 "visualReference": subservice_data.get('street_ref', ''),
                 "latitude": subservice_data.get('destination_latitude', ''),
                 "longitude": subservice_data.get('destination_longitude', ''),
             },
             "typeAssignment": {
-                "code": self.SEARCH_TYPE_MAP.get(self.assignation_type)['code'],
-                "description": self.SEARCH_TYPE_MAP.get(self.assignation_type)['name'],
+                "code": self.SEARCH_TYPE_MAP.get(self.assignation_type, {}).get('code'),
+                "description": self.SEARCH_TYPE_MAP.get(self.assignation_type, {}).get('name'),
                 "id": str(self.truck_id.x_vehicle_ref) if self.truck_id.x_vehicle_ref else '',
             },
-            "serviceDetails": service_details,
+            "serviceDetails": survey_input_data,
         }
 
         # handle status
@@ -148,134 +609,10 @@ class IkeEventSupplierSelection(models.Model):
                 "description": status['name'],
             }
         })
+
         return body
 
-    def _get_service_details(self, survey_input_id):
-        """ Get the service details from the survey input """
-        survey = []
-
-        group_multiple_choice = {}
-        for input_id in survey_input_id.user_input_line_ids:
-            question_id = input_id.question_id
-            title = question_id.title or ''
-            description = html2plaintext(question_id.description) or ''
-            answer = input_id.display_name or ''
-            question_type = question_id.question_type
-            if question_type == 'multiple_choice':
-                if title not in group_multiple_choice:
-                    group_multiple_choice[title] = []
-                group_multiple_choice[title].append(answer)
-                continue
-            survey.append({
-                "title": title,
-                "description": description,
-                "type": question_type,
-                "answer": answer,
-                "required": question_id.constr_mandatory,
-            })
-        if group_multiple_choice:
-            for key, value in group_multiple_choice.items():
-                survey.append({
-                    "title": key,
-                    "description": key,
-                    "type": "multiple_choice",
-                    "answer": value,
-                    "required": False,
-                })
-
-        return survey
-
     # === AUX METHODS === #
-    def operator_app_notify(
-        self, url: str, user_id: str, vehicle_id: str, service_id: str, ca_id: str, lat: str, lng: str, dst_lat: str,
-        dst_lng: str, control: str, assignation_type: str, status: str, event_supplier_id: str, user_code: str,
-    ):
-        if not url:
-            return False
-        response = requests.post(
-            url,
-            headers={
-                "Content-Type": "application/json",
-                "User-Agent": "Python-IoT-Test/1.0",
-            },
-            params={
-                "user_id": user_id,  # operador asignado al vehículo
-                "vehicle_id": vehicle_id,  # vehículo
-            },
-            json={
-                "service_id": service_id,  # id del evento
-                "ca_id": ca_id,  # centro de atención
-                "lng": lng,  # recolección
-                "lat": lat,  # recolección
-                "dst_lng": dst_lng,  # destino
-                "dst_lat": dst_lat,  # destino
-                "control": control,  # mesa de control
-                "assignation_type": assignation_type,  # Tipo de asignación
-                "estatus": status,
-                "event_supplier_id": event_supplier_id,  # ID de la linea del modelo ik.event.supplier
-                "user_code": user_code,  # Código de usuario
-                "DB": self.env.cr.dbname,  # Base de datos para distinguir de donde provienen las notificaciones
-            },
-        )
-        return response.json()
-
-    def send_route_tracking(
-        self, url, service_id, vehicle_id, origin, destination, route_to_user=None, route_to_destination=None,
-    ):
-        if route_to_user is None:
-            route_to_user = []
-        if route_to_destination is None:
-            route_to_destination = []
-        if not url:
-            return False
-        dest_lat = destination.get('lat', False)
-        dest_lng = destination.get('lng', False)
-        if not dest_lat and not dest_lng:
-            destination = origin
-            origin = {
-                "lat": False,
-                "lng": False,
-                "label": False,
-            }
-        routes = [route_to_user, route_to_destination]
-        json_data = {
-            "serviceId": service_id,  # id del evento
-            "vehicleId": vehicle_id,
-            "origin": origin,
-            "destination": destination,
-            "routes": routes,
-            "DB": self.env.cr.dbname,  # Base de datos para distinguir el ambiente de donde se envía
-        }
-        response = requests.post(
-            url,
-            headers={
-                "Content-Type": "application/json",
-                "User-Agent": "Python-IoT-Test/1.0",
-            },
-            json=json_data,
-        )
-        _logger.info(f"Sending route payload: {json_data}")
-        return response.json()
-
-    def notify_external_supplier(self, url: str):
-        if not url:
-            return False
-
-        headers = {"Content-Type": "application/json"}
-        body = self._prepare_body_for_external_notification()
-        _logger.warning(f"Sending external notification: {body}")
-        external_response = requests.post(
-            url,
-            headers=headers,
-            json=body,
-        )
-        try:
-            return external_response.json()
-        except Exception as e:
-            _logger.error(f"Error al enviar notificación: {str(e)}")
-            _logger.error(f"Error al enviar notificación: {external_response.text}")
-            return False
-
     def x_get_whatsapp_token(self):
         # ToDo: Implementar expiración de token
         # ToDo: Mover a custom_nu
@@ -302,7 +639,7 @@ class IkeEventSupplierSelection(models.Model):
             _logger.error("WP Token: Error al obtener credenciales de usuario")
 
         try:
-            login_response = requests.post(login_url, headers=headers, json=login_body)
+            login_response = requests.post(str(login_url), headers=headers, json=login_body)
             data_login = login_response.json()
             access_token = data_login.get('data', {}).get('accessToken', False)
         except Exception as e:
@@ -351,380 +688,13 @@ class IkeEventSupplierSelection(models.Model):
         # _logger.warning(f"WP User code: headers: {headers}")
         _logger.warning(f"WP Template {template}: body: {body}")
         try:
-            response = requests.post(template_url, headers=headers, json=body)
+            response = requests.post(str(template_url), headers=headers, json=body)
             response_json = response.json()
             _logger.info(f"WP Template {template}: response: {response_json}")
             return True
         except Exception as e:
             _logger.error(f"WP Template {template}: Error enviando petición: {str(e)}")
             return False
-
-    # === Override methods === #
-    def action_notify_cancellation_to_app(self, url: str, origin: str = 'internal'):
-        for rec in self:
-            headers = {"Content-Type": "application/json"}
-            body = {
-                "vehicleId": str(rec.truck_id.x_vehicle_ref),
-                "userId": None,
-                "payload": {
-                    "type": "TRAVEL_CANCELATION",
-                    "details": {
-                        "serviceId": str(rec.event_id.id),
-                    }
-                }
-            }
-            service_notification_response = requests.post(
-                url,
-                headers=headers,
-                json=body,
-            )
-            service_data = service_notification_response.json()
-            if 'ok' in service_data:
-                _logger.info(f"Notification sent successfully ({origin}): {service_data}")
-            else:
-                _logger.warning(f"Error sending notification ({origin}): {service_data}")
-
-    def action_notify_cancellation_to_external(self, url: str, cancel_reason_id, reason_text, origin: str = 'internal'):
-        for supplier in self:
-            headers = {"Content-Type": "application/json"}
-            body = {
-                "folio": str(supplier.event_id.id),
-                "craneId": str(supplier.truck_id.x_vehicle_ref),
-                "motivo": cancel_reason_id,
-                "observaciones": reason_text if reason_text else ""
-            }
-            _logger.warning(f"Sending external notification: {body}")
-            external_notification_response = requests.post(
-                url,
-                headers=headers,
-                json=body,
-            )
-            try:
-                notification_data = external_notification_response.json()
-                if notification_data.get('error', True):
-                    _logger.info(f"External notification sent successfully ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data}")
-                else:
-                    _logger.warning(f"Error sending external notification ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data}")
-            except Exception as e:
-                _logger.warning(f"Error sending external notification ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data.text}")
-
-    def action_notify(self):
-        # Override
-        res = super().action_notify()
-
-        url = self.env['ir.config_parameter'].sudo().get_param('ike_event.url.send_external_supplier')
-        if not url:
-            _logger.warning("No se ha configurado la URL de notificación a proveedores externos")
-            return res
-
-        self_filtered = self.filtered(
-            lambda x: x.state == 'notified'  # Notiticados
-            and x.notification_date  # Con fecha de notificación
-            and x.event_id.service_id.x_ref == 'vial'  # Tipo vial
-            and x.event_id.sub_service_id.default_code in self.SUB_SERVICE_REF_MAP.keys()  # Que sea de los subservicios mapeados
-            and x.supplier_id.x_has_external_notification  # Que tenga notificación externa
-            and x.truck_id.x_vehicle_ref  # Que tenga uid el vehiculo
-        )
-        for rec in self_filtered:
-            response = False
-            try:
-                response = rec.notify_external_supplier(url)
-            except Exception as e:
-                _logger.error(f"Error al notificar a proveedor: {str(e)}")
-            _logger.info(f"Notified external supplier {rec.event_id.id}/{rec.truck_id.x_vehicle_ref}: {response}")
-            # response => 'success': True or False
-        return res
-
-    def action_notify_operator(self):
-        # Realizamos el proces antes del super, ya que después del super, el filtrado de self_filtered se complicaría,
-        # ya que se le cambia el valor al estado
-
-        self_filtered = self.filtered(lambda x: x.state == 'accepted' and not x.notification_sent_to_app)
-
-        supplier_responses = []
-        IrConfig = self.env['ir.config_parameter'].sudo()
-        url_notifications = IrConfig.get_param('ike_event.app.url.notification')
-        if not url_notifications:
-            _logger.warning("No se ha configurado la URL para las notificaciones")
-
-        if url_notifications and not self._is_db_neutralized():  # No ejecutar si está neutralizado
-            for s in self_filtered:
-                if s.truck_id.driver_id and s.supplier_id.x_has_portal is True:
-
-                    # Hack, saltar si el proveedor maneja notificación externa
-                    if s.supplier_id.x_has_external_notification:
-                        continue
-
-                    try:
-                        response = self.operator_app_notify(
-                            url=url_notifications,
-                            user_id=str(s.truck_id.driver_id.user_ids[0].id),
-                            vehicle_id=str(s.truck_id.x_vehicle_ref),
-                            service_id=str(s.event_id.id),
-                            ca_id=str(s.truck_id.x_center_id.id),
-                            lat=str(s.event_id.location_latitude),
-                            lng=str(s.event_id.location_longitude),
-                            dst_lat=str(s.event_id.destination_latitude),
-                            dst_lng=str(s.event_id.destination_longitude),
-                            control="1",  # Mandar 1 cuando tiene mesa de control
-                            assignation_type=str(s.assignation_type),
-                            status=str(s.state),  # ToDo: Es este estado?
-                            event_supplier_id=str(s.id),  # ID de la linea del modelo ik.event.supplier
-                            user_code=str(s.event_id.user_code),  # Código de usuario
-                        )
-                        supplier_responses.append(response)
-                        topic = response.get("topic", False)
-                        if topic and topic == f"vehiculos/{s.truck_id.driver_id.user_ids[0].id}/{s.truck_id.x_vehicle_ref}":
-                            # Marcar la linea como notificada
-                            s.notification_sent_to_app = True
-                    except Exception as e:
-                        _logger.error(f"Error en notificación: {str(e)}")
-            for response in supplier_responses:
-                _logger.info(f"Notified by portal: {response}")
-                # En el log debemos ver algo como:
-                # {
-                #     'success': True,
-                #     'message': 'Event published to IoT Core',
-                #     'topic': 'vehiculos/2/27',
-                #     'method': 'default_endpoint',
-                #     'request_id': '71e29af8-24a5-4fec-b821-a2563b8e2473'
-                # }
-
-        tracking_responses = []
-        url_route_tracking = IrConfig.get_param('ike_event_api.url.send_route')
-        if not url_route_tracking:
-            _logger.warning("No se ha configurado la URL para el envío de rutas")
-        if url_route_tracking and not self._is_db_neutralized():  # No ejecutar si está neutralizado
-            for s in self_filtered:
-                if not s.route:
-                    _logger.warning(f"Route not found for {s.truck_id.license_plate}")
-                    continue
-                # if s.truck_id.driver_id:
-                _logger.info(f"Preparando ruta para {s.truck_id.license_plate}")
-                origin = {
-                    "lat": s.event_id.location_latitude,
-                    "lng": s.event_id.location_longitude,
-                    "label": s.event_id.location_label,
-                }
-                destination = {
-                    "lat": s.event_id.destination_latitude,
-                    "lng": s.event_id.destination_longitude,
-                    "label": s.event_id.destination_label,
-                }
-
-                # Si route_to_user es string
-                if s.route:
-                    if isinstance(s.route, str):
-                        route_to_user = json.loads(s.route)
-                    else:
-                        route_to_user = s.route  # Ya es lista
-                else:
-                    route_to_user = []
-                # Si route_to_destination es string
-                if s.event_id.destination_route:
-                    if isinstance(s.event_id.destination_route, str):
-                        route_to_destination = json.loads(s.event_id.destination_route)
-                    else:
-                        route_to_destination = s.event_id.destination_route  # Ya es lista
-                else:
-                    route_to_destination = []
-
-                try:
-                    tracking_response = self.send_route_tracking(
-                        url=url_route_tracking,
-                        service_id=str(s.event_id.id),
-                        vehicle_id=str(s.truck_id.x_vehicle_ref),
-                        origin=origin,
-                        destination=destination,
-                        route_to_user=route_to_user,
-                        route_to_destination=route_to_destination,
-                    )
-                    tracking_responses.append(tracking_response)
-                except Exception as e:
-                    _logger.error(f"Error en ruta: {str(e)}")
-            for response in tracking_responses:
-                _logger.info(f"Tracking route: {response}")
-
-        return super().action_notify_operator()
-
-    def _async_send_notification(self, db_name, record_ids, action_name, *args):
-        """Thread to send notification"""
-        db_registry = Registry(db_name)
-        with db_registry.cursor() as cr:
-            env = api.Environment(cr, SUPERUSER_ID, {})
-
-            records = env['ike.event.supplier'].browse(record_ids).sudo()
-            method = getattr(records, action_name, None)
-            if callable(method):
-                method(*args)
-
-    def action_accept(self):
-        """OVERRIDE: send user notification"""
-        res = super().action_accept()
-        selected_suppliers = self.filtered(lambda x: x.selected)
-        # FixMe: check len == 1 makes no sense.
-        if len(selected_suppliers) == 1:
-            threading.Thread(
-                target=self._async_send_notification,
-                args=(self.env.cr.dbname, selected_suppliers.ids, '_send_notification_accept'),
-                daemon=True
-            ).start()
-        return res
-
-    def _send_notification_accept(self):
-        try:
-            time.sleep(30)
-            wp_access_token = self.x_get_whatsapp_token()
-
-            if not wp_access_token:
-                _logger.error("WP Send user code: Error al obtener el token de acceso")
-
-            if wp_access_token:
-                supplier = self[0]
-                decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
-                phone_number = decrypt_encrypt_utility_sudo.decrypt_aes256(supplier.event_id.user_id.phone or '')
-
-                parameter = f"de su servicio ha iniciado, el vehículo asignado es {supplier.truck_id.name},"\
-                    f" con matrícula {supplier.truck_id.license_plate}. Deberá proporcionar el siguiente"\
-                    f" código #{supplier.event_id.user_code} a"
-                successfully_sent = supplier.x_send_whatsapp_template(
-                    access_token=wp_access_token,
-                    event_id=str(supplier.event_id.id),
-                    template=71,  # CodigoVerificador
-                    phone_number=phone_number,
-                    parameter=parameter,
-                )
-                if successfully_sent:
-                    _logger.info(f"WP Send user code: {parameter}")
-                else:
-                    _logger.error("WP Send user code: Error al enviar el código de usuario")
-        except Exception as e:
-            _logger.error(f"WP Send user code: Error al enviar el código de usuario: {str(e)}")
-
-    def _send_notification_accept_backup(self, db_name, record_ids):
-        """Thread to send notification: accept"""
-        db_registry = Registry(db_name)
-        with db_registry.cursor() as cr:
-            env = api.Environment(cr, SUPERUSER_ID, {})
-
-            records = env['ike.event.supplier'].browse(record_ids).sudo()
-
-            try:
-                wp_access_token = records.x_get_whatsapp_token()
-
-                if not wp_access_token:
-                    _logger.error("WP Send user code: Error al obtener el token de acceso")
-
-                if wp_access_token:
-                    supplier = records[0]
-                    decrypt_encrypt_utility_sudo = records.env['custom.encryption.utility'].sudo()
-                    phone_number = decrypt_encrypt_utility_sudo.decrypt_aes256(supplier.event_id.user_id.phone or '')
-
-                    parameter = f"de su servicio ha iniciado, el vehículo asignado es {supplier.truck_id.name},"\
-                        f" con matrícula {supplier.truck_id.license_plate}. Deberá proporcionar el siguiente"\
-                        f" código #{supplier.event_id.user_code} a"
-                    successfully_sent = supplier.x_send_whatsapp_template(
-                        access_token=wp_access_token,
-                        event_id=str(supplier.event_id.id),
-                        template=71,  # CodigoVerificador
-                        phone_number=phone_number,
-                        parameter=parameter,
-                    )
-                    if successfully_sent:
-                        _logger.info(f"WP Send user code: {parameter}")
-                    else:
-                        _logger.error("WP Send user code: Error al enviar el código de usuario")
-            except Exception as e:
-                _logger.error(f"WP Send user code: Error al enviar el código de usuario: {str(e)}")
-
-    def action_cancel(self, cancel_reason_id: int, reason_text=None):
-        # Filtrar los operadores a notificar cancelación
-        self_filtered = self.filtered(lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized')
-        self_filtered_app = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is False)
-        self_filtered_external = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is True)
-        res = super().action_supplier_cancel(cancel_reason_id, reason_text)
-
-        # Lógica para notificar la cancelación a la app
-        if self_filtered_app:
-            global_app_notification_url =\
-                self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.global_notification')
-            if not global_app_notification_url:
-                _logger.warning("No se ha configurado la URL de notificación global a la app")
-            if global_app_notification_url:
-                try:
-                    self_filtered_app.action_notify_cancellation_to_app(global_app_notification_url, 'internal')
-                except Exception as e:
-                    _logger.error(f"Error sending global notification to app: {str(e)}")
-
-        # Lógica para notificar cancelación a proveedor externo
-        if self_filtered_external:
-            cancel_external_notification_url =\
-                self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.cancel_external_notification')
-            if not cancel_external_notification_url:
-                _logger.warning("No se ha configurado la URL de notificación a proveedores externos")
-            if cancel_external_notification_url:
-                try:
-                    self_filtered_external.action_notify_cancellation_to_external(
-                        cancel_external_notification_url,
-                        cancel_reason_id,
-                        reason_text,
-                        'portal'
-                    )
-                except Exception as e:
-                    _logger.error(f"Error sending external notification to external suppliers: {str(e)}")
-        return res
-
-    def action_event_cancel(self, cancel_reason_id: int, reason_text=None):
-        # Filtrar los operadores a notificar cancelación
-        self_filtered = self.filtered(lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized')
-        self_filtered_app = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is False)
-        self_filtered_external = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is True)
-        res = super().action_supplier_cancel(cancel_reason_id, reason_text)
-
-        # Lógica para notificar la cancelación a la app
-        if self_filtered_app:
-            global_app_notification_url =\
-                self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.global_notification')
-            if not global_app_notification_url:
-                _logger.warning("No se ha configurado la URL de notificación global a la app")
-            if global_app_notification_url:
-                try:
-                    self_filtered_app.action_notify_cancellation_to_app(global_app_notification_url, 'internal')
-                except Exception as e:
-                    _logger.error(f"Error sending global notification to app: {str(e)}")
-
-        # Lógica para notificar cancelación a proveedor externo
-        if self_filtered_external:
-            cancel_external_notification_url =\
-                self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.cancel_external_notification')
-            if not cancel_external_notification_url:
-                _logger.warning("No se ha configurado la URL de notificación a proveedores externos")
-            if cancel_external_notification_url:
-                try:
-                    self_filtered_external.action_notify_cancellation_to_external(
-                        cancel_external_notification_url,
-                        cancel_reason_id,
-                        reason_text,
-                        'portal'
-                    )
-                except Exception as e:
-                    _logger.error(f"Error sending external notification to external suppliers: {str(e)}")
-        return res
-
-    def action_supplier_cancel(self, cancel_reason_id: int, reason_text=None):
-        # Implement: Notify cancel from portal to app
-        global_app_notification_url =\
-            self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.global_notification')
-        self_filtered = self.filtered(
-            lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized'
-            and x.supplier_id.x_has_portal is True  # Notificar solo si tiene mesa de control
-        )
-        res = super().action_supplier_cancel(cancel_reason_id, reason_text)
-        if not global_app_notification_url:
-            _logger.warning("No se ha configurado la URL de notificación global a la app")
-        if self_filtered and global_app_notification_url:
-            self_filtered.action_notify_cancellation_to_app(str(global_app_notification_url), 'portal')
-        return res
 
 
 class IkeEventSupplierElapsedTime(models.Model):

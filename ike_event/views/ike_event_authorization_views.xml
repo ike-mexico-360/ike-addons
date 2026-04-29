@@ -93,9 +93,20 @@
                 (0, 0, {'view_mode': 'list', 'view_id': ref('ike_event_authorization_view_list')}),
                 (0, 0, {'view_mode': 'form', 'view_id': ref('ike_event_authorization_view_form')})]"/>
         <field name="domain">[
-            ('stage_ref', 'in', ['draft', 'capturing', 'searching', 'assigned', 'in_progress']),
-            ('user_id', '!=', False)
-            ]
+            '|',
+            '&amp;',
+            '&amp;',
+            '&amp;',
+            ('user_id', '!=', False),
+            ('authorization_required', '=', True),
+            ('service_supplier_ids', '!=', False),
+            ('stage_ref', 'in', ['searching', 'assigned', 'in_progress']),
+            '&amp;',
+            '&amp;',
+            ('stage_ref', 'in', ['draft', 'capturing']),
+            ('membership_authorization_status', 'in', ['pending', 'pending_cabine', 'pending_commercial']),
+            ('user_id', '!=', False),
+        ]
         </field>
         <field name="context">{'search_default_stage': 1}</field>
     </record>

@@ -15,6 +15,7 @@ class CustomNus(models.Model):
     _name = 'custom.nus'
     _description = 'Custom NUs'
     _inherit = ['custom.model.encryption', 'mail.thread']
+    _order = 'id desc'
 
     # Original encrypted fields (WITHOUT tracking)
     name = fields.Char(required=True, encrypt=True)

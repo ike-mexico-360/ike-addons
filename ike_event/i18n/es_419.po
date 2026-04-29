@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-23 15:35+0000\n"
-"PO-Revision-Date: 2026-04-23 15:35+0000\n"
+"POT-Creation-Date: 2026-04-29 03:43+0000\n"
+"PO-Revision-Date: 2026-04-29 03:43+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -448,20 +448,9 @@ msgstr "Llegó (usuario)"
 #. module: ike_event
 #. odoo-python
 #: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
-msgid ""
-"Arrived at destination date cannot be earlier than or equal to On route to "
-"destination date (%s)."
+msgid "Arrived date cannot be earlier than or equal to event date (%s)"
 msgstr ""
-"La fecha de llegar al destino no puede ser anterior o igual a la fecha de en"
-" ruta al destino (%s)."
-
-#. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
-msgid "Arrived date cannot be earlier than or equal to On route date (%s)."
-msgstr ""
-"La fecha de llegó no puede ser anterior o igual a la fecha de inicio de en "
-"ruta (%s)."
+"La fecha de llegó no puede ser anterior o igual a la fecha del evento (%s)"
 
 #. module: ike_event
 #: model:ike.service.stage,name:ike_event.ike_service_stage_arrived_2
@@ -1089,10 +1078,10 @@ msgstr "Contactado (usuario)"
 #. module: ike_event
 #. odoo-python
 #: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
-msgid "Contacted date cannot be earlier than or equal to Arrived date (%s)."
+msgid "Contacted date cannot be earlier than or equal to event date (%s)"
 msgstr ""
-"La fecha de contactado no puede ser anterior o igual a la fecha de llegó "
-"(%s)."
+"La fecha de contactado no puede ser anterior o igual a la fecha del evento "
+"(%s)"
 
 #. module: ike_event
 #. odoo-javascript
@@ -1266,6 +1255,28 @@ msgstr "Fecha de finalización"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__date_start
 msgid "Date Start"
 msgstr "Fecha de inicio"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid ""
+"Date cannot be earlier than or equal to last captured date (%s).\n"
+"Assignation: %s\n"
+"On route: %s\n"
+"Arrived: %s\n"
+"Contacted: %s\n"
+"On route to destination: %s\n"
+"He arrived destination: %s\n"
+"Finalized: %s"
+msgstr ""
+"La fecha no puede ser anterior o igual a la última fecha capturada (%s).\n"
+"Asignado: %s\n"
+"En ruta: %s\n"
+"Llegó: %s\n"
+"Contactado: %s\n"
+"En ruta al destino: %s\n"
+"Llegó al destino: %s\n"
+"Finalizado: %s"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_service_count_detail_form
@@ -2171,12 +2182,10 @@ msgstr "Finalizado (usuario)"
 #. module: ike_event
 #. odoo-python
 #: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
-msgid ""
-"Finalized date cannot be earlier than or equal to Arrived at destination "
-"date (%s)."
+msgid "Finalized date cannot be earlier than or equal to event date (%s)"
 msgstr ""
-"La fecha de finalizado no puede ser anterior o igual a la fecha de llegó al "
-"destino (%s)."
+"La fecha de finalizado no puede ser anterior o igual a la fecha del evento "
+"(%s)"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_comment
@@ -3500,23 +3509,6 @@ msgstr "En ruta (primer usuario)"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_start_user_id
 msgid "On route (user)"
 msgstr "En ruta (usuario)"
-
-#. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
-msgid "On route date cannot be earlier than or equal to Assigned date (%s)."
-msgstr ""
-"La fecha de en ruta no puede ser anterior o igual a la fecha asignado (%s)."
-
-#. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
-msgid ""
-"On route to destination date cannot be earlier than or equal to Contacted "
-"date (%s)."
-msgstr ""
-"La fecha de en ruta al destino no puede ser anterior o igual a la fecha de "
-"contactado (%s)."
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_history_view_list

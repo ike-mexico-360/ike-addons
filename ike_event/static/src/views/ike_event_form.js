@@ -103,6 +103,7 @@ export class IkeEventFormController extends FormController {
         }
     }
     async broadcastNextSearch(payload) {
+        console.log("broadcastNextSearch", payload);
         if (!payload || payload.id != this.model.root.resId) {
             return;
         }

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import time
+
 from uuid import uuid4
 
 from odoo import models, fields, api, _
@@ -209,8 +211,9 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered = self.filtered(lambda x: x.state == 'notified')
         if not self_filtered:
             return
-        self_filtered.state = 'timeout'
-        self_filtered.rejection_date = fields.Datetime.now()
+        with self.env.cr.savepoint():
+            self_filtered.state = 'timeout'
+            self_filtered.rejection_date = fields.Datetime.now()
         self_filtered.broadcastReload()
         if not self.env.context.get('not_notify_next'):
             self_filtered._notify_next()
@@ -306,6 +309,16 @@ class IkeEventSupplierSelection(models.Model):
         """ Broadcast form view reload by uuid. """
         for rec in self:
             channel_name = f'ike_channel_event_{str(rec.event_id.id)}'
+            # event_batcher.add_event_notification(
+            #     self.env.cr.dbname,
+            #     channel_name,
+            #     'ike_event_next_search', {
+            #         'id': rec.event_id.id,
+            #         'params': {
+            #             'function_name': function_name,
+            #             'next_uuid': next_uuid,
+            #         },
+            #     }, batch_timeout=4)
             self.env['bus.bus']._sendone(
                 target=channel_name,
                 notification_type='ike_event_next_search',
@@ -341,6 +354,13 @@ class IkeEventSupplierSelection(models.Model):
                         next_uuid = uuid4()
                         rec.event_id.next_search_uuid = next_uuid
                         rec.broadcastNextSearch('search_publication_suppliers_3', next_uuid)
+
+                        # TESTING
+                        # rec.event_id.next_search_suppliers({
+                        #     'function_name': 'search_publication_suppliers_3',
+                        #     'next_uuid': next_uuid,
+                        # })
+                        # rec.event_id.broadcastEventReload()
             elif rec.assignation_type == 'publication':
                 current = rec._get_current_notified_siblings()
                 if not current:
@@ -354,15 +374,69 @@ class IkeEventSupplierSelection(models.Model):
                             function_name = 'search_publication_suppliers_' + str(next_priority)
                             rec.broadcastNextSearch(function_name, next_uuid)
 
+                            # TESTING: NOT WORKING, even without postcommit function. :C
+                            # rec.event_id.next_search_suppliers({
+                            #     'function_name': function_name,
+                            #     'next_uuid': next_uuid,
+                            # })
+                            # rec.event_id.broadcastEventReload()
+                elif rec.state == 'timeout':
+                    available_siblings = rec._count_available_siblings()
+                    timeout_id = rec.id
+                    first_timeout_sibling = rec._get_first_timeout_sibling(rec.notification_date)
+                    if first_timeout_sibling:
+                        timeout_id = first_timeout_sibling[0]['id']
+                    if not available_siblings and timeout_id == rec.id:
+                        next_priority = int(rec.priority) - 1
+                        if next_priority >= 1:
+                            # rec._notify_next_siblings(rec.assignation_type, str(next_priority))
+                            next_uuid = uuid4()
+                            rec.event_id.next_search_uuid = next_uuid
+                            function_name = 'search_publication_suppliers_' + str(next_priority)
+                            rec.broadcastNextSearch(function_name, next_uuid)
+
+                            # TESTING: NOT WORKING, even without postcommit function. :C
+                            # @self.env.cr.postcommit.add
+                            # def postcommit_next_search_suppliers(self):
+                            #     rec.event_id.next_search_suppliers({
+                            #         'function_name': function_name,
+                            #         'next_uuid': next_uuid,
+                            #     })
+                            # rec.event_id.broadcastEventReload()
+
+    def _count_available_siblings(self):
+        self.ensure_one()
+        return self.search_count([
+            ('event_id', '=', self.event_id.id),
+            ('supplier_number', '=', self.supplier_number),
+            ('search_number', '=', self.search_number),
+            ('state', 'in', ['available']),
+            ('assignation_type', '=', self.assignation_type),
+            ('priority', '=', self.priority),
+            ('display_type', '=', False),
+        ])
+
+    def _get_first_timeout_sibling(self, notification_date):
+        return self.search_read([
+            ('event_id', '=', self.event_id.id),
+            ('supplier_number', '=', self.supplier_number),
+            ('search_number', '=', self.search_number),
+            ('notification_date', '=', notification_date),
+            ('state', 'in', ['timeout', 'notified']),
+            ('assignation_type', '=', self.assignation_type),
+            ('display_type', '=', False),
+        ], ['id'], limit=1)
+
     def _get_current_notified_siblings(self):
         self.ensure_one()
         return self.search_read([
             ('id', '!=', self.id),
             ('event_id', '=', self.event_id.id),
             ('supplier_number', '=', self.supplier_number),
+            ('search_number', '=', self.search_number),
             ('state', '=', 'notified'),
             ('assignation_type', '=', self.assignation_type),
-            ('priority', '=', self.priority),
+            ('display_type', '=', False),
         ], fields=['id'])
 
     def _notify_next_siblings(self, assignation_type, priority=None, limit=None):
@@ -371,7 +445,8 @@ class IkeEventSupplierSelection(models.Model):
             ('id', '!=', self.id),
             ('event_id', '=', self.event_id.id),
             ('supplier_number', '=', self.supplier_number),
-            ('state', '=', 'available'),
+            ('search_number', '=', self.search_number),
+            ('state', 'in', ['available', 'notified']),
             ('assignation_type', '=', assignation_type),
         ]
         if priority:
@@ -383,7 +458,7 @@ class IkeEventSupplierSelection(models.Model):
 
         line_ids = self.search(domain, order='sequence', **kwargs)
         if line_ids:
-            line_ids.action_notify()
+            line_ids.filtered(lambda d: d.state == 'available').action_notify()
 
         return line_ids
 

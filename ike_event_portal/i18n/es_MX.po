@@ -587,7 +587,7 @@ msgstr "Monitoree las órdenes que debe cumplir"
 #. module: ike_event_portal
 #: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
 msgid "Follow your Requests for Quotation"
-msgstr "Siga sus solicitudes de cotización"
+msgstr "Siga sus solicitudes de revisión de costos"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -1058,7 +1058,7 @@ msgstr "Relación entre Proveedores y Usuarios"
 #. module: ike_event_portal
 #: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
 msgid "Requests for Quotation"
-msgstr "Solicitudes de cotización"
+msgstr "Revisión de costos"
 
 #. module: ike_event_portal
 #: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__event_search_type

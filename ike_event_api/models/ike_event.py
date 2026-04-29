@@ -1,9 +1,12 @@
 
-import random
 import base64
+import logging
+import random
+
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-import logging
+from odoo.tools import html2plaintext
+
 _logger = logging.getLogger(__name__)
 
 
@@ -16,7 +19,7 @@ class IkeEvent(models.Model):
     temporary_phone = fields.Char(
         string="Temporary phone", copy=False,
         help="Technical (BP): This field will temporarily store the value received from BrightPattern when there is no record matching the phone number.")
-    temporary_key_indentification = fields.Char(
+    temporary_key_identification = fields.Char(
         string="Temporary key identification", copy=False,
         help="Technical (BP): Field that temporarily stores the value received from Bright Pattern when there is no record matching the identification key.")
     temporary_membership_plan_id = fields.Many2one(
@@ -177,3 +180,42 @@ class IkeEvent(models.Model):
                 'events_of_period': detail.events_of_period + 1,
             })
         return res
+
+    # === GET METHODS === #
+    def get_survey_input_data(self):
+        self.ensure_one()
+        survey_input_data = []
+        group_multiple_choice = {}
+
+        for input_id in self.sub_service_survey_input_id.user_input_line_ids:
+            question_id = input_id.question_id
+            title = question_id.title or ''
+            description = html2plaintext(question_id.description) or ''
+            answer = input_id.display_name or ''
+            question_type = question_id.question_type
+
+            if question_type == 'multiple_choice':
+                if title not in group_multiple_choice:
+                    group_multiple_choice[title] = []
+                group_multiple_choice[title].append(answer)
+                continue
+
+            survey_input_data.append({
+                "title": title,
+                "description": description,
+                "type": question_type,
+                "answer": answer,
+                "required": question_id.constr_mandatory,
+            })
+
+        if group_multiple_choice:
+            for key, value in group_multiple_choice.items():
+                survey_input_data.append({
+                    "title": key,
+                    "description": key,
+                    "type": "multiple_choice",
+                    "answer": value,
+                    "required": False,
+                })
+
+        return survey_input_data

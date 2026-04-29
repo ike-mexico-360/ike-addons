@@ -45,10 +45,10 @@
                             <th class="py-3 px-3 rounded-start">
                                 <t t-out="translate('Concept')"/>
                             </th>
-                            <th class="py-3 px-3 text-end">
+                            <th class="py-3 px-3 text-end" t-if="state.order_data.state == 'sent'">
                                 <t t-out="translate('Event Quantity')"/>
                             </th>
-                            <th class="py-3 px-3 text-end">
+                            <th class="py-3 px-3 text-end" t-if="state.order_data.state == 'sent'">
                                 <t t-out="translate('Event Price')"/>
                             </th>
                             <th class="py-3 px-3 text-end">
@@ -93,10 +93,10 @@
                                         </select>
                                     </t>
                                 </td>
-                                <td class="text-end align-content-center">
+                                <td class="text-end align-content-center" t-if="state.order_data.state == 'sent'">
                                     <t t-out="line.x_product_qty_event" t-if="!is_new_line" />
                                 </td>
-                                <td class="text-end align-content-center">
+                                <td class="text-end align-content-center" t-if="state.order_data.state == 'sent'">
                                     <t t-out="line.x_price_unit_event" t-if="!is_new_line"/>
                                 </td>
                                 <!-- Quantity -->
@@ -115,7 +115,7 @@
                                     </t>
                                     <t t-else="">
                                         <t t-out="line.price_unit"/>
-                                </t>
+                                    </t>
                                 </td>
                                 <!-- Dispute fields -->
                                 <td class="text-end align-content-center" t-if="show_dispute_columns">
@@ -149,10 +149,10 @@
                             <td class="py-3 px-3">
                                 <t t-out="translate('Subtotal')"/>
                             </td>
-                            <td class="py-3 px-3 text-end">
+                            <td class="py-3 px-3 text-end" t-if="state.order_data.state == 'sent'">
                             </td>
-                            <td class="py-3 px-3 text-end">
-                                <span t-out="state.order_data.amount_untaxed_event"/>
+                            <td class="py-3 px-3 text-end" t-if="state.order_data.state == 'sent'">
+                                <span t-out="state.order_data.amount_untaxed"/>
                             </td>
                             <td class="py-3 px-3 text-end">
                             </td>

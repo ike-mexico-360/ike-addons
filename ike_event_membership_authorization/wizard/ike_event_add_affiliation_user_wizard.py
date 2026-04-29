@@ -264,7 +264,7 @@ class IkeEventAffiliationUser(models.TransientModel):
             'user_additional_phone': self.phone_alternative,
             # Limpiando campos temporales
             'temporary_phone': False,
-            'temporary_key_indentification': False,
+            'temporary_key_identification': False,
             'temporary_membership_plan_id': False,
         })
 

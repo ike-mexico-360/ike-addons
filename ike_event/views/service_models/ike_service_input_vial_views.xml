@@ -55,6 +55,7 @@
                             <field name="vehicle_brand"/>
                             <field name="vehicle_model"/>
                             <field name="vehicle_year"/>
+                            <field name="vehicle_nus_id"/>
                             <field name="vehicle_category_id" options="{'no_open': True, 'no_create': True}"/>
                             <field name="vehicle_plate"/>
                             <field name="vehicle_color"/>
