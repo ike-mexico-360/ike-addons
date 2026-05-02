@@ -27,6 +27,7 @@
         'wizard/ike_event_duplicate_wizard.xml',
         'wizard/ike_event_change_state_supplier_wizard.xml',
         'wizard/ike_event_assignment_wizard.xml',
+        'wizard/ike_event_phone_view_wizard.xml',
         'views/ike_event_supplier_views.xml',
         'views/ike_event_stage_views.xml',
         'views/service_models/ike_service_stage_views.xml',

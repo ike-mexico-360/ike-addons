@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-29 03:43+0000\n"
-"PO-Revision-Date: 2026-04-29 03:43+0000\n"
+"POT-Creation-Date: 2026-05-01 19:17+0000\n"
+"PO-Revision-Date: 2026-05-01 19:17+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -132,6 +132,11 @@ msgid "Account holder user"
 msgstr "Titular de la cuenta"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__label_account_identification
+msgid "Account identification"
+msgstr "Identificación de la cuenta"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_confirm_wizard__action_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_flow__action_ids
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_flow_detail__detail_type__action
@@ -244,7 +249,6 @@ msgstr "Agregar proveedor"
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_product_list_view
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_product_detail_list_view
-#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_generic_screen_form
 msgid "Add a Concept"
 msgstr "Agregar concepto"
 
@@ -252,12 +256,6 @@ msgstr "Agregar concepto"
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "Add comments"
 msgstr "Agregar comentarios"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_product__additional
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__additional
-msgid "Additional"
-msgstr "Adicional"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_supplier_popup_form
@@ -294,7 +292,6 @@ msgstr "Costo convenio"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__base_amount_concept_subtotal
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__base_subtotal
-#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_product_detail_base_cost_final_list_view
 msgid "Agreement Subtotal"
 msgstr "Subtotal convenio"
 
@@ -315,7 +312,6 @@ msgstr "Impuestos convenio"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__base_vat
-#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_product_detail_base_cost_final_list_view
 msgid "Agreement Vat"
 msgstr "Impuestos convenio"
 
@@ -389,6 +385,7 @@ msgstr "Archivado"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_purchase_suppliers_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "Are you sure?"
 msgstr "¿Estás seguro?"
@@ -486,7 +483,6 @@ msgstr "Tipo de Asignación"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__assigned
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__state__assigned
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_base__state__assigned
-#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_public__state__assigned
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "Assigned"
 msgstr "Asignado"
@@ -542,6 +538,12 @@ msgstr ""
 #: code:addons/ike_event/models/ike_event_supplier.py:0
 msgid "Assigned supplier"
 msgstr "Proveedor asignado"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier.py:0
+msgid "Assigned supplier: %s"
+msgstr "Proveedor asignado: %s"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__assigned_user_id
@@ -700,6 +702,11 @@ msgid "Base"
 msgstr ""
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event__base_supplier_number
+msgid "Base Supplier Number"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic__street2
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical__street2
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__street2
@@ -722,6 +729,59 @@ msgstr "Marca"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_assignment_type__by_priority
 msgid "By Priority"
 msgstr "Por prioridad"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_custom_membership_nus__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_fleet_vehicle__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_authorization__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_base__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_confirm_wizard__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence_detail__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_flow__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_flow_detail__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_product__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_service_summary__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_summary__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_assignment_type__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product_authorization__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_vehicle_detail_wizard__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_vehicle_wizard__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic_sub__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_stage__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ir_websocket__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_product_category__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_product_product__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_survey_question__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_survey_survey__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_survey_user_input__can_be_disabled
+msgid "Can Be Disabled"
+msgstr "Puede ser deshabilitado"
 
 #. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event_product__mandatory
@@ -843,6 +903,12 @@ msgid "Capturing"
 msgstr "Capturando detalles"
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/widgets/ike_carrusel_image/ike_carrusel_image.xml:0
+msgid "Cargando..."
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__vehicle_category_id
 msgid "Category"
 msgstr "Categoría"
@@ -882,7 +948,9 @@ msgstr "Limpiar ícono"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_history_readonly_view_form
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_form_view
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_link_form_view
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_purchase_suppliers_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_supplier_popup_form
 msgid "Close"
@@ -985,6 +1053,7 @@ msgid "Concepts out of coverage"
 msgstr "Conceptos fuera de cobertura"
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_purchase_suppliers_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "Conclude"
 msgstr "Concluir"
@@ -1097,11 +1166,6 @@ msgstr "Continuar"
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__cancel_from__control_panel
 msgid "Control Panel"
 msgstr "Mesa de control"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__coordinator_domain
-msgid "Coordinator Domain"
-msgstr "Dominio del coordinador"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__event_cost
@@ -1618,6 +1682,11 @@ msgid "Elapsed Time"
 msgstr "Tiempo transcurrido"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__elapsed_time_s
+msgid "Elapsed Time S"
+msgstr "Tiempo transcurrido"
+
+#. module: ike_event
 #: model:ike.event.supplier.assignment.type,name:ike_event.ike_supplier_assignment_electronic
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event__supplier_search_type__electronic
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__assignation_type__electronic
@@ -1642,12 +1711,6 @@ msgstr "Emergencia"
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_supplier_assignment_type_search
 msgid "Enabled"
 msgstr "Habilitado"
-
-#. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
-msgid "Error executing action \"%s\": %s"
-msgstr ""
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__estimated_cost
@@ -2016,8 +2079,8 @@ msgid "Events in capturing details"
 msgstr "Eventos en captura de detalles"
 
 #. module: ike_event
-#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_assignment_wizard_view_form
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_assignment_wizard__event_not_assign_ids
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_assignment_wizard_view_form
 msgid "Events not assigned"
 msgstr "Eventos no asignados"
 
@@ -2034,6 +2097,7 @@ msgstr "Eventos para asignar"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__service_evidence_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__service_evidence_ids
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__service_evidence_ids
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 msgid "Evidence"
 msgstr "Evidencia"
@@ -2279,6 +2343,11 @@ msgstr "Por cobertura"
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 msgid "Forward"
 msgstr "Avanzar"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__from_portal
+msgid "From Portal"
+msgstr "Desde el portal"
 
 #. module: ike_event
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_evidence_detail__side__front
@@ -2584,12 +2653,6 @@ msgid "Invalid date"
 msgstr "Fecha no válida"
 
 #. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
-msgid "Invalid stage."
-msgstr "Estado no válido."
-
-#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_arrived_2_editable
 msgid "Is Arrived 2 Editable"
 msgstr "Es editable (llegó al destino)"
@@ -2706,6 +2769,12 @@ msgid "Is destination a Highway?"
 msgstr "¿La ubicación es carretera?"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__is_generic_supplier
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__is_generic_supplier
+msgid "Is generic supplier"
+msgstr "Es proveedor genérico"
+
+#. module: ike_event
 #: model_terms:survey.question,description:ike_event.survey_vial_truck_question_1
 msgid "Is it an armored vehicle?"
 msgstr "¿Es un vehículo blindado?"
@@ -2750,11 +2819,6 @@ msgstr "Identificador de clave"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__key_identification
 msgid "Key identification"
-msgstr ""
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__label_account_identification
-msgid "Label"
 msgstr ""
 
 #. module: ike_event
@@ -3182,7 +3246,6 @@ msgid "Name"
 msgstr "Nombre"
 
 #. module: ike_event
-#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_supplier_assignment_type_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_generic_form
@@ -3554,6 +3617,11 @@ msgid "Origin"
 msgstr "Origen"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__osrm
+msgid "Osrm"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event__user_by__by_other
 #: model:survey.question,title:ike_event.survey_vial_truck_question_9
 msgid "Other"
@@ -3596,6 +3664,43 @@ msgstr "Periodo del evento"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone
 msgid "Phone"
 msgstr "Teléfono"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone_1
+msgid "Phone 1"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone_2
+msgid "Phone 2"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone_3
+msgid "Phone 3"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone_4
+msgid "Phone 4"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone_5
+msgid "Phone 5"
+msgstr ""
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_form_view
+msgid "Phones"
+msgstr "Teléfonos"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier_selection.py:0
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_supplier_popup_form
+msgid "Phone directory"
+msgstr "Directorio telefónico"
 
 #. module: ike_event
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_evidence__evidence_type__pickup
@@ -3691,6 +3796,18 @@ msgid "Publication"
 msgstr "Publicación"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__purchase_supplier_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__purchase_supplier_id
+msgid "Purchase Supplier"
+msgstr "Provedor para cotización"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event.py:0
+msgid "Purchase Suppliers"
+msgstr "Proveedores para la cotización"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__quantity
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product_authorization__quantity
 msgid "Quantity"
@@ -3707,6 +3824,11 @@ msgid "Question 01?"
 msgstr ""
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
+msgid "RELOAD"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__ranking
 msgid "Ranking"
 msgstr ""
@@ -3715,6 +3837,16 @@ msgstr ""
 #: model:survey.question,title:ike_event.survey_satisfaction_vial_question_1
 msgid "Rate"
 msgstr "Calificación"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__real_distance
+msgid "Real Distance"
+msgstr "Distancia real"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__real_duration
+msgid "Real Duration"
+msgstr "Duración real"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_confirm_wizard__reason
@@ -3941,6 +4073,12 @@ msgid "Satisfaction Survey URL"
 msgstr "URL de encuesta de satisfacción"
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_form_view
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_purchase_suppliers_form
+msgid "Save"
+msgstr "Guardar"
+
+#. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_link_form_view
 msgid "Save and Request Authorization"
 msgstr "Guardar y solicitar autorización"
@@ -3997,7 +4135,6 @@ msgstr "Tipo de búsqueda (proveedor)"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_product_list_view
-#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_generic_screen_form
 msgid "Search a concept"
 msgstr "Buscar concepto"
 
@@ -4399,6 +4536,11 @@ msgid "Set Products Covered"
 msgstr "Asignar productos cubiertos"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_survey_survey__x_show_final_score
+msgid "Show Final Score"
+msgstr ""
+
+#. module: ike_event
 #. odoo-javascript
 #: code:addons/ike_event/static/src/fields/html/ike_html_field.js:0
 #: code:addons/ike_event/static/src/widgets/ike_event_screen_header_info/components/ike_component_info.js:0
@@ -4411,6 +4553,13 @@ msgstr "Mostrar menos"
 #: code:addons/ike_event/static/src/widgets/ike_event_screen_header_info/components/ike_component_info.js:0
 msgid "Show More"
 msgstr "Mostrar más"
+
+#. module: ike_event
+#: model:ir.model.fields,help:ike_event.field_survey_survey__x_show_final_score
+msgid ""
+"Show final score in survey (Odoo default workflow show always the final "
+"score)"
+msgstr ""
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__show_supplier
@@ -4426,6 +4575,12 @@ msgstr "Lado"
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_evidece_form
 msgid "Signature"
 msgstr "Firma"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/widgets/ike_carrusel_image/ike_carrusel_image.xml:0
+msgid "Sin imágenes"
+msgstr ""
 
 #. module: ike_event
 #: model:survey.question,title:ike_event.survey_vial_tire_question_1
@@ -4708,7 +4863,6 @@ msgstr "Resumen superior"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__supplier_id
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_product_list_view
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
-#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_generic_screen_form
 msgid "Supplier"
 msgstr "Proveedor"
 
@@ -4740,16 +4894,16 @@ msgstr "Enlace de proveedor"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__supplier_number
-#: model:ir.model.fields,field_description:ike_event.field_ike_service_input__supplier_number
-#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic__supplier_number
-#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic_sub__supplier_number
-#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical__supplier_number
-#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__supplier_number
-#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__supplier_number
-#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__supplier_number
-#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__supplier_number
-#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__supplier_number
-#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__supplier_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input__event_supplier_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic__event_supplier_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic_sub__event_supplier_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical__event_supplier_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical_consultation__event_supplier_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__event_supplier_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__event_supplier_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__event_supplier_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__event_supplier_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__event_supplier_number
 msgid "Supplier Number"
 msgstr "No. de proveedor"
 
@@ -4776,6 +4930,7 @@ msgid "Suppliers"
 msgstr "Proveedores"
 
 #. module: ike_event
+#: model:ir.model,name:ike_event.model_survey_survey
 #: model:ir.model.fields,field_description:ike_event.field_product_category__x_survey_id
 #: model:ir.model.fields,field_description:ike_event.field_product_product__x_survey_id
 msgid "Survey"
@@ -4907,19 +5062,6 @@ msgid "Their design is very Human?"
 msgstr ""
 
 #. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/models/ike_event_supplier_search.py:0
-msgid ""
-"There are no geographic areas configured for this municipality: %s (%s)."
-msgstr "No hay áreas geográficas configuradas para este municipio: %s (%s)."
-
-#. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/models/ike_event_supplier_search.py:0
-msgid "There are no municipalities with postal code: %s."
-msgstr "No hay municipios para el C.P.: %s."
-
-#. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_service_summary_search
 msgid "This Month"
 msgstr "Este mes"
@@ -4964,8 +5106,6 @@ msgid "Time it took to accept the service, in seconds."
 msgstr "Tiempo que tomó en acpetar el servicio, en segundos."
 
 #. module: ike_event
-#. odoo-javascript
-#: code:addons/ike_event/static/src/fields/section_and_note_o2m/ike_timer_widget.js:0
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__state__timeout
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_base__state__timeout
 msgid "Timeout"
@@ -5053,6 +5193,11 @@ msgstr "Progreso del viaje(%)"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__travel_tracking_url
 msgid "Travel Tracking Url"
 msgstr "URL de seguimiento de viaje"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__truck_domain
+msgid "Truck Domain"
+msgstr ""
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__truck_domain
@@ -5365,7 +5510,6 @@ msgstr "Ver detalles convenio"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
-#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "View Vehicles Data"
 msgstr ""
 
@@ -5450,6 +5594,31 @@ msgid "Wrong answer"
 msgstr "Respuesta incorrecta"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p1_classification_id
+msgid "X Phone P1 Classification"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p2_classification_id
+msgid "X Phone P2 Classification"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p3_classification_id
+msgid "X Phone P3 Classification"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p4_classification_id
+msgid "X Phone P4 Classification"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p5_classification_id
+msgid "X Phone P5 Classification"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__vehicle_year
 msgid "Year"
 msgstr "Año"
@@ -5504,6 +5673,31 @@ msgstr ""
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__service_id
 msgid "service"
 msgstr "Servicio"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p1
+msgid "tel_p1"
+msgstr "Teléfono 1"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p2
+msgid "tel_p2"
+msgstr "Teléfono 2"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p3
+msgid "tel_p3"
+msgstr "Teléfono 3"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p4
+msgid "tel_p4"
+msgstr "Teléfono 4"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p5
+msgid "tel_p5"
+msgstr "Teléfono 5"
 
 #. module: ike_event
 #: model:ir.model,name:ike_event.model_ir_websocket

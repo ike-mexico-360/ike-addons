@@ -1913,6 +1913,11 @@
                     <t t-if="object.membership_authorization_id">
                         <p>
                             <strong>Rejected authorization</strong>
+                            <br/>
+                            <t t-if="object.membership_authorization_id.comment_authorizer">
+                                <strong>Comment: </strong>
+                                <t t-out="object.membership_authorization_id.comment_authorizer"/>
+                            </t>
                         </p>
                     </t>
                 </t>

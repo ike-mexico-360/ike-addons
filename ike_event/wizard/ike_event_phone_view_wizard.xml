@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ike_event_phone_wizard_view_form" model="ir.ui.view">
+        <field name="name">ike.event.phone.wiezard.view.form</field>
+        <field name="model">ike.event.phone.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Other phones">
+                <sheet>
+                    <field name="ike_event_supplier_id" readonly="1" options="{'no_open': True}"/>
+                    <group>
+                        <label for="x_phone_p1"/>
+                        <div class="o_row">
+                            <field name="x_phone_p1"/>
+                            <field name="x_phone_p1_classification_id" options="{'no_create': True, 'no_open': True}" />
+                        </div>
+                        <label for="x_phone_p2"/>
+                        <div class="o_row">
+                            <field name="x_phone_p2"/>
+                            <field name="x_phone_p2_classification_id" options="{'no_create': True, 'no_open': True}" />
+                        </div>
+                        <label for="x_phone_p3"/>
+                        <div class="o_row">
+                            <field name="x_phone_p3"/>
+                            <field name="x_phone_p3_classification_id" options="{'no_create': True, 'no_open': True}" />
+                        </div>
+                        <label for="x_phone_p4"/>
+                        <div class="o_row">
+                            <field name="x_phone_p4"/>
+                            <field name="x_phone_p4_classification_id" options="{'no_create': True, 'no_open': True}"/>
+                        </div>
+                        <label for="x_phone_p5"/>
+                        <div class="o_row">
+                            <field name="x_phone_p5"/>
+                            <field name="x_phone_p5_classification_id" options="{'no_create': True, 'no_open': True}"/>
+                        </div>
+                    </group>
+                    <footer>
+                        <button string="Close" name="action_close_wizard" type="object" class="btn-secondary"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+</odoo>

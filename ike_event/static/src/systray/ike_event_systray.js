@@ -82,7 +82,7 @@ export class IkeEventSystray extends Component {
             const { payload, sender } = event.detail;
 
             if (payload?.line_id && payload?.timer_duration) {
-                console.log("SUPPLIER_TIMEOUT", payload?.line_id);
+                console.log("SYSTRAY - SUPPLIER_TIMEOUT", payload?.line_id);
                 if (!this.currentTimeoutIds[payload.line_id]) {
                     const timeoutId = setTimeout(() => {
                         try {

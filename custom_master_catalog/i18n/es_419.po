@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-23 04:29+0000\n"
-"PO-Revision-Date: 2026-04-23 04:29+0000\n"
+"POT-Creation-Date: 2026-04-30 17:00+0000\n"
+"PO-Revision-Date: 2026-04-30 17:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -309,6 +309,7 @@ msgstr "Se requiere una acción"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model_category__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_category__active
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_country__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_country_state__active
 msgid "Active"
@@ -597,6 +598,52 @@ msgid "Cabin Supervisor"
 msgstr "Supervisor de cabina"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_type__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source_field__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographic_subservice_wizard__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_pre_work_entry_type__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_mapping__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality_code__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_weight_category__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model_category__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_category__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_template__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_config_settings__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_country__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_country_state__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__can_be_disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__can_be_disabled
+msgid "Can Be Disabled"
+msgstr "Puede ser deshabilitado"
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_import_postal_codes_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_model_confirm_wizard_view_form
 msgid "Cancel"
@@ -826,9 +873,13 @@ msgstr "Descripción"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__concepts_domain
-#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_concepts_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_product_concept_domain
 msgid "Concept domain"
+msgstr "Dominio de concepto"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_concepts_domain
+msgid "Concept domain "
 msgstr "Dominio de concepto"
 
 #. module: custom_master_catalog
@@ -1555,7 +1606,8 @@ msgstr "Tipo de evento"
 #. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_product_product__x_min_required_photos_assistview
 msgid "Evidence photos required for this subservice (Assistview)."
-msgstr "Evidencias de fotografías requeridas para este sub-servicio (Assistview)."
+msgstr ""
+"Evidencias de fotografías requeridas para este sub-servicio (Assistview)."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_product_product__x_min_required_photos
@@ -2018,6 +2070,12 @@ msgid "If checked, some messages have a delivery error."
 msgstr "Si está marcada, algunos mensajes tendrán un error de entrega."
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_product_product__active
+msgid ""
+"If unchecked, it will allow you to hide the product without removing it."
+msgstr "Si no está marcado, permitirá ocultar el producto sin eliminarlo."
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_is_ike
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_is_ike
 msgid "Iké"
@@ -2128,6 +2186,12 @@ msgstr "Es blindaje?"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_form
 msgid "Is cancelation?"
 msgstr "¿Es cancelación?"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_is_generic_supplier
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_is_generic_supplier
+msgid "Is generic supplier"
+msgstr "Es proveedor genérico"
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_data_source_view_form
@@ -3770,7 +3834,8 @@ msgstr "Campo búsqueda UN"
 #. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_fleet_vehicle__x_economic_number
 msgid "Unit identifier in the supplier's system (internal value)"
-msgstr "Identificador de la unidad en el sistema del proveedor (valor interno)"
+msgstr ""
+"Identificador de la unidad en el sistema del proveedor (valor interno)"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__uom_id
