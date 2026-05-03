@@ -89,6 +89,9 @@
                             </div>
                             <field name="x_has_portal"/>
                             <field name="x_has_external_notification"/>
+                            <field name="x_is_generic_supplier"
+                                readonly="disabled"
+                                groups="base.group_no_one"/>
                         </group>
                         <group>
                             <field name="phone" widget="phone" options="{'enable_sms': False, 'enable_call': False}" readonly="disabled" required="1"/>

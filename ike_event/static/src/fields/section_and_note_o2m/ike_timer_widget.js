@@ -1,6 +1,6 @@
-import { _t } from "@web/core/l10n/translation";
 import { rpc } from "@web/core/network/rpc";
 import { registry } from "@web/core/registry";
+import { user } from "@web/core/user";
 import { useRecordObserver } from "@web/model/relational_model/utils";
 import { standardWidgetProps } from "@web/views/widgets/standard_widget_props";
 
@@ -15,7 +15,7 @@ export class IkeTimerWidget extends Component {
     static defaultProps = {
     };
     setup() {
-        // console.log("LineTimerWidget", this);
+        console.log("LineTimerWidget", this);
         this.orm = this.env.services.orm;
         this.notification = this.env.services.notification;
         this.resId = null;
@@ -28,13 +28,7 @@ export class IkeTimerWidget extends Component {
             is_manual: null,
             assignation_type: 'electronic',
         });
-        this.configurationLoaded = false;
-        this.configuration = [];
-
-        onWillStart(async () => {
-            // console.log("onWillStart");
-            // this.test = this.orm.searchRead("")
-        })
+        this.isErpManager = null;
 
         useRecordObserver(async (record) => {
             // console.log("useRecordObserver", record.data.state);
@@ -43,20 +37,21 @@ export class IkeTimerWidget extends Component {
                 changed = true
             }
             this.resId = record.resId;
-            this.timer_duration = record.data.timer_duration;
             this.state.current_state = record.data.state;
-            this.state.is_manual = record.data.is_manual;
             this.state.assignation_type = record.data.assignation_type;
-            this.notification_date = record.data.notification_date;
-            this.acceptance_date = record.data.acceptance_date;
-            this.rejection_date = record.data.rejection_date;
-            this.elapsed_time_s = record.data.elapsed_time_s;
+            this.state.is_manual = record.data.is_manual;
+            this.timer_duration = record.data.timer_duration;
+            this.elapsed_time = record.data.elapsed_time;
+            this.manual_notification = record.data.manual_notification;
+            this.authorization_required = (
+                this.env.model.root.data.authorization_required
+                || this.env.model.root.data.uncovered_authorization_required
+            );
 
             if (changed) {
                 switch (this.state.current_state) {
                     case 'available':
                         this.state.seconds = 0;
-                        this.processed_date = null;
                         break;
                     case 'notified':
                         if (!this.interval) {
@@ -65,7 +60,6 @@ export class IkeTimerWidget extends Component {
                         }
                         break;
                     case 'accepted':
-                        this.processed_date = this.acceptance_date;
                         this.calculateElapsedTime();
                         this.stopTimer();
                         break;
@@ -73,13 +67,17 @@ export class IkeTimerWidget extends Component {
                     case 'timeout':
                     case 'expired':
                     case 'cancel':
-                        this.processed_date = this.rejection_date;
                         this.calculateElapsedTime();
                         this.stopTimer();
                         break;
                 }
             }
             this.state.blocked = false;
+        });
+
+        onWillStart(async () => {
+            // console.log("onWillStart");
+            this.isErpManager = await user.hasGroup("base.group_erp_manager");
         });
 
         onWillUnmount(() => {
@@ -102,15 +100,9 @@ export class IkeTimerWidget extends Component {
     }
 
     calculateElapsedTime() {
-        if (this.elapsed_time_s) {
-            this.state.seconds = this.elapsed_time_s;
+        if (this.elapsed_time) {
+            this.state.seconds = this.elapsed_time;
         }
-        // if (this.notification_date) {
-        //     const notificationDate = this.notification_date ? this.notification_date.toJSDate() : null;
-        //     const currentTime = this.processed_date || Date.now();
-        //     const elapsed = Math.floor((currentTime - notificationDate) / 1000);
-        //     this.state.seconds = elapsed;
-        // }
     }
     startTimer() {
         // console.log("startTimer", this.interval);
@@ -249,7 +241,22 @@ export class IkeTimerWidget extends Component {
         return odoo.debug && !['available', 'notified'].includes(this.state.current_state);
     }
     get showNotification() {
-        return this.state.current_state == 'available' && (odoo.debug || this.state.is_manual || ['manual'].includes(this.state.assignation_type));
+        return (
+            this.state.current_state == 'available'
+            && !this.authorization_required
+            && (
+                (this.state.is_manual && this.manual_notification)
+                || ["electronic", "publication"].includes(this.state.assignation_type)
+                || (typeof odoo.debug == 'string' && odoo.debug.length > 0 && this.isErpManager)
+            )
+        );
+    }
+    get showManualAccept() {
+        return (
+            this.state.current_state == 'available'
+            && !this.authorization_required
+            && (this.state.is_manual && !this.manual_notification)
+        );
     }
 };
 
