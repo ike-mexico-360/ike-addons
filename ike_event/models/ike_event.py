@@ -358,21 +358,6 @@ class IkeEvent(models.Model):
         # self.action_create_satisfaction_survey()
 
     def action_verify(self):
-        # Purchase suppliers validation
-        for rec in self:
-            if rec.selected_supplier_ids.filtered(lambda x: x.is_generic_supplier and not x.purchase_supplier_id):
-                view_id = self.env.ref('ike_event.view_ike_event_purchase_suppliers_form').id
-
-                return {
-                    'name': _('Purchase Suppliers'),
-                    'view_mode': 'form',
-                    'type': 'ir.actions.act_window',
-                    'res_model': 'ike.event',
-                    'res_id': rec.id,
-                    'views': [(view_id, 'form')],
-                    'target': 'new',
-                }
-        # Normal Flow
         total_amount = sum(self.selected_supplier_ids.mapped('base_amount_concept_subtotal'))
         if total_amount <= self.covered_amount:
             self.action_close()
@@ -381,7 +366,6 @@ class IkeEvent(models.Model):
             self.stage_id = self.env.ref('ike_event.ike_event_stage_verifying').id
 
     def action_close(self):
-
         self.action_create_satisfaction_survey()
         self.stage_id = self.env.ref('ike_event.ike_event_stage_closed').id
         self.action_create_purchase_orders()

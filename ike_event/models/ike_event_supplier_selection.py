@@ -24,7 +24,7 @@ class IkeEventSupplierSelection(models.Model):
     acceptance_date = fields.Datetime(tracking=True, copy=False)
     acceptance_duration = fields.Float(help='Time it took to accept the service, in seconds.', copy=False)
     rejection_date = fields.Datetime(tracking=True, copy=False)
-    elapsed_time = fields.Integer(compute='_compute_elapsed_time')
+    elapsed_time_s = fields.Integer(compute='_compute_elapsed_time_s')
     # === STAGE FIELDS FIRST === #
     first_state_date = fields.Datetime(string='First state datetime', tracking=True, copy=False)
     first_state_user_id = fields.Many2one(
@@ -100,23 +100,15 @@ class IkeEventSupplierSelection(models.Model):
     cause_rate = fields.Boolean(default=True, index=True, readonly=True, copy=False)
     timer_duration = fields.Integer(help='Maximum timer duration, in seconds.', default=600, copy=False)
     is_manual = fields.Boolean(default=True)
-    manual_notification = fields.Boolean(related='supplier_link_id.manual_notification')
 
     # === COMPUTES === #
-    def _compute_elapsed_time(self):
+    def _compute_elapsed_time_s(self):
         now = fields.Datetime.now()
         for rec in self:
-            if not rec.notification_date:
-                rec.elapsed_time = 0
-                continue
             if rec.state == 'notified':
-                rec.elapsed_time = max((now - rec.notification_date).total_seconds(), 0)
-            elif rec.state in ['accepted', 'assigned']:
-                rec.elapsed_time = max(((rec.acceptance_date or now) - rec.notification_date).total_seconds(), 0)
-            elif rec.state in ['rejected', 'timeout', 'expired']:
-                rec.elapsed_time = max(((rec.rejection_date or now)- rec.notification_date).total_seconds(), 0)
+                rec.elapsed_time_s = max((now - rec.notification_date).total_seconds(), 0)
             else:
-                rec.elapsed_time = 0
+                rec.elapsed_time_s = 0
 
     # === ACTIONS === #
     def action_reset(self):
@@ -127,14 +119,14 @@ class IkeEventSupplierSelection(models.Model):
         self.rejection_date = False
         self.broadcastReload()
 
-    def action_notify(self)->list[int]:
+    def action_notify(self):
         self_filtered = self.filtered(lambda x: x.state == 'available')
         if not self_filtered:
-            return []
+            return
         try:
             updated_ids = self_filtered._update_record_state('available', 'notified')
         except Exception:
-            return []
+            return
         self.env.cache.invalidate([
             (self._fields['state'], updated_ids),
         ])
@@ -142,16 +134,14 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered.notification_date = fields.Datetime.now()
         self_filtered.broadcastReload()
 
-        return updated_ids
-
-    def action_notify_operator(self)->list[int]:
+    def action_notify_operator(self):
         self_filtered = self.filtered(lambda x: x.state == 'accepted')
         if not self_filtered:
-            return []
+            return
         try:
             updated_ids = self_filtered._update_record_state('accepted', 'assigned')
         except Exception:
-            return []
+            return
         self.env.cache.invalidate([
             (self._fields['state'], updated_ids),
         ])
@@ -159,12 +149,10 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered.assignation_date = fields.Datetime.now()
         self_filtered.broadcastReload()
 
-        return updated_ids
-
-    def action_accept(self)->list[int]:
+    def action_accept(self):
         self_filtered = self.filtered(lambda x: x.state == 'notified' or x.state == 'available' and x.is_manual)
         if not self_filtered:
-            return []
+            return
         self_filtered.state = 'accepted'
         self_filtered.selected = True
         self_filtered.acceptance_date = fields.Datetime.now()
@@ -223,16 +211,14 @@ class IkeEventSupplierSelection(models.Model):
             # Broadcast
             rec.broadcastReload(event_reload=use_action_forward)
 
-        return self_filtered.ids
-
-    def action_reject(self)->list[int]:
+    def action_reject(self):
         self_filtered = self.filtered(lambda x: x.state == 'notified')
         if not self_filtered:
-            return []
+            return
         try:
             updated_ids = self_filtered._update_record_state('notified', 'rejected')
         except Exception:
-            return []
+            return
         self.env.cache.invalidate([
             (self._fields['state'], updated_ids),
         ])
@@ -241,16 +227,15 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered.broadcastReload()
         if not self.env.context.get('not_notify_next'):
             self_filtered._notify_next()
-        return updated_ids
 
-    def action_timeout(self)->list[int]:
+    def action_timeout(self):
         self_filtered = self.filtered(lambda x: x.state == 'notified')
         if not self_filtered:
-            return []
+            return
         try:
             updated_ids = self_filtered._update_record_state('notified', 'timeout')
         except Exception:
-            return []
+            return
         self.env.cache.invalidate([
             (self._fields['state'], updated_ids),
         ])
@@ -260,24 +245,21 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered.broadcastReload()
         if not self.env.context.get('not_notify_next'):
             self_filtered._notify_next()
-        return updated_ids
 
-    def action_expire(self)->list[int]:
+    def action_expire(self):
         self_filtered = self.filtered(lambda x: x.state == 'notified')
         if not self_filtered:
-            return []
+            return
         try:
             updated_ids = self_filtered._update_record_state('notified', 'expired')
         except Exception:
-            return []
+            return
         self.env.cache.invalidate([
             (self._fields['state'], updated_ids),
         ])
         self_filtered = self_filtered.filtered(lambda x: x.id in updated_ids)
         self_filtered.rejection_date = fields.Datetime.now()
         self_filtered.broadcastReload()
-
-        return updated_ids
 
     def _update_record_state(self, current_state: str, new_state: str):
         with self.env.cr.savepoint():
@@ -650,22 +632,5 @@ class IkeEventSupplierSelection(models.Model):
             'target': 'new',
             'context': {
                 'default_supplier_id': self.id,
-            }
-        }
-
-    def action_wizard_view_othre_phones(self):
-        self.ensure_one()
-        view_id = self.env.ref('ike_event.ike_event_phone_wizard_view_form').id
-
-        return {
-            'name':_('Phone directory'),
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'ike.event.phone.wizard',
-            'view_id': view_id,
-            'views': [(view_id, 'form')],
-            'target': 'new',
-            'context': {
-                'default_ike_event_supplier_id': self.id,
             }
         }

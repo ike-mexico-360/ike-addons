@@ -330,10 +330,8 @@ class IkeEvent(models.Model):
         result = super().action_confirm_costs()  # type: ignore
         for rec in self:
             rec._create_message_binnacle([
-                # 'ike_event_binnacle.ike_binnacle_stage_10_4',
-                "ike_event_binnacle.ike_binnacle_stage_10_5",
-                "ike_event_binnacle.ike_binnacle_stage_10_2"])
-                
+                'ike_event_binnacle.ike_binnacle_stage_10_4',
+                'ike_event_binnacle.ike_binnacle_stage_10_2'])
         return result
 
     def user_assigned(self):
@@ -455,82 +453,75 @@ class IkeEventSupplier(models.Model):
                 ])
         return result
 
-    # === SEARCH ACTIONS === #
-    def action_notify(self)->list[int]:
-        update_ids = super().action_notify()
-        self_filtered = self.filtered(lambda x: x.id in update_ids)
-        for rec in self_filtered:
-            rec.event_id.with_context(
-                supplier=rec.supplier_id.name,
-                truck_id=rec.truck_id.id
-            )._create_message_binnacle([
-                "ike_event_binnacle.ike_binnacle_stage_11_1"
-            ])
-        return self_filtered.ids
-
-    def action_notify_operator(self)->list[int]:
-        updated_ids = super().action_notify_operator()
-        self_filtered = self.filtered(lambda x: x.id in updated_ids)
-        for rec in self_filtered:
-            rec.event_id.with_context(
-                supplier=rec.supplier_id.name,
-                truck_id=rec.truck_id.id
-            )._create_message_binnacle([
-                "ike_event_binnacle.ike_binnacle_stage_11_1"
-            ])
-        return updated_ids
-
-    def action_accept(self)->list[int]:
-        updated_ids = super().action_accept()
-        self_filtered = self.filtered(lambda x: x.id in updated_ids)
-        for rec in self_filtered:
-            rec.event_id.with_context(
-                supplier=rec.supplier_id.name,
-                truck_id=rec.truck_id.id
-            )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_11_4"])
-        for rec in self_filtered:
-            rec.event_id.with_context(
-                supplier=rec.supplier_id.name,
-                truck_id=rec.truck_id.id
-            )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_2"])
-        return updated_ids
-
-    def action_reject(self)->list[int]:
-        updated_ids = super().action_reject()
-        self_filtered = self.filtered(lambda x: x.id in updated_ids)
-        for rec in self_filtered:
+    def action_reject(self):
+        result = super().action_reject()
+        for rec in self:
             rec.event_id.with_context(
                 supplier=rec.supplier_id.name,
                 truck_id=rec.truck_id.id
             )._create_message_binnacle([
                 "ike_event_binnacle.ike_binnacle_stage_11_2"
             ])
-        return updated_ids
+        return result
 
-    def action_timeout(self)->list[int]:
-        updated_ids = super().action_timeout()
-        self_filtered = self.filtered(lambda x: x.id in updated_ids)
-        print("BINNACLE - ACTION_TIMEOUT", self_filtered.ids)
-        for rec in self_filtered:
+    def action_timeout(self):
+        result = super().action_timeout()
+        for rec in self:
             rec.event_id.with_context(
                 supplier=rec.supplier_id.name,
                 truck_id=rec.truck_id.id
             )._create_message_binnacle([
                 "ike_event_binnacle.ike_binnacle_stage_11_3"
             ])
-        return updated_ids
+        return result
 
-
-class IkeEventSupplierPublic(models.Model):
-    _inherit = 'ike.event.supplier.public'
-
-    def action_supplier_cancel(self, cancel_reason_id=None, reason_text=None):
-        result = super().action_supplier_cancel(cancel_reason_id, reason_text)
+    def action_accept(self):
         for rec in self:
-            rec.sudo().event_id.with_context(supplier=rec.supplier_id.name)._create_message_binnacle([
-                "ike_event_binnacle.ike_binnacle_stage_8_3"
+            rec.event_id.with_context(
+                supplier=rec.supplier_id.name,
+                truck_id=rec.truck_id.id
+            )._create_message_binnacle([
+                "ike_event_binnacle.ike_binnacle_stage_11_4"
+            ])
+        result = super().action_accept()
+        self.event_id.with_context(
+            supplier=self.supplier_id.name,
+            truck_id=self.truck_id.id
+        )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_2"])
+        return result
+
+    def action_notify(self):
+        result = super().action_notify()
+        for rec in self:
+            rec.event_id.with_context(
+                supplier=rec.supplier_id.name,
+                truck_id=rec.truck_id.id
+            )._create_message_binnacle([
+                "ike_event_binnacle.ike_binnacle_stage_11_1"
             ])
         return result
+
+    def action_notify_operator(self):
+        result = super().action_notify_operator()
+        for rec in self:
+            rec.event_id.with_context(
+                supplier=rec.supplier_id.name,
+                truck_id=rec.truck_id.id
+            )._create_message_binnacle([
+                "ike_event_binnacle.ike_binnacle_stage_11_1"
+            ])
+        return result
+
+    class IkeEventSupplierPublic(models.Model):
+        _inherit = 'ike.event.supplier.public'
+
+        def action_supplier_cancel(self, cancel_reason_id=None, reason_text=None):
+            result = super().action_supplier_cancel(cancel_reason_id, reason_text)
+            for rec in self:
+                rec.sudo().event_id.with_context(supplier=rec.supplier_id.name)._create_message_binnacle([
+                    "ike_event_binnacle.ike_binnacle_stage_8_3"
+                ])
+            return result
 
 
 class IkeEventSupplierLink(models.Model):
@@ -589,10 +580,7 @@ class IkeEventMembershipAuthorization(models.Model):
     def action_rejected(self):
         result = super().action_rejected()
         for rec in self: 
-            rec.event_id._create_message_binnacle([
-                "ike_event_binnacle.ike_binnacle_stage_7_31",
-                "ike_event_binnacle.ike_binnacle_stage_7_32",
-                ])
+            rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_31"])
         return result
 
     def send_mail_commercial_authorizator(self):

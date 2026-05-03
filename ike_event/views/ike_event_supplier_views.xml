@@ -116,50 +116,6 @@
         </field>
     </record>
 
-    <!-- EVENT SUPPLIER POPUP -->
-    <record id="ike_event_supplier_form_view" model="ir.ui.view">
-        <field name="name">ike.event.supplier.form.view</field>
-        <field name="model">ike.event.supplier</field>
-        <field name="priority">99</field>
-        <field name="arch" type="xml">
-            <form>
-                <group>
-                    <group>
-                        <field name="supplier_id" readonly="1"
-                            options="{'no_create': 1, 'no_open': 1}"
-                            required="1"/>
-                        <field name="truck_id"
-                            domain="truck_domain"
-                            options="{'no_create': 1, 'no_open': 1}"
-                            readonly="assignation_type not in ['manual', 'manual_manual'] or display_type"
-                            required="1"/>
-                        <field name="truck_domain" invisible="1"/>
-                    </group>
-                    <group>
-                        <label for="supplier_phone" string="Phones"/>
-                        <div>
-                            <field name="supplier_phone" readonly="1"/>
-                            <br/>
-                            <field name="supplier_phone_1" readonly="1"/>
-                            <br/>
-                            <field name="supplier_phone_2" readonly="1"/>
-                            <br/>
-                            <field name="supplier_phone_3" readonly="1"/>
-                            <br/>
-                            <field name="supplier_phone_4" readonly="1"/>
-                            <br/>
-                            <field name="supplier_phone_5" readonly="1"/>
-                        </div>
-                    </group>
-                </group>
-                <footer>
-                    <button string="Save" class="btn-primary" special="save" invisible="assignation_type not in ['manual', 'manual_manual'] or display_type"/>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
-                </footer>
-            </form>
-        </field>
-    </record>
-
     <!-- EVENT SUPPLIER LINK POPUP -->
     <record id="ike_event_supplier_link_form_view" model="ir.ui.view">
         <field name="name">ike.event.supplier.link.form.view</field>
@@ -344,12 +300,6 @@
                         <div class="row">
                             <div class="col-12 col-lg-5 col-xl-4">
                                 <field name="event_supplier_summary_data" widget="html" nolabel="1" readonly="1"/>
-                                <button
-                                    name="action_wizard_view_othre_phones"
-                                    string="Phone directory"
-                                    class="btn-link"
-                                    type="object"
-                                />
                                 <button
                                     name="action_view_products"
                                     string="Additional concepts"

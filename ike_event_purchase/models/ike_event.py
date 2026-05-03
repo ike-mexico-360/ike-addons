@@ -31,58 +31,64 @@ class IkeEvent(models.Model):
             'target': 'current',
         }
 
-    def _x_prepare_grouped_purchase_vals(self):
-        self.ensure_one()
-        grouped_purchase_by_suppliers = {}
-
-        for supplier_line in self.selected_supplier_ids:
-            product_ids = supplier_line.supplier_link_id.supplier_product_ids.filtered(
-                lambda p: p.product_id
-            )
-
-            if not product_ids:
-                continue
-
-            if supplier_line.is_generic_supplier and supplier_line.purchase_supplier_id:
-                selected_supplier = supplier_line.purchase_supplier_id
-            else:
-                selected_supplier = supplier_line.supplier_id
-
-            if selected_supplier not in grouped_purchase_by_suppliers:
-                grouped_purchase_by_suppliers[selected_supplier.id] = {
-                    **self.x_get_values_for_purchase_header(supplier_line),
-                    "order_line": []
-                }
-            for concept_id in product_ids:
-                grouped_purchase_by_suppliers[selected_supplier.id]['order_line'].append(
-                    Command.create(self.x_get_values_for_purchase_line(concept_id))
-                )
-
-        return list(grouped_purchase_by_suppliers.values())
-
-    def _x_create_grouped_purchase_orders(self):
-        self.ensure_one()
-        purchase_vals_list = self._x_prepare_grouped_purchase_vals()
-        if not purchase_vals_list:
-            return self.env['purchase.order']
-
-        return self.env['purchase.order'].with_context(
-            ike_event_purchase=True
-        ).create(purchase_vals_list)
-
+    # ToDo: Unificar código repetido, crear método compartido para generar las órdenes de compra
     def action_confirm_costs(self):
         self.ensure_one()
         # Cuando el evento esté en concluido
-        if self.stage_ref == 'verifying' and  not self.x_purchase_ids:
-            purchase_ids = self._x_create_grouped_purchase_orders()
+        if self.stage_ref == 'verifying' and len(self.x_purchase_ids) == 0:
+            # ToDo: =============================================================================================
+            # * Crear una sola orden de compra por proveedor con todos los conceptos
+            grouped_purchase_by_suppliers = {}
+            for supplier_line in self.selected_supplier_ids:
+                product_ids = supplier_line.supplier_link_id.supplier_product_ids.filtered(
+                    lambda x: x.product_id
+                )
+                if len(product_ids) == 0:  # Omitir crear RFQ para proveedores sin conceptos
+                    continue
+                if supplier_line.supplier_id.id not in grouped_purchase_by_suppliers:
+                    grouped_purchase_by_suppliers[supplier_line.supplier_id.id] = {
+                        **self.x_get_values_for_purchase_header(supplier_line),
+                        "order_line": []
+                    }
+                for concept_id in product_ids:
+                    grouped_purchase_by_suppliers[supplier_line.supplier_id.id]['order_line'].append(
+                        Command.create(self.x_get_values_for_purchase_line(concept_id))
+                    )
+
+            purchase_ids = self.env['purchase.order'].with_context(dict(ike_event_purchase=True)).create([
+                purchase_vals for purchase_vals in grouped_purchase_by_suppliers.values()
+            ])
+            # ToDo: =============================================================================================
             for purchase in purchase_ids:
                 purchase.action_rfq_send_one_step()
         self.sudo().action_close()
 
     def action_create_purchase_orders(self):
         res = super().action_create_purchase_orders()
-        if not self.x_purchase_ids:
-            self._x_create_grouped_purchase_orders()
+        if len(self.x_purchase_ids) == 0:
+            # ToDo: =============================================================================================
+            # * Crear una sola orden de compra por proveedor con todos los conceptos
+            grouped_purchase_by_suppliers = {}
+            for supplier_line in self.selected_supplier_ids:
+                product_ids = supplier_line.supplier_link_id.supplier_product_ids.filtered(
+                    lambda x: x.product_id
+                )
+                if len(product_ids) == 0:  # Omitir crear RFQ para proveedores sin conceptos
+                    continue
+                if supplier_line.supplier_id.id not in grouped_purchase_by_suppliers:
+                    grouped_purchase_by_suppliers[supplier_line.supplier_id.id] = {
+                        **self.x_get_values_for_purchase_header(supplier_line),
+                        "order_line": []
+                    }
+                for concept_id in product_ids:
+                    grouped_purchase_by_suppliers[supplier_line.supplier_id.id]['order_line'].append(
+                        Command.create(self.x_get_values_for_purchase_line(concept_id))
+                    )
+
+            self.env['purchase.order'].with_context(dict(ike_event_purchase=True)).create([
+                purchase_vals for purchase_vals in grouped_purchase_by_suppliers.values()
+            ])
+            # ToDo: =============================================================================================
         return res
 
     def x_get_values_for_purchase_line(self, supplier_product_id):
@@ -98,14 +104,8 @@ class IkeEvent(models.Model):
 
     def x_get_values_for_purchase_header(self, selected_supplier_id):
         max_hours_to_confirm = self.env.company.x_time_for_automatic_purchase_generation
-
-        if selected_supplier_id.is_generic_supplier and selected_supplier_id.purchase_supplier_id:
-            supplier_id = selected_supplier_id.purchase_supplier_id
-        else:
-            supplier_id = selected_supplier_id.supplier_id
-
         return {
-            "partner_id": supplier_id.id,
+            "partner_id": selected_supplier_id.supplier_id.id,
             "company_id": self.env.company.id,
             "x_event_id": self.id,  # Link to event_id
             "x_sub_service_id": selected_supplier_id.event_id.sub_service_id.id,

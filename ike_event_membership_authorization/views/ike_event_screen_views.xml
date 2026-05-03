@@ -13,7 +13,7 @@
                 <attribute name="invisible">membership_authorization_status in ('authorized', False) or not sections.get('user_data', False)</attribute>
             </xpath>
             <xpath expr="//sheet/widget[@name='ike_event_screen_header_info']" position="attributes">
-                <attribute name="invisible">membership_authorization_status in (False) or not user_id </attribute>
+                <attribute name="invisible">membership_authorization_status in ('rejected', False) or not user_id </attribute>
             </xpath>
             <xpath expr="//sheet/group[@name='titular_user']" position="after">
                 <group col="2">

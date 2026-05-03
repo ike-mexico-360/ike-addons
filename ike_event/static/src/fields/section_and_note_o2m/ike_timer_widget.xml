@@ -13,8 +13,8 @@
                 <i class="fa fa-undo cursor-pointer" t-on-click="onReset" title="Reset" />
             </t>
             <!-- Notification -->
-            <t t-if="!showManualAccept">
-                <t t-if="showNotification and !state.blocked">
+            <t t-if="!state.is_manual">
+                <t t-if="showNotification">
                     <i class="fa fa-clock-o fw-bold cursor-pointer"
                         t-att-class="{'text-muted': state.blocked}" t-on-click="onNotify"
                         title="Notify" />
@@ -24,17 +24,16 @@
                 </t>
                 <!-- Timer -->
                 <span t-out="formatTime(state.seconds)" />
-                <!-- Accept/Reject -->
-                <t t-if="state.current_state == 'notified' and !state.blocked">
-                    <i class="fa fa-check cursor-pointer"
-                        t-on-click="onAccept" title="Accept" />
-                    <i class="fa fa-times cursor-pointer"
-                        t-on-click="onReject" title="Reject" />
-                </t>
             </t>
-            <t t-if="showManualAccept and !state.blocked">
+            <!-- Accept/Reject -->
+            <t t-if="state.current_state == 'notified' and !state.blocked">
                 <i class="fa fa-check cursor-pointer"
                     t-on-click="onAccept" title="Accept" />
+                <i class="fa fa-times cursor-pointer"
+                    t-on-click="onReject" title="Reject" />
+            </t>
+            <t t-if="state.current_state == 'available' and state.is_manual and !state.blocked">
+                <i class="fa fa-check cursor-pointer" t-on-click="onAccept" title="Accept" />
                 Accept
             </t>
         </div>

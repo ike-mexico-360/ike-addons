@@ -34,11 +34,6 @@ class IkeEventSupplier(models.Model):
     # Assignation supplier fields
     ranking = fields.Integer(string='Ranking', default=0, readonly=True)
     supplier_phone = fields.Char(related='supplier_id.phone', string='Phone')
-    supplier_phone_1 = fields.Char(related='supplier_id.x_phone_p1', string='Phone 1')
-    supplier_phone_2 = fields.Char(related='supplier_id.x_phone_p2', string='Phone 2')
-    supplier_phone_3 = fields.Char(related='supplier_id.x_phone_p3', string='Phone 3')
-    supplier_phone_4 = fields.Char(related='supplier_id.x_phone_p4', string='Phone 4')
-    supplier_phone_5 = fields.Char(related='supplier_id.x_phone_p5', string='Phone 5')
     assigned = fields.Char(string='Operator')
     latitude = fields.Char(copy=False)
     longitude = fields.Char(copy=False)
@@ -557,28 +552,10 @@ class IkeEventSupplier(models.Model):
             },
         }
 
-    def action_view_supplier_data(self):
-        self.ensure_one()
-        view_id = self.env.ref('ike_event.ike_event_supplier_form_view').id
-        return {
-            'name': self.supplier_id.display_name,
-            'view_mode': 'form',
-            'type': 'ir.actions.act_window',
-            'res_model': 'ike.event.supplier',
-            'res_id': self.id,
-            'views': [(view_id, 'form')],
-            'context': {
-                **self.env.context,
-                'create': False,
-                'edit': True,
-            },
-            'target': 'new',
-        }
-
     def action_open_travel_tracking(self):
         self.ensure_one()
         return {
-            'name': _('Assigned supplier: %s') % self.supplier_id.name,
+            'name': 'Assigned supplier: %s' % self.supplier_id.name,
             'type': 'ir.actions.act_window',
             'res_model': 'ike.event.supplier',
             'view_mode': 'form',
@@ -607,7 +584,6 @@ class IkeEventSupplierLink(models.Model):
     event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
     supplier_id = fields.Many2one('res.partner', required=True, index=True, readonly=True)
     supplier_number = fields.Integer(required=True, readonly=True, default=1)
-    manual_notification = fields.Boolean(default=True)
 
     estimated_cost = fields.Float(default=0.0, compute='_compute_estimated_cost', store=True)
 

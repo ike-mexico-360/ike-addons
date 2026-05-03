@@ -48,10 +48,11 @@ class IkeEventSupplierSelection(models.Model):
     }
 
     # === OVERRIDE ACTIONS === #
-    def action_notify(self)->list[int]:
+    def action_notify(self):
         """OVERRIDE: send unknown? notification"""
         # SUPER
-        result = super().action_notify()
+        with self.env.cr.savepoint():
+            res = super().action_notify()
         # Async Notification
         if not self._is_db_neutralized():
             self_filtered = self.filtered(
@@ -62,22 +63,24 @@ class IkeEventSupplierSelection(models.Model):
                 and x.supplier_id.x_has_external_notification
                 and x.truck_id.x_vehicle_ref
             )
-            if self_filtered:
-                @self.env.cr.postcommit.add
-                def send_notifications_with_new_cursor():
-                    threading.Thread(
-                        target=self._async_send_notification,
-                        args=(self.env.cr.dbname, self_filtered.ids, 'send_external_notification'),
-                        # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_external_notification'),  # ? TESTING
-                        daemon=True,
-                    ).start()
-        return result
+            if not self_filtered:
+                return
 
-    def action_notify_operator(self)->list[int]:
+            @self.env.cr.postcommit.add
+            def send_notifications_with_new_cursor():
+                threading.Thread(
+                    target=self._async_send_notification,
+                    args=(self.env.cr.dbname, self_filtered.ids, 'send_external_notification'),
+                    # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_external_notification'),  # ? TESTING
+                    daemon=True,
+                ).start()
+        return res
+
+    def action_notify_operator(self):
         """OVERRIDE: send operator notification"""
         self_filtered = self.filtered(lambda x: x.state == 'accepted')
         if not self_filtered:
-            return []
+            return
         # Async Notification
         if not self._is_db_neutralized():
             threading.Thread(
@@ -87,12 +90,12 @@ class IkeEventSupplierSelection(models.Model):
                 daemon=True,
             ).start()
         # SUPER
-        result = super().action_notify_operator()
-        return result
+        res = super().action_notify_operator()
+        return res
 
-    def action_accept(self)->list[int]:
+    def action_accept(self):
         """OVERRIDE: send user notification"""
-        result = super().action_accept()
+        res = super().action_accept()
         selected_suppliers = self.filtered(lambda x: x.selected)
         # FixMe: check len == 1 ?
         if len(selected_suppliers) == 1 and not self._is_db_neutralized():
@@ -104,7 +107,7 @@ class IkeEventSupplierSelection(models.Model):
                     # args=(self.env.cr.dbname, selected_suppliers.ids, '_testing_async_method', 'send_accept_notification'),  # ? TEST
                     daemon=True
                 ).start()
-        return result
+        return res
 
     # def action_reject(self):
     # def action_timeout(self):
@@ -117,7 +120,7 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered_app = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is False)
         self_filtered_external = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is True)
 
-        result = super().action_supplier_cancel(cancel_reason_id, reason_text)
+        res = super().action_supplier_cancel(cancel_reason_id, reason_text)
 
         # Lógica para notificar la cancelación a la app
         if self_filtered_app and not self._is_db_neutralized():
@@ -152,7 +155,7 @@ class IkeEventSupplierSelection(models.Model):
             except Exception as e:
                 _logger.error(f"Error sending cancel notification to external: {str(e)}")
 
-        return result
+        return res
 
     def action_event_cancel(self, cancel_reason_id: int, reason_text=None):
         """OVERRIDE: send user notification"""
@@ -161,7 +164,7 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered_app = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is False)
         self_filtered_external = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is True)
 
-        result = super().action_supplier_cancel(cancel_reason_id, reason_text)
+        res = super().action_supplier_cancel(cancel_reason_id, reason_text)
 
         if self_filtered_app and not self._is_db_neutralized():
             try:
@@ -195,12 +198,12 @@ class IkeEventSupplierSelection(models.Model):
                 except Exception as e:
                     _logger.error(f"Error sending cancel notification to external: {str(e)}")
 
-        return result
+        return res
 
     def action_supplier_cancel(self, cancel_reason_id: int, reason_text=None):
         """OVERRIDE: send user notification"""
         self_filtered = self.filtered(lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized')
-        result = super().action_supplier_cancel(cancel_reason_id, reason_text)
+        res = super().action_supplier_cancel(cancel_reason_id, reason_text)
 
         if not self._is_db_neutralized():
             @self.env.cr.postcommit.add
@@ -208,11 +211,11 @@ class IkeEventSupplierSelection(models.Model):
                 threading.Thread(
                     target=self._async_send_notification,
                     args=(self.env.cr.dbname, self_filtered.ids, 'send_cancel_notification', 'portal'),
-                    # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_cancel_notification'),  # ? TEST
+                    # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_cancel_notification'),  # ? TESTING
                     daemon=True,
                 ).start()
 
-        return result
+        return res
 
     # === ASYNC EXECUTION === #
     def _async_send_notification(self, db_name, record_ids, action_name, *args):

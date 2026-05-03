@@ -115,8 +115,6 @@ class IkeEvent_Search(models.Model):
                         'supplier_number': self.supplier_number,
                         'supplier_product_ids': supplier_products_data,
                     })
-                    # Manual Notification
-                    supplier_link_id.manual_notification = supplier_link_id.supplier_id.x_has_external_notification or supplier_link_id.supplier_id.x_has_portal
                     # Set Authorization Data
                     authorized = (self.previous_amount + supplier_link_id.estimated_cost) <= self.authorized_amount
                     for product_id in supplier_link_id.supplier_product_ids:
@@ -1114,8 +1112,7 @@ class IkeEvent_Search(models.Model):
                         })]
                 else:
                     product_id.authorization_pending = True
-        # Manual Notification
-        supplier_link_id.manual_notification = supplier_link_id.supplier_id.x_has_external_notification or supplier_link_id.supplier_id.x_has_portal
+
         # Products cost by km
         products_cost_by_km = supplier_link_id.supplier_product_ids.filtered(
             lambda x: x.product_id.x_cost_by_km and not x.parent_product_id

@@ -16,8 +16,6 @@ class IkeEventSupplierBase(models.AbstractModel):
     # Related fields
     supplier_id = fields.Many2one('res.partner', domain="[('x_is_supplier', '=', True)]")
     supplier_center_id = fields.Many2one('res.partner', readonly=True)
-    is_generic_supplier = fields.Boolean(related='supplier_id.x_is_generic_supplier')
-    purchase_supplier_id = fields.Many2one('res.partner', domain="[('x_is_supplier', '=', True), ('x_is_generic_supplier', '=', False)]")
     service_ref = fields.Char(related="event_id.service_ref")
     subservice_id = fields.Many2one(related='event_id.sub_service_id')
     event_search_type = fields.Selection(related='event_id.supplier_search_type')

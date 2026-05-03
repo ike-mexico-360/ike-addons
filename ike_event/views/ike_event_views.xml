@@ -82,7 +82,7 @@
         </field>
     </record>
 
-    <!-- View ike.event List -->
+    <!-- View ike.event View List -->
     <record id="view_ike_event_list" model="ir.ui.view">
         <field name="name">view.ike.event.list</field>
         <field name="model">ike.event</field>
@@ -103,7 +103,7 @@
         </field>
     </record>
 
-    <!-- View ike.event List 2 -->
+    <!-- View ike.event View List -->
     <record id="view_ike_event_list_secondary" model="ir.ui.view">
         <field name="name">view.ike.event.list_secondary</field>
         <field name="model">ike.event</field>
@@ -119,7 +119,7 @@
         </field>
     </record>
 
-    <!-- View ike.event assignment List -->
+    <!-- View ike.event assignment View List -->
     <record id="view_ike_event_assignment_list" model="ir.ui.view">
         <field name="name">view.ike.event.assignment.list</field>
         <field name="model">ike.event</field>
@@ -135,7 +135,8 @@
         </field>
     </record>
 
-    <!-- View ike.event Form -->
+
+    <!-- View ike.event form -->
     <record id="view_ike_event_form" model="ir.ui.view">
         <field name="name">view.ike.event.form</field>
         <field name="model">ike.event</field>
@@ -162,9 +163,14 @@
                 <sheet>
                     <div class="oe_button_box" name="button_box" invisible="not id">
                     </div>
+                    <div class="oe_title">
+                        <label for="name" class="o_form_label_required"/>
+                        <h1>
+                            <field name="name" placeholder="Name..."/>
+                        </h1>
+                    </div>
                     <group string="User Info" name="user_data">
                         <group>
-                            <field name="name"/>
                             <field name="user_by"/>
                             <field name="user_id"
                                    options="{'no_create': 1}"/>
@@ -235,11 +241,8 @@
                                     </div>
                                     <field name="previous_amount"/>
                                     <field name="current_amount"/>
-                                    <label for="authorization_required"/>
-                                    <div class="o_row">
-                                        <field name="authorization_required"/>
-                                        <field name="uncovered_authorization_required"/>
-                                    </div>
+                                    <field name="authorization_required"/>
+                                    <field name="uncovered_authorization_required"/>
                                     <field name="use_external_locations" widget="boolean_toggle"/>
                                     <div class="o_row" colspan="2">
                                         <button string="Add Supplier" name="action_add_multi_supplier_product_data" type="object" class="btn-primary"/>
@@ -266,9 +269,9 @@
                                 <field name="service_supplier_ids" nolabel="1" colspan="2"
                                     widget="ike_supplier_section_and_note_field_o2m"
                                     options="{'field_columns': ['supplier_id']}"
-                                    context="{'default_search_number': supplier_search_number, 'form_view_ref': 'ike_event.ike_event_supplier_form_view'}"
+                                    context="{'default_search_number': supplier_search_number}"
                                     readonly="supplier_search_type not in ['manual', 'manual_manual']">
-                                    <list create="0" delete="0">
+                                    <list create="0" delete="0" editable="bottom">
                                         <field name="display_type" column_invisible="1" />
                                         <field name="sequence" column_invisible="1"/>
 
@@ -281,7 +284,7 @@
                                         <field name="supplier_id"
                                             widget="ike_label_section_and_note_field"
                                             options="{'no_create': 1, 'no_open': 1}"
-                                            readonly="1"
+                                            readonly="assignation_type not in ['manual_manual'] or display_type"
                                             width="200px"/>
                                         <field name="truck_id"
                                             domain="truck_domain"
@@ -305,12 +308,9 @@
                                         <field name="acceptance_date" optional="hide" readonly="1"/>
                                         <field name="rejection_date" optional="hide" readonly="1"/>
                                         <field name="timer_duration" column_invisible="1"/>
-                                        <field name="elapsed_time" column_invisible="1"/>
-                                        <field name="manual_notification" column_invisible="1"/>
+                                        <field name="elapsed_time_s" column_invisible="1"/>
                                         <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
                                         <button name="action_view_products" string="View Details" type="object" class="btn-link"/>
-                                        <!-- <button name="action_view_supplier_data" string="Edit" type="object" class="btn-link"
-                                            column_invisible="parent.supplier_search_type not in ['manual', 'manual_manual']"/> -->
                                     </list>
                                 </field>
                                 <button string="Add Supplier" name="action_open_add_manual_supplier_wizard" type="object" class="btn-link"
@@ -465,34 +465,6 @@
         </field>
     </record>
 
-    <!-- View ik.event purchase suppliers Popup -->
-    <record id="view_ike_event_purchase_suppliers_form" model="ir.ui.view">
-        <field name="name">view.ike.event.purchase.suppliers.form</field>
-        <field name="model">ike.event</field>
-        <field name="priority">99</field>
-        <field name="arch" type="xml">
-            <form>
-                <group>
-                    <field name="selected_supplier_ids" widget="one2many" readonly="0">
-                        <list create="0" delete="0" editable="bottom" >
-                            <field name="supplier_id" readonly="1" options="{'no_open': 1, 'no_create': 1}"/>
-                            <field name="truck_id" readonly="1" options="{'no_open': 1, 'no_create': 1}"/>
-                            <field name="is_generic_supplier" readonly="1" options="{'no_open': 1, 'no_create': 1}"/>
-                            <field name="purchase_supplier_id" required="is_generic_supplier" readonly="0" options="{'no_open': 1, 'no_create': 1}"/>
-                        </list>
-                    </field>
-                </group>
-                <footer>
-                    <button name="action_verify" string="Conclude"
-                            confirm="Are you sure?"
-                            type="object" class="btn-primary" invisible="stage_ref not in ['completed']"/>
-                    <button string="Save" class="btn-primary" special="save"/>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
-                </footer>
-            </form>
-        </field>
-    </record>
-
     <!-- Filtros de vista lista histórico de eventos -->
     <record id="ike_event_history_view_search" model="ir.ui.view">
         <field name="name">ike_event_history.view.search</field>
@@ -528,4 +500,5 @@
         <field name="domain">[]</field>
         <field name="context">{}</field>
     </record>
+
 </odoo>

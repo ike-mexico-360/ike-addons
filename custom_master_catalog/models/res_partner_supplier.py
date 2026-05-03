@@ -133,13 +133,6 @@ class ResPartner(models.Model):
         copy=False,
     )
 
-    # Supplier generic
-    x_is_generic_supplier = fields.Boolean(
-        string='Is generic supplier',
-        default=False,
-        tracking=True,
-    )
-
     @api.depends("x_exclusive_account_ids", "x_special_account_ids")
     def _compute_x_allowed_account_ids(self):
         for rec in self:

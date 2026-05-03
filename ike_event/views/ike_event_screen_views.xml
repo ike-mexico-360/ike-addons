@@ -9,7 +9,7 @@
                 <header>
                     <button name="action_verify" string="Conclude"
                             confirm="Are you sure?"
-                            type="object" class="btn-primary" invisible="stage_ref not in ['completed', 'cancel_subsequently']"
+                            type="object" class="btn-primary" invisible="stage_ref not in ['completed']"
                             groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds"/>
                     <button name="action_close" string="Close"
                             confirm="Are you sure?"
@@ -205,11 +205,8 @@
                             <field name="authorized_amount" readonly="1"/>
                             <field name="previous_amount" groups="base.group_no_one"/>
                             <field name="current_amount" groups="base.group_no_one"/>
-                            <label for="authorization_required" groups="base.group_no_one"/>
-                            <div class="o_row" groups="base.group_no_one">
-                                <field name="authorization_required"/>
-                                <field name="uncovered_authorization_required"/>
-                            </div>
+                            <field name="authorization_required" groups="base.group_no_one"/>
+                            <field name="uncovered_authorization_required" groups="base.group_no_one"/>
                             <field name="use_external_locations" widget="boolean_toggle" groups="base.group_erp_manager"/>
                         </group>
                         <group>
@@ -232,9 +229,9 @@
                         <field name="service_supplier_ids" nolabel="1" colspan="2"
                             widget="ike_supplier_section_and_note_field_o2m"
                             options="{'field_columns': ['supplier_id']}"
-                            context="{'default_search_number': supplier_search_number, 'form_view_ref': 'ike_event.ike_event_supplier_form_view'}"
-                            readonly="supplier_search_type not in ['manual', 'manual_manual']">
-                            <list create="0" delete="0">
+                            context="{'default_search_number': supplier_search_number}"
+                            readonly="supplier_search_type  not in ['manual', 'manual_manual']">
+                            <list create="0" delete="0" editable="bottom">
                                 <field name="display_type" column_invisible="1" />
                                 <field name="sequence" column_invisible="1"/>
 
@@ -242,12 +239,12 @@
 
                                 <field name="search_number" column_invisible="1"/>
                                 <field name="ranking" string="#" width="25px"
-                                    column_invisible="parent.supplier_search_type in ['manual', 'manual_manual']"
+                                    column_invisible="parent.supplier_search_type in ['manual', 'manual']"
                                     readonly="1"/>
                                 <field name="supplier_id"
                                     widget="ike_label_section_and_note_field"
                                     options="{'no_create': 1, 'no_open': 1}"
-                                    readonly="1"
+                                    readonly="assignation_type not in ['manual_manual'] or display_type"
                                     width="200px"/>
                                 <field name="truck_id"
                                     domain="truck_domain"
@@ -271,8 +268,7 @@
                                 <field name="acceptance_date" optional="hide" readonly="1"/>
                                 <field name="rejection_date" optional="hide" readonly="1"/>
                                 <field name="timer_duration" column_invisible="1"/>
-                                <field name="elapsed_time" column_invisible="1"/>
-                                <field name="manual_notification" column_invisible="1"/>
+                                <field name="elapsed_time_s" column_invisible="1"/>
                                 <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
                                 <button name="action_view_products" string="View Details" type="object" class="btn-link"/>
                             </list>

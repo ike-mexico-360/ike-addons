@@ -410,11 +410,7 @@ class IkeEventMembershipAuthorization(models.Model):
             rec.write({
                 'state': 'rejected',
             })
-            rec.nus_membership_id.write({
-                'subscription_validity': False
-            })
             rec.action_send_authorization_rejected_email()
-            rec.action_ike_event_reload()
 
     def action_authororizer_wizard(self):
         self.ensure_one()
