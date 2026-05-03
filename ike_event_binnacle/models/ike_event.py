@@ -330,8 +330,10 @@ class IkeEvent(models.Model):
         result = super().action_confirm_costs()  # type: ignore
         for rec in self:
             rec._create_message_binnacle([
-                'ike_event_binnacle.ike_binnacle_stage_10_4',
-                'ike_event_binnacle.ike_binnacle_stage_10_2'])
+                # 'ike_event_binnacle.ike_binnacle_stage_10_4',
+                "ike_event_binnacle.ike_binnacle_stage_10_5",
+                "ike_event_binnacle.ike_binnacle_stage_10_2"])
+                
         return result
 
     def user_assigned(self):
