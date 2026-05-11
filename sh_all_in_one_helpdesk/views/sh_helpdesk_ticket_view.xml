@@ -149,7 +149,7 @@
         <field name="arch" type="xml">
             <list string="Ticket" multi_edit="1" js_class="sh_helpdesk_ticket_list_view" >
                 <field name="name" />
-                <field name="partner_id" />
+                <field name="partner_id" string="Supplier"/>
                 <field name="ticket_read_data" column_invisible='True' /><!-- Bold Ticket -->
                 <field name="create_date" string="Create Date" />
                 <field name="write_date" string="Last Update Date" />

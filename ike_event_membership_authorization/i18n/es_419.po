@@ -1263,6 +1263,12 @@ msgid "X Domain Authorization Supervisor Affiliation"
 msgstr ""
 
 #. module: ike_event_membership_authorization
+#. odoo-python
+#: code:addons/ike_event_membership_authorization/wizard/ike_event_add_affiliation_user_wizard.py:0
+msgid "You must enter at least one key (e.g., policy, VIN)."
+msgstr "Debe ingresar al menos una clave (ej. póliza, VIN)."
+
+#. module: ike_event_membership_authorization
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_add_affiliation_nu_wizard__account_id
 msgid "account"
 msgstr "Cuenta"

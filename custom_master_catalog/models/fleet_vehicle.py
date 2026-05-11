@@ -59,11 +59,21 @@ class FleetVehicle(models.Model):
         for vehicle in self:
             domain = []
             if vehicle.x_partner_id:
+                vehicle_id = vehicle.id if isinstance(vehicle.id, int) else None
+
                 self.env.cr.execute("""
                     SELECT partner_id AS id
                     FROM res_partner_supplier_users_rel
-                    WHERE supplier_id = %s AND user_type = 'operator';
-                """ % (vehicle.x_partner_id.id,))
+                    WHERE supplier_id = %s
+                    AND center_of_attention_id = %s
+                    AND user_type = 'operator'
+                    AND partner_id NOT IN (
+                        SELECT driver_id
+                        FROM fleet_vehicle
+                        WHERE driver_id IS NOT NULL
+                        AND (%s IS NULL OR id != %s)
+                    )
+                """, (vehicle.x_partner_id.id, vehicle.x_center_id.id, vehicle_id, vehicle_id,))
                 driver_ids = [x['id'] for x in self.env.cr.dictfetchall()]
                 domain.append(('id', 'in', driver_ids))
             vehicle.x_driver_domain = domain

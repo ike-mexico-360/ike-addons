@@ -21,7 +21,7 @@
                     <group>
                         <div style="display: flex; align-items: center; gap: 4px;">
                             <field name="label_identification_primary" nolabel="1"/>
-                            <span class="text-danger" invisible="not account_id">*</span>
+                            <span class="" invisible="not account_id"></span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 4px;">
                             <field name="key_primary"
@@ -34,7 +34,7 @@
                             <field name="label_identification_second"
                                 invisible="not check_second_key"
                                 nolabel="1"/>
-                            <span class="text-danger" invisible="not check_second_key">*</span>
+                            <span class="" invisible="not check_second_key"></span>
                         </div>
 
                         <div style="display: flex; align-items: center; gap: 4px;">
@@ -49,7 +49,7 @@
                     </group>
 
                     <group>
-                        <field name="clause_primary" invisible="not check_clause"  required="0"/>
+                        <field name="clause_primary" invisible="not check_clause" required="0"/>
                         <field name="clause_second" invisible="not check_clause_second" required="check_clause_second"/>
                     </group>
                 </group>

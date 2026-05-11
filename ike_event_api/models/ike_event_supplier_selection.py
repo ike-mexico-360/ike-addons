@@ -63,12 +63,16 @@ class IkeEventSupplierSelection(models.Model):
                 and x.truck_id.x_vehicle_ref
             )
             if self_filtered:
+
+                # Frozen variables to prevent bug at post commit
+                dbname = self.env.cr.dbname
+                record_ids = self_filtered.ids
+
                 @self.env.cr.postcommit.add
                 def send_notifications_with_new_cursor():
                     threading.Thread(
                         target=self._async_send_notification,
-                        args=(self.env.cr.dbname, self_filtered.ids, 'send_external_notification'),
-                        # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_external_notification'),  # ? TESTING
+                        args=(dbname, record_ids, 'send_external_notification'),
                         daemon=True,
                     ).start()
         return result
@@ -83,7 +87,6 @@ class IkeEventSupplierSelection(models.Model):
             threading.Thread(
                 target=self._async_send_notification,
                 args=(self.env.cr.dbname, self_filtered.ids, 'send_operator_notification'),
-                # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_operator_notification'),  # ? TESTING
                 daemon=True,
             ).start()
         # SUPER
@@ -96,12 +99,24 @@ class IkeEventSupplierSelection(models.Model):
         selected_suppliers = self.filtered(lambda x: x.selected)
         # FixMe: check len == 1 ?
         if len(selected_suppliers) == 1 and not self._is_db_neutralized():
+
+            # Frozen variables to prevent bug at post commit
+            dbname = self.env.cr.dbname
+            record_ids = selected_suppliers.ids
+
+            @self.env.cr.postcommit.add
+            def send_tracking_route_with_new_cursor():
+                threading.Thread(
+                    target=self._async_send_notification,
+                    args=(dbname, record_ids, 'send_tracking_route'),
+                    daemon=True
+                ).start()
+
             @self.env.cr.postcommit.add
             def send_notifications_with_new_cursor():
                 threading.Thread(
                     target=self._async_send_notification,
-                    args=(self.env.cr.dbname, selected_suppliers.ids, 'send_accept_notification'),
-                    # args=(self.env.cr.dbname, selected_suppliers.ids, '_testing_async_method', 'send_accept_notification'),  # ? TEST
+                    args=(dbname, record_ids, 'send_accept_notification'),
                     daemon=True
                 ).start()
         return result
@@ -119,6 +134,11 @@ class IkeEventSupplierSelection(models.Model):
 
         result = super().action_supplier_cancel(cancel_reason_id, reason_text)
 
+        # Frozen variables to prevent bug at post commit
+        dbname = self.env.cr.dbname
+        app_record_ids = self_filtered_app.ids
+        external_record_ids = self_filtered_external.ids
+
         # Lógica para notificar la cancelación a la app
         if self_filtered_app and not self._is_db_neutralized():
             try:
@@ -126,8 +146,7 @@ class IkeEventSupplierSelection(models.Model):
                 def send_notifications_with_new_cursor():
                     threading.Thread(
                         target=self._async_send_notification,
-                        args=(self.env.cr.dbname, self_filtered_app.ids, 'send_cancel_notification', 'internal'),
-                        # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_cancel_notification'),  # ? TEST
+                        args=(dbname, app_record_ids, 'send_cancel_notification', 'internal'),
                         daemon=True,
                     ).start()
             except Exception as e:
@@ -140,8 +159,8 @@ class IkeEventSupplierSelection(models.Model):
                     threading.Thread(
                         target=self._async_send_notification,
                         args=(
-                            self.env.cr.dbname,
-                            self_filtered_external.ids,
+                            dbname,
+                            external_record_ids,
                             'send_cancel_notification_to_external',
                             cancel_reason_id,
                             reason_text,
@@ -163,14 +182,18 @@ class IkeEventSupplierSelection(models.Model):
 
         result = super().action_supplier_cancel(cancel_reason_id, reason_text)
 
+        # Frozen variables to prevent bug at post commit
+        dbname = self.env.cr.dbname
+        app_record_ids = self_filtered_app.ids
+        external_record_ids = self_filtered_external.ids
+
         if self_filtered_app and not self._is_db_neutralized():
             try:
                 @self.env.cr.postcommit.add
                 def send_notifications_with_new_cursor():
                     threading.Thread(
                         target=self._async_send_notification,
-                        args=(self.env.cr.dbname, self_filtered_app.ids, 'send_cancel_notification', 'event'),
-                        # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_cancel_notification'),  # ? TEST
+                        args=(dbname, app_record_ids, 'send_cancel_notification', 'event'),
                         daemon=True,
                     ).start()
             except Exception as e:
@@ -183,8 +206,8 @@ class IkeEventSupplierSelection(models.Model):
                         threading.Thread(
                             target=self._async_send_notification,
                             args=(
-                                self.env.cr.dbname,
-                                self_filtered_external.ids,
+                                dbname,
+                                external_record_ids,
                                 'send_cancel_notification_to_external',
                                 cancel_reason_id,
                                 reason_text,
@@ -203,12 +226,15 @@ class IkeEventSupplierSelection(models.Model):
         result = super().action_supplier_cancel(cancel_reason_id, reason_text)
 
         if not self._is_db_neutralized():
+            # Frozen variables to prevent bug at post commit
+            dbname = self.env.cr.dbname
+            record_ids = self_filtered.ids
+
             @self.env.cr.postcommit.add
             def send_notifications_with_new_cursor():
                 threading.Thread(
                     target=self._async_send_notification,
-                    args=(self.env.cr.dbname, self_filtered.ids, 'send_cancel_notification', 'portal'),
-                    # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_cancel_notification'),  # ? TEST
+                    args=(dbname, record_ids, 'send_cancel_notification', 'portal'),
                     daemon=True,
                 ).start()
 
@@ -302,14 +328,15 @@ class IkeEventSupplierSelection(models.Model):
                             supplier_responses.append(response_json)
                             topic = response_json.get("topic", False)
                             if topic and topic == f"vehiculos/{rec.truck_id.driver_id.user_ids[0].id}/{rec.truck_id.x_vehicle_ref}":
-                                # rec.notification_sent_to_app = True
-                                query = """
-                                    UPDATE ike_event_supplier
-                                    SET notification_sent_to_app = true
-                                    WHERE id = %
-                                """
-                                params = (rec.id)
-                                self.env.cr.execute(query, params)
+                                rec.notification_sent_to_app = True
+                                # ! Se comenta actualización por SQL dado que está generando error por tuplas
+                                # query = """
+                                #     UPDATE ike_event_supplier
+                                #     SET notification_sent_to_app = true
+                                #     WHERE id = %
+                                # """
+                                # params = (rec.id)
+                                # self.env.cr.execute(query, params)
                     except Exception as e:
                         _logger.error(f"Error en notificación: {str(e)}")
 
@@ -326,8 +353,10 @@ class IkeEventSupplierSelection(models.Model):
         else:
             _logger.warning("No se ha configurado la URL para las notificaciones")
 
+    def send_tracking_route(self):
         # Route Notification
         tracking_responses = []
+        IrConfig = self.env['ir.config_parameter'].sudo()
         route_tracking_url = IrConfig.get_param('ike_event_api.url.send_route')
         if route_tracking_url:
             headers = {
@@ -383,12 +412,14 @@ class IkeEventSupplierSelection(models.Model):
                     routes = [route_to_user, route_to_destination]
                     json_data = {
                         "serviceId": str(rec.event_id.id),
-                        "vehicleId": str(rec.event_id.id),
+                        # "vehicleId": str(rec.event_id.id),
+                        "vehicleId": str(rec.truck_id.x_vehicle_ref),
                         "origin": origin,
                         "destination": destination,
                         "routes": routes,
                         "DB": self.env.cr.dbname,  # Base de datos para distinguir el ambiente de donde se envía
                     }
+                    _logger.info(f"Tracking route (body): {json_data}")
                     tracking_response = requests.post(
                         str(route_tracking_url),
                         headers=headers,
@@ -397,9 +428,9 @@ class IkeEventSupplierSelection(models.Model):
                     if tracking_response:
                         tracking_responses.append(tracking_response.json())
                 except Exception as e:
-                    _logger.error(f"Error en ruta: {str(e)}")
-            # for response in tracking_responses:
-            #     _logger.info(f"Tracking route: {response}")
+                    _logger.error(f"Tracking route (error): {str(e)}")
+            for response in tracking_responses:
+                _logger.info(f"Tracking route (response): {response}")
         else:
             _logger.warning("No se ha configurado la URL para el envío de rutas")
 

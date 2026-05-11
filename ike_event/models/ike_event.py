@@ -354,8 +354,16 @@ class IkeEvent(models.Model):
 
     # === STAGE ACTIONS === #
     def action_completed(self):
-        self.stage_id = self.env.ref('ike_event.ike_event_stage_completed').id
-        # self.action_create_satisfaction_survey()
+        event_stage_in_progress_ref = self.env.ref('ike_event.ike_event_stage_in_progress').ref
+        event_stage_completed_id = self.env.ref('ike_event.ike_event_stage_completed').id
+        for rec in self:
+            pending_suppliers = rec.selected_supplier_ids.filtered(
+                lambda x: x.stage_ref not in ['finalized', 'cancel']
+            )
+            if pending_suppliers:
+                continue
+            if rec.stage_ref == event_stage_in_progress_ref and rec.step_number == 1:
+                rec.stage_id = event_stage_completed_id
 
     def action_verify(self):
         # Purchase suppliers validation
@@ -451,11 +459,22 @@ class IkeEvent(models.Model):
             stage_ref = rec.stage_ref
             step_number = rec.step_number
 
+            # backward special treatment
+            if stage_ref in ['assigned', 'in_progress'] and step_number == 2:
+                pending_suppliers = rec.selected_supplier_ids.filtered(
+                    lambda x: x.stage_ref not in ['finalized', 'cancel']
+                )
+                if not pending_suppliers:
+                    rec.step_number = 1
+                    rec.action_completed()
+                    continue
+
             stage_conf = event_flow.get(stage_ref, {})
             step_conf = stage_conf.get(str(step_number))
 
             previous_stage_ref, step_number = self._find_previous_step(
                 event_flow, stage_keys, stage_conf, step_conf, stage_ref, step_number)
+
             if previous_stage_ref != stage_ref:
                 previous_stage_id = self.env.ref("ike_event.ike_event_stage_" + previous_stage_ref)
                 rec.stage_id = previous_stage_id
@@ -606,7 +625,6 @@ class IkeEvent(models.Model):
     def action_set_user_data(self):
         for rec in self:
             rec.count_json = rec._build_sub_service_counter_json()
-            rec.assigned_user_id = rec.user_assigned()  # type: ignore
             if not rec.event_summary_id:
                 event_summary_id = self.env['ike.event.summary'].create({
                     'event_id': rec.id,

@@ -22,11 +22,11 @@
                             <field name="received_assistview" readonly="1"/>
                         </group>
                         <group>
-                            <field name="brand"/>
-                            <field name="model"/>
-                            <field name="plate"/>
-                            <field name="color"/>
-                            <field name="year"/>
+                            <field name="brand" required="1"/>
+                            <field name="model" required="1"/>
+                            <field name="plate" required="1"/>
+                            <field name="color" required="1"/>
+                            <field name="year" required="1"/>
                         </group>
                         <group>
                             <field name="address"/>

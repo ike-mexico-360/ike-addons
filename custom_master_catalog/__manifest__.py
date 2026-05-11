@@ -82,7 +82,7 @@
         'web.assets_backend': [
             'custom_master_catalog/static/src/css/tags_list.css',
             'custom_master_catalog/static/src/scss/fields.scss',
-            'custom_master_catalog/static/src/views/*.*',
+            # 'custom_master_catalog/static/src/views/*.*',
             'custom_master_catalog/static/src/fields/*.*',
             'custom_master_catalog/static/src/widgets/*.*',
         ],

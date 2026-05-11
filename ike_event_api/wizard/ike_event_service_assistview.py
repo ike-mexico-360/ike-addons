@@ -8,10 +8,8 @@ class IkeEventServiceAssistView(models.TransientModel):
     _description = 'Service Assist View'
 
     event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
-    # service_id = fields.Many2one('ike.service', string='Service', required=True)
     service_res_model = fields.Char(string='Service Resource Model')
     service_res_id = fields.Integer(string='Service Resource ID')
-    service_survey_input_id = fields.Many2one('ike.service.survey.input', string='Service Survey Input')
     received_assistview = fields.Boolean(string='Received Assistview', default=False)
     created_lambda_session = fields.Boolean(string='Created Lambda Session', default=False)
     sended_whatsapp_message = fields.Boolean(string='Sended Whatsapp Message', default=False)

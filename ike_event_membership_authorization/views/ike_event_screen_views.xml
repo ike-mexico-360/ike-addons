@@ -42,7 +42,7 @@
                 </group>
             </xpath>
             <!-- Button before alters service coverage -->
-            <xpath expr="//group[@name='sub_service']//separator[@class='col-12 my-1']" position="before">
+            <xpath expr="//group[@name='sub_service']//separator[@name='separator_service_type']" position="before">
 
                 <button 
                     string="Authorization"

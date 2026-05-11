@@ -1,0 +1,13 @@
+.o_notebook_chatter {
+    display: flex;
+    flex-direction: column;
+    min-height: 500px;
+    width: 100%;
+    background: white;
+}
+
+/* Forzamos que el componente interno de Odoo se expanda */
+.o_notebook_chatter .o_Chatter {
+    height: 100%;
+    width: 100%;
+}

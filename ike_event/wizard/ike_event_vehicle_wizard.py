@@ -16,6 +16,7 @@ class IkeEventVehicleWizard(models.TransientModel):
 
 class IkeEventVehicleDetailWizard(models.TransientModel):
     _name = 'ike.event.vehicle.detail.wizard'
+    _description = 'Event Vehicle Detail Wizard'
 
     wizard_id = fields.Many2one('ike.event.vehicle.wizard')
     vehicle_id = fields.Many2one('fleet.vehicle', 'Vehicle')

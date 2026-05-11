@@ -148,3 +148,93 @@ class CustomerPortal(PurchasePortal):
         except Exception as e:
             _logger.error(f"Error at get_supplier_product_matrix_lines: {str(e)}")
             return {"success": False, "message": str(e)}
+
+
+class PurchaseOrderController(http.Controller):
+
+    @http.route('/get_purchase_order_full_data', type='json', auth='user')
+    def get_purchase_order_full_data(self, order_id):
+        specification = {
+            'id': {},
+            'name': {},
+            'state': {},
+            'partner_id': {'fields': {'id': {}, 'name': {}}},
+            'x_event_public_id': {'fields': {'id': {}, 'name': {}}},
+            'message_ids': {
+                'fields': {
+                    'id': {},
+                    'body': {},
+                    'date': {},
+                    'author_id': {'fields': {'id': {}, 'name': {}}},
+                    'subtype_id': {'fields': {'id': {}, 'name': {}}},
+                    'tracking_value_ids': {
+                        'fields': {
+                            'id': {},
+                            'field_info': {},
+                            'old_value_char': {},
+                            'new_value_char': {},
+                            'o2m_record_id': {},
+                            'new_value_integer': {},
+                            'old_value_integer': {},
+                            'new_value_float': {},
+                            'old_value_float': {},
+                        }
+                    },
+                    'o2m_tracking_command_ids': {'fields': {'id': {}}},
+                }
+            },
+            'x_dispute_state': {},
+            'x_dispute_approved': {},
+            'x_change_comments': {},
+            'amount_untaxed': {},
+            'amount_untaxed_dispute': {},
+            'amount_untaxed_approved': {},
+            'amount_untaxed_event': {},
+            'order_line': {
+                'fields': {
+                    'id': {},
+                    'name': {},
+                    'display_name': {},
+                    'product_id': {'fields': {'id': {}, 'name': {}, 'image_1024': {}}},
+                    'product_qty': {},
+                    'product_uom': {'fields': {'id': {}, 'name': {}, 'display_name': {}}},
+                    'price_unit': {},
+                    'taxes_id': {'fields': {'id': {}, 'name': {}, 'display_name': {}}},
+                    'x_price_unit_dispute': {},
+                    'x_product_qty_dispute': {},
+                    'x_price_unit_approved': {},
+                    'x_product_qty_approved': {},
+                    'x_product_qty_event': {},
+                    'x_price_unit_event': {},
+                }
+            },
+            'x_dispute_iteration_count': {},
+        }
+
+        result = request.env['purchase.order'].sudo().web_search_read(
+            [('id', '=', order_id)], specification
+        )
+
+        if not result or not result.get('records'):
+            return {}
+
+        order_data = result['records'][0]
+        messages = order_data.get('message_ids', [])
+
+        msg_ids_with_o2m = [
+            m['id'] for m in messages
+            if m.get('o2m_tracking_command_ids') and len(m['o2m_tracking_command_ids']) > 0
+        ]
+
+        if msg_ids_with_o2m:
+            messages_rs = request.env['mail.message'].sudo().browse(msg_ids_with_o2m)
+            o2m_trackings_map = messages_rs.get_o2m_tracking_format(model_name='purchase.order')
+
+            for msg in messages:
+                msg_id = msg.get('id')
+                msg['o2mTrackings'] = o2m_trackings_map.get(msg_id) or []
+        else:
+            for msg in messages:
+                msg['o2mTrackings'] = []
+
+        return order_data

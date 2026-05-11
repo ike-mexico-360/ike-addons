@@ -13,6 +13,15 @@ class IkeServiceVial(models.Model):
     _description = 'Service Input Vial'
     _track_duration_field = 'stage_id'
 
+    WATCHED_FIELDS = [
+        'identification_type',
+        'vehicle_brand',
+        'vehicle_model',
+        'vehicle_plate',
+        'vehicle_color',
+        'vehicle_year',
+    ]
+
     identification_type = fields.Selection([
         ('link', 'Link'),
         ('manual', 'Manual'),
@@ -30,6 +39,27 @@ class IkeServiceVial(models.Model):
         string='Category',
         domain="[('disabled', '=', False)]"
     )
+    can_continue = fields.Boolean(compute='_compute_can_continue')
+
+    # === COMPUTE === #
+    @api.depends(*WATCHED_FIELDS)
+    def _compute_can_continue(self):
+        for rec in self:
+            if rec.identification_type == 'manual':
+                rec.can_continue = True
+            else:
+                can_continue = True
+                data = rec.read(self.WATCHED_FIELDS)[0]
+                for field, value in data.items():
+                    if field in ['identification_type', 'id']:
+                        continue
+
+                    if not value:
+                        can_continue = False
+                        break
+                    else:
+                        can_continue = True
+                rec.can_continue = can_continue
 
     # === FLOW ACTIONS === #
     def _find_or_create_vehicle_brand(self):

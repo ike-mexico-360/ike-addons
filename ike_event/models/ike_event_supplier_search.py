@@ -6,7 +6,6 @@ import math
 import requests
 
 from datetime import timedelta
-from psycopg2.errors import LockNotAvailable
 
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError, ValidationError
@@ -29,8 +28,6 @@ class IkeEvent_Search(models.Model):
     ], default='electronic', string="Search Type (Supplier)", copy=False)
     supplier_search_number = fields.Integer(string='Search Number (Supplier)', default=0, copy=False)
     base_supplier_number = fields.Integer(default=1, copy=False)
-    is_searching = fields.Boolean(default=False, copy=False)
-    next_search_uuid = fields.Char(copy=False)
     use_external_locations = fields.Boolean(default=True)
 
     # === SUPPLIER SEARCH ACTIONS === #
@@ -67,6 +64,9 @@ class IkeEvent_Search(models.Model):
     def _search_suppliers(self, assignation_type, priority=None):
         """ Function to assign """
         self.ensure_one()
+        locked_record_ids = self._with_locked_records()
+        if not locked_record_ids:
+            return
 
         # Algorithm
         service_suppliers, max_suppliers, limit_max_distance_km = self._search_suppliers_algorithm(assignation_type, priority)
@@ -116,7 +116,9 @@ class IkeEvent_Search(models.Model):
                         'supplier_product_ids': supplier_products_data,
                     })
                     # Manual Notification
-                    supplier_link_id.manual_notification = supplier_link_id.supplier_id.x_has_external_notification or supplier_link_id.supplier_id.x_has_portal
+                    supplier_link_id.manual_notification = (
+                        supplier_link_id.supplier_id.x_has_external_notification or supplier_link_id.supplier_id.x_has_portal
+                    )
                     # Set Authorization Data
                     authorized = (self.previous_amount + supplier_link_id.estimated_cost) <= self.authorized_amount
                     for product_id in supplier_link_id.supplier_product_ids:
@@ -979,26 +981,33 @@ class IkeEvent_Search(models.Model):
 
     def broadcastSuppliersDeleted(self):
         for rec in self:
-            if rec.service_supplier_ids:
-                suppliers = rec.service_supplier_ids.mapped('supplier_id.id')
-                for supplier in suppliers:
-                    channel_name = f'ike_channel_supplier_{str(supplier)}'
-                    line_ids = rec.service_supplier_ids.filtered(lambda x: x.supplier_id.id == supplier)
-                    message = {
-                        'event_id': rec.id,
-                        'service_supplier_ids': [
-                            {
-                                'id': x.id,
-                            }
-                            for x in line_ids
-                        ],
-                    }
+            self.env['bus.bus']._sendone(
+                target='ike_channel_event_' + str(rec.id),
+                notification_type='IKE_EVENT_SUPPLIERS_DELETED',
+                message={
+                    'id': rec.id,
+                },
+            )
+            # if rec.service_supplier_ids:
+            #     suppliers = rec.service_supplier_ids.mapped('supplier_id.id')
+            #     for supplier in suppliers:
+            #         channel_name = f'ike_channel_supplier_{str(supplier)}'
+            #         line_ids = rec.service_supplier_ids.filtered(lambda x: x.supplier_id.id == supplier)
+            #         message = {
+            #             'event_id': rec.id,
+            #             'service_supplier_ids': [
+            #                 {
+            #                     'id': x.id,
+            #                 }
+            #                 for x in line_ids
+            #             ],
+            #         }
 
-                    self.env['bus.bus']._sendone(
-                        target=channel_name,
-                        notification_type='ike_supplier_event_deleted',
-                        message=message,
-                    )
+            #         self.env['bus.bus']._sendone(
+            #             target=channel_name,
+            #             notification_type='ike_supplier_event_deleted',
+            #             message=message,
+            #         )
 
     def broadcastEventReload(self, batch_timeout=5):
         for rec in self:
@@ -1115,7 +1124,9 @@ class IkeEvent_Search(models.Model):
                 else:
                     product_id.authorization_pending = True
         # Manual Notification
-        supplier_link_id.manual_notification = supplier_link_id.supplier_id.x_has_external_notification or supplier_link_id.supplier_id.x_has_portal
+        supplier_link_id.manual_notification = (
+            supplier_link_id.supplier_id.x_has_external_notification or supplier_link_id.supplier_id.x_has_portal
+        )
         # Products cost by km
         products_cost_by_km = supplier_link_id.supplier_product_ids.filtered(
             lambda x: x.product_id.x_cost_by_km and not x.parent_product_id
@@ -1251,76 +1262,14 @@ class IkeEvent_Search(models.Model):
             'context': {}
         }
 
-    # === SUPPLIER SEARCH ACTIONS FOR JAVASCRIPT === #
-    def next_search_suppliers(self, params):
-        """ Process executed from JavaScript to handle the concurrency problems. """
-        self.ensure_one()
-        is_searching = False
-        try:
-            with self.env.cr.savepoint():
-                self.env.cr.execute(
-                    "SELECT id FROM %s WHERE id = %%s AND is_searching = false FOR UPDATE" % self._table,
-                    (self.id,)
-                )
-                self.env.cr.execute(
-                    "SELECT is_searching, next_search_uuid FROM %s WHERE id = %%s" % self._table,
-                    (self.id,)
-                )
-                row = self.env.cr.fetchone()
-
-                if row and (row[0] is True or row[1] != params['next_uuid']):
-                    is_searching = True
-                if not is_searching:
-                    self.env.cr.execute(
-                        "UPDATE %s SET is_searching = true WHERE id = %%s" % self._table,
-                        (self.id,)
-                    )
-        except Exception:
-            return
-
-        if is_searching:
-            return
-
-        try:
-            method = getattr(self, params['function_name'], None)
-            if callable(method):
-                method(params)
-        except UserError:
-            raise
-        except Exception as e:
-            _logger.exception("Unexpected error (id=%s): %s", self.id, e)
-        finally:
-            self.write({'is_searching': False, 'next_search_uuid': None})
-
-    def search_publication_suppliers_3(self, params):
-        self.ensure_one()
-        if self.next_search_uuid == params['next_uuid']:
-            self.next_search_uuid = None
-            self._search_suppliers('publication', '3')
-
-    def search_publication_suppliers_2(self, params):
-        self.ensure_one()
-        if self.next_search_uuid == params['next_uuid']:
-            self.next_search_uuid = None
-            self._search_suppliers('publication', '2')
-
-    def search_publication_suppliers_1(self, params):
-        self.ensure_one()
-        if self.next_search_uuid == params['next_uuid']:
-            self.next_search_uuid = None
-            self._search_suppliers('publication', '1')
-
-    def search_publication_suppliers_0(self, params):
-        self.ensure_one()
-        if self.next_search_uuid == params['next_uuid']:
-            self.next_search_uuid = None
-            self._search_suppliers('publication', '0')
-
-    def search_manual_suppliers(self, params):
-        self.ensure_one()
-        if self.next_search_uuid == params['next_uuid']:
-            self.next_search_uuid = None
-            self._search_suppliers('manual')
+    # === LOCK RECORDS === #
+    def _with_locked_records(self):
+        if not self.ids:
+            return []
+        self._cr.execute(
+            f'SELECT id FROM {self._table} WHERE id IN %s FOR UPDATE SKIP LOCKED', [tuple(self.ids)]
+        )
+        return [row[0] for row in self.env.cr.fetchall()]
 
     # === MULTI SUPPLIERS ACTIONS === #
     def action_add_multi_supplier_product_data(self):

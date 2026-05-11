@@ -6,7 +6,7 @@
                 <t t-esc="order.partner_id.name"/>
             </strong>
             <strong class="d-block mb-1">
-                <t t-esc="order.x_event_id.name"/>
+                <t t-out="order.x_event_public_id.name"/>
             </strong>
         </xpath>
         <xpath expr="//h3[@id='details']" position="after">
@@ -111,7 +111,7 @@
                                 </a>
                             </td>
                             <td id="order_event">
-                                <span t-field="order.x_event_id.name"/>
+                                <t t-out="order.x_event_public_id.name"/>
                             </td>
                             <td id="order_confirmation">
                                 <span t-field="order.date_approve" t-options="{'widget': 'date'}"/>
@@ -161,7 +161,7 @@
                             </a>
                         </td>
                         <td class="text-start">
-                            <span t-field="rfq.x_event_id.name"/>
+                            <span t-field="rfq.x_event_public_id.name"/>
                         </td>
                         <td class="text-start">
                             <t t-if="rfq.state == 'to_consolidate'">

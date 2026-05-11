@@ -13,7 +13,7 @@
         <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
     </record>
     <record id="purchase.menu_purchase_root" model="ir.ui.menu">
-        <field name="groups_id" eval="[(6, 0, [ref('custom_master_catalog.custom_group_ccc_boss')])]"/>
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account'),ref('custom_master_catalog.custom_group_ccc_boss'),ref('custom_master_catalog.custom_group_supplier_support'),ref('custom_master_catalog.custom_group_bi_queries')])]"/>
     </record>
     <record id="purchase.menu_purchase_products" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
@@ -23,7 +23,7 @@
     </record>
 
     <record id="sh_all_in_one_helpdesk.helpdesk_main_menu" model="ir.ui.menu">
-        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account'),ref('custom_master_catalog.custom_group_ccc_coordinator'),ref('custom_master_catalog.custom_group_ccc_analyst')])]"/>
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account'),ref('custom_master_catalog.custom_group_ccc_coordinator'),ref('custom_master_catalog.custom_group_ccc_analyst'),ref('custom_master_catalog.custom_group_supplier_support'),ref('custom_master_catalog.custom_group_bi_queries')])]"/>
     </record>
     <record id="sh_all_in_one_helpdesk.helpdesk_reporting_menu" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>

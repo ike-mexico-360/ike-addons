@@ -8,7 +8,7 @@ class IkeEventSupplierBase(models.AbstractModel):
 
     # Key Fields
     event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
-    event_stage_ref = fields.Char(related='event_id.stage_ref', string='Stage Ref')
+    event_stage_ref = fields.Char(related='event_id.stage_ref', string='Event Stage Ref')
     sequence = fields.Integer(default=5, required=True)
     folio = fields.Char(readonly=True, copy=False)
     name = fields.Text('Description')
@@ -17,7 +17,10 @@ class IkeEventSupplierBase(models.AbstractModel):
     supplier_id = fields.Many2one('res.partner', domain="[('x_is_supplier', '=', True)]")
     supplier_center_id = fields.Many2one('res.partner', readonly=True)
     is_generic_supplier = fields.Boolean(related='supplier_id.x_is_generic_supplier')
-    purchase_supplier_id = fields.Many2one('res.partner', domain="[('x_is_supplier', '=', True), ('x_is_generic_supplier', '=', False)]")
+    purchase_supplier_id = fields.Many2one(
+        'res.partner',
+        domain="[('x_is_supplier', '=', True), ('x_is_generic_supplier', '=', False)]",
+    )
     service_ref = fields.Char(related="event_id.service_ref")
     subservice_id = fields.Many2one(related='event_id.sub_service_id')
     event_search_type = fields.Selection(related='event_id.supplier_search_type')

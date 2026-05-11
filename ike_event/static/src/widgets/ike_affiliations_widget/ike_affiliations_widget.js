@@ -91,7 +91,7 @@ export class IkeAffiliations extends Component {
         onWillUnmount(() => {
             this.unsubscribeFromChannel();
         });
-        console.log(this);
+        // console.log(this);
     }
 
     subscribeToChannel() {

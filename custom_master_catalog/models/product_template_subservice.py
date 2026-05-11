@@ -153,6 +153,7 @@ class ProductProduct(models.Model):
 
 class CustomSubserviceConceptLine(models.Model):
     _name = 'custom.subservice.concept.line'
+    _description = 'Sub-service Concept Line'
 
     subservice_id = fields.Many2one(
         'product.product',

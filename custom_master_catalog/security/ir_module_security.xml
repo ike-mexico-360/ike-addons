@@ -70,6 +70,10 @@
         <field name="name">Suppliers (Support)</field>
         <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
     </record>
+    <record id="custom_group_bi_queries" model="res.groups">
+        <field name="name">BI Queries</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+    </record>
     <record id="custom_group_commercial_supervisor" model="res.groups">
         <field name="name">Commercial Supervisor</field>
         <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />

@@ -38,6 +38,9 @@
     <record id="custom_master_catalog.custom_group_supplier_support" model="res.groups">
         <field name="implied_ids" eval="[(4, ref('group_ike_event_user'))]"/>
     </record>
+    <record id="custom_master_catalog.custom_group_bi_queries" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_ike_event_user'))]"/>
+    </record>
 
     <record id="rule_ike_event_analyst_read_all" model="ir.rule">
         <field name="name">Ike Event: Analyst can read all</field>

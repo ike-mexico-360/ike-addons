@@ -256,9 +256,29 @@ class IkeEvent(models.Model):
     def action_set_user_data(self):
         result = super(IkeEvent, self).action_set_user_data()
         for rec in self:
-            # rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_2_1"])
+            rec.assigned_user_id = rec._action_set_user_assigned()
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_2_4"])
         return result
+
+    def _action_set_user_assigned(self):
+        self.ensure_one()
+        binnacle_category = self.env.ref('ike_event_binnacle.ike_binnacle_stage_3_1')
+
+        message = self.env['mail.message'].search([
+            ('model', '=', 'ike.event'),
+            ('res_id', '=', self.id),
+            ('event_binnacle_id', '=', binnacle_category.id)
+        ], limit=1)
+
+        if not message or not message.author_id:
+            return False
+
+        user = self.env['res.users'].search(
+            [('partner_id', '=', message.author_id.id)],
+            limit=1
+        )
+
+        return user.id if user else False
 
     def action_set_user_service_data(self):
         result = super(IkeEvent, self).action_set_user_service_data()
@@ -333,28 +353,7 @@ class IkeEvent(models.Model):
                 # 'ike_event_binnacle.ike_binnacle_stage_10_4',
                 "ike_event_binnacle.ike_binnacle_stage_10_5",
                 "ike_event_binnacle.ike_binnacle_stage_10_2"])
-                
         return result
-
-    def user_assigned(self):
-        self.ensure_one()
-        binnacle_category = self.env.ref('ike_event_binnacle.ike_binnacle_stage_3_1')
-
-        message = self.env['mail.message'].search([
-            ('model', '=', 'ike.event'),
-            ('res_id', '=', self.id),
-            ('event_binnacle_id', '=', binnacle_category.id)
-        ], limit=1)
-
-        if not message or not message.author_id:
-            return False
-
-        user = self.env['res.users'].search(
-            [('partner_id', '=', message.author_id.id)],
-            limit=1
-        )
-
-        return user.id if user else False
 
 
 class IkeEventSupplier(models.Model):
@@ -456,7 +455,7 @@ class IkeEventSupplier(models.Model):
         return result
 
     # === SEARCH ACTIONS === #
-    def action_notify(self)->list[int]:
+    def action_notify(self) -> list[int]:
         update_ids = super().action_notify()
         self_filtered = self.filtered(lambda x: x.id in update_ids)
         for rec in self_filtered:
@@ -468,7 +467,7 @@ class IkeEventSupplier(models.Model):
             ])
         return self_filtered.ids
 
-    def action_notify_operator(self)->list[int]:
+    def action_notify_operator(self) -> list[int]:
         updated_ids = super().action_notify_operator()
         self_filtered = self.filtered(lambda x: x.id in updated_ids)
         for rec in self_filtered:
@@ -480,7 +479,7 @@ class IkeEventSupplier(models.Model):
             ])
         return updated_ids
 
-    def action_accept(self)->list[int]:
+    def action_accept(self) -> list[int]:
         updated_ids = super().action_accept()
         self_filtered = self.filtered(lambda x: x.id in updated_ids)
         for rec in self_filtered:
@@ -495,7 +494,7 @@ class IkeEventSupplier(models.Model):
             )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_2"])
         return updated_ids
 
-    def action_reject(self)->list[int]:
+    def action_reject(self) -> list[int]:
         updated_ids = super().action_reject()
         self_filtered = self.filtered(lambda x: x.id in updated_ids)
         for rec in self_filtered:
@@ -507,7 +506,7 @@ class IkeEventSupplier(models.Model):
             ])
         return updated_ids
 
-    def action_timeout(self)->list[int]:
+    def action_timeout(self) -> list[int]:
         updated_ids = super().action_timeout()
         self_filtered = self.filtered(lambda x: x.id in updated_ids)
         print("BINNACLE - ACTION_TIMEOUT", self_filtered.ids)
@@ -588,11 +587,11 @@ class IkeEventMembershipAuthorization(models.Model):
 
     def action_rejected(self):
         result = super().action_rejected()
-        for rec in self: 
+        for rec in self:
             rec.event_id._create_message_binnacle([
                 "ike_event_binnacle.ike_binnacle_stage_7_31",
                 "ike_event_binnacle.ike_binnacle_stage_7_32",
-                ])
+            ])
         return result
 
     def send_mail_commercial_authorizator(self):

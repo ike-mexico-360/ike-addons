@@ -10,19 +10,21 @@
                 <group string="Key identification" class="o_group_border">
                     <field name="x_display_mask" invisible="1"/>
                     <field name="x_second_display_mask" invisible="1"/>
+                    <field name="x_validation_pattern" invisible="1"/>
+                    <field name="x_validation_pattern_second" invisible="1"/>
                     <field name="check_membership_authorizer" invisible="1"/>
                     <field name="account" invisible="0"/>
 
                     <group>
                         <field name="label_identification_primary" nolabel="1"/>
-                        <field name="key_identification" readonly="1" widget="ike_regex_validator_field" mask_field="x_display_mask" nolabel="1"/>
+                        <field name="key_identification" readonly="0" widget="ike_regex_validator_field" mask_field="x_display_mask" nolabel="1"/>
                         <field name="label_identification_second" invisible="not check_second_key" nolabel="1"/>
-                        <field name="second_key_identification" readonly="1" widget="ike_regex_validator_field"  mask_field="x_second_display_mask" invisible="not check_second_key" nolabel="1" />
+                        <field name="second_key_identification" readonly="0" widget="ike_regex_validator_field"  mask_field="x_second_display_mask" pattern_field="x_validation_pattern_second" invisible="not check_second_key" nolabel="1" />
                     </group>
 
                     <group>
-                        <field name="clause_primary" invisible="not check_clause" readonly="1" />
-                        <field name="clause_second" invisible="not check_clause_second" readonly="1"/>
+                        <field name="clause_primary" invisible="not check_clause" readonly="0" />
+                        <field name="clause_second" invisible="not check_clause_second" readonly="0"/>
                     </group>
                 </group>
 

@@ -92,13 +92,13 @@ class ShHelpdeskTicketButtonsAndConfig(models.Model):
                 sla_failed = rec.sh_sla_status_ids.filtered(
                     lambda x: x.sh_status == 'sla_failed')
                 if sla_passed:
-                    rec.sh_status = 'sla_passed'
+                    rec.sudo().sh_status = 'sla_passed'
                 elif sla_failed:
-                    rec.sh_status = 'sla_failed'
+                    rec.sudo().sh_status = 'sla_failed'
                 elif rec.sh_sla_status_ids:
-                    rec.sh_status = 'sh_partially_passed'
+                    rec.sudo().sh_status = 'sh_partially_passed'
                 else:
-                    rec.sh_status = ""
+                    rec.sudo().sh_status = ""
 
     @api.depends('stage_id')
     def _compute_stage_booleans(self):

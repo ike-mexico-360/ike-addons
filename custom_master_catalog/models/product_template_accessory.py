@@ -47,6 +47,10 @@ class ProductProduct(models.Model):
             'default_categ_id': all_categ_id.id,
             'default_uom_id': service_uom_id.id,
         })
+        if not self.env.user.has_group('base.group_system'):
+            readonly_view = self.env.ref('custom_master_catalog.view_custom_ike_accessories_product_form_readonly')
+            list_readonly_view = self.env.ref('custom_master_catalog.custom_ike_accessories_view_tree')
+            action['views'] = [(list_readonly_view.id, 'list'), (readonly_view.id, 'form')]
         action.update({'domain': self.get_accessories_domain(), 'context': ctx})
         return action
 

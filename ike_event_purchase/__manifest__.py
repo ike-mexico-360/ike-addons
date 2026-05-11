@@ -20,6 +20,7 @@
         'security/ir.model.access.csv',
         "data/purchase_email_data.xml",
         "data/ike_event_purchase_data.xml",
+        "data/mail_template_data.xml",
         "views/ike_event_screen_views.xml",
         "views/purchase_order_views.xml",
         "views/res_partner_supplier_views.xml",
@@ -35,7 +36,9 @@
             'ike_event_purchase/static/src/js/components/purchase_order_dispute/*.*',
         ],
         'web.assets_backend': [
-            'ike_event_purchase/static/src/xml/systray_notification_view.xml'
+            'ike_event_purchase/static/src/xml/systray_notification_view.xml',
+            'ike_event_purchase/static/src/js/chatter_notebook_widget.js',
+            'ike_event_purchase/static/src/css/chatter_fix.css',
         ]
     }
 }

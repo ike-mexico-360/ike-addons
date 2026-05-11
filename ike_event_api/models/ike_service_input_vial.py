@@ -152,3 +152,101 @@ class IkeServiceInputVial(models.Model):
             'request_lambda_session': request_lambda_session,
             'request_whatsapp_message': request_whatsapp_message,
         }
+
+    def test_lambda_session(self):
+        """ Función que implementa la prueba de creación de sesiónes para pruebas de cambios en los lambdas
+        No tendrá funcionalidad en producción, se usa para testear cambios en los lambdas antes de implementar """
+
+        self.ensure_one()
+
+        lambda_url = self.env['ir.config_parameter'].sudo().get_param('assistview.lambda.session')
+        if not lambda_url:
+            _logger.warning("No se ha configurado la URL para crear la sessión del lambda deprocesamiento para el Assistview")
+            return False
+
+        allow_lambda_test = bool(self.env['ir.config_parameter'].sudo().get_param('assistview.lambda.test.enable'))
+        if not allow_lambda_test:
+            _logger.info("Assistview: Deshabilitado assistview.lambda.test.enable = False")
+            return False
+
+        meta_url = self.env['ir.config_parameter'].sudo().get_param('assistview.lambda.test.meta_url')
+        if not meta_url:
+            _logger.warning("No se ha configurado la URL para obtener la metadata del lambda deprocesamiento para el Assistview")
+            return False
+
+        meta_token = self.env['ir.config_parameter'].sudo().get_param('assistview.lambda.test.meta_token')
+        if not meta_token:
+            _logger.warning("No se ha configurado el token para obtener la metadata del lambda deprocesamiento para el Assistview")
+            return False
+
+        meta_whithelist_number = self.env['ir.config_parameter'].sudo().get_param('assistview.lambda.test.meta_whithelist_number')
+        if not meta_whithelist_number:
+            _logger.warning("No se ha configurado el numero de telefono para obtener la metadata del lambda deprocesamiento para el Assistview")
+            return False
+
+        decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
+        user_name = decrypt_encrypt_utility_sudo.decrypt_aes256(self.event_id.user_id.name or '')
+        assistview_data = self._x_ike_create_assistview()
+
+        lambda_headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "Python-IoT-Test/1.0",
+        }
+        lambda_body = {
+            "phone": meta_whithelist_number,
+            "reference": self.event_id.id,
+            "assistview_id": str(assistview_data['id'].id),
+            "template_id": 66,
+            "type_id": 1,
+            "nombre": user_name,
+            "min_required_photos": 5,
+        }
+        session_response = requests.post(lambda_url, headers=lambda_headers, json=lambda_body)
+        if session_response.status_code != 200:
+            _logger.warning(f"Assistview: Error al enviar petición: {session_response.status_code}")
+            _logger.warning(f"Assistview: Error al enviar petición: {session_response.text}")
+            return False
+        else:
+            _logger.info(f"Assistview: Session created successfully: {session_response.text}")
+
+        headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "Python-IoT-Test/1.0",
+            "Authorization": f"Bearer {meta_token}",
+        }
+
+        body = {
+            "messaging_product": "whatsapp",
+            "to": meta_whithelist_number,
+            "type": "template",
+            "template": {
+                "name": "asistencia_ike_inicio",
+                "language": {"code": "es_MX"},
+                "components": [
+                    {"type": "body", "parameters": [{"type": "text", "text": user_name}]}
+                ],
+            },
+        }
+
+        _logger.info(f"Assistview: Sending request to create session at lambda (TEST): {body}")
+
+        meta_response = requests.post(meta_url, headers=headers, json=body)
+        if meta_response.status_code != 200:
+            _logger.warning(f"Assistview: Error al enviar petición: {meta_response.status_code}")
+            _logger.warning(f"Assistview: Error al enviar petición: {meta_response.text}")
+            return False
+        else:
+            _logger.info(f"Assistview: Meta created successfully: {meta_response.text}")
+
+        return {
+            'name': _("Assistview"),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'ike.event.service.assistview',
+            'res_id': assistview_data['id'].id,
+            'view_id': self.env.ref('ike_event_api.ike_event_service_assistview_view_form').id,
+            'context': {
+                'default_event_id': self.event_id.id,
+            },
+            'target': 'new',
+        }

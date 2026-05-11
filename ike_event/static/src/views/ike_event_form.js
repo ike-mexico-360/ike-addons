@@ -30,11 +30,11 @@ export class IkeEventFormController extends FormController {
         useBus(this.env.bus, "IKE_EVENT_SYSTRAY:SUPPLIER_RELOAD", (event) => {
             this.broadcastSupplierReload(event.detail.payload);
         });
-        useBus(this.env.bus, "IKE_EVENT_SYSTRAY:NEXT_SEARCH", (event) => {
-            this.broadcastNextSearch(event.detail.payload);
-        });
         useBus(this.env.bus, "IKE_EVENT_SYSTRAY:EVENT_RELOAD", (event) => {
             this.broadcastEventReload(event.detail.payload);
+        });
+        useBus(this.env.bus, "IKE_EVENT_SYSTRAY:EVENT_SUPPLIERS_DELETED", (event) => {
+            this.broadcastEventSuppliersDeleted(event.detail.payload);
         });
     }
     async broadcastSupplierReload(payload) {
@@ -102,21 +102,20 @@ export class IkeEventFormController extends FormController {
             }
         }
     }
-    async broadcastNextSearch(payload) {
-        console.log("broadcastNextSearch", payload);
-        if (!payload || payload.id != this.model.root.resId) {
-            return;
-        }
-        const params = payload.params;
-        this._executeAction(this.model.root, "next_search_suppliers", params);
-    }
     async broadcastEventReload(payload) {
         if (!payload || !payload.data || !payload.data.length) {
             return;
         }
         const data = payload.data.find(x => x.id == this.model.root.resId);
         if (data) {
-            // console.log("RELOADED");
+            await this.model.root.load();
+        }
+    }
+    async broadcastEventSuppliersDeleted(payload) {
+        if (!payload.id) {
+            return;
+        }
+        if (payload.id == this.model.root.resId && this.model.root.data.service_supplier_ids?.records.length) {
             await this.model.root.load();
         }
     }

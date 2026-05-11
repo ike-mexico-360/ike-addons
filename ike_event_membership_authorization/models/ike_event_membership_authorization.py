@@ -13,23 +13,17 @@ class IkeEventMembershipAuthorization(models.Model):
     _order = 'id desc'
 
     # === KEY FIELDS === #
-    authorization_reasons_id = fields.Many2one('custom.reason.authorizing.additional.costs')
     event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
     event_name = fields.Char(related='event_id.name')
-    nus_membership_id = fields.Many2one('custom.membership.nus', required=True)
-    nus_id = fields.Many2one('custom.nus', string="NUs", required=True)
-    authorizer_id = fields.Many2one('res.partner', required=True, string="Supervisor authorizer")
     user_id = fields.Many2one(
         'res.users',
         string='User',
         default=lambda self: self.env.user,
     )
-    vehicle_weight_category_id = fields.Many2one(
-        'custom.vehicle.weight.category',
-        'Weight Category',
-        related="nus_membership_id.vehicle_weight_category_id",
-        readonly=False,
-        domain="[('disabled', '=', False)]")
+    nus_id = fields.Many2one('custom.nus', string="NUs", required=True)
+    authorizer_id = fields.Many2one('res.partner', required=True, string="Supervisor authorizer")
+    nus_membership_id = fields.Many2one('custom.membership.nus', required=True)
+    authorization_reasons_id = fields.Many2one('custom.reason.authorizing.additional.costs')
     account_identification_id = fields.Many2one(
         'custom.account.identification',
         related='account_id.x_account_identification_id',
@@ -40,24 +34,30 @@ class IkeEventMembershipAuthorization(models.Model):
         related='account_id.x_second_key_identification_id',
         readonly=True
     )
-    label_identification_primary = fields.Char(related="account_identification_id.label", string="label")
-    label_identification_second = fields.Char(related="account_identification_second_id.label")
 
     # === FIELDS ACCOUNT=== #
     name = fields.Char(string="name", compute='_compute_name')
     account_id = fields.Many2one(related="nus_membership_id.membership_plan_id.account_id", string="Account ", store=False)
     account = fields.Char(related="nus_membership_id.membership_plan_id.account_id.name", string="Account")
-    key_identification = fields.Char(string="Key identification")
-    second_key_identification = fields.Char(string="Second key identification")
     masked_key_identification = fields.Char(
         compute="_compute_masked_keys",
         string="Masked Primary Key"
     )
-
     masked_second_key_identification = fields.Char(
         compute="_compute_masked_keys",
         string="Masked Second Key"
     )
+    label_identification_primary = fields.Char(related="account_identification_id.label", string="label")
+    label_identification_second = fields.Char(related="account_identification_second_id.label")
+
+    # === AFFILIATION FIELDS=== #
+    key_identification = fields.Char(string="Key identification")
+    second_key_identification = fields.Char(string="Second key identification")
+    x_validation_pattern = fields.Char(string='Validation pattern', related="nus_membership_id.x_validation_pattern")
+    x_validation_pattern_second = fields.Char(
+        string='Second validation pattern',
+        related="nus_membership_id.x_validation_pattern_second")
+
     x_display_mask = fields.Char(related="nus_membership_id.membership_plan_id.account_id.x_display_mask", store=True)
     x_second_display_mask = fields.Char(related="nus_membership_id.membership_plan_id.account_id.x_display_mask_second", store=True)
     label_identification_primary = fields.Char(
@@ -70,6 +70,8 @@ class IkeEventMembershipAuthorization(models.Model):
     check_clause_second = fields.Boolean(
         related="nus_membership_id.membership_plan_id.second_account_identification_id.clause",
         string="Second Clause")
+
+    # === AUTHORIZER FIELDS=== #
     user_authorization_commercial_affiliation_id = fields.Many2one(
         'res.partner',
         string='Authorizing responsible',
@@ -78,20 +80,6 @@ class IkeEventMembershipAuthorization(models.Model):
     x_domain_authorization_supervisor_affiliation = fields.Binary(compute="_compute_x_domain_authorization_supervisor_affiliation")
     from_event_button = fields.Boolean()
 
-    # === FIELDS  NUs=== #
-    nus_name = fields.Char(
-        string="NUs Name",
-        compute="_compute_user_name",
-        store=False
-    )
-    preference_contact = fields.Selection([
-        ('whatsapp', 'Whatsapp'),
-        ('message', 'Message'),
-    ])
-    nu_alternative = fields.Char(string="Phone alternative")
-    phone_nu = fields.Char(string="Phone")
-
-    # === FIELDS === #
     comment_authorizer = fields.Text(string="Comment")
     check_is_fleet = fields.Boolean(string="Is fleet")
     check_is_special = fields.Boolean(string="Is special")
@@ -105,11 +93,6 @@ class IkeEventMembershipAuthorization(models.Model):
     check_is_event_commercial = fields.Boolean(compute="_compute_is_event_commercial")
     check_is_admin = fields.Boolean(compute="_compute_is_admin")
 
-    screenshot = fields.Binary(
-        string="Screenshot",
-        attachment=True,
-        tracking=True
-    )
     affiliation_date_start = fields.Date(related="nus_membership_id.date_start", string="Affiliation date start", readonly=False)
     affiliation_date_end = fields.Date(related="nus_membership_id.date_end", string="Affiliation date end", readonly=False)
     date_range_input = fields.Char(string="Date range", store=False)
@@ -133,6 +116,25 @@ class IkeEventMembershipAuthorization(models.Model):
         string="Formatted Image",
         compute="_compute_image_formatted",
         store=False
+    )
+
+    # === FIELDS  NUs=== #
+    nus_name = fields.Char(
+        string="NUs Name",
+        compute="_compute_user_name",
+        store=False
+    )
+    preference_contact = fields.Selection([
+        ('whatsapp', 'Whatsapp'),
+        ('message', 'Message'),
+    ])
+    nu_alternative = fields.Char(string="Phone alternative")
+    phone_nu = fields.Char(string="Phone")
+
+    screenshot = fields.Binary(
+        string="Screenshot",
+        attachment=True,
+        tracking=True
     )
 
     @api.onchange('date_range_input')
@@ -378,6 +380,7 @@ class IkeEventMembershipAuthorization(models.Model):
                 'date_end': rec.affiliation_date_end,
                 'check_is_fleet': rec.check_is_fleet,
                 'check_is_special': rec.check_is_special,
+                'key_identification': rec.key_identification,
             })
             rec.action_ike_event_reload()
         if self.check_is_event_commercial:

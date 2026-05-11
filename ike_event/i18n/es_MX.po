@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-01 19:17+0000\n"
-"PO-Revision-Date: 2026-05-01 19:17+0000\n"
+"POT-Creation-Date: 2026-05-08 16:47+0000\n"
+"PO-Revision-Date: 2026-05-08 16:47+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -99,7 +99,6 @@ msgstr "Duración de aceptación"
 
 #. module: ike_event
 #. odoo-javascript
-#: code:addons/ike_event/static/src/systray/ike_event_systray.js:0
 #: code:addons/ike_event/static/src/views/ike_event_form.js:0
 #: code:addons/ike_event/static/src/widgets/custom_travel_tracking_map/selected_suppliers_info.js:0
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__state__accepted
@@ -402,7 +401,7 @@ msgstr "Tiempo de llegada"
 
 #. module: ike_event
 #: model:ike.service.stage,name:ike_event.ike_service_stage_arrived
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_end_user_id
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_change_state_supplier_wizard__stage_selected__arrived
 msgid "Arrived"
 msgstr "Llegó"
 
@@ -455,6 +454,12 @@ msgid "Arrived to destination"
 msgstr "Llegó al destino"
 
 #. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid "Arrived: Invalid datetime"
+msgstr "Llegó: Fecha y hora no válida."
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__assigned_user_id
 msgid "Assign"
 msgstr "Asignar"
@@ -479,46 +484,41 @@ msgstr "Tipo de Asignación"
 #: code:addons/ike_event/models/ike_event_summary.py:0
 #: model:ike.event.stage,name:ike_event.ike_event_stage_assigned
 #: model:ike.service.stage,name:ike_event.ike_service_stage_assigned
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_assignation_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__assigned
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__state__assigned
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_base__state__assigned
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_public__state__assigned
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
 msgid "Assigned"
 msgstr "Asignado"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__assignation_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__assignation_comment
 msgid "Assigned (comment)"
 msgstr "Asignado (comentario)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__assignation_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__assignation_date
 msgid "Assigned (datetime)"
 msgstr "Asignado (fecha)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_assignation_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__first_assignation_comment
 msgid "Assigned (first comment)"
 msgstr "Asignado (primer comentario)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_assignation_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__first_assignation_date
 msgid "Assigned (first datetime)"
 msgstr "Asignado (primera fecha y hora)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_assignation_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__first_assignation_user_id
 msgid "Assigned (first user)"
 msgstr "Asignado (primer usuario)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__assignation_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__assignation_user_id
 msgid "Assigned (user)"
 msgstr "Asignado (usuario)"
@@ -748,6 +748,7 @@ msgstr "Por prioridad"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_flow_detail__can_be_disabled
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__can_be_disabled
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__can_be_disabled
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__can_be_disabled
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_product__can_be_disabled
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count__can_be_disabled
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__can_be_disabled
@@ -782,6 +783,11 @@ msgstr "Por prioridad"
 #: model:ir.model.fields,field_description:ike_event.field_survey_user_input__can_be_disabled
 msgid "Can Be Disabled"
 msgstr "Puede ser deshabilitado"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__can_continue
+msgid "Can Continue"
+msgstr "Puede continuar"
 
 #. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event_product__mandatory
@@ -853,7 +859,6 @@ msgstr "Motivos de cancelación"
 
 #. module: ike_event
 #. odoo-javascript
-#: code:addons/ike_event/static/src/systray/ike_event_systray.js:0
 #: code:addons/ike_event/static/src/views/ike_event_form.js:0
 #: code:addons/ike_event/static/src/widgets/custom_travel_tracking_map/selected_suppliers_info.js:0
 #: model:ike.event.stage,name:ike_event.ike_event_stage_cancelled
@@ -884,7 +889,6 @@ msgstr "Cancelado por el evento"
 
 #. module: ike_event
 #. odoo-javascript
-#: code:addons/ike_event/static/src/systray/ike_event_systray.js:0
 #: code:addons/ike_event/static/src/views/ike_event_form.js:0
 #: code:addons/ike_event/static/src/widgets/custom_travel_tracking_map/selected_suppliers_info.js:0
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__state__cancel_supplier
@@ -948,10 +952,10 @@ msgstr "Limpiar ícono"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_history_readonly_view_form
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_phone_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_form_view
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_link_form_view
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_purchase_suppliers_form
-#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_supplier_popup_form
 msgid "Close"
 msgstr "Cerrar"
@@ -1104,7 +1108,7 @@ msgstr "Tipo de consulta"
 
 #. module: ike_event
 #: model:ike.service.stage,name:ike_event.ike_service_stage_contacted
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_contacted_user_id
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_change_state_supplier_wizard__stage_selected__contacted
 msgid "Contacted"
 msgstr "Contactado"
 
@@ -1151,6 +1155,12 @@ msgid "Contacted date cannot be earlier than or equal to event date (%s)"
 msgstr ""
 "La fecha de contactado no puede ser anterior o igual a la fecha del evento "
 "(%s)"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid "Contacted: Invalid datetime"
+msgstr "Contactado: Fecha y hora no válida."
 
 #. module: ike_event
 #. odoo-javascript
@@ -1230,6 +1240,7 @@ msgstr "Monto cubierto"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_flow_detail__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__create_uid
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_product__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__create_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__create_uid
@@ -1267,6 +1278,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_flow_detail__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__create_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_product__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__create_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__create_date
@@ -1319,28 +1331,6 @@ msgstr "Fecha de finalización"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__date_start
 msgid "Date Start"
 msgstr "Fecha de inicio"
-
-#. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
-msgid ""
-"Date cannot be earlier than or equal to last captured date (%s).\n"
-"Assignation: %s\n"
-"On route: %s\n"
-"Arrived: %s\n"
-"Contacted: %s\n"
-"On route to destination: %s\n"
-"He arrived destination: %s\n"
-"Finalized: %s"
-msgstr ""
-"La fecha no puede ser anterior o igual a la última fecha capturada (%s).\n"
-"Asignado: %s\n"
-"En ruta: %s\n"
-"Llegó: %s\n"
-"Contactado: %s\n"
-"En ruta al destino: %s\n"
-"Llegó al destino: %s\n"
-"Finalizado: %s"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_service_count_detail_form
@@ -1514,6 +1504,7 @@ msgstr "Máscara de visualización"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_flow_detail__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__display_name
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_product__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count__display_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__display_name
@@ -1676,14 +1667,10 @@ msgstr ""
 #. module: ike_event
 #. odoo-javascript
 #: code:addons/ike_event/static/src/fields/section_and_note_o2m/ike_supplier_section_and_note_field.js:0
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__elapsed_time
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "Elapsed Time"
-msgstr "Tiempo transcurrido"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__elapsed_time_s
-msgid "Elapsed Time S"
 msgstr "Tiempo transcurrido"
 
 #. module: ike_event
@@ -1883,6 +1870,11 @@ msgid "Event Manual Supplier Wizard"
 msgstr "Asistente de proveedor manual del evento"
 
 #. module: ike_event
+#: model:ir.model,name:ike_event.model_ike_event_phone_wizard
+msgid "Event Phones Wizard"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.actions.act_window,name:ike_event.action_ike_event_screen
 msgid "Event Screen"
 msgstr "Pantalla de evento"
@@ -1933,6 +1925,12 @@ msgstr "Resumen del servicio"
 #: model:ir.model,name:ike_event.model_ike_event_stage
 msgid "Event Stage"
 msgstr "Etapa del evento"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__event_stage_ref
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__event_stage_ref
+msgid "Event Stage Ref"
+msgstr "Ref. de la etapa del evento"
 
 #. module: ike_event
 #: model:ir.actions.act_window,name:ike_event.action_ike_event_service_summary
@@ -2018,6 +2016,11 @@ msgstr "Proveedores del servicio"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__event_type_id
 msgid "Event Type"
 msgstr "Tipo de evento"
+
+#. module: ike_event
+#: model:ir.model,name:ike_event.model_ike_event_vehicle_detail_wizard
+msgid "Event Vehicle Detail Wizard"
+msgstr ""
 
 #. module: ike_event
 #: model:ir.model,name:ike_event.model_ike_event_vehicle_wizard
@@ -2203,7 +2206,7 @@ msgstr "Finalizar"
 
 #. module: ike_event
 #: model:ike.service.stage,name:ike_event.ike_service_stage_finalized
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_finalized_user_id
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_change_state_supplier_wizard__stage_selected__finalized
 msgid "Finalized"
 msgstr "Finalizado"
 
@@ -2250,6 +2253,12 @@ msgid "Finalized date cannot be earlier than or equal to event date (%s)"
 msgstr ""
 "La fecha de finalizado no puede ser anterior o igual a la fecha del evento "
 "(%s)"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid "Finalized: Invalid datetime"
+msgstr "Finalizado: Fecha y hora no válida."
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_comment
@@ -2402,42 +2411,31 @@ msgid "Has Message"
 msgstr "Tiene un mensaje"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_destination_end_user_id
-msgid "He arrived at his destination"
-msgstr "Llegó al destino"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_end_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_end_comment
 msgid "He arrived at his destination (comment)"
 msgstr "Llegó al destino (comentario)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_end_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_end_date
 msgid "He arrived at his destination (datetime)"
 msgstr "Llegó al destino (fecha y hora)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_on_route_to_destination_end_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__first_on_route_to_destination_end_comment
 msgid "He arrived at his destination (first comment)"
 msgstr "Llegó al destino (primer comentario)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_on_route_to_destination_end_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__first_on_route_to_destination_end_date
 msgid "He arrived at his destination (first datetime)"
 msgstr "Llegó al destino (primera fecha y hora)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_on_route_to_destination_end_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__first_on_route_to_destination_end_user_id
 msgid "He arrived at his destination (first user)"
 msgstr "Llegó al destino (primer usuario)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_end_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_end_user_id
 msgid "He arrived at his destination (user)"
 msgstr "Llegó al destino"
@@ -2475,6 +2473,7 @@ msgstr "¿Cómo calificas el servicio vial?"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_flow_detail__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_product__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count__id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__id
@@ -2647,42 +2646,6 @@ msgid "Internal Reference"
 msgstr "Referencia interna"
 
 #. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
-msgid "Invalid date"
-msgstr "Fecha no válida"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_arrived_2_editable
-msgid "Is Arrived 2 Editable"
-msgstr "Es editable (llegó al destino)"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_arrived_2_hidden
-msgid "Is Arrived 2 Hidden"
-msgstr ""
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_arrived_editable
-msgid "Is Arrived Editable"
-msgstr "Es editable (llegó)"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_arrived_hidden
-msgid "Is Arrived Hidden"
-msgstr ""
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_assigned_editable
-msgid "Is Assigned Editable"
-msgstr "Es editable (asignado)"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_assigned_hidden
-msgid "Is Assigned Hidden"
-msgstr ""
-
-#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__authorization_by_nu
 msgid "Is Authorized By Nu"
 msgstr "Es autorizado por usuario NU"
@@ -2693,19 +2656,9 @@ msgid "Is Contacted Editable"
 msgstr "Es editable (contactado)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_contacted_hidden
-msgid "Is Contacted Hidden"
-msgstr ""
-
-#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_finalized_editable
 msgid "Is Finalized Editable"
 msgstr "Es editable (finalizado)"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_finalized_hidden
-msgid "Is Finalized Hidden"
-msgstr ""
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_is_follower
@@ -2727,31 +2680,6 @@ msgstr "Es un seguidor"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__is_manual
 msgid "Is Manual"
 msgstr "Es manual"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_on_route_2_editable
-msgid "Is On Route 2 Editable"
-msgstr "Es editable (en ruta al destino)"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_on_route_2_hidden
-msgid "Is On Route 2 Hidden"
-msgstr ""
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_on_route_editable
-msgid "Is On Route Editable"
-msgstr "Es editable (en ruta)"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__is_on_route_hidden
-msgid "Is On Route Hidden"
-msgstr ""
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event__is_searching
-msgid "Is Searching"
-msgstr "Es búsqueda"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__is_highway
@@ -2857,6 +2785,7 @@ msgstr "Última etapa"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_flow_detail__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__write_uid
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_product__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__write_uid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__write_uid
@@ -2895,6 +2824,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_flow_detail__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__write_date
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_product__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__write_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_type__write_date
@@ -3059,6 +2989,12 @@ msgstr ""
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_base__assignation_type__manual_manual
 msgid "Manual Added"
 msgstr "Agregado manualmente"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__manual_notification
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__manual_notification
+msgid "Manual Notification"
+msgstr "Notificación manual"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
@@ -3295,11 +3231,6 @@ msgid "Next Activity Type"
 msgstr ""
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event__next_search_uuid
-msgid "Next Search Uuid"
-msgstr "Siguiente búsqueda Uuid"
-
-#. module: ike_event
 #: model:survey.question.answer,value:ike_event.survey_medical_consultation_question_answer_1_no
 #: model:survey.question.answer,value:ike_event.survey_medical_question_answer_1_no
 #: model:survey.question.answer,value:ike_event.survey_medical_question_answer_2_no
@@ -3533,42 +3464,31 @@ msgid "On Route to Destiny"
 msgstr "En ruta al destino"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_start_user_id
-msgid "On route"
-msgstr "En ruta"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_start_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_start_comment
 msgid "On route (comment)"
 msgstr "En ruta (comentario)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_user_start_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_user_start_date
 msgid "On route (datetime)"
 msgstr "En ruta (fecha y hora)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_on_route_to_start_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__first_on_route_to_start_comment
 msgid "On route (first comment)"
 msgstr "En ruta (primer comentario)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_on_route_to_user_start_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__first_on_route_to_user_start_date
 msgid "On route (first datetime)"
 msgstr "En ruta  (primera fecha y hora)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_on_route_to_start_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__first_on_route_to_start_user_id
 msgid "On route (first user)"
 msgstr "En ruta (primer usuario)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_start_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_start_user_id
 msgid "On route (user)"
 msgstr "En ruta (usuario)"
@@ -3633,6 +3553,11 @@ msgid "Other detail?"
 msgstr "¿Otro detalle?"
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_phone_wizard_view_form
+msgid "Other phones"
+msgstr "Otros teléfonos"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__parent_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_base__parent_id
 msgid "Parent"
@@ -3691,16 +3616,16 @@ msgid "Phone 5"
 msgstr ""
 
 #. module: ike_event
-#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_form_view
-msgid "Phones"
-msgstr "Teléfonos"
-
-#. module: ike_event
 #. odoo-python
-#: code:addons/ike_event/models/ike_event_supplier_selection.py:0
+#: code:addons/ike_event/models/ike_event_supplier.py:0
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_supplier_popup_form
 msgid "Phone directory"
 msgstr "Directorio telefónico"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_form_view
+msgid "Phones"
+msgstr "Teléfonos"
 
 #. module: ike_event
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_evidence__evidence_type__pickup
@@ -3824,11 +3749,6 @@ msgid "Question 01?"
 msgstr ""
 
 #. module: ike_event
-#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
-msgid "RELOAD"
-msgstr ""
-
-#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__ranking
 msgid "Ranking"
 msgstr ""
@@ -3892,7 +3812,6 @@ msgstr "Rechazar"
 
 #. module: ike_event
 #. odoo-javascript
-#: code:addons/ike_event/static/src/systray/ike_event_systray.js:0
 #: code:addons/ike_event/static/src/views/ike_event_form.js:0
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_membership_authorization__state__rejected
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__state__rejected
@@ -3991,42 +3910,31 @@ msgid "Route Data"
 msgstr "Datos de la ruta"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_destination_start_user_id
-msgid "Route to destination"
-msgstr "En ruta al destino"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_start_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_start_comment
 msgid "Route to destination (comment)"
 msgstr "En ruta al destino (comentario)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_start_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_start_date
 msgid "Route to destination (datetime)"
 msgstr "En ruta al destino (fecha y hora)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_on_route_to_destination_start_comment
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__first_on_route_to_destination_start_comment
 msgid "Route to destination (first comment)"
 msgstr "En ruta al destino (primer comentario)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_on_route_to_destination_start_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__first_on_route_to_destination_start_date
 msgid "Route to destination (first datetime)"
 msgstr "En ruta al destino (primera fecha y hora)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__first_on_route_to_destination_start_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__first_on_route_to_destination_start_user_id
 msgid "Route to destination (first user)"
 msgstr "En ruta al destino (primer usuario)"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__on_route_to_destination_start_user_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_start_user_id
 msgid "Route to destination (user)"
 msgstr "En ruta al destino (usuario)"
@@ -4287,11 +4195,29 @@ msgid "Service"
 msgstr "Servicio"
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/systray/ike_event_systray.js:0
+msgid "Service Accepted"
+msgstr "Servicio aceptado"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__service_accessories_domain
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__service_accessories_domain
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__service_accessories_domain
 msgid "Service Accessories Domain"
 msgstr "Dominio de accesorios de servicio"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/systray/ike_event_systray.js:0
+msgid "Service Cancelled"
+msgstr "Servicio cancelado"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/systray/ike_event_systray.js:0
+msgid "Service Cancelled by Supplier"
+msgstr "Servicio cancelado por el proveedor"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__event_summary_service_data
@@ -4414,6 +4340,12 @@ msgstr "Respuestas de servicios"
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_screen_form
 msgid "Service Location"
 msgstr "Ubicación del servicio"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/systray/ike_event_systray.js:0
+msgid "Service Rejected"
+msgstr "Servicio rechazado"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_flow_detail__service_specific
@@ -4610,9 +4542,7 @@ msgid "Stage"
 msgstr "Etapa"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__event_stage_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__stage_ref
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__event_stage_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__stage_ref
 msgid "Stage Ref"
 msgstr "Ref. de la etapa"
@@ -4857,6 +4787,7 @@ msgstr "Resumen superior"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_authorization__supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__supplier_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__ike_event_supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__supplier_id
@@ -5023,6 +4954,66 @@ msgstr "Impuestos"
 #: model:ir.model.constraint,message:ike_event.constraint_ike_event_cancellation_reason_unique_name
 msgid "The cancellation reason already exists."
 msgstr "El motivo de cancelación ya existe"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid ""
+"The date and time of Arrived (%s) is less than or equal to the date and time"
+" of the Assigned (%s)"
+msgstr ""
+"La fecha y hora de Llegó (%s) es menor o igual que la fecha y hora"
+" de Asignación (%s)."
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid ""
+"The date and time of Arrived (%s) is less than or equal to the date and time"
+" of the event (%s)"
+msgstr ""
+"La fecha y hora de Llegó (%s) es menor o igual que la fecha y hora"
+" del evento (%s)."
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid ""
+"The date and time of Contacted (%s) is less than or equal to the date and "
+"time of the Arrived (%s)"
+msgstr ""
+"La fecha y hora de Contactado (%s) es menor o igual que la fecha y hora"
+" de Llegó (%s)."
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid ""
+"The date and time of Contacted (%s) is less than or equal to the date and "
+"time of the event (%s)"
+msgstr ""
+"La fecha y hora de Contactado (%s) es menor o igual que la fecha y hora"
+" del evento (%s)."
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid ""
+"The date and time of Finalized (%s) is less than or equal to the date and "
+"time of the Contacted (%s)"
+msgstr ""
+"La fecha y hora de Finalizado (%s) es menor o igual que la fecha y hora"
+" de Contactado (%s)."
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid ""
+"The date and time of Finalized (%s) is less than or equal to the date and "
+"time of the event (%s)"
+msgstr ""
+"La fecha y hora de Finalizado (%s) es menor o igual que la fecha y hora"
+" del evento (%s)."
 
 #. module: ike_event
 #. odoo-javascript
@@ -5648,11 +5639,6 @@ msgstr "Debes tener un proveedor elegido."
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_truck_form
 msgid "ZIP"
 msgstr "C.P."
-
-#. module: ike_event
-#: model:ir.model,name:ike_event.model_ike_event_vehicle_detail_wizard
-msgid "ike.event.vehicle.detail.wizard"
-msgstr ""
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__name

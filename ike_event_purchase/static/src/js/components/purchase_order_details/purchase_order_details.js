@@ -1,12 +1,12 @@
 /** @odoo-module **/
 
-import { Component, onWillStart, useState } from "@odoo/owl";
+import { Component, markup, onWillStart, useState } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 import { addLoadingEffect } from '@web/core/utils/ui';
 import { registry } from "@web/core/registry";
 import { rpc } from "@web/core/network/rpc";
-
+import { deserializeDateTime, formatDateTime } from "@web/core/l10n/dates";
 var new_line_id = 0;
 
 export class PurchaseOrderDetails extends Component {
@@ -43,84 +43,156 @@ export class PurchaseOrderDetails extends Component {
     async _loadOrderData() {
         this.state.loading = true;
         try {
-            const order_data = await this.orm.webSearchRead(
-                'purchase.order',
-                [
-                    ['id', '=', this.props.order_id]
-                ],
-                {
-                    specification: {
-                        id: {},
-                        name: {},
-                        state: {},
-                        partner_id: {
-                            fields: {
-                                id: {},
-                                name: {},
-                            }
-                        },
-                        x_event_id: {
-                            fields: {
-                                id: {},
-                                name: {},
-                            }
-                        },
-                        x_dispute_state: {},
-                        x_dispute_approved: {},
-                        x_change_comments: {},
-                        amount_untaxed: {},
-                        amount_untaxed_dispute: {},
-                        amount_untaxed_approved: {},
-                        amount_untaxed_event: {},
-                        order_line: {
-                            fields: {
-                                id: {},
-                                name: {},
-                                display_name: {},
-                                product_id: {
-                                    fields: {
-                                        id: {},
-                                        name: {},
-                                        image_1024: {},
-                                    },
-                                },
-                                product_qty: {},
-                                product_uom: {
-                                    fields: {
-                                        id: {},
-                                        name: {},
-                                        display_name: {},
-                                    },
-                                },
-                                price_unit: {},
-                                taxes_id: {
-                                    fields: {
-                                        id: {},
-                                        name: {},
-                                        display_name: {},
-                                    },
-                                },
-                                x_price_unit_dispute: {},
-                                x_product_qty_dispute: {},
-                                x_price_unit_approved: {},
-                                x_product_qty_approved: {},
-                                x_product_qty_event: {},
-                                x_price_unit_event: {},
-                            },
-                        },
-                        x_dispute_iteration_count: {},
-                    }
-                }
-            );
-            this.state.order_data = order_data.records[0];
+            const orderData = await rpc('/get_purchase_order_full_data', {
+                order_id: this.props.order_id,
+            });
+
+            if (orderData) {
+                this.state.order_data = orderData;
+                console.log("Full Order Data with O2M:", this.state.order_data);
+            }
         } catch (e) {
             this.notification.add(_t("Error loading order data: ") + e.message, {
-                type: "danger", sticky: true
+                type: "danger",
+                sticky: true
             });
         } finally {
             this.state.loading = false;
         }
     }
+
+    formatDate(dateStr) {
+        if (!dateStr) return "";
+        // Converts Odoo UTC string to a local date object
+        const date = deserializeDateTime(dateStr);
+        // Formats to something readable, e.g., "09/05/2026 12:33:48"
+        return formatDateTime(date);
+    }
+
+    // async _loadOrderData() {
+    //     this.state.loading = true;
+    //     try {
+    //         const order_data = await this.orm.webSearchRead(
+    //             'purchase.order',
+    //             [
+    //                 ['id', '=', this.props.order_id]
+    //             ],
+    //             {
+    //                 specification: {
+    //                     id: {},
+    //                     name: {},
+    //                     state: {},
+    //                     partner_id: {
+    //                         fields: {
+    //                             id: {},
+    //                             name: {},
+    //                         }
+    //                     },
+    //                     x_event_public_id: {
+    //                         fields: {
+    //                             id: {},
+    //                             name: {},
+    //                         }
+    //                     },
+    //                     message_ids: {
+    //                         fields: {
+    //                             id: {},
+    //                             body: {},
+    //                             date: {},
+    //                             author_id: {
+    //                                 fields: {
+    //                                     id: {},
+    //                                     name: {},
+    //                                 }
+    //                             },
+    //                             subtype_id: {
+    //                                 fields: {
+    //                                     id: {},
+    //                                     name: {},
+    //                                 }
+    //                             },
+    //                             tracking_value_ids: {
+    //                                 fields: {
+    //                                     id: {},
+    //                                     field_info: {},
+    //                                     old_value_char: {},
+    //                                     new_value_char: {},
+    //                                     o2m_record_id: {},
+    //                                     new_value_integer: {},
+    //                                     old_value_integer: {},
+    //                                     new_value_float: {},
+    //                                     old_value_float: {}
+    //                                 }
+    //                             },
+    //                             o2m_tracking_command_ids: {
+    //                                 fields: {
+    //                                     id: {},
+    //                                 }
+    //                             },
+    //                         }
+    //                     },
+    //                     x_dispute_state: {},
+    //                     x_dispute_approved: {},
+    //                     x_change_comments: {},
+    //                     amount_untaxed: {},
+    //                     amount_untaxed_dispute: {},
+    //                     amount_untaxed_approved: {},
+    //                     amount_untaxed_event: {},
+    //                     order_line: {
+    //                         fields: {
+    //                             id: {},
+    //                             name: {},
+    //                             display_name: {},
+    //                             product_id: {
+    //                                 fields: {
+    //                                     id: {},
+    //                                     name: {},
+    //                                     image_1024: {},
+    //                                 },
+    //                             },
+    //                             product_qty: {},
+    //                             product_uom: {
+    //                                 fields: {
+    //                                     id: {},
+    //                                     name: {},
+    //                                     display_name: {},
+    //                                 },
+    //                             },
+    //                             price_unit: {},
+    //                             taxes_id: {
+    //                                 fields: {
+    //                                     id: {},
+    //                                     name: {},
+    //                                     display_name: {},
+    //                                 },
+    //                             },
+    //                             x_price_unit_dispute: {},
+    //                             x_product_qty_dispute: {},
+    //                             x_price_unit_approved: {},
+    //                             x_product_qty_approved: {},
+    //                             x_product_qty_event: {},
+    //                             x_price_unit_event: {},
+    //                         },
+    //                     },
+    //                     x_dispute_iteration_count: {},
+    //                 }
+    //             }
+    //         );
+    //         this.state.order_data = order_data.records[0];
+    //         // const allTrackingIds = this.state.order_data.message_ids.flatMap((m) => (m.tracking_value_ids || []).map((tv) => tv.id));
+    //         // if (allTrackingIds.length > 0) {
+    //         //     const allTrackingFields = await this.orm.read('mail.tracking.value', allTrackingIds, []);
+    //         //     console.log('mail.tracking.value — all fields:', allTrackingFields);
+    //         // }
+    //         await this._loadO2mTrackings(this.state.order_data.message_ids);
+    //     } catch (e) {
+    //         this.notification.add(_t("Error loading order data: ") + e.message, {
+    //             type: "danger", sticky: true
+    //         });
+    //     } finally {
+    //         this.state.loading = false;
+    //     }
+    // }
 
     async _loadComplementaryData() {
         try {
@@ -159,6 +231,26 @@ export class PurchaseOrderDetails extends Component {
                 type: "danger", sticky: true
             });
         }
+    }
+
+    // async _loadO2mTrackings(messages) {
+    //     const ids = messages
+    //         .filter((m) => m.o2m_tracking_command_ids?.length > 0)
+    //         .map((m) => m.id);
+    //     if (!ids.length) return;
+    //     const o2mTrackingsMap = await this.orm.call(
+    //         'mail.message',
+    //         'get_o2m_tracking_format',
+    //         [ids, 'purchase.order']
+    //     );
+    //     console.log("O2M Trackings Map:", o2mTrackingsMap);
+    //     for (const msg of messages) {
+    //         msg.o2mTrackings = o2mTrackingsMap[msg.id] || [];
+    //     }
+    // }
+
+    messageBody(body) {
+        return markup(body || '');
     }
 
     get requireChangeReason() {
@@ -245,11 +337,20 @@ export class PurchaseOrderDetails extends Component {
 
     // Validar campos de línea sin valor
     _validate_field = (lineId, fieldName, value) => {
+        const fieldsAllowZero = ['price_unit', 'x_price_unit_dispute'];
         const key = `${lineId}_${fieldName}`;
-        if (value < 0 || value == null) {
+
+        const allowZero = fieldsAllowZero.includes(fieldName);
+
+        const isInvalid = allowZero
+            ? (value == null || value < 0)
+            : (value == null || value <= 0);
+
+        if (isInvalid) {
             this.state.invalid_lines.add(key);
             return false;
         }
+
         this.state.invalid_lines.delete(key);
         return true;
     }
@@ -276,7 +377,7 @@ export class PurchaseOrderDetails extends Component {
         // Establecer UoM configurado en el concepto (solo para líneas nuevas)
         if (line?.new_line && fieldName === 'product_id' && value) {
             const product = this.state.product_ids.find((p) => p.id === value);
-            const event_id = this.state.order_data.x_event_id.id;
+            const event_id = this.state.order_data.x_event_public_id.id;
             const supplier_id = this.state.order_data.partner_id.id;
             const matrix_lines = await rpc('/my/purchase/' + product.id + '/get_matrix_lines', {
                 event_id: event_id,
@@ -309,15 +410,6 @@ export class PurchaseOrderDetails extends Component {
 
     // Funcionalidad del botón enviar disputa
     send_dispute = async (ev) => {
-        if (this.requireChangeReason && !(this.state.order_data.x_change_comments || '').trim()) {
-            this.notification.add(_t("You must specify a reason for the change"), {
-                type: "warning"
-            });
-            this.state.highlight_change_reason = true;
-            return;
-        }
-        this.state.highlight_change_reason = false;
-        const disableBtn = addLoadingEffect(ev.currentTarget);
         this.state.invalid_lines = new Set();
         const order_line = this.state.order_data.order_line;
         const dispute_fields = ['x_price_unit_dispute', 'x_product_qty_dispute'];
@@ -329,6 +421,8 @@ export class PurchaseOrderDetails extends Component {
                 new_line_fields.forEach((field) => this._validate_field(line.id, field, line[field]))
             }
         }
+
+        const disableBtn = addLoadingEffect(ev.currentTarget);
         if (this.state.invalid_lines.size > 0) {
             this.notification.add(_t("There are fields with invalid values"), {
                 type: "danger"
@@ -336,6 +430,15 @@ export class PurchaseOrderDetails extends Component {
             disableBtn();
             return;
         }
+        if (this.requireChangeReason && !(this.state.order_data.x_change_comments || '').trim()) {
+            this.notification.add(_t("You must specify a reason for the change"), {
+                type: "warning"
+            });
+            this.state.highlight_change_reason = true;
+            disableBtn();
+            return;
+        }
+        this.state.highlight_change_reason = false;
         try {
             const saved = await this._saveDispute(order_line);
             if (saved) {

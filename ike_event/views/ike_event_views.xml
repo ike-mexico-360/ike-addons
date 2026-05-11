@@ -10,17 +10,21 @@
                 <field name="stage_id"/>
                 <field name="user_membership_id"/>
                 <group name="my_events">
-                    <filter string="My Events" name="my_events" domain="[('write_uid', '=', uid)]"/>
+                    <filter string="My Events" name="my_events"
+                        domain="[
+                            ('stage_ref', 'not in', ['cancel', 'verifying', 'close']),
+                            ('assigned_user_id', '=', uid)
+                        ]"/>
                     <filter string="My events active last 7 days"
                         name="my_events_active_last_7_days"
                         domain="[
                             ('stage_ref', 'in', ['capturing', 'searching', 'assigned', 'in_progress', 'completed', 'close']),
-                            ('write_uid', '=', uid),
+                            ('assigned_user_id', '=', uid),
                             ('create_date', '>=', (context_today() - datetime.timedelta(days=7)).strftime('%Y-%m-%d'))]"/>
                     <filter string="My events last 20 minutes"
                         name="my_events_last_20_minutes"
                         domain="[
-                            ('write_uid', '=', uid),
+                            ('assigned_user_id', '=', uid),
                             ('create_date', '>=', (datetime.datetime.now() - datetime.timedelta(minutes=20)).strftime('%Y-%m-%d %H:%M:%S'))]"/>
                 </group>
                 <group name="events_time">
@@ -77,6 +81,7 @@
                     <filter string="Subservice" name="subservice" domain="[]" context="{'group_by':'sub_service_id'}"/>
                     <filter string="Event type" name="event_type" domain="[]" context="{'group_by':'event_type_id'}"/>
                     <filter string="Service type" name="service_type" domain="[]" context="{'group_by':'service_type_id'}"/>
+                    <filter string="Assigned" name="assigned_user" domain="[]" context="{'group_by':'assigned_user_id'}"/>
                 </group>
             </search>
         </field>
@@ -156,7 +161,6 @@
                             type="object" class="btn-danger"
                             context="{'ike_event_supplier_cancel': True}"
                             invisible="not id or stage_ref in ['completed', 'cancel', 'cancel_subsequently']"/>
-                    <button name="action_testing_reload" type="object" string="RELOAD" invisible="1"/>
                     <field name="stage_id" widget="statusbar_duration" options="{'clickable': 1, 'fold_field': 'fold'}"/>
                 </header>
                 <sheet>
@@ -248,8 +252,8 @@
                                 </group>
                                 <group>
                                     <field name="supplier_number" readonly="0"/>
-                                    <field name="supplier_search_number" readonly="1"/>
-                                    <field name="supplier_search_type" readonly="1"/>
+                                    <field name="supplier_search_number" readonly="0"/>
+                                    <field name="supplier_search_type" readonly="0"/>
                                     <div class="o_row" colspan="2">
                                         <button name="action_search_electronic_suppliers" string="Search Electronic (Suppliers)"
                                                 type="object" class="btn-info"/>
@@ -478,7 +482,10 @@
                             <field name="supplier_id" readonly="1" options="{'no_open': 1, 'no_create': 1}"/>
                             <field name="truck_id" readonly="1" options="{'no_open': 1, 'no_create': 1}"/>
                             <field name="is_generic_supplier" readonly="1" options="{'no_open': 1, 'no_create': 1}"/>
-                            <field name="purchase_supplier_id" required="is_generic_supplier" readonly="0" options="{'no_open': 1, 'no_create': 1}"/>
+                            <field name="purchase_supplier_id"
+                                required="is_generic_supplier"
+                                readonly="not is_generic_supplier"
+                                options="{'no_open': 1, 'no_create': 1}"/>
                         </list>
                     </field>
                 </group>

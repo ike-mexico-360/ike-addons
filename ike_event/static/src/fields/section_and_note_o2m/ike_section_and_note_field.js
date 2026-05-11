@@ -8,6 +8,7 @@ export class IkeSectionAndNoteListRender extends FieldLabelSectionAndNoteListRen
     setup() {
         // console.log("IkeSectionAndNoteListRender", this);
         super.setup();
+
     }
     onClickSortColumn(column) {
         return;
@@ -19,8 +20,14 @@ export class IkeSectionAndNoteListRender extends FieldLabelSectionAndNoteListRen
         if (!record || (record.isNew && record.isInEdition)) {
             return false;
         }
+        let event_search_number = 1;
+        if (this.env.model.root.resModel == "ike.event") {
+            event_search_number = this.env.model.root.data.supplier_search_number;
+        } else {
+            event_search_number = record.data.event_search_number;
+        }
         return (
-            record.data.event_search_number && record.data.event_search_number != record.data.search_number
+            record.data.event_search_number && record.data.search_number != event_search_number
             || record.data.event_supplier_number && record.data.event_supplier_number != record.data.supplier_number
         );
     }

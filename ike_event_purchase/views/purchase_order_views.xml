@@ -17,6 +17,9 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//sheet/div[2]/span[1]" position="replace">
+                <span class="o_form_label" invisible="state not in ('draft', 'sent')">Cost review</span>
+            </xpath>
             <xpath expr="//header" position="inside">
                 <button name="x_syncronize_po_with_sap" type="object" string="Test SAP Sync" groups="base.group_no_one"
                     invisible="x_event_id == False or state not in ('done', 'purchase') or x_ref_sap != False"/>
@@ -33,21 +36,27 @@
                 <attribute name="readonly">parent.x_event_id</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='product_id']" position="after">
-                <field name="x_product_qty_event" optional="show" readonly="1"/>
-                <field name="x_price_unit_event" optional="show" readonly="1"/>
+                <field name="x_product_qty_event" optional="show" readonly="1" column_invisible="not parent.x_event_id or parent.state in ('purchase', 'done')"/>
+                <field name="x_price_unit_event" optional="show" readonly="1" column_invisible="not parent.x_event_id or parent.state in ('purchase', 'done')"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="attributes">
                 <attribute name="readonly">parent.x_event_id and id != False</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="after">
-                <field name="x_product_qty_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id"/>
-                <field name="x_price_unit_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id"/>
-                <field name="x_product_qty_approved" optional="show" column_invisible="not parent.x_event_id"/>
-                <field name="x_price_unit_approved" optional="show" column_invisible="not parent.x_event_id"/>
+                <field name="x_product_qty_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id or parent.state in ('purchase', 'done')"/>
+                <field name="x_price_unit_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id or parent.state in ('purchase', 'done')"/>
+                <field name="x_product_qty_approved" optional="show" column_invisible="not parent.x_event_id or parent.state in ('purchase', 'done')"/>
+                <field name="x_price_unit_approved" optional="show" column_invisible="not parent.x_event_id or parent.state in ('purchase', 'done')"/>
                 <field name="x_has_dispute_changes" column_invisible="1" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='fiscal_position_id']" position="after">
-                <field name="x_ref_sap" readonly="1" invisible="not x_event_id or state not in ('done', 'purchase')"/>
+                <label for="x_ref_sap" invisible="not x_event_id or state not in ('done', 'purchase')"/>
+                <div class="o_row" invisible="not x_event_id or state not in ('done', 'purchase')">
+                    <field name="x_ref_sap" readonly="1"/>
+                    <button name="x_syncronize_po_with_sap" type="object" string=" Synchronize" class="btn-link fa-refresh" invisible="x_ref_sap"/>
+                </div>
+                <field name="x_sap_connection_error_message" widget="text" readonly="1" invisible="not x_sap_connection_error_message"/>
+                <field name="x_sap_reference_received" invisible="1"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='product_uom'][1]" position="attributes">
                 <attribute name="column_invisible">1</attribute>
@@ -73,10 +82,10 @@
             </xpath>
             <xpath expr="//group[hasclass('oe_subtotal_footer')]" position="replace">
                 <group class="oe_subtotal_footer">
-                    <field name="amount_untaxed_event" readonly="1"/>
+                    <field name="amount_untaxed_event" readonly="1" invisible="not x_event_id or state in ('purchase', 'done')"/>
                     <field name="amount_untaxed" readonly="1"/>
-                    <field name="amount_untaxed_dispute" readonly="1"/>
-                    <field name="amount_untaxed_approved" readonly="1"/>
+                    <field name="amount_untaxed_dispute" readonly="1" invisible="not x_event_id or state in ('purchase', 'done')"/>
+                    <field name="amount_untaxed_approved" readonly="1" invisible="not x_event_id or state in ('purchase', 'done')"/>
                     <field name="tax_totals" widget="account-tax-totals-field" nolabel="1" readonly="1" invisible="1"/>
                 </group>
             </xpath>
@@ -119,7 +128,7 @@
                             placeholder="Name, TIN, Email, or Reference"
                             readonly="state in ['cancel', 'done', 'purchase']"/>
                         <field name="partner_ref"/>
-                        <field name="sh_purchase_ticket_ids" widget="many2many_tags" />
+                        <field name="sh_purchase_ticket_ids" string="Ticket" widget="many2many_tags" />
                         <field name="x_dispute_state" invisible="1"/>
                         <field name="x_event_id" readonly="1" invisible="x_event_id == False"
                             options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
@@ -254,6 +263,9 @@
                                 <field name="x_ref_sap" readonly="1" invisible="not x_event_id or state not in ('done', 'purchase')"/>
                             </group>
                         </group>
+                    </page>
+                    <page string="Change history" name="change_history">
+                        <field name="message_ids" widget="notebook_chatter" nolabel="1"/>
                     </page>
                 </notebook>
             </sheet>

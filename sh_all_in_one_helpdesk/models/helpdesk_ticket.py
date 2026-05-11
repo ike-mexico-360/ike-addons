@@ -223,7 +223,7 @@ class HelpdeskTicket(models.Model):
 
     def _compute_count_merge_ticket(self):
         for record in self:
-            record.sh_merge_ticket_count = len(
+            record.sudo().sh_merge_ticket_count = len(
                 record.sh_merge_ticket_ids) if record.sh_merge_ticket_ids else 0
 
     #====THIS METHOD CALLED IN Create METHOD=====#

@@ -28,6 +28,34 @@ class MailMessage(models.Model):
                         if not value_id['o2m_record_id']
                     ]
 
+    def get_o2m_tracking_format(self, model_name=None):
+        """Public RPC wrapper. Returns {message_id: o2mTrackings} for all records in self.
+
+        O2M tracking values belong to the comodel of each O2M field, not the parent model,
+        so we group by model before formatting to get correct field labels.
+        """
+        from collections import defaultdict
+        result = {}
+        for message in self:
+            # Map each tracking_value id to the comodel it belongs to
+            o2m_tv_model = {}
+            for cmd in message.o2m_tracking_command_ids:
+                comodel = cmd.o2m_field_id.relation if cmd.o2m_field_id else None
+                for tv_id in cmd.o2m_tracking_value_ids.ids:
+                    o2m_tv_model[tv_id] = comodel
+
+            # Group tracking values by model, format each group separately
+            groups = defaultdict(lambda: self.env['mail.tracking.value'])
+            for tv in message.tracking_value_ids:
+                groups[o2m_tv_model.get(tv.id, model_name)] |= tv
+
+            formatted = []
+            for model, tvs in groups.items():
+                formatted.extend(tvs._tracking_value_format_model(model))
+
+            result[message.id] = message._o2m_tracking_message_format(formatted)
+        return result
+
     def _o2m_tracking_message_format(self, current_tracking_values):
         """ Return structure and formatted data structure to be used by chatter
         to display o2m tracking messages.

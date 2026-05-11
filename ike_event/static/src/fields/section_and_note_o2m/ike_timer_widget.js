@@ -15,7 +15,7 @@ export class IkeTimerWidget extends Component {
     static defaultProps = {
     };
     setup() {
-        console.log("LineTimerWidget", this);
+        // console.log("LineTimerWidget", this);
         this.orm = this.env.services.orm;
         this.notification = this.env.services.notification;
         this.resId = null;

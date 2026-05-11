@@ -709,27 +709,28 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
+
+                    <t t-set="lines"
+                    t-value="object.service_product_ids.filtered(
+                        lambda l: l.supplier_number == object.supplier_number
+                        and not l.display_type
+                        and l.covered
+                    )"/>
+
                     <strong>Covered concepts:</strong>
 
-                    <t t-set="lines" t-value="object.service_product_ids"/>
-
                     <t t-if="lines">
-                        <t t-set="has_lines" t-value="0"/>
-
                         <ul>
                             <t t-foreach="lines" t-as="line">
-                                <t t-if="not line.display_type and line.covered">
-                                    <li>
-                                        <t t-out="line.product_id.name or line.name"/>
-                                    </li>
-                                    <t t-set="has_lines" t-value="1"/>
-                                </t>
+                                <li>
+                                    <t t-out="line.product_id.name or line.name"/>
+                                </li>
                             </t>
                         </ul>
+                    </t>
 
-                        <t t-if="not has_lines">
-                            <em>No covered concepts available.</em>
-                        </t>
+                    <t t-else="">
+                        <em>No covered concepts available.</em>
                     </t>
                 </t>
             </field>
@@ -741,17 +742,13 @@
             <field name="sequence">3</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_4_3"/>
         </record>
-         <record id="ike_binnacle_stage_mail_template_4_4" model="mail.template">
+        <record id="ike_binnacle_stage_mail_template_4_4" model="mail.template">
             <field name="name">Binnacle stage mail template 4 4</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
                     <strong>Non-covered concepts:</strong>
-
-                    <!-- Obtener el último supplier_number -->
-                    <t t-set="last_supplier"
-                    t-value="max(object.service_product_ids.mapped('supplier_number') or [0])"/>
 
                     <!-- Filtrar líneas SOLO de ese proveedor -->
                     <t t-set="lines"
@@ -829,7 +826,7 @@
             <field name="body_html" type="html">
                 <t>
                     <t t-set="last_supplier"
-                    t-value="max(object.service_product_ids.mapped('supplier_number') or [0])"/>
+                    t-value="max(object.service_supplier_ids.mapped('supplier_number') or [0])"/>
 
 
                     <strong>Type assignation:</strong>

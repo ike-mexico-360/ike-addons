@@ -689,7 +689,7 @@ class CustomSupplierCostProduct(models.Model):
     concept_id = fields.Many2one(
         comodel_name='product.product', string='Concept', sub_tracking=True, ondelete='restrict')
     subservice_specification_id = fields.Many2one(
-        'custom.subservice.specification', string='Subservice Specification', tracking=True, index=True)
+        'custom.subservice.specification', string='Subservice Specification', index=True)
     # ToDo: Remove vehicle_category_id
     vehicle_category_id = fields.Many2one(
         'fleet.vehicle.model.category', string='Category', sub_tracking=True, ondelete='restrict')

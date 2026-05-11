@@ -522,6 +522,11 @@ msgid "Año(s)"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:res.groups,name:custom_master_catalog.custom_group_bi_queries
+msgid "BI Queries"
+msgstr "Consultas BI"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__base_concept_id
 msgid "Base Concept"
 msgstr "Concepto base"

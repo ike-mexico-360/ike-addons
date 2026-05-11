@@ -11,9 +11,11 @@
                             confirm="Are you sure?"
                             type="object" class="btn-primary" invisible="stage_ref not in ['completed', 'cancel_subsequently']"
                             groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds"/>
+                    <!--
                     <button name="action_close" string="Close"
                             confirm="Are you sure?"
                             type="object" class="btn-primary" invisible="1"/>
+                    -->
                     <button name="action_open_duplicate_wizard" string="Duplicate Expedient"
                             confirm="Are you sure?"
                             type="object" class="btn-info"
@@ -21,7 +23,7 @@
                     <button name="open_cancel_wizard" string="Cancel"
                             confirm="Are you sure?"
                             type="object" class="btn-danger"
-                            invisible="not id or stage_ref in ['close', 'cancel', 'cancel_subsequently']"/>
+                            invisible="not id or stage_ref in ['close', 'cancel', 'cancel_subsequently', 'completed']"/>
                     <button name="action_directory_center_attention" string="Directories center attention"
                             type="object" class="btn-primary"
                             invisible="stage_ref in ['draft', 'capturing', 'cancel', 'cancel_subsequently']"/>
@@ -167,7 +169,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <separator class="col-12 my-1" string="Service type"/>
+                                <separator class="col-12 my-1" string="Service type" name="separator_service_type"/>
                                 <div class="col-12 mt-3">
                                     <field name="service_type_id"
                                         nolabel="1"

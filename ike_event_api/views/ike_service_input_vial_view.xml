@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_ike_service_input_vial_form_inherit_ike_event_api" model="ir.ui.view">
+        <field name="name">view_ike_service_input_vial_form.inherit.ike_event_api</field>
+        <field name="model">ike.service.input.vial</field>
+        <field name="inherit_id" ref="ike_event.view_ike_service_input_vial_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_identification_whatsapp']/.." position="after">
+                <div colspan="2" groups="base.group_no_one">
+                    <button name="test_lambda_session" string="Test Lambda Session (Not use)" type="object" class="btn-warning mt-2" icon="fa-check-circle" invisible="0"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

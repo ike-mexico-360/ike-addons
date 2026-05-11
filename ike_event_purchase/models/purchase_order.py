@@ -31,9 +31,25 @@ class PurchaseOrder(models.Model):
     ], string='Dispute State', default='none')
     x_dispute_approved = fields.Boolean(string='Dispute Approved', default=False)
     x_ref_sap = fields.Char(string='SAP Reference')
+    x_sap_reference_received = fields.Boolean(string='SAP Reference Received', default=False)
+    x_sap_connection_error_message = fields.Char(string='SAP Connection Error Message')
     x_dispute_iteration_count = fields.Integer(
         string='Dispute Iteration Count', default=0,
         help="Technical: The number of times the order has been send dispute.")
+    x_event_public_id = fields.Many2one(
+        'ike.event.public',
+        string='Event Public',
+        compute='_compute_x_event_public_id',
+        store=True
+    )
+
+    @api.depends('x_event_id')
+    def _compute_x_event_public_id(self):
+        for record in self:
+            if record.x_event_id:
+                record.x_event_public_id = record.sudo().x_event_id.id
+            else:
+                record.x_event_public_id = False
 
     # Add tracking native field
     order_line = fields.One2many(tracking=True)
@@ -340,118 +356,184 @@ class PurchaseOrder(models.Model):
     # - - - - - - - - - - - - - #
     #      Consolidation        #
     # - - - - - - - - - - - - - #
-    # Auxiliar methods
-    def _x_prepare_grouped_data(self, rfq):
-        return (rfq.partner_id.id, rfq.x_membership_plan_id.id, rfq.x_sub_service_id.id)
-
     def x_action_consolidate(self):
-        disputed_pos = self.filtered(lambda r: r.x_dispute_state in ('open', 'submitted'))
+        self._x_validate_orders_for_consolidation()
+
+        rfqs = self.filtered(lambda po: po.state == 'to_consolidate')
+        if not rfqs:
+            return self._x_get_consolidation_notification(
+                notification_type='warning',
+                message=_('There are no purchase orders to consolidate.')
+            )
+
+        try:
+            new_po_vals, original_pos = self._x_prepare_consolidated_purchase_orders(rfqs)
+
+            if not new_po_vals:
+                return self._x_get_consolidation_notification(
+                    notification_type='warning',
+                    message=_('No consolidated purchase orders could be generated.')
+                )
+
+            new_po_ids = self.env['purchase.order'].create(new_po_vals)
+            original_pos.write({'state': 'consolidated'})
+            new_po_ids.button_confirm()
+
+            try:
+                new_po_ids.x_syncronize_po_with_sap()
+            except Exception:
+                _logger.exception(
+                    "Error synchronizing consolidated purchase orders with SAP. PO ids: %s",
+                    new_po_ids.ids,
+                )
+
+        except Exception:
+            _logger.exception(
+                "Error consolidating purchase orders. Selected PO ids: %s",
+                self.ids,
+            )
+            return self._x_get_consolidation_notification(
+                notification_type='error',
+                message=_('Error consolidating purchase orders')
+            )
+
+        return self._x_get_consolidation_notification(
+            notification_type='success',
+            message=_('Purchase orders consolidated')
+        )
+
+    def _x_validate_orders_for_consolidation(self):
+        disputed_pos = self.filtered(lambda po: po.x_dispute_state in ('open', 'submitted'))
         if disputed_pos:
             raise UserError(_(
                 'The following orders have an open or submitted dispute and cannot be consolidated:\n%s'
             ) % '\n'.join(disputed_pos.mapped('name')))
 
-        try:
-            rfq_to_consolidate = self.filtered(lambda r: r.state in ['to_consolidate'])
+    def _x_prepare_consolidated_purchase_orders(self, rfqs):
+        grouped_rfqs = self._x_group_rfqs_by_partner_and_subservice(rfqs)
 
-            rfqs_grouped = defaultdict(lambda: self.env['purchase.order'])
-            for rfq in rfq_to_consolidate:
-                key = self._x_prepare_grouped_data(rfq)
-                rfqs_grouped[key] += rfq
+        new_po_vals = []
+        original_pos = self.env['purchase.order']
 
-            bunches_of_rfq_to_be_consolidate = list(rfqs_grouped.values())
+        for group_key, partner_rfqs in grouped_rfqs.items():
+            grouped_concept_lines = self._x_group_lines_by_sap_concept(partner_rfqs)
 
-            to_create_rfqs = []
-            for rfqs in bunches_of_rfq_to_be_consolidate:
-                group_concepts = {
-                    'purchase_ids': rfqs,
-                    'partner_id': rfqs.partner_id.id,
-                    'extra_sub_total': {},  # Para la suma de subtotal de lineas que no tienen concepto detallado, por id de compra
-                    'line_ids': {},
-                }  # Agrupar por (po_name, product_description_po, sap_id_outgoing)
+            partner_new_po_vals, partner_original_pos = self._x_build_partner_consolidated_pos(
+                grouped_concept_lines,
+            )
 
-                all_products = rfqs.order_line.mapped('product_id')
-                concepts = self.env['custom.membership.plan.line.product'].search([
-                    ('product_id', 'in', all_products.ids),
-                    ('line_id.membership_plan_id', 'in', rfqs.mapped('x_membership_plan_id').ids),
-                ])
-                concept_map = {(c.product_id.id, c.line_id.membership_plan_id.id): c for c in concepts}
-                for rfq in rfqs:
-                    membership_plan_id = rfq.x_membership_plan_id
-                    extra_sub_total = 0.0
+            new_po_vals.extend(partner_new_po_vals)
+            original_pos |= partner_original_pos
 
-                    for rfq_line in rfq.order_line:
-                        detailed_concept_id = concept_map.get((rfq_line.product_id.id, membership_plan_id.id), False)
-                        if detailed_concept_id:
-                            sap_key = (rfq_line.order_id.id, detailed_concept_id.line_id.product_description_po, detailed_concept_id.line_id.sap_id_outgoing)
-                            if sap_key not in group_concepts['line_ids']:
-                                group_concepts['line_ids'][sap_key] = []
-                            group_concepts['line_ids'][sap_key].append({
-                                'purchase_line_id': rfq_line.id,
-                                'concept_line_id': detailed_concept_id.line_id.id,
-                                'product_description_po': detailed_concept_id.line_id.product_description_po,
-                                'sap_id_outgoing': detailed_concept_id.line_id.sap_id_outgoing,
-                                'price_subtotal': rfq_line.price_subtotal,
-                                'description': f"[{detailed_concept_id.line_id.sap_id_outgoing}] {detailed_concept_id.line_id.product_description_po} - {rfq_line.order_id.name}",  # ToDo: No se usará
-                                'product_id': detailed_concept_id.line_id.sub_service_ids[:1].id or False,  # ToDo: Será el producto configurado como SAP
-                            })
-                        else:
-                            extra_sub_total += rfq_line.price_subtotal
-                    group_concepts['extra_sub_total'][rfq.id] = extra_sub_total
+        return new_po_vals, original_pos
 
-                if group_concepts:
-                    to_create_rfqs.append(group_concepts)
+    def _x_group_rfqs_by_partner_and_subservice(self, rfqs):
+        grouped_ids = defaultdict(list)
 
-            new_pos = []
-            consolidate_pos = self.env['purchase.order']
-            for group_concepts in to_create_rfqs:
-                data = {
-                    'partner_id': group_concepts['partner_id'],
-                    'origin': ', '.join(group_concepts['purchase_ids'].mapped('name')),
-                    'order_line': [],
-                    'x_event_id': group_concepts['purchase_ids'][0].x_event_id.id,
-                    'x_membership_plan_id': group_concepts['purchase_ids'][0].x_membership_plan_id.id,
-                }
-                new_line_ids = [values for values in group_concepts['line_ids'].values() if len(values) > 0]
-                if not len(new_line_ids):
+        for rfq in rfqs:
+            grouped_ids[(rfq.partner_id.id, rfq.x_sub_service_id.id)].append(rfq.id)
+
+        return {
+            key: self.env['purchase.order'].browse(rfq_ids)
+            for key, rfq_ids in grouped_ids.items()
+        }
+
+    def _x_group_lines_by_sap_concept(self, rfqs):
+        grouped_concept_lines = defaultdict(list)
+        concept_line_cache = {}
+
+        for rfq in rfqs:
+            membership_plan_id = rfq.x_membership_plan_id.id
+            sub_service_id = rfq.x_sub_service_id.id
+            cache_key = (sub_service_id, membership_plan_id)
+
+            if cache_key not in concept_line_cache:
+                concept_line = self.env['custom.membership.plan.product.line'].search([
+                    ('sub_service_ids', 'in', [sub_service_id]),
+                    ('membership_plan_id', '=', membership_plan_id),
+                ], limit=1)
+                concept_line_cache[cache_key] = concept_line
+            concept_line = concept_line_cache[cache_key]
+
+            if not concept_line:
+                _logger.warning(
+                    "No concept line found for RFQ id=%s, sub_service_id=%s, membership_plan_id=%s",
+                    rfq.id,
+                    sub_service_id,
+                    membership_plan_id,
+                )
+                continue
+
+            sap_key = (concept_line.sap_id_outgoing, concept_line.product_description_po)
+
+            grouped_concept_lines[sap_key].append({
+                'rfq': rfq,
+                'subtotal': sum(rfq.order_line.mapped('price_subtotal')),
+                'concept_line': concept_line,
+            })
+
+        return grouped_concept_lines
+
+    def _x_build_partner_consolidated_pos(self, grouped_concept_lines):
+        new_po_vals = []
+        original_pos = self.env['purchase.order']
+
+        for _sap_key, concept_lines in grouped_concept_lines.items():
+            first_order = concept_lines[0]['rfq']
+            origin_names = []
+            order_lines = []
+
+            for item in concept_lines:
+                rfq = item['rfq']
+                subtotal = item['subtotal']
+                concept_line = item['concept_line']
+                product_id = concept_line.sub_service_ids[:1].id
+
+                if not product_id:
+                    _logger.warning(
+                        "Concept line id=%s has no product configured in sub_service_ids. RFQ id=%s",
+                        concept_line.id,
+                        rfq.id,
+                    )
                     continue
-                for key, values in group_concepts['line_ids'].items():
-                    purchase_id = key[0]
-                    data['order_line'].append(Command.create({
-                        'name': values[0]['description'],  # ToDo: No se usará
-                        'product_id': values[0]['product_id'],  # ToDo: Será el producto configurado como SAP
-                        'product_qty': 1,
-                        'price_unit': sum([line['price_subtotal'] for line in values] + [group_concepts['extra_sub_total'].get(purchase_id, 0.0)]),
-                        'x_concept_line_id': values[0]['concept_line_id'],
-                    }))
-                new_pos.append(data)
-                consolidate_pos += group_concepts['purchase_ids']
 
-            new_po_ids = self.env['purchase.order'].create(new_pos)
-            consolidate_pos.write({'state': 'consolidated'})
-            new_po_ids.button_confirm()
-            try:
-                new_po_ids.x_syncronize_po_with_sap()
-            except Exception as e:
-                _logger.error(e)
-        except Exception as e:
-            _logger.error(e)
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'type': 'error',
-                    'message': _('Error consolidating purchase orders'),
-                    'next': {'type': 'ir.actions.act_window_close'},
-                }
-            }
+                if rfq.name not in origin_names:
+                    origin_names.append(rfq.name)
 
+                order_lines.append(Command.create({
+                    'name': "[%s] %s - %s" % (
+                        concept_line.sap_id_outgoing,
+                        concept_line.product_description_po,
+                        rfq.name,
+                    ),
+                    'product_id': product_id,
+                    'product_qty': 1,
+                    'price_unit': subtotal,
+                    'x_concept_line_id': concept_line.id,
+                }))
+
+                original_pos |= rfq
+
+            if not order_lines:
+                continue
+            new_po_vals.append({
+                'partner_id': first_order.partner_id.id,
+                'origin': ', '.join(origin_names),
+                'order_line': order_lines,
+                'x_event_id': first_order.x_event_id.id,
+                'x_sub_service_id': first_order.x_sub_service_id.id,
+                'x_membership_plan_id': first_order.x_membership_plan_id.id,
+            })
+
+        return new_po_vals, original_pos
+
+    def _x_get_consolidation_notification(self, notification_type, message):
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'type': 'success',
-                'message': _('Purchase orders consolidated'),
+                'type': notification_type,
+                'message': message,
                 'next': {'type': 'ir.actions.act_window_close'},
             }
         }
@@ -529,8 +611,24 @@ class PurchaseOrder(models.Model):
                 access_token = response_data.get('access_token', False)  # Obtener el token
             else:
                 _logger.warning(f'PO-SAP: Error al obtener el token de acceso a SAP: {response}')
+                for p in self:
+                    try:
+                        p.write({
+                            'x_sap_connection_error_message': f'Error al obtener el token de acceso a SAP: {response}',
+                            'x_sap_reference_received': False,
+                        })
+                    except Exception as e:
+                        _logger.warning(f'PO-SAP: Error al actualizar el token de acceso a SAP: {str(e)}')
         except Exception as e:
             _logger.warning(f'PO-SAP: Error al obtener el token de acceso a SAP: {str(e)}')
+            for p in self:
+                try:
+                    p.write({
+                        'x_sap_connection_error_message': f'Error al obtener el token de acceso a SAP: {str(e)}',
+                        'x_sap_reference_received': False,
+                    })
+                except Exception as e:
+                    _logger.warning(f'PO-SAP: Error al actualizar el token de acceso a SAP: {str(e)}')
 
         if access_token:
             purchases_response = self.x_create_sap_order(access_token)
@@ -540,7 +638,26 @@ class PurchaseOrder(models.Model):
                     if order_data['code'] == '200' and 'detail' in order_data:
                         po_sap_id = order_data['detail']['purchaseOrder']
                         purchase = self.browse(purchase_response['order_id'])
-                        purchase.x_ref_sap = po_sap_id
+
+                        if not po_sap_id:
+                            try:
+                                purchase.write({
+                                    'x_ref_sap': po_sap_id,
+                                    'x_sap_connection_error_message': order_data['detail']['message'],
+                                    'x_sap_reference_received': False,
+                                })
+                            except Exception as e:
+                                _logger.warning(f'PO-SAP: Error al actualizar el token de acceso a SAP: {str(e)}')
+                            continue
+
+                        try:
+                            purchase.write({
+                                'x_ref_sap': po_sap_id,
+                                'x_sap_connection_error_message': "",
+                                'x_sap_reference_received': True,
+                            })
+                        except Exception as e:
+                            _logger.warning(f'PO-SAP: Error al actualizar el token de acceso a SAP: {str(e)}')
                         purchase.message_post(
                             body=_('SAP Reference: %s') % po_sap_id,
                             message_type='notification',
@@ -548,13 +665,27 @@ class PurchaseOrder(models.Model):
                         )
                     else:
                         purchase = self.browse(purchase_response['order_id'])
+                        try:
+                            purchase.write({
+                                'x_sap_connection_error_message': f'Error creando la orden en SAP: {order_data}',
+                                'x_sap_reference_received': False,
+                            })
+                        except Exception as e:
+                            _logger.warning(f'PO-SAP: Error al actualizar el token de acceso a SAP: {str(e)}')
                         purchase.message_post(
-                            body=_('Error creating SAP order: %s') % order_data['detail']['message'],
+                            body=_('Error creating SAP order: %s') % order_data,
                             message_type='notification',
                             subtype_xmlid='mail.mt_note',
                         )
                 else:
                     purchase = self.browse(purchase_response['order_id'])
+                    try:
+                        purchase.write({
+                            'x_sap_connection_error_message': f'Error creando la orden en SAP: {purchase_response}',
+                            'x_sap_reference_received': False,
+                        })
+                    except Exception as e:
+                        _logger.warning(f'PO-SAP: Error al actualizar el token de acceso a SAP: {str(e)}')
                     purchase.message_post(
                         body=_('Error creating SAP order'),
                         message_type='notification',
@@ -624,9 +755,9 @@ class PurchaseOrder(models.Model):
             try:
                 order_response = requests.post(create_po_url, headers=headers, json=body)
                 if order_response.status_code == 200:
-                    _logger.info("PO-SAP: successfully created order")
                     order_data = order_response.json()
                     purchase_reponses.append({'order_id': purchase.id, 'response': order_data})
+                    _logger.info(f"PO-SAP: successfully created order {order_data}")
                 else:
                     _logger.warning(f'PO-SAP: Error al crear la orden en SAP: {order_response.text}')
                     purchase_reponses.append(empty_response)

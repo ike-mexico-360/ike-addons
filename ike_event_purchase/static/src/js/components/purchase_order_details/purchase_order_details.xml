@@ -107,15 +107,15 @@
                                 </td>
                                 <!-- Price -->
                                 <td class="text-end align-content-center">
-                                    <t t-if="is_new_line &amp;&amp; !line.has_matrix_cost &amp;&amp; line.product_id !== null">
+                                    <!-- <t t-if="is_new_line &amp;&amp; !line.has_matrix_cost &amp;&amp; line.product_id !== null">
                                         <input t-if="state.show_dispute_fields" type="number" class="form-control text-end"
                                         t-att-value="line.price_unit" t-on-change="(ev) => onchange_disputed_value(line.id, 'price_unit', +ev.target.value)"
                                         t-att-style="state.invalid_lines.has(line.id + '_price_unit') ? 'border: 1px solid red' : ''"
                                     />
                                     </t>
-                                    <t t-else="">
+                                    <t t-else=""> -->
                                         <t t-out="line.price_unit"/>
-                                    </t>
+                                    <!-- </t> -->
                                 </td>
                                 <!-- Dispute fields -->
                                 <td class="text-end align-content-center" t-if="show_dispute_columns">
@@ -175,7 +175,7 @@
                 </table>
             </div>
             <div class="row text-center mb-3" t-if="state.show_dispute_fields">
-                <div class="col-12 mb-3">
+                <div class="col-12 mb-3 mt-3">
                     <button class="btn text-white bg-primary bg-opacity-10 rounded-pill px-3" t-on-click="add_line">
                         <t t-out="translate('Add concept')"/>
                     </button>
@@ -195,6 +195,54 @@
                         <t t-out="translate('Send Dispute')"/>
                     </button>
                 </div>
+            </div>
+            <div class="mt-4" t-if="state.order_data.message_ids.length">
+                <h5 class="mb-3"><t t-out="translate('Messages')"/></h5>
+                <t t-foreach="state.order_data.message_ids" t-as="msg" t-key="msg.id">
+                    <div class="d-flex mb-3 gap-2">
+                        <div class="flex-grow-1 border rounded p-3">
+                            <div class="d-flex justify-content-between mb-1">
+                                <strong t-out="msg.author_id.name"/>
+                                <small class="text-muted" t-out="formatDate(msg.date)"/>
+                            </div>
+                            <!-- Message body (may contain HTML) -->
+                            <div t-out="messageBody(msg.body)" t-if="msg.body"/>
+                            <!-- Regular field tracking changes (non-O2M) -->
+                            <t t-set="regularTrackings" t-value="(msg.tracking_value_ids || []).filter((tv) => !tv.o2m_record_id)"/>
+                            <ul class="mb-0 mt-2 small text-muted" t-if="regularTrackings.length">
+                                <t t-foreach="regularTrackings" t-as="tv" t-key="tv.id">
+                                    <li>
+                                        <span t-out="tv.old_value_char || (tv.old_value_float != null ? '$' + tv.old_value_float : '—')"/>
+                                        <i class="fa fa-arrow-right mx-1"/>
+                                        <span t-out="tv.new_value_char || (tv.new_value_float != null ? '$' + tv.new_value_float : '—')"/>
+                                    </li>
+                                </t>
+                            </ul>
+                            <!-- O2M tracking changes grouped by field -->
+                            <t t-foreach="(msg.o2mTrackings || [])" t-as="o2mGroup" t-key="o2mGroup.o2m_field_id">
+                                <div class="mt-2">
+                                    <strong class="small" t-out="o2mGroup.o2m_field_description"/>
+                                    <t t-foreach="o2mGroup.o2mTrackingCommands" t-as="cmd" t-key="cmd.id">
+                                        <div class="ms-3 small text-muted">
+                                            <span class="badge bg-secondary me-1" t-out="cmd.o2m_command"/>
+                                            <span t-out="cmd.o2m_record_name"/>
+                                            <ul class="list-unstyled mb-0 ms-2" t-if="cmd.o2mTrackingValues.length">
+                                                <t t-foreach="cmd.o2mTrackingValues" t-as="tv" t-key="tv.id">
+                                                    <li>
+                                                        <strong t-out="tv.changedField"/>:
+                                                        <span t-out="tv.oldValue.value ?? '—'"/>
+                                                        <i class="fa fa-arrow-right mx-1"/>
+                                                        <span t-out="tv.newValue.value ?? '—'"/>
+                                                    </li>
+                                                </t>
+                                            </ul>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
             </div>
         </t>
         <t t-else="">

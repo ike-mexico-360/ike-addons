@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import time
-
-from uuid import uuid4
-
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
 
@@ -114,7 +110,7 @@ class IkeEventSupplierSelection(models.Model):
             elif rec.state in ['accepted', 'assigned']:
                 rec.elapsed_time = max(((rec.acceptance_date or now) - rec.notification_date).total_seconds(), 0)
             elif rec.state in ['rejected', 'timeout', 'expired']:
-                rec.elapsed_time = max(((rec.rejection_date or now)- rec.notification_date).total_seconds(), 0)
+                rec.elapsed_time = max(((rec.rejection_date or now) - rec.notification_date).total_seconds(), 0)
             else:
                 rec.elapsed_time = 0
 
@@ -127,42 +123,35 @@ class IkeEventSupplierSelection(models.Model):
         self.rejection_date = False
         self.broadcastReload()
 
-    def action_notify(self)->list[int]:
-        self_filtered = self.filtered(lambda x: x.state == 'available')
+    def action_notify(self) -> list[int]:
+        available_ids = self._lock_records_by_state('available')
+        self_filtered = self.filtered(lambda x: x.id in available_ids)
         if not self_filtered:
             return []
-        try:
-            updated_ids = self_filtered._update_record_state('available', 'notified')
-        except Exception:
-            return []
-        self.env.cache.invalidate([
-            (self._fields['state'], updated_ids),
-        ])
-        self_filtered = self_filtered.filtered(lambda x: x.id in updated_ids)
+        self_filtered.state = 'notified'
         self_filtered.notification_date = fields.Datetime.now()
         self_filtered.broadcastReload()
 
-        return updated_ids
+        return available_ids
 
-    def action_notify_operator(self)->list[int]:
-        self_filtered = self.filtered(lambda x: x.state == 'accepted')
+    def action_notify_operator(self) -> list[int]:
+        available_ids = self._lock_records_by_state('accepted')
+        self_filtered = self.filtered(lambda x: x.id in available_ids)
         if not self_filtered:
             return []
-        try:
-            updated_ids = self_filtered._update_record_state('accepted', 'assigned')
-        except Exception:
-            return []
-        self.env.cache.invalidate([
-            (self._fields['state'], updated_ids),
-        ])
-        self_filtered = self_filtered.filtered(lambda x: x.id in updated_ids)
+        self_filtered.state = 'assigned'
         self_filtered.assignation_date = fields.Datetime.now()
         self_filtered.broadcastReload()
 
-        return updated_ids
+        return available_ids
 
-    def action_accept(self)->list[int]:
-        self_filtered = self.filtered(lambda x: x.state == 'notified' or x.state == 'available' and x.is_manual)
+    def action_accept(self) -> list[int]:
+        notified_ids = self._lock_records_by_state('notified')
+        available_ids = self._lock_records_by_state('available')
+        self_filtered = self.filtered(
+            lambda x: x.id in (notified_ids + available_ids)
+            and (x.state == 'notified' or x.state == 'available' and x.is_manual)
+        )
         if not self_filtered:
             return []
         self_filtered.state = 'accepted'
@@ -225,73 +214,169 @@ class IkeEventSupplierSelection(models.Model):
 
         return self_filtered.ids
 
-    def action_reject(self)->list[int]:
-        self_filtered = self.filtered(lambda x: x.state == 'notified')
+    def action_reject(self) -> list[int]:
+        available_ids = self._lock_records_by_state('notified')
+        self_filtered = self.filtered(lambda x: x.id in available_ids)
         if not self_filtered:
             return []
-        try:
-            updated_ids = self_filtered._update_record_state('notified', 'rejected')
-        except Exception:
-            return []
-        self.env.cache.invalidate([
-            (self._fields['state'], updated_ids),
-        ])
-        self_filtered = self_filtered.filtered(lambda x: x.id in updated_ids)
-        self_filtered.rejection_date = fields.Datetime.now()
-        self_filtered.broadcastReload()
-        if not self.env.context.get('not_notify_next'):
-            self_filtered._notify_next()
-        return updated_ids
-
-    def action_timeout(self)->list[int]:
-        self_filtered = self.filtered(lambda x: x.state == 'notified')
-        if not self_filtered:
-            return []
-        try:
-            updated_ids = self_filtered._update_record_state('notified', 'timeout')
-        except Exception:
-            return []
-        self.env.cache.invalidate([
-            (self._fields['state'], updated_ids),
-        ])
-        self_filtered = self_filtered.filtered(lambda x: x.id in updated_ids)
-        # print("ACTION_TIMEOUT", self_filtered.ids, self_filtered.state)
-        self_filtered.rejection_date = fields.Datetime.now()
-        self_filtered.broadcastReload()
-        if not self.env.context.get('not_notify_next'):
-            self_filtered._notify_next()
-        return updated_ids
-
-    def action_expire(self)->list[int]:
-        self_filtered = self.filtered(lambda x: x.state == 'notified')
-        if not self_filtered:
-            return []
-        try:
-            updated_ids = self_filtered._update_record_state('notified', 'expired')
-        except Exception:
-            return []
-        self.env.cache.invalidate([
-            (self._fields['state'], updated_ids),
-        ])
-        self_filtered = self_filtered.filtered(lambda x: x.id in updated_ids)
+        self_filtered.state = 'rejected'
         self_filtered.rejection_date = fields.Datetime.now()
         self_filtered.broadcastReload()
 
-        return updated_ids
+        @self.env.cr.postcommit.add
+        def send_broadcast_reject():
+            if not self.env.context.get('not_notify_next'):
+                with self.env.registry.cursor() as new_cr:
+                    new_env = self.env(cr=new_cr)
+                    records = self_filtered.with_env(new_env)
+                    records._notify_next()
 
-    def _update_record_state(self, current_state: str, new_state: str):
-        with self.env.cr.savepoint():
-            self.env.cr.execute(
-                "SELECT id FROM %s WHERE id IN %%s AND state = %%s FOR UPDATE" % self._table,
-                (tuple(self.ids), current_state)
-            )
-            self.env.cr.execute(
-                "UPDATE %s SET state = %%s WHERE id IN %%s RETURNING id" % self._table,
-                (new_state, tuple(self.ids))
-            )
-            return [row[0] for row in self.env.cr.fetchall()]
+        return available_ids
 
-    # === NOTIFICATION === #
+    def action_timeout(self) -> list[int]:
+        available_ids = self._lock_records_by_state('notified')
+        self_filtered = self.filtered(lambda x: x.id in available_ids)
+        if not self_filtered:
+            return []
+        self_filtered.state = 'timeout'
+        self_filtered.rejection_date = fields.Datetime.now()
+        self_filtered.broadcastReload()
+
+        @self.env.cr.postcommit.add
+        def send_broadcast_timeout():
+            if not self.env.context.get('not_notify_next'):
+                with self.env.registry.cursor() as new_cr:
+                    new_env = self.env(cr=new_cr)
+                    records = self_filtered.with_env(new_env)
+                    records._notify_next()
+
+        return available_ids
+
+    def action_expire(self) -> list[int]:
+        available_ids = self._lock_records_by_state('notified')
+        self_filtered = self.filtered(lambda x: x.id in available_ids)
+        if not self_filtered:
+            return []
+        self_filtered.state = 'expired'
+        self_filtered.rejection_date = fields.Datetime.now()
+        self_filtered.broadcastReload()
+
+        return available_ids
+
+    # === PRIVATE METHODS === #
+    def _notify_expiration(self):
+        for rec in self:
+            line_ids = self.search([
+                ('event_id', '=', rec.event_id.id),
+                ('state', '=', 'notified'),
+            ], order='sequence desc')
+            if line_ids:
+                line_ids.action_expire()
+
+    def _notify_acceptation(self):
+        pass
+
+    def _notify_next(self):
+        for rec in self:
+            if rec.assignation_type == 'electronic':
+                current = rec._get_current_notified_siblings()
+                if not current:
+                    line_id = rec._notify_next_siblings(rec.assignation_type, limit=1)
+                    if not line_id:
+                        rec.event_id._search_suppliers('publication', '3')
+                        rec.event_id.broadcastEventReload(3)
+            elif rec.assignation_type == 'publication':
+                current = rec._get_current_notified_siblings()
+                if not current:
+                    line_ids = rec._notify_next_siblings(rec.assignation_type, rec.priority)
+                    if not line_ids:
+                        next_priority = int(rec.priority) - 1
+                        if next_priority >= 1:
+                            rec.event_id._search_suppliers('publication', str(next_priority))
+                            rec.event_id.broadcastEventReload(3)
+                elif rec.state == 'timeout':
+                    available_siblings = rec._count_available_siblings()
+                    timeout_id = rec.id
+                    first_timeout_sibling = rec._get_first_timeout_sibling(rec.notification_date)
+                    if first_timeout_sibling:
+                        timeout_id = first_timeout_sibling[0]['id']
+                    if not available_siblings and timeout_id == rec.id:
+                        next_priority = int(rec.priority) - 1
+                        if next_priority >= 1:
+                            rec.event_id._search_suppliers('publication', str(next_priority))
+                            rec.event_id.broadcastEventReload(3)
+
+    def _count_available_siblings(self):
+        self.ensure_one()
+        return self.search_count([
+            ('event_id', '=', self.event_id.id),
+            ('supplier_number', '=', self.supplier_number),
+            ('search_number', '=', self.search_number),
+            ('state', 'in', ['available']),
+            ('assignation_type', '=', self.assignation_type),
+            ('priority', '=', self.priority),
+            ('display_type', '=', False),
+        ])
+
+    def _get_first_timeout_sibling(self, notification_date):
+        return self.search_read([
+            ('event_id', '=', self.event_id.id),
+            ('supplier_number', '=', self.supplier_number),
+            ('search_number', '=', self.search_number),
+            ('notification_date', '=', notification_date),
+            ('state', 'in', ['timeout', 'notified']),
+            ('assignation_type', '=', self.assignation_type),
+            ('display_type', '=', False),
+        ], ['id'], limit=1)
+
+    def _get_current_notified_siblings(self):
+        self.ensure_one()
+        return self.search_read([
+            ('id', '!=', self.id),
+            ('event_id', '=', self.event_id.id),
+            ('supplier_number', '=', self.supplier_number),
+            ('search_number', '=', self.search_number),
+            ('state', '=', 'notified'),
+            ('assignation_type', '=', self.assignation_type),
+            ('display_type', '=', False),
+        ], fields=['id'])
+
+    def _notify_next_siblings(self, assignation_type, priority=None, limit=None):
+        self.ensure_one()
+        domain = [
+            ('id', '!=', self.id),
+            ('event_id', '=', self.event_id.id),
+            ('supplier_number', '=', self.supplier_number),
+            ('search_number', '=', self.search_number),
+            ('state', 'in', ['available', 'notified']),
+            ('assignation_type', '=', assignation_type),
+        ]
+        if priority:
+            domain.append(('priority', '=', priority))
+
+        kwargs = {}
+        if limit:
+            kwargs['limit'] = limit
+
+        line_ids = self.search(domain, order='sequence', **kwargs)
+        if line_ids:
+            line_ids.filtered(lambda d: d.state == 'available').action_notify()
+
+        return line_ids
+
+    def _lock_records_by_state(self, current_state: str) -> list[int]:
+        """ To avoid sending the same records multiple times from different transactions to update the record state field.
+
+        :param state: target state.
+        """
+        if not self.ids:
+            return []
+        self._cr.execute(
+            f'SELECT id FROM {self._table} WHERE id IN %s AND state = %s FOR UPDATE SKIP LOCKED', [tuple(self.ids), current_state]
+        )
+        return [row[0] for row in self.env.cr.fetchall()]
+
+    # === BROADCASTS === #
     def broadcastReload(self, event_reload=False):
         """ Broadcast notifications for internal users."""
         action_from = self.env.context.get('ike_event_action_from', 'internal')
@@ -396,137 +481,6 @@ class IkeEventSupplierSelection(models.Model):
                 },
             )
 
-    def _notify_expiration(self):
-        for rec in self:
-            line_ids = self.search([
-                ('event_id', '=', rec.event_id.id),
-                ('state', '=', 'notified'),
-            ], order='sequence desc')
-            if line_ids:
-                line_ids.action_expire()
-
-    def _notify_acceptation(self):
-        pass
-
-    def _notify_next(self):
-        for rec in self:
-            if rec.assignation_type == 'electronic':
-                current = rec._get_current_notified_siblings()
-                if not current:
-                    line_id = rec._notify_next_siblings(rec.assignation_type, limit=1)
-                    if not line_id:
-                        # rec._notify_next_siblings(assignation_type='publication', priority='3')
-                        next_uuid = uuid4()
-                        rec.event_id.next_search_uuid = next_uuid
-                        rec.broadcastNextSearch('search_publication_suppliers_3', next_uuid)
-
-                        # TESTING
-                        # rec.event_id.next_search_suppliers({
-                        #     'function_name': 'search_publication_suppliers_3',
-                        #     'next_uuid': next_uuid,
-                        # })
-                        # rec.event_id.broadcastEventReload()
-            elif rec.assignation_type == 'publication':
-                current = rec._get_current_notified_siblings()
-                if not current:
-                    line_ids = rec._notify_next_siblings(rec.assignation_type, rec.priority)
-                    if not line_ids:
-                        next_priority = int(rec.priority) - 1
-                        if next_priority >= 1:
-                            # rec._notify_next_siblings(rec.assignation_type, str(next_priority))
-                            next_uuid = uuid4()
-                            rec.event_id.next_search_uuid = next_uuid
-                            function_name = 'search_publication_suppliers_' + str(next_priority)
-                            rec.broadcastNextSearch(function_name, next_uuid)
-
-                            # TESTING: NOT WORKING, even without postcommit function. :C
-                            # rec.event_id.next_search_suppliers({
-                            #     'function_name': function_name,
-                            #     'next_uuid': next_uuid,
-                            # })
-                            # rec.event_id.broadcastEventReload()
-                elif rec.state == 'timeout':
-                    available_siblings = rec._count_available_siblings()
-                    timeout_id = rec.id
-                    first_timeout_sibling = rec._get_first_timeout_sibling(rec.notification_date)
-                    if first_timeout_sibling:
-                        timeout_id = first_timeout_sibling[0]['id']
-                    if not available_siblings and timeout_id == rec.id:
-                        next_priority = int(rec.priority) - 1
-                        if next_priority >= 1:
-                            # rec._notify_next_siblings(rec.assignation_type, str(next_priority))
-                            next_uuid = uuid4()
-                            rec.event_id.next_search_uuid = next_uuid
-                            function_name = 'search_publication_suppliers_' + str(next_priority)
-                            rec.broadcastNextSearch(function_name, next_uuid)
-
-                            # TESTING: NOT WORKING, even without postcommit function. :C
-                            # @self.env.cr.postcommit.add
-                            # def postcommit_next_search_suppliers(self):
-                            #     rec.event_id.next_search_suppliers({
-                            #         'function_name': function_name,
-                            #         'next_uuid': next_uuid,
-                            #     })
-                            # rec.event_id.broadcastEventReload()
-
-    def _count_available_siblings(self):
-        self.ensure_one()
-        return self.search_count([
-            ('event_id', '=', self.event_id.id),
-            ('supplier_number', '=', self.supplier_number),
-            ('search_number', '=', self.search_number),
-            ('state', 'in', ['available']),
-            ('assignation_type', '=', self.assignation_type),
-            ('priority', '=', self.priority),
-            ('display_type', '=', False),
-        ])
-
-    def _get_first_timeout_sibling(self, notification_date):
-        return self.search_read([
-            ('event_id', '=', self.event_id.id),
-            ('supplier_number', '=', self.supplier_number),
-            ('search_number', '=', self.search_number),
-            ('notification_date', '=', notification_date),
-            ('state', 'in', ['timeout', 'notified']),
-            ('assignation_type', '=', self.assignation_type),
-            ('display_type', '=', False),
-        ], ['id'], limit=1)
-
-    def _get_current_notified_siblings(self):
-        self.ensure_one()
-        return self.search_read([
-            ('id', '!=', self.id),
-            ('event_id', '=', self.event_id.id),
-            ('supplier_number', '=', self.supplier_number),
-            ('search_number', '=', self.search_number),
-            ('state', '=', 'notified'),
-            ('assignation_type', '=', self.assignation_type),
-            ('display_type', '=', False),
-        ], fields=['id'])
-
-    def _notify_next_siblings(self, assignation_type, priority=None, limit=None):
-        self.ensure_one()
-        domain = [
-            ('id', '!=', self.id),
-            ('event_id', '=', self.event_id.id),
-            ('supplier_number', '=', self.supplier_number),
-            ('search_number', '=', self.search_number),
-            ('state', 'in', ['available', 'notified']),
-            ('assignation_type', '=', assignation_type),
-        ]
-        if priority:
-            domain.append(('priority', '=', priority))
-
-        kwargs = {}
-        if limit:
-            kwargs['limit'] = limit
-
-        line_ids = self.search(domain, order='sequence', **kwargs)
-        if line_ids:
-            line_ids.filtered(lambda d: d.state == 'available').action_notify()
-
-        return line_ids
-
     # === ACTIONS CANCEL === #
     def action_cancel(self, cancel_reason_id: int, reason_text=None):
         """ Cancelled by User """
@@ -562,7 +516,9 @@ class IkeEventSupplierSelection(models.Model):
 
             if state == 'cancel_supplier' or rec.cancel_on_time:
                 rec.cause_rate = False
-                rec._supplier_cost_cancelled()
+                rec._set_supplier_cost_zero()
+            else:
+                rec._set_supplier_cost_cancelled()
 
             # Vehicle State
             rec.truck_id.x_vehicle_service_state = 'available'
@@ -580,7 +536,14 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered.cancelled = True
         self_filtered.broadcastCancel()
 
-    def _supplier_cost_cancelled(self):
+    def _set_supplier_cost_zero(self):
+        for rec in self:
+            supplier_product_ids = rec.supplier_product_ids.filtered(
+                lambda x: x.display_type != 'line_section')
+            for product_line in supplier_product_ids:
+                product_line.write({'base_unit_price': 0.0})
+
+    def _set_supplier_cost_cancelled(self):
         for rec in self:
             supplier_id = rec.supplier_id
             supplier_product_ids = rec.supplier_product_ids.filtered(
@@ -650,22 +613,5 @@ class IkeEventSupplierSelection(models.Model):
             'target': 'new',
             'context': {
                 'default_supplier_id': self.id,
-            }
-        }
-
-    def action_wizard_view_othre_phones(self):
-        self.ensure_one()
-        view_id = self.env.ref('ike_event.ike_event_phone_wizard_view_form').id
-
-        return {
-            'name':_('Phone directory'),
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'ike.event.phone.wizard',
-            'view_id': view_id,
-            'views': [(view_id, 'form')],
-            'target': 'new',
-            'context': {
-                'default_ike_event_supplier_id': self.id,
             }
         }

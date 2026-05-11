@@ -84,7 +84,7 @@
     </template>
 
     <template id="portal_layout_account_name" inherit_id="portal.portal_layout">
-        <xpath expr="//t[@t-if='my_details']//h3[contains(@class, 'my-3')]"
+        <xpath expr="//t[@t-if='my_details']//h3"
                position="replace">
             <h3 class="my-3">
                 Welcome <t t-out="request.env.user.name"/>

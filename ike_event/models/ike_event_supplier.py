@@ -408,26 +408,16 @@ class IkeEventSupplier(models.Model):
             rec.on_route_to_destination_end_date_widget = fields.Datetime.now()
 
     def action_finalize(self):
-        supplier_finalized_stage = self.env.ref('ike_event.ike_service_stage_finalized')
-        event_stage_in_progress = self.env.ref('ike_event.ike_event_stage_in_progress')
+        supplier_stage_finalized = self.env.ref('ike_event.ike_service_stage_finalized').id
         for rec in self:
-            rec.stage_id = supplier_finalized_stage.id
+            rec.stage_id = supplier_stage_finalized
             # Vehicle State
             rec.truck_id.x_vehicle_service_state = 'available'
-            # Concluir el evento, si es multi proveedor, concluir cuando todos estén finalizados
-            if rec.event_id.stage_ref == event_stage_in_progress.ref and rec.event_id.step_number == 1:
-                selected_suppliers = rec.event_id.service_supplier_ids.filtered(lambda x: x.state in ('accepted', 'assigned'))
-                finalized_suppliers = []
-                for selected_supplier in selected_suppliers:
-                    if selected_supplier.stage_id.id == supplier_finalized_stage.id:
-                        finalized_suppliers.append(True)
-                    else:
-                        finalized_suppliers.append(False)
-                if all(finalized_suppliers):
-                    # Se cambia a usar el action_completed en lugar de action_forward por indicaciones de Neftalí el día 26.04.22
-                    # rec.event_id.action_forward()
-                    rec.event_id.action_completed()
-                    rec.broadcastReload(event_reload=True)
+
+            # Event Completed: validation inside
+            rec.event_id.action_completed()
+            # Event reload
+            rec.broadcastReload(event_reload=True)
 
     def action_from_progress_state(self, progress_state):
         self.ensure_one()
@@ -573,6 +563,23 @@ class IkeEventSupplier(models.Model):
                 'edit': True,
             },
             'target': 'new',
+        }
+
+    def action_view_other_phones(self):
+        self.ensure_one()
+        view_id = self.env.ref('ike_event.ike_event_phone_wizard_view_form').id
+
+        return {
+            'name': _('Phone directory'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'ike.event.phone.wizard',
+            'view_id': view_id,
+            'views': [(view_id, 'form')],
+            'target': 'new',
+            'context': {
+                'default_ike_event_supplier_id': self.id,
+            }
         }
 
     def action_open_travel_tracking(self):
