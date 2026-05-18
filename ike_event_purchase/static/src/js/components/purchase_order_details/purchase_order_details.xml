@@ -45,10 +45,10 @@
                             <th class="py-3 px-3 rounded-start">
                                 <t t-out="translate('Concept')"/>
                             </th>
-                            <th class="py-3 px-3 text-end" t-if="state.order_data.state == 'sent'">
+                            <th class="py-3 px-3 text-end" t-if="['sent', 'to_consolidate', 'consolidated'].includes(state.order_data.state)">
                                 <t t-out="translate('Event Quantity')"/>
                             </th>
-                            <th class="py-3 px-3 text-end" t-if="state.order_data.state == 'sent'">
+                            <th class="py-3 px-3 text-end" t-if="['sent', 'to_consolidate', 'consolidated'].includes(state.order_data.state)">
                                 <t t-out="translate('Event Price')"/>
                             </th>
                             <th class="py-3 px-3 text-end">

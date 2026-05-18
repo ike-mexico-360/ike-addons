@@ -107,14 +107,16 @@
         <field name="ref">verifying</field>
         <field name="sequence">7</field>
         <field name="fold">False</field>
+        <field name="flow_path">1</field>
     </record>
     <record id="ike_event_stage_closed" model="ike.event.stage">
         <field name="name">Concluded</field>
-        <field name="ref">close</field>
+        <field name="ref">closed</field>
         <field name="sequence">8</field>
         <field name="fold">False</field>
         <field name="color">#BB78BC</field>
         <field name="last_stage">True</field>
+        <field name="flow_path">1</field>
     </record>
     <record id="ike_event_stage_cancelled" model="ike.event.stage">
         <field name="name">Cancelled</field>
@@ -123,6 +125,7 @@
         <field name="fold">True</field>
         <field name="color">#db5f5f</field>
         <field name="last_stage">True</field>
+        <field name="flow_path">3</field>
     </record>
     <record id="ike_event_stage_cancelled_subsequently" model="ike.event.stage">
         <field name="name">Cancelled Subsequently</field>
@@ -130,7 +133,26 @@
         <field name="sequence">10</field>
         <field name="fold">True</field>
         <field name="color">#db5f5f</field>
+        <field name="last_stage">False</field>
+        <field name="flow_path">2</field>
+    </record>
+    <record id="ike_event_stage_cancelled_verifying" model="ike.event.stage">
+        <field name="name">Cancelled Verifying</field>
+        <field name="ref">cancel_verifying</field>
+        <field name="sequence">11</field>
+        <field name="fold">True</field>
+        <field name="color">#db5f5f</field>
+        <field name="last_stage">False</field>
+        <field name="flow_path">2</field>
+    </record>
+    <record id="ike_event_stage_cancelled_closed" model="ike.event.stage">
+        <field name="name">Cancelled Concluded</field>
+        <field name="ref">cancel_closed</field>
+        <field name="sequence">12</field>
+        <field name="fold">True</field>
+        <field name="color">#db5f5f</field>
         <field name="last_stage">True</field>
+        <field name="flow_path">2</field>
     </record>
 
     <!-- Service Stages -->

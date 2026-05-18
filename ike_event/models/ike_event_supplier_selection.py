@@ -208,7 +208,10 @@ class IkeEventSupplierSelection(models.Model):
                 elif rec.event_id.stage_ref == stage_in_progress.ref and rec.event_id.step_number == 3:
                     use_action_forward = True
                 if use_action_forward:
-                    rec.event_id.sudo().action_forward()
+                    rec.event_id.sudo().with_context(dict(
+                        current_stage_id=rec.event_id.stage_id.id,
+                        current_step_number=rec.event_id.step_number,
+                    )).action_forward()
             # Broadcast
             rec.broadcastReload(event_reload=use_action_forward)
 
@@ -506,6 +509,8 @@ class IkeEventSupplierSelection(models.Model):
         supplier_coverages = self.env['custom.supplier.coverage.configuration'].sudo().search_read([
             ('supplier_id', 'in', suppliers)
         ], ['supplier_id', 'waiting_time'], order='id desc', limit=1)
+
+        self_filtered.cancel_reason_id = cancel_reason_id
         for rec in self_filtered:
             waiting_time = 0
             coverage = next((x for x in supplier_coverages if x.get("supplier_id") == 2), None)
@@ -514,7 +519,7 @@ class IkeEventSupplierSelection(models.Model):
             time_passed = fields.Datetime.now() - rec.acceptance_date
             rec.cancel_on_time = time_passed.total_seconds() / 60 <= waiting_time
 
-            if state == 'cancel_supplier' or rec.cancel_on_time:
+            if rec.cancel_on_time or state == 'cancel_supplier' or rec.cancel_reason_id.from_supplier:
                 rec.cause_rate = False
                 rec._set_supplier_cost_zero()
             else:
@@ -527,9 +532,10 @@ class IkeEventSupplierSelection(models.Model):
             if rec.supplier_number == rec.event_id.base_supplier_number:
                 rec.event_id.base_supplier_number = rec.event_id.supplier_number + 1
         # Common
+        stage_cancel_id = self.env.ref('ike_event.ike_service_stage_cancelled').id
         self_filtered.cancel_date = fields.Datetime.now()
         self_filtered.state = state
-        self_filtered.cancel_reason_id = cancel_reason_id
+        self_filtered.stage_id = stage_cancel_id
         self_filtered.cancel_user_id = self.env.user.id
         self_filtered.cancel_from = self.env.context.get('ike_event_action_from', 'internal')
         self_filtered.cancel_reason_text = reason_text

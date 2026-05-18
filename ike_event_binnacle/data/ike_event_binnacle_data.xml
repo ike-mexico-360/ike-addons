@@ -209,7 +209,12 @@
             <field name="name">Binnacle stage mail template 2 4</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
-            <field name="body_html" type="html"><t>Number of valid events</t></field>
+            <field name="body_html" type="html">
+                <div>
+                    <strong>Number of valid events: </strong>
+                    <t t-out="object.services_available or 0"/>
+                </div>
+            </field>
         </record>
         <record id="ike_binnacle_stage_2_4" model="ike.event.binnacle">
             <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
@@ -218,7 +223,48 @@
             <field name="sequence">4</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_2_4"/>
         </record>
+        <record id="ike_binnacle_stage_mail_template_2_5" model="mail.template">
+            <field name="name">Binnacle stage mail template 2 5</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <div>
+                    <strong>Applicant:</strong>
+                    <t t-out="dict(object._fields['user_by'].get_description(object.env)['selection']).get(object.user_by, '')"/>
+                    <br/>
 
+                    <t t-if="object.user_additional_name">
+                        <strong>Additional name:</strong>
+                        <t t-out="object.user_additional_name"/>
+                        <br/>
+                    </t>
+
+                    <t t-if="object.user_additional_last_name">
+                        <strong>Additional last name:</strong>
+                        <t t-out="object.user_additional_last_name"/>
+                        <br/>
+                    </t>
+
+                    <t t-if="object.user_additional_phone">
+                        <strong>Aditional phone:</strong>
+                        <t t-out="object.user_additional_phone"/>
+                        <br/>
+                    </t>
+
+                    <t t-if="object.preference_contact">
+                        <strong>Contact preference:</strong>
+                        <t t-out="dict(object._fields['preference_contact'].get_description(object.env)['selection']).get(object.preference_contact, '')"/>
+                    </t>
+                </div>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_2_5" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_coverage_validation_summary"/>
+            <field name="step_number">2</field>
+            <field name="sequence">5</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_2_5"/>
+        </record>
         <record id="ike_binnacle_stage_mail_template_3_1" model="mail.template">
             <field name="name">Binnacle stage mail template 3 1</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
@@ -2511,6 +2557,32 @@
             <field name="sequence">5</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_11_5"/>
         </record>
+        <!-- Notification to operator from portal -->
+        <record id="ike_binnacle_stage_mail_template_11_6" model="mail.template">
+            <field name="name">Binnacle stage binacle 11 6</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-set="supplier" t-value="ctx.get('supplier')"/>
+                    <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
+                    <p>
+                        <strong>Notification sent to operator: </strong><br/>
+                        <strong>Supplier: </strong><t t-out="supplier"></t><br/>
+                        <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
+
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_11_6" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">11</field>
+            <field name="sequence">6</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_11_6"/>
+        </record>
+
 
         <!-- API Message workflow -->
         <!-- Parent -->

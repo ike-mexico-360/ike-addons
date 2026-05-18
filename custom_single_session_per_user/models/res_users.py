@@ -119,6 +119,21 @@ class ResDeviceLog(models.Model):
 class ResUsers(models.Model):
     _inherit = "res.users"
 
+    @api.model
+    def _is_excluded_from_single_session(self, uid):
+        """
+        Check if the user belongs to any group with 'exclude_single_session' active.
+        """
+        # We use a direct SQL query or sudo to ensure we can read groups during login
+        self.env.cr.execute("""
+            SELECT 1
+            FROM res_groups_users_rel r
+            JOIN res_groups g ON r.gid = g.id
+            WHERE r.uid = %s AND g.exclude_single_session = TRUE
+            LIMIT 1
+        """, (uid,))
+        return bool(self.env.cr.fetchone())
+
     @classmethod
     def _login(cls, db, credential, user_agent_env=None):
         """
@@ -133,6 +148,18 @@ class ResUsers(models.Model):
             uid = auth_info["uid"]
             _logger.warning(f"User {uid} logging in - closing previous sessions")
 
+            # New Check: Is the user excluded?
+            registry = Registry(db)
+            with registry.cursor() as cr:
+                env = api.Environment(cr, odoo.SUPERUSER_ID, {})
+                user_model = env['res.users'].browse(uid)
+
+                # We check if any of the user's groups have the exclusion active
+                if any(group.exclude_single_session for group in user_model.groups_id):
+                    _logger.info(f"User {uid} is excluded from single session restriction via group settings.")
+                    return auth_info
+
+            # If not excluded, proceed with closing previous sessions
             try:
                 # Get all user sessions FROM THE TABLE
                 registry = Registry(db)

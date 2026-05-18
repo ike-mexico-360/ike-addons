@@ -1207,6 +1207,12 @@ msgid "Receipt Date:"
 msgstr "Fecha de recepción:"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: ike_event_purchase
 #: model:mail.template,subject:ike_event_purchase.ike_event_purchase_proposal_dispute_ticket
 msgid ""
 "{{object.company_id.name}} Dispute opened (Ref {{object.name or 'n/a' }})"

@@ -92,6 +92,8 @@ class IkeServiceInputVial(models.Model):
             try:
                 decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
                 phone_number = decrypt_encrypt_utility_sudo.decrypt_aes256(self.event_id.user_id.phone or '')
+                if phone_number:
+                    phone_number = phone_number.replace(' ', '')
                 assistview_data = self._x_ike_create_assistview()
                 _logger.info(f"Assistview: {assistview_data}")
                 request_lambda_session = assistview_data['request_lambda_session']

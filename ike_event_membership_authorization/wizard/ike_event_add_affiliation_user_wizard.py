@@ -72,12 +72,41 @@ class IkeEventAffiliationUser(models.TransientModel):
 
     # ONCHANGE
     @api.onchange('phone', 'phone_alternative')
-    def _onchange_phone_format(self):
-        for field in ['phone', 'phone_alternative']:
-            valor = self[field] or ''
-            numbers = re.sub(r'[^0-9]', '', valor)
-            if valor != numbers:
-                self[field] = numbers
+    def _onchange_check_phone_fields(self):
+
+        for field_name in ['phone', 'phone_alternative']:
+
+            value = self[field_name]
+
+            if not value:
+                continue
+
+            # Quitar espacios
+            value = str(value).replace(' ', '').strip()
+
+            # Actualizar el campo ya limpio
+            self[field_name] = value
+
+            # Solo números
+            if re.search(r'[^0-9]', value):
+                self[field_name] = False
+
+                return {
+                    'warning': {
+                        'title': _('Invalid phone'),
+                        'message': _('Phone fields must contain only numbers.')
+                    }
+                }
+
+            # Exactamente 10 dígitos
+            if len(value) != 10:
+                self[field_name] = False
+                return {
+                    'warning': {
+                        'title': _('Invalid phone'),
+                        'message': _('Phone fields must contain exactly 10 digits.')
+                    }
+                }
 
     @api.onchange('phone')
     def _onchange_phone_search(self):

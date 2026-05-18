@@ -303,7 +303,8 @@ export class ServicesMainComponent extends Component {
                     [event_supplier_id]
                 );
                 // Refresh only the accepted service instead of reloading the full list
-                await this.refreshSingleService(event_supplier_id);
+                //await this.refreshSingleService(event_supplier_id);
+                await this.refreshMultipleServices(event_supplier.event_id[0], event_supplier.supplier_id[0]);
             }
             else {
                 alert("Este servicio ya no se encuentra disponible para su aceptación");
@@ -356,6 +357,42 @@ export class ServicesMainComponent extends Component {
             console.error("Error refreshing single service:", err);
             // Fallback: reload the full list if single refresh fails
             await this.loadServices();
+        }
+    }
+
+    async refreshMultipleServices(event_id, supplier_id) {
+        const supplierLines = await this.orm.searchRead(
+            'ike.event.supplier.public',
+            [
+                ['event_id', '=', event_id],
+                ['supplier_id', '=', supplier_id]
+            ],
+            []
+        );
+
+        // Index backend results by event_supplier_id for fast lookup
+        const backendMap = new Map(supplierLines.map(l => [l.event_supplier_id, l]));
+        console.log("Backend supplier lines for refresh:", supplierLines);
+        // Iterate backwards so splicing doesn't skip elements
+        for (let i = this.state.services.length - 1; i >= 0; i--) {
+            const svc = this.state.services[i];
+            if (svc.event_id !== event_id) continue;
+
+            const backendLine = backendMap.get(svc.event_supplier_id);
+
+            if (!backendLine || backendLine.event_supplier_state === 'notified') {
+                // No longer relevant (dismissed because another operator was accepted)
+                this.state.services.splice(i, 1);
+            } else {
+                Object.assign(svc, {
+                    event_supplier_state: backendLine.event_supplier_state,
+                    event_supplier_state_label: backendLine.event_supplier_state_label,
+                    truck_name: backendLine.truck_name,
+                    driver_name: backendLine.driver_name,
+                    stage: backendLine.stage,
+                    highlighted: false,
+                });
+            }
         }
     }
 

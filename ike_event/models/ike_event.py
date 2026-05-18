@@ -23,6 +23,7 @@ class IkeEvent(models.Model):
     # Flow fields
     sections = fields.Json(compute='_compute_sections', store=True, copy=False)
     stage_id = fields.Many2one(tracking=True)
+    current_stage_date = fields.Datetime(compute='_compute_current_stage_date')
 
     # nu fields
     nu_name = fields.Char('Nu user name')
@@ -147,6 +148,7 @@ class IkeEvent(models.Model):
         domain=[('selected', '=', True)],
         readonly=True,
         copy=False)
+    selected_pending_suppliers = fields.Integer(compute='_compute_selected_pending_suppliers', store=True)
     child_ids = fields.One2many('ike.event', 'parent_id', 'Children', copy=False)
 
     ia_suggestion_done = fields.Boolean(default=False, copy=False)
@@ -352,73 +354,60 @@ class IkeEvent(models.Model):
             rec.services_available = selected.get('available', 0)
             rec.selected_sub_service_name = selected.get('sub_service_ref')
 
-    # === STAGE ACTIONS === #
-    def action_completed(self):
-        event_stage_in_progress_ref = self.env.ref('ike_event.ike_event_stage_in_progress').ref
-        event_stage_completed_id = self.env.ref('ike_event.ike_event_stage_completed').id
+    @api.depends('stage_id')
+    def _compute_current_stage_date(self):
+        field = self.env['ir.model.fields'].sudo().search_fetch([
+            ('model', '=', self._name),
+            ('name', '=', self._track_duration_field),
+        ], ['id'], limit=1)
+        query = """
+               SELECT m.res_id,
+                      v.create_date,
+                      v.new_value_integer
+                 FROM mail_tracking_value v
+            LEFT JOIN mail_message m
+                   ON m.id = v.mail_message_id
+                  AND v.field_id = %(field_id)s
+                WHERE m.model = %(model_name)s
+                  AND m.res_id IN %(record_ids)s
+                  AND v.new_value_integer IN %(stage_id)s
+             ORDER BY v.id DESC
+        """
+        self.env.cr.execute(query, {
+            "field_id": field.id,
+            "model_name": self._name,
+            "record_ids": tuple(self.ids),
+            "stage_id": tuple(self.mapped('stage_id.id')),
+        })
+        trackings = self.env.cr.dictfetchall()
         for rec in self:
-            pending_suppliers = rec.selected_supplier_ids.filtered(
+            record_trackings = [
+                tracking for tracking in trackings
+                if tracking['res_id'] == rec.id and tracking['new_value_integer'] == rec.stage_id.id
+            ]
+            if record_trackings:
+                rec.current_stage_date = record_trackings[0]['create_date']
+            else:
+                rec.current_stage_date = rec.create_date
+
+    @api.depends('selected_supplier_ids', 'selected_supplier_ids.stage_ref')
+    def _compute_selected_pending_suppliers(self):
+        for rec in self:
+            rec.selected_pending_suppliers = len(rec.selected_supplier_ids.filtered(
                 lambda x: x.stage_ref not in ['finalized', 'cancel']
-            )
-            if pending_suppliers:
-                continue
-            if rec.stage_ref == event_stage_in_progress_ref and rec.step_number == 1:
-                rec.stage_id = event_stage_completed_id
-
-    def action_verify(self):
-        # Purchase suppliers validation
-        for rec in self:
-            if rec.selected_supplier_ids.filtered(lambda x: x.is_generic_supplier and not x.purchase_supplier_id):
-                view_id = self.env.ref('ike_event.view_ike_event_purchase_suppliers_form').id
-
-                return {
-                    'name': _('Purchase Suppliers'),
-                    'view_mode': 'form',
-                    'type': 'ir.actions.act_window',
-                    'res_model': 'ike.event',
-                    'res_id': rec.id,
-                    'views': [(view_id, 'form')],
-                    'target': 'new',
-                }
-        # Normal Flow
-        total_amount = sum(self.selected_supplier_ids.mapped('base_amount_concept_subtotal'))
-        if total_amount <= self.covered_amount:
-            self.action_close()
-        else:
-            self.assigned_user_id = False
-            self.stage_id = self.env.ref('ike_event.ike_event_stage_verifying').id
-
-    def action_close(self):
-
-        self.action_create_satisfaction_survey()
-        self.stage_id = self.env.ref('ike_event.ike_event_stage_closed').id
-        self.action_create_purchase_orders()
-
-    def action_create_purchase_orders(self):
-        pass
-
-    def action_create_satisfaction_survey(self):
-        for rec in self:
-            service_satisfaction_survey_id = rec.service_id.sudo().x_satisfaction_survey_id
-            if not rec.satisfaction_survey_input_id and service_satisfaction_survey_id:
-                user_input_id = self.env['survey.user_input'].create({
-                    'event_id': rec.id,
-                    'survey_id': service_satisfaction_survey_id.id,
-                })
-                rec.satisfaction_survey_input_id = user_input_id.id
-                rec.satisfaction_survey_input_url = (
-                    f'{service_satisfaction_survey_id.get_base_url()}'
-                    f'/survey/{service_satisfaction_survey_id.access_token}/{user_input_id.access_token}'
-                )
-
-    def action_testing_reload(self):
-        self.broadcastEventReload(4)
+            ))
 
     # === FLOW ACTIONS === #
     def action_forward(self):
+        context_stage_id = self.env.context.get('current_stage_id')
+        context_step_number = self.env.context.get('current_step_number')
+
         event_flow = self._get_event_flow_dict()
         stage_keys = list(event_flow.keys())
         for rec in self:
+            if context_stage_id and context_step_number:
+                if rec.stage_id.id != context_stage_id or rec.step_number != context_step_number:
+                    continue
             stage_ref = rec.stage_ref
             step_number = rec.step_number
 
@@ -429,11 +418,14 @@ class IkeEvent(models.Model):
                 current_step = self._get_current_step(step_conf)
 
                 if 'actions' in current_step:
-                    for action_name in current_step['actions']:
-                        action_function = getattr(self, action_name)
+                    for action in current_step['actions']:
+                        # ToDo: Active to testing
+                        # if action['required_fields']:
+                        #     rec._check_own_required_fields(action['required_fields'])
+                        action_function = getattr(self, action['name'])
                         action_function()
 
-            # ? SPECIAL TREATMENT
+            # ? SPECIAL TREATMENT: Return from adding extra supplier.
             if (stage_ref == 'assigned' or stage_ref == 'in_progress') and step_number == 3:
                 next_stage_ref = rec.stage_ref
                 step_number = 1
@@ -453,13 +445,20 @@ class IkeEvent(models.Model):
             rec.step_number = step_number
 
     def action_backward(self):
+        context_stage_id = self.env.context.get('current_stage_id')
+        context_step_number = self.env.context.get('current_step_number')
+
         event_flow = self._get_event_flow_dict()
         stage_keys = list(event_flow.keys())
         for rec in self:
+            if context_stage_id and context_step_number:
+                if rec.stage_id.id != context_stage_id or rec.step_number != context_step_number:
+                    continue
+
             stage_ref = rec.stage_ref
             step_number = rec.step_number
 
-            # backward special treatment
+            # ? SPECIAL TREATMENT: Cancel from adding extra supplier.
             if stage_ref in ['assigned', 'in_progress'] and step_number == 2:
                 pending_suppliers = rec.selected_supplier_ids.filtered(
                     lambda x: x.stage_ref not in ['finalized', 'cancel']
@@ -567,7 +566,7 @@ class IkeEvent(models.Model):
         elif self.sub_service_res_model in service_specific:
             return service_specific[self.sub_service_res_model]
         else:
-            return {'sections': [], 'actions': []}
+            return {'sections': [], 'actions': [], 'required_fields': []}
 
     def _get_event_flow_dict(self):
         event_flow_ids = self.env['ike.event.flow'].sudo().search(domain=[('active', '=', True)], order='sequence')
@@ -587,11 +586,32 @@ class IkeEvent(models.Model):
             # Not Specific
             if len(not_specific):
                 stage[str(event_flow_id.step_number)] = {
-                    'sections': [x.name for x in not_specific if x.detail_type == 'section'],
-                    'actions': [x.name for x in not_specific if x.detail_type == 'action'],
+                    'sections': [
+                        x.name for x in not_specific if x.detail_type == 'section'
+                    ],
+                    'actions': [
+                        {
+                            'name': x.name,
+                            'required_fields': (
+                                [s.strip() for s in x.required_fields.split(',')]
+                                if x.required_fields
+                                else []
+                            ),
+                        }
+                        for x in not_specific
+                        if x.detail_type == 'action'
+                    ],
                     'summary': {
-                        'top': [x.name for x in not_specific if x.detail_type == 'summary_top'],
-                        'bottom': [x.name for x in not_specific if x.detail_type == 'summary_bottom'],
+                        'top': [
+                            x.name
+                            for x in not_specific
+                            if x.detail_type == 'summary_top'
+                        ],
+                        'bottom': [
+                            x.name
+                            for x in not_specific
+                            if x.detail_type == 'summary_bottom'
+                        ],
                     },
                 }
 
@@ -602,16 +622,42 @@ class IkeEvent(models.Model):
                 services = list(set(services))
                 stage[str(event_flow_id.step_number)]['service_specific'] = {}
                 for service in services:
-                    stage[str(event_flow_id.step_number)]['service_specific'][service] = {
+                    stage[str(event_flow_id.step_number)]['service_specific'][
+                        service
+                    ] = {
                         'sections': [
-                            x.name for x in specific if x.detail_type == 'section' and x.service_specific == service],
+                            x.name
+                            for x in specific
+                            if x.detail_type == 'section'
+                            and x.service_specific == service
+                        ],
                         'actions': [
-                            x.name for x in specific if x.detail_type == 'action' and x.service_specific == service],
+                            {
+                                'name': x.name,
+                                'required_fields': (
+                                    [s.strip() for s in x.required_fields.split(',')]
+                                    if x.required_fields
+                                    else []
+                                ),
+                            }
+                            for x in specific
+                            if x.detail_type == 'action'
+                            and x.service_specific == service
+                        ],
+                        'required_fields': [],
                         'summary': {
                             'top': [
-                                x.name for x in specific if x.detail_type == 'summary_top' and x.service_specific == service],
+                                x.name
+                                for x in specific
+                                if x.detail_type == 'summary_top'
+                                and x.service_specific == service
+                            ],
                             'bottom': [
-                                x.name for x in specific if x.detail_type == 'summary_bottom' and x.service_specific == service],
+                                x.name
+                                for x in specific
+                                if x.detail_type == 'summary_bottom'
+                                and x.service_specific == service
+                            ],
                         },
                     }
 
@@ -620,6 +666,80 @@ class IkeEvent(models.Model):
                 stage[str(event_flow_id.step_number)]['domain'] = safe_eval(event_flow_id.condition_domain)
 
         return result
+
+    def _check_own_required_fields(self, required_fields: list[str]):
+        self.ensure_one()
+        if not required_fields:
+            return
+
+        self_required_fields = []
+        service_required_fields = []
+        sub_service_required_fields = []
+        other_required_fields = {}
+        for field_name in required_fields:
+            aux_find = field_name.count('.')
+            if aux_find == 1:
+                aux_split = field_name.split('.')
+                if aux_split[0] == 'service_res_id':
+                    service_required_fields.append(aux_split[1])
+                elif aux_split[0] == 'sub_service_res_id':
+                    sub_service_required_fields.append(aux_split[1])
+                else:
+                    if aux_split[0] not in other_required_fields:
+                        other_required_fields[aux_split[0]] = []
+                    other_required_fields[aux_split[0]].append(aux_split[1])
+            elif aux_find == 0:
+                self_required_fields.append(field_name)
+
+        fields = self.fields_get(self_required_fields, attributes=['string', 'type'])
+
+        empty_fields = []
+        for field_name, field_info in fields.items():
+            value = self[field_name]
+            field_type = field_info.get('type')
+            field_label = field_info.get('string')
+
+            if field_type in ('many2one',):
+                if not value:
+                    empty_fields.append({
+                        'name': field_name,
+                        'label': field_label or field_name,
+                    })
+            elif field_type in ('one2many', 'many2many'):
+                if not value:
+                    empty_fields.append({
+                        'name': field_name,
+                        'label': field_label or field_name,
+                    })
+            elif field_type == 'boolean':
+                pass
+            else:
+                if value is False or value is None or value == '':
+                    empty_fields.append({
+                        'name': field_name,
+                        'label': field_label or field_name,
+                    })
+
+        if service_required_fields:
+            service_res_id = self.get_service_model()
+            service_res_id._check_own_required_fields(service_required_fields)  # type: ignore
+        if sub_service_required_fields:
+            sub_service_res_id = self.get_sub_service_model()
+            sub_service_res_id._check_own_required_fields(sub_service_required_fields)  # type: ignore
+
+        for key, value in other_required_fields.items():
+            other_id = self[key]
+            other_id._check_own_required_fields(service_required_fields)  # type: ignore
+
+        if empty_fields:
+            field_labels = []
+            for field_name in empty_fields:
+                field_labels.append(f"• {field_name['label']} ({field_name['name']})")
+
+            raise UserError(
+                _("Next field(s) are required:\n%s")
+                % "\n".join(field_labels)
+            )
 
     # === ACTIONS SET DATA === #
     def action_set_user_data(self):
@@ -918,7 +1038,21 @@ class IkeEvent(models.Model):
             'my_draft_events': 0,
         }
         IKE_EVENT = self.env['ike.event']
-        active_domain = [('stage_id.ref', 'in', ['capturing', 'searching', 'assigned', 'in_progress', 'completed', 'close'])]
+        active_domain = [
+            (
+                'stage_id.ref',
+                'in',
+                [
+                    'capturing',
+                    'searching',
+                    'assigned',
+                    'in_progress',
+                    'completed',
+                    'verifying',
+                    'closed',
+                ],
+            )
+        ]
         inactive_domain = [('stage_id.ref', 'in', ['draft'])]
         my_events_domain = [('write_uid', '=', self.env.uid)]
         result.update({
@@ -953,6 +1087,7 @@ class IkeEvent(models.Model):
         self.ensure_one()
         view = self.env.ref('ike_event.ike_event_history_view_list')
         search_view = self.env.ref('ike_event.ike_event_history_view_search')
+        completed_stage = self.env.ref('ike_event.ike_event_stage_completed')
         closed_stage = self.env.ref('ike_event.ike_event_stage_closed')
         return {
             'name': _('Service history'),
@@ -966,7 +1101,7 @@ class IkeEvent(models.Model):
                 ('id', '!=', self.id),
                 ('user_id', '=', self.user_id.id),
                 ('sub_service_id', '=', self.sub_service_id.id),
-                ('stage_id', '=', closed_stage.id),
+                ('stage_id', 'in', (closed_stage.id, completed_stage.id)),
             ],
         }
 
@@ -978,6 +1113,83 @@ class IkeEvent(models.Model):
             "url": f"/odoo/ike-event-screen/{self.id}",
             "target": "new"
         }
+
+    # === STAGE ACTIONS === #
+    def action_completed(self):
+        event_stage_in_progress_ref = self.env.ref('ike_event.ike_event_stage_in_progress').ref
+        event_stage_completed_id = self.env.ref('ike_event.ike_event_stage_completed').id
+        for rec in self:
+            pending_suppliers = rec.selected_supplier_ids.filtered(
+                lambda x:
+                    x.stage_ref not in ['finalized', 'cancel']
+                    and x.state not in ['cancel', 'cancel_event', 'cancel_supplier']
+            )
+            if pending_suppliers:
+                continue
+            if rec.stage_ref == event_stage_in_progress_ref and rec.step_number == 1:
+                rec.stage_id = event_stage_completed_id
+
+    def action_verify(self):
+        # Purchase suppliers validation
+        for rec in self:
+            if rec.selected_supplier_ids.filtered(lambda x: x.is_generic_supplier and not x.purchase_supplier_id):
+                view_id = self.env.ref('ike_event.view_ike_event_purchase_suppliers_form').id
+
+                return {
+                    'name': _('Purchase Suppliers'),
+                    'view_mode': 'form',
+                    'type': 'ir.actions.act_window',
+                    'res_model': 'ike.event',
+                    'res_id': rec.id,
+                    'views': [(view_id, 'form')],
+                    'target': 'new',
+                }
+
+        # Current Flow
+        for rec in self:
+            total_amount = sum(rec.selected_supplier_ids.mapped('base_amount_concept_subtotal'))
+            if total_amount <= rec.covered_amount:
+                rec.action_close()
+            else:
+                rec.assigned_user_id = False
+                if rec.stage_ref == 'completed':
+                    rec.stage_id = self.env.ref('ike_event.ike_event_stage_verifying').id
+                elif rec.stage_ref == 'cancel_subsequently':
+                    rec.stage_id = self.env.ref('ike_event.ike_event_stage_cancelled_verifying').id
+                else:
+                    _logger.error("ike_event.action_verify error 2")
+
+    def action_create_purchase_orders(self):
+        """"Not implemented yet."""
+        # return self.env['purchase.order'].with_context(
+        #     ike_event_purchase=True
+        # ).create([{}])
+        pass
+
+    def action_close(self):
+        self.action_create_purchase_orders()
+        for rec in self:
+            if rec.stage_ref in ['completed', 'verifying']:
+                rec.action_create_satisfaction_survey()
+                self.stage_id = self.env.ref('ike_event.ike_event_stage_closed').id
+            elif rec.stage_ref in ['cancel_subsequently', 'cancel_verifying']:
+                self.stage_id = self.env.ref('ike_event.ike_event_stage_cancelled_closed').id
+            else:
+                _logger.error("ike_event.action_close error 3")
+
+    def action_create_satisfaction_survey(self):
+        for rec in self:
+            service_satisfaction_survey_id = rec.service_id.sudo().x_satisfaction_survey_id
+            if not rec.satisfaction_survey_input_id and service_satisfaction_survey_id:
+                user_input_id = self.env['survey.user_input'].create({
+                    'event_id': rec.id,
+                    'survey_id': service_satisfaction_survey_id.id,
+                })
+                rec.satisfaction_survey_input_id = user_input_id.id
+                rec.satisfaction_survey_input_url = (
+                    f'{service_satisfaction_survey_id.get_base_url()}'
+                    f'/survey/{service_satisfaction_survey_id.access_token}/{user_input_id.access_token}'
+                )
 
     # === ACTION CANCEL === #
     def open_cancel_wizard(self):
@@ -1196,18 +1408,3 @@ class IkeEvent(models.Model):
             _logger.error(f"Error geolocation routes server: {str(e)}")
 
         return destination_distance_m, destination_duration_s, destination_route
-
-
-class IkeEventStage(models.Model):
-    _name = 'ike.event.stage'
-    _description = 'Event Stage'
-    _order = 'sequence, id'
-
-    name = fields.Char(translate=True)
-    ref = fields.Char()
-    sequence = fields.Integer(default=1)
-    color = fields.Char()
-    fold = fields.Boolean(default=False)
-    hide_timer = fields.Boolean(default=False)
-    last_stage = fields.Boolean(default=False)
-    active = fields.Boolean(default=True)

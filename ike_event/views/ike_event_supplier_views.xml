@@ -334,9 +334,11 @@
                             <div class="d-flex justify-content-between w-100">
                                 <button string="Watches" class="btn btn-primary fa-clock" type="object" name="open_change_state_supplier_wizard"
                                     invisible="stage_ref in ['cancel', 'preparing'] or
-                                        event_stage_ref in ['verifying', 'cancel', 'cancel_subsequently', 'close'] or cancelled"/>
+                                        event_stage_ref in ['verifying', 'closed', 'cancel_verifying', 'cancel', 'cancel_subsequently', 'cancel_closed'] or
+                                        state in ['cancel', 'cancel_event', 'cancel_supplier']"/>
                                 <button string="Cancel supplier" class="btn btn-danger ms-auto" type="object" name="open_cancel_wizard"
-                                    invisible="event_stage_ref in ['completed', 'verifying','cancel', 'cancel_subsequently', 'close'] or cancelled"/>
+                                    invisible="event_stage_ref in ['completed', 'verifying', 'closed', 'cancel', 'cancel_subsequently', 'cancel_verifying', 'cancel_closed'] or
+                                        state in ['cancel', 'cancel_event', 'cancel_supplier']"/>
                             </div>
                         </group>
                     </group>
@@ -354,7 +356,8 @@
                                     name="action_view_products"
                                     string="Additional concepts"
                                     invisible="stage_ref not in ['contacted', 'arrived_2', 'arrived'] or
-                                        event_stage_ref in ['verifying', 'cancel', 'cancel_subsequently', 'close'] or cancelled"
+                                        event_stage_ref in ['verifying', 'closed', 'cancel', 'cancel_subsequently', 'cancel_verifying', 'cancel_closed'] or
+                                        state in ['cancel', 'cancel_event', 'cancel_supplier']"
                                     context="{'from_event_authorization': True}"
                                     type="object" class="btn btn-primary rounded-4 py-1"
                                 />

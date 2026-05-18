@@ -1,0 +1,91 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* custom_single_session_per_user
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-12 00:01+0000\n"
+"PO-Revision-Date: 2026-05-12 00:01+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: custom_single_session_per_user
+#: model:ir.model,name:custom_single_session_per_user.model_res_groups
+msgid "Access Groups"
+msgstr "Grupos de acceso"
+
+#. module: custom_single_session_per_user
+#: model:ir.model.fields,field_description:custom_single_session_per_user.field_custom_res_users_session__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: custom_single_session_per_user
+#: model:ir.model.fields,field_description:custom_single_session_per_user.field_custom_res_users_session__create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: custom_single_session_per_user
+#: model:ir.model,name:custom_single_session_per_user.model_res_device_log
+msgid "Device Log"
+msgstr "Registro del dispositivo"
+
+#. module: custom_single_session_per_user
+#: model:ir.model.fields,field_description:custom_single_session_per_user.field_custom_res_users_session__display_name
+msgid "Display Name"
+msgstr "Nombre a mostrar"
+
+#. module: custom_single_session_per_user
+#: model:ir.model.fields,field_description:custom_single_session_per_user.field_res_groups__exclude_single_session
+msgid "Exclude Single Session"
+msgstr "Excluir sesión única"
+
+#. module: custom_single_session_per_user
+#: model:ir.model.fields,field_description:custom_single_session_per_user.field_custom_res_users_session__file_path
+msgid "File Path"
+msgstr "Ruta del archivo"
+
+#. module: custom_single_session_per_user
+#: model:ir.model.fields,field_description:custom_single_session_per_user.field_custom_res_users_session__id
+msgid "ID"
+msgstr "ID"
+
+#. module: custom_single_session_per_user
+#: model:ir.model.fields,help:custom_single_session_per_user.field_res_groups__exclude_single_session
+msgid ""
+"If checked, members of this group will not be restricted to a single "
+"session."
+msgstr ""
+"Si se marca esta casilla, los miembros de este grupo no estarán restringidos a una sola "
+"sesión."
+
+#. module: custom_single_session_per_user
+#: model:ir.model.fields,field_description:custom_single_session_per_user.field_custom_res_users_session__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: custom_single_session_per_user
+#: model:ir.model.fields,field_description:custom_single_session_per_user.field_custom_res_users_session__write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: custom_single_session_per_user
+#: model:ir.model.fields,field_description:custom_single_session_per_user.field_custom_res_users_session__session_id
+msgid "Session"
+msgstr "Sesión"
+
+#. module: custom_single_session_per_user
+#: model:ir.model,name:custom_single_session_per_user.model_res_users
+#: model:ir.model.fields,field_description:custom_single_session_per_user.field_custom_res_users_session__user_id
+msgid "User"
+msgstr "Usuario"
+
+#. module: custom_single_session_per_user
+#: model:ir.model,name:custom_single_session_per_user.model_custom_res_users_session
+msgid "User Session Tracking"
+msgstr "Seguimiento de sesiones de usuario"

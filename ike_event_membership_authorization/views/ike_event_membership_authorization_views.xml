@@ -18,7 +18,7 @@
         <field name="name">ike.event.membership.authorization.view.form</field>
         <field name="model">ike.event.membership.authorization</field>
         <field name="arch" type="xml">
-            <form delete="0">
+            <form delete="false" duplicate="false">
                 <sheet>
                     <header>
                         <button name="action_authorized" 
@@ -87,7 +87,7 @@
         <field name="name">ike.event.membership.authorization.view.list</field>
         <field name="model">ike.event.membership.authorization</field>
         <field name="arch" type="xml">
-            <list delete="0" edit="false">
+            <list delete="false" edit="false" duplicate="false">
                 <field name="event_name"/>
                 <field name="name"/>
                 <field name="nus_id"/>

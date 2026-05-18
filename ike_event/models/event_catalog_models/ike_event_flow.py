@@ -14,6 +14,7 @@ class IkeEventFlow(models.Model):
     stage_id = fields.Many2one('ike.event.stage', required=True)
     step_number = fields.Integer(default=1, aggregator='max', required=True)
     condition_domain = fields.Char(string='Domain')
+
     active = fields.Boolean(default=True)
 
     detail_ids = fields.One2many('ike.event.flow.detail', 'event_flow_id')
@@ -49,3 +50,4 @@ class IkeEventFlowSection(models.Model):
         ('summary_bottom', 'Summary Bottom'),
     ], required=True)
     service_specific = fields.Char()
+    required_fields = fields.Char()

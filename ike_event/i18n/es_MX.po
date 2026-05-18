@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-08 16:47+0000\n"
-"PO-Revision-Date: 2026-05-08 16:47+0000\n"
+"POT-Creation-Date: 2026-05-14 20:11+0000\n"
+"PO-Revision-Date: 2026-05-14 20:11+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -238,6 +238,8 @@ msgid "Add Channel and Subscribe"
 msgstr ""
 
 #. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier_search.py:0
 #: model:ir.actions.act_window,name:ike_event.ike_add_manual_supplier_wizard_action
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_add_manual_supplier_wizard_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
@@ -401,6 +403,7 @@ msgstr "Tiempo de llegada"
 
 #. module: ike_event
 #: model:ike.service.stage,name:ike_event.ike_service_stage_arrived
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_on_route_to_user_end_date
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_change_state_supplier_wizard__stage_selected__arrived
 msgid "Arrived"
 msgstr "Llegó"
@@ -484,6 +487,7 @@ msgstr "Tipo de Asignación"
 #: code:addons/ike_event/models/ike_event_summary.py:0
 #: model:ike.event.stage,name:ike_event.ike_event_stage_assigned
 #: model:ike.service.stage,name:ike_event.ike_service_stage_assigned
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_assignation_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__assigned
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__state__assigned
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_base__state__assigned
@@ -800,7 +804,6 @@ msgstr "No se puede eliminar"
 #: code:addons/ike_event/models/ike_event.py:0
 #: code:addons/ike_event/models/ike_event_supplier_selection.py:0
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_assignment_wizard_view_form
-#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_change_state_supplier_wizard_form
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_duplicate_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
@@ -951,6 +954,7 @@ msgid "Clear icon"
 msgstr "Limpiar ícono"
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_change_state_supplier_wizard_form
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_history_readonly_view_form
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_phone_wizard_view_form
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_form_view
@@ -1015,10 +1019,20 @@ msgid "Company"
 msgstr "Empresa"
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
+msgid "Complete Assistance"
+msgstr "Completar asistencia"
+
+#. module: ike_event
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_evidence__evidence_type__completed
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 msgid "Completed"
 msgstr "Concluido"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
+msgid "Complete Assistance"
+msgstr "Completar asistencia"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
@@ -1108,6 +1122,7 @@ msgstr "Tipo de consulta"
 
 #. module: ike_event
 #: model:ike.service.stage,name:ike_event.ike_service_stage_contacted
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_contacted_date
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_change_state_supplier_wizard__stage_selected__contacted
 msgid "Contacted"
 msgstr "Contactado"
@@ -2030,7 +2045,7 @@ msgstr ""
 #. module: ike_event
 #: model:ir.actions.act_window,name:ike_event.ike_event_authorization_action
 msgid "Event authorization"
-msgstr ""
+msgstr "Autorización de evento"
 
 #. module: ike_event
 #: model:ir.model,name:ike_event.model_ike_event_cancellation_reason
@@ -2206,6 +2221,7 @@ msgstr "Finalizar"
 
 #. module: ike_event
 #: model:ike.service.stage,name:ike_event.ike_service_stage_finalized
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_finalized_date
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_change_state_supplier_wizard__stage_selected__finalized
 msgid "Finalized"
 msgstr "Finalizado"
@@ -4529,6 +4545,7 @@ msgstr "Consulta de especialista"
 #: code:addons/ike_event/static/src/portal/ike_event_supplier_app.xml:0
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__stage_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_base__stage_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__stage_selected
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_flow__stage_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_summary__stage_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__stage_id
@@ -4959,11 +4976,21 @@ msgstr "El motivo de cancelación ya existe"
 #. odoo-python
 #: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
 msgid ""
+"The date and time of Arrived (%s) is greater than or equal to the date and "
+"time of the Contacted (%s)"
+msgstr ""
+"La fecha y hora de Llegó (%s) es mayor o igual a la fecha y hora del "
+"Contactado (%s)"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid ""
 "The date and time of Arrived (%s) is less than or equal to the date and time"
 " of the Assigned (%s)"
 msgstr ""
-"La fecha y hora de Llegó (%s) es menor o igual que la fecha y hora"
-" de Asignación (%s)."
+"La fecha y hora de Llegó (%s) es menor o igual que la fecha y hora de "
+"Asignación (%s)."
 
 #. module: ike_event
 #. odoo-python
@@ -4972,8 +4999,18 @@ msgid ""
 "The date and time of Arrived (%s) is less than or equal to the date and time"
 " of the event (%s)"
 msgstr ""
-"La fecha y hora de Llegó (%s) es menor o igual que la fecha y hora"
-" del evento (%s)."
+"La fecha y hora de Llegó (%s) es menor o igual que la fecha y hora del "
+"evento (%s)."
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid ""
+"The date and time of Contacted (%s) is greater than or equal to the date and"
+" time of the Finalized (%s)"
+msgstr ""
+"La fecha y hora del Contactado (%s) es mayor o igual a la fecha y hora del "
+"Finalizado (%s)"
 
 #. module: ike_event
 #. odoo-python
@@ -4982,8 +5019,8 @@ msgid ""
 "The date and time of Contacted (%s) is less than or equal to the date and "
 "time of the Arrived (%s)"
 msgstr ""
-"La fecha y hora de Contactado (%s) es menor o igual que la fecha y hora"
-" de Llegó (%s)."
+"La fecha y hora de Contactado (%s) es menor o igual que la fecha y hora de "
+"Llegó (%s)."
 
 #. module: ike_event
 #. odoo-python
@@ -4992,8 +5029,8 @@ msgid ""
 "The date and time of Contacted (%s) is less than or equal to the date and "
 "time of the event (%s)"
 msgstr ""
-"La fecha y hora de Contactado (%s) es menor o igual que la fecha y hora"
-" del evento (%s)."
+"La fecha y hora de Contactado (%s) es menor o igual que la fecha y hora del "
+"evento (%s)."
 
 #. module: ike_event
 #. odoo-python
@@ -5002,8 +5039,8 @@ msgid ""
 "The date and time of Finalized (%s) is less than or equal to the date and "
 "time of the Contacted (%s)"
 msgstr ""
-"La fecha y hora de Finalizado (%s) es menor o igual que la fecha y hora"
-" de Contactado (%s)."
+"La fecha y hora de Finalizado (%s) es menor o igual que la fecha y hora de "
+"Contactado (%s)."
 
 #. module: ike_event
 #. odoo-python
@@ -5012,8 +5049,8 @@ msgid ""
 "The date and time of Finalized (%s) is less than or equal to the date and "
 "time of the event (%s)"
 msgstr ""
-"La fecha y hora de Finalizado (%s) es menor o igual que la fecha y hora"
-" del evento (%s)."
+"La fecha y hora de Finalizado (%s) es menor o igual que la fecha y hora del "
+"evento (%s)."
 
 #. module: ike_event
 #. odoo-javascript
@@ -5627,6 +5664,26 @@ msgstr "Año"
 #: model:survey.question.answer,value:ike_event.survey_vial_truck_question_answer_5_1
 msgid "Yes"
 msgstr "Sí"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid ""
+"You must first register the Arrived datetime before registering the "
+"Contacted datetime."
+msgstr ""
+"Primero debe registrar la fecha y hora de Llegó antes de registrar la fecha "
+"y hora de Contactado"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid ""
+"You must first register the Contacted datetime before registering the "
+"Finalized datetime."
+msgstr ""
+"Primero debe registrar la fecha y hora de Contactado antes de registrar la "
+"fecha y hora de Finalizado"
 
 #. module: ike_event
 #. odoo-python

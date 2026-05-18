@@ -8,8 +8,8 @@
             <form string="Event" js_class="ike_event_screen_form" delete="false" duplicate="false">
                 <header>
                     <button name="action_verify" string="Conclude"
-                            confirm="Are you sure?"
-                            type="object" class="btn-primary" invisible="stage_ref not in ['completed', 'cancel_subsequently']"
+                            type="object" class="btn-primary" confirm="Are you sure?"
+                            invisible="stage_ref not in ['completed', 'cancel_subsequently']"
                             groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds"/>
                     <!--
                     <button name="action_close" string="Close"
@@ -23,7 +23,7 @@
                     <button name="open_cancel_wizard" string="Cancel"
                             confirm="Are you sure?"
                             type="object" class="btn-danger"
-                            invisible="not id or stage_ref in ['close', 'cancel', 'cancel_subsequently', 'completed']"/>
+                            invisible="not id or stage_ref in ['completed', 'verifying', 'closed', 'cancel', 'cancel_subsequently', 'cancel_verifying', 'cancel_closed']"/>
                     <button name="action_directory_center_attention" string="Directories center attention"
                             type="object" class="btn-primary"
                             invisible="stage_ref in ['draft', 'capturing', 'cancel', 'cancel_subsequently']"/>
@@ -88,6 +88,7 @@
                             <div class="d-flex justify-content-end gap-2">
                                 <button name="action_forward" string="Continue"
                                         type="object" class="btn-primary" colspan="2"
+                                        context="{'current_stage_id': stage_id, 'current_step_number': step_number}"
                                         invisible="not user_membership_id"/>
                             </div>
                         </group>
@@ -193,9 +194,11 @@
 
                                 <div class="d-flex justify-content-end gap-1">
                                     <button name="action_backward" string="Return"
-                                            type="object" class="btn-secondary" colspan="2"/>
+                                            type="object" class="btn-secondary" colspan="2"
+                                            context="{'current_stage_id': stage_id, 'current_step_number': step_number}"/>
                                     <button name="action_forward" string="Continue"
                                             type="object" class="btn-primary" colspan="2"
+                                            context="{'current_stage_id': stage_id, 'current_step_number': step_number}"
                                             invisible="not sub_service_id"/>
                                 </div>
                             </div>
@@ -308,9 +311,11 @@
                         <group>
                             <div class="d-flex justify-content-end gap-1">
                                 <button name="action_backward" string="Return"
-                                        type="object" class="btn-secondary" colspan="2"/>
+                                        type="object" class="btn-secondary" colspan="2"
+                                        context="{'current_stage_id': stage_id, 'current_step_number': step_number}"/>
                                 <button name="action_forward" string="Continue"
                                         type="object" class="btn-primary" colspan="2"
+                                        context="{'current_stage_id': stage_id, 'current_step_number': step_number}"
                                         invisible="not sub_service_id"/>
                             </div>
                         </group>
@@ -328,12 +333,16 @@
                         </group>
                     </group>
 
-                    <group invisible="not sections.get('service_supplier')" class="text-end">
-                        <button string="Add Supplier" name="action_add_multi_supplier_product_data" type="object" class="btn-primary"/>
+                    <group invisible="not sections.get('service_supplier')">
+                        <field name="selected_pending_suppliers" invisible="1"/>
+                        <div class="d-flex justify-content-end gap-1">
+                            <button string="Complete Assistance" name="action_completed" type="object" class="btn-primary" invisible="selected_pending_suppliers != 0"/>
+                            <button string="Add Supplier" name="action_add_multi_supplier_product_data" type="object" class="btn-primary"/>
+                        </div>
                     </group>
 
                     <group name="suppliers_selected" invisible="stage_ref not in
-                        ('assigned', 'in_progress', 'verifying', 'completed', 'close', 'cancel', 'cancel_subsequently')">
+                        ['assigned', 'in_progress', 'completed', 'verifying', 'closed', 'cancel', 'cancel_subsequently', 'cancel_verifying', 'cancel_closed']">
                         <group>
                             <field name="service_supplier_ids" nolabel="1" colspan="2" widget="ike_selected_suppliers_info"/>
                         </group>
@@ -345,19 +354,19 @@
                                     'list_view_ref': 'custom_master_catalog.custom_view_users_list',
                                 }"
                                 options="{'no_create': 1, 'no_open': 1}"
-                                invisible="stage_ref not in ('verifying')"
-                                required="stage_ref in ('verifying')"/>
+                                invisible="stage_ref not in ['verifying', 'cancel_verifying']"
+                                required="stage_ref in ['verifying', 'cancel_verifying']"/>
                             <field name="assigned_user_id"
                                 groups="custom_master_catalog.custom_group_ccc_coordinator,!base.group_system,!custom_master_catalog.custom_group_ccc_analyst,!custom_master_catalog.custom_group_ccc_boss"
                                 readonly="1"
-                                invisible="stage_ref not in ('verifying')"
+                                invisible="stage_ref not in ['verifying', 'cancel_verifying']"
                                 options="{'no_open': 1}"/>
                             <div class="d-flex flex-column align-items-center">
                                 <div><h3>Confirmation code: #7890</h3></div>
                                 <div class="mb-2">
                                     <button name="action_view_ike_event_service_cost"
                                         string="View service cost details"
-                                        invisible="stage_ref in ('verifying')"
+                                        invisible="stage_ref in ['verifying', 'cancel_verifying']"
                                         type="object"
                                         class="btn btn-primary rounded-4 py-1"/>
                                 </div>
@@ -365,7 +374,7 @@
                                     <button name="action_view_ike_event_agreement_cost_final"
                                         string="View agreement cost details"
                                         type="object"
-                                        invisible="stage_ref != 'verifying'"
+                                        invisible="stage_ref not in ['verifying', 'cancel_verifying']"
                                         class="btn btn-primary rounded-4 py-1"
                                         groups="base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_boss"/>
                                 </div>

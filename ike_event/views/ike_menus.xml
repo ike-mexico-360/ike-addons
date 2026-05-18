@@ -67,10 +67,10 @@
                 action="custom_fleet_dashboard_action"
                 groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_manager_cds"/>
             <menuitem id="ike_menu_configuration" name="Configuration" sequence="5"
-                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_supplier_support">
+                groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_supplier_contralory">
                 <menuitem id="ike_menu_event_supplier_assignment_type" name="Event Supplier Assignment Type" sequence="10"
                         action="action_ike_event_supplier_assignment_type"
-                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_support" />
+                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_supplier_contralory" />
                 <menuitem id="ike_menu_event_flow" name="Event Flow" sequence="20"
                         action="action_ike_event_flow"
                         groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />

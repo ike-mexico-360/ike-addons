@@ -17,7 +17,7 @@
         <field name="name">ike.event.authorization.view.form</field>
         <field name="model">ike.event</field>
         <field name="arch" type="xml">
-            <form>
+            <form delete="false" duplicate="false">
                 <sheet>
                     <group>
                         <group>

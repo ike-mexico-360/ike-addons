@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-05 16:16+0000\n"
-"PO-Revision-Date: 2026-05-05 16:16+0000\n"
+"POT-Creation-Date: 2026-05-18 16:37+0000\n"
+"PO-Revision-Date: 2026-05-18 16:37+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -109,6 +109,84 @@ msgstr ""
 "                    <t t-else=\"\">\n"
 "                        <em>No hay vehículo seleccionado.</em>\n"
 "                    </t>\n"
+"                </div>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_2_5
+msgid ""
+"<div>\n"
+"                    <strong>Applicant:</strong>\n"
+"                    <t t-out=\"dict(object._fields['user_by'].get_description(object.env)['selection']).get(object.user_by, '')\"/>\n"
+"                    <br/>\n"
+"\n"
+"                    <t t-if=\"object.user_additional_name\">\n"
+"                        <strong>Additional name:</strong>\n"
+"                        <t t-out=\"object.user_additional_name\"/>\n"
+"                        <br/>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-if=\"object.user_additional_last_name\">\n"
+"                        <strong>Additional last name:</strong>\n"
+"                        <t t-out=\"object.user_additional_last_name\"/>\n"
+"                        <br/>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-if=\"object.user_additional_phone\">\n"
+"                        <strong>Aditional phone:</strong>\n"
+"                        <t t-out=\"object.user_additional_phone\"/>\n"
+"                        <br/>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-if=\"object.preference_contact\">\n"
+"                        <strong>Contact preference:</strong>\n"
+"                        <t t-out=\"dict(object._fields['preference_contact'].get_description(object.env)['selection']).get(object.preference_contact, '')\"/>\n"
+"                    </t>\n"
+"                </div>\n"
+"            "
+msgstr ""
+"<div>\n"
+"                    <strong>Solicitante:</strong>\n"
+"                    <t t-out=\"dict(object._fields['user_by'].get_description(object.env)['selection']).get(object.user_by, '')\"/>\n"
+"                    <br/>\n"
+"\n"
+"                    <t t-if=\"object.user_additional_name\">\n"
+"                        <strong>Nombre adicional:</strong>\n"
+"                        <t t-out=\"object.user_additional_name\"/>\n"
+"                        <br/>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-if=\"object.user_additional_last_name\">\n"
+"                        <strong>Apellido adicional:</strong>\n"
+"                        <t t-out=\"object.user_additional_last_name\"/>\n"
+"                        <br/>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-if=\"object.user_additional_phone\">\n"
+"                        <strong>Teléfono adicional:</strong>\n"
+"                        <t t-out=\"object.user_additional_phone\"/>\n"
+"                        <br/>\n"
+"                    </t>\n"
+"\n"
+"                    <t t-if=\"object.preference_contact\">\n"
+"                        <strong>Contacto de preferencia:</strong>\n"
+"                        <t t-out=\"dict(object._fields['preference_contact'].get_description(object.env)['selection']).get(object.preference_contact, '')\"/>\n"
+"                    </t>\n"
+"                </div>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_2_4
+msgid ""
+"<div>\n"
+"                    <strong>Number of valid events: </strong>\n"
+"                    <t t-out=\"object.services_available or 0\"/>\n"
+"                </div>\n"
+"            "
+msgstr ""
+"<div>\n"
+"                    <strong>Número de eventos válidos: </strong>\n"
+"                    <t t-out=\"object.services_available or 0\"/>\n"
 "                </div>\n"
 "            "
 
@@ -2645,6 +2723,33 @@ msgstr ""
 "            "
 
 #. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_11_6
+msgid ""
+"<t>\n"
+"                    <t t-set=\"supplier\" t-value=\"ctx.get('supplier')\"/>\n"
+"                    <t t-set=\"truck\" t-value=\"object.env['fleet.vehicle'].browse(ctx.get('truck_id'))\"/>\n"
+"                    <p>\n"
+"                        <strong>Notification sent to operator: </strong><br/>\n"
+"                        <strong>Supplier: </strong><t t-out=\"supplier\"/><br/>\n"
+"                        <strong>Plate: </strong><t t-out=\"truck.license_plate or truck.name\"/>\n"
+"\n"
+"                    </p>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <t t-set=\"supplier\" t-value=\"ctx.get('supplier')\"/>\n"
+"                    <t t-set=\"truck\" t-value=\"object.env['fleet.vehicle'].browse(ctx.get('truck_id'))\"/>\n"
+"                    <p>\n"
+"                        <strong>Notificación enviada al operador: </strong><br/>\n"
+"                        <strong>Proveedor: </strong><t t-out=\"supplier\"/><br/>\n"
+"                        <strong>Placas: </strong><t t-out=\"truck.license_plate or truck.name\"/>\n"
+"\n"
+"                    </p>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
 #: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_29
 msgid ""
 "<t>\n"
@@ -3035,11 +3140,6 @@ msgid "<t>Data capturing</t>"
 msgstr "<t>Capturando datos</t>"
 
 #. module: ike_event_binnacle
-#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_2_4
-msgid "<t>Number of valid events</t>"
-msgstr "<t>Número de eventos válidos</t>"
-
-#. module: ike_event_binnacle
 #: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_1_1
 #: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_1_2
 msgid "<t>Opening of the service</t>"
@@ -3160,6 +3260,11 @@ msgid "Binnacle Template"
 msgstr ""
 
 #. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_11_6
+msgid "Binnacle stage binacle 11 6"
+msgstr ""
+
+#. module: ike_event_binnacle
 #: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_1_1
 msgid "Binnacle stage mail template 1 1"
 msgstr ""
@@ -3222,6 +3327,11 @@ msgstr ""
 #. module: ike_event_binnacle
 #: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_2_4
 msgid "Binnacle stage mail template 2 4"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_2_5
+msgid "Binnacle stage mail template 2 5"
 msgstr ""
 
 #. module: ike_event_binnacle
@@ -3971,6 +4081,7 @@ msgstr ""
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_11_3
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_11_4
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_11_5
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_11_6
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_1_1
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_1_2
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_1_3
@@ -3979,6 +4090,7 @@ msgstr ""
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_2_2
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_2_3
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_2_4
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_2_5
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_1
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_10
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_3_11

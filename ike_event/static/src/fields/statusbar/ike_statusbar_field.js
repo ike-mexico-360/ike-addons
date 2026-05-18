@@ -9,7 +9,7 @@ export class IkeStatusBarDurationField extends StatusBarDurationField {
         // console.log("ike_statusbar", this);
     }
     setSpecialData() {
-        super.setSpecialData(["last_stage", "color"]);
+        super.setSpecialData(["flow_path", "sequence", "last_stage", "color"]);
     }
 
     adjustVisibleItems() { }
@@ -28,6 +28,10 @@ export class IkeStatusBarDurationField extends StatusBarDurationField {
         const { foldField, name, record } = this.props;
         const currentValue = record.data[name];
         const durationTracking = this.props.record.data.duration_tracking || {};
+
+        const currentValueData = this.specialData.data.find(x => x.id == currentValue[0]);
+        const flowPath = currentValueData['flow_path'];
+
         const items = this.specialData.data.map((option) => {
             const duration = durationTracking[option.id];
             let shortTimeInStage = 0;
@@ -36,11 +40,17 @@ export class IkeStatusBarDurationField extends StatusBarDurationField {
                 shortTimeInStage = formatDuration(duration, false);
                 fullTimeInStage = formatDuration(duration, true);
             }
+            // Conditional must show
+            let isFolded = option[foldField];
+            if (flowPath && option["flow_path"]) {
+                const flowPathSplit = option['flow_path'].split(",");
+                isFolded = !flowPathSplit.includes(flowPath);
+            }
 
             return {
                 value: option.id,
                 label: option.display_name,
-                isFolded: option[foldField],
+                isFolded: isFolded,
                 lastStage: option['last_stage'],
                 color: option['color'],
                 isSelected: Boolean(currentValue && option.id === currentValue[0]),

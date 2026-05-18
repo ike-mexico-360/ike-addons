@@ -9,6 +9,8 @@ import threading
 from odoo import models, fields, api, SUPERUSER_ID
 from odoo.modules.registry import Registry
 
+from odoo.addons.ike_event.models.service_models.ike_service_input_vial import IkeServiceVial
+
 _logger = logging.getLogger(__name__)
 
 
@@ -48,7 +50,7 @@ class IkeEventSupplierSelection(models.Model):
     }
 
     # === OVERRIDE ACTIONS === #
-    def action_notify(self)->list[int]:
+    def action_notify(self) -> list[int]:
         """OVERRIDE: send unknown? notification"""
         # SUPER
         result = super().action_notify()
@@ -72,16 +74,19 @@ class IkeEventSupplierSelection(models.Model):
                 def send_notifications_with_new_cursor():
                     threading.Thread(
                         target=self._async_send_notification,
-                        args=(dbname, record_ids, 'send_external_notification'),
+                        args=(self.env.cr.dbname, self_filtered.ids, 'send_external_notification'),
+                        # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_external_notification'),  # ?TEST
                         daemon=True,
                     ).start()
         return result
 
-    def action_notify_operator(self)->list[int]:
+    def action_notify_operator(self) -> list[int]:
         """OVERRIDE: send operator notification"""
         self_filtered = self.filtered(lambda x: x.state == 'accepted')
         if not self_filtered:
             return []
+        # SUPER
+        result = super().action_notify_operator()
         # Async Notification
         if not self._is_db_neutralized():
             threading.Thread(
@@ -89,11 +94,9 @@ class IkeEventSupplierSelection(models.Model):
                 args=(self.env.cr.dbname, self_filtered.ids, 'send_operator_notification'),
                 daemon=True,
             ).start()
-        # SUPER
-        result = super().action_notify_operator()
         return result
 
-    def action_accept(self)->list[int]:
+    def action_accept(self) -> list[int]:
         """OVERRIDE: send user notification"""
         result = super().action_accept()
         selected_suppliers = self.filtered(lambda x: x.selected)
@@ -286,6 +289,7 @@ class IkeEventSupplierSelection(models.Model):
 
     def send_operator_notification(self):
         # Supplier Notification
+        time.sleep(2)  # Evitar concurrencia al solaparse el proceso principal con el hilo, al usar el mismo registro
         supplier_responses = []
         IrConfig = self.env['ir.config_parameter'].sudo()
         notification_url = IrConfig.get_param('ike_event.app.url.notification')
@@ -444,6 +448,8 @@ class IkeEventSupplierSelection(models.Model):
                 supplier = self[0]
                 decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
                 phone_number = decrypt_encrypt_utility_sudo.decrypt_aes256(supplier.event_id.user_id.phone or '')
+                if phone_number:
+                    phone_number = phone_number.replace(' ', '')
 
                 parameter = f"de su servicio ha iniciado, el vehículo asignado es {supplier.truck_id.name},"\
                     f" con matrícula {supplier.truck_id.license_plate}. Deberá proporcionar el siguiente"\
@@ -524,11 +530,17 @@ class IkeEventSupplierSelection(models.Model):
             try:
                 notification_data = external_notification_response.json()
                 if notification_data.get('error', True):
-                    _logger.info(f"External notification sent successfully ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data}")
+                    _logger.info(
+                        f"External notification sent successfully"
+                        f" ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data}")
                 else:
-                    _logger.warning(f"Error sending external notification ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data}")
-            except Exception as e:
-                _logger.warning(f"Error sending external notification ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data.text}")
+                    _logger.warning(
+                        f"Error sending external notification"
+                        f" ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data}")
+            except Exception:
+                _logger.warning(
+                    f"Error sending external notification"
+                    f" ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data.text}")
 
     # === PRIVATE METHODS === #
     def _is_db_neutralized(self):
@@ -546,7 +558,7 @@ class IkeEventSupplierSelection(models.Model):
                 return {'code': 2, 'name': 'Cerrado'}
             return {}
 
-        service_model_id = self.event_id.get_service_model()
+        service_model_id: "IkeServiceVial" = self.event_id.get_service_model()  # type: ignore
 
         # Para subsevicios que no tienen todos los campos necesarios para notificar... aplicar read para obtener
         # solo los existentes necesarios
@@ -569,8 +581,8 @@ class IkeEventSupplierSelection(models.Model):
         subservice_data = subservice_data[0]
 
         range_high = False
-        if service_model_id.vehicle_category_id:  # type: ignore
-            range_high = bool(service_model_id.vehicle_category_id.name.strip().lower().replace(' ', '') == 'altagama')  # type: ignore
+        if service_model_id.vehicle_category_id:
+            range_high = bool(service_model_id.vehicle_category_id.name.strip().lower().replace(' ', '') == 'altagama')
 
         survey_input_data = self.event_id.get_survey_input_data()
         decrypt_utility = self.env['custom.encryption.utility'].sudo()
@@ -580,13 +592,13 @@ class IkeEventSupplierSelection(models.Model):
             "user": decrypt_utility.decrypt_aes256(self.event_id.user_id.name or ''),
             "placeEvent": self.event_id.event_type_id.name or '',
             "car": {
-                "yearCar": service_model_id.vehicle_year or '',  # type: ignore
-                "typeCar": service_model_id.vehicle_model or '',  # type: ignore
-                "brandCar": service_model_id.vehicle_brand or '',  # type: ignore
-                "colorCar": service_model_id.vehicle_color or '',  # type: ignore
-                "platesCar": service_model_id.vehicle_plate or '',  # type: ignore
+                "yearCar": service_model_id.vehicle_year or '',
+                "typeCar": service_model_id.vehicle_model or '',
+                "brandCar": service_model_id.vehicle_brand or '',
+                "colorCar": service_model_id.vehicle_color or '',
+                "platesCar": service_model_id.vehicle_plate or '',
                 "rangehigh": range_high,
-                "rangetype": service_model_id.vehicle_category_id.name or '',  # type: ignore
+                "rangetype": service_model_id.vehicle_category_id.name or '',
             },
             # Servicio se envía estático, solo se notifica en Asistencia vial
             "service": {
@@ -596,15 +608,15 @@ class IkeEventSupplierSelection(models.Model):
             },
             "subservice": self.SUB_SERVICE_REF_MAP.get(self.event_id.sub_service_id.default_code, {}),
             "origin": {
-                "postalCode": service_model_id.location_zip_code or '',  # type: ignore
-                "state": service_model_id.state_id.name or '',  # type: ignore
-                "municipality": service_model_id.municipality_id.name or '',  # type: ignore
-                "neighborhood": service_model_id.colony or '',  # type: ignore
-                "street": f"{service_model_id.street} {service_model_id.street_number}" or '',  # type: ignore
-                "betweenStreets": service_model_id.street2 or '',  # type: ignore
-                "visualReference": service_model_id.street_ref or '',  # type: ignore
-                "latitude": service_model_id.location_latitude or '',  # type: ignore
-                "longitude": service_model_id.location_longitude or '',  # type: ignore
+                "postalCode": service_model_id.location_zip_code or '',
+                "state": service_model_id.state_id.name or '',
+                "municipality": service_model_id.municipality_id.name or '',
+                "neighborhood": service_model_id.colony or '',
+                "street": f"{service_model_id.street} {service_model_id.street_number}" or '',
+                "betweenStreets": service_model_id.street2 or '',
+                "visualReference": service_model_id.street_ref or '',
+                "latitude": service_model_id.location_latitude or '',
+                "longitude": service_model_id.location_longitude or '',
             },
             "destino": {
                 "postalCode": subservice_data.get('destination_zip_code', ''),

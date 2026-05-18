@@ -121,7 +121,11 @@ export class IkeEventFormController extends FormController {
     }
     async _executeAction(record, method, params) {
         const resModel = record.resModel;
-        const context = record.context;
+        const context = {
+            ...record.context,
+            current_stage_id: record.data.stage_id[0],
+            current_step_number: record.data.step_number,
+        };
         const args = [[record.resId]];
         if (params) {
             args.push(params);

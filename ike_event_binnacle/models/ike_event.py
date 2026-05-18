@@ -257,7 +257,8 @@ class IkeEvent(models.Model):
         result = super(IkeEvent, self).action_set_user_data()
         for rec in self:
             rec.assigned_user_id = rec._action_set_user_assigned()
-            rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_2_4"])
+            if rec.user_by == 'by_other':
+                rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_2_5"])
         return result
 
     def _action_set_user_assigned(self):
@@ -284,6 +285,7 @@ class IkeEvent(models.Model):
         result = super(IkeEvent, self).action_set_user_service_data()
         for rec in self:
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_5"])
+            rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_2_4"])
         return result
 
     def action_set_location_data(self):
@@ -347,7 +349,7 @@ class IkeEvent(models.Model):
         return result
 
     def action_confirm_costs(self):
-        result = super().action_confirm_costs()  # type: ignore
+        result = super().action_confirm_costs()
         for rec in self:
             rec._create_message_binnacle([
                 # 'ike_event_binnacle.ike_binnacle_stage_10_4',
@@ -475,7 +477,7 @@ class IkeEventSupplier(models.Model):
                 supplier=rec.supplier_id.name,
                 truck_id=rec.truck_id.id
             )._create_message_binnacle([
-                "ike_event_binnacle.ike_binnacle_stage_11_1"
+                "ike_event_binnacle.ike_binnacle_stage_11_6"
             ])
         return updated_ids
 

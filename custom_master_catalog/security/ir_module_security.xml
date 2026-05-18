@@ -119,6 +119,17 @@
             <field name="domain_force">[(1, '=', 1)]</field>
         </record>
 
+        <record id="custom_contact_admin_supplier_contralory_read_write_rule" model="ir.rule">
+            <field name="name">Suppliers Contralory Limited Rule</field>
+            <field name="model_id" ref="base.model_res_partner" />
+            <field name="groups" eval="[(4, ref('custom_group_supplier_contralory'))]" />
+            <field name="perm_read" eval="True" />
+            <field name="perm_write" eval="True" />
+            <field name="perm_create" eval="True" />
+            <field name="perm_unlink" eval="False" />
+            <field name="domain_force">['|', ('x_is_supplier', '=', True), ('type', '=', 'center')]</field>
+        </record>
+
         <record id="custom_contact_admin_supplier_support_modify_rule" model="ir.rule">
             <field name="name">Suppliers Support Admin Modify Rule</field>
             <field name="model_id" ref="base.model_res_partner" />

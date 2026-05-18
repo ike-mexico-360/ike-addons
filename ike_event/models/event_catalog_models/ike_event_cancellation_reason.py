@@ -9,7 +9,8 @@ class IkeEventCancellationReason(models.Model):
 
     name = fields.Char(string="Motive", tracking=True)
     sequence = fields.Char(default=5)
-    show_supplier = fields.Boolean(string="Show supplier", tracking=True)
+    show_supplier = fields.Boolean(string="Show Supplier", tracking=True)
+    from_supplier = fields.Boolean(string='From Supplier', tracking=True)
 
     active = fields.Boolean(default=True, tracking=True)
     disabled = fields.Boolean(default=False, tracking=True)

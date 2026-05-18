@@ -20,6 +20,7 @@
             <field name="name">action_set_user_data</field>
             <field name="sequence">2</field>
             <field name="detail_type">action</field>
+            <field name="required_fields">user_id,user_membership_id</field>
             <field name="event_flow_id" ref="ike_event_flow_draft_1"/>
         </record>
         <!-- Capturing 1 -->
@@ -40,6 +41,7 @@
             <field name="name">action_set_service_data</field>
             <field name="sequence">2</field>
             <field name="detail_type">action</field>
+            <field name="required_fields">service_id,sub_service_id</field>
             <field name="event_flow_id" ref="ike_event_flow_capturing_1"/>
         </record>
         <record id="ike_event_flow_capturing_1_detail_summary_bottom_1" model="ike.event.flow.detail">
@@ -100,6 +102,7 @@
             <field name="name">action_set_location_data</field>
             <field name="sequence">3</field>
             <field name="detail_type">action</field>
+            <field name="required_fields">location_latitude,location_longitude</field>
             <field name="event_flow_id" ref="ike_event_flow_capturing_3"/>
         </record>
         <record id="ike_event_flow_capturing_3_detail_summary_top_1" model="ike.event.flow.detail">
@@ -181,6 +184,7 @@
             <field name="name">action_set_destination_data</field>
             <field name="sequence">2</field>
             <field name="detail_type">action</field>
+            <field name="required_fields">destination_latitude,destination_longitude</field>
             <field name="service_specific">ike.service.input.vial.truck</field>
             <field name="event_flow_id" ref="ike_event_flow_capturing_5"/>
         </record>

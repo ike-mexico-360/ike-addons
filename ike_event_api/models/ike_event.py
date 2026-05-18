@@ -124,7 +124,7 @@ class IkeEvent(models.Model):
                 if rec.stage_ref == in_progress_stage_ref and rec.step_number == 1:
                     rec._ike_event_send_whatsapp_notification('in_progress')
                 elif rec.stage_ref == close_stage_ref:
-                    rec._ike_event_send_whatsapp_notification('close')
+                    rec._ike_event_send_whatsapp_notification('closed')
             except Exception as e:
                 _logger.error(f'Error al enviar notificación WhatsApp: {str(e)}', exc_info=True)
 
@@ -136,6 +136,8 @@ class IkeEvent(models.Model):
 
         encryption_util = self.env['custom.encryption.utility']
         phone_number = encryption_util.decrypt_aes256(self.user_id.phone or '')
+        if phone_number:
+            phone_number = phone_number.replace(' ', '')
 
         # Si cambia a en progreso, se envía template 72, con el enlace de seguimiento
         if stage_ref == 'in_progress':
@@ -152,7 +154,7 @@ class IkeEvent(models.Model):
                 )
 
         # Si cambia a concluido, se envían 70 y 73
-        elif stage_ref == 'close':
+        elif stage_ref == 'closed':
             wp_access_token = self.env['ike.event.supplier'].x_get_whatsapp_token()
             self.env['ike.event.supplier'].x_send_whatsapp_template(
                 access_token=wp_access_token,
@@ -170,9 +172,9 @@ class IkeEvent(models.Model):
                 parameter=survey_url
             )
 
-    def action_verify(self):
-        """ Overrride action_verify to add 1 event to the event_count_detail_ids """
-        res = super().action_verify()
+    def action_completed(self):
+        """ Overrride action_completed to add 1 event to the event_count_detail_ids """
+        res = super().action_completed()
         sub_service_id = self.sub_service_id
         matching_detail_ids = self.user_membership_id.event_count_detail_ids.filtered(lambda x: sub_service_id.id in x.sub_service_ids.ids)
         for detail in matching_detail_ids:

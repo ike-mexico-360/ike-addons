@@ -101,14 +101,15 @@ class PurchaseOrder(models.Model):
 
         self.x_require_change_reason = False
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        res = super().create(vals_list)
-        # Si es creado desde eventos
-        if self._context.get('ike_event_purchase'):
-            for purchase_id in res:
-                purchase_id._x_ike_check_automatic_rfq()
-        return res
+    # Queda en des uso, debido a que siempre se enviará la cotización automáticamente
+    # @api.model_create_multi
+    # def create(self, vals_list):
+    #     res = super().create(vals_list)
+    #     # Si es creado desde eventos
+    #     if self._context.get('ike_event_purchase'):
+    #         for purchase_id in res:
+    #             purchase_id._x_ike_check_automatic_rfq()
+    #     return res
 
     def write(self, vals):
         comments = vals.pop('x_change_comments', None)
@@ -335,11 +336,11 @@ class PurchaseOrder(models.Model):
     def action_rfq_send_one_step(self):
         """Sends the RFQ email by executing the mail composer wizard."""
         self.ensure_one()
-        if self.state in ['draft', 'sent'] and not self.env.user.has_group('custom_master_catalog.custom_group_event_coordinator'):
+        if self.state in ['draft']:
             action_data = self.action_rfq_send()
             ctx = action_data.get('context', {})
             ir_model_data = self.env['ir.model.data']
-            template_id = ir_model_data._xmlid_lookup('purchase.email_template_edi_purchase')[1]
+            template_id = ir_model_data._xmlid_lookup('ike_event_purchase.email_template_edi_purchase')[1]
             compose_wizard = self.env['mail.compose.message'].with_context(ctx).create({
                 'composition_mode': 'comment',
                 'model': 'purchase.order',
@@ -472,6 +473,7 @@ class PurchaseOrder(models.Model):
                 'subtotal': sum(rfq.order_line.mapped('price_subtotal')),
                 'concept_line': concept_line,
                 'event': rfq.x_event_id.id,
+                'event_name': rfq.x_event_id.name,
             })
 
         return grouped_concept_lines
@@ -490,6 +492,7 @@ class PurchaseOrder(models.Model):
                 subtotal = item['subtotal']
                 concept_line = item['concept_line']
                 event_id = item['event']
+                event_name = item['event_name']
                 product_id = concept_line.sub_service_ids[:1].id
 
                 if not product_id:
@@ -504,10 +507,11 @@ class PurchaseOrder(models.Model):
                     origin_names.append(rfq.name)
 
                 order_lines.append(Command.create({
-                    'name': "[%s] %s - %s" % (
+                    'name': "[%s] %s - %s - %s" % (
                         concept_line.sap_id_outgoing,
                         concept_line.product_description_po,
                         rfq.name,
+                        event_name,
                     ),
                     'product_id': product_id,
                     'product_qty': 1,
@@ -541,44 +545,44 @@ class PurchaseOrder(models.Model):
             }
         }
 
-    def _x_ike_check_automatic_rfq(self):
-        """ Si los costos de convenio coinciden con los costos de evento, es candidato a ser enviado """
-        self.ensure_one()
-        auto_send_rfq = self._x_ike_check_costs()
-        if not auto_send_rfq:
-            return
+    # def _x_ike_check_automatic_rfq(self):
+    #     """ Si los costos de convenio coinciden con los costos de evento, es candidato a ser enviado """
+    #     self.ensure_one()
+    #     auto_send_rfq = self._x_ike_check_costs()
+    #     if not auto_send_rfq:
+    #         return
 
-        ir_model_data = self.env['ir.model.data']
-        template_id = ir_model_data._xmlid_lookup('purchase.email_template_edi_purchase')[1]
+    #     ir_model_data = self.env['ir.model.data']
+    #     template_id = ir_model_data._xmlid_lookup('ike_event_purchase.email_template_edi_purchase')[1]
 
-        ctx = {
-            'default_model': 'purchase.order',
-            'default_res_ids': self.ids,
-            'default_template_id': template_id,
-            'default_composition_mode': 'comment',
-            'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
-            'email_notification_allow_footer': True,
-            'force_email': True,
-            'mark_rfq_as_sent': True,  # <- Esto activa el message_post de purchase.order
-        }
+    #     ctx = {
+    #         'default_model': 'purchase.order',
+    #         'default_res_ids': self.ids,
+    #         'default_template_id': template_id,
+    #         'default_composition_mode': 'comment',
+    #         'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
+    #         'email_notification_allow_footer': True,
+    #         'force_email': True,
+    #         'mark_rfq_as_sent': True,  # <- Esto activa el message_post de purchase.order
+    #     }
 
-        composer = self.env['mail.compose.message'].with_context(**ctx).create({
-            'model': 'purchase.order',
-            'res_ids': self.ids,
-            'template_id': template_id,
-            'composition_mode': 'comment',
-        })
+    #     composer = self.env['mail.compose.message'].with_context(**ctx).create({
+    #         'model': 'purchase.order',
+    #         'res_ids': self.ids,
+    #         'template_id': template_id,
+    #         'composition_mode': 'comment',
+    #     })
 
-        composer.with_context(**ctx)._action_send_mail()
+    #     composer.with_context(**ctx)._action_send_mail()
         # ToDo: Se dejará algún mensaje en el chatter?
 
-    def _x_ike_check_costs(self):
-        """ Validar linea por linea que coincidan los costos de convenio, si todos coincide, regresar True """
-        self.ensure_one()
-        return all(
-            line.x_supplier_product_id.base_unit_price == line.price_unit
-            for line in self.order_line
-        )
+    # def _x_ike_check_costs(self):
+    #     """ Validar linea por linea que coincidan los costos de convenio, si todos coincide, regresar True """
+    #     self.ensure_one()
+    #     return all(
+    #         line.x_supplier_product_id.base_unit_price == line.price_unit
+    #         for line in self.order_line
+    #     )
 
     def x_action_start_consolidation(self):
         """Verificar si el proveedor tiene la configuración para consolidar las órdenes por batch.
@@ -747,7 +751,7 @@ class PurchaseOrder(models.Model):
                                 "netPriceAmount": str(line.price_unit),
                                 "material": line.x_concept_line_id.sap_id_outgoing,  # Valor SAP egreso de Plan de cobertura
                                 "purchaseOrderQuantityUnit": "SER",
-                                "expediente": str(line.x_parent_event_id.id)
+                                "expediente": str(line.x_parent_event_id.name)
                             } for line in purchase.order_line
                         ]
                     }

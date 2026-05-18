@@ -53,7 +53,7 @@
                 <label for="x_ref_sap" invisible="state not in ('done', 'purchase')"/>
                 <div class="o_row" invisible="state not in ('done', 'purchase')">
                     <field name="x_ref_sap" readonly="1"/>
-                    <button name="x_syncronize_po_with_sap" type="object" string=" Synchronize" class="btn-link fa-refresh" invisible="x_ref_sap"/>
+                    <button name="x_syncronize_po_with_sap" type="object" string=" Synchronize" class="btn-link fa-refresh" invisible="x_ref_sap" groups="base.group_no_one"/>
                 </div>
                 <field name="x_sap_connection_error_message" widget="text" readonly="1" invisible="not x_sap_connection_error_message"/>
                 <field name="x_sap_reference_received" invisible="1"/>

@@ -35,13 +35,13 @@ class BaseModel(models.AbstractModel):
     @ormcache('self.env.uid', 'self.env.su')
     def _o2m_sub_track_get_fields(self):
         """ Return the set of sub-tracked fields names for the current model. """
-        model_fields = {
+        model_fields = [
             name
             for name, field in self._fields.items()
             if getattr(field, 'sub_tracking', None)
-        }
+        ]
 
-        return model_fields and set(self.fields_get(model_fields, attributes=()))
+        return model_fields and set(self.fields_get(model_fields, attributes=[]))
 
     def _o2m_sub_track_prepare(self, fields_iter):
         """ Prepare the sub-tracking of ``fields_iter`` for ``self``.
@@ -101,7 +101,7 @@ class BaseModel(models.AbstractModel):
         if not fields_iter:
             return {}
 
-        tracked_fields = self.fields_get(fields_iter, attributes=('string', 'type', 'selection', 'currency_field'))
+        tracked_fields = self.fields_get(fields_iter, attributes=['string', 'type', 'selection', 'currency_field'])
         tracking = dict()
         for record in self:
             try:

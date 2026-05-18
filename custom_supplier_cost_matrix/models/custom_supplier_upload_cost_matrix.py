@@ -56,6 +56,7 @@ class CustomSupplierUploadCostMatrix(models.Model):
         ], ondelete='restrict', tracking=True)
 
     active = fields.Boolean(default=True)
+    disabled = fields.Boolean(default=False)
     service_id = fields.Many2one(
         comodel_name='product.category', string='Service',
         domain=[('disabled', '=', False)], tracking=True)

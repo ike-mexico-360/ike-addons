@@ -60,8 +60,10 @@
                 <group>
                     <group string="User" class="o_group_border">
                         <field name="name" required="1" force_save="1" readonly="fields_readonly"/>
-                        <field name="phone" required="1" force_save="1" readonly="fields_readonly"/>
-                        <field name="phone_alternative" widget="phone" options="{'enable_sms': False, 'enable_call': False}"/>
+                        <field name="phone" required="1"
+                            force_save="1"
+                            readonly="fields_readonly"/>
+                        <field name="phone_alternative"/>
                     </group>
                     <group string="Affiliation" invisible="not fields_readonly">
                         <field name="check_is_fleet" readonly="1" force_save="1" />

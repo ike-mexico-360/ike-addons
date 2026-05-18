@@ -341,7 +341,8 @@ class IkeEventMembershipAuthorization(models.Model):
     # ACTIONS
     def action_authorized_membership(self):
         for rec in self:
-
+            if not rec.key_identification:
+                raise UserError(_("The field %s is required") % rec.label_identification_primary)
             rec.event_id.write({
                 'event_coverage_authorizer': True,
                 'required_commercial_authorizer': False
@@ -365,6 +366,8 @@ class IkeEventMembershipAuthorization(models.Model):
 
     def action_authorized(self):
         for rec in self:
+            if not rec.key_identification:
+                raise UserError(_("The field %s is required") % rec.label_identification_primary)
             rec.event_id.write({
                 'required_commercial_authorizer': False
             })

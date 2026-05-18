@@ -225,7 +225,8 @@ class IkeEventSupplier(models.Model):
     def _compute_event_supplier_summary_data(self):
         for rec in self:
             event_summary_supplier_data = ""
-            states = ('searching', 'assigned', 'in_progress', 'completed', 'verifying', 'close', 'cancel', 'cancel_subsequently')
+            # FixMe: wrong validation
+            states = ('searching', 'assigned', 'in_progress', 'completed', 'verifying', 'closed', 'cancel', 'cancel_subsequently')
             if rec.event_id.service_ref == 'vial' and rec.event_id.stage_ref in states:
                 # Modelo de detalles del vehículo al que se le dará el servicio
                 vial_res_model = rec.event_id.service_res_model
@@ -381,7 +382,10 @@ class IkeEventSupplier(models.Model):
             rec.on_route_to_user_start_date_widget = fields.Datetime.now()
             # Si el evento aún está en etapa asignado, se puede pasar a la etapa en ruta
             if rec.event_id.stage_ref == event_stage_assigned.ref and rec.event_id.step_number == 1:
-                rec.event_id.action_forward()
+                rec.event_id.with_context(dict(
+                    current_stage_id=rec.event_id.stage_id.id,
+                    current_step_number=rec.event_id.step_number,
+                )).action_forward()
                 rec.broadcastReload(event_reload=True)
 
     def action_arrive(self):

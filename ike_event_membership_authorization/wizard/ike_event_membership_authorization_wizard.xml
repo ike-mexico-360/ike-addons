@@ -16,8 +16,15 @@
                     <field name="account" invisible="0"/>
 
                     <group>
+                        <!-- <field name="label_identification_primary" nolabel="1"/>
+                        <field name="key_identification" readonly="0" required="1" widget="ike_regex_validator_field" mask_field="x_display_mask" nolabel="1"/> -->
+                        <div style="display: flex; align-items: center; gap: 4px;">
                         <field name="label_identification_primary" nolabel="1"/>
-                        <field name="key_identification" readonly="0" widget="ike_regex_validator_field" mask_field="x_display_mask" nolabel="1"/>
+                            <span class="text-danger" invisible="not account_id">*</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <field name="key_identification" readonly="0" required="1" widget="ike_regex_validator_field" mask_field="x_display_mask" nolabel="1"/>
+                        </div>
                         <field name="label_identification_second" invisible="not check_second_key" nolabel="1"/>
                         <field name="second_key_identification" readonly="0" widget="ike_regex_validator_field"  mask_field="x_second_display_mask" pattern_field="x_validation_pattern_second" invisible="not check_second_key" nolabel="1" />
                     </group>
@@ -56,49 +63,49 @@
 
                         <!-- Commercial -->
                         <field name="x_domain_authorization_commercial_affiliation" invisible="1"/>
-                        <field name="user_authorization_commercial_affiliation_id" 
+                        <field name="user_authorization_commercial_affiliation_id"
                             domain="x_domain_authorization_commercial_affiliation"
                             options="{'no_create': True, 'no_open': True, 'no_edit': True}"
                             context="{'edit': False}"
                             invisible="not check_commercial_authorization"
                             groups="!custom_master_catalog.custom_group_commercial_supervisor"
                             required="1"/>
-                        <field name="authorization_reasons_id" 
+                        <field name="authorization_reasons_id"
                             invisible="(not check_commercial_authorization and not check_membership_authorizer)"
                             options="{'no_create': True, 'no_open': True, 'no_edit': True}"
                             groups="custom_master_catalog.custom_group_commercial_supervisor"
                             required="1"/>
-                        <field name="comment_authorizer" 
+                        <field name="comment_authorizer"
                             groups="!base.group_system,custom_master_catalog.custom_group_commercial_supervisor"
                             invisible="not check_commercial_authorization"/>
 
                         <!-- Supervisor -->
                         <field name="x_domain_authorization_supervisor_affiliation" invisible="1"/>
-                        <field name="authorizer_id" 
+                        <field name="authorizer_id"
                             domain="x_domain_authorization_supervisor_affiliation"
                             options="{'no_create': True, 'no_open': True, 'no_edit': True}"
                             context="{'edit': False}"
                             invisible="check_commercial_authorization "
                             groups="!custom_master_catalog.custom_group_event_cabin_supervisor,!custom_master_catalog.custom_group_commercial_supervisor"
                             required="1"/>
-                        <field name="authorization_reasons_id" 
+                        <field name="authorization_reasons_id"
                             invisible="(not check_membership_authorizer and not check_commercial_authorization) or (check_membership_authorizer and check_commercial_authorization) or (not check_membership_authorizer and check_commercial_authorization)"
                             options="{'no_create': True, 'no_open': True, 'no_edit': True}"
                             groups="custom_master_catalog.custom_group_event_cabin_supervisor"
                             required="1"/>
-                        <field name="comment_authorizer" 
+                        <field name="comment_authorizer"
                             groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,!custom_master_catalog.custom_group_commercial_supervisor"
                             invisible="check_commercial_authorization"/>
                     </group>
                 </group>
                 <group>
                     <group>
-                        <field name="image" 
+                        <field name="image"
                             widget="image" options="{'size': [200, 300], 'zoom': true}"
                             groups="!custom_master_catalog.custom_group_commercial_supervisor"
                             invisible="check_commercial_authorization"
                             required="not check_commercial_authorization"/>
-                        <field name="image" 
+                        <field name="image"
                             widget="image" options="{'size': [200, 300], 'zoom': true}"
                             groups="!base.group_system,!custom_master_catalog.custom_group_event_cabin_supervisor,!custom_master_catalog.custom_group_event_coordinator"
                             required="check_commercial_authorization"/>
@@ -106,89 +113,89 @@
                 </group>
                 <footer>
                     <!-- Authorizer commercial -->
-                     <button string="Authorize" 
-                        name="action_authorized" 
-                        type="object" 
+                     <button string="Authorize"
+                        name="action_authorized"
+                        type="object"
                         class="btn btn-success"
                         groups="custom_master_catalog.custom_group_commercial_supervisor"
                         invisible="check_membership_authorizer"/>
-                     
-                    <button string="Authorize" 
-                        name="action_authorized_membership" 
-                        type="object" 
+
+                    <button string="Authorize"
+                        name="action_authorized_membership"
+                        type="object"
                         class="btn btn-success"
                         invisible="(not check_membership_authorizer and not check_commercial_authorization) or (not check_membership_authorizer and check_commercial_authorization)"
                         groups="custom_master_catalog.custom_group_commercial_supervisor"/>
 
-                    <button string="Reject" 
-                        name="action_rejected" 
-                        type="object" 
+                    <button string="Reject"
+                        name="action_rejected"
+                        type="object"
                         class="btn btn-danger"
                         groups="custom_master_catalog.custom_group_commercial_supervisor"
                         invisible=""/>
                     <!-- Authorizer cabine -->
-                    <button string="Request authorization" 
+                    <button string="Request authorization"
                         name="send_mail_commercial_authorizator"
-                        invisible="not check_commercial_authorization" 
+                        invisible="not check_commercial_authorization"
                         type="object"
-                        groups="!custom_master_catalog.custom_group_commercial_supervisor" 
+                        groups="!custom_master_catalog.custom_group_commercial_supervisor"
                         class="btn btn-success"/>
 
-                    <button string="Request authorization" 
+                    <button string="Request authorization"
                         name="action_send_authorization_email"
-                        invisible="check_commercial_authorization or (check_supervisor_authorization and check_commercial_authorization)" 
-                        type="object" 
+                        invisible="check_commercial_authorization or (check_supervisor_authorization and check_commercial_authorization)"
+                        type="object"
                         groups="!custom_master_catalog.custom_group_event_cabin_supervisor,!custom_master_catalog.custom_group_commercial_supervisor"
                         class="btn btn-success"
                         context="{'Autorization_supervisor_cabine': True}"/>
-                    
-                    <button string="Authorize" 
-                        name="action_authorized" 
-                        type="object" 
+
+                    <button string="Authorize"
+                        name="action_authorized"
+                        type="object"
                         class="btn btn-success"
                         groups="custom_master_catalog.custom_group_event_cabin_supervisor"
                         invisible="check_commercial_authorization or check_membership_authorizer"/>
-                     
-                    <button string="Authorize" 
-                        name="action_authorized_membership" 
-                        type="object" 
+
+                    <button string="Authorize"
+                        name="action_authorized_membership"
+                        type="object"
                         class="btn btn-success"
                         invisible="not check_membership_authorizer or check_commercial_authorization"
                         groups="custom_master_catalog.custom_group_event_cabin_supervisor"/>
 
-                    <button string="Reject" 
-                        name="action_rejected" 
-                        type="object" 
+                    <button string="Reject"
+                        name="action_rejected"
+                        type="object"
                         class="btn btn-danger"
                         groups="custom_master_catalog.custom_group_event_cabin_supervisor"
                         invisible="check_commercial_authorization"/>
-                    
+
                     <!-- Administrator  -->
-                    <button string="Authorized" 
-                        name="action_authorized" 
-                        type="object" 
+                    <button string="Authorized"
+                        name="action_authorized"
+                        type="object"
                         class="btn btn-success"
                         groups="base.group_system,!custom_master_catalog.custom_group_event_cabin_supervisor"
                         invisible="check_commercial_authorization or check_membership_authorizer or check_supervisor_authorization"/>
-                            
-                    <button string="Authorized" 
-                        name="action_authorized_membership" 
-                        type="object" 
+
+                    <button string="Authorized"
+                        name="action_authorized_membership"
+                        type="object"
                         class="btn btn-success"
                         invisible="not check_membership_authorizer or check_commercial_authorization or check_supervisor_authorization"
                         groups="base.group_system,!custom_master_catalog.custom_group_event_cabin_supervisor"/>
 
-                    <button string="Rejected" 
-                        name="action_rejected" 
-                        type="object" 
+                    <button string="Rejected"
+                        name="action_rejected"
+                        type="object"
                         class="btn btn-danger"
                         groups="base.group_system,!custom_master_catalog.custom_group_event_cabin_supervisor"
                         invisible="check_commercial_authorization or check_supervisor_authorization"/>
-                    
 
 
-                     <button string="Cancel" 
-                            class="btn-secondary" 
+
+                     <button string="Cancel"
+                            class="btn-secondary"
                             special="cancel"/>
                 </footer>
             </form>

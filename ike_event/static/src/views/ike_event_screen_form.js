@@ -162,7 +162,7 @@ export class IkeEventScreenFormController extends IkeEventFormController {
                 }
 
                 // EVENT SUPPLIER VIEW
-                if (['assigned', 'in_progress', 'completed', 'close'].includes(model.root.data.stage_ref)) {
+                if (['assigned', 'in_progress', 'completed', 'closed'].includes(model.root.data.stage_ref)) {
                     const service_supplier_ids = model.root.data.service_supplier_ids.records;
                     const selected_service_supplier_id = service_supplier_ids.find(supplier_id => supplier_id.data.state == 'accepted');
                     if (selected_service_supplier_id) {
@@ -398,7 +398,7 @@ export class IkeEventScreenFormController extends IkeEventFormController {
     //             ia_suggestion_done: true,
     //         });
     //     } catch (error) {
-    //         console.error('Error guardando datos de sugerencia de vehículos', error);
+    //         console.error('Error saving vehicle suggested data', error);
     //     }
     // }
 };

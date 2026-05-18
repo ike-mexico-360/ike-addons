@@ -1,8 +1,16 @@
-from odoo import models, _
+from odoo import models, fields, api, _
 
 
 class ShHelpdeskTicket(models.Model):
     _inherit = 'sh.helpdesk.ticket'
+
+    in_progress_stage_boolean = fields.Boolean(compute='_compute_in_progress_stage_boolean')
+
+    @api.depends('stage_id')
+    def _compute_in_progress_stage_boolean(self):
+        in_progress_ref = self.env.ref('sh_all_in_one_helpdesk.in_progress_stage').id
+        for rec in self:
+            rec.in_progress_stage_boolean = rec.stage_id.id == in_progress_ref
 
     def action_reply(self):
         """ Override of `sh.helpdesk.ticket.action_reply` to send new values to RFQ. """

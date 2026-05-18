@@ -216,7 +216,7 @@ export class IkeTimerWidget extends Component {
     async _executeAction(record, method) {
         const resModel = record.resModel;
         const context = {
-            ...record.context,
+            // ...record.context,
             not_notify_next: this.state.paused,
         };
         try {

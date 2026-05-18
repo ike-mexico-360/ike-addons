@@ -52,18 +52,50 @@ export class IkeEventServiceAssistviewController extends FormController {
             if (message?.answers) vals.answers = JSON.parse(JSON.stringify(message.answers));
             if (message?.plate_image) vals.plate_image = message.plate_image;
 
-            // Solo agregar vehicle_images si hay imágenes
             if (message?.vehicle_images && Object.keys(message.vehicle_images).length) {
-                vals.vehicle_images = Object.entries(message.vehicle_images).map(([name, encoded]) => [
-                    0, 0, { image_name: name, image: encoded }
-                ]);
+                // Leer imágenes actuales del registro
+                const [record] = await this.env.services.orm.read(
+                    "ike.event.service.assistview",
+                    [this.model.root.resId],
+                    ["vehicle_images"]
+                );
+
+                const existingImageIds = record.vehicle_images || [];
+
+                let existingNames = new Set();
+                if (existingImageIds.length) {
+                    const existingLines = await this.env.services.orm.read(
+                        "ike.event.service.assistview.image",
+                        existingImageIds,
+                        ["image_name"]
+                    );
+                    existingNames = new Set(
+                        existingLines
+                            .map((line) => line.image_name)
+                            .filter(Boolean)
+                    );
+                }
+
+                const newVehicleImages = Object.entries(message.vehicle_images)
+                    .filter(([name]) => !existingNames.has(name))
+                    .map(([name, encoded]) => [
+                        0, 0, { image_name: name, image: encoded }
+                    ]);
+
+                if (newVehicleImages.length) {
+                    vals.vehicle_images = newVehicleImages;
+                }
             }
 
-            await this.env.services.orm.write('ike.event.service.assistview', [this.model.root.resId], vals);
+            await this.env.services.orm.write(
+                "ike.event.service.assistview",
+                [this.model.root.resId],
+                vals
+            );
             await this.model.root.load();
             console.log("Campo received_assistview marcado en DB");
         }
-    }
+    };
 }
 
 export const ikeEventServiceAssistviewFormView = {

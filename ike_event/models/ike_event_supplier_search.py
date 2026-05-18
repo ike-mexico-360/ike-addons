@@ -365,7 +365,7 @@ class IkeEvent_Search(models.Model):
             else:
                 # Maneuvers
                 product_tag_names = self.service_product_ids.mapped('product_id.product_tag_ids.name')
-                if 'maniobras' in product_tag_names:
+                if 'maniobras' in product_tag_names:  # cSpell: ignore maniobras
                     vehicles_domain.append(('x_maneuvers', '=', True))
 
             # * LOGGER 4: Vehicles Domain
@@ -1025,7 +1025,7 @@ class IkeEvent_Search(models.Model):
         self.ensure_one()
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Add Supplier',
+            'name': _('Add Supplier'),
             'res_model': 'ike.event.manual.supplier.wizard',
             'view_mode': 'form',
             'target': 'new',

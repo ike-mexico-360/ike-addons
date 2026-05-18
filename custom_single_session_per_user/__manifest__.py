@@ -9,10 +9,11 @@
         logs in from a new device or browser using Odoo's native session management.
     """,
     'author': 'lumpuy@hotmail.com',
-    'depends': ['base', 'web'],
+    'depends': ['base', 'web', 'custom_master_catalog',],
     'data': [
         'security/ir_module_security.xml',
         'security/ir.model.access.csv',
+        'views/res_groups_views.xml',
     ],
     'post_init_hook': 'post_init_hook',
     'installable': True,

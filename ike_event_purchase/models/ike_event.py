@@ -25,7 +25,10 @@ class IkeEvent(models.Model):
             'name': self.name,
             'view_mode': 'list,form',
             'res_model': 'purchase.order',
-            'views': [(self.env.ref('purchase.purchase_order_kpis_tree').id, 'list'), (self.env.ref('purchase.purchase_order_form').id, 'form')],
+            'views': [
+                (self.env.ref('purchase.purchase_order_kpis_tree').id, 'list'),
+                (self.env.ref('purchase.purchase_order_form').id, 'form')
+            ],
             'type': 'ir.actions.act_window',
             'domain': [('x_event_id', '=', self.id)],
             'target': 'current',
@@ -71,19 +74,15 @@ class IkeEvent(models.Model):
         ).create(purchase_vals_list)
 
     def action_confirm_costs(self):
-        self.ensure_one()
-        # Cuando el evento esté en concluido
-        if self.stage_ref == 'verifying' and not self.x_purchase_ids:
-            purchase_ids = self._x_create_grouped_purchase_orders()
-            for purchase in purchase_ids:
-                purchase.action_rfq_send_one_step()
+        """ Confirm Costs only close the event. For now. """
         self.sudo().action_close()
 
     def action_create_purchase_orders(self):
-        res = super().action_create_purchase_orders()
-        if not self.x_purchase_ids:
-            self._x_create_grouped_purchase_orders()
-        return res
+        for rec in self:
+            if not rec.x_purchase_ids:
+                purchase_ids = rec._x_create_grouped_purchase_orders()
+                for purchase in purchase_ids:
+                    purchase.action_rfq_send_one_step()
 
     def x_get_values_for_purchase_line(self, supplier_product_id):
         return {

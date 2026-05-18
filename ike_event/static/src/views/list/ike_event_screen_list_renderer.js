@@ -10,7 +10,8 @@ const STAGE_LIST = [
     'assigned',
     'in_progress',
     'completed',
-    'close',
+    'verifying',
+    'closed',
     'cancel',
 ]
 

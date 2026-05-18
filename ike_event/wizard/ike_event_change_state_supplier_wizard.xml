@@ -10,21 +10,36 @@
                         <group>
                             <field name="event_id" options="{'no_open': True}"/>
                             <field name="supplier_id" readonly="1" options="{'no_open': True}"/>
+                        </group>
+                        <group>
                             <field name="stage_id" options="{'no_open': True}"/>
+                            <field name="supplier_assignation_date"/>
                         </group>
                     </group>
                     <group>
                         <field name="stage_selected"
-                            widget="statusbar"
+                            widget="statusbar" force_save="1"
                             options="{'clickable': 1}"
                             nolabel="1"/>
+                    </group>
+                    <group col="12" class="m-2">
+                        <group colspan="4">
+                            <field name="supplier_on_route_to_user_end_date" nolabel="0" />
+                        </group>
+                        <group colspan="4">
+                            <field name="supplier_contacted_date" nolabel="0"/>
+                        </group>
+                        <group colspan="4">
+                            <field name="supplier_finalized_date" nolabel="0"/>
+                        </group>
+
                     </group>
 
                     <group name="detail_status_arrived" invisible="stage_selected != 'arrived'" col="12">
                         <group name="date_arrived" string="Datetime status" colspan="4">
                             <field name="first_on_route_to_user_end_date"/>
                             <field name="on_route_to_user_end_date" widget="datetime"
-                                required="stage_selected == 'arrived'"
+                                required="stage_selected == 'arrived'" force_save="1"
                                 options="{'rounding': 1}"/>
                         </group>
                         <group name="user_arrived" string="Responsible for the status change" colspan="4">
@@ -35,7 +50,7 @@
                         </group>
                         <group name="comment_arrived" string="Comment change status" colspan="4">
                             <field name="first_on_route_to_end_comment"/>
-                            <field name="on_route_to_end_comment"
+                            <field name="on_route_to_end_comment" force_save="1"
                                 required="stage_selected == 'arrived'"/>
                         </group>
                     </group>
@@ -45,7 +60,7 @@
                         <group name="date_contacted" string="Datetime status" colspan="4">
                             <field name="first_contacted_date"/>
                             <field name="contacted_date" widget="datetime"
-                                readonly="not is_contacted_editable"
+                                readonly="not is_contacted_editable" force_save="1"
                                 required="stage_selected == 'contacted'"
                                 options="{'rounding': 1}"/>
                         </group>
@@ -58,7 +73,7 @@
                         <group name="comment_contacted" string="Comment change status" colspan="4">
                             <field name="first_contacted_comment"/>
                             <field name="contacted_comment"
-                                readonly="not is_contacted_editable"
+                                readonly="not is_contacted_editable" force_save="1"
                                 required="stage_selected == 'contacted'"/>
                         </group>
                     </group>
@@ -68,7 +83,7 @@
                         <group name="date_finalized" string="Datetime status" colspan="4">
                             <field name="first_finalized_date"/>
                             <field name="finalized_date" widget="datetime"
-                                readonly="not is_finalized_editable"
+                                readonly="not is_finalized_editable" force_save="1"
                                 required="stage_selected == 'finalized'"
                                 options="{'rounding': 1}"/>
                         </group>
@@ -80,20 +95,20 @@
                         </group>
                         <group name="comment_finalized" string="Comment change status" colspan="4">
                             <field name="first_finalized_comment"/>
-                            <field name="finalized_comment"
+                            <field name="finalized_comment" force_save="1"
                                 readonly="not is_finalized_editable"
                                 required="stage_selected == 'finalized'"/>
                         </group>
                     </group>
                     <group col="12" invisible="1">
                         <group colspan="4">
-                            <field name="first_state_date"/>
+                            <field name="first_state_date" force_save="1"/>
                         </group>
                         <group colspan="4">
-                            <field name="first_state_user_id" options="{'no_open': True}"/>
+                            <field name="first_state_user_id" options="{'no_open': True}" force_save="1"/>
                         </group>
                         <group colspan="4">
-                            <field name="first_comment" colspan="4"/>
+                            <field name="first_comment" colspan="4" force_save="1"/>
                         </group>
                     </group>
                 </sheet>
@@ -102,7 +117,7 @@
                         string="Confirm"
                         type="object"
                         class="btn-primary"/>
-                    <button string="Cancel"
+                    <button string="Close"
                         class="btn-secondary"
                         special="cancel"/>
                 </footer>

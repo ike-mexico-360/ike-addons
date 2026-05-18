@@ -8,6 +8,7 @@
                 <field name="sequence" widget="handle"/>
                 <field name="name" />
                 <field name="show_supplier" />
+                <field name="from_supplier" />
             </list>
         </field>
     </record>
@@ -30,6 +31,7 @@
                         </header>
                         
                         <field name="show_supplier" readonly="disabled"/>
+                        <field name="from_supplier" readonly="disabled"/>
                     </group>
                 </sheet>
                 <chatter />

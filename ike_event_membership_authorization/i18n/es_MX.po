@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-14 18:50+0000\n"
-"PO-Revision-Date: 2026-04-14 18:50+0000\n"
+"POT-Creation-Date: 2026-05-16 16:17+0000\n"
+"PO-Revision-Date: 2026-05-16 16:17+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -844,6 +844,12 @@ msgid "Image removed"
 msgstr "Imagen borrada"
 
 #. module: ike_event_membership_authorization
+#. odoo-python
+#: code:addons/ike_event_membership_authorization/wizard/ike_event_add_affiliation_user_wizard.py:0
+msgid "Invalid phone"
+msgstr "Teléfono inválido"
+
+#. module: ike_event_membership_authorization
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__message_is_follower
 msgid "Is Follower"
 msgstr "Es un seguidor"
@@ -1039,6 +1045,18 @@ msgid "Phone alternative"
 msgstr "Télefono alternativo"
 
 #. module: ike_event_membership_authorization
+#. odoo-python
+#: code:addons/ike_event_membership_authorization/wizard/ike_event_add_affiliation_user_wizard.py:0
+msgid "Phone fields must contain exactly 10 digits."
+msgstr "Los campos telefónicos deben contener exactamente 10 dígitos."
+
+#. module: ike_event_membership_authorization
+#. odoo-python
+#: code:addons/ike_event_membership_authorization/wizard/ike_event_add_affiliation_user_wizard.py:0
+msgid "Phone fields must contain only numbers."
+msgstr "Los campos telefónicos solo deben contener números."
+
+#. module: ike_event_membership_authorization
 #: model_terms:ir.ui.view,arch_db:ike_event_membership_authorization.ike_event_membership_authorization_view_form
 msgid "Popup"
 msgstr ""
@@ -1174,6 +1192,12 @@ msgstr ""
 #: model:ir.model.fields,field_description:ike_event_membership_authorization.field_ike_event_membership_authorization__authorizer_id
 msgid "Supervisor authorizer"
 msgstr "Supervisor atorizador"
+
+#. module: ike_event_membership_authorization
+#. odoo-python
+#: code:addons/ike_event_membership_authorization/models/ike_event_membership_authorization.py:0
+msgid "The field %s is required"
+msgstr "El campo %s es requerido"
 
 #. module: ike_event_membership_authorization
 #. odoo-python

@@ -11,7 +11,7 @@
                     string="Confirm Costs"
                     type="object"
                     class="btn-primary"
-                    invisible="stage_ref != 'verifying' or x_purchase_ids_count &gt; 0"
+                    invisible="stage_ref not in ['verifying', 'cancel_verifying'] or x_purchase_ids_count &gt; 0"
                 />
                 <field name="x_purchase_ids_count" invisible="1"/>
             </xpath>

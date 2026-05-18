@@ -26,7 +26,7 @@ class CustomerPortal(PurchasePortal):
         result = request.env.cr.fetchone()
         if 'rfq_count' in counters:
             values['rfq_count'] = PurchaseOrder.search_count([
-                ('partner_id', '=', result[0]),
+                ('partner_id', '=', result[0] if result else 0),
                 ('x_dispute_state', 'not in', ['open', 'submitted']),
                 ('state', 'in', ['sent'])
             ]) or 1 if PurchaseOrder.has_access('read') else 0

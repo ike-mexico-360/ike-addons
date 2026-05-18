@@ -18,7 +18,7 @@ class IkeEventAssignmentWizard(models.TransientModel):
         string='Events not assigned',
         domain=[
             ('assigned_user_id', '=', False),
-            ('stage_ref', '=', 'verifying')
+            ('stage_ref', 'in', ['verifying', 'cancel_verifying']),
         ]
     )
     event_assign_ids = fields.Many2many(
@@ -50,7 +50,7 @@ class IkeEventAssignmentWizard(models.TransientModel):
         for rec in self:
             if rec.assigned_user_ids:
                 rec.event_assign_ids = self.env['ike.event'].search([
-                    ('stage_ref', '=', 'verifying'),
+                    ('stage_ref', 'in', ['verifying', 'cancel_verifying']),
                     ('assigned_user_id', 'in', rec.assigned_user_ids.ids)
                 ])
             else:

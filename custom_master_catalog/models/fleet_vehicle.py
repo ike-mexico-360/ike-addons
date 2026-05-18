@@ -54,11 +54,11 @@ class FleetVehicle(models.Model):
     x_economic_number = fields.Char(
         string='Economic Number', tracking=True, help="Unit identifier in the supplier's system (internal value)")
 
-    @api.depends('driver_id', 'x_partner_id')
+    @api.depends('driver_id', 'x_partner_id', 'x_center_id')
     def _compute_x_driver_domain(self):
         for vehicle in self:
             domain = []
-            if vehicle.x_partner_id:
+            if vehicle.x_partner_id and vehicle.x_center_id:
                 vehicle_id = vehicle.id if isinstance(vehicle.id, int) else None
 
                 self.env.cr.execute("""
