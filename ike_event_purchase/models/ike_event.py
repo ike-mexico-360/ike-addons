@@ -73,7 +73,7 @@ class IkeEvent(models.Model):
     def action_confirm_costs(self):
         self.ensure_one()
         # Cuando el evento esté en concluido
-        if self.stage_ref == 'verifying' and  not self.x_purchase_ids:
+        if self.stage_ref == 'verifying' and not self.x_purchase_ids:
             purchase_ids = self._x_create_grouped_purchase_orders()
             for purchase in purchase_ids:
                 purchase.action_rfq_send_one_step()
@@ -109,6 +109,7 @@ class IkeEvent(models.Model):
             "company_id": self.env.company.id,
             "x_event_id": self.id,  # Link to event_id
             "x_sub_service_id": selected_supplier_id.event_id.sub_service_id.id,
+            "x_nu_user_id": selected_supplier_id.event_id.user_id.id,
             "x_membership_plan_id": selected_supplier_id.event_id.user_membership_id.membership_plan_id.id,
             "date_order": fields.Datetime.now() + timedelta(hours=max_hours_to_confirm),
         }

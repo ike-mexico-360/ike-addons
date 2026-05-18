@@ -33,6 +33,8 @@ class PurchaseOrderLine(models.Model):
     x_product_qty_event = fields.Integer('Event Quantity', related='x_supplier_product_id.quantity')
     x_price_subtotal_event = fields.Monetary(compute='_x_compute_amount_event', string='Subtotal event', aggregator=None, store=True)
 
+    x_parent_event_id = fields.Many2one('ike.event', 'Event', help="Techinical: Refer to the event of the purchase order")
+
     @api.depends('x_product_qty_dispute', 'x_price_unit_dispute',)
     def _x_compute_amount_dispute(self):
         for line in self:

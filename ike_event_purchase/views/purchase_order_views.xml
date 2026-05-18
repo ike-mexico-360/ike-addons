@@ -50,8 +50,8 @@
                 <field name="x_has_dispute_changes" column_invisible="1" readonly="1"/>
             </xpath>
             <xpath expr="//field[@name='fiscal_position_id']" position="after">
-                <label for="x_ref_sap" invisible="not x_event_id or state not in ('done', 'purchase')"/>
-                <div class="o_row" invisible="not x_event_id or state not in ('done', 'purchase')">
+                <label for="x_ref_sap" invisible="state not in ('done', 'purchase')"/>
+                <div class="o_row" invisible="state not in ('done', 'purchase')">
                     <field name="x_ref_sap" readonly="1"/>
                     <button name="x_syncronize_po_with_sap" type="object" string=" Synchronize" class="btn-link fa-refresh" invisible="x_ref_sap"/>
                 </div>

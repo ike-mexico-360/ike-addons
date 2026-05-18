@@ -1,4 +1,4 @@
-import re
+# import re
 import logging
 import requests
 # from urllib.parse import urlparse, parse_qs
@@ -21,7 +21,8 @@ class PurchaseOrder(models.Model):
     ])
     x_event_id = fields.Many2one('ike.event', string='Event', ondelete='set null')
     x_sub_service_id = fields.Many2one('product.product', string='Subservice')
-    x_membership_plan_id = fields.Many2one('custom.membership.plan', string='Membership Plan')
+    x_nu_user_id = fields.Many2one('custom.nus', string='NU User', help="Technical: NU linked to the event of the purchase order")
+    x_membership_plan_id = fields.Many2one('custom.membership.plan', string='Membership Plan', help="Technical: Membership Plan linked to the event of the purchase order")
     x_dispute_state = fields.Selection([
         ('none', 'No Dispute'),
         ('open', 'Open'),
@@ -431,7 +432,7 @@ class PurchaseOrder(models.Model):
         grouped_ids = defaultdict(list)
 
         for rfq in rfqs:
-            grouped_ids[(rfq.partner_id.id, rfq.x_sub_service_id.id)].append(rfq.id)
+            grouped_ids[(rfq.partner_id.id, rfq.x_nu_user_id.id, rfq.x_sub_service_id.id)].append(rfq.id)
 
         return {
             key: self.env['purchase.order'].browse(rfq_ids)
@@ -470,6 +471,7 @@ class PurchaseOrder(models.Model):
                 'rfq': rfq,
                 'subtotal': sum(rfq.order_line.mapped('price_subtotal')),
                 'concept_line': concept_line,
+                'event': rfq.x_event_id.id,
             })
 
         return grouped_concept_lines
@@ -487,6 +489,7 @@ class PurchaseOrder(models.Model):
                 rfq = item['rfq']
                 subtotal = item['subtotal']
                 concept_line = item['concept_line']
+                event_id = item['event']
                 product_id = concept_line.sub_service_ids[:1].id
 
                 if not product_id:
@@ -510,6 +513,7 @@ class PurchaseOrder(models.Model):
                     'product_qty': 1,
                     'price_unit': subtotal,
                     'x_concept_line_id': concept_line.id,
+                    'x_parent_event_id': event_id,
                 }))
 
                 original_pos |= rfq
@@ -520,7 +524,6 @@ class PurchaseOrder(models.Model):
                 'partner_id': first_order.partner_id.id,
                 'origin': ', '.join(origin_names),
                 'order_line': order_lines,
-                'x_event_id': first_order.x_event_id.id,
                 'x_sub_service_id': first_order.x_sub_service_id.id,
                 'x_membership_plan_id': first_order.x_membership_plan_id.id,
             })
@@ -744,7 +747,7 @@ class PurchaseOrder(models.Model):
                                 "netPriceAmount": str(line.price_unit),
                                 "material": line.x_concept_line_id.sap_id_outgoing,  # Valor SAP egreso de Plan de cobertura
                                 "purchaseOrderQuantityUnit": "SER",
-                                "expediente": str(purchase.x_event_id.id)
+                                "expediente": str(line.x_parent_event_id.id)
                             } for line in purchase.order_line
                         ]
                     }
