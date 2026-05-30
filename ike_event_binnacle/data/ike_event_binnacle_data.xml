@@ -1058,12 +1058,15 @@
                 <!-- Filtrar proveedores válidos -->
                 <t t-set="suppliers"
                 t-value="object.service_supplier_ids.filtered(
-                    lambda l: l.search_number == last_search
-                    and not l.display_type
-                    and (
-                        not ctx.get('search_priority')
-                        or str(l.priority) == str(ctx.get('search_priority'))
-                    )
+                    lambda l:
+                        l.search_number == last_search
+                        and l.state == 'available'
+                        and not l.display_type
+                        and l.assignation_type == object.supplier_search_type
+                        and (
+                            not ctx.get('search_priority')
+                            or str(l.priority) == str(ctx.get('search_priority'))
+                        )
                 ).sorted(
                     key=lambda l: l.sequence
                 )"/>

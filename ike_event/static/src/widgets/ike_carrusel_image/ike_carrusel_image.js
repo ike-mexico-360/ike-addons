@@ -44,7 +44,7 @@ export class IkeCarouselImage extends Component {
 
     _loadImages(props) {
         const list = props.record?.data?.[props.name];
-        console.log("LIST:", list);
+        // console.log("LIST:", list);
         const records = list?.records || [];
 
         //filtrar nu_evidence

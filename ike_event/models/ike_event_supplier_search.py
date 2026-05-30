@@ -683,8 +683,8 @@ class IkeEvent_Search(models.Model):
             ) AS m ON TRUE
             WHERE p.id = ANY(%s)
         """
-        query_result = query % params
-        print(query_result)
+        # query_result = query % params
+        # print(query_result)
 
         self.env.cr.execute(query, params)
         return self.env.cr.dictfetchall()
@@ -1024,8 +1024,8 @@ class IkeEvent_Search(models.Model):
     def action_open_add_manual_supplier_wizard(self):
         self.ensure_one()
         return {
-            'type': 'ir.actions.act_window',
             'name': _('Add Supplier'),
+            'type': 'ir.actions.act_window',
             'res_model': 'ike.event.manual.supplier.wizard',
             'view_mode': 'form',
             'target': 'new',

@@ -2,7 +2,7 @@
 
 import { rpc } from "@web/core/network/rpc";
 import { registry } from "@web/core/registry";
-import { useBus } from "@web/core/utils/hooks";
+import { useBus, useService } from "@web/core/utils/hooks";
 import { ListController } from '@web/views/list/list_controller';
 import { listView } from "@web/views/list/list_view";
 
@@ -13,7 +13,10 @@ export class IkeEventListController extends ListController {
     setup() {
         // console.log("IkeEventList", this);
         super.setup();
-        this.notification = this.env.services.notification;
+        this.notification = useService("notification");
+        if (crypto) {
+            this.props.context['ike_uuid'] = crypto.randomUUID();
+        }
 
         useBus(this.env.bus, "IKE_EVENT_SYSTRAY:EVENT_LIST_RELOAD", (event) => {
             this.broadcastEventListReload(event.detail.payload)
@@ -25,6 +28,9 @@ export class IkeEventListController extends ListController {
             return;
         }
         for (const item of payload.data) {
+            if (item['ike_uuid'] && item['ike_uuid'] == this.props.context['ike_uuid']) {
+                continue;
+            }
             const record = this.model.root.records.find(rec => rec.resId == item.id);
             if (record && record.data.stage_ref != item.stage_red) {
                 record.load();
@@ -33,7 +39,7 @@ export class IkeEventListController extends ListController {
     }
     async _executeAction(record, method, params = null) {
         const resModel = record.resModel;
-        const context = record.context;
+        const context = {};
         const args = [[record.resId]];
         if (params) {
             args.push(params);

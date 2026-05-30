@@ -456,6 +456,50 @@ class IkeEventSupplier(models.Model):
                 ])
         return result
 
+    # === ACTIONS UPDATE RELOJES === #
+    class IkeEventChangeStateSupplierWizard(models.TransientModel):
+        _inherit = 'ike.event.change.state.supplier.wizard'
+
+        def _action_arrived(self, supplier, vals, datetime, user, comment):
+            result = super()._action_arrived(supplier, vals, datetime, user, comment)
+            already_arrived = bool(supplier.first_on_route_to_user_end_date or supplier.on_route_to_user_end_date)
+            if already_arrived:
+                supplier.event_id.with_context(
+                    supplier=supplier.name,
+                    plate=supplier.truck_id.license_plate,
+                    first_date=supplier.first_contacted_date,
+                    current_date=datetime,
+                    comment=comment,
+                )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_4"])
+            return result
+
+        def _action_contacted(self, supplier, vals, datetime, user, comment):
+            result = super()._action_contacted(supplier, vals, datetime, user, comment)
+            already_contacted = bool(supplier.first_contacted_date or supplier.contacted_date)
+
+            if already_contacted:
+                supplier.event_id.with_context(
+                    supplier=supplier.name,
+                    plate=supplier.truck_id.license_plate,
+                    first_date=supplier.first_contacted_date,
+                    current_date=datetime,
+                    comment=comment,
+                )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_33"])
+            return result
+
+        def _action_finalized(self, supplier, vals, datetime, user, comment):
+            result = super()._action_finalized(supplier, vals, datetime, user, comment)
+            already_finalized = bool(supplier.first_finalized_date or supplier.finalized_date)
+            if already_finalized:
+                supplier.event_id.with_context(
+                    supplier=supplier.name,
+                    plate=supplier.truck_id.license_plate,
+                    first_date=supplier.first_contacted_date,
+                    current_date=datetime,
+                    comment=comment,
+                )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_22"])
+            return result
+
     # === SEARCH ACTIONS === #
     def action_notify(self) -> list[int]:
         update_ids = super().action_notify()

@@ -9,6 +9,26 @@ class helpdeskPO(models.Model):
 
     sh_purchase_ticket_ids = fields.Many2many("sh.helpdesk.ticket",
                                               string="Tickets")
+    x_ticket_stage_readonly = fields.Boolean(
+        string="Ticket Readonly",
+        compute="_compute_ticket_stage_readonly",
+        store=False
+    )
+
+    @api.depends('sh_purchase_ticket_ids.stage_id')
+    def _compute_ticket_stage_readonly(self):
+
+        done_stage = self.env.ref('sh_all_in_one_helpdesk.done_stage')
+        cancel_stage = self.env.ref('sh_all_in_one_helpdesk.cancel_stage')
+
+        readonly_stages = (done_stage | cancel_stage)
+
+        for rec in self:
+            rec.x_ticket_stage_readonly = any(
+                ticket.stage_id in readonly_stages
+                for ticket in rec.sh_purchase_ticket_ids
+            )
+
     purchase_ticket_count = fields.Integer(
         'Ticket', compute='_compute_purchase_ticket_count')
 
@@ -60,7 +80,7 @@ class helpdeskPO(models.Model):
         elif len(tickets) == 1:
             form_view = [(self.env.ref(
                 'sh_all_in_one_helpdesk.sh_helpdesk_ticket_form_view').id, 'form')
-                         ]
+            ]
             if 'views' in action:
                 action['views'] = form_view + \
                     [(state, view)

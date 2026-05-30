@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-09 23:03+0000\n"
-"PO-Revision-Date: 2026-05-09 23:03+0000\n"
+"POT-Creation-Date: 2026-05-25 22:27+0000\n"
+"PO-Revision-Date: 2026-05-25 22:27+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -193,6 +193,15 @@ msgid ""
 msgstr ""
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid ""
+"<i class=\"fa fa-check-circle\"/>\n"
+"                                    <span>Available services:</span>"
+msgstr ""
+"<i class=\"fa fa-check-circle\"/>\n"
+"                                    <span>Servicios disponibles:</span>"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_orders
 msgid ""
 "<span class=\"d-none d-md-inline\">Confirmation Date</span>\n"
@@ -200,6 +209,15 @@ msgid ""
 msgstr ""
 "<span class=\"d-none d-md-inline\">Fecha de confirmación</span>\n"
 "                            <span class=\"d-block d-md-none\">Confirmación</span>"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_orders
+msgid ""
+"<span class=\"d-none d-md-inline\">Event</span>\n"
+"                                <span class=\"d-block d-md-none\">Event</span>"
+msgstr ""
+"<span class=\"d-none d-md-inline\">Event</span>\n"
+"                                <span class=\"d-block d-md-none\">Evento</span>"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_orders
@@ -253,6 +271,11 @@ msgid "<span>Ask confirmation</span>"
 msgstr "<span>Solicitar confirmación</span>"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "<span>of</span>"
+msgstr "<span>de</span>"
+
+#. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "A dispute can only be opened on orders in Sent state."
@@ -276,8 +299,8 @@ msgstr "Agregar producto"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
-msgid "Add a section"
-msgstr "Agregar seccion"
+msgid "Agreement costs"
+msgstr "Costos convenio"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -305,6 +328,11 @@ msgstr "Precio aprobado"
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_purchase_purchase_order_portal_content
 msgid "Approved Quantity"
 msgstr "Cantidad aprobada"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_authorized_amount
+msgid "Authorized Amount"
+msgstr "Monto autorizado"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
@@ -370,6 +398,18 @@ msgid "Concept Line"
 msgstr "Línea de concepto"
 
 #. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/ike_event.py:0
+msgid "Concepts in coverage"
+msgstr "Conceptos en cobertura"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/ike_event.py:0
+msgid "Concepts out of coverage"
+msgstr "Conceptos fuera de cobertura"
+
+#. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_res_config_settings
 msgid "Config Settings"
 msgstr "Ajustes de configuración"
@@ -407,11 +447,36 @@ msgid "Cost"
 msgstr "Costo"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Cost Matrix"
+msgstr "Matriz de costos"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "Cost Matrix - Supplier"
+msgstr "Matriz de costos - proveedor"
+
+#. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/sh_helpdesk_ticket.py:0
+msgid "Cost Review"
+msgstr "Revisión de costos"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_ike_event_screen_inherit_purchase_order_form
 msgid "Cost review"
 msgstr "Revisión de costos"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_covered
+msgid "Covered"
+msgstr "Cubierto"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_covered_amount
+msgid "Covered Amount"
+msgstr "Monto cubierto"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__daily
@@ -577,6 +642,11 @@ msgid "Event Quantity"
 msgstr "Cantidad evento"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_excess_amount
+msgid "Excess amount"
+msgstr "Monto excedente"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__5
 msgid "Friday"
 msgstr "Viernes"
@@ -594,11 +664,13 @@ msgstr "Ticket de Ayuda"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "Ike price"
 msgstr "Precio iké"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "Ike quantity"
 msgstr "Cantidad iké"
 
@@ -614,6 +686,11 @@ msgstr "Acción de disputa inválida: "
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
 msgid "Loading..."
 msgstr "Cargando..."
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_mandatory
+msgid "Mandatory"
+msgstr "Obligatorio"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_membership_plan_id
@@ -656,6 +733,12 @@ msgstr "No hay cambios para guardar"
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__open
 msgid "Open"
 msgstr "Abierto"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
+msgid "Orden de compra"
+msgstr ""
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
@@ -867,6 +950,16 @@ msgid "Specify the reason for the change"
 msgstr "Especifica el motivo del cambio"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_services_allowed
+msgid "Services Allowed"
+msgstr "Servicios permitidos"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_services_available
+msgid "Services Available"
+msgstr "Servicios disponibles"
+
+#. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 msgid "Start Dispute"
@@ -906,6 +999,11 @@ msgstr "Subtotal evento"
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__0
 msgid "Sunday"
 msgstr "Domingo"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_form_view_inherit_ike_event_purchase
+msgid "Supplier"
+msgstr "Proveedor"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_supplier_product_id
@@ -1031,9 +1129,20 @@ msgid "Thursday"
 msgstr "Jueves"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event__x_ticket_ids
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "Ticket"
 msgstr ""
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event__x_ticket_ids_count
+msgid "Tickets Count"
+msgstr ""
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_ike_event_screen_inherit_purchase_order_form
+msgid "Tickets review"
+msgstr "Revisar tickets"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_res_company__x_time_for_automatic_purchase_generation
@@ -1126,6 +1235,16 @@ msgid "Wait a moment, processing..."
 msgstr "Espere un momento, procesando..."
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "View detail service"
+msgstr "Ver detalles de siniestralidad"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "View service cost details"
+msgstr "Ver detalle de costo del servicio"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_res_company__x_time_for_automatic_purchase_generation
 #: model:ir.model.fields,help:ike_event_purchase.field_res_config_settings__x_time_for_automatic_purchase_generation
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.res_config_settings_view_form_purchase_inherit_ike_event_purchase
@@ -1185,6 +1304,12 @@ msgstr "Subtotal"
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
 msgid "close"
 msgstr "cerrar"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "cost matrix - supplier"
+msgstr "Matriz de costos - proveedor"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form

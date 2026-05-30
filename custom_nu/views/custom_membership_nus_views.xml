@@ -35,45 +35,104 @@
                                 required="1"
                                 options='{"no_open": True, "no_create": True}'
                                 domain="[('disabled', '=', False)]"
-                                readonly="disabled"
-                            />
+                                readonly="disabled or 1"
+                                groups="!base.group_no_one"/>
+                            <field
+                                name="nus_id"
+                                required="1"
+                                options='{"no_open": True, "no_create": True}'
+                                domain="[('disabled', '=', False)]"
+                                readonly="0"
+                                groups="base.group_no_one"/>
+
                             <field
                                 name="membership_plan_id"
                                 required="1"
                                 options='{"no_open": True, "no_create": True}'
                                 domain="[('disabled', '=', False)]"
-                                readonly="disabled"
-                            />
-                            <field name="date" readonly="disabled" required="1"/>
+                                readonly="disabled or 1"
+                                groups="!base.group_no_one"/>
+                            <field
+                                name="membership_plan_id"
+                                required="1"
+                                options='{"no_open": True, "no_create": True}'
+                                domain="[('disabled', '=', False)]"
+                                readonly="0"
+                                groups="base.group_no_one"/>
+
+                            <field name="date" readonly="disabled or 1" required="1" groups="!base.group_no_one"/>
+                            <field name="date" readonly="0" required="1" groups="base.group_no_one"/>
+
                             <field
                                 name="key_identification"
                                 required="1"
                                 widget="regex_validator_field"
                                 password="true"
                                 invisible="disabled == True"
-                            />
-                            <field name="clause" invisible="not check_clause"/>
+                                readonly="disabled or 1"
+                                groups="!base.group_no_one"/>
+                            <field
+                                name="key_identification"
+                                required="1"
+                                widget="regex_validator_field"
+                                password="true"
+                                invisible="disabled == True"
+                                readonly="0"
+                                groups="base.group_no_one"/>
+                            <field name="clause" invisible="not check_clause" readonly="disabled or 1" groups="!base.group_no_one"/>
+                            <field name="clause" invisible="not check_clause" readonly="0" groups="base.group_no_one"/>
+
                             <field
                                 name="second_key_identification"
-                                required="0"
                                 widget="regex_validator_field"
                                 mask_field="x_display_mask_second"
                                 pattern_field="x_validation_pattern_second"
-                                password="true"
                                 invisible="disabled == True or not check_second_key"
+                                password="true"
+                                required="0"
+                                readonly="disabled or 1"
+                                groups="!base.group_no_one"
                             />
-                            <field name="second_clause" invisible="not second_check_clause"/>
+                            <field
+                                name="second_key_identification"
+                                widget="regex_validator_field"
+                                mask_field="x_display_mask_second"
+                                pattern_field="x_validation_pattern_second"
+                                invisible="disabled == True or not check_second_key"
+                                password="true"
+                                required="0"
+                                readonly="0"
+                                groups="base.group_no_one"
+                            />
+                            <field name="second_clause" invisible="not second_check_clause" readonly="disabled or 1" groups="!base.group_no_one"/>
+                            <field name="second_clause" invisible="not second_check_clause" readonly="0" groups="base.group_no_one"/>
+
                             <field
                                 name="subscription_validity"
                                 invisible="0"
-                                readonly="disabled"
+                                readonly="disabled or 1"
+                                groups="!base.group_no_one"
+                            />
+                            <field
+                                name="subscription_validity"
+                                invisible="0"
+                                readonly="0"
+                                groups="base.group_no_one"
                             />
                         </group>
                         <group>
-                            <field name="date_start"/>
-                            <field name="date_end"/>
-                            <field name="check_is_fleet" readonly="check_is_special"/>
-                            <field name="check_is_special" readonly="check_is_fleet"/>
+                            <field name="date_start" readonly="disabled or 1" groups="!base.group_no_one"/>
+                            <field name="date_start" readonly="disabled or 0" groups="base.group_no_one"/>
+
+                            <field name="date_end" readonly="disabled or 1" groups="!base.group_no_one"/>
+                            <field name="date_end" readonly="disabled or 0" groups="base.group_no_one"/>
+
+                            <field name="check_is_fleet" readonly="check_is_special or 1" groups="!base.group_no_one"/>
+                            <field name="check_is_fleet" readonly="check_is_special or 0" groups="base.group_no_one"/>
+
+                            <field name="check_is_special" readonly="check_is_fleet or 1" groups="!base.group_no_one"/>
+                            <field name="check_is_special" readonly="check_is_fleet or 0" groups="base.group_no_one"/>
+
                             <field name="display_key_primary_clause" readonly="1" invisible="1"/>
                             <field name="display_key_second_clause_second" readonly="1" invisible="1"/>
                             <field name="x_validation_pattern" invisible="1"/>

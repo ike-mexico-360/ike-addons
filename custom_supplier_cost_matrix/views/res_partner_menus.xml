@@ -30,4 +30,7 @@
             sequence="25"/>
     </menuitem>
 
+    <record id="custom_supplier_cost_matrix_configuration_menu" model="ir.ui.menu">
+        <field name="groups_id" eval="[(3, ref('custom_master_catalog.custom_group_supplier_procurement'))]"/>
+    </record>
 </odoo>

@@ -7,7 +7,7 @@ import { CustomConfirmationDialog } from "../confirmation_dialog/confirmation_di
 import { onWillStart } from "@odoo/owl";
 
 patch(ListController.prototype, {
-    setup(){
+    setup() {
         // console.log("ListController", this);
         super.setup();
         this.disableEnabled =
@@ -54,7 +54,7 @@ patch(ListController.prototype, {
             confirm: (reason) => {
                 this.toggleDisableState(true, reason);
             },
-            cancel: () => {},
+            cancel: () => { },
         };
     },
     /**

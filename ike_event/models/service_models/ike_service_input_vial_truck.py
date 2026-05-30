@@ -45,12 +45,6 @@ class IkeServiceInputVialTruck(models.Model):
     street_ref = fields.Char(string='References')
     street_number = fields.Char()
     destination_highway = fields.Boolean(string='Is destination a Highway?')
-    service_product_ids = fields.One2many(
-        related='event_id.service_product_ids',
-        string='Service concepts',
-        readonly=False,
-        copy=False,
-    )
 
     # === METHODS === #
     def set_event_summary_user_subservice_data(self):

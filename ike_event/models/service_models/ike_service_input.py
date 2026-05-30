@@ -25,6 +25,15 @@ class IkeServiceInput(models.AbstractModel):
         copy=False,
     )
 
+    products_count = fields.Integer(compute='_compute_products_count')
+
+    @api.depends('service_product_ids')
+    def _compute_products_count(self):
+        for rec in self:
+            rec.products_count = len(
+                rec.service_product_ids.filtered(lambda x: x.supplier_number == rec.event_supplier_number)
+            )
+
     ia_suggestion_loading = fields.Boolean()
 
     def set_event_summary_event_data(self):

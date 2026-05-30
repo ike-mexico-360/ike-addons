@@ -98,13 +98,23 @@
                 <header>
                 </header>
                 <field name="name"/>
+                <field name="event_date" optional="show"/>
                 <field name="user_id"/>
                 <field name="service_id"/>
                 <field name="sub_service_id" context="{'display_default_code': 0}"/>
                 <field name="selected_supplier_ids" widget="many2many_tags" />
                 <field name="stage_id" widget="badge"/>
                 <field name="stage_ref" column_invisible="1"/>
-                <!-- <field name="current_stage_date"/> -->
+                <!-- Stage Tracking -->
+                <!--
+                <field name="current_stage_date" column_invisible="1"/>
+                <field name="current_elapsed_time_minutes" column_invisible="1"/>
+                <field name="stage_apply_max_wait_time" column_invisible="1"/>
+                <field name="stage_max_wait_time_minutes" column_invisible="1"/>
+                <field name="stage_apply_tracking_time" column_invisible="1"/>
+                <field name="stage_tracking_time_minutes" column_invisible="1"/>
+                <widget name="ike_stage_tracking_comment"/>
+                -->
             </list>
         </field>
     </record>
@@ -402,6 +412,7 @@
                                     <field name="truck_id"/>
                                     <field name="state"/>
                                     <field name="stage_id"/>
+                                    <field name="cause_rate"/>
                                     <button name="action_view_products" string="View Details" type="object"/>
                                     <button name="action_view_products_base_costs" string="View Details Base Costs" type="object"/>
                                     <button name="open_cancel_wizard" string="Cancel"

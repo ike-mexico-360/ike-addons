@@ -80,10 +80,12 @@
                 <menuitem id="ike_menu_cancellation_reasons_action" name="Cancellation reasons" sequence="30"
                         action="ike_event_cancellation_reason_action"
                         groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
-                 <menuitem id="ike_service_duplicate_reason_action" name="Duplication reasons" sequence="35"
+                <menuitem id="ike_service_duplicate_reason_action" name="Duplication reasons" sequence="35"
                         action="ike_event_duplicate_reason_action"
                         groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
-
+                <menuitem id="ike_service_stage_menu" name="Event Stages" sequence="40"
+                        action="action_ike_event_stage"
+                        groups="base.group_erp_manager"/>
             </menuitem>
         </menuitem>
     </data>

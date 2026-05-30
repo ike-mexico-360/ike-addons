@@ -20,9 +20,17 @@ class PurchaseOrder(models.Model):
         ('purchase',),  # Ancla de posición
     ])
     x_event_id = fields.Many2one('ike.event', string='Event', ondelete='set null')
+    x_services_available = fields.Integer(related='x_event_id.services_available')
+    x_services_allowed = fields.Integer(related='x_event_id.services_allowed')
+    x_covered_amount = fields.Float(related='x_event_id.covered_amount')
+    x_authorized_amount = fields.Float(related="x_event_id.authorized_amount")
+    x_excess_amount = fields.Float(string="Excess amount", compute="_compute_excess_amount")
     x_sub_service_id = fields.Many2one('product.product', string='Subservice')
     x_nu_user_id = fields.Many2one('custom.nus', string='NU User', help="Technical: NU linked to the event of the purchase order")
-    x_membership_plan_id = fields.Many2one('custom.membership.plan', string='Membership Plan', help="Technical: Membership Plan linked to the event of the purchase order")
+    x_membership_plan_id = fields.Many2one(
+        'custom.membership.plan',
+        string='Membership Plan',
+        help="Technical: Membership Plan linked to the event of the purchase order")
     x_dispute_state = fields.Selection([
         ('none', 'No Dispute'),
         ('open', 'Open'),
@@ -65,9 +73,29 @@ class PurchaseOrder(models.Model):
         store=False,
     )
 
-    amount_untaxed_dispute = fields.Monetary(string='Untaxed Amount Dispute', store=True, readonly=True, compute='_x_amount_all_dispute', tracking=True)
-    amount_untaxed_approved = fields.Monetary(string='Untaxed Amount Approved', store=True, readonly=True, compute='_x_amount_all_approved', tracking=True)
-    amount_untaxed_event = fields.Monetary(string='Untaxed Amount Event', store=True, readonly=True, compute='_x_amount_all_event', tracking=True)
+    amount_untaxed_dispute = fields.Monetary(
+        string='Untaxed Amount Dispute',
+        store=True, readonly=True,
+        compute='_x_amount_all_dispute',
+        tracking=True)
+    amount_untaxed_approved = fields.Monetary(
+        string='Untaxed Amount Approved',
+        store=True,
+        readonly=True,
+        compute='_x_amount_all_approved',
+        tracking=True)
+    amount_untaxed_event = fields.Monetary(
+        string='Untaxed Amount Event',
+        store=True, readonly=True,
+        compute='_x_amount_all_event',
+        tracking=True)
+
+    @api.depends('x_covered_amount', 'x_authorized_amount')
+    def _compute_excess_amount(self):
+        if self.x_authorized_amount > self.x_covered_amount:
+            self.x_excess_amount = self.x_authorized_amount - self.x_covered_amount
+        else:
+            self.x_excess_amount = 0
 
     @api.onchange('order_line')
     def _onchange_order_line_check_reason(self):
@@ -173,7 +201,7 @@ class PurchaseOrder(models.Model):
                     'state': 'customer_replied',
                     'partner_id': self.partner_id.id,
                     'sh_purchase_order_ids': [(6, 0, [self.id])],
-                    'state': 'customer_replied',
+                    'x_event_id': self.x_event_id and self.x_event_id.id or False,
                 })
             # Cuando se mande la disputa, marcar en el ticket como "Proveedor respondió"
             ticket_id.write({'state': 'customer_replied'})
@@ -798,3 +826,45 @@ class PurchaseOrder(models.Model):
                 _logger.error("Failed to process tickets for PO %s: %s", order.name, str(e))
 
         return True
+
+    def x_action_open_supplier_cost_matrix(self):
+        view = self.env.ref(
+            'custom_supplier_cost_matrix.custom_supplier_cost_matrix_line_view_list'
+        )
+
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Cost Matrix - Supplier') + f' {self.partner_id.name}',
+            'res_model': 'custom.supplier.cost.matrix.line',
+            'view_mode': 'list,form',
+            'view_id': view.id,
+            'views': [
+                (view.id, 'list'),
+            ],
+            'target': 'new',
+            'domain': [('supplier_center_id.parent_id', '=', self.partner_id.id)],
+            'context': {
+                'partner_id': self.partner_id.id,
+            },
+        }
+
+    def x_action_show_history_wizard(self):
+        """Show history service"""
+        self.ensure_one()
+
+        if not self.x_event_id:
+            raise UserError(_("No related event found."))
+
+        return self.x_event_id.action_show_history_wizard()
+
+    def action_view_ike_event_agreement_cost_final(self):
+        supplier_links = self.x_event_id.selected_supplier_ids.mapped('supplier_link_id')
+
+        suppliers = self.env['ike.event.supplier'].browse(supplier_links.ids)
+        return suppliers.action_view_ike_event_agreement_cost_final()
+
+    def x_action_view_ike_event_service_cost(self):
+        supplier_links = self.x_event_id.selected_supplier_ids.mapped('supplier_link_id')
+
+        suppliers = self.env['ike.event.supplier'].browse(supplier_links.ids)
+        return suppliers.action_view_ike_event_service_cost()

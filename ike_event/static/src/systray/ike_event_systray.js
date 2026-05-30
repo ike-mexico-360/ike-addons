@@ -1,7 +1,7 @@
 import { _t } from "@web/core/l10n/translation";
 import { rpc } from "@web/core/network/rpc";
 import { registry } from "@web/core/registry";
-import { useBus } from "@web/core/utils/hooks";
+import { useBus, useService } from "@web/core/utils/hooks";
 
 import { Component, onError, onMounted, onWillUnmount, useState } from "@odoo/owl";
 
@@ -21,11 +21,11 @@ export class IkeEventSystray extends Component {
     static template = "ike_event.IkeEventSystray";
 
     setup() {
-        // console.log("IkeEventSystray", this, this.env.services);
-        this.busService = this.env.services.bus_service;
-        this.notification = this.env.services.notification;
+        // console.log("IkeEventSystray", this);
+        this.busService = useService("bus_service");
+        this.notification = useService("notification");
+        this.actionService = useService("action");
 
-        this.actionService = this.env.services.action;
         this.state = useState({
             resModel: null,
             type: null,
@@ -33,6 +33,7 @@ export class IkeEventSystray extends Component {
             eventChannel: null,
             listChannel: null,
         });
+
         this._updateFromAction = this._updateFromAction.bind(this);
         this.currentTimeoutIds = {};
 
@@ -222,7 +223,7 @@ export class IkeEventSystray extends Component {
                         this.notification.add(message, message_options);
                     }
                 }
-            } else if (type == "EVENT_RELOAD") {
+            } else if (type == "EVENT_LIST_RELOAD") {
                 // List
                 this.env.bus.trigger("IKE_EVENT_SYSTRAY:" + type, {
                     payload: payload,

@@ -37,11 +37,11 @@ export class IkeBinnacleButtonWidget extends Component {
     }
 
     async onClick() {
-        const resId = this.props.record.resId;
         const rawLang = this.user.lang || 'es_MX';
         const userLang = rawLang.replace('-', '_');
+        const resId = this.props.record.data.x_event_id?.[0]
+            || this.props.record.resId;
 
-        // Optimized webSearchRead: One single call to fetch everything
         const { records: messages } = await this.orm.webSearchRead(
             "mail.message",
             [

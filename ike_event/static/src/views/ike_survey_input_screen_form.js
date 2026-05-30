@@ -5,7 +5,7 @@ import { effect } from "@web/core/utils/reactive";
 import { FormController } from '@web/views/form/form_controller';
 import { formView } from "@web/views/form/form_view";
 
-import { markup, onMounted, status, useState, useSubEnv } from "@odoo/owl";
+import { markup, onMounted, status, useState, useSubEnv, onRendered, useEffect } from "@odoo/owl";
 
 
 export class IkeSurveyInputScreenFormController extends FormController {
@@ -28,54 +28,72 @@ export class IkeSurveyInputScreenFormController extends FormController {
         this.title = _t("Service Details");
 
         useBus(this.env.bus, "IKE_EVENT_SAVE_DATA", async (ev) => {
+            // console.log("BUS - IKE_EVENT_SAVE_DATA")
             const record = this.model.root;
             await record.save({});
         });
 
         onMounted(() => {
-            this.onMounted();
+            // console.log("onMounted")
+            // this.onMounted();
             // console.log("record", this.model.root);
         });
+        onRendered(() => {
+            // console.log("onRendered")
+        });
+
+        useEffect(
+            (surveyId) => {
+                // console.log("useEffect", survey_id);
+                this.loadSurveyQuestions(surveyId);
+            },
+            () => [this.model.root?.data?.survey_id?.[0]]
+        );
     }
     onMounted() {
-        effect(async (model) => {
+        effect(async (surveyId) => {
             if (status(this) === "mounted") {
-                let surveyId = model.root.data.survey_id ? model.root.data.survey_id[0] : null;
-                if (surveyId != this.state.surveyId) {
-                    this.state.surveyId = surveyId;
-                    const surveyData = await this.env.services.orm.webSearchRead(
-                        "survey.survey", [['id', '=', surveyId]], {
-                        specification: {
+                this.loadSurveyQuestions(surveyId);
+            }
+        }, [this.model.root?.data?.survey_id?.[0]]);
+    }
+    loadSurveyQuestions(surveyId) {
+        if (surveyId != this.state.surveyId) {
+            this.state.surveyId = surveyId;
+            this.env.services.orm.webSearchRead(
+                "survey.survey", [['id', '=', surveyId], '|', ['active', '=', false], ['active', '=', true]], {
+                specification: {
+                    title: {},
+                    question_ids: {
+                        fields: {
                             title: {},
-                            question_ids: {
+                            description: {},
+                            question_type: {},
+                            is_page: {},
+                            triggering_answer_ids: {},
+                            suggested_answer_ids: {
                                 fields: {
-                                    title: {},
-                                    description: {},
-                                    question_type: {},
-                                    is_page: {},
-                                    triggering_answer_ids: {},
-                                    suggested_answer_ids: {
-                                        fields: {
-                                            value: {},
-                                            display_name: {},
-                                            sequence: {},
-                                        }
-                                    },
-                                    question_placeholder: {},
-                                    validation_required: {},
-                                    validation_min_float_value: {},
-                                    validation_max_float_value: {},
-                                    validation_length_min: {},
-                                    validation_length_max: {},
-                                    validation_error_msg: {},
-                                    constr_mandatory: {},
-                                    constr_error_msg: {},
-                                    comments_allowed: {},
-                                    comments_message: {},
+                                    value: {},
+                                    display_name: {},
+                                    sequence: {},
                                 }
-                            }
-                        },
-                    });
+                            },
+                            question_placeholder: {},
+                            validation_required: {},
+                            validation_min_float_value: {},
+                            validation_max_float_value: {},
+                            validation_length_min: {},
+                            validation_length_max: {},
+                            validation_error_msg: {},
+                            constr_mandatory: {},
+                            constr_error_msg: {},
+                            comments_allowed: {},
+                            comments_message: {},
+                        }
+                    }
+                },
+            }).then(surveyData => {
+                if (surveyData.records && surveyData.records.length) {
                     for (let question of surveyData.records[0].question_ids) {
                         if (!['simple_choice', 'multiple_choice'].includes(question.question_type)) {
                             const answerLines = this.getAnswerLines(question);
@@ -86,10 +104,10 @@ export class IkeSurveyInputScreenFormController extends FormController {
                         }
                     }
                     this.state.surveyData = surveyData.records[0];
-                    console.log("surveyData", surveyId, this.state.surveyData);
+                    // console.log("surveyData", surveyId, this.state.surveyData);
                 }
-            }
-        }, [this.model]);
+            });
+        }
     }
     get input_lines() {
         return this.model.root.data.user_input_line_ids.records.map((line_id) => ({

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
-from odoo import models, fields, Command, api
+from odoo import models, fields, Command, api, _
 
 import logging
 _logger = logging.getLogger(__name__)
@@ -13,10 +13,19 @@ class IkeEvent(models.Model):
         comodel_name='purchase.order', inverse_name='x_event_id', string='Purchases', readonly=True)
     x_purchase_ids_count = fields.Integer(compute='_compute_x_purchase_ids_count', string='Purchases Count')
 
+    x_ticket_ids = fields.One2many(
+        comodel_name='sh.helpdesk.ticket', inverse_name='x_event_id', string='Ticket', readonly=True)
+    x_ticket_ids_count = fields.Integer(compute='_compute_x_ticket_ids_count', string='Tickets Count')
+
     @api.depends('x_purchase_ids')
     def _compute_x_purchase_ids_count(self):
         for rec in self:
             rec.x_purchase_ids_count = len(rec.x_purchase_ids)
+
+    @api.depends('x_ticket_ids')
+    def _compute_x_ticket_ids_count(self):
+        for rec in self:
+            rec.x_ticket_ids_count = len(rec.x_ticket_ids)
 
     # ACTIONS
     def x_action_view_purchases(self):
@@ -33,6 +42,27 @@ class IkeEvent(models.Model):
             'domain': [('x_event_id', '=', self.id)],
             'target': 'current',
         }
+
+    def x_action_view_tickets(self):
+        self.ensure_one()
+        action = {
+            'name': self.name,
+            'view_mode': 'form,list',
+            'res_model': 'sh.helpdesk.ticket',
+            'views': [
+                (self.env.ref('sh_all_in_one_helpdesk.sh_helpdesk_ticket_tree_view').id, 'list'),
+                (self.env.ref('sh_all_in_one_helpdesk.sh_helpdesk_ticket_form_view').id, 'form')
+            ],
+            'type': 'ir.actions.act_window',
+            'domain': [('x_event_id', '=', self.id)],
+            'target': 'current',
+        }
+        if self.x_ticket_ids_count == 1:
+            action['views'] = [(self.env.ref('sh_all_in_one_helpdesk.sh_helpdesk_ticket_form_view').id, 'form')]
+            action['view_mode'] = 'form'
+            action['res_id'] = self.x_ticket_ids[:1].id
+            return action
+        return action
 
     def _x_prepare_grouped_purchase_vals(self):
         self.ensure_one()
@@ -51,10 +81,29 @@ class IkeEvent(models.Model):
             else:
                 selected_supplier = supplier_line.supplier_id
 
-            if selected_supplier not in grouped_purchase_by_suppliers:
+            if selected_supplier.id not in grouped_purchase_by_suppliers:
                 grouped_purchase_by_suppliers[selected_supplier.id] = {
                     **self.x_get_values_for_purchase_header(supplier_line),
-                    "order_line": []
+                    "order_line": [
+                        Command.create({
+                            'display_type': 'line_section',
+                            'name': _('Concepts in coverage'),
+                            'x_mandatory': True,
+                            'x_covered': True,
+                            'sequence': 1,
+                            'product_qty': 0,
+                            'x_product_qty_dispute': 0
+                        }),
+                        Command.create({
+                            'display_type': 'line_section',
+                            'name': _('Concepts out of coverage'),
+                            'x_mandatory': True,
+                            'x_covered': True,
+                            'sequence': 1001,
+                            'product_qty': 0,
+                            'x_product_qty_dispute': 0
+                        }),
+                    ]
                 }
             for concept_id in product_ids:
                 grouped_purchase_by_suppliers[selected_supplier.id]['order_line'].append(
@@ -92,7 +141,10 @@ class IkeEvent(models.Model):
             "price_unit": supplier_product_id.base_unit_price,
             "currency_id": self.env.company.currency_id.id,
             "x_supplier_product_id": supplier_product_id.id,  # Link to supplier_product_id
+            "x_covered": supplier_product_id.covered,
+            "sequence": supplier_product_id.sequence,
             "x_generated_from_event": True,  # To mark the line as generated from event
+            "x_mandatory": True,
         }
 
     def x_get_values_for_purchase_header(self, selected_supplier_id):

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="custom_nu.custom_phone" t-inherit="web.PhoneField" t-inherit-mode="primary">
+        <xpath expr="//a" position="replace">
+            <span t-out="formattedValue"/>
+        </xpath>
+    </t>
+
+</templates>

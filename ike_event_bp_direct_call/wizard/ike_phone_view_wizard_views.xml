@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ike_event_phone_wizard_view_form_inherit_bp_direct_call" model="ir.ui.view">
+        <field name="name">ike_event_phone_wizard_view_form.inherit.bp_direct_call</field>
+        <field name="model">ike.event.phone.wizard</field>
+        <field name="inherit_id" ref="ike_event.ike_event_phone_wizard_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='x_phone_p1']" position="attributes">
+                <attribute name="widget">bp_phone_dial</attribute>
+                <attribute name="show_groups">custom_master_catalog.custom_group_event_coordinator</attribute>
+            </xpath>
+            <xpath expr="//field[@name='x_phone_p2']" position="attributes">
+                <attribute name="widget">bp_phone_dial</attribute>
+                <attribute name="show_groups">custom_master_catalog.custom_group_event_coordinator</attribute>
+            </xpath>
+            <xpath expr="//field[@name='x_phone_p3']" position="attributes">
+                <attribute name="widget">bp_phone_dial</attribute>
+                <attribute name="show_groups">custom_master_catalog.custom_group_event_coordinator</attribute>
+            </xpath>
+            <xpath expr="//field[@name='x_phone_p4']" position="attributes">
+                <attribute name="widget">bp_phone_dial</attribute>
+                <attribute name="show_groups">custom_master_catalog.custom_group_event_coordinator</attribute>
+            </xpath>
+            <xpath expr="//field[@name='x_phone_p5']" position="attributes">
+                <attribute name="widget">bp_phone_dial</attribute>
+                <attribute name="show_groups">custom_master_catalog.custom_group_event_coordinator</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

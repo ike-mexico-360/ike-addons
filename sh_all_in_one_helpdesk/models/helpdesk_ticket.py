@@ -172,9 +172,9 @@ class HelpdeskTicket(models.Model):
                                   default=default_due_date)
     sh_ticket_alarm_ids = fields.Many2many('sh.ticket.alarm',
                                            string='Ticket Reminders')
-    sh_ticket_report_url = fields.Char(compute='_compute_report_url')
+    sh_ticket_report_url = fields.Char(compute='_compute_report_url', compute_sudo=True)
     report_token = fields.Char("Access Token")
-    portal_ticket_url_wp = fields.Char(compute='_compute_ticket_portal_url_wp')
+    portal_ticket_url_wp = fields.Char(compute='_compute_ticket_portal_url_wp', compute_sudo=True)
     mobile_no = fields.Char('Mobile')
     email_subject = fields.Char('Subject')
 

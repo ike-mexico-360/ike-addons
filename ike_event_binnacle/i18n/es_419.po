@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-18 16:37+0000\n"
-"PO-Revision-Date: 2026-05-18 16:37+0000\n"
+"POT-Creation-Date: 2026-05-22 18:01+0000\n"
+"PO-Revision-Date: 2026-05-22 18:01+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -263,7 +263,7 @@ msgid ""
 "                <t t-set=\"last_search\" t-value=\"max(object.service_supplier_ids.mapped('search_number') or [0])\"/>\n"
 "\n"
 "                <!-- Filtrar proveedores v&#225;lidos -->\n"
-"                <t t-set=\"suppliers\" t-value=\"object.service_supplier_ids.filtered(                     lambda l: l.search_number == last_search                     and not l.display_type                     and (                         not ctx.get('search_priority')                         or str(l.priority) == str(ctx.get('search_priority'))                     )                 ).sorted(                     key=lambda l: l.sequence                 )\"/>\n"
+"                <t t-set=\"suppliers\" t-value=\"object.service_supplier_ids.filtered(                     lambda l:                         l.search_number == last_search                         and l.state == 'available'                         and not l.display_type                         and l.assignation_type == object.supplier_search_type                         and (                             not ctx.get('search_priority')                             or str(l.priority) == str(ctx.get('search_priority'))                         )                 ).sorted(                     key=lambda l: l.sequence                 )\"/>\n"
 "\n"
 "                <!-- Si hay proveedores -->\n"
 "                <t t-if=\"suppliers\">\n"
@@ -301,7 +301,7 @@ msgstr ""
 "                <t t-set=\"last_search\" t-value=\"max(object.service_supplier_ids.mapped('search_number') or [0])\"/>\n"
 "\n"
 "                <!-- Filtrar proveedores v&#225;lidos -->\n"
-"                <t t-set=\"suppliers\" t-value=\"object.service_supplier_ids.filtered(                     lambda l: l.search_number == last_search                     and not l.display_type                     and (                         not ctx.get('search_priority')                         or str(l.priority) == str(ctx.get('search_priority'))                     )                 ).sorted(                     key=lambda l: l.sequence                 )\"/>\n"
+"                <t t-set=\"suppliers\" t-value=\"object.service_supplier_ids.filtered(                     lambda l:                         l.search_number == last_search                         and l.state == 'available'                         and not l.display_type                         and l.assignation_type == object.supplier_search_type                         and (                             not ctx.get('search_priority')                             or str(l.priority) == str(ctx.get('search_priority'))                         )                 ).sorted(                     key=lambda l: l.sequence                 )\"/>\n"
 "\n"
 "                <!-- Si hay proveedores -->\n"
 "                <t t-if=\"suppliers\">\n"
@@ -321,7 +321,6 @@ msgstr ""
 "                </t>\n"
 "\n"
 "            "
-
 #. module: ike_event_binnacle
 #: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_32
 msgid ""
@@ -3599,23 +3598,6 @@ msgid "Body"
 msgstr "Plantilla"
 
 #. module: ike_event_binnacle
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_add_affiliation_nu_wizard__can_be_disabled
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event__can_be_disabled
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__can_be_disabled
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle_category__can_be_disabled
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_comment_wizard__can_be_disabled
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_confirm_wizard__can_be_disabled
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_default_supplier_comment__can_be_disabled
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_duplicate_wizard__can_be_disabled
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_membership_authorization__can_be_disabled
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_supplier__can_be_disabled
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_supplier_link__can_be_disabled
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_supplier_public__can_be_disabled
-#: model:ir.model.fields,field_description:ike_event_binnacle.field_mail_message__can_be_disabled
-msgid "Can Be Disabled"
-msgstr "Puede ser deshabilitado"
-
-#. module: ike_event_binnacle
 #: model_terms:ir.ui.view,arch_db:ike_event_binnacle.view_ike_event_comment_wizard_form
 msgid "Cancel"
 msgstr "Cancelar"
@@ -3833,6 +3815,11 @@ msgstr "Categoría de bitácora"
 #: model:ir.model,name:ike_event_binnacle.model_ike_event_default_supplier_comment
 msgid "Event Binnacle Supplier Log"
 msgstr "Bitácora de proveedor de eventos"
+
+#. module: ike_event_binnacle
+#: model:ir.model,name:ike_event_binnacle.model_ike_event_change_state_supplier_wizard
+msgid "Event Change State Wizard"
+msgstr "Cambio de estado"
 
 #. module: ike_event_binnacle
 #: model:ir.model,name:ike_event_binnacle.model_ike_event_comment_wizard

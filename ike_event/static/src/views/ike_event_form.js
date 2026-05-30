@@ -1,7 +1,7 @@
 import { _t } from "@web/core/l10n/translation";
 import { rpc } from "@web/core/network/rpc";
 import { registry } from "@web/core/registry";
-import { useBus } from "@web/core/utils/hooks";
+import { useBus, useService } from "@web/core/utils/hooks";
 import { FormController } from '@web/views/form/form_controller';
 import { formView } from "@web/views/form/form_view";
 
@@ -10,9 +10,12 @@ import { useEffect } from "@odoo/owl";
 
 export class IkeEventFormController extends FormController {
     setup() {
-        console.log("IkeEventForm", this);
+        // console.log("IkeEventForm", this);
         super.setup();
-        this.notification = this.env.services.notification;
+        this.notification = useService("notification");
+        if (crypto) {
+            this.props.context['ike_uuid'] = crypto.randomUUID();
+        }
 
         // New event
         useEffect((resId) => {
@@ -38,7 +41,7 @@ export class IkeEventFormController extends FormController {
         });
     }
     async broadcastSupplierReload(payload) {
-        console.log("broadcastSupplierReload", payload);
+        // console.log("broadcastSupplierReload", payload);
         if (!payload || !payload.data || !payload.data.length) {
             return;
         }

@@ -3505,7 +3505,7 @@ msgstr "Razón social del proveedor"
 #. module: custom_master_catalog
 #: model:res.groups,name:custom_master_catalog.custom_group_ccc_analyst
 msgid "Supplier CCC Analyst"
-msgstr "Proveedores CCC Analista"
+msgstr "Proveedores CCC Jefe (Analista)"
 
 #. module: custom_master_catalog
 #: model:res.groups,name:custom_master_catalog.custom_group_ccc_coordinator
@@ -3515,7 +3515,7 @@ msgstr "Proveedores CCC Coordinador"
 #. module: custom_master_catalog
 #: model:res.groups,name:custom_master_catalog.custom_group_ccc_boss
 msgid "Supplier CCC leader / Boss"
-msgstr "Proveedores CCC Lider / Jefe"
+msgstr "Proveedores CCC Líder"
 
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.res_partner_supplier_center_action_window

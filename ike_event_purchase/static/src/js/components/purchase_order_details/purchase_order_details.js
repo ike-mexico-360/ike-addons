@@ -337,6 +337,11 @@ export class PurchaseOrderDetails extends Component {
 
     // Validar campos de línea sin valor
     _validate_field = (lineId, fieldName, value) => {
+        const line = this.state.order_data.order_line.find((l) => l.id === lineId);
+        if (line?.display_type === 'line_section') {
+            return true;
+        }
+
         const fieldsAllowZero = ['price_unit', 'x_price_unit_dispute'];
         const key = `${lineId}_${fieldName}`;
 

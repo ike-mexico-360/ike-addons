@@ -5,7 +5,7 @@ import { formView } from "@web/views/form/form_view";
 import { View } from "@web/views/view";
 import { IkeEventFormController } from "./ike_event_form";
 
-import { onMounted, status, useState } from '@odoo/owl';
+import { onMounted, status, useState, useEffect } from '@odoo/owl';
 
 
 const VIEW_IDS = {
@@ -50,144 +50,155 @@ export class IkeEventScreenFormController extends IkeEventFormController {
         });
 
         onMounted(() => {
-            this.onMounted();
+            // this.onMounted();
         });
+        useEffect(
+            (model, stage_ref, step_number) => {
+                // console.log("useEffect", stage_ref, step_number);
+                this.loadEventViews(model);
+            },
+            () => [this.model, this.model.root.data.stage_ref, this.model.root.data.step_number]
+        );
     }
     onMounted() {
         effect((model) => {
             if (status(this) === "mounted") {
-                const stepChanged = (
-                    this.state.step_number != model.root.data.step_number
-                    || this.state.stage_ref != model.root.data.stage_ref
-                );
-                this.state.stage_ref = model.root.data.stage_ref;
-                this.state.step_number = model.root.data.step_number;
-                this.state.sections = model.root.data.sections;
-
-                // SERVICE VIEW
-                if (model.root.data.service_res_id) {
-                    if (model.root.data.service_res_id.resId != this.state.serviceInputId) {
-                        let serviceResModel = model.root.data.service_res_model;
-                        let serviceResId = model.root.data.service_res_id.resId;
-                        let serviceViewId = this.props.context[VIEW_IDS[serviceResModel]];
-                        let context = {
-                            'ike_event_screen': true,
-                        };
-                        this.state.serviceInputId = serviceResId;
-                        this.state.serviceInputViewProps = this.getViewProps(
-                            serviceResModel,
-                            serviceResId,
-                            serviceViewId,
-                            context,
-                            this.saveViewData.bind(this),
-                            this.actionBackward.bind(this),
-                        );
-                    }
-                    if (stepChanged) {
-                        this.state.serviceInputAux = !this.state.serviceInputAux;
-                    }
-                } else {
-                    this.state.serviceInputId = null;
-                }
-                // SURVEY VIEW
-                if (model.root.data.service_survey_input_id) {
-                    if (model.root.data.service_survey_input_id != this.state.serviceSurveyInputId) {
-                        let surveyInputResModel = "survey.user_input";
-                        let surveyInputResId = model.root.data.service_survey_input_id[0];
-                        let surveyInputViewId = this.props.context[VIEW_IDS[surveyInputResModel]];
-                        let context = {
-                            'ike_event_screen': true,
-                        };
-                        this.state.serviceSurveyInputId = surveyInputResId;
-                        this.state.serviceSurveyInputViewProps = this.getViewProps(
-                            surveyInputResModel,
-                            surveyInputResId,
-                            surveyInputViewId,
-                            context,
-                            this.saveViewData.bind(this),
-                            this.actionBackward.bind(this),
-                        );
-                    }
-                    if (stepChanged) {
-                        this.state.serviceSurveyInputAux = !this.state.serviceSurveyInputAux;
-                    }
-                }
-                if (model.root.data.sub_service_survey_input_id) {
-                    if (model.root.data.sub_service_survey_input_id != this.state.subServiceSurveyInputId) {
-                        let surveyInputResModel = "survey.user_input";
-                        let surveyInputResId = model.root.data.sub_service_survey_input_id[0];
-                        let surveyInputViewId = this.props.context[VIEW_IDS[surveyInputResModel]];
-                        let context = {
-                            'ike_event_screen': true,
-                        };
-                        this.state.subServiceSurveyInputId = surveyInputResId;
-                        this.state.subServiceSurveyInputViewProps = this.getViewProps(
-                            surveyInputResModel,
-                            surveyInputResId,
-                            surveyInputViewId,
-                            context,
-                            this.saveViewData.bind(this),
-                            this.actionBackward.bind(this),
-                        );
-                    }
-                    if (stepChanged) {
-                        this.state.subServiceSurveyInputAux = !this.state.subServiceSurveyInputAux;
-                    }
-                }
-
-                // SUB SERVICE VIEW
-                if (model.root.data.sub_service_res_id) {
-                    if (model.root.data.sub_service_res_id.resId != this.state.subServiceInputId) {
-                        let serviceResModel = model.root.data.sub_service_res_model;
-                        let serviceResId = model.root.data.sub_service_res_id.resId;
-                        let serviceViewId = this.props.context[VIEW_IDS[serviceResModel]];
-                        let context = {
-                            'ike_event_screen': true,
-                        };
-                        this.state.subServiceInputId = serviceResId;
-                        this.state.subServiceInputViewProps = this.getViewProps(
-                            serviceResModel,
-                            serviceResId,
-                            serviceViewId,
-                            context,
-                            this.saveViewData.bind(this),
-                            this.actionBackward.bind(this),
-                        );
-                    }
-                    if (stepChanged) {
-                        this.state.subServiceInputAux = !this.state.subServiceInputAux;
-                    }
-                } else {
-                    this.state.subServiceInputId = null;
-                }
-
-                // EVENT SUPPLIER VIEW
-                if (['assigned', 'in_progress', 'completed', 'closed'].includes(model.root.data.stage_ref)) {
-                    const service_supplier_ids = model.root.data.service_supplier_ids.records;
-                    const selected_service_supplier_id = service_supplier_ids.find(supplier_id => supplier_id.data.state == 'accepted');
-                    if (selected_service_supplier_id) {
-                        let serviceResModel = selected_service_supplier_id.resModel;
-                        let serviceResId = selected_service_supplier_id.resId;
-                        let serviceViewId = this.props.context[VIEW_IDS[serviceResModel]];
-                        let context = {
-                            'ike_event_screen': true,
-                        };
-                        this.state.serviceSupplierId = serviceResId;
-                        this.state.serviceSupplierViewProps = this.getViewProps(
-                            serviceResModel,
-                            serviceResId,
-                            serviceViewId,
-                            context,
-                            this.saveViewData.bind(this),
-                            this.actionBackward.bind(this),
-                        );
-                    }
-                    if (stepChanged) {
-                        this.state.serviceSupplierAux = !this.state.serviceSupplierAux;
-                    }
-                }
+                this.loadCoreView(model);
             }
         }, [this.model]);
+    }
+
+    loadEventViews(model) {
+        const stepChanged = (
+            this.state.step_number != model.root.data.step_number
+            || this.state.stage_ref != model.root.data.stage_ref
+        );
+        this.state.stage_ref = model.root.data.stage_ref;
+        this.state.step_number = model.root.data.step_number;
+        this.state.sections = model.root.data.sections;
+
+        // SERVICE VIEW
+        if (model.root.data.service_res_id) {
+            if (model.root.data.service_res_id.resId != this.state.serviceInputId) {
+                let serviceResModel = model.root.data.service_res_model;
+                let serviceResId = model.root.data.service_res_id.resId;
+                let serviceViewId = this.props.context[VIEW_IDS[serviceResModel]];
+                let context = {
+                    'ike_event_screen': true,
+                };
+                this.state.serviceInputId = serviceResId;
+                this.state.serviceInputViewProps = this.getViewProps(
+                    serviceResModel,
+                    serviceResId,
+                    serviceViewId,
+                    context,
+                    this.saveViewData.bind(this),
+                    this.actionBackward.bind(this),
+                );
+            }
+            if (stepChanged) {
+                this.state.serviceInputAux = !this.state.serviceInputAux;
+            }
+        } else {
+            this.state.serviceInputId = null;
+        }
+        // SURVEY VIEW
+        if (model.root.data.service_survey_input_id) {
+            if (model.root.data.service_survey_input_id != this.state.serviceSurveyInputId) {
+                let surveyInputResModel = "survey.user_input";
+                let surveyInputResId = model.root.data.service_survey_input_id[0];
+                let surveyInputViewId = this.props.context[VIEW_IDS[surveyInputResModel]];
+                let context = {
+                    'ike_event_screen': true,
+                };
+                this.state.serviceSurveyInputId = surveyInputResId;
+                this.state.serviceSurveyInputViewProps = this.getViewProps(
+                    surveyInputResModel,
+                    surveyInputResId,
+                    surveyInputViewId,
+                    context,
+                    this.saveViewData.bind(this),
+                    this.actionBackward.bind(this),
+                );
+            }
+            if (stepChanged) {
+                this.state.serviceSurveyInputAux = !this.state.serviceSurveyInputAux;
+            }
+        }
+        if (model.root.data.sub_service_survey_input_id) {
+            if (model.root.data.sub_service_survey_input_id != this.state.subServiceSurveyInputId) {
+                let surveyInputResModel = "survey.user_input";
+                let surveyInputResId = model.root.data.sub_service_survey_input_id[0];
+                let surveyInputViewId = this.props.context[VIEW_IDS[surveyInputResModel]];
+                let context = {
+                    'ike_event_screen': true,
+                };
+                this.state.subServiceSurveyInputId = surveyInputResId;
+                this.state.subServiceSurveyInputViewProps = this.getViewProps(
+                    surveyInputResModel,
+                    surveyInputResId,
+                    surveyInputViewId,
+                    context,
+                    this.saveViewData.bind(this),
+                    this.actionBackward.bind(this),
+                );
+            }
+            if (stepChanged) {
+                this.state.subServiceSurveyInputAux = !this.state.subServiceSurveyInputAux;
+            }
+        }
+
+        // SUB SERVICE VIEW
+        if (model.root.data.sub_service_res_id) {
+            if (model.root.data.sub_service_res_id.resId != this.state.subServiceInputId) {
+                let serviceResModel = model.root.data.sub_service_res_model;
+                let serviceResId = model.root.data.sub_service_res_id.resId;
+                let serviceViewId = this.props.context[VIEW_IDS[serviceResModel]];
+                let context = {
+                    'ike_event_screen': true,
+                };
+                this.state.subServiceInputId = serviceResId;
+                this.state.subServiceInputViewProps = this.getViewProps(
+                    serviceResModel,
+                    serviceResId,
+                    serviceViewId,
+                    context,
+                    this.saveViewData.bind(this),
+                    this.actionBackward.bind(this),
+                );
+            }
+            if (stepChanged) {
+                this.state.subServiceInputAux = !this.state.subServiceInputAux;
+            }
+        } else {
+            this.state.subServiceInputId = null;
+        }
+
+        // EVENT SUPPLIER VIEW
+        if (['assigned', 'in_progress', 'completed', 'closed'].includes(model.root.data.stage_ref)) {
+            const service_supplier_ids = model.root.data.service_supplier_ids.records;
+            const selected_service_supplier_id = service_supplier_ids.find(supplier_id => supplier_id.data.state == 'accepted');
+            if (selected_service_supplier_id) {
+                let serviceResModel = selected_service_supplier_id.resModel;
+                let serviceResId = selected_service_supplier_id.resId;
+                let serviceViewId = this.props.context[VIEW_IDS[serviceResModel]];
+                let context = {
+                    'ike_event_screen': true,
+                };
+                this.state.serviceSupplierId = serviceResId;
+                this.state.serviceSupplierViewProps = this.getViewProps(
+                    serviceResModel,
+                    serviceResId,
+                    serviceViewId,
+                    context,
+                    this.saveViewData.bind(this),
+                    this.actionBackward.bind(this),
+                );
+            }
+            if (stepChanged) {
+                this.state.serviceSupplierAux = !this.state.serviceSupplierAux;
+            }
+        }
     }
 
     getViewProps(resModel, resId, viewId, context, saveCallback, discardCallback) {

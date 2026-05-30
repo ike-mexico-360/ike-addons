@@ -4,6 +4,7 @@ from odoo import models, fields, api, _
 class ShHelpdeskTicket(models.Model):
     _inherit = 'sh.helpdesk.ticket'
 
+    x_event_id = fields.Many2one('ike.event', string='Event', ondelete='set null')
     in_progress_stage_boolean = fields.Boolean(compute='_compute_in_progress_stage_boolean')
 
     @api.depends('stage_id')
@@ -32,7 +33,11 @@ class ShHelpdeskTicket(models.Model):
                     order.x_action_approve_dispute()
 
                 order.x_action_start_consolidation()
-        return super().action_done()
+        res = super().action_done()
+        if self.company_id and self.company_id.done_stage_id and self.stage_id != self.company_id.done_stage_id:
+            # Update the stage to the 'done_stage_id'
+            self.stage_id = self.company_id.done_stage_id.id
+        return res
 
     def x_action_open_purchase_order(self):
         view_id = self.env.ref('ike_event_purchase.purchase_order_helpdesk_dispute_form').id

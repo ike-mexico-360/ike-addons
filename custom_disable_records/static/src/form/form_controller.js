@@ -3,10 +3,17 @@ import { FormController } from "@web/views/form/form_controller";
 import { CustomConfirmationDialog } from "../confirmation_dialog/confirmation_dialog";
 import { patch } from "@web/core/utils/patch";
 
+import { onWillStart } from "@odoo/owl";
+
 patch(FormController.prototype, {
     setup() {
         // console.log("FormController", this);
         super.setup();
+        this.canBeDisabled = false;
+        onWillStart(async () => {
+            this.canBeDisabled = await this.model.orm.call(this.props.resModel, "get_can_be_disabled", [], {
+            });
+        });
     },
     getStaticActionMenuItems() {
         let res = super.getStaticActionMenuItems();
@@ -43,11 +50,8 @@ patch(FormController.prototype, {
     },
     get disableActivated() {
         return "disabled" in this.model.root.activeFields
-            ? !this.props.fields.disabled.readonly
+            ? !this.props.fields.disabled.readonly && this.canBeDisabled
             : false;
-    },
-    get canBeDisabled()  {
-        return "can_be_disabled" in this.model.root.activeFields ? this.model.root.data.can_be_disabled : true;
     },
     get disableEnabled() {
         return "disabled" in this.model.root.activeFields
@@ -62,6 +66,6 @@ patch(FormController.prototype, {
                 ? !this.props.fields.x_active.readonly
                 : false;
 
-        return res && !this.canBeDisabled;
+        return res && !("disabled" in this.model.root.activeFields);
     }
 });

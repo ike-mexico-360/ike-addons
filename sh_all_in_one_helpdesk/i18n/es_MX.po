@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-06 19:28+0000\n"
-"PO-Revision-Date: 2026-05-06 19:28+0000\n"
+"POT-Creation-Date: 2026-05-20 21:16+0000\n"
+"PO-Revision-Date: 2026-05-20 21:16+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -6275,6 +6275,11 @@ msgstr "¿Detalles del producto del ticket en el mensaje?"
 #: model:ir.model.fields,field_description:sh_all_in_one_helpdesk.field_sh_helpdesk_ticket__ticket_read_data
 msgid "Ticket Read Data"
 msgstr ""
+
+#. module: sh_all_in_one_helpdesk
+#: model:ir.model.fields,field_description:sh_all_in_one_helpdesk.field_purchase_order__x_ticket_stage_readonly
+msgid "Ticket Readonly"
+msgstr "Ticket solo lectura"
 
 #. module: sh_all_in_one_helpdesk
 #: model:ir.actions.server,name:sh_all_in_one_helpdesk.cron_ticket_reminder_ir_actions_server

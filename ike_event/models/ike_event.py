@@ -23,7 +23,13 @@ class IkeEvent(models.Model):
     # Flow fields
     sections = fields.Json(compute='_compute_sections', store=True, copy=False)
     stage_id = fields.Many2one(tracking=True)
+    # Stage Tracking Comments
     current_stage_date = fields.Datetime(compute='_compute_current_stage_date')
+    current_elapsed_time_minutes = fields.Integer(compute='_compute_current_stage_date')
+    stage_apply_max_wait_time = fields.Boolean(related='stage_id.apply_max_wait_time')
+    stage_max_wait_time_minutes = fields.Integer(related='stage_id.max_wait_time_minutes')
+    stage_apply_tracking_time = fields.Boolean(related='stage_id.apply_tracking_time')
+    stage_tracking_time_minutes = fields.Integer(related='stage_id.tracking_time_minutes')
 
     # nu fields
     nu_name = fields.Char('Nu user name')
@@ -380,6 +386,7 @@ class IkeEvent(models.Model):
             "stage_id": tuple(self.mapped('stage_id.id')),
         })
         trackings = self.env.cr.dictfetchall()
+        now = fields.Datetime.now()
         for rec in self:
             record_trackings = [
                 tracking for tracking in trackings
@@ -389,6 +396,7 @@ class IkeEvent(models.Model):
                 rec.current_stage_date = record_trackings[0]['create_date']
             else:
                 rec.current_stage_date = rec.create_date
+            rec.current_elapsed_time_minutes = (now - rec.current_stage_date).total_seconds() // 60
 
     @api.depends('selected_supplier_ids', 'selected_supplier_ids.stage_ref')
     def _compute_selected_pending_suppliers(self):

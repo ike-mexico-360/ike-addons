@@ -90,14 +90,6 @@ export class ServicesMainComponent extends Component {
     }
 
     async loadConceptsByEventSupplierId(supplier_link_id) {
-        console.log(await this.orm.searchRead(
-            'ike.event.supplier.product',
-            [
-                ['event_supplier_link_id', '=', supplier_link_id],
-            ],
-            [],
-            { context: { lang: this.user.lang || 'es_MX' } }
-        ));
         return await this.orm.searchRead(
             'ike.event.supplier.product',
             [
@@ -105,7 +97,18 @@ export class ServicesMainComponent extends Component {
                 ['display_type', 'not in', ['line_section', 'line_note']],
                 ['parent_product_id', '=', false],
             ],
-            [],
+            [
+                'id',
+                'supplier_id',
+                'product_id',
+                'quantity',
+                'uom_id',
+                'unit_price',
+                'cost_price',
+                'vat',
+                'subtotal',
+                'from_portal',
+            ],
             { context: { lang: this.user.lang || 'es_MX' } }
         );
     }
@@ -484,7 +487,7 @@ export class ServicesMainComponent extends Component {
                     let event_supplier = await this.GetSupplierNotifiedSingleEvent(event_supplier_id);
                     if (event_supplier) {
                         await this.orm.call(
-                            'ike.event.supplier',
+                            'ike.event.supplier.public',
                             'action_reject',
                             [event_supplier_id]
                         );

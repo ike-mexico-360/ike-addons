@@ -41,4 +41,7 @@
     <record id="custom_master_catalog.custom_group_bi_queries" model="res.groups">
         <field name="implied_ids" eval="[(4, ref('group_custom_nus_user'))]"/>
     </record>
+    <record id="custom_master_catalog.custom_group_ccc_analyst" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_custom_nus_user'))]"/>
+    </record>
 </odoo>

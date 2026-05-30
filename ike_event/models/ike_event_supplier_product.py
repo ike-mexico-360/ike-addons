@@ -151,6 +151,8 @@ class IkeEventSupplierProduct(models.Model):
 
     event_supplier_link_id = fields.Many2one('ike.event.supplier.link', 'Event Supplier', required=True, ondelete='cascade')
     supplier_id = fields.Many2one(string='Supplier', related='event_supplier_link_id.supplier_id', store=True, readonly=True)
+    truck_id = fields.Many2one('fleet.vehicle', string='Vehicle', compute='_compute_truck_id', readonly=True)
+    license_plate = fields.Char(string='License Plate', compute='_compute_truck_id', readonly=True)
     event_id = fields.Many2one(related='event_supplier_link_id.event_id')
 
     # === AMOUNT FIELDS === #
@@ -189,6 +191,20 @@ class IkeEventSupplierProduct(models.Model):
     product_add_domain = fields.Binary(compute='_compute_product_add_domain')
 
     from_portal = fields.Boolean(default=False, readonly=True)
+
+    @api.depends('event_supplier_link_id.event_id.selected_supplier_ids.truck_id')
+    def _compute_truck_id(self):
+        for rec in self:
+
+            supplier_id = self.env['ike.event.supplier'].search([
+                ('event_id', '=', rec.event_id.id),
+                ('supplier_id', '=', rec.supplier_id.id),
+                ('supplier_link_id', '=', rec.event_supplier_link_id.id),
+                ('selected', '=', True),
+            ], limit=1)
+
+            rec.truck_id = supplier_id.truck_id
+            rec.license_plate = supplier_id.truck_id.license_plate
 
     # === ONCHANGES === #
     @api.onchange('product_id')

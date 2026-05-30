@@ -74,40 +74,58 @@
                     </thead>
                     <tbody>
                         <t t-foreach="state.order_data.order_line" t-as="line" t-key="line.id">
-                            <t t-set="is_new_line" t-value="line.new_line"/>
-                            <tr>
-                                <!-- Concept -->
-                                <td class="align-content-center">
-                                    <span t-out="line.display_name" t-if="!is_new_line"/>
-                                    <t t-if="is_new_line">
-                                        <select class="form-control" name="product_id"
-                                        t-att-style="state.invalid_lines.has(line.id + '_product_id') ? 'border: 1px solid red' : ''"
-                                        t-on-change="(ev) => onchange_disputed_value(line.id, 'product_id', +ev.target.value)"
-                                    >
-                                            <option value="">
-                                                <t t-out="translate('Select a product')"/>
-                                            </option>
-                                            <t t-foreach="state.product_ids" t-as="product" t-key="product_index">
-                                                <option t-att-value="product.id" t-out="product.name"/>
-                                            </t>
-                                        </select>
-                                    </t>
-                                </td>
-                                <td class="text-end align-content-center" t-if="state.order_data.state == 'sent'">
-                                    <t t-out="line.x_product_qty_event" t-if="!is_new_line" />
-                                </td>
-                                <td class="text-end align-content-center" t-if="state.order_data.state == 'sent'">
-                                    <t t-out="line.x_price_unit_event" t-if="!is_new_line"/>
-                                </td>
-                                <!-- Quantity -->
-                                <td class="text-end align-content-center">
-                                    <div t-if="!is_new_line">
-                                        <span t-out="line.product_qty"/>
-                                    </div>
-                                </td>
-                                <!-- Price -->
-                                <td class="text-end align-content-center">
-                                    <!-- <t t-if="is_new_line &amp;&amp; !line.has_matrix_cost &amp;&amp; line.product_id !== null">
+                            <t t-if="line.display_type === 'line_section'">
+                                <tr>
+                                    <td class="py-2 px-3" colspan="10">
+                                        <strong class="text-primary fs-6">
+                                            <i class="fa fa-folder me-2"/>
+                                            <t t-out="line.display_name"/>
+                                        </strong>
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-elif="line.display_type === 'line_note'">
+                                <tr>
+                                    <td class="py-2 px-3 text-muted" colspan="10">
+                                        <t t-out="line.display_name"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-else="">
+                                <t t-set="is_new_line" t-value="line.new_line"/>
+                                <tr>
+                                    <!-- Concept -->
+                                    <td class="align-content-center">
+                                        <span t-out="line.x_concept_line_id.display_name or line.display_name" t-if="!is_new_line"/>
+                                        <t t-if="is_new_line">
+                                            <select class="form-control" name="product_id"
+                                            t-att-style="state.invalid_lines.has(line.id + '_product_id') ? 'border: 1px solid red' : ''"
+                                            t-on-change="(ev) => onchange_disputed_value(line.id, 'product_id', +ev.target.value)"
+                                        >
+                                                <option value="">
+                                                    <t t-out="translate('Select a product')"/>
+                                                </option>
+                                                <t t-foreach="state.product_ids" t-as="product" t-key="product_index">
+                                                    <option t-att-value="product.id" t-out="product.name"/>
+                                                </t>
+                                            </select>
+                                        </t>
+                                    </td>
+                                    <td class="text-end align-content-center" t-if="['sent', 'to_consolidate', 'consolidated'].includes(state.order_data.state)">
+                                        <t t-out="line.x_product_qty_event" t-if="!is_new_line" />
+                                    </td>
+                                    <td class="text-end align-content-center" t-if="['sent', 'to_consolidate', 'consolidated'].includes(state.order_data.state)">
+                                        <t t-out="line.x_price_unit_event" t-if="!is_new_line"/>
+                                    </td>
+                                    <!-- Quantity -->
+                                    <td class="text-end align-content-center">
+                                        <div t-if="!is_new_line">
+                                            <span t-out="line.product_qty"/>
+                                        </div>
+                                    </td>
+                                    <!-- Price -->
+                                    <td class="text-end align-content-center">
+                                        <!-- <t t-if="is_new_line &amp;&amp; !line.has_matrix_cost &amp;&amp; line.product_id !== null">
                                         <input t-if="state.show_dispute_fields" type="number" class="form-control text-end"
                                         t-att-value="line.price_unit" t-on-change="(ev) => onchange_disputed_value(line.id, 'price_unit', +ev.target.value)"
                                         t-att-style="state.invalid_lines.has(line.id + '_price_unit') ? 'border: 1px solid red' : ''"
@@ -115,44 +133,46 @@
                                     </t>
                                     <t t-else=""> -->
                                         <t t-out="line.price_unit"/>
-                                    <!-- </t> -->
-                                </td>
-                                <!-- Dispute fields -->
-                                <td class="text-end align-content-center" t-if="show_dispute_columns">
-                                    <t t-out="line.x_product_qty_dispute" t-if="show_dispute_values"/>
-                                    <input t-if="is_new_line || state.show_dispute_fields" type="number" class="form-control text-end"
+                                        <!-- </t> -->
+                                    </td>
+                                    <!-- Dispute fields -->
+                                    <td class="text-end align-content-center" t-if="show_dispute_columns">
+                                        <t t-out="line.x_product_qty_dispute" t-if="show_dispute_values"/>
+                                        <input t-if="is_new_line || state.show_dispute_fields" type="number" class="form-control text-end"
                                     t-att-value="line.x_product_qty_dispute" t-on-change="(ev) => onchange_disputed_value(line.id, 'x_product_qty_dispute', +ev.target.value)"
                                     t-att-style="state.invalid_lines.has(line.id + '_x_product_qty_dispute') ? 'border: 1px solid red' : ''"
                                 />
-                                </td>
-                                <td class="text-end align-content-center" t-if="show_dispute_columns">
-                                    <t t-out="line.x_price_unit_dispute" t-if="show_dispute_values"/>
-                                    <input t-if="is_new_line || state.show_dispute_fields" type="number" class="form-control text-end"
+                                    </td>
+                                    <td class="text-end align-content-center" t-if="show_dispute_columns">
+                                        <t t-out="line.x_price_unit_dispute" t-if="show_dispute_values"/>
+                                        <input t-if="is_new_line || state.show_dispute_fields" type="number" class="form-control text-end"
                                     t-att-value="line.x_price_unit_dispute" t-on-change="(ev) => onchange_disputed_value(line.id, 'x_price_unit_dispute', +ev.target.value)"
                                     t-att-style="state.invalid_lines.has(line.id + '_x_price_unit_dispute') ? 'border: 1px solid red' : ''"
                                 />
-                                </td>
-                                <td class="text-end align-content-center" t-if="show_approved_columns">
-                                    <t t-out="line.x_product_qty_approved" t-if="!is_new_line"/>
-                                </td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-danger rounded-pill px-3" t-on-click="() => remove_line(line.id)" t-if="is_new_line">
-                                        <i class="fa fa-trash"/>
-                                    </button>
-                                </td>
-                                <td class="text-end align-content-center" t-if="show_approved_columns">
-                                    <t t-out="line.x_price_unit_approved" t-if="!is_new_line"/>
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td class="text-end align-content-center" t-if="show_approved_columns">
+                                        <t t-out="line.x_product_qty_approved" t-if="!is_new_line"/>
+                                    </td>
+                                    <td t-if="is_new_line">
+                                        <button class="btn btn-sm btn-outline-danger rounded-pill px-3" t-on-click="() => remove_line(line.id)">
+                                            <i class="fa fa-trash"/>
+                                        </button>
+                                    </td>
+                                    <td class="text-end align-content-center" t-if="show_approved_columns">
+                                        <t t-out="line.x_price_unit_approved" t-if="!is_new_line"/>
+                                    </td>
+                                    <td class="py-3 px-3"></td>
+                                </tr>
+                            </t>
                         </t>
                         <tr class="border-top-3 fw-bold" style="border-top: 3px solid #000;">
                             <td class="py-3 px-3">
                                 <t t-out="translate('Subtotal')"/>
                             </td>
-                            <td class="py-3 px-3 text-end" t-if="state.order_data.state == 'sent'">
+                            <td class="py-3 px-3 text-end" t-if="['sent', 'to_consolidate', 'consolidated'].includes(state.order_data.state)">
                             </td>
-                            <td class="py-3 px-3 text-end" t-if="state.order_data.state == 'sent'">
-                                <span t-out="state.order_data.amount_untaxed"/>
+                            <td class="py-3 px-3 text-end" t-if="['sent', 'to_consolidate', 'consolidated'].includes(state.order_data.state)">
+                                <span t-out="state.order_data.amount_untaxed_event"/>
                             </td>
                             <td class="py-3 px-3 text-end">
                             </td>
@@ -197,7 +217,9 @@
                 </div>
             </div>
             <div class="mt-4" t-if="state.order_data.message_ids.length">
-                <h5 class="mb-3"><t t-out="translate('Messages')"/></h5>
+                <h5 class="mb-3">
+                    <t t-out="translate('Messages')"/>
+                </h5>
                 <t t-foreach="state.order_data.message_ids" t-as="msg" t-key="msg.id">
                     <div class="d-flex mb-3 gap-2">
                         <div class="flex-grow-1 border rounded p-3">

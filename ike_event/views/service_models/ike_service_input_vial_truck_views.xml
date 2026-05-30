@@ -214,12 +214,14 @@
                     </group>
                     <group invisible="not sections.get('user_sub_service_data')">
                         <group>
+                            <field name="products_count" invisible="1"/>
                         </group>
                         <div class="d-flex justify-content-end gap-1">
                             <button string="Return" class="btn-secondary o_discard"
                                     special="cancel" data-hotkey="x" />
                             <button string="Continue" class="btn-primary o_save"
-                                    special="save" data-hotkey="s"/>
+                                    special="save" data-hotkey="s"
+                                    invisible="products_count == 0" />
                         </div>
                     </group>
                 </sheet>

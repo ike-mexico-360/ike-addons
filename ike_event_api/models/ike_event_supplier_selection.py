@@ -135,7 +135,7 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered_app = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is False)
         self_filtered_external = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is True)
 
-        result = super().action_supplier_cancel(cancel_reason_id, reason_text)
+        result = super().action_cancel(cancel_reason_id, reason_text)
 
         # Frozen variables to prevent bug at post commit
         dbname = self.env.cr.dbname
@@ -183,7 +183,7 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered_app = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is False)
         self_filtered_external = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is True)
 
-        result = super().action_supplier_cancel(cancel_reason_id, reason_text)
+        result = super().action_event_cancel(cancel_reason_id, reason_text)
 
         # Frozen variables to prevent bug at post commit
         dbname = self.env.cr.dbname

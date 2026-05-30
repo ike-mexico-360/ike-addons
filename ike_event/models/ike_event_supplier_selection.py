@@ -531,6 +531,7 @@ class IkeEventSupplierSelection(models.Model):
             # Update next base supplier number
             if rec.supplier_number == rec.event_id.base_supplier_number:
                 rec.event_id.base_supplier_number = rec.event_id.supplier_number + 1
+
         # Common
         stage_cancel_id = self.env.ref('ike_event.ike_service_stage_cancelled').id
         self_filtered.cancel_date = fields.Datetime.now()
@@ -551,21 +552,16 @@ class IkeEventSupplierSelection(models.Model):
 
     def _set_supplier_cost_cancelled(self):
         for rec in self:
-            supplier_id = rec.supplier_id
+            # supplier_id = rec.supplier_id
             supplier_product_ids = rec.supplier_product_ids.filtered(
                 lambda x: x.display_type != 'line_section')
-            matrix = rec.event_id.get_supplier_product_matrix_lines(
-                supplier_id.id, supplier_product_ids.mapped('product_id').ids)
+            # matrix = rec.event_id.get_supplier_product_matrix_lines(
+            #     supplier_id.id, supplier_product_ids.mapped('product_id').ids)
 
-            cancelled_matrix = matrix.filtered(lambda x: x.supplier_status_id.ref == 'cancelled')
+            # cancelled_matrix = matrix.filtered(lambda x: x.supplier_status_id.ref == 'cancelled')
 
             for product_line in supplier_product_ids:
-                matrix_line = cancelled_matrix.filtered(
-                    lambda x: x.concept_id == product_line.product_id
-                )
-                cost = matrix_line[0].cost if matrix_line else 0
-
-                product_line.write({'base_unit_price': cost})
+                product_line.write({'base_unit_price': product_line.base_cancel_price})
 
     # === ACTIONS CANCEL WIZARD === #
     def open_cancel_wizard(self):

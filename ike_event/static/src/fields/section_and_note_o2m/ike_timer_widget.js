@@ -219,6 +219,7 @@ export class IkeTimerWidget extends Component {
             // ...record.context,
             not_notify_next: this.state.paused,
         };
+        // console.log("DEBUG", record.context)
         try {
             await rpc(`/web/dataset/call_button/${resModel}/${method}`, {
                 args: [[record.resId]],

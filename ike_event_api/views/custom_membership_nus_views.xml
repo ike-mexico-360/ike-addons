@@ -7,7 +7,8 @@
         <field name="inherit_id" ref="custom_nu.view_custom_membership_nus_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='x_display_mask']" position="after">
-                <field name="x_service_counter_validation" readonly="disabled" groups="base.group_no_one"/>
+                <field name="x_service_counter_validation" readonly="disabled or 1" groups="!base.group_no_one"/>
+                <field name="x_service_counter_validation" readonly="0" groups="base.group_no_one"/>
             </xpath>
         </field>
     </record>

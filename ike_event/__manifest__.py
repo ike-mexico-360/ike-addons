@@ -42,6 +42,7 @@
         'views/product_models/product_category_service_views.xml',
         'views/event_flow_models/ike_event_cancellation_reasons.xml',
         'views/event_flow_models/ike_supplier_assignment_type_views.xml',
+        'views/event_flow_models/ike_event_stage_comment_views.xml',
         'views/product_models/product_template_subservice_views.xml',
         'views/ike_event_views.xml',
         'views/ike_event_duplicate_reason.xml',

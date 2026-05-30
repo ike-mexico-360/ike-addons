@@ -101,30 +101,30 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             self.on_route_to_end_comment = self.supplier_id.on_route_to_end_comment
 
         elif self.stage_selected == 'contacted':
-            if not self.supplier_id.on_route_to_user_end_date :
+            if not self.supplier_id.on_route_to_user_end_date:
                 return {
-                'warning': {
-                    'title': _('Contacted: Invalid datetime'),
-                    'message': _(
-                        'You must first register the Arrived datetime '
-                        'before registering the Contacted datetime.')
+                    'warning': {
+                        'title': _('Contacted: Invalid datetime'),
+                        'message': _(
+                            'You must first register the Arrived datetime '
+                            'before registering the Contacted datetime.')
+                    }
                 }
-            }
 
             self.contacted_date = self.supplier_id.contacted_date
             self.contacted_user_id = self.supplier_id.contacted_user_id
             self.contacted_comment = self.supplier_id.contacted_comment
 
         elif self.stage_selected == 'finalized':
-            if not self.supplier_id.contacted_date :
+            if not self.supplier_id.contacted_date:
                 return {
-                'warning': {
-                    'title': _('Finalized: Invalid datetime'),
-                    'message': _(
-                        'You must first register the Contacted datetime '
-                        'before registering the Finalized datetime.')
+                    'warning': {
+                        'title': _('Finalized: Invalid datetime'),
+                        'message': _(
+                            'You must first register the Contacted datetime '
+                            'before registering the Finalized datetime.')
+                    }
                 }
-            }
 
             self.finalized_date = self.supplier_id.finalized_date
             self.finalized_user_id = self.supplier_id.finalized_user_id

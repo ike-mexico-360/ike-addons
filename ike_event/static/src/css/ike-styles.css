@@ -21,3 +21,16 @@
     border: 1px solid #cce0fc;
     border-radius: 6px;
 }
+
+.ike_blinking {
+    animation: ike_blink 5s infinite;
+}
+
+@keyframes ike_blink {
+    0%, 50%, 100% {
+        opacity: 1;
+    }
+    25%, 75% {
+        opacity: 0;
+    }
+}

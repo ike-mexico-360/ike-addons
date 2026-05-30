@@ -17,7 +17,7 @@ class PortalUserAccount(CustomerPortal):
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
         if "ike_event_service_count" in counters:
-            values["ike_event_service_count"] = request.env["ike.event"].search_count(
+            values["ike_event_service_count"] = request.env["ike.event"].sudo().search_count(
                 self._get_ike_event_services_domain(), limit=1
             )
         return values

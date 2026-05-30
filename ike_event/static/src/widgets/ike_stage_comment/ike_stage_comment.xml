@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="ike_event.IkeStageTrackingComment">
+        <div class="d-flex gap-2">
+            <i t-att-class="{'text-warning': state.trackingTimeWarning}" class="fa fa-sticky-note cursor-pointer" t-on-click="openCommentForm"/>
+            <i t-att-style="state.maxWaitTimeWarning ? '' : 'color: transparent !important;'"
+                class="fa fa-exclamation-triangle text-danger ike_blinking"/>
+        </div>
+    </t>
+
+</templates>

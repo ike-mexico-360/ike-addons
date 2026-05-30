@@ -39,6 +39,8 @@ class IkeEventSupplierPublic(models.Model):
     def action_supplier_cancel(self, cancel_reason_id=None, reason_text=None):
         return self.env['ike.event.supplier'].sudo().browse(self.id).action_supplier_cancel(cancel_reason_id=cancel_reason_id, reason_text=reason_text)
 
+    def action_reject(self):
+        self.env['ike.event.supplier'].sudo().browse(self.id).action_reject()
     # ToDo
     # def write(self, vals):
     #     fields_names = list(vals.keys())

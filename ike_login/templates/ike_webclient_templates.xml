@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="ike_login.login" name="Ike Login" inherit_id="web.login">
+        <xpath expr="//button[@name='redirect']" position="attributes">
+            <attribute name="class" add="d-none" separator=" "/>
+        </xpath>
+        <xpath expr="//button[@name='redirect']" position="attributes">
+            <attribute name="class" add="d-none" separator=" "/>
+        </xpath>
+        <xpath expr="//form" position="after">
+            <t t-set="disable_footer" t-value="1"/>
+            <t t-set="disable_database_manager" t-value="1"/>
+        </xpath>
+        <xpath expr="//div[.//input[@id='db']]" position="after">
+            <div class="mb-3" t-if="databases and len(databases) &gt; 1">
+                <label for="db" class="col-form-label">Country</label>
+                <select name="countryDB" t-att-value="request.db" id="countryDB" class="form-select" required="required"/>
+            </div>
+            <script>
+                const div = document.querySelector('input#db').parentElement.parentElement;
+                const select = document.getElementById('countryDB');
+                const input = document.getElementById('db');
+                const host = window.location.host;
+                console.log(div);
+
+                let data = [];
+                switch (host) {
+                    case 'localhost:8118':
+                        data = [{
+                            name: "🇲🇽 México",
+                            db: "DevIke360",
+                        }, {
+                            name: "🇨🇴 Colombia",
+                            db: "DevIke360-2",
+                        }];
+                        break;
+                    case 'devike360.alsiba.mx':
+                        data = [{
+                            name: "🇲🇽 México",
+                            db: "devike360",
+                        }, {
+                            name: "🇨🇴 Colombia",
+                            db: "devike360-col",
+                        }];
+                        break;
+                    case 'qaike360.alsiba.mx':
+                        data = [{
+                            name: "🇲🇽 México",
+                            db: "qaike360",
+                        }, {
+                            name: "🇨🇴 Colombia",
+                            db: "qaike360-col",
+                        }];
+                        break;
+                    default:
+                        data = [];
+                };
+
+                if (data.length) {
+                    if (div) {
+                        div.classList.add("d-none");
+                    }
+                    for (let option of data) {
+                        select.add(new Option(option.name, option.db));
+                    }
+                }
+
+                // console.log(select, input);
+                select.addEventListener('change', function () {
+                    // console.log('Nuevo valor:', input, this.value);
+                    input.value = this.value;
+                });
+            </script>
+        </xpath>
+    </template>
+
+</odoo>

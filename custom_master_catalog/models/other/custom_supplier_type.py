@@ -15,6 +15,20 @@ class CustomSupplierType(models.Model):
     active = fields.Boolean(default=True)
     disabled = fields.Boolean(default=False, tracking=True)
 
+    @api.model
+    def get_can_be_disabled(self):
+        """ Inherit and override to restrict disabling capabilities based on specific user groups. """
+        res = super().get_can_be_disabled()
+        # List of allowed technical group XML IDs
+        allowed_groups = [
+            'base.group_system',
+            'custom_master_catalog.custom_group_supplier_admin_system',
+        ]
+        has_permission = any(self.env.user.has_group(group) for group in allowed_groups)
+        if not has_permission:
+            return False
+        return res
+
     # === ACTIONS === #
     def action_disable(self, reason=None):
         for rec in self:

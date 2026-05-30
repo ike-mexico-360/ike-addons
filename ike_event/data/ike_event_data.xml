@@ -89,6 +89,12 @@
         <field name="ref">assigned</field>
         <field name="sequence">4</field>
         <field name="fold">False</field>
+        <!--
+        <field name="apply_max_wait_time">True</field>
+        <field name="max_wait_time_minutes">20</field>
+        <field name="apply_tracking_time">True</field>
+        <field name="tracking_time_minutes">15</field>
+        -->
     </record>
     <record id="ike_event_stage_in_progress" model="ike.event.stage">
         <field name="name">In Progress</field>

@@ -6,16 +6,10 @@ from odoo import models, fields, api, _
 class BaseModel(models.AbstractModel):
     _inherit = 'base'
 
-    # === FIELDS === #
-    can_be_disabled = fields.Boolean(compute='_compute_can_be_disabled')
-
     # === COMPUTES === #
     @api.model
     def get_can_be_disabled(self):
         return True
-
-    def _compute_can_be_disabled(self):
-        self.can_be_disabled = self.get_can_be_disabled()
 
     # === ACTIONS === #
     def toggle_disable(self):

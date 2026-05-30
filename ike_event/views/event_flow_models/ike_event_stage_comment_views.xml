@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- View ike.event.stage.comment form -->
+    <record id="view_ike_event_stage_comment_form" model="ir.ui.view">
+        <field name="name">view.ike.event.stage.comment.form</field>
+        <field name="model">ike.event.stage.comment</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="event_id" readonly="1" options="{'no_open': True}"/>
+                        </group>
+                        <group invisible="id > 0">
+                            <field name="stage_id" readonly="1" options="{'no_open': True}"/>
+                            <field name="sequence" readonly="1"/>
+                            <field name="comment"/>
+                            <div class="d-flex justify-content-end gap-1">
+                                <button name="action_dummy_save" type="object" string="Save" data-hotkey="shift+s"/>
+                            </div>
+                            <field name="previous_date" readonly="1" invisible="1"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="stage_comment_ids" readonly="1" nolabel="1" widget="one2many">
+                            <list>
+                                <field name="create_date" string="Date"/>
+                                <field name="stage_id"/>
+                                <field name="sequence" optional="hide"/>
+                                <field name="elapsed_time_minutes" column_invisible="1"/>
+                                <field name="duration_text" string="Elapsed" optional="show"/>
+                                <field name="duration_minutes" widget="integer" options="{'postfix': 'minutes'}" optional="show"/>
+                                <field name="comment"/>
+                            </list>
+                        </field>
+                    </group>
+                </sheet>
+                <footer>
+                    <button string="Close" special="cancel" invisible="id" data-hotkey="shift-x"/>
+                    <button string="Close" special="save" invisible="not id" data-hotkey="shift+x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action ike.event.stage.comment -->
+    <!-- <record id="action_ike_event_stage_comment model="ir.actions.act_window">
+        <field name="name">Event Stage Comment</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ike.event.stage.comment</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record> -->
+
+</odoo>

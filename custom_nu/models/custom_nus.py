@@ -4,6 +4,7 @@ from odoo import models, fields, api, _
 from markupsafe import Markup
 import logging
 import time
+import re
 from datetime import datetime
 import requests
 from odoo.exceptions import UserError
@@ -379,24 +380,39 @@ class CustomNus(models.Model):
 
     @api.onchange('phone', 'country_id')
     def _onchange_phone_validation(self):
-        if self.phone:
-            country_id = self.country_id
-            if not country_id:
-                country_id = list(self._phone_get_country())[0] if self._phone_get_country() else False
-            if not country_id:
-                country_id = self.env.company.country_id
-            phone_format = self._phone_format(fname='phone', force_format='INTERNATIONAL')
-            self.phone = self._phone_format(fname='phone', force_format='INTERNATIONAL') or ""
-            self.phone = self.phone.partition(' ')[2] if self.phone.startswith('+') else self.phone
-            if not phone_format:
-                country_name = country_id.name if country_id else _("unknown")
+        if not self.phone:
+            return
 
-                return {
-                    "warning": {
-                        "title": _("Validate Phone"),
-                        "message": _("The entered phone number is not valid for country %s", country_name),
-                    }
+        country_id = self.country_id or (
+            self._phone_get_country()[0]
+            if self._phone_get_country()
+            else self.env.company.country_id
+        )
+        country_name = country_id.name if country_id else _("unknown")
+
+        def invalid_warning():
+            return {
+                "warning": {
+                    "title": _("Validate Phone"),
+                    "message": _("The entered phone number is not valid for country %s", country_name),
                 }
+            }
+
+        # Letras
+        if re.search(r"[a-zA-Z]", self.phone):
+            return invalid_warning()
+
+        digits = re.sub(r"\D", "", self.phone)
+
+        # Más de 10 dígitos
+        if len(digits) > 10:
+            self.phone = digits[:10]
+            return invalid_warning()
+
+        # Formato inválido por país
+        phone_format = self._phone_format(fname='phone', force_format='INTERNATIONAL')
+        if not digits or not phone_format:
+            return invalid_warning()
 
 
 class CustomNusSearchHelperRel(models.Model):

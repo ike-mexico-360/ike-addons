@@ -408,7 +408,9 @@
                 default_group_by="supplier_id"
                 expand="1">
                 <field name="sequence" widget="handle" column_invisible="1" />
-                <field name="supplier_id"/>
+                <field name="supplier_id" optional="hide"/>
+                <field name="truck_id" optional="hide"/>
+                <field name="license_plate" optional="hide"/>
                 <field name="product_id"
                     options="{'no_create': 1, 'no_open': 1}"/>
                 <field name="covered" string="For coverage"/>
@@ -445,17 +447,19 @@
                 <field name="supplier_id" readonly="1"
                     optional="hide"
                     options="{'no_open': 1}"/>
+                <field name="truck_id" readonly="1"
+                    optional="hide"
+                    options="{'no_open': 1}"/>
+                <field name="license_plate" readonly="1"
+                    optional="hide"/>
                 <field name="product_id" readonly="1"
                     options="{'no_open': 1}" />
                 <field name="name" column_invisible="1" />
                 <field name="quantity" readonly="1"/>
                 <field name="cost_price" />
-                <!-- <field name="uom_id" readonly="1" options="{'no_open': 1}" /> -->
-                <field name="base_unit_price" />
+                <field name="base_unit_price" readonly="context.get('from_review_cost', False)"/>
                 <field name="base_cost_price" readonly="1" sum="Agreement Cost"/>
-                <!-- <field name="base_vat" readonly="1" sum="Agreement Vat"/> -->
                 <field name="tax_ids" column_invisible="1" widget="many2many_tags" optional="hide" readonly="1"/>
-                <!-- <field name="base_subtotal" readonly="1" sum="Agreement Subtotal"/> -->
                 <field name="is_manual" column_invisible="1"/>
             </list>
         </field>

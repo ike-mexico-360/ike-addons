@@ -11,6 +11,13 @@
             <xpath expr="//header/button[@name='preview_ticket']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+            <xpath expr="//field[@name='sh_purchase_order_ids']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="readonly">1</attribute>
+                <attribute name="string">Supplier</attribute>
+            </xpath>
             <xpath expr="//header/button[@name='action_send_whatsapp']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>

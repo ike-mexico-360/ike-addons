@@ -79,6 +79,7 @@ class CustomSupplierUploadCostMatrix(models.Model):
     product_ids_count = fields.Integer(compute='_compute_product_ids_count')
     products_to_confirm_count = fields.Integer(compute='_compute_products_to_confirm_count')
     product_ids_with_missing_values_count = fields.Integer(compute='_compute_product_ids_with_missing_values_count')
+    disabled = fields.Boolean(default=False, tracking=True)
 
     # === ONCHANGE === #
     @api.onchange("supplier_center_id")
