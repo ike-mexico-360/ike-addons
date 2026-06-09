@@ -142,7 +142,7 @@
                                         <field name="municipality_id" domain="['|', ('state_id', '=', state_id), ('disabled', '=', state_id)]" options="{'no_create': 1}"/>
                                         <field name="area_product_ids" widget="many2many_tags"
                                                domain="[('geographical_area_id', '=', id)]"
-                                               context="{'display_default_code': 0}"
+                                               context="{'display_default_code': 0, 'show_priority_stars': True}"
                                                options="{'color_field': 'color_computed'}"
                                                readonly="1" force_save="1">
                                             <list>

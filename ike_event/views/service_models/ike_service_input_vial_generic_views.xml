@@ -101,9 +101,18 @@
                         <div class="d-flex justify-content-end gap-1">
                             <button string="Return" class="btn-secondary o_discard"
                                     special="cancel" data-hotkey="x" />
+                            <!--
                             <button string="Continue" class="btn-primary o_save"
                                     special="save" data-hotkey="s"
                                     invisible="products_count == 0" />
+                            -->
+                            <widget name="ike_button_checkbox"
+                                className="btn btn-primary"
+                                special="save"
+                                string="Continue"
+                                confirm="Are you sure you added all the concepts?"
+                                readonly="products_count == 0"
+                                data-hotkey="s"/>
                         </div>
                     </group>
                 </sheet>

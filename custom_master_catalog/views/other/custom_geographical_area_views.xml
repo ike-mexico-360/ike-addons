@@ -40,6 +40,7 @@
                                 <field name="subservice_specification_ids" widget="many2many_tags"
                                        domain="subservice_specification_domain"
                                        options="{'no_open': True, 'no_create': True}"/>
+                                <field name="priority" widget="priority"/>
                                 <field name="color" widget="color_picker"/>
                                 <field name="disabled" widget="disable_field"
                                        options="{'disabled_reason_action': false, 'disabled_reason_field': 'disabled_reason'}"/>

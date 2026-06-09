@@ -244,6 +244,76 @@ class IkeEvent(models.Model):
             }
         }
 
+    def get_decrypted_key_identification(self):
+        self.ensure_one()
+
+        if not self.user_membership_id.key_identification:
+            return ''
+
+        encryption = self.env['custom.model.encryption']
+
+        value = encryption.x_decrypt_aes256(
+            self.user_membership_id.key_identification
+        )
+
+        mask = self.membership_display_mask
+
+        if value and mask:
+            value = self._apply_mask(value, mask)
+
+        return value
+
+    def get_decrypted_second_key_identification(self):
+        self.ensure_one()
+
+        if not self.user_membership_id.second_key_identification:
+            return ''
+
+        encryption = self.env['custom.model.encryption']
+
+        value = encryption.x_decrypt_aes256(
+            self.user_membership_id.key_identification
+        )
+
+        mask = self.membership_display_mask
+
+        if value and mask:
+            value = self._apply_mask(value, mask)
+
+        return value
+
+    def get_decrypted_phone(self):
+        self.ensure_one()
+
+        if not self.user_id.phone:
+            return ''
+
+        encryption = self.env['custom.model.encryption']
+        return encryption.x_decrypt_aes256(
+            self.user_id.phone
+        )
+
+    def _apply_mask(self, value, mask):
+        if not value or not mask:
+            return value or ''
+
+        result = ''
+        value_index = 0
+
+        for m in mask:
+            if m == '#':
+                if value_index < len(value):
+                    result += value[value_index]
+                    value_index += 1
+            elif m == '*':
+                if value_index < len(value):
+                    result += '*'
+                    value_index += 1
+            else:
+                result += m
+
+        return result
+
     # Search Supplier
     def _process_suppliers_data(self, service_suppliers, assignation_type, priority=None):
         result = super()._process_suppliers_data(service_suppliers, assignation_type, priority)
@@ -337,13 +407,13 @@ class IkeEvent(models.Model):
             if rec.stage_id != previous_stage:
                 if rec.stage_id == self.env.ref('ike_event.ike_event_stage_closed'):
                     rec._create_message_binnacle([
-                        "ike_event_binnacle.ike_binnacle_stage_10_4",
+                        "ike_event_binnacle.ike_binnacle_stage_10_5",
                         "ike_event_binnacle.ike_binnacle_stage_10_2"
                     ])
                 elif rec.stage_id == self.env.ref('ike_event.ike_event_stage_verifying'):
                     rec._create_message_binnacle([
                         "ike_event_binnacle.ike_binnacle_stage_10_3",
-                        "ike_event_binnacle.ike_binnacle_stage_10_4"
+                        "ike_event_binnacle.ike_binnacle_stage_10_5"
                     ])
 
         return result
@@ -609,9 +679,11 @@ class IkeEventAffiliationUser(models.TransientModel):
         result = super().action_save()
         for rec in self:
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_1"])
-            rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_23"])
-            rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_24"])
-
+            if self.event_id.user_membership_id.membership_plan_id.account_id.authorizer:
+                rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_23"])
+                rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_24"])
+            else:
+                rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_23_1"])
         return result
 
 
@@ -678,7 +750,9 @@ class IkeEventConfirmWizard(models.TransientModel):
         elif self.res_model == 'ike.event.supplier':
             for supplier in records:
                 supplier.event_id.cancel_reason_text = self.reason  # type: ignore
-                supplier.event_id.with_context(supplier=supplier.supplier_id.name)._create_message_binnacle([  # type: ignore
+                supplier.event_id.with_context(  # type: ignore
+                    cancelled_supplier_id=supplier.id
+                )._create_message_binnacle([
                     "ike_event_binnacle.ike_binnacle_stage_8_2"
                 ])
         return res

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- List view -->
+    <record id="view_custom_sat_validator_list" model="ir.ui.view">
+        <field name="name">custom.sat.validator.view.list</field>
+        <field name="model">custom.sat.validator</field>
+        <field name="arch" type="xml">
+            <list delete="0">
+                <field name="name"/>
+                <field name="xml_filename"/>
+                <field name="emisor_rfc"/>
+                <field name="sat_uuid"/>
+                <field name="total_amount"/>
+                <field name="sat_status"/>
+                <field name="cfdi_is_valid"/>
+                <field name="purchase_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Form view -->
+    <record id="ccustom_sat_validator_view_form" model="ir.ui.view">
+        <field name="name">custom.sat.validator.view.form</field>
+        <field name="model">custom.sat.validator</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_process_and_validate_invoice_xml"
+                            string="Validate in SAT"
+                            type="object"
+                            class="oe_highlight"
+                            invisible="state in ['validated']"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft,xml_error,validated"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+
+                    <group string="Purchase Order">
+                        <group>
+                            <field name="purchase_id" readonly="state == 'validated'"/>
+                        </group>
+                    </group>
+
+                    <group string="File Upload">
+                        <group>
+                            <field name="xml_filename" invisible="1"/>
+                            <field name="xml_file" filename="xml_filename" readonly="state == 'validated'"/>
+                        </group>
+                    </group>
+
+                    <group string="Extracted XML Data (Automated)" invisible="not sat_uuid">
+                        <group>
+                            <field name="sat_uuid"/>
+                            <field name="total_amount"/>
+                        </group>
+                        <group>
+                            <field name="emisor_rfc"/>
+                            <field name="receptor_rfc"/>
+                        </group>
+                    </group>
+
+                    <group string="SAT Audit Results">
+                        <group>
+                            <field name="sat_status"/>
+                            <field name="cfdi_is_valid"/>
+                        </group>
+                        <group>
+                            <field name="validation_log"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_custom_sat_validator" model="ir.actions.act_window">
+        <field name="name">SAT CFDI Validator</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">custom.sat.validator</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[]</field>
+        <field name="context"></field>
+    </record>
+
+    <!-- Menuitem -->
+    <menuitem
+        id="menu_custom_sat_validator_root"
+        name="SAT Services"
+        groups="base.group_system,custom_master_catalog.custom_group_ccc_analyst"
+        sequence="10"
+        />
+    <menuitem
+        id="menu_custom_sat_validator_sub"
+        name="CFDI Live Check"
+        parent="menu_custom_sat_validator_root"
+        action="action_custom_sat_validator"
+        groups="base.group_system,custom_master_catalog.custom_group_ccc_analyst"
+        sequence="10"
+        />
+</odoo>

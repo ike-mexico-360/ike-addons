@@ -20,6 +20,7 @@
                         <group>
                             <field name="file" widget="binary"
                                     filename="file_name"
+                                    groups="base.group_system"
                                     options="{'accepted_file_extensions': '.txt'}"/>
                             <field name="file_name" invisible="1"/>
                             <field name="file_type" invisible="1"/>

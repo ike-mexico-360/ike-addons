@@ -1749,6 +1749,61 @@
             <field name="sequence">23</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_23"/>
         </record>
+
+        <record id="ike_binnacle_stage_mail_template_7_23_1"  model="mail.template">
+            <field name="name">  Binnacle stage mail template 7_23_1 </field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">  Reference {{ object.name or 'n/a' }} </field>
+            <field name="body_html" type="html">
+                <t>
+                    <div t-if="object.user_membership_id.membership_plan_id.name">
+                        <strong>Account:</strong>
+                        <t t-out="object.user_membership_id.membership_plan_id.name"/>
+                    </div>
+
+                    <div t-if="object.get_decrypted_key_identification()">
+                        <strong>
+                            <t t-out="object.user_membership_id.membership_plan_id.account_id.x_account_identification_id.label or 'Primary key'"/>:
+                        </strong>
+                        <t t-out="object.get_decrypted_key_identification()"/>
+                    </div>
+
+                    <div t-if="object.get_decrypted_second_key_identification()">
+                        <strong>
+                            <t t-out="object.user_membership_id.membership_plan_id.account_id.x_second_key_identification_id.label or 'Second key'"/>:
+                        </strong>
+                        <t t-out="object.get_decrypted_second_key_identification()"/>
+                    </div>
+
+                    <div t-if="object.nu_name">
+                        <strong>Titular name:</strong>
+                        <t t-out="object.nu_name"/>
+                    </div>
+
+                    <div t-if="object.user_phone">
+                        <strong>Phone:</strong>
+                        <t t-out="object.get_decrypted_phone()"/>
+                    </div>
+
+                    <div t-if="object.user_additional_phone">
+                        <strong>Alternative phone:</strong>
+                        <t t-out="object.user_additional_phone"/>
+                    </div>
+
+                    <div t-if="object.preference_contact">
+                        <strong>Preference contact:</strong>
+                        <t t-out="dict(object._fields['preference_contact'].get_description(object.env)['selection']).get(object.preference_contact, '')"/>
+                    </div>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_23_1" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">7</field>
+            <field name="sequence">23</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_23_1"/>
+        </record>
         <record id="ike_binnacle_stage_mail_template_7_24"  model="mail.template">
             <field name="name">  Binnacle stage mail template 7_24 </field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
@@ -2024,16 +2079,18 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <t t-if="object.service_supplier_ids.filtered(lambda s: s.cancelled)">
-                        <!-- Tomar el último supplier cancelado -->
-                        <t t-set="supplier" t-value="object.service_supplier_ids.filtered(lambda s: s.cancelled).sorted(key=lambda s: s.write_date)[-1]"/>
-                        
+                    <t t-set="supplier"
+                    t-value="object.service_supplier_ids.browse(ctx.get('cancelled_supplier_id'))"/>
+
+                    <t t-if="supplier">
                         <div>
                             <strong>Canceled supplier:</strong>
                             <br/>
                             <ul>
                                 <li>
-                                    <strong><t t-out="supplier.supplier_id.name"/></strong><br/>
+                                    <strong>
+                                        <t t-out="supplier.supplier_id.name"/>
+                                    </strong><br/>
 
                                     <t t-if="supplier.truck_id">
                                         <strong>Plates:</strong>
@@ -2041,16 +2098,18 @@
                                     </t>
 
                                     <t t-if="supplier.cancel_reason_id">
-                                        <strong>Reason:</strong> <t t-out="supplier.cancel_reason_id.name"/><br/>
+                                        <strong>Reason:</strong>
+                                        <t t-out="supplier.cancel_reason_id.name"/><br/>
                                     </t>
 
-
                                     <t t-if="supplier.cancel_reason_text">
-                                        <strong>Comment:</strong> <t t-out="supplier.cancel_reason_text"/><br/>
+                                        <strong>Comment:</strong>
+                                        <t t-out="supplier.cancel_reason_text"/><br/>
                                     </t>
 
                                     <t t-if="supplier.cancel_user_id">
-                                        <strong>Canceled by:</strong> <t t-out="supplier.cancel_user_id.name"/>
+                                        <strong>Canceled by:</strong>
+                                        <t t-out="supplier.cancel_user_id.name"/>
                                     </t>
                                 </li>
                             </ul>
@@ -2187,7 +2246,8 @@
             <field name="body_html" type="html">
                 <t>
                     <p>
-                        <strong>Event concluded</strong>
+                        <strong>Event concluded</strong><br/>
+                        <strong>Concluded by: </strong><t t-out="user.name"/>
                     </p>
                 </t>
             </field>
@@ -2339,10 +2399,7 @@
 
                 <br/>
 
-                <t t-set="valid_suppliers"
-                t-value="object.selected_supplier_ids.filtered(
-                    lambda s: s.state not in ['cancel', 'cancel_supplier', 'cancel_event']
-                )"/>
+                <t t-set="valid_suppliers" t-value="object.selected_supplier_ids"/>
 
                 <t t-set="all_lines"
                 t-value="env['ike.event.supplier.product'].search([
@@ -2352,8 +2409,8 @@
                     ('event_supplier_link_id', 'in', valid_suppliers.mapped('supplier_link_id').ids)
                 ])"/>
 
-                <t t-set="unique_suppliers"
-                t-value="list(dict.fromkeys(all_lines.mapped('supplier_id')))"/>
+                <t t-set="unique_links"
+                t-value="list(dict.fromkeys(all_lines.mapped('event_supplier_link_id')))"/>
 
                 <table style="width:100%; border: 1px solid black; font-size:13px;">
                     <thead style="background-color:#4a90e2; color:white;">
@@ -2366,18 +2423,52 @@
                     </thead>
                     <tbody>
 
-                        <t t-foreach="unique_suppliers" t-as="supp">
-                            <t t-set="supplier_lines"
-                            t-value="all_lines.filtered(lambda l: l.supplier_id.id == supp.id)"/>
+                        <t t-foreach="unique_links" t-as="link">
 
-                            <tr style="background-color:#d9e8fb;">
+                            <t t-set="selected_supplier"
+                            t-value="object.selected_supplier_ids.filtered(
+                                lambda s: s.supplier_link_id.id == link.id
+                            )[:1]"/>
+
+                            <t t-set="is_cancelled"
+                            t-value="selected_supplier and selected_supplier.state in ['cancel', 'cancel_supplier', 'cancel_event']"/>
+
+                            <t t-set="supplier_lines"
+                            t-value="all_lines.filtered(lambda l: l.event_supplier_link_id.id == link.id)"/>
+
+                            <!-- Truck asignado a este link -->
+                            <t t-set="truck"
+                            t-value="selected_supplier.truck_id if selected_supplier else False"/>
+
+                            <!-- Encabezado del proveedor -->
+                            <tr t-att-style="'background-color:#ffd6d6;' if is_cancelled else 'background-color:#d9e8fb;'">
                                 <td colspan="4" style="border:1px solid #000; padding:6px; font-weight:bold;">
-                                    <t t-out="supp.name"/>
+
+                                    <t t-out="link.supplier_id.name"/>
+
+                                    <!-- Vehículo asignado -->
+                                    <t t-if="truck">
+                                        <span style="font-weight:normal; margin-left:8px; color:#333;">
+
+                                            <t t-if="selected_supplier.truck_plate">
+                                                — <t t-out="selected_supplier.truck_plate"/>
+                                            </t>
+                                        </span>
+                                    </t>
+
+                                    <!-- Badge cancelado -->
+                                    <t t-if="is_cancelled">
+                                        <span style="color:#cc0000; font-weight:bold; margin-left:8px;">
+                                            (CANCELLED)
+                                        </span>
+                                    </t>
+
                                 </td>
                             </tr>
 
+                            <!-- Líneas del proveedor -->
                             <t t-foreach="supplier_lines" t-as="sl">
-                                <tr>
+                                <tr t-att-style="'opacity:0.6;' if is_cancelled else ''">
                                     <td style="border:1px solid #000; padding:6px;">
                                         <t t-out="sl.product_id.display_name"/>
                                     </td>
@@ -2385,34 +2476,32 @@
                                         <t t-out="sl.quantity"/>
                                     </td>
                                     <td style="border:1px solid #000; padding:6px;">
-                                        <!-- precio unitario del convenio -->
                                         <t t-out="'${:,.2f}'.format(sl.base_unit_price)"/>
                                     </td>
                                     <td style="border:1px solid #000; padding:6px;">
-                                        <!-- costo total del convenio -->
                                         <t t-out="'${:,.2f}'.format(sl.base_cost_price)"/>
                                     </td>
                                 </tr>
                             </t>
 
+                            <!-- Subtotal por link -->
                             <tr style="font-weight:bold; background-color:#f5f5f5;">
                                 <td colspan="3" style="border:1px solid #000; padding:6px; text-align:right;">
-                                    Subtotal <t t-out="supp.name"/>
+                                    Subtotal <t t-out="link.supplier_id.name"/>
                                 </td>
                                 <td style="border:1px solid #000; padding:6px;">
-                                    <!-- subtotal convenio por proveedor -->
                                     <t t-out="'${:,.2f}'.format(sum(supplier_lines.mapped('base_cost_price')))"/>
                                 </td>
                             </tr>
 
                         </t>
 
+                        <!-- Total general -->
                         <tr style="font-weight:bold; background-color:#4a90e2; color:white;">
                             <td colspan="3" style="border:1px solid #000; padding:6px; text-align:right;">
                                 TOTAL
                             </td>
                             <td style="border:1px solid #000; padding:6px;">
-                                <!-- total convenio general -->
                                 <t t-out="'${:,.2f}'.format(sum(all_lines.mapped('base_cost_price')))"/>
                             </td>
                         </tr>

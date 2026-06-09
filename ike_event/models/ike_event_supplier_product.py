@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields, api, _
+from collections import defaultdict
+
+from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError, ValidationError
 
 
@@ -72,6 +74,7 @@ class IkeEventProduct(models.Model):
                 ('sh_product_subscribe', '=', False),
                 ('purchase_ok', '=', True),
                 ('x_concept_ok', '=', True),
+                ('x_additional_ok', '=', True),
                 ('type', '=', 'service'),
                 ('disabled', '=', False),
                 ('list_price', '=', 0),
@@ -148,6 +151,7 @@ class IkeEventSupplierProduct(models.Model):
     _name = 'ike.event.supplier.product'
     _inherit = ['ike.event.product']
     _description = 'Event Supplier Product'
+    _order = 'sequence, id'
 
     event_supplier_link_id = fields.Many2one('ike.event.supplier.link', 'Event Supplier', required=True, ondelete='cascade')
     supplier_id = fields.Many2one(string='Supplier', related='event_supplier_link_id.supplier_id', store=True, readonly=True)
@@ -281,13 +285,13 @@ class IkeEventSupplierProduct(models.Model):
             domain = [
                 ('active', '=', True),
                 ('disabled', '=', False),
-                ('x_additional_ok', '=', True),
+                ('x_concept_ok', '=', True),
+                # ('x_additional_ok', '=', True),
                 '|',
                 ('x_apply_all_services_subservices', '=', True),
-                ('x_categ_id', 'in', [rec.event_id.service_id.id, False]),
-                '|',
+                '&',
+                ('x_categ_id', '=', rec.event_id.service_id.id),
                 ('x_product_id', 'in', [rec.event_id.sub_service_id.id, False]),
-                ('x_product_id', '=', False),
             ]
 
             if rec.event_id:
@@ -351,8 +355,40 @@ class IkeEventSupplierProduct(models.Model):
         res = super().create(vals_list)
         if not self.env.context.get('from_internal', False):
             res.set_base_prices()
-            if not res.unit_price:
-                res.unit_price = res.base_unit_price
+            for rec in res:
+                if not rec.unit_price:
+                    rec.unit_price = rec.base_unit_price
+        elif self.env.context.get('from_add_concept', False) and not self.env.context.get('not_add_horizontally', False):
+            # Add product globally
+            for rec in res:
+                if rec.product_id.id not in rec.event_id.service_product_ids.ids:
+                    rec.event_id.service_product_ids = [
+                        Command.create({
+                            'product_id': rec.product_id.id,
+                            'estimated_quantity': rec.quantity,
+                            'supplier_number': rec.supplier_number,
+                        })
+                    ]
+
+            # Add product horizontally
+            link_ids = res.mapped('event_supplier_link_id')
+            grouped_by_link = defaultdict(list)
+            for vals in vals_list:
+                grouped_by_link[vals['event_supplier_link_id']].append({
+                    'product_id': vals['product_id'],
+                    'quantity': vals['quantity'],
+                    'unit_price': vals['unit_price'],
+                })
+
+            for link_id, lines in grouped_by_link.items():
+                current_id = link_ids.filtered(lambda x: x.id == link_id)
+                sibling_ids = self.env['ike.event.supplier.link'].search([
+                    ('id', '!=', current_id.id),
+                    ('event_id', '=', current_id.event_id.id),
+                    ('event_id.supplier_search_number', '=', current_id.event_id.supplier_search_number),
+                ])
+                if sibling_ids:
+                    sibling_ids.add_products_horizontally(lines)
         return res
 
     def write(self, vals):

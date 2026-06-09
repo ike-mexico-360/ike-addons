@@ -18,21 +18,47 @@
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']" position="attributes">
-                <attribute name="widget">section_and_note_field_o2m</attribute>
+                <attribute name="widget">product_label_section_and_note_field_o2m</attribute>
                 <attribute name="options">{'field_columns': ['product_id'], 'delete_condition_field': 'x_mandatory'}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='qty_received']" position="attributes">
+                <attribute name="groups">base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_support</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='qty_received']" position="after">
+                <field name="qty_received"
+                string="Received"
+                column_invisible="parent.state not in ('purchase', 'done')"
+                readonly="1"
+                optional="show"
+                groups="!base.group_system,custom_master_catalog.custom_group_ccc_boss"/>
             </xpath>
             <xpath expr="//sheet/div[2]/span[1]" position="replace">
                 <span class="o_form_label" invisible="state not in ('draft', 'sent')">Cost review</span>
             </xpath>
             <xpath expr="//header" position="inside">
-                <button name="x_syncronize_po_with_sap" type="object" string="Test SAP Sync" groups="base.group_no_one"
+                <button name="x_syncronize_po_with_sap" type="object" string="Test SAP Sync" groups="base.group_system"
                     invisible="x_event_id == False or state not in ('done', 'purchase') or x_ref_sap != False"/>
-                <button name="x_action_consolidate" type="object" string="Consolidate" invisible="not x_event_id or state != 'to_consolidate'"/>
+                <button name="x_action_consolidate" type="object" string="Consolidate" groups="base.group_system" invisible="not x_event_id or state != 'to_consolidate'"/>
+            </xpath>
+            <xpath expr="//button[@name='action_create_invoice']" position="attributes">
+                <attribute name="groups">base.group_system</attribute>
             </xpath>
             <xpath expr="//button[@name='button_confirm']" position="attributes">
                 <attribute name="groups">base.group_system</attribute>
             </xpath>
+            <xpath expr="//button[@name='action_rfq_send'][1]" position="attributes">
+                <attribute name="groups">base.group_system</attribute>
+            </xpath>
             <xpath expr="//button[@name='action_rfq_send'][2]" position="attributes">
+                <attribute name="groups">base.group_system</attribute>
+            </xpath>
+            <xpath expr="//button[@name='action_rfq_send'][3]" position="attributes">
+                <attribute name="groups">base.group_system</attribute>
+            </xpath>
+            <xpath expr="//button[@name='confirm_reminder_mail']" position="attributes">
+                <attribute name="groups">base.group_system</attribute>
+            </xpath>
+            <xpath expr="//button[@name='button_done']" position="attributes">
                 <attribute name="groups">base.group_system</attribute>
             </xpath>
             <xpath expr="//button[@name='button_cancel']" position="attributes">
@@ -48,12 +74,12 @@
             <xpath expr="//field[@name='order_line']/list/field[@name='product_qty']" position="attributes">
                 <attribute name="readonly">parent.x_event_id</attribute>
             </xpath>
-            <xpath expr="//field[@name='order_line']/list/field[@name='name']" position="attributes">
+            <!-- <xpath expr="//field[@name='order_line']/list/field[@name='name']" position="attributes">
                 <attribute name="column_invisible">1</attribute>
-            </xpath>
+            </xpath> -->
             <xpath expr="//field[@name='order_line']/list/field[@name='product_id']" position="attributes">
                 <attribute name="widget">ike_label_section_and_note_field</attribute>
-                <attribute name="readonly">x_covered or display_type</attribute>
+                <attribute name="readonly">x_covered or display_type or x_mandatory</attribute>
                 <attribute name="options">{'no_open': True, 'no_create': True}</attribute>
                 <attribute name="optional"></attribute>
                 <attribute name="domain">x_product_domain</attribute>
@@ -64,7 +90,7 @@
                         'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list',
                     }
                 </attribute>
-
+                <attribute name="groups">base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_support</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='product_id']" position="after">
                 <field name="x_product_domain" column_invisible="1" />
@@ -74,6 +100,19 @@
                     invisible="display_type"/>
                 <field name="x_price_unit_event" optional="show" readonly="1" column_invisible="not parent.x_event_id or parent.state in ('purchase', 'done')"
                     invisible="display_type"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list/field[@name='product_id']" position="after">
+                 <field
+                    name="product_id"
+                    widget="product_label_section_and_note_field"
+                    readonly="1"
+                    required="not display_type and not is_downpayment"
+                    optional="show"
+                    options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                    context="{'partner_id':partner_id, 'quantity':product_qty, 'company_id': parent.company_id}"
+                    force_save="1"
+                    domain="[('purchase_ok', '=', True), '|', ('company_id', '=', False), ('company_id', 'parent_of', parent.company_id)]"
+                    groups="!base.group_system,custom_master_catalog.custom_group_ccc_boss"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='sequence']" position="attributes">
                 <attribute name="column_invisible">1</attribute>
@@ -134,6 +173,9 @@
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='price_subtotal'][2]" position="attributes">
                 <attribute name="column_invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='products']/group/group[1]/field[@name='notes']" position="attributes">
+                <attribute name="invisible">1</attribute>
             </xpath>
             <xpath expr="//group[hasclass('oe_subtotal_footer')]" position="replace">
                 <group class="oe_subtotal_footer">
@@ -297,7 +339,26 @@
                                 <field
                                     name="product_id"
                                     widget="ike_label_section_and_note_field"
-                                    readonly="x_covered or display_type"
+                                    readonly="1"
+                                    required="not display_type and not is_downpayment"
+                                    context="{
+                                        'partner_id':parent.partner_id,
+                                        'quantity':product_qty,
+                                        'company_id': parent.company_id,
+                                        'edit': 0,
+                                        'display_default_code': 0,
+                                        'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list',
+                                    }"
+                                    groups="base.group_system,custom_master_catalog.custom_group_ccc_boss"
+                                    force_save="1"
+                                    options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
+                                    domain="x_product_domain"/>
+
+                                <field
+                                    name="product_id"
+                                    widget="ike_label_section_and_note_field"
+                                    groups="custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_support"
+                                    readonly="x_covered or display_type or x_mandatory"
                                     required="not display_type and not is_downpayment"
                                     context="{
                                         'partner_id':parent.partner_id,
@@ -325,7 +386,18 @@
                                 <field name="price_subtotal" string="Ike price" invisible="display_type"/>
                                 <field name="qty_received_manual" column_invisible="True"/>
                                 <field name="qty_received_method" column_invisible="True"/>
-                                <field name="qty_received" string="Received" column_invisible="parent.state not in ('purchase', 'done')" invisible="display_type" readonly="qty_received_method != 'manual' or is_downpayment" optional="show"/>
+                                <field name="qty_received"
+                                    string="Received"
+                                    groups="base.group_system,custom_master_catalog.custom_group_ccc_boss"
+                                    column_invisible="parent.state not in ('purchase', 'done')"
+                                    invisible="parent.state not in ('purchase', 'done')"
+                                    readonly="1"/>
+                                <field name="qty_received"
+                                    string="Received"
+                                    groups="custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_support"
+                                    column_invisible="parent.state not in ('purchase', 'done')"
+                                    invisible="display_type"
+                                    readonly="qty_received_method != 'manual' or is_downpayment" optional="show"/>
                                 <field name="qty_invoiced" string="Billed" column_invisible="parent.state not in ('purchase', 'done')" invisible="display_type" optional="show"/>
                                 <field name="product_uom" string="UdM" groups="uom.group_uom"
                                     readonly="state in ('purchase', 'done', 'cancel') or is_downpayment"
@@ -335,7 +407,7 @@
                                     column_invisible="1"/>
                                 <field name="product_packaging_qty" invisible="display_type or not product_id or not product_packaging_id" groups="product.group_stock_packaging" optional="show"/>
                                 <field name="product_packaging_id" invisible="display_type or not product_id" context="{'default_product_id': product_id, 'list_view_ref':'product.product_packaging_tree_view', 'form_view_ref':'product.product_packaging_form_view'}" groups="product.group_stock_packaging" optional="show"/>
-                                <field name="price_unit" readonly="parent.x_event_id and id != False" invisible="display_type"/>
+                                <field name="price_unit" readonly="1" invisible="display_type"/>
                                 <field name="x_product_qty_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id" invisible="display_type"/>
                                 <field name="x_price_unit_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id" invisible="display_type"/>
                                 <field name="x_product_qty_approved" optional="show" column_invisible="not parent.x_event_id" invisible="display_type"/>
@@ -351,7 +423,7 @@
                         </field>
                         <group>
                             <group>
-                                <field colspan="2" name="notes" nolabel="1" placeholder="Define your terms and conditions ..."/>
+                                <field colspan="2" name="notes" nolabel="1" placeholder="Define your terms and conditions ..." invisible="1"/>
                             </group>
                             <group class="oe_subtotal_footer">
                                 <field name="amount_untaxed_event" readonly="1"/>

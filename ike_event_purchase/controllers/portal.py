@@ -46,8 +46,9 @@ class CustomerPortal(PurchasePortal):
                 WHERE user_id = %s
             """, (user_id.id,))
             result = request.env.cr.fetchone()
+            supplier_id = result[0] if result else 0
 
-            domain += [('partner_id', '=', result[0]), ('x_dispute_state', 'not in', ['open', 'submitted'])]
+            domain += [('partner_id', '=', supplier_id), ('x_dispute_state', 'not in', ['open', 'submitted'])]
 
         return super()._render_portal(
             template, page, date_begin, date_end, sortby,

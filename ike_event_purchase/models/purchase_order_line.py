@@ -163,9 +163,10 @@ class PurchaseOrderLine(models.Model):
     def create(self, vals_list):
         res = super().create(vals_list)
 
-        if not self.env.context.get('ike_event_purchase', False):
-            res._x_set_is_covered()
-            res._x_set_unit_prices()
+        lines = res.filtered(lambda r: r.order_id.x_event_id)
+        if not self.env.context.get('ike_event_purchase', False) and lines:
+            lines._x_set_is_covered()
+            lines._x_set_unit_prices()
 
         return res
 

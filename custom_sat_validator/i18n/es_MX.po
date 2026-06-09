@@ -1,0 +1,278 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* custom_sat_validator
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-29 20:03+0000\n"
+"PO-Revision-Date: 2026-05-29 20:03+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_needaction
+msgid "Action Needed"
+msgstr "Acción requerida"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields.selection,name:custom_sat_validator.selection__custom_sat_validator__sat_status__vigente
+msgid "Active"
+msgstr "Vigente"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_attachment_count
+msgid "Attachment Count"
+msgstr "Conteo de archivos adjuntos"
+
+#. module: custom_sat_validator
+#: model:ir.model,name:custom_sat_validator.model_custom_sat_validator
+msgid "Autonomous SAT CFDI Validator"
+msgstr "Validador Autónomo de CFDI SAT"
+
+#. module: custom_sat_validator
+#: model:ir.ui.menu,name:custom_sat_validator.menu_custom_sat_validator_sub
+msgid "CFDI Live Check"
+msgstr "Validación de CFDI en Vivo"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__xml_file
+msgid "CFDI XML File"
+msgstr "Archivo XML CFDI"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields.selection,name:custom_sat_validator.selection__custom_sat_validator__sat_status__cancelado
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields.selection,name:custom_sat_validator.selection__custom_sat_validator__sat_status__error
+msgid "Communication Error"
+msgstr "Error de Comunicación"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__create_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields.selection,name:custom_sat_validator.selection__custom_sat_validator__state__draft
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
+msgid "Extracted XML Data (Automated)"
+msgstr "Datos Extraídos del XML (Automatizados)"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
+msgid "File Upload"
+msgstr "Carga del Archivo"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_follower_ids
+msgid "Followers"
+msgstr "Seguidores"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "Seguidores (Contactos)"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__has_message
+msgid "Has Message"
+msgstr "Tiene mensaje"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__id
+msgid "ID"
+msgstr ""
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,help:custom_sat_validator.field_custom_sat_validator__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "Si está marcado, hay nuevos mensajes que requieren su atención."
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,help:custom_sat_validator.field_custom_sat_validator__message_has_error
+#: model:ir.model.fields,help:custom_sat_validator.field_custom_sat_validator__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "Si está marcado, algunos mensajes presentan error de entrega."
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_is_follower
+msgid "Is Follower"
+msgstr "Es seguidor"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__cfdi_is_valid
+msgid "Is XML Valid?"
+msgstr "¿XML Válido?"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__emisor_rfc
+msgid "Issuer RFC"
+msgstr "RFC Emisor"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__write_date
+msgid "Last Updated on"
+msgstr "Última actualización el"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_has_error
+msgid "Message Delivery error"
+msgstr "Error de entrega de mensaje"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_ids
+msgid "Messages"
+msgstr "Mensajes"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields.selection,name:custom_sat_validator.selection__custom_sat_validator__sat_status__no_encontrado
+msgid "Not Found"
+msgstr "No Encontrado"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_needaction_counter
+msgid "Number of Actions"
+msgstr "Número de acciones"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_has_error_counter
+msgid "Number of errors"
+msgstr "Número de errores"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,help:custom_sat_validator.field_custom_sat_validator__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "Número de mensajes que requieren acción"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,help:custom_sat_validator.field_custom_sat_validator__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "Número de mensajes con error de envío"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__purchase_id
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
+msgid "Purchase Order"
+msgstr "Orden de Compra"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__rating_ids
+msgid "Ratings"
+msgstr "Calificaciones"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__receptor_rfc
+msgid "Receiver RFC"
+msgstr "RFC Receptor"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__name
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
+msgid "SAT Audit Results"
+msgstr "Resultado de Auditoría SAT"
+
+#. module: custom_sat_validator
+#: model:ir.actions.act_window,name:custom_sat_validator.action_custom_sat_validator
+msgid "SAT CFDI Validator"
+msgstr "Validador de CFDI SAT"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields.selection,name:custom_sat_validator.selection__custom_sat_validator__state__error
+msgid "SAT Error / Communication"
+msgstr "Error SAT / Comunicación"
+
+#. module: custom_sat_validator
+#: model:ir.ui.menu,name:custom_sat_validator.menu_custom_sat_validator_root
+msgid "SAT Services"
+msgstr "Servicios SAT"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__sat_status
+msgid "SAT Status"
+msgstr "Estatus SAT"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "Error de entrega de SMS"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__state
+msgid "Status"
+msgstr "Estado"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields.selection,name:custom_sat_validator.selection__custom_sat_validator__state__validated
+msgid "Successfully Validated"
+msgstr "Validado Exitosamente"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__sat_uuid
+msgid "UUID (Fiscal Folio)"
+msgstr "UUID (Folio Fiscal)"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
+msgid "Validate in SAT"
+msgstr "Validar en SAT"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__validation_log
+msgid "Validation Log"
+msgstr "Bitácora de Validación"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__website_message_ids
+msgid "Website Messages"
+msgstr "Mensajes del sitio web"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,help:custom_sat_validator.field_custom_sat_validator__website_message_ids
+msgid "Website communication history"
+msgstr "Historial de comunicación del sitio web"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__xml_filename
+msgid "XML File Name"
+msgstr "Nombre del Archivo XML"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields.selection,name:custom_sat_validator.selection__custom_sat_validator__state__xml_error
+msgid "XML Mismatch"
+msgstr "Discrepancia en XML"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__total_amount
+msgid "XML Total"
+msgstr "Total XML"

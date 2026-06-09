@@ -221,7 +221,7 @@
         <field name="last_stage">True</field>
     </record>
     <!-- Configuration -->
-    <data noupdate="0">
+    <data noupdate="1">
         <record id="ike_supplier_assignment_electronic" model="ike.event.supplier.assignment.type">
             <field name="name">Electronic</field>
             <field name="sequence">1</field>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="ike_event.IkeButtonCheckbox">
+        <div class="input-group">
+            <button t-att-class="props.className" t-on-click.stop="onClickCheckbox" t-ref="checkboxButton"
+                t-att-disabled="props.readonly">
+                <i class="fa fa-check-square" t-if="state.checked" />
+                <i class="fa fa-square" t-else="" />
+            </button>
+            <ViewButton t-props="ViewButtonProps" />
+        </div>
+    </t>
+
+    <t t-name="ike_event.IkeButtonCheckboxPopover">
+        <t>
+            <div class="popover">
+                <div class="popover-arrow"
+                    style="position: absolute; left: 0px; transform: translate3d(47.2px, 0px, 0px);"></div>
+                <h3 class="popover-header" t-if="props.title">
+                    <t t-out="props.title"/>
+                </h3>
+                <div class="popover-body">
+                    <t t-out="props.body"/>
+                </div>
+            </div>
+        </t>
+    </t>
+
+</templates>

@@ -879,3 +879,71 @@ class CatalogsAPIController(http.Controller):
         # dictfetchall retorna todas las filas como lista de dicts,
         # que Odoo serializa directamente a JSON en la respuesta.
         return request.env.cr.dictfetchall()
+
+    # ======================== #
+    #    EVENT/SUB SERVICES    #
+    # ======================== #
+    @http.route('/ike/catalog/subservices', type='json', auth='user', methods=['GET'])
+    def ike_catalog_sub_services(self, **kw):
+        if not request.env.uid:
+            request.env.cr.rollback()
+            raise Unauthorized('Usuario no autenticado')
+
+        # Construimos el dominio desde el metodo centralizado del modelo,
+        # evitando duplicar criterios de filtrado en multiples lugares.
+        SubService = request.env['product.product']
+        sub_services_domain = SubService.get_subservices_domain()
+
+        # _where_calc traduce el dominio de Odoo a un objeto Query con
+        # from_clause y where_clause listos para embeber en SQL raw,
+        # respetando los permisos de acceso (ir.rule) del usuario.
+        query = SubService._where_calc(sub_services_domain)
+
+        # Idioma del usuario para resolver la traduccion de campos JSONB.
+        # Fallback a 'en_US' si el usuario no tiene idioma configurado.
+        lang = request.env.user.lang or 'en_US'
+
+        request.env.cr.execute(
+            SQL(
+                """
+                SELECT
+                    product_product.id AS id,
+
+                    -- Nombre del producto traducido al idioma del usuario.
+                    -- COALESCE garantiza que nunca retorne null:
+                    -- intenta con el idioma del usuario, luego en_US, luego string vacio.
+                    COALESCE(
+                        product_template.name ->> %(lang)s,
+                        product_template.name ->> 'en_US',
+                        ''
+                    ) AS name,
+
+                    -- UOM como array [id, nombre] para que el cliente no necesite
+                    -- un endpoint adicional para resolver la unidad de medida.
+                    json_build_array(
+                        uom.id,
+                        COALESCE(
+                            uom.name ->> %(lang)s,
+                            uom.name ->> 'en_US',
+                            ''
+                        )
+                    ) AS uom_id
+
+                FROM %(from_clause)s
+                INNER JOIN product_template ON product_template.id = product_product.product_tmpl_id
+                INNER JOIN uom_uom uom ON uom.id = product_template.uom_id
+                WHERE %(where_clause)s
+                    -- Excluimos explicitamente productos archivados,
+                    -- aunque el dominio de Odoo normalmente ya lo filtra.
+                    AND product_product.active = true
+                ORDER BY product_product.id ASC
+                """,
+                from_clause=query.from_clause,
+                where_clause=query.where_clause or SQL("TRUE"),
+                lang=lang,
+            )
+        )
+
+        # dictfetchall retorna todas las filas como lista de dicts,
+        # que Odoo serializa directamente a JSON en la respuesta.
+        return request.env.cr.dictfetchall()

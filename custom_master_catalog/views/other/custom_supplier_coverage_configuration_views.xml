@@ -8,11 +8,24 @@
         <field name="arch" type="xml">
             <search>
                 <field name="supplier_id"/>
+                <field name="vat"/>
                 <field name="phone"/>
                 <field name="email"/>
+                <field name="services_ids"/>
+                <field name="subservices_ids"/>
                 <field name="disabled"/>
                 <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Electronics" name="filter_electronics" domain="[('x_is_electronic', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Manual" name="filter_manual" domain="[('x_is_manual', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <filter string="Extraordinary" name="filter_extraordinary" domain="[('x_is_extraordinary', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
+                <group >
+                    <filter string="Services" name="services" domain="[]" context="{'group_by':'services_ids'}"/>
+                    <filter string="Subservices" name="subservices" domain="[]" context="{'group_by':'subservices_ids'}"/>
+                    <filter string="Electronics" name="electronics" domain="[]" context="{'group_by':'x_is_electronic'}"/>
+                    <filter string="Manual" name="manual" domain="[]" context="{'group_by':'x_is_manual'}"/>
+                    <filter string="Extraordinary" name="extraordinary" domain="[]" context="{'group_by':'x_is_extraordinary'}"/>
+                </group>
             </search>
         </field>
     </record>
@@ -24,8 +37,14 @@
         <field name="arch" type="xml">
             <list delete="0" edit="0" duplicate="0">
                 <field name="supplier_id"/>
-                <field name="phone"/>
-                <field name="email"/>
+                <field name="vat" optional="show"/>
+                <field name="phone" optional="show"/>
+                <field name="email" optional="show"/>
+                <field name="services_ids" widget="many2many_tags" optional="show"/>
+                <field name="subservices_ids" widget="many2many_tags" optional="show"/>
+                <field name="x_is_electronic" optional="show"/>
+                <field name="x_is_manual" optional="show"/>
+                <field name="x_is_extraordinary" optional="show"/>
                 <field name="accept_cancellations" column_invisible="1"/>
                 <field name="active" column_invisible="1"/>
                 <field name="disabled" column_invisible="1"/>
@@ -85,12 +104,24 @@
                                 <field name="supplier_coverage_config_line_ids" nolabel="1" mode="list" readonly="disabled">
                                     <list string="Productos" editable="bottom" limit="20" no_open="1" delete="0">
                                         <field name="x_service_domain" column_invisible="1"/>
+                                        <field name="product_domain" column_invisible="1"/>
                                         <field name="service_id" options='{"no_open": True, "no_create": True}' required="1"
                                             domain="x_service_domain"
                                             context="{'list_view_ref': 'custom_master_catalog.product_category_service_view_list'}"/>
                                         <field name="product_id" options='{"no_open": True, "no_create": True}' required="1"
-                                            domain="[('categ_id', '=', service_id),('type', '=', 'service'),('disabled', '=', False)]"
+                                            domain="product_domain"
                                             context="{'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list', 'display_default_code': 0}"/>
+                                        <button type="object" name="action_disable_line"
+                                            string="Disable"
+                                            confirm="Are you sure you want to disable this subservice?"
+                                            invisible="disabled"
+                                            class="bg-danger text-white"/>
+                                        <button type="object" name="action_enable_line"
+                                            string="Enable"
+                                            confirm="Are you sure you want to enable this subservice?"
+                                            invisible="not disabled"
+                                            class="bg-success text-white"/>
+                                        <field name="disabled" widget="boolean" readonly="1" optional="show"/>
                                         <button type="object" name="action_open_geographic_subservice_wizard" title="Forecast Report" icon="fa-pencil-square-o"/>
                                     </list>
                                 </field>

@@ -6,8 +6,11 @@
         <field name="model">ike.event</field>
         <field name="inherit_id" ref="ike_event.view_ike_event_screen_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//sheet/group[@name='user_data']" position="after">
+                <field name="required_account_authorizer" invisible="1"/>
+            </xpath>
             <xpath expr="//sheet/group[@name='user_data']" position="attributes">
-                <attribute name="invisible">membership_authorization_status in ('pending_cabine','rejected','pending_commercial', False) or not sections.get('user_data', False)</attribute>
+                <attribute name="invisible">(membership_authorization_status in ('pending_cabine','rejected','pending_commercial', False) and required_account_authorizer or not sections.get('user_data', False)) or not user_id</attribute>
             </xpath>
             <xpath expr="//sheet/group[@name='titular_user']" position="attributes">
                 <attribute name="invisible">membership_authorization_status in ('authorized', False) or not sections.get('user_data', False)</attribute>
@@ -19,10 +22,11 @@
                 <group col="2">
                     <div class="d-flex justify-content-end ">
                         <button name="action_open_register_user_wizard" 
-                        type="object"
-                        class="btn-link" 
-                        invisible="membership_authorization_status in ('pending_cabine','pending_commercial','rejected','authorized') 
-                        or stage_ref in ('cancel')">Register user key</button>
+                            type="object"
+                            class="btn-link"
+                            invisible="membership_authorization_status in ('pending_cabine','pending_commercial','rejected','authorized') or user_id or stage_ref in ('cancel')">
+                                Register user key
+                        </button>
                         <!-- <field name="membership_authorization_status" widget="badge" readonly="1" invisible="not membership_authorization_status"/> -->
                         <button 
                             string="Authorization"
@@ -56,7 +60,7 @@
                     string="Authorization"
                     name="action_view_authorization"
                     type="object"
-                    invisible="membership_authorization_status in ['authorized']" 
+                    invisible="membership_authorization_status in ['authorized']"
                     groups="custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_commercial_supervisor">
                 </button>
                 <div invisible="not event_coverage_authorizer or membership_authorization_id.state == 'rejected'" class="d-flex justify-content-center">

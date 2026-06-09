@@ -141,13 +141,13 @@
                                             domain="['|', ('country_id', '=', country_id), ('disabled', '=', country_id)]"
                                             options="{'no_open': True, 'no_create': 1}"/>
                                         <field name="municipality_id" domain="['|', ('state_id', '=', state_id), ('disabled', '=', state_id)]" options="{'no_create': 1}"/>
-                                        <field name="priority" widget="priority"/>
+                                        <field name="priority" widget="priority" optional="hide"/>
                                         <!-- <field name="field_char"/>
                                         <field name="field_float"/> -->
                                         <field name="area_product_ids" widget="many2many_tags"
                                                domain="[('geographical_area_id', '=', id)]"
                                                options="{'color_field': 'color_computed'}"
-                                               context="{'display_default_code': 0}"
+                                               context="{'display_default_code': 0, 'show_priority_stars': True,}"
                                                readonly="1" force_save="1">
                                             <list>
                                                 <field name="product_id" context="{'display_default_code': 0}"/>

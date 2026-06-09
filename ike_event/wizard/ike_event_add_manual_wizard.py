@@ -20,7 +20,7 @@ class IkeEventManualSupplierWizard(models.TransientModel):
     truck_id = fields.Many2one(
         'fleet.vehicle',
         required=True,
-        string='Town Truck')
+        string='Service Vehicle')
     truck_domain = fields.Binary(
         string='Truck domain',
         compute='_compute_truck_domain')

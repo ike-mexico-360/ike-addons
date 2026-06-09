@@ -19,6 +19,7 @@
                     <button name="action_open_duplicate_wizard" string="Duplicate Expedient"
                             confirm="Are you sure?"
                             type="object" class="btn-info"
+                            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds"
                             invisible="stage_ref in ['draft']"/>
                     <button name="open_cancel_wizard" string="Cancel"
                             confirm="Are you sure?"
@@ -26,6 +27,7 @@
                             invisible="not id or stage_ref in ['completed', 'verifying', 'closed', 'cancel', 'cancel_subsequently', 'cancel_verifying', 'cancel_closed']"/>
                     <button name="action_directory_center_attention" string="Directories center attention"
                             type="object" class="btn-primary"
+                            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support"
                             invisible="stage_ref in ['draft', 'capturing', 'cancel', 'cancel_subsequently']"/>
                     <field name="stage_id" widget="ike_statusbar_duration" options="{'clickable': 0, 'fold_field': 'fold'}"/>
                 </header>
@@ -144,9 +146,10 @@
                                             </strong>
                                             <span>of your program.</span>
                                         </div>
-                                        <div>
+                                        <!-- Se pidio cambio para que este en el widget del header -->
+                                        <!-- <div>
                                             <button name="action_show_history_wizard" string="View history" type="object" class="btn btn-link"/>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
 
@@ -165,9 +168,9 @@
                                             </strong>
                                             <span>of your program.</span>
                                         </div>
-                                        <div>
+                                        <!-- <div>
                                             <button name="action_show_history_wizard" string="View history" type="object" class="btn btn-link"/>
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                                 <separator class="col-12 my-1" string="Service type" name="separator_service_type"/>
@@ -237,7 +240,7 @@
                         <field name="service_supplier_ids" nolabel="1" colspan="2"
                             widget="ike_supplier_section_and_note_field_o2m"
                             options="{'field_columns': ['supplier_id']}"
-                            context="{'default_search_number': supplier_search_number, 'form_view_ref': 'ike_event.ike_event_supplier_form_view'}"
+                            context="{'default_search_number': supplier_search_number, 'form_view_ref': 'ike_event.ike_event_supplier_phones_form_view'}"
                             readonly="supplier_search_type not in ['manual', 'manual_manual']">
                             <list create="0" delete="0">
                                 <field name="display_type" column_invisible="1" />

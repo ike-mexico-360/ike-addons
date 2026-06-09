@@ -5,6 +5,7 @@ import requests
 from collections import defaultdict
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError
+from odoo.exceptions import ValidationError
 from markupsafe import Markup
 from werkzeug.urls import url_encode
 
@@ -167,6 +168,11 @@ class PurchaseOrder(models.Model):
         for order in self:
             order_lines = order.order_line.filtered(lambda x: not x.display_type)
             order.amount_untaxed_approved = sum(order_lines.mapped('x_price_subtotal_approved'))
+            # new_amount = sum(order_lines.mapped('x_price_subtotal_approved'))
+            # if new_amount > order.x_authorized_amount:
+            #     raise ValidationError(_("The approved subtotal must not exceed the authorized amount."))
+            # else:
+            #     order.amount_untaxed_approved = new_amount
 
     @api.depends('order_line.x_price_subtotal_event')
     def _x_amount_all_event(self):
@@ -461,7 +467,7 @@ class PurchaseOrder(models.Model):
         grouped_ids = defaultdict(list)
 
         for rfq in rfqs:
-            grouped_ids[(rfq.partner_id.id, rfq.x_nu_user_id.id, rfq.x_sub_service_id.id)].append(rfq.id)
+            grouped_ids[(rfq.partner_id.id, rfq.x_sub_service_id.id)].append(rfq.id)
 
         return {
             key: self.env['purchase.order'].browse(rfq_ids)

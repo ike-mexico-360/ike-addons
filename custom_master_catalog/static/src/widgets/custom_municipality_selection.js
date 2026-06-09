@@ -82,6 +82,7 @@ class CustomMunicipalitySelection extends Component {
                         context: {
                             default_geographical_area_id: area_id.data.id,
                             default_product_id: productId,
+                            default_priority: area_id.data.priority,
                             default_active: true,
                         },
                     });

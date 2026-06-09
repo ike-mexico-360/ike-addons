@@ -234,6 +234,17 @@ export class IkeAffiliations extends Component {
             context: {hide_disabled_enabled_filters: 1}
         });
     }
+    openHistoryWizard = async () => {
+        const action = await this.orm.call(
+            "ike.event",
+            "action_show_history_wizard",
+            [[this.props.record.resId]]
+        );
+
+        if (action) {
+            await this.action.doAction(action);
+        }
+    };
 
     openCoverageDetails = () => {
         //obtenemos el membershiop del actual
@@ -270,7 +281,7 @@ export class IkeAffiliations extends Component {
             try {
                 const records = await this.orm.searchRead('custom.membership.nus', [
                     ['id', '=', currentAffiliationId],
-                    ['subscription_validity', '=', true]
+                    // ['subscription_validity', '=', true]
                 ], ['id', 'name', 'membership_plan_id', 'key_identification', 'x_validation_pattern', 'x_display_mask', 'subscription_validity', 'vehicle_weight_category_id', 'check_is_special'], { order: 'id asc', limit: 1 });
 
                 if (this.state.currentAffiliationId !== expectedAffId) return;

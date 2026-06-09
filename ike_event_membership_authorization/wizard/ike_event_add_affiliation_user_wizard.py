@@ -265,10 +265,11 @@ class IkeEventAffiliationUser(models.TransientModel):
 
             nus_affiliation_id = self._create_affiliation(nus_user)
 
-        self._new_register_authorization(
-            nus_membership=nus_affiliation_id,
-            nus_user=nus_user
-        )
+        if self.account_id.account_id.authorizer:
+            self._new_register_authorization(
+                nus_membership=nus_affiliation_id,
+                nus_user=nus_user
+            )
 
         self.event_id.write({
             'user_id': nus_user.id,
@@ -357,7 +358,6 @@ class IkeEventAffiliationUser(models.TransientModel):
             'state': 'pending_cabine',
         })
         self.event_id.membership_authorization_id = membership_authorization_id.id
-        membership_authorization_id.with_context(**self.env.context).action_send_authorization_email()
         return
 
     def _find_existing_user(self):

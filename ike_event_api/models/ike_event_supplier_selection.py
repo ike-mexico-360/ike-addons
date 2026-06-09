@@ -324,6 +324,10 @@ class IkeEventSupplierSelection(models.Model):
                                 "estatus": str(rec.state),
                                 "event_supplier_id": str(rec.id),
                                 "user_code": str(rec.event_id.user_code),
+                                "sub_service": {
+                                    "id": rec.event_id.sub_service_id.id,
+                                    "name": rec.event_id.sub_service_id.name,
+                                },
                                 "DB": self.env.cr.dbname,  # Base de datos para distinguir de donde provienen las notificaciones
                             },
                         )

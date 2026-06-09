@@ -14,7 +14,7 @@ export class IkeEventListController extends ListController {
         // console.log("IkeEventList", this);
         super.setup();
         this.notification = useService("notification");
-        if (crypto) {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
             this.props.context['ike_uuid'] = crypto.randomUUID();
         }
 

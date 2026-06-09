@@ -18,7 +18,7 @@
                     </span>
                     <!-- Validez de Vigencia -->
                     <t t-if="state.currentAffiliationId !== null">
-                        <t t-if="state.currentAffiliationInfo !== null">
+                        <t t-if="state.currentAffiliationInfo and state.currentAffiliationInfo.subscription_validity">
                             <span class="badge rounded-pill text-bg-success ps-1 pe-2 py-1">
                                 <i class="fa fa-check-circle-o"/> Active Validity
                             </span>
@@ -79,6 +79,69 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+                <div class="row" t-if="props.record.data.sub_service_id">
+                    <t t-if="props.record.data.services_available > 0">
+                        <div class="col-12">
+                            <div class="alert alert-success d-flex flex-wrap gap-1 align-items-center"
+                                role="status">
+
+                                <span>You have services available</span>
+
+                                <span class="badge bg-success fs-6">
+                                    <Field name="'services_available'"
+                                        record="props.record"
+                                        readonly="true"/>
+                                </span>
+
+                                <span>out of</span>
+
+                                <strong class="fs-6">
+                                    <Field name="'services_allowed'"
+                                        record="props.record"
+                                        readonly="true"/>
+                                </strong>
+
+                                <button type="button"
+                                        class="btn btn-link p-0"
+                                        t-on-click="openHistoryWizard">
+                                    View history
+                                </button>
+
+                            </div>
+                        </div>
+                    </t>
+
+                    <t t-else="">
+                        <div class="col-12">
+                            <div class="alert alert-warning d-flex flex-wrap gap-1 align-items-center"
+                                role="status">
+
+
+                                <span>You have no services available</span>
+
+                                <span class="badge bg-warning text-dark fs-6">
+                                    <Field name="'services_available'"
+                                        record="props.record"
+                                        readonly="true"/>
+                                </span>
+
+                                <span>out of</span>
+
+                                <strong class="fs-6">
+                                    <Field name="'services_allowed'"
+                                        record="props.record"
+                                        readonly="true"/>
+                                </strong>
+
+                                <button type="button"
+                                        class="btn btn-link p-0"
+                                        t-on-click="openHistoryWizard">
+                                    View history
+                                </button>
                             </div>
                         </div>
                     </t>

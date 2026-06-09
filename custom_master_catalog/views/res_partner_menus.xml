@@ -112,16 +112,22 @@
             action="res_partner_supplier_center_action_window"
             groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement,custom_group_supplier_contralory,custom_group_supplier_support,custom_group_bi_queries"
             sequence="10"/>
+        <!-- Importar vehículos -->
+        <menuitem id="custom_vehicle_import_wizard_menu"
+            action="action_custom_vehicle_import_wizard"
+            name="Import Vehicles"
+            groups="base.group_no_one"
+            sequence="15"/>
         <menuitem id="custom_supplier_coverage_configuration_menu"
             action="custom_supplier_coverage_configuration_action"
             name="Configuration of Services and Subservices"
             groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement,custom_group_supplier_contralory,custom_group_supplier_support,custom_group_bi_queries"
-            sequence="15"/>
+            sequence="20"/>
         <menuitem id="custom_fleet_vehicle_menu"
             action="custom_fleet_vehicle_action"
             name="Vehicles of service"
             groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement,custom_group_supplier_contralory,custom_group_supplier_support,custom_group_bi_queries"
-            sequence="20"/>
+            sequence="25"/>
     </menuitem>
 
     <!-- Sub-menu Config -->

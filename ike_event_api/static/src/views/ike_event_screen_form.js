@@ -84,7 +84,7 @@ patch(IkeEventScreenFormController.prototype, {
             }));
 
         // Fleet extra data
-        const accessories_domain = await this.orm.call('product.product', 'get_accessories_domain', []);
+        let accessories_domain = await this.orm.call('product.product', 'get_accessories_domain', []);
 
         const specIds = await this.orm.search(
             "custom.subservice.specification",
@@ -93,7 +93,7 @@ patch(IkeEventScreenFormController.prototype, {
 
         const [concepts, accessories, vehicle_types] = await Promise.all([
             this.orm.searchRead(
-                "product.product", [["x_product_id", "=", sub_service_id[0]]], ["id", "name", "x_check_is_armor", "x_armor_level"]),
+                "product.product", [["x_product_id", "=", sub_service_id[0]], ["disabled", "=", false]], ["id", "name", "x_check_is_armor", "x_armor_level"]),
             this.orm.searchRead(
                 "product.product", accessories_domain, ["id", "name"]),
             this.orm.searchRead(

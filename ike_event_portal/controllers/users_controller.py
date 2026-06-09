@@ -1,6 +1,5 @@
 from odoo import http
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
-from odoo.exceptions import AccessError, MissingError
 from odoo.http import request
 import logging
 
@@ -16,59 +15,44 @@ class PortalUserAccount(CustomerPortal):
         website=True,
     )
     def portal_users_list(self, page=1, sortby=None, **kw):
-        if not request.env.user.has_group('ike_event_portal.custom_group_portal_admin'):
-            return request.redirect('/my')
-
-        values = self._prepare_portal_layout_values()
-
-        User = request.env["res.users"].sudo()
-        domain = []  # adjust if you want to filter (e.g., by groups or company)
-        groups = (
-            request.env.ref("ike_event_portal.custom_group_portal_admin"),
-            request.env.ref("ike_event_portal.custom_group_portal_supervisor"),
-            request.env.ref("ike_event_portal.custom_group_portal_operator"),
-        )
-        single_user = request.env.user
-        ad = request.env.user.has_group("ike_event_portal.custom_group_portal_admin")
-        add = request.env.user.has_group("custom_group_portal_admin")
-
-        print(groups)
-        print(single_user)
-        print(ad)
-        print(add)
-
-        total = User.search_count(domain)
-        pager = portal_pager(
-            url="/provider/portal/users",
-            url_args={"sortby": sortby},
-            total=total,
-            page=page,
-            step=20,
-        )
-
-        users = User.search(domain, order="id desc")
-
-        values.update({"users": users, "pager": pager, "page_name": "users_list"})
-        return request.render("ike_event_portal.portal_ike_event_users_list", values)
-
-    @http.route(
-        ["/provider/portal/user/<int:user_id>"], type="http", auth="user", website=True
-    )
-    def portal_user_detail(self, user_id, **kw):
         try:
-            user = request.env["res.users"].sudo().browse(user_id)
-            if not user.exists():
-                return request.redirect("/provider/portal/users")
-            partner = user.partner_id
-        except (AccessError, MissingError):
-            return request.redirect("/provider/portal/users")
+            if not request.env.user.has_group('ike_event_portal.custom_group_portal_admin'):
+                return request.redirect('/my')
 
-        values = {
-            "partner": partner,
-            "user": user,
-            "page_name": "user_detail",
-        }
-        return request.render("ike_event_portal.portal_ike_event_user_detail", values)
+            values = self._prepare_portal_layout_values()
+
+            User = request.env["res.users"].sudo()
+            domain = []  # adjust if you want to filter (e.g., by groups or company)
+            groups = (
+                request.env.ref("ike_event_portal.custom_group_portal_admin"),
+                request.env.ref("ike_event_portal.custom_group_portal_supervisor"),
+                request.env.ref("ike_event_portal.custom_group_portal_operator"),
+            )
+            single_user = request.env.user
+            ad = request.env.user.has_group("ike_event_portal.custom_group_portal_admin")
+            add = request.env.user.has_group("custom_group_portal_admin")
+
+            print(groups)
+            print(single_user)
+            print(ad)
+            print(add)
+
+            total = User.search_count(domain)
+            pager = portal_pager(
+                url="/provider/portal/users",
+                url_args={"sortby": sortby},
+                total=total,
+                page=page,
+                step=20,
+            )
+
+            users = User.search(domain, order="id desc")
+
+            values.update({"users": users, "pager": pager, "page_name": "users_list"})
+            return request.render("ike_event_portal.portal_ike_event_users_list", values)
+        except Exception as e:
+            _logger.error("Error in portal_users_list: %s", str(e))
+            return request.redirect('/my')
 
     # ------------------------------------------------------------
     # CREATE NEW USER (JSON ENDPOINT FOR JAVASCRIPT)
@@ -211,23 +195,26 @@ class PortalUserAccount(CustomerPortal):
 
     @http.route("/api/partners/centers", type="json", auth="user", methods=["POST"])
     def get_supplier_centers(self, partner_id=None, **kwargs):
+        try:
+            Partner = request.env["res.partner"]
 
-        Partner = request.env["res.partner"]
+            domain = [
+                ("id", "=", partner_id),
+            ]
 
-        domain = [
-            ("id", "=", partner_id),
-        ]
+            res_partner = Partner.search(domain)
 
-        res_partner = Partner.search(domain)
+            # Get list of child IDs using .ids
+            center_ids = res_partner.child_ids.ids
 
-        # Get list of child IDs using .ids
-        center_ids = res_partner.child_ids.ids
+            supplier_centers = Partner.search(
+                [("id", "in", center_ids), ("type", "=", "center")]
+            )
 
-        supplier_centers = Partner.search(
-            [("id", "in", center_ids), ("type", "=", "center")]
-        )
-
-        return [{"id": center.id, "name": center.name} for center in supplier_centers]
+            return [{"id": center.id, "name": center.name} for center in supplier_centers]
+        except Exception as e:
+            _logger.error("Error in get_supplier_centers: %s", str(e))
+            return {"error": str(e)}
 
     @http.route(
         ["/provider/portal/users/search"],
@@ -260,44 +247,4 @@ class PortalUserAccount(CustomerPortal):
 
         except Exception as e:
             _logger.error(f"Error searching users: {str(e)}")
-            return []
-
-    @http.route(
-        ["/provider/portal/groups/search"],
-        type="json",
-        auth="user",
-        methods=["POST"],
-        csrf=False,
-    )
-    def search_groups(self, group_ids=None, fields=None, **kw):
-        """
-        Search groups by IDs
-
-        Args:
-            group_ids: List of group IDs to search
-            fields: List of field names to return
-
-        Returns:
-            list: List of dictionaries with group data
-        """
-        try:
-            if not group_ids:
-                return []
-
-            # Use default fields if not specified
-            if fields is None:
-                fields = ['id', 'name']
-
-            # Search groups
-            groups = request.env['res.groups'].search_read(
-                domain=[['id', 'in', group_ids]],
-                fields=fields
-            )
-
-            _logger.info(f"User {request.env.user.login} retrieved {len(groups)} groups")
-
-            return groups
-
-        except Exception as e:
-            _logger.error(f"Error searching groups: {str(e)}")
-            return []
+            return {"error": str(e)}

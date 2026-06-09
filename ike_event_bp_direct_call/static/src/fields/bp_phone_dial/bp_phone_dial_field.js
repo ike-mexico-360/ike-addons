@@ -352,8 +352,8 @@ export class BPPhoneDialField extends PhoneField {
 
             await wait(250);
 
-            const response = await api.dialNumber(cleanNumber);
-            console.log("Bright Pattern dialNumber response:", response);
+            const response = await api.dialNumber(cleanNumber.slice(-10));
+            console.log("Bright Pattern dialNumber", cleanNumber.slice(-10) ," response:", response);
 
             this.notification.add(_t("Llamada enviada a Bright Pattern."), {
                 type: "success",

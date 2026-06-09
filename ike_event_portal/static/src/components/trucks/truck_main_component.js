@@ -9,6 +9,7 @@ import { TruckCreateComponent } from "./truck_create_component";
 import { rpc } from "@web/core/network/rpc";
 import { usePagination } from "../pagination/pagination_service";
 import { PaginationComponent } from "../pagination/pagination_component";
+import { _t } from "@web/core/l10n/translation";
 
 export class TrucksComponent extends Component {
     static template = "ike_event_portal.TrucksComponent";
@@ -19,6 +20,7 @@ export class TrucksComponent extends Component {
 
     setup() {
         this.orm = useService("orm");
+        this.notification = useService("notification");
         this.supplier_id = 0;
         this.user = user;
         this.state = useState({
@@ -67,7 +69,6 @@ export class TrucksComponent extends Component {
     }
 
     async loadTrucks() {
-        // ... (loadTrucks method remains the same)
         this.state.isLoading = true;
         const userLang = this.user.lang || 'es_MX';
         let selectionMapping = {};
@@ -84,27 +85,23 @@ export class TrucksComponent extends Component {
                     selectionMapping[key] = label;
                 });
             }
-            console.log(' selectionMapping...',  selectionMapping);
             const trucksData = await this.orm.searchRead(
                 'fleet.vehicle',
-                [],
+                [['x_partner_id', '=', this.supplier_id]],
                 ['name', 'license_plate', 'model_id', 'x_partner_id', 'vehicle_type', 'brand_id', 'driver_id', 'x_vehicle_service_state', 'x_vehicle_type'],
                 { context: { Lang: userLang }}
             );
 
             this.state.trucks = trucksData
-                .filter(x => x.x_partner_id && x.x_partner_id.includes(this.supplier_id))
                 .map(truck => {
                     return {
                         ...truck,
                         x_vehicle_service_state_label: selectionMapping[truck.x_vehicle_service_state] || truck.x_vehicle_service_state
                     };
                 });
-            console.log('Trucks...', this.state.trucks);
-            // console.log('Trucks...', trucksData.filter(x => x.x_partner_id && x.x_partner_id.includes(this.supplier_id)));
-            // this.state.trucks = trucksData.filter(x => x.x_partner_id && x.x_partner_id.includes(this.supplier_id));
-        } catch (e) {
-            console.error("Failed to load trucks:", e);
+
+        } catch (err) {
+            this.showNotification({ title: _t("Error loading trucks"), message: _t(err?.data?.message || err.message || "An error occurred while loading the trucks."), type: 'danger' });
         } finally {
             this.state.isLoading = false;
         }
@@ -140,28 +137,26 @@ export class TrucksComponent extends Component {
         });
     }
 
+    showNotification({ message, type = 'info', sticky = true, title }) {
+        this.notification.add(message, { type, sticky, title });
+    }
+
     async getSupplierId() {
         try {
-            let supplier_drivers = await this.orm.searchRead(
+            const [supplier] = await this.orm.searchRead(
                 'res.partner.supplier_users.rel',
-                [],
-                []
+                [['user_id', '=', this.user.userId]],
+                ['supplier_id'],
+                { limit: 1 }
             );
-            let supplier = supplier_drivers.find(x => x.user_id && x.user_id[0] === this.user.userId);
-            if(!supplier) {
-                this.state.notification = { type: 'warning', message: 'El usuario no está asociado a ningún proveedor.' };
+            if (!supplier) {
+                this.showNotification({ title: _t("Supplier not found"), message: _t("The user is not associated with any provider."), type: 'warning' });
                 return;
             }
             this.supplier_id = supplier.supplier_id[0];
+        } catch (err) {
+            this.showNotification({ title: _t("Error obtaining supplier"), message: _t(err?.data?.message || err.message || "Error obtaining the associated provider."), type: 'danger' });
         }
-        catch (e) {
-            this.state.notification = { type: 'error', message: 'Error al obtener el proveedor asociado.' };
-        }
-
-    }
-
-    closeNotification() {
-        this.state.notification = null;
     }
 
     updateFilter(field, value) {
@@ -172,8 +167,8 @@ export class TrucksComponent extends Component {
         try {
             const result = await rpc('/provider/portal/trucks/can_add_driver');
             this.state.canAddDriver = result.can_edit;
-        } catch (e) {
-            console.error('Failed to check user permissions:', e);
+        } catch (err) {
+            this.showNotification({ title: _t("Error checking permissions"), message: _t(err?.data?.message || err.message || "An error occurred while checking user permissions."), type: 'danger' });
             this.state.canAddDriver = false;
         }
     }

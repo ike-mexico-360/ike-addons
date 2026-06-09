@@ -62,65 +62,16 @@
     <template id="ike_event_portal_my_purchase_orders" name="My Purchase Orders" inherit_id="purchase.portal_my_purchase_orders">
         <xpath expr="//t[1]" position="replace">
             <t t-call="portal.portal_layout">
-                <t t-set="breadcrumbs_searchbar" t-value="True"/>
-                <t t-call="portal.portal_searchbar">
-                    <t t-set="title">Purchase Orders</t>
-                </t>
-                <form method="get" action="/my/purchase" class="row g-2 mb-3">
-                    <div class="col-auto">
-                        <input type="text" id="portal_po_search" name="search"
-                               class="form-control" placeholder="Search by Purchase Order #..."/>
-                    </div>
-                    <div class="col-auto">
-                        <button type="submit" class="btn btn-primary">Search</button>
-                    </div>
-                </form>
-                <script>
-                    (function () {
-                        var params = new URLSearchParams(window.location.search);
-                        var val = params.get('search');
-                        if (val) { document.getElementById('portal_po_search').value = val; }
-                    })();
-                </script>
                 <t t-if="not orders">
                     <p class="o_view_nocontent_smiling_face">No purchase orders yet.</p>
                 </t>
-                <t t-if="orders" t-call="portal.portal_table">
-                    <thead>
-                        <tr class="active">
-                            <th id="order_name_header">
-                                <span class='d-none d-md-inline'>Purchase Order #</span>
-                                <span class='d-block d-md-none'>Ref.</span>
-                            </th>
-                            <th id="order_event_header">
-                                <span class='d-none d-md-inline'>Event</span>
-                                <span class='d-block d-md-none'>Event</span>
-                            </th>
-                            <th id="order_confirmation_header">
-                                <span class='d-none d-md-inline'>Confirmation Date</span>
-                                <span class='d-block d-md-none'>Confirmation</span>
-                            </th>
-                            <th id="order_total_header">Total</th>
-                        </tr>
-                    </thead>
-                    <t t-foreach="orders" t-as="order">
-                        <tr>
-                            <td id="order_name">
-                                <a t-att-href="order.get_portal_url()">
-                                    <t t-esc="order.name"/>
-                                </a>
-                            </td>
-                            <td id="order_event">
-                                <t t-out="order.x_event_public_id.name"/>
-                            </td>
-                            <td id="order_confirmation">
-                                <span t-field="order.date_approve" t-options="{'widget': 'date'}"/>
-                            </td>
-                            <td id="order_total">
-                                <span t-field="order.amount_total"/>
-                            </td>
-                        </tr>
-                    </t>
+                <t t-if="orders">
+                    <div class="o_portal_purchase_order_list">
+                        <owl-component
+                            name="ike_event_purchase.PurchaseOrderList"
+                            t-att-props="json.dumps({})"
+                        />
+                    </div>
                 </t>
             </t>
         </xpath>
@@ -135,56 +86,18 @@
         </xpath>
     </template>
     <template id="ike_event_portal_my_purchase_rfqs" name="My Requests For Quotation" inherit_id="purchase.portal_my_purchase_rfqs">
-        <t t-set="breadcrumbs_searchbar" t-value="True"/>
-        <xpath expr="//t[1]/t[4]" position="replace">
-            <t t-if="rfqs" t-call="portal.portal_table">
-                <thead>
-                    <tr class="active">
-                        <th class="text-start">
-                            <span class='d-none d-md-inline'>Request for Quotation #</span>
-                            <span class='d-block d-md-none'>Ref.</span>
-                        </th>
-                        <th class="text-start">Event</th>
-                        <th class="text-start"></th>
-                        <th class="text-start">Order Deadline</th>
-                        <th class="text-start">IKE Price</th>
-                        <th class="text-start">Untaxed Amount Dispute</th>
-                        <th class="text-start">Untaxed Amount Approved</th>
-
-                    </tr>
-                </thead>
-                <t t-foreach="rfqs" t-as="rfq">
-                    <tr>
-                        <td class="text-start">
-                            <a t-att-href="rfq.get_portal_url()">
-                                <t t-esc="rfq.name"/>
-                            </a>
-                        </td>
-                        <td class="text-start">
-                            <span t-field="rfq.x_event_public_id.name"/>
-                        </td>
-                        <td class="text-start">
-                            <t t-if="rfq.state == 'to_consolidate'">
-                                <span class="badge bg-success">Aceptado</span>
-                            </t>
-                            <t t-elif="rfq.state == 'consolidated'">
-                                <span class="badge bg-success">Aceptado</span>
-                            </t>
-                        </td>
-                        <td class="text-start">
-                            <span t-field="rfq.date_order" t-options="{'widget': 'date'}"/>
-                        </td>
-                        <td class="text-start">
-                            <span t-field="rfq.amount_untaxed"/>
-                        </td>
-                        <td class="text-start">
-                            <span t-field="rfq.amount_untaxed_dispute"/>
-                        </td>
-                        <td class="text-start">
-                            <span t-field="rfq.amount_untaxed_approved"/>
-                        </td>
-                    </tr>
-                </t>
+        <xpath expr="//t[@t-set='breadcrumbs_searchbar']" position="attributes">
+            <attribute name="t-value">False</attribute>
+        </xpath>
+        <xpath expr="//t[@t-call='portal.portal_searchbar']" position="replace"/>
+        <xpath expr="//t[@t-if='rfqs']" position="replace">
+            <t t-if="rfqs">
+                <div class="o_portal_rfq_list">
+                    <owl-component
+                        name="ike_event_purchase.PurchaseRfqList"
+                        t-att-props="json.dumps({'search': request.params.get('search', False)})"
+                    />
+                </div>
             </t>
         </xpath>
     </template>

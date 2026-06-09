@@ -5,6 +5,7 @@ import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
 import { user } from "@web/core/user";
 import { rpc } from "@web/core/network/rpc";
+import { _t } from "@web/core/l10n/translation";
 
 export class TruckCreateComponent extends Component {
     static template = "ike_event_portal.TruckCreateComponent";
@@ -15,6 +16,7 @@ export class TruckCreateComponent extends Component {
 
     setup() {
         this.orm = useService("orm");
+        this.notification = useService("notification");
         this.supplier_id = 0;
         this.supplier_name = "";
         this.user = user;
@@ -36,43 +38,46 @@ export class TruckCreateComponent extends Component {
             service_states: [],
             accessories: [],
             isSubmitting: false,
-            error: null
         });
 
         onWillStart(async () => {
-            // Use Promise.all to fetch all data in parallel for better performance
             await this.getSupplierId();
-            //await this.loadDrivers();
             await this.loadSupplierCenters();
-            const [
-                modelsData,
-                suppliersData,
-                vehicleTypesData,
-                fieldsData,
-                accessoriesResult
-            ] = await Promise.all([
-                this.orm.searchRead('fleet.vehicle.model', [], []),
-                this.orm.searchRead('res.partner', [['x_is_supplier', '=', true], ['disabled', '=', false]], ['name']),
-                this.orm.searchRead('custom.vehicle.type', [['disabled', '=', false]], ['name']),
-                this.orm.call('fleet.vehicle', 'fields_get', [['x_vehicle_service_state']], {}),
-                rpc('/provider/portal/trucks/accessories', {})
-            ]);
+            try {
+                const [
+                    modelsData,
+                    suppliersData,
+                    vehicleTypesData,
+                    fieldsData,
+                    accessoriesResult
+                ] = await Promise.all([
+                    this.orm.searchRead('fleet.vehicle.model', [], []),
+                    this.orm.searchRead('res.partner', [['x_is_supplier', '=', true], ['disabled', '=', false]], ['name']),
+                    this.orm.searchRead('custom.vehicle.type', [['disabled', '=', false]], ['name']),
+                    this.orm.call('fleet.vehicle', 'fields_get', [['x_vehicle_service_state']], {}),
+                    rpc('/provider/portal/trucks/accessories', {})
+                ]);
 
-            // Assign fetched data to the component's state
-            this.state.models = modelsData;
-            this.state.suppliers = suppliersData;
-            this.state.vehicle_types = vehicleTypesData;
-            this.state.service_states = fieldsData.x_vehicle_service_state.selection;
-            this.state.accessories = accessoriesResult.success ? accessoriesResult.accessories : [];
+                this.state.models = modelsData;
+                this.state.suppliers = suppliersData;
+                this.state.vehicle_types = vehicleTypesData;
+                this.state.service_states = fieldsData.x_vehicle_service_state.selection;
+                this.state.accessories = accessoriesResult.success ? accessoriesResult.accessories : [];
+            } catch (err) {
+                this.showNotification({ title: _t("Error loading form data"), message: _t(err?.data?.message || err.message || "An error occurred while loading the form data."), type: 'danger' });
+            }
         });
     }
 
+    showNotification({ message, type = 'info', sticky = true, title }) {
+        this.notification.add(message, { type, sticky, title });
+    }
+
     async saveTruck() {
-        this.state.error = null;
         this.state.isSubmitting = true;
 
         if (this.supplier_id === 0) {
-            this.state.error = "No se pudo determinar el proveedor. Por favor, contacte al administrador.";
+            this.showNotification({ title: _t("Supplier not found"), message: _t("The provider could not be determined. Please contact the administrator."), type: 'warning' });
             this.state.isSubmitting = false;
             return;
         }
@@ -98,12 +103,11 @@ export class TruckCreateComponent extends Component {
                 x_accessories: [[6, 0, this.state.formData.accessories.map(id => parseInt(id))]],
                 x_manages_tire_conditioning: this.state.formData.x_manages_tire_conditioning
             };
-            console.log('Payload for truck creation:', payload);
             await this.orm.create('fleet.vehicle', [payload]);
+            this.showNotification({ title: _t("Truck created"), message: _t("The truck has been created successfully."), type: 'success' });
             this.props.onTruckCreated();
         } catch (err) {
-            console.error("Error creating truck:", err);
-            this.state.error = "Error saving truck. Please check the console.";
+            this.showNotification({ title: _t("Error saving truck"), message: _t(err?.data?.message || err.message || "An error occurred while saving the truck."), type: 'danger' });
         } finally {
             this.state.isSubmitting = false;
         }
@@ -111,65 +115,60 @@ export class TruckCreateComponent extends Component {
 
     async getSupplierId() {
         try {
-            let supplier_drivers = await this.orm.searchRead(
+            const [supplier] = await this.orm.searchRead(
                 'res.partner.supplier_users.rel',
-                [],
-                []
+                [['user_id', '=', this.user.userId]],
+                ['supplier_id'],
+                { limit: 1 }
             );
-            let supplier = supplier_drivers.find(x => x.user_id && x.user_id[0] === this.user.userId);
             if (!supplier) {
-                this.state.notification = { type: 'warning', message: 'El usuario no está asociado a ningún proveedor.' };
+                this.showNotification({ title: _t("Supplier not found"), message: _t("The user is not associated with any provider."), type: 'warning' });
                 return;
             }
             this.supplier_id = supplier.supplier_id[0];
             this.supplier_name = supplier.supplier_id[1];
+        } catch (err) {
+            this.showNotification({ title: _t("Error obtaining supplier"), message: _t(err?.data?.message || err.message || "Error obtaining the associated provider."), type: 'danger' });
         }
-        catch (e) {
-            this.state.notification = { type: 'error', message: 'Error al obtener el proveedor asociado.' };
-        }
-
-    }
-
-    closeNotification() {
-        this.state.notification = null;
     }
 
     async onCenterOfAttentionChange(ev) {
         const centerId = ev.target.value;
         this.state.formData.center_of_attention_id = centerId;
         if (centerId) {
-            // Replace with your actual route and params
-            const drivers = await rpc("/provider/portal/trucks/available_drivers", { center_of_attention_id: parseInt(centerId) });
-            console.log('Available Drivers:', drivers);
-            this.state.drivers = drivers;
+            try {
+                const drivers = await rpc("/provider/portal/trucks/available_drivers", { center_of_attention_id: parseInt(centerId) });
+                this.state.drivers = drivers;
+            } catch (err) {
+                this.showNotification({ title: _t("Error loading drivers"), message: _t(err?.data?.message || err.message || "An error occurred while loading the available drivers."), type: 'danger' });
+                this.state.drivers = [];
+            }
         } else {
             this.state.drivers = [];
         }
     }
 
     async loadDrivers() {
-
-        const drivers = await rpc('/provider/portal/trucks/available_drivers', {
-            supplier_id: this.supplier_id
-        });
-
-        console.log('Available Drivers:', drivers);
-        this.state.drivers = drivers;
+        try {
+            const drivers = await rpc('/provider/portal/trucks/available_drivers', {
+                supplier_id: this.supplier_id
+            });
+            this.state.drivers = drivers;
+        } catch (err) {
+            this.showNotification({ title: _t("Error loading drivers"), message: _t(err?.data?.message || err.message || "An error occurred while loading the drivers."), type: 'danger' });
+            this.state.drivers = [];
+        }
     }
 
     async loadSupplierCenters() {
-        console.log('Loading supplier centers for partner ID:', this.supplier_id);
         try {
             const result = await rpc('/api/partners/centers', {
                 partner_id: this.supplier_id
             });
-
-            console.log('Supplier Centers:', result);
-            this.state.supplierCenters = result; // Store in state if needed
+            this.state.supplierCenters = result;
             return result;
-        } catch (error) {
-            console.error('Error loading supplier centers:', error);
-            this.state.error = 'Error loading supplier centers';
+        } catch (err) {
+            this.showNotification({ title: _t("Error loading supplier centers"), message: _t(err?.data?.message || err.message || "An error occurred while loading the supplier centers."), type: 'danger' });
         }
     }
 

@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-30 17:00+0000\n"
-"PO-Revision-Date: 2026-04-30 17:00+0000\n"
+"POT-Creation-Date: 2026-06-03 20:14+0000\n"
+"PO-Revision-Date: 2026-06-03 20:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__error_file
+msgid " Errors"
+msgstr "Errores"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_data_source__separator__tab
@@ -470,6 +475,16 @@ msgid "Archived"
 msgstr "Archivado"
 
 #. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_coverage_configuration_view_form
+msgid "Are you sure you want to disable this subservice?"
+msgstr "¿Está seguro de que desea deshabilitar este subservicio?"
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_coverage_configuration_view_form
+msgid "Are you sure you want to enable this subservice?"
+msgstr "¿Estás seguro de que quieres habilitar este subservicio?"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__message_attachment_count
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_type__message_attachment_count
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_attachment_count
@@ -686,6 +701,18 @@ msgid "Category specification"
 msgstr "Especificación de categoría"
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Center '%s' does not belong to supplier '%s'."
+msgstr "El centro '%s' no pertenece al proveedor '%s'."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Center not found with name '%s'."
+msgstr "No se encontró el centro con el nombre '%s'."
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__center_of_attention_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__center_of_attention_id
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_search
@@ -788,6 +815,7 @@ msgstr "Administrador de Clientes"
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_model_confirm_wizard_view_form
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_custom_vehicle_import_wizard_form
 msgid "Close"
 msgstr "Cerrar"
 
@@ -972,12 +1000,60 @@ msgstr "Contactos"
 #. module: custom_master_catalog
 #: model:res.groups,name:custom_master_catalog.custom_group_event_coordinator
 msgid "Coordinator"
-msgstr "Coordinador"
+msgstr "Coordinador CDS"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_cost_by_km
 msgid "Cost by Km"
 msgstr "Costo por km"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Could not create center '%s' without supplier."
+msgstr "No se puede crear el centro '%s' sin proveedor."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Could not create center '%s': %s"
+msgstr "No se puede crear el centro '%s': %s"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Could not create center without name."
+msgstr "No se puede crear el centro sin nombre."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Could not create supplier '%s': %s"
+msgstr "No se puede crear el proveedor '%s': %s"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Could not create user with login '%s': %s"
+msgstr "No se puede crear el usuario con login '%s': %s"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Could not create user without email/login."
+msgstr "No se puede crear el usuario sin email/login."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Could not create vehicle '%s' without the model data."
+msgstr "No se puede crear el vehículo sin los datos del modelo."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Could not create vehicle without reference."
+msgstr "No se puede crear el vehículo sin referencia."
 
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.custom_ike_action_country
@@ -1088,6 +1164,7 @@ msgstr "¡Crea tu primera clasificación de teléfono!"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__create_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_weight_category__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__create_uid
@@ -1124,6 +1201,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__create_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_weight_category__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__create_date
@@ -1293,6 +1371,17 @@ msgstr "Descripción"
 
 #. module: custom_master_catalog
 #. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Did not indicate email to search user."
+msgstr "No indicó el correo electrónico para buscar el usuario."
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_coverage_configuration_view_form
+msgid "Disable"
+msgstr "Deshabilitar"
+
+#. module: custom_master_catalog
+#. odoo-python
 #: code:addons/custom_master_catalog/models/fleet_vehicle.py:0
 #: code:addons/custom_master_catalog/models/fleet_vehicle_model.py:0
 #: code:addons/custom_master_catalog/models/fleet_vehicle_model_category.py:0
@@ -1329,6 +1418,7 @@ msgstr "Descripción"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__disabled
@@ -1443,6 +1533,7 @@ msgstr "Razón de desactivación"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__display_name
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_weight_category__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__display_name
@@ -1546,8 +1637,10 @@ msgid ""
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__x_is_electronic
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_is_electronic
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_is_electronic
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_coverage_configuration_view_search
 msgid "Electronics"
 msgstr "Electrónica"
 
@@ -1562,6 +1655,11 @@ msgstr "Correo electrónico"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_employee_tree
 msgid "Employees"
 msgstr "Empleados"
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_coverage_configuration_view_form
+msgid "Enable"
+msgstr "Habilitar"
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_account_identification_view_search
@@ -1654,8 +1752,10 @@ msgid "External Code"
 msgstr "Código externo"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__x_is_extraordinary
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_is_extraordinary
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_is_extraordinary
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_coverage_configuration_view_search
 msgid "Extraordinary"
 msgstr "Extraordinaria"
 
@@ -1716,6 +1816,7 @@ msgstr "Campos"
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes__file
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__file
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__file
 msgid "File"
 msgstr "Archivo"
 
@@ -1739,6 +1840,21 @@ msgstr "Subdirectorio"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes__file_type
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__file_type
 msgid "File Type"
+msgstr "Tipo de archivo"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__file_name
+msgid "File name"
+msgstr "Nombre de archivo"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__error_file_name
+msgid "File name errors"
+msgstr "Nombre de archivo de errores"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__file_type
+msgid "File type"
 msgstr "Tipo de archivo"
 
 #. module: custom_master_catalog
@@ -1926,6 +2042,7 @@ msgstr "Tiene portal"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_geographical_area__priority__3
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_geographical_area_product_rel__priority__3
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__priority__3
 msgid "High"
 msgstr "Alta"
@@ -1974,6 +2091,7 @@ msgstr "Días festivos..."
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_weight_category__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__id
@@ -2100,6 +2218,26 @@ msgstr "Fecha de importación"
 #: model:ir.ui.menu,name:custom_master_catalog.custom_import_postal_codes_sepomex_menu
 msgid "Import Postal Codes"
 msgstr "Actualización SEPOMEX"
+
+#. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_custom_vehicle_import_wizard
+msgid "Import Supplier Users / Vehicles"
+msgstr "Importar usuarios de proveedor / vehículos"
+
+#. module: custom_master_catalog
+#: model:ir.ui.menu,name:custom_master_catalog.custom_vehicle_import_wizard_menu
+msgid "Import Vehicles"
+msgstr "Importar vehículos"
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_custom_vehicle_import_wizard_form
+msgid "Import vehicles"
+msgstr "Importar vehículos"
+
+#. module: custom_master_catalog
+#: model:ir.actions.act_window,name:custom_master_catalog.action_custom_vehicle_import_wizard
+msgid "Importar usuarios de proveedor"
+msgstr "Importar usuarios de proveedor"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__imported_records
@@ -2263,6 +2401,7 @@ msgstr "Última actualización"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__write_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_weight_category__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__write_uid
@@ -2299,6 +2438,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__write_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_weight_category__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__write_date
@@ -2329,6 +2469,7 @@ msgstr "Longitud"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_geographical_area__priority__1
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_geographical_area_product_rel__priority__1
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__priority__1
 msgid "Low"
 msgstr "Baja"
@@ -2355,8 +2496,10 @@ msgid "Maneuvers"
 msgstr "Maniobras"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__x_is_manual
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_is_manual
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_is_manual
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_coverage_configuration_view_search
 msgid "Manual"
 msgstr ""
 
@@ -2368,6 +2511,7 @@ msgstr "Mapeos"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_geographical_area__priority__2
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_geographical_area_product_rel__priority__2
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__priority__2
 msgid "Medium"
 msgstr "Media"
@@ -2442,6 +2586,18 @@ msgstr "Mínimo requerido de fotografías"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_min_required_photos_assistview
 msgid "Minimum Required Photos (Assistview)"
 msgstr "Mínimo requerido de fotografías (Assistview)"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Missing required values: %s"
+msgstr "Faltan valores requeridos: %s"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Missing the following required columns: %s"
+msgstr "Faltan las siguientes columnas requeridas: %s"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__mobile
@@ -2614,6 +2770,18 @@ msgid "No Metadata"
 msgstr ""
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "No center name was indicated."
+msgstr "No se indicó el nombre del centro."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "No file has been loaded."
+msgstr "No se ha cargado ningún archivo."
+
+#. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_data_source__quote__none
 msgid "No quote"
 msgstr "Sin comillas"
@@ -2621,6 +2789,7 @@ msgstr "Sin comillas"
 #. module: custom_master_catalog
 #. odoo-python
 #: code:addons/custom_master_catalog/wizard/custom_import_postal_codes.py:0
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
 msgid "No se ha cargado ningún archivo."
 msgstr ""
 
@@ -2631,15 +2800,31 @@ msgid "No sub-services configured"
 msgstr "No hay subservicios configurados"
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "No supplier name was indicated."
+msgstr "No se indicó el nombre del proveedor."
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_client_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_search
 msgid "Nombre"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__error_file_name
+msgid "Nombre archivo errores"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_list
 msgid "Nombre comercial"
+msgstr ""
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__file_name
+msgid "Nombre de archivo"
 msgstr ""
 
 #. module: custom_master_catalog
@@ -2654,6 +2839,7 @@ msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_geographical_area__priority__0
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_geographical_area_product_rel__priority__0
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__priority__0
 msgid "None"
 msgstr "Ninguna"
@@ -2938,6 +3124,7 @@ msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__priority
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__priority
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__priority
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__priority
 msgid "Priority"
@@ -2970,6 +3157,11 @@ msgstr "Mapeo de productos"
 #: model:ir.model,name:custom_master_catalog.model_product_product
 msgid "Product Variant"
 msgstr "Variante del producto"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__product_domain
+msgid "Product domain"
+msgstr "Dominio del producto"
 
 #. module: custom_master_catalog
 #: model:ir.model.constraint,message:custom_master_catalog.constraint_custom_product_mapping_product_uniq
@@ -3111,6 +3303,18 @@ msgstr "Nombre del responsable"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_user_id
 msgid "Responsible User"
 msgstr "Usuario responsable"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Rows processed:"
+msgstr "Filas procesadas:"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Rows skipped:"
+msgstr "Filas omitidas:"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source_field__field_rule
@@ -3280,9 +3484,11 @@ msgstr "Nombre del servicio"
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.product_category_service_action_window
 #: model:ir.model,name:custom_master_catalog.model_product_category
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__services_ids
 #: model:ir.ui.menu,name:custom_master_catalog.product_category_services_menu
 #: model:ir.ui.menu,name:custom_master_catalog.product_category_services_menu_root
 #: model:ir.ui.menu,name:custom_master_catalog.product_category_services_menu_services
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_coverage_configuration_view_search
 msgid "Services"
 msgstr "Servicios"
 
@@ -3459,12 +3665,19 @@ msgstr "Especificación del subservicio"
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.action_x_subservice_product_template_view
 #: model:ir.actions.server,name:custom_master_catalog.x_subservice_product_template_view_action_server
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__subservices_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__x_subservice_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_subservice_ids
 #: model:ir.ui.menu,name:custom_master_catalog.product_category_subservices_menu_subservices
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_search
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_coverage_configuration_view_search
 msgid "Subservices"
 msgstr "Subservicios"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__summary_html
+msgid "Summary"
+msgstr "Resumen"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner_supplier_users_rel__user_type__supervisor
@@ -3495,6 +3708,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_users_rel_view_search
 msgid "Supplier"
 msgstr "Proveedor"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Supplier '%s' does not exist to create center '%s'."
+msgstr "El proveedor '%s' no existe para crear el centro '%s'."
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_form
@@ -3585,6 +3804,12 @@ msgstr "Configuración cobertura proveedor"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_driver_ids
 msgid "Supplier drivers"
 msgstr "Conductores"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Supplier not found with name '%s'."
+msgstr "Proveedor no encontrado con nombre '%s'."
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
@@ -3747,6 +3972,18 @@ msgstr "El teléfono ingresado no es válido para el país %s"
 
 #. module: custom_master_catalog
 #. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "The file does not contain information."
+msgstr "El archivo no contiene información."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "The file must be type: %s"
+msgstr "El archivo debe ser del tipo: %s"
+
+#. module: custom_master_catalog
+#. odoo-python
 #: code:addons/custom_master_catalog/models/res_partner_supplier.py:0
 msgid "The postal code must be between 01000 and 99999"
 msgstr "El código postal debe estar entre 01000 y 99999"
@@ -3770,9 +4007,22 @@ msgstr "El proveedor debe ser único. Está deshabilitado."
 
 #. module: custom_master_catalog
 #. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid ""
+"The xlsxwriter library is not available to generate the import errors file."
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-python
 #: code:addons/custom_master_catalog/models/other/custom_holidays.py:0
 msgid "The year must have exactly 4 digits and be greater than 2000"
 msgstr "El año debe tener exactamente 4 dígitos y ser mayor a 2000"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "There are no rows with data to process."
+msgstr "No hay filas con datos para procesar."
 
 #. module: custom_master_catalog
 #: model_terms:ir.actions.act_window,help:custom_master_catalog.action_custom_holidays
@@ -3785,6 +4035,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_currency_form
 msgid "This is your company's currency."
 msgstr "Esta es la moneda de tu compañía."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Total rows evaluated:"
+msgstr "Total de filas evaluadas:"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_pre_work_entry_type__is_totalizing
@@ -3837,6 +4093,12 @@ msgid "UN Search"
 msgstr "Campo búsqueda UN"
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Unexpected error: %s"
+msgstr "Error inesperado: %s"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_fleet_vehicle__x_economic_number
 msgid "Unit identifier in the supplier's system (internal value)"
 msgstr ""
@@ -3871,6 +4133,18 @@ msgid "User"
 msgstr "Usuario"
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "User '%s' already assigned as driver in vehicle '%s'."
+msgstr "El usuario '%s' ya está asignado como conductor en el vehículo '%s'."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "User '%s' already assigned in supplier-user relation."
+msgstr "El usuario '%s' ya está asignado en la relación proveedor-usuario."
+
+#. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.res_partner_supplier_users_rel_action
 msgid "User - Supplier"
 msgstr "Usuario - Proveedor"
@@ -3889,6 +4163,12 @@ msgstr "Tipo de usuario"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__is_user_internal
 msgid "User internal"
 msgstr "Usuario interno"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "User not found with login '%s'."
+msgstr "Usuario no encontrado con login '%s'."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__user_ids
@@ -3927,9 +4207,20 @@ msgid "Value Type"
 msgstr "Tipo de valor"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__vat
+msgid "Vat"
+msgstr "RFC"
+
+#. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_fleet_vehicle
 msgid "Vehicle"
 msgstr "Vehículo"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Vehicle '%s' already has assigned another driver: '%s'."
+msgstr "El vehículo '%s' ya tiene asignado otro conductor: '%s'."
 
 #. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_fleet_vehicle_model_category

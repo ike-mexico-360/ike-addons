@@ -34,6 +34,8 @@
             'ike_event_purchase/static/src/js/purchase_portal_sidebar.js',
             'ike_event_purchase/static/src/js/components/purchase_order_details/*.*',
             'ike_event_purchase/static/src/js/components/purchase_order_dispute/*.*',
+            'ike_event_purchase/static/src/js/components/purchase_orders_list/*.*',
+            'ike_event_purchase/static/src/js/components/purchase_rfq_list/*.*',
         ],
         'web.assets_backend': [
             'ike_event_purchase/static/src/xml/systray_notification_view.xml',

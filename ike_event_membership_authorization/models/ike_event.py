@@ -11,7 +11,7 @@ class IkeEvent(models.Model):
     membership_authorization_id = fields.Many2one('ike.event.membership.authorization', copy=False)
     event_coverage_authorizer = fields.Boolean()
     required_commercial_authorizer = fields.Boolean()
-
+    required_account_authorizer = fields.Boolean(related="user_membership_id.membership_plan_id.account_id.authorizer")
     membership_authorization_status = fields.Selection(
         related="membership_authorization_id.state",
         store=False
@@ -37,7 +37,38 @@ class IkeEvent(models.Model):
     # ACTIONS
     def action_view_authorization(self):
         self.ensure_one()
-        return self.membership_authorization_id.with_context(self.env.context).action_authororizer_wizard()
+        if self.membership_authorization_id:
+            return self.membership_authorization_id.with_context(self.env.context).action_authororizer_wizard()
+        else:
+            decrypt_util = self.env['custom.encryption.utility']
+            print("")
+            membership_authorization_id = self.env['ike.event.membership.authorization'].create({
+                'event_id': self.id,
+                'nus_membership_id': self.user_membership_id.id,
+                'nus_id': self.user_membership_id.nus_id.id,
+                'phone_nu': decrypt_util.decrypt_aes256(self.user_phone) if self.user_phone else False,
+                'nu_alternative': self.user_additional_phone,
+                'preference_contact': self.preference_contact,
+                'key_identification': decrypt_util.decrypt_aes256(
+                    self.user_membership_id.key_identification
+                ) if self.user_membership_id.key_identification else False,
+                'second_key_identification': decrypt_util.decrypt_aes256(
+                    self.user_membership_id.second_key_identification
+                ) if self.user_membership_id.second_key_identification else False,
+                'clause_primary': self.user_membership_id.clause,
+                'clause_second': self.user_membership_id.second_clause,
+                'check_is_fleet': self.user_membership_id.check_is_fleet,
+                'check_is_special': self.user_membership_id.check_is_special,
+                'authorizer_id': (
+                    self.membership_authorization_id.id
+                    if self.membership_authorization_id
+                    else self.env.user.partner_id.id
+                ),
+                'request_date': fields.Datetime.now(),
+                'state': 'authorized',
+            })
+            self.membership_authorization_id = membership_authorization_id.id
+            return self.membership_authorization_id.with_context(self.env.context).action_authororizer_wizard()
 
     def action_update_nu_name(self):
         result = super().action_update_nu_name()  # type: ignore

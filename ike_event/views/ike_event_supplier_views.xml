@@ -116,50 +116,6 @@
         </field>
     </record>
 
-    <!-- EVENT SUPPLIER POPUP -->
-    <record id="ike_event_supplier_form_view" model="ir.ui.view">
-        <field name="name">ike.event.supplier.form.view</field>
-        <field name="model">ike.event.supplier</field>
-        <field name="priority">99</field>
-        <field name="arch" type="xml">
-            <form>
-                <group>
-                    <group>
-                        <field name="supplier_id" readonly="1"
-                            options="{'no_create': 1, 'no_open': 1}"
-                            required="1"/>
-                        <field name="truck_id"
-                            domain="truck_domain"
-                            options="{'no_create': 1, 'no_open': 1}"
-                            readonly="assignation_type not in ['manual', 'manual_manual'] or display_type"
-                            required="1"/>
-                        <field name="truck_domain" invisible="1"/>
-                    </group>
-                    <group>
-                        <label for="supplier_phone" string="Phones"/>
-                        <div>
-                            <field name="supplier_phone" readonly="1"/>
-                            <br/>
-                            <field name="supplier_phone_1" readonly="1"/>
-                            <br/>
-                            <field name="supplier_phone_2" readonly="1"/>
-                            <br/>
-                            <field name="supplier_phone_3" readonly="1"/>
-                            <br/>
-                            <field name="supplier_phone_4" readonly="1"/>
-                            <br/>
-                            <field name="supplier_phone_5" readonly="1"/>
-                        </div>
-                    </group>
-                </group>
-                <footer>
-                    <button string="Save" class="btn-primary" special="save" invisible="assignation_type not in ['manual', 'manual_manual'] or display_type"/>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
-                </footer>
-            </form>
-        </field>
-    </record>
-
     <!-- EVENT SUPPLIER LINK POPUP -->
     <record id="ike_event_supplier_link_form_view" model="ir.ui.view">
         <field name="name">ike.event.supplier.link.form.view</field>
@@ -171,6 +127,7 @@
                         <field name="supplier_id"/>
                         <field name="supplier_number"/>
                         <field name="uncovered_authorization_required"/>
+                        <field name="cost_invalid"/>
                     </group>
                     <field name="supplier_product_ids"
                         nolabel="1"
@@ -232,32 +189,138 @@
                                 readonly="context.get('from_authorizer', False)"
                             />
                         </group>
+                        <group>
+                            <field name="user_amount_paid" invisible="1"/>
+                        </group>
+                    </group>
+                    <group invisible="not cost_invalid">
+                        <div class="alert alert-warning d-flex flex-wrap gap-1" role="status">
+                            There are zero costs.
+                        </div>
                     </group>
                 </sheet>
                 <footer>
                     <button name="action_request_authorization" string="Save and Request Authorization"
                             type="object" class="btn-primary"
-                            invisible="not context.get('from_event_authorization', False) and not context.get('from_add_concept', False)"/>
+                            invisible="cost_invalid or (not context.get('from_event_authorization', False) and not context.get('from_add_concept', False))"/>
 
                     <!-- ERP Manager TESTING -->
                     <button name="action_accept_authorization" string="Authorize"
                             type="object" class="btn-primary"
-                            invisible="not context.get('from_event_authorization', False)"
+                            invisible="cost_invalid or not context.get('from_event_authorization', False)"
                             groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
                     <button name="action_reject_authorization" string="Reject"
                             type="object" class="btn-primary"
-                            invisible="not context.get('from_event_authorization', False)"
+                            invisible="cost_invalid or not context.get('from_event_authorization', False)"
                             groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
 
                     <button name="action_accept_authorization" string="Authorize"
                             type="object" class="btn-primary"
-                            invisible="not context.get('from_authorizer', False)"
+                            invisible="cost_invalid or not context.get('from_authorizer', False)"
                             groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
                     <button name="action_reject_authorization" string="Reject"
                             type="object" class="btn-primary"
-                            invisible="not context.get('from_authorizer', False)"
+                            invisible="cost_invalid or not context.get('from_authorizer', False)"
                             groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
 
+                    <button string="Close" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- EVENT SUPPLIER LINK ADD FORM POPUP -->
+    <record id="ike_event_supplier_link_add_form_view" model="ir.ui.view">
+        <field name="name">ike.event.supplier.link.add.form.view</field>
+        <field name="model">ike.event.supplier.link</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="event_id" readonly="1"/>
+                        <field name="supplier_id" readonly="0"
+                            options="{'no_create': 1, 'no_open': 1}"
+                            required="1"/>
+                        <field name="supplier_number"/>
+                    </group>
+                    <group>
+                        <field name="aux_truck_id"
+                            domain="truck_domain"
+                            options="{'no_create': 1, 'no_open': 1}"
+                            required="1"/>
+                        <field name="truck_domain" invisible="1"/>
+                    </group>
+                </group>
+                <field name="supplier_product_ids"
+                    nolabel="1"
+                    colspan="2"
+                    widget="ike_section_and_note_field_o2m"
+                    options="{'field_columns': ['product_id'], 'delete_condition_field': 'mandatory'}"
+                    context="{
+                        'list_view_ref': 'ike_event.ike_event_supplier_product_detail_list_view',
+                        'default_authorization_pending': True,
+                        'default_is_manual': True,
+                        'default_supplier_number': supplier_number,
+                        'from_internal': True,
+                    }"/>
+                <group class="oe_subtotal_footer oe_right">
+                    <field name="amount_concept_subtotal"/>
+                    <field name="amount_concept_vat"/>
+                    <field name="amount_concept_total" class="oe_subtotal_footer_separator"/>
+                    <field name="cost_invalid" invisible="1"/>
+                </group>
+                <group invisible="not cost_invalid">
+                    <div class="alert alert-warning d-flex flex-wrap gap-1" role="status">
+                        There are zero costs.
+                    </div>
+                </group>
+                <footer>
+                    <button string="Save" class="btn-primary" special="save" invisible="cost_invalid"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- EVENT SUPPLIER PHONES POPUP -->
+    <record id="ike_event_supplier_phones_form_view" model="ir.ui.view">
+        <field name="name">ike.event.supplier.phones.form.view</field>
+        <field name="model">ike.event.supplier</field>
+        <field name="priority">99</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="supplier_id" readonly="1"
+                            options="{'no_create': 1, 'no_open': 1}"
+                            required="1"/>
+                        <field name="truck_id"
+                            domain="truck_domain"
+                            options="{'no_create': 1, 'no_open': 1}"
+                            readonly="assignation_type not in ['manual', 'manual_manual'] or display_type"
+                            required="1"/>
+                        <field name="truck_domain" invisible="1"/>
+                    </group>
+                    <group>
+                        <label for="supplier_phone" string="Phones"/>
+                        <div>
+                            <field name="supplier_phone" readonly="1"/>
+                            <br/>
+                            <field name="supplier_phone_1" readonly="1"/>
+                            <br/>
+                            <field name="supplier_phone_2" readonly="1"/>
+                            <br/>
+                            <field name="supplier_phone_3" readonly="1"/>
+                            <br/>
+                            <field name="supplier_phone_4" readonly="1"/>
+                            <br/>
+                            <field name="supplier_phone_5" readonly="1"/>
+                        </div>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Save" class="btn-primary" special="save" invisible="assignation_type not in ['manual', 'manual_manual'] or display_type"/>
                     <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

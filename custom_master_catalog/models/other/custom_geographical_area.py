@@ -99,6 +99,29 @@ class CustomGeographicalAreaProduct(models.Model):
         'Sub-Service must be unique per Geographical Area.'
     )]
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('priority') and vals.get('geographical_area_id'):
+                area = self.env['custom.geographical.area'].browse(
+                    vals['geographical_area_id']
+                )
+                vals['priority'] = area.priority
+
+        return super().create(vals_list)
+
+    def _default_priority_child(self):
+        geographical_area_id = self._context.get('default_geographical_area_id')
+
+        if geographical_area_id:
+            area = self.env['custom.geographical.area'].browse(geographical_area_id)
+
+            partner = area.parent_id or area.partner_id
+
+            return partner.priority or '0'
+
+        return '0'
+
     geographical_area_id = fields.Many2one(
         'custom.geographical.area', string='Geographical Coverage Area',
         ondelete='cascade',
@@ -113,6 +136,12 @@ class CustomGeographicalAreaProduct(models.Model):
         'subservice_specification_id',
         string='Subservice Specifications')
     product_id = fields.Many2one('product.product', string='Sub-Service', required=True)
+    priority = fields.Selection([
+        ('0', 'None'),
+        ('1', 'Low'),
+        ('2', 'Medium'),
+        ('3', 'High'),
+    ], string='Priority', default=_default_priority_child)
     color = fields.Integer()
     product_category_color = fields.Integer(related='product_id.categ_id.x_color', string='Product Color')
     color_computed = fields.Integer(compute='_compute_color_computed', store=True)
@@ -142,3 +171,23 @@ class CustomGeographicalAreaProduct(models.Model):
             else:
                 domain = [('id', 'in', [])]
             rec.subservice_specification_domain = domain
+
+    @api.depends('product_id.display_name', 'priority')
+    def _compute_display_name(self):
+        super()._compute_display_name()
+
+        if not self.env.context.get('show_priority_stars'):
+            return
+
+        stars = {
+            '0': '',
+            '1': '⭐',
+            '2': '⭐⭐',
+            '3': '⭐⭐⭐',
+        }
+
+        for rec in self:
+            rec.display_name = (
+                f"{rec.product_id.display_name} "
+                f"{stars.get(rec.priority, '')}"
+            ).strip()

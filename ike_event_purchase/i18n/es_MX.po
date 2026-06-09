@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-25 22:27+0000\n"
-"PO-Revision-Date: 2026-05-25 22:27+0000\n"
+"POT-Creation-Date: 2026-05-26 15:58+0000\n"
+"PO-Revision-Date: 2026-05-26 15:58+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -850,6 +850,12 @@ msgid "Quantity"
 msgstr "Cantidad"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_purchase_purchase_order_portal_content
+msgid "Receipt Date:"
+msgstr "Fecha de recepción:"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "Received"
 msgstr "Recibido"
@@ -1046,24 +1052,10 @@ msgid "Test SAP Sync"
 msgstr ""
 
 #. module: ike_event_purchase
-#. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
-msgid "The dispute has been approved."
-msgstr "La disputa ha sido aprobada."
-
-#. module: ike_event_purchase
-#. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
-msgid "The dispute has been rejected."
-msgstr "La disputa ha sido rechazada."
-
-#. module: ike_event_purchase
-#. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
-msgid "The dispute has been submitted."
-msgstr "La disputa ha sido enviada."
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "The approved subtotal must not exceed the authorized amount."
+msgstr "El subtotal aprobado no debe exceder el monto autorizado."
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -1270,6 +1262,12 @@ msgstr "No puedes eliminar líneas generadas del evento"
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "You cannot exceed the authorized amount."
+msgstr "No puedes exceder del monto autorizado."
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "You must propose at least one new price or quantity before submitting."
 msgstr "Debe proponer al menos una nueva cantidad o precio antes de enviar."
 
@@ -1336,6 +1334,52 @@ msgstr "Fecha de recepción:"
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 msgid "Messages"
 msgstr "Mensajes"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Confirmation Date"
+msgstr "Confirmación"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Purchase Order #"
+msgstr "Orden de Compra #"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Event"
+msgstr "Evento"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
+msgid "Deadline"
+msgstr "Fecha límite"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
+msgid "Request for Quotation #"
+msgstr "Solicitud de cotización"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
+msgid "Untaxed Amount Dispute"
+msgstr "Subtotal disputado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_rfqs
+msgid "Untaxed Amount Approved"
+msgstr "Subtotal aprobado"
 
 #. module: ike_event_purchase
 #: model:mail.template,subject:ike_event_purchase.ike_event_purchase_proposal_dispute_ticket

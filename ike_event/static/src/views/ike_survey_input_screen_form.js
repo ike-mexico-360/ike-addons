@@ -251,7 +251,7 @@ export class IkeSurveyInputScreenFormController extends FormController {
     }
 
     async onSubmit(ev) {
-        // console.log("onSubmit");
+        console.log("onSubmit");
         let anyError = false;
         for (let question of this.state.surveyData.question_ids) {
             if (!this.displayQuestion(question)) {
@@ -260,7 +260,12 @@ export class IkeSurveyInputScreenFormController extends FormController {
             const inputLine = this.input_lines.find(answer => answer.question_id == question.id);
             if (question.constr_mandatory) {
                 let requiredError = false;
-                if (['text_box', 'char_box', 'numerical_box'].includes(question.question_type)) {
+                if (['numerical_box'].includes(question.question_type) && !question.validation_required) {
+                    if (!value) {
+                        anyError = true;
+                        requiredError = true;
+                    }
+                } else if (['text_box', 'char_box'].includes(question.question_type)) {
                     const value = inputLine ? inputLine['value_' + question.question_type] : null;
                     if (!value) {
                         anyError = true;
@@ -280,7 +285,7 @@ export class IkeSurveyInputScreenFormController extends FormController {
                 if (['numerical_box'].includes(question.question_type)) {
                     const min = question.validation_min_float_value;
                     const max = question.validation_max_float_value;
-                    if (!value || min && value < min || max && value > max) {
+                    if (value == null || min && value < min || max && value > max) {
                         anyError = true;
                         validationError = true;
                     }

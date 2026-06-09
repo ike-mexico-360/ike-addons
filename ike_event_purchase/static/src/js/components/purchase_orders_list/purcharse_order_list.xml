@@ -1,0 +1,76 @@
+<t t-name="ike_event_purchase.PurchaseOrderList" owl="1">
+  <div class="o_purchase_order_list">
+    <t t-if="state.loading">
+      <div class="text-center"><t t-out="translate('Loading...')"/></div>
+    </t>
+    <t t-else="">
+      <!-- Filters Bar -->
+      <div class="card border-0 shadow-sm rounded-3 mb-4">
+        <div class="card-body py-3">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-5">
+              <label class="form-label small text-muted fw-semibold mb-1">
+                <i class="fa fa-search me-1"/><t t-out="translate('Reference')"/>
+              </label>
+              <input type="text"
+                class="form-control form-control-sm rounded-pill"
+                t-att-placeholder="translate('Buscar por referencia...')"
+                t-att-value="state.filters.reference"
+                t-on-input="(ev) => this.onFilterChange('reference', ev.target.value)"/>
+            </div>
+            <div class="col-md-5">
+              <label class="form-label small text-muted fw-semibold mb-1">
+                <i class="fa fa-calendar me-1"/><t t-out="translate('Event')"/>
+              </label>
+              <input type="text"
+                class="form-control form-control-sm rounded-pill"
+                t-att-placeholder="translate('Buscar por evento...')"
+                t-att-value="state.filters.event"
+                t-on-input="(ev) => this.onFilterChange('event', ev.target.value)"/>
+            </div>
+            <div class="col-md-2 d-flex align-items-end">
+              <button class="btn btn-sm btn-outline-secondary rounded-pill w-100"
+                t-att-title="translate('Clear filters')"
+                t-on-click="clearFilters">
+                <i class="fa fa-times"/>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <PaginationComponent pagination="pagination">
+        <table class="table table-hover table-striped align-middle mb-0" style="border-collapse: separate; border-spacing: 0;">
+          <thead>
+            <tr class="active">
+              <th>
+                <span class="d-none d-md-inline"><t t-out="translate('Purchase Order #')"/></span>
+                <span class="d-block d-md-none"><t t-out="translate('Ref.')"/></span>
+              </th>
+              <th>
+                <span class="d-none d-md-inline"><t t-out="translate('Event')"/></span>
+                <span class="d-block d-md-none"><t t-out="translate('Event')"/></span>
+              </th>
+              <th>
+                <span class="d-none d-md-inline"><t t-out="translate('Confirmation Date')"/></span>
+                <span class="d-block d-md-none"><t t-out="translate('Confirmation')"/></span>
+              </th>
+              <th><t t-out="translate('Total')"/></th>
+            </tr>
+          </thead>
+          <tbody>
+            <t t-foreach="pagination.paginatedItems" t-as="order" t-key="order.id">
+              <tr>
+                <td>
+                  <a t-att-href="'/my/purchase/' + order.id"><t t-esc="order.name"/></a>
+                </td>
+                <td><t t-esc="order.x_event_id ? order.x_event_id.name : ''"/></td>
+                <td><t t-esc="formatDate(order.date_approve)"/></td>
+                <td><t t-esc="order.amount_total"/></td>
+              </tr>
+            </t>
+          </tbody>
+        </table>
+      </PaginationComponent>
+    </t>
+  </div>
+</t>

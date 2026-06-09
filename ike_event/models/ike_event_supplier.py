@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from collections import defaultdict
+
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError, ValidationError
 
@@ -30,6 +32,7 @@ class IkeEventSupplier(models.Model):
     estimated_cost = fields.Float(related='supplier_link_id.estimated_cost', store=True, readonly=False)
     real_distance = fields.Float(default=0.0)
     real_duration = fields.Float(default=0.0)
+    user_amount_paid = fields.Float(related='supplier_link_id.user_amount_paid', readonly=False)
 
     # Assignation supplier fields
     ranking = fields.Integer(string='Ranking', default=0, readonly=True)
@@ -482,7 +485,7 @@ class IkeEventSupplier(models.Model):
                 **self.env.context,
                 'create': False,
                 'edit': True,
-                'from_add_concept': self.selected is True or self.is_manual and self.state == 'available',
+                'from_add_concept': True,  # self.selected is True or self.is_manual and self.state == 'available',
                 'from_internal': True,
             },
             'target': 'new',
@@ -553,7 +556,7 @@ class IkeEventSupplier(models.Model):
 
     def action_view_supplier_data(self):
         self.ensure_one()
-        view_id = self.env.ref('ike_event.ike_event_supplier_form_view').id
+        view_id = self.env.ref('ike_event.ike_event_supplier_phones_form_view').id
         return {
             'name': self.supplier_id.display_name,
             'view_mode': 'form',
@@ -616,9 +619,11 @@ class IkeEventSupplierLink(models.Model):
     _description = 'Event Supplier Link'
 
     event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
-    supplier_id = fields.Many2one('res.partner', required=True, index=True, readonly=True)
+    supplier_id = fields.Many2one('res.partner', required=True, index=True, domain="[('x_is_supplier', '=', True)]")
     supplier_number = fields.Integer(required=True, readonly=True, default=1)
     manual_notification = fields.Boolean(default=True)
+    aux_truck_id = fields.Many2one('fleet.vehicle', 'Service Vehicle')
+    truck_domain = fields.Binary(string='Truck domain', compute='_compute_truck_domain')
 
     estimated_cost = fields.Float(default=0.0, compute='_compute_estimated_cost', store=True)
 
@@ -630,6 +635,7 @@ class IkeEventSupplierLink(models.Model):
     authorizer_domain = fields.Binary(compute="_compute_authorizer_domain")
     nu_user_id = fields.Many2one(related='event_id.user_id')
     authorizer = fields.Char('Authorizer', compute="_compute_authorizer_name", store=True)
+    user_amount_paid = fields.Float('Amount Paid to Supplier', default=0)
 
     # === LINE FIELDS === #
     supplier_product_ids = fields.One2many(
@@ -639,6 +645,7 @@ class IkeEventSupplierLink(models.Model):
     amount_concept_subtotal = fields.Float(string='Subtotal', compute='_compute_amount_supplier_product', store=True)
     amount_concept_vat = fields.Float(string='VAT', compute='_compute_amount_supplier_product', store=True)
     amount_concept_total = fields.Float(string='Total', compute='_compute_amount_supplier_product', store=True)
+    cost_invalid = fields.Boolean(compute='_compute_amount_supplier_product', store=True)
 
     base_amount_concept_subtotal = fields.Float(
         string='Agreement Subtotal', compute='_compute_base_amount_supplier_product', store=True)
@@ -667,6 +674,8 @@ class IkeEventSupplierLink(models.Model):
             rec.amount_concept_subtotal = amount_subtotal
             rec.amount_concept_vat = amount_vat
             rec.amount_concept_total = amount_total
+
+            rec.cost_invalid = amount_subtotal == 0
 
     @api.depends('supplier_product_ids.base_subtotal', 'supplier_product_ids.base_vat')
     def _compute_base_amount_supplier_product(self):
@@ -785,6 +794,9 @@ class IkeEventSupplierLink(models.Model):
         })
         event_id.accept_authorization(event_authorization_id.id)
 
+        if event_id.supplier_search_type in ['manual_manual', 'manual']:
+            event_id.broadcastEventReload(1)
+
         # Start automatic notifications
         event_id.action_start_notifications()
 
@@ -809,6 +821,101 @@ class IkeEventSupplierLink(models.Model):
                 and x.supplier_status_id.ref == 'cancelled')
 
         return cost_line_id[0].cost if cost_line_id else 0, cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
+
+    # === SUPPLIER ADD ONCHANGE === #
+    @api.depends_context('add_supplier')
+    @api.onchange('supplier_id')
+    def _onchange_supplier_id(self):
+        if self.supplier_id:
+            # Vehicle
+            if self.aux_truck_id and self.aux_truck_id.x_partner_id.id != self.supplier_id.id:
+                self.aux_truck_id = None
+            # Costs
+            matrix_cost_line_ids = self.event_id.get_supplier_product_matrix_lines(
+                self.supplier_id.id, self.supplier_product_ids.mapped('product_id.id')
+            )
+            for product_line_id in self.supplier_product_ids:
+                cost_line_id = matrix_cost_line_ids.filtered(
+                    lambda x:
+                        x.concept_id.id == product_line_id.product_id.id
+                        and x.supplier_status_id.ref == 'concluded')
+                cancel_cost_line_id = matrix_cost_line_ids.filtered(
+                    lambda x:
+                        x.concept_id.id == product_line_id.product_id.id
+                        and x.supplier_status_id.ref == 'cancelled')
+                total_base_unit_price = cost_line_id[0].cost if cost_line_id else 0
+                total_base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
+
+                product_line_id.base_unit_price = total_base_unit_price
+                product_line_id.base_cancel_price = total_base_cancel_price
+                product_line_id.unit_price = total_base_unit_price
+
+    # === SUPPLIER ADD COMPUTE === #
+    @api.depends('event_id', 'supplier_id')
+    def _compute_truck_domain(self):
+        for rec in self:
+            sub_res_id = self.env[rec.event_id.sub_service_res_model].browse(rec.event_id.sub_service_res_id)
+            service_vehicle_type_ids = []
+            service_vehicle_type_ids = sub_res_id.service_vehicle_type_ids.ids  # type: ignore
+
+            domain = [
+                ('disabled', '=', False),
+                ('x_vehicle_service_state', '=', 'available'),
+                ('x_vehicle_type', 'in', service_vehicle_type_ids),
+                ('x_partner_id', '=', rec.supplier_id.id),
+                ('x_subservice_ids', '=', [rec.event_id.sub_service_id.id])
+            ]
+
+            if rec.event_id.requires_federal_plates:
+                domain.append(
+                    ('x_federal_license_plates', '=', True),
+                )
+
+            if rec.event_id:
+                trucks_used = rec.event_id.service_supplier_ids.mapped('truck_id').ids
+                if trucks_used:
+                    domain.append(('id', 'not in', trucks_used))
+
+            rec.truck_domain = domain
+
+    # Horizontally
+    def add_products_horizontally(self, lines):
+        for rec in self:
+            current_product_ids = rec.supplier_product_ids.ids
+            for line in lines:
+                new_products_data = []
+                if line['product_id'] not in current_product_ids:
+                    new_products_data.append(Command.create({
+                        'product_id': line['product_id'],
+                        'quantity': line['quantity'],
+                        'unit_price': line['unit_price'],
+                        'authorization_pending': True,
+                        'is_manual': True,
+                        'supplier_number': rec.supplier_number,
+                    }))
+            rec.with_context(not_add_horizontally=True, from_internal=False).supplier_product_ids = new_products_data
+
+    # === CRUD === #
+    @api.model_create_multi
+    def create(self, vals_list):
+        res = super().create(vals_list)
+        if self.env.context.get('add_supplier'):
+            for rec in res:
+                event_supplier_id = rec.event_id.add_manual_suppliers(rec.supplier_id, rec.aux_truck_id)
+                event_supplier_id.supplier_link_id = rec.id
+        return res
+
+    def write(self, vals):
+        res = super().write(vals)
+        if 'user_amount_paid' in vals and vals['user_amount_paid'] > 0:
+            sibling_ids = self.search([
+                ('id', '!=', self.id),
+                ('event_id', '=', self.event_id.id),
+                ('user_amount_paid', '=', 0),
+            ])
+            for link_id in sibling_ids:
+                link_id.user_amount_paid = vals['user_amount_paid']
+        return res
 
 
 class IkeServiceStage(models.Model):

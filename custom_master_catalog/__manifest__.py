@@ -74,6 +74,7 @@
         "wizard/custom_import_postal_codes_views.xml",
         "wizard/custom_geographic_subservice_wizard.xml",
         "wizard/custom_model_confirm_wizard.xml",
+        "wizard/custom_vehicle_import_wizard_views.xml",
         "views/res_partner_menus.xml",
         "views/other/res_config_settings_views.xml",
         'security/cleanup_menus.xml',  # TODO Delete in sprint18 or after the client has updated their database with this code

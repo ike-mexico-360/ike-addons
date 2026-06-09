@@ -1429,3 +1429,635 @@ msgstr ""
 #: code:addons/ike_event_portal/static/src/components/pagination/pagination_component.xml:0
 msgid "Última página"
 msgstr ""
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "A concept must be selected to save."
+msgstr "Se debe seleccionar un concepto para guardar."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Administrator"
+msgstr "Administrador"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred while accepting the service."
+msgstr "Ocurrió un error al aceptar el servicio."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred while adding the service to the list."
+msgstr "Ocurrió un error al agregar el servicio a la lista."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred while canceling the service."
+msgstr "Ocurrió un error al cancelar el servicio."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred while loading the event."
+msgstr "Ocurrió un error al cargar el evento."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred while loading the notified events."
+msgstr "Ocurrió un error al cargar los eventos notificados."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred while loading the service summary."
+msgstr "Ocurrió un error al cargar el resumen del servicio."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred while loading the supplier event."
+msgstr "Ocurrió un error al cargar el evento del proveedor."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred while notifying the service."
+msgstr "Ocurrió un error al notificar el servicio."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred while processing the notified events."
+msgstr "Ocurrió un error al procesar los eventos notificados."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred while rejecting the service."
+msgstr "Ocurrió un error al rechazar el servicio."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred while requesting authorization."
+msgstr "Ocurrió un error al solicitar la autorización."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred while updating the concept."
+msgstr "Ocurrió un error al actualizar el concepto."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An unknown error occurred"
+msgstr "Ocurrió un error desconocido"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Are you sure you want to accept this service?"
+msgstr "¿Está seguro de que desea aceptar este servicio?"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Are you sure you want to delete this concept?"
+msgstr "¿Está seguro de que desea eliminar este concepto?"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Are you sure you want to notify this service?"
+msgstr "¿Está seguro de que desea notificar este servicio?"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Are you sure you want to reject this service?"
+msgstr "¿Está seguro de que desea rechazar este servicio?"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Authorization requested successfully"
+msgstr "Autorización solicitada exitosamente"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Concept added successfully"
+msgstr "Concepto agregado exitosamente"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Confirm Acceptance"
+msgstr "Confirmar Aceptación"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Confirm Deletion"
+msgstr "Confirmar Eliminación"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Confirm Notification"
+msgstr "Confirmar Notificación"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Confirm Rejection"
+msgstr "Confirmar Rechazo"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error accepting service"
+msgstr "Error al aceptar el servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error adding concept"
+msgstr "Error al agregar el concepto"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error adding service"
+msgstr "Error al agregar el servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error canceling service"
+msgstr "Error al cancelar el servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error creating concept"
+msgstr "Error al crear el concepto"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error deleting concept"
+msgstr "Error al eliminar el concepto"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error loading available concepts"
+msgstr "Error al cargar los conceptos disponibles"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error loading event"
+msgstr "Error al cargar el evento"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error loading notified events"
+msgstr "Error al cargar los eventos notificados"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error loading service concepts"
+msgstr "Error al cargar los conceptos del servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error loading service summary"
+msgstr "Error al cargar el resumen del servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error loading supplier event"
+msgstr "Error al cargar el evento del proveedor"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error notifying service"
+msgstr "Error al notificar el servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error obtaining the associated provider"
+msgstr "Error al obtener el proveedor asociado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error processing notified events"
+msgstr "Error al procesar los eventos notificados"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error rejecting service"
+msgstr "Error al rechazar el servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error requesting authorization"
+msgstr "Error al solicitar la autorización"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error updating concept"
+msgstr "Error al actualizar el concepto"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Notification Sent"
+msgstr "Notificación Enviada"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Notification sent successfully"
+msgstr "Notificación enviada exitosamente"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Please select a concept"
+msgstr "Por favor seleccione un concepto"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Reason:"
+msgstr "Razón:"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Service Cancelled"
+msgstr "Servicio Cancelado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Service canceled successfully"
+msgstr "Servicio cancelado exitosamente"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Service Unavailable"
+msgstr "Servicio No Disponible"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Service Updated"
+msgstr "Servicio Actualizado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Sin proveedor"
+msgstr "Sin proveedor"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "The concept has been added successfully."
+msgstr "El concepto ha sido agregado exitosamente."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "The service has been cancelled by"
+msgstr "El servicio ha sido cancelado por"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "The service has been updated and removed from the list"
+msgstr "El servicio ha sido actualizado y eliminado de la lista"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "This service is no longer available for acceptance."
+msgstr "Este servicio ya no está disponible para aceptación."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "This service is no longer available for cancellation."
+msgstr "Este servicio ya no está disponible para cancelación."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "This service is no longer available for rejection."
+msgstr "Este servicio ya no está disponible para rechazo."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Your request has been submitted for review."
+msgstr "Su solicitud ha sido enviada para revisión."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.js:0
+msgid "Supplier not found"
+msgstr "Proveedor no encontrado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+msgid "The provider could not be determined. Please contact the administrator."
+msgstr "No se pudo determinar el proveedor. Por favor, contacte al administrador."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.js:0
+msgid "The user is not associated with any provider."
+msgstr "El usuario no está asociado a ningún proveedor."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.js:0
+msgid "Error obtaining supplier"
+msgstr "Error al obtener el proveedor"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.js:0
+msgid "Error obtaining the associated provider."
+msgstr "Error al obtener el proveedor asociado."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+msgid "Error loading form data"
+msgstr "Error al cargar los datos del formulario"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+msgid "An error occurred while loading the form data."
+msgstr "Ocurrió un error al cargar los datos del formulario."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "Error loading drivers"
+msgstr "Error al cargar los conductores"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "An error occurred while loading the available drivers."
+msgstr "Ocurrió un error al cargar los conductores disponibles."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+msgid "An error occurred while loading the drivers."
+msgstr "Ocurrió un error al cargar los conductores."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+msgid "Error loading supplier centers"
+msgstr "Error al cargar los centros de atención"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+msgid "An error occurred while loading the supplier centers."
+msgstr "Ocurrió un error al cargar los centros de atención."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+msgid "Error saving truck"
+msgstr "Error al guardar la grúa"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+msgid "An error occurred while saving the truck."
+msgstr "Ocurrió un error al guardar la grúa."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+msgid "Truck created"
+msgstr "Grúa creada"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_create_component.js:0
+msgid "The truck has been created successfully."
+msgstr "La grúa ha sido creada exitosamente."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.js:0
+msgid "Error loading trucks"
+msgstr "Error al cargar las grúas"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.js:0
+msgid "An error occurred while loading the trucks."
+msgstr "Ocurrió un error al cargar las grúas."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.js:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "Error checking permissions"
+msgstr "Error al verificar los permisos"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.js:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "An error occurred while checking user permissions."
+msgstr "Ocurrió un error al verificar los permisos del usuario."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "Missing truck"
+msgstr "Grúa no especificada"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "No Truck ID provided."
+msgstr "No se proporcionó un ID de grúa."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "Truck not found"
+msgstr "Grúa no encontrada"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "The requested truck could not be found."
+msgstr "La grúa solicitada no pudo ser encontrada."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "Error loading truck"
+msgstr "Error al cargar la grúa"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "An error occurred while fetching truck details."
+msgstr "Ocurrió un error al obtener los detalles de la grúa."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "Error saving driver"
+msgstr "Error al guardar el conductor"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "An error occurred while saving the driver."
+msgstr "Ocurrió un error al guardar el conductor."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "Driver updated"
+msgstr "Conductor actualizado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.js:0
+msgid "The driver has been updated successfully."
+msgstr "El conductor ha sido actualizado exitosamente."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Clocks"
+msgstr "Relojes"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Arrived"
+msgstr "Llegó"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Register time"
+msgstr "Registrar hora"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Not registered"
+msgstr "No registrado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Contacted"
+msgstr "Contactado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Requires Arrived"
+msgstr "Requiere Llegó"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Finalized"
+msgstr "Finalizado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Requires Contacted"
+msgstr "Requiere Contactado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error loading clocks"
+msgstr "Error al cargar relojes"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "An error occurred"
+msgstr "Ocurrió un error"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Confirm Clock Registration"
+msgstr "Confirmar Registro de Reloj"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Are you sure you want to register the current time for the '%s' stage? This action cannot be undone."
+msgstr "¿Estás seguro de registrar la hora actual para la etapa '%s'? Esta acción no puede deshacerse."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Clock registered"
+msgstr "Reloj registrado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "The time has been registered successfully."
+msgstr "La hora ha sido registrada exitosamente."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Error registering clock"
+msgstr "Error al registrar el reloj"

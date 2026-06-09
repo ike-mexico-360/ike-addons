@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="ike_event_portal_my_purchase_order" name="Purchase Order Detail" inherit_id="purchase.portal_my_purchase_order">
+        <xpath expr="//a[@id='print_invoice_report']" position="after">
+
+            <div class="card p-3 mt-3 border rounded">
+
+                <label class="form-label fw-bold">
+                    Validar CFDI XML
+                </label>
+
+                <input type="file"
+                    id="xml_file"
+                    class="form-control mb-2"
+                    accept=".xml"/>
+
+                <button type="button"
+                        id="validate_xml_btn"
+                        class="btn btn-primary"
+                        t-att-data-order-id="order.id"> Validar XML
+                </button>
+
+                <div id="xml_validation_result"
+                    class="mt-3"/>
+            </div>
+        </xpath>
+    </template>
+</odoo>

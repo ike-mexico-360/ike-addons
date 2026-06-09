@@ -99,7 +99,7 @@ class IkeEventStageComment(models.Model):
             'IKE_CHANNEL_LIST_LISTEN', {
                 'id': self.event_id.id,
                 'stage_ref': self.event_id.stage_ref,
-                'ike_uuid': self.env.context.get('ike_uuid')
+                'ike_uuid': self.env.context.get('ike_uuid'),
             }, batch_timeout=10)
 
     @api.model_create_multi

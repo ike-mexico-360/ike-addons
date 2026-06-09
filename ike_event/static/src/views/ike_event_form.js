@@ -13,7 +13,7 @@ export class IkeEventFormController extends FormController {
         // console.log("IkeEventForm", this);
         super.setup();
         this.notification = useService("notification");
-        if (crypto) {
+        if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
             this.props.context['ike_uuid'] = crypto.randomUUID();
         }
 
@@ -109,8 +109,11 @@ export class IkeEventFormController extends FormController {
         if (!payload || !payload.data || !payload.data.length) {
             return;
         }
-        const data = payload.data.find(x => x.id == this.model.root.resId);
-        if (data) {
+        const item = payload.data.find(x => x.id == this.model.root.resId);
+        if (item) {
+            if (item['ike_uuid'] && item['ike_uuid'] == this.props.context['ike_uuid']) {
+                return;
+            }
             await this.model.root.load();
         }
     }

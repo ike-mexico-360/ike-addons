@@ -2,7 +2,7 @@
     <t t-name="ike_event_portal.ServicesMainComponent" owl="1">
         <div class="portal-main-container">
             <!-- Service Summary Modal -->
-            <t t-if="state.showServiceSummaryModal">
+            <t t-if="state.modal.show">
                 <div class="modal-backdrop fade show" style="z-index:1040;"/>
                 <div class="modal fade show d-block" tabindex="-1" role="dialog" style="z-index:1050;">
                     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
@@ -14,20 +14,110 @@
                                 <button type="button" class="btn-close btn-close-white" aria-label="Close" t-on-click="closeServiceSummaryModal"/>
                             </div>
                             <div class="modal-body">
-                                <div t-if="state.event_supplier_summary_data" t-ref="summaryContainer"/>
-                                <t t-if="state.travel_tracking_url">
+                                <div t-if="state.modal.summaryData" t-ref="summaryContainer"/>
+                                <t t-if="state.modal.travelTrackingUrl">
                                     <div class="travel-tracking-container mb-4 rounded-3 overflow-hidden">
-                                        <iframe frameborder="0" style="width:100%; height: 400px; border:none;" t-att-src="state.travel_tracking_url"/>
+                                        <iframe frameborder="0" style="width:100%; height: 400px; border:none;" t-att-src="state.modal.travelTrackingUrl"/>
                                     </div>
                                 </t>
+                                <!-- Relojes Section -->
+                                <div class="card border-0 shadow-sm rounded-3 mb-4">
+                                    <div class="card-header bg-light d-flex align-items-center gap-2 py-2">
+                                        <i class="fa fa-clock-o text-primary"/>
+                                        <span class="fw-bold text-primary"><t t-out="translate('Clocks')"/></span>
+                                    </div>
+                                    <div class="card-body py-3">
+                                        <t t-if="state.modal.isLoadingRelojes">
+                                            <div class="d-flex justify-content-center py-3">
+                                                <div class="spinner-border spinner-border-sm text-primary" role="status"/>
+                                            </div>
+                                        </t>
+                                        <t t-elif="state.modal.relojes">
+                                            <div class="row g-3">
+                                                <!-- Llegó -->
+                                                <div class="col-md-4">
+                                                    <div t-attf-class="d-flex flex-column align-items-center text-center p-3 rounded-3 border h-100 #{state.modal.relojes.arrived.is_set ? 'bg-success bg-opacity-10 border-success' : 'bg-light'}">
+                                                        <i t-attf-class="fa fa-map-marker fa-lg mb-2 #{state.modal.relojes.arrived.is_set ? 'text-success' : 'text-muted'}"/>
+                                                        <strong class="small mb-2"><t t-out="translate('Arrived')"/></strong>
+                                                        <t t-if="state.modal.relojes.arrived.is_set">
+                                                            <span class="badge bg-success rounded-pill px-2 py-1 small">
+                                                                <i class="fa fa-check me-1"/>
+                                                                <t t-out="state.modal.relojes.arrived.formatted_date"/>
+                                                            </span>
+                                                        </t>
+                                                        <t t-elif="state.modal.relojes.arrived.can_stamp">
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-outline-primary rounded-pill"
+                                                                    t-on-click="() => this.onStampRelojClick('arrived')">
+                                                                <i class="fa fa-clock-o me-1"/>
+                                                                <t t-out="translate('Register time')"/>
+                                                            </button>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span class="text-muted small fst-italic"><t t-out="translate('Not registered')"/></span>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                                <!-- Contactado -->
+                                                <div class="col-md-4">
+                                                    <div t-attf-class="d-flex flex-column align-items-center text-center p-3 rounded-3 border h-100 #{state.modal.relojes.contacted.is_set ? 'bg-primary bg-opacity-10 border-primary' : 'bg-light'}">
+                                                        <i t-attf-class="fa fa-user fa-lg mb-2 #{state.modal.relojes.contacted.is_set ? 'text-primary' : 'text-muted'}"/>
+                                                        <strong class="small mb-2"><t t-out="translate('Contacted')"/></strong>
+                                                        <t t-if="state.modal.relojes.contacted.is_set">
+                                                            <span class="badge bg-primary rounded-pill px-2 py-1 small">
+                                                                <i class="fa fa-check me-1"/>
+                                                                <t t-out="state.modal.relojes.contacted.formatted_date"/>
+                                                            </span>
+                                                        </t>
+                                                        <t t-elif="state.modal.relojes.contacted.can_stamp">
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-outline-primary rounded-pill"
+                                                                    t-on-click="() => this.onStampRelojClick('contacted')">
+                                                                <i class="fa fa-clock-o me-1"/>
+                                                                <t t-out="translate('Register time')"/>
+                                                            </button>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span class="text-muted small fst-italic"><t t-out="translate('Requires Arrived')"/></span>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                                <!-- Finalizado -->
+                                                <div class="col-md-4">
+                                                    <div t-attf-class="d-flex flex-column align-items-center text-center p-3 rounded-3 border h-100 #{state.modal.relojes.finalized.is_set ? 'bg-warning bg-opacity-10 border-warning' : 'bg-light'}">
+                                                        <i t-attf-class="fa fa-flag-checkered fa-lg mb-2 #{state.modal.relojes.finalized.is_set ? 'text-warning' : 'text-muted'}"/>
+                                                        <strong class="small mb-2"><t t-out="translate('Finalized')"/></strong>
+                                                        <t t-if="state.modal.relojes.finalized.is_set">
+                                                            <span class="badge bg-warning text-dark rounded-pill px-2 py-1 small">
+                                                                <i class="fa fa-check me-1"/>
+                                                                <t t-out="state.modal.relojes.finalized.formatted_date"/>
+                                                            </span>
+                                                        </t>
+                                                        <t t-elif="state.modal.relojes.finalized.can_stamp">
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-outline-warning rounded-pill"
+                                                                    t-on-click="() => this.onStampRelojClick('finalized')">
+                                                                <i class="fa fa-clock-o me-1"/>
+                                                                <t t-out="translate('Register time')"/>
+                                                            </button>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span class="text-muted small fst-italic"><t t-out="translate('Requires Contacted')"/></span>
+                                                        </t>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
                                 <hr class="my-4"/>
                                 <!-- Service Costs Section -->
-                                <t t-if="state.serviceCostsData">
+                                <t t-if="state.modal.costsData">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h6 class="fw-bold text-primary mb-0">
                                             <i class="fa fa-calculator me-2"/><t t-out="translate('Service Costs')"/>
                                         </h6>
-                                        <button t-if="!state.isAddingConcept"
+                                        <button t-if="!state.modal.isAddingConcept"
                                             type="button"
                                             class="btn btn-success btn-sm rounded-pill px-3"
                                             t-on-click="onAddConceptClick">
@@ -35,7 +125,7 @@
                                         </button>
                                     </div>
                                     <!-- New concept row (when adding) - ABOVE TABLE -->
-                                    <t t-if="state.isAddingConcept">
+                                    <t t-if="state.modal.isAddingConcept">
                                         <div class="card bg-success bg-opacity-10 border-success mb-3">
                                             <div class="card-body py-3">
                                                 <div class="row g-2 align-items-center">
@@ -44,7 +134,7 @@
                                                         <select class="form-select form-select-sm"
                                                                 t-on-change="onNewConceptProductChange">
                                                             <option value=""><t t-out="translate('Select concept')"/>...</option>
-                                                            <t t-foreach="state.availableProducts" t-as="product" t-key="product.id">
+                                                             <t t-foreach="state.modal.availableProducts" t-as="product" t-key="product.id">
                                                                 <option t-att-value="product.id" t-out="product.name"/>
                                                             </t>
                                                         </select>
@@ -53,7 +143,7 @@
                                                         <label class="form-label small text-muted mb-1"><t t-out="translate('Quantity')"/></label>
                                                         <input type="number"
                                                                class="form-control form-control-sm text-center"
-                                                               t-att-value="state.newConcept.quantity"
+                                                               t-att-value="state.modal.newConcept.quantity"
                                                                min="1"
                                                                step="1"
                                                                t-on-change="(ev) => this.onNewConceptQuantityChange('quantity', ev)"/>
@@ -86,7 +176,7 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <t t-foreach="state.serviceCostsData.items" t-as="item" t-key="item.id">
+                                                <t t-foreach="state.modal.costsData.items" t-as="item" t-key="item.id">
                                                     <tr class="border-bottom">
                                                         <td class="py-3 px-3">
                                                             <t t-out="item.concept"/>
@@ -150,7 +240,7 @@
                                     </div>
                                 </t>
                                 <!-- No costs message -->
-                                <t t-if="!state.serviceCostsData and !state.isLoadingCosts and !state.isAddingConcept">
+                                <t t-if="!state.modal.costsData and !state.modal.isLoadingCosts and !state.modal.isAddingConcept">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                     </div>
                                     <div class="alert alert-info mb-0">

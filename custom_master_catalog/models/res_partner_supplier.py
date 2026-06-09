@@ -173,7 +173,9 @@ class ResPartner(models.Model):
 
             allowed_product_ids = []
             if coverage_id:
-                allowed_product_ids = coverage_id.mapped('supplier_coverage_config_line_ids.product_id.id')
+                allowed_product_ids = coverage_id.mapped('supplier_coverage_config_line_ids').filtered(
+                    lambda x: not x.disabled
+                ).mapped('product_id.id')
 
             rec.x_allowed_product_ids = allowed_product_ids
 

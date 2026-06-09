@@ -32,7 +32,7 @@ class ProductProduct(models.Model):
     @api.constrains('name', 'sale_ok', 'sh_product_subscribe', 'purchase_ok', 'x_accessory_ok', 'categ_id', 'uom_id')
     def chec_unique_accessory(self):
         for rec in self:
-            domain = rec.get_accessories_domain()
+            domain = rec.get_accessories_domain(hide_disabled=False)
             if self.search_count(domain + [('id', '<>', rec.id), ('name', '=', rec.name), ('disabled', '=', False)]) > 0:
                 raise ValidationError(_('A record with the same name already exists.'))
             elif self.search_count(domain + [('id', '<>', rec.id), ('name', '=', rec.name), ('disabled', '=', True)]) > 0:
@@ -51,14 +51,14 @@ class ProductProduct(models.Model):
             readonly_view = self.env.ref('custom_master_catalog.view_custom_ike_accessories_product_form_readonly')
             list_readonly_view = self.env.ref('custom_master_catalog.custom_ike_accessories_view_tree')
             action['views'] = [(list_readonly_view.id, 'list'), (readonly_view.id, 'form')]
-        action.update({'domain': self.get_accessories_domain(), 'context': ctx})
+        action.update({'domain': self.get_accessories_domain(hide_disabled=False), 'context': ctx})
         return action
 
     @api.model
-    def get_accessories_domain(self):
+    def get_accessories_domain(self, hide_disabled=True):
         all_categ_id = self.env.ref('product.product_category_all')
         service_uom_id = self.env.ref('l10n_mx.product_uom_service_unit')
-        return [
+        domain = [
             ('sale_ok', '=', False),
             ('sh_product_subscribe', '=', False),
             ('purchase_ok', '=', True),
@@ -69,6 +69,9 @@ class ProductProduct(models.Model):
             ('categ_id', '=', all_categ_id.id),
             ('uom_id', '=', service_uom_id.id),
         ]
+        if hide_disabled:
+            domain.append(['disabled', '=', False])
+        return domain
 
     @api.model
     def repair_missing_values_accessories(self):

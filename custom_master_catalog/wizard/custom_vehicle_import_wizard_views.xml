@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_custom_vehicle_import_wizard_form" model="ir.ui.view">
+        <field name="name">custom.vehicle.import.wizard.form</field>
+        <field name="model">custom.vehicle.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import vehicles">
+                <group>
+                    <field name="file" filename="file_name" required="1"/>
+                    <field name="file_name" invisible="1"/>
+                    <field name="file_type" invisible="1"/>
+                </group>
+
+                <group>
+                    <field name="summary_html" nolabel="1" readonly="1" widget="html"/>
+                </group>
+
+                <group>
+                    <field name="error_file_name" invisible="1"/>
+                    <field name="error_file" filename="error_file_name" readonly="1" invisible="error_file == False"/>
+                </group>
+
+                <footer>
+                    <button name="action_import" string="Procesar" type="object" class="btn-primary"/>
+                    <button string="Close" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_custom_vehicle_import_wizard" model="ir.actions.act_window">
+        <field name="name">Importar usuarios de proveedor</field>
+        <field name="res_model">custom.vehicle.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+</odoo>

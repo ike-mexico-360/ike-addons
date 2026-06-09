@@ -213,7 +213,7 @@ class IkeEvent(models.Model):
         """
         Override read to return decrypted values when necessary
         """
-        result = super(IkeEvent, self).read(fields=fields, load=load)
+        result = super(IkeEvent, self.sudo()).read(fields=fields, load=load)
         # Only decrypt if encrypted fields are specifically requested
         if not fields or any(f in fields for f in ['user_phone', 'key_identification']):
             encryption_util = self.env['custom.encryption.utility']
@@ -472,6 +472,7 @@ class IkeEvent(models.Model):
                     lambda x: x.stage_ref not in ['finalized', 'cancel']
                 )
                 if not pending_suppliers:
+                    rec.stage_id = self.env.ref('ike_event.ike_event_stage_in_progress').id
                     rec.step_number = 1
                     rec.action_completed()
                     continue

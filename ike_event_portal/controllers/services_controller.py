@@ -1,4 +1,6 @@
-from odoo import http, fields
+from datetime import timedelta
+
+from odoo import http, fields, _
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.http import request
 import logging
@@ -122,7 +124,7 @@ class PortalUserAccount(CustomerPortal):
                     )
                 return {"success": True, "suppliers_events": results}
 
-            return {"success": False, "suppliers_events": []}
+            return {"success": True, "suppliers_events": []}
         except Exception as e:
             _logger.error(f"Error getting current notified supplier: {str(e)}")
             return {"success": False, "error": str(e)}
@@ -140,7 +142,7 @@ class PortalUserAccount(CustomerPortal):
         """
         try:
             if not event_supplier_id:
-                return {"success": False, "error": "event_supplier_id is required"}
+                return {"success": False, "error": "event_supplier_id field is required"}
 
             supplier_line = request.env["ike.event.supplier.public"].search(
                 [
@@ -190,80 +192,6 @@ class PortalUserAccount(CustomerPortal):
         except Exception as e:
             _logger.error(f"Error getting single notified supplier: {str(e)}")
             return {"success": False, "error": str(e), "supplier_event": None}
-
-    @http.route(
-        ["/provider/portal/services/send_notification"],
-        type="json",
-        auth="user",
-        methods=["POST"],
-        csrf=False,
-    )
-    def send_user_notification(self, vehicle_id, user_id, event_data, **kw):
-        """
-        Endpoint to send notification via AWS Lambda
-        Called from React component
-        """
-        try:
-            # Validate inputs
-            if not vehicle_id or not user_id:
-                return {
-                    "success": False,
-                    "error": "vehicle_id and user_id are required",
-                }
-
-            url = (
-                request.env["ir.config_parameter"]
-                .sudo()
-                .get_param("ike_event.app.url.notification")
-            )
-            result = False
-            if url:
-                event_supplier_id = event_data.get("event_supplier_id")
-                try:
-                    result = request.env["ike.event.supplier"].operator_app_notify(
-                        url,
-                        user_id,
-                        vehicle_id,
-                        event_data.get("service_id"),
-                        event_data.get("ca_id"),
-                        event_data.get("lat"),
-                        event_data.get("lng"),
-                        event_data.get("dst_lat"),
-                        event_data.get("dst_lng"),
-                        event_data.get("control"),
-                        event_data.get("assignation_type"),
-                        event_data.get("estatus"),
-                        event_supplier_id,
-                        event_data.get("user_code"),
-                    )
-
-                    _logger.info(f"Notify operator by portal -> {result}")
-                    # Marcar la linea como notificada
-                    request.env["ike.event.supplier"].sudo().browse(
-                        event_supplier_id
-                    ).notification_sent_to_app = True
-                except Exception as e:
-                    _logger.error(f"Error notificando al operador: {str(e)}")
-
-                if not result:
-                    return {"success": False, "error": "No operatos to notify"}
-
-            # Call the notification service
-            # result = NotificationService.send_user_notification(user_id, vehicle_id, event)
-
-            if result:
-                return {
-                    "success": True,
-                    "message": "Notification sent successfully",
-                    "data": result,
-                }
-            else:
-                return {"success": False, "error": "Failed to send notification"}
-
-        except Exception as e:
-            _logger.error(f"Error in send_user_notification endpoint: {str(e)}")
-            return {"success": False, "error": str(e)}
-
     @http.route(
         ["/provider/portal/services/supplier_cancel"],
         type="json",
@@ -386,14 +314,14 @@ class PortalUserAccount(CustomerPortal):
             if not event_id or not supplier_id or not product_id:
                 return {
                     "success": False,
-                    "error": "event_id, supplier_id and product_id are required",
+                    "error": "Event, Supplier and Product are required"
                 }
 
             EventSupplierProduct = request.env["ike.event.supplier.product"].sudo()
             Product = request.env["product.product"].sudo()
 
             if not supplier_link_id:
-                return {"success": False, "error": "Supplier link ID is required"}
+                return {"success": False, "error": "Supplier Link is required"}
 
             # Get the product
             product = Product.browse(product_id)
@@ -416,19 +344,6 @@ class PortalUserAccount(CustomerPortal):
 
             # Apply onchange logic to populate pricing fields
             new_concept._onchange_product_id()
-
-            # Retrieve full record data
-            # concept_data = request.env["ike.event.supplier.product"].search(
-            #     [
-            #         ("id", "=", new_concept.id),
-            #     ],
-            #     limit=1,
-            # )
-            # concept_data._onchange_product_id()
-
-            _logger.info(
-                f"Created concept {new_concept.id} for event {event_id}, supplier {supplier_id}, product {product_id}"
-            )
 
             return {
                 "success": True,
@@ -462,9 +377,229 @@ class PortalUserAccount(CustomerPortal):
         "/provider/portal/supplier/request_authorization", type="json", auth="user"
     )
     def request_authorization(self, event_supplier_id):
-        supplier = request.env["ike.event.supplier"].browse(event_supplier_id)
-        supplier.action_request_authorization()
-        return {"success": True}
+        try:
+            supplier = request.env["ike.event.supplier"].browse(event_supplier_id)
+            supplier.action_request_authorization()
+            return {"success": True}
+        except Exception as e:
+            return {"success": False, "error": str(e)}
+
+    @http.route(
+        ["/provider/portal/services/get_relojes"],
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=False,
+    )
+    def get_relojes(self, event_supplier_id, **kw):
+        """
+        Get clock timestamps (arrived, contacted, finalized) for a supplier event.
+        """
+        try:
+            supplier = request.env["ike.event.supplier"].sudo().browse(event_supplier_id)
+            if not supplier.exists():
+                return {"success": False, "error": _("Service not found")}
+
+            def fmt(dt):
+                return fields.Datetime.to_string(dt) if dt else None
+
+            arrived = supplier.on_route_to_user_end_date
+            contacted = supplier.contacted_date
+            finalized = supplier.finalized_date
+
+            return {
+                "success": True,
+                "relojes": {
+                    "arrived": {
+                        "date": fmt(arrived),
+                        "is_set": bool(arrived),
+                        "can_stamp": not bool(arrived),
+                    },
+                    "contacted": {
+                        "date": fmt(contacted),
+                        "is_set": bool(contacted),
+                        "can_stamp": bool(arrived) and not bool(contacted),
+                    },
+                    "finalized": {
+                        "date": fmt(finalized),
+                        "is_set": bool(finalized),
+                        "can_stamp": bool(contacted) and not bool(finalized),
+                    },
+                },
+            }
+        except Exception as e:
+            _logger.error(f"Error getting relojes: {str(e)}")
+            return {"success": False, "error": str(e)}
+
+    @http.route(
+        ["/provider/portal/services/stamp_reloj"],
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=False,
+    )
+    def stamp_reloj(self, event_supplier_id, stage, **kw):
+        """
+        Stamp the current server time for a given stage clock (arrived/contacted/finalized).
+        Only allowed if the timestamp is not yet set (portal restriction: one-time, immutable).
+        """
+        try:
+            if stage not in ("arrived", "contacted", "finalized"):
+                return {"success": False, "error": _("Invalid stage")}
+
+            supplier = request.env["ike.event.supplier"].sudo().browse(event_supplier_id)
+            if not supplier.exists():
+                return {"success": False, "error": _("Service not found")}
+
+            now = fields.Datetime.now()
+
+            if stage == "arrived":
+                if supplier.on_route_to_user_end_date:
+                    return {"success": False, "error": _("Arrived timestamp is already registered")}
+
+                if supplier.assignation_date and now <= supplier.assignation_date:
+                    return {"success": False, "error": _("Arrived time must be after the assignment date")}
+
+                # Ensure on_route is set before arrived
+                if not supplier.on_route_to_user_start_date:
+                    on_route_vals = {
+                        "on_route_to_user_start_date": now - timedelta(seconds=1),
+                        "on_route_to_start_user_id": request.env.user.id,
+                        "on_route_to_start_comment": "Portal - On route",
+                    }
+                    if not supplier.first_on_route_to_user_start_date:
+                        on_route_vals.update({
+                            "first_on_route_to_user_start_date": now - timedelta(seconds=1),
+                            "first_on_route_to_start_user_id": request.env.user.id,
+                            "first_on_route_to_start_comment": "Portal - On route",
+                        })
+                    supplier.write(on_route_vals)
+                    supplier.action_on_route()
+
+                arrived_vals = {
+                    "on_route_to_user_end_date": now,
+                    "on_route_to_end_user_id": request.env.user.id,
+                    "on_route_to_end_comment": "Portal - Arrived",
+                }
+                if not supplier.first_on_route_to_user_end_date:
+                    arrived_vals.update({
+                        "first_on_route_to_user_end_date": now,
+                        "first_on_route_to_end_user_id": request.env.user.id,
+                        "first_on_route_to_end_comment": "Portal - Arrived",
+                    })
+                supplier.write(arrived_vals)
+                supplier.action_arrive()
+
+            elif stage == "contacted":
+                if not supplier.on_route_to_user_end_date:
+                    return {"success": False, "error": _("The Arrived time must be registered first")}
+                if supplier.contacted_date:
+                    return {"success": False, "error": _("Contacted timestamp is already registered")}
+
+                if now <= supplier.on_route_to_user_end_date:
+                    return {"success": False, "error": _("Contacted time must be after the arrived date")}
+
+                contacted_vals = {
+                    "contacted_date": now,
+                    "contacted_user_id": request.env.user.id,
+                    "contacted_comment": "Portal - Contacted",
+                }
+                if not supplier.first_contacted_date:
+                    contacted_vals.update({
+                        "first_contacted_date": now,
+                        "first_contacted_user_id": request.env.user.id,
+                        "first_contacted_comment": "Portal - Contacted",
+                    })
+                supplier.write(contacted_vals)
+                supplier.action_contact()
+
+            elif stage == "finalized":
+                if not supplier.contacted_date:
+                    return {"success": False, "error": _("The Contacted time must be registered first")}
+                if supplier.finalized_date:
+                    return {"success": False, "error": _("Finalized timestamp is already registered")}
+
+                if now <= supplier.contacted_date:
+                    return {"success": False, "error": _("Finalized time must be after the contacted date")}
+
+                # Set on_route_to_destination if not already set
+                if not supplier.on_route_to_destination_start_date:
+                    route2_vals = {
+                        "on_route_to_destination_start_date": now - timedelta(seconds=2),
+                        "on_route_to_destination_start_user_id": request.env.user.id,
+                        "on_route_to_destination_start_comment": "Portal - On route to destination",
+                    }
+                    if not supplier.first_on_route_to_destination_start_date:
+                        route2_vals.update({
+                            "first_on_route_to_destination_start_date": now - timedelta(seconds=2),
+                            "first_on_route_to_destination_start_user_id": request.env.user.id,
+                            "first_on_route_to_destination_start_comment": "Portal - On route to destination",
+                        })
+                    supplier.write(route2_vals)
+                    supplier.action_on_route_to_the_destination()
+
+                # Set arrived_to_destination if not already set
+                if not supplier.on_route_to_destination_end_date:
+                    arrived2_vals = {
+                        "on_route_to_destination_end_date": now - timedelta(seconds=1),
+                        "on_route_to_destination_end_user_id": request.env.user.id,
+                        "on_route_to_destination_end_comment": "Portal - Arrived to destination",
+                    }
+                    if not supplier.first_on_route_to_destination_end_date:
+                        arrived2_vals.update({
+                            "first_on_route_to_destination_end_date": now - timedelta(seconds=1),
+                            "first_on_route_to_destination_end_user_id": request.env.user.id,
+                            "first_on_route_to_destination_end_comment": "Portal - Arrived to destination",
+                        })
+                    supplier.write(arrived2_vals)
+                    supplier.action_arrive_to_the_destination()
+
+                # Set finalized timestamp
+                finalized_vals = {
+                    "finalized_date": now,
+                    "finalized_user_id": request.env.user.id,
+                    "finalized_comment": "Portal - Finalized",
+                }
+                if not supplier.first_finalized_date:
+                    finalized_vals.update({
+                        "first_finalized_date": now,
+                        "first_finalized_user_id": request.env.user.id,
+                        "first_finalized_comment": "Portal - Finalized",
+                    })
+                supplier.write(finalized_vals)
+                supplier.action_finalize()
+
+            # Return updated relojes
+            def fmt(dt):
+                return fields.Datetime.to_string(dt) if dt else None
+
+            arrived = supplier.on_route_to_user_end_date
+            contacted = supplier.contacted_date
+            finalized = supplier.finalized_date
+
+            return {
+                "success": True,
+                "relojes": {
+                    "arrived": {
+                        "date": fmt(arrived),
+                        "is_set": bool(arrived),
+                        "can_stamp": not bool(arrived),
+                    },
+                    "contacted": {
+                        "date": fmt(contacted),
+                        "is_set": bool(contacted),
+                        "can_stamp": bool(arrived) and not bool(contacted),
+                    },
+                    "finalized": {
+                        "date": fmt(finalized),
+                        "is_set": bool(finalized),
+                        "can_stamp": bool(contacted) and not bool(finalized),
+                    },
+                },
+            }
+        except Exception as e:
+            _logger.error(f"Error stamping reloj: {str(e)}")
+            return {"success": False, "error": str(e)}
 
     @http.route("/fleet/vehicle/safe/<int:vehicle_id>", type="json", auth="user")
     def get_vehicle_safe(self, vehicle_id):
