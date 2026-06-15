@@ -541,7 +541,7 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered.cancel_from = self.env.context.get('ike_event_action_from', 'internal')
         self_filtered.cancel_reason_text = reason_text
         self_filtered.cancelled = True
-        self_filtered.broadcastCancel()
+        self_filtered.broadcastCancel(True)
 
     def _set_supplier_cost_zero(self):
         for rec in self:

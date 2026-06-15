@@ -44,7 +44,8 @@ class IkeEvent(models.Model):
                     original_event_name=self.env['ike.event'].browse(original_event_id).name,
                     reason_name=reason_name
                 )._create_message_binnacle([
-                    "ike_event_binnacle.ike_binnacle_stage_9_2"
+                    "ike_event_binnacle.ike_binnacle_stage_9_2",
+                    'ike_event_binnacle.ike_binnacle_stage_3_1'
                 ])
 
         return result

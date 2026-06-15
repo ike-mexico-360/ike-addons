@@ -63,6 +63,7 @@
             </xpath>
             <xpath expr="//button[@name='button_cancel']" position="attributes">
                 <attribute name="groups">base.group_system</attribute>
+                <attribute name="invisible">state not in ('draft', 'to approve', 'sent', 'to_consolidate', 'to_consolidate', 'consolidated', 'purchase')</attribute>
             </xpath>
             <xpath expr="//field[@name='project_id']" position="after">
                 <field name="x_require_change_reason" invisible="1" readonly="1"/>

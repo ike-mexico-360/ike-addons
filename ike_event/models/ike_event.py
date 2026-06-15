@@ -398,7 +398,7 @@ class IkeEvent(models.Model):
                 rec.current_stage_date = rec.create_date
             rec.current_elapsed_time_minutes = (now - rec.current_stage_date).total_seconds() // 60
 
-    @api.depends('selected_supplier_ids', 'selected_supplier_ids.stage_ref')
+    @api.depends('selected_supplier_ids', 'selected_supplier_ids.stage_id')
     def _compute_selected_pending_suppliers(self):
         for rec in self:
             rec.selected_pending_suppliers = len(rec.selected_supplier_ids.filtered(

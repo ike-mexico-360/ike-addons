@@ -1891,6 +1891,9 @@
                 <t t-if="object.membership_authorization_id">
                     <strong>Is special:</strong>
                     <t t-out="'Yes' if object.membership_authorization_id.check_is_special else 'No'"/>
+                    <br/>
+                    <strong>Is float:</strong>
+                    <t t-out="'Yes' if object.membership_authorization_id.check_is_fleet else 'No'"/>
                 </t>
             </field>
         </record>
