@@ -255,5 +255,9 @@
             <field name="by_priority">False</field>
             <field name="total_assignment_time">0</field>
         </record>
+        <!-- Product Tags -->
+        <record id="ike_product_tag_maneuvers" model="product.tag">
+            <field name="name">Maneuvers</field>
+        </record>
     </data>
 </odoo>

@@ -71,10 +71,11 @@
                                     'display_default_code': 0,
                                 }"
                                 domain="x_product_concept_domain"/>
-                                <field name="x_additional_ok" readonly="disabled"/>
-                                <field name="x_cost_by_km" readonly="disabled"/>
-                                <field name="x_check_is_armor"/>
-                                <field name="x_armor_level" invisible="not x_check_is_armor"/>
+                            <field name="x_additional_ok" readonly="disabled"/>
+                            <field name="x_cost_by_km" readonly="disabled"/>
+                            <field name="x_check_is_armor"/>
+                            <field name="x_armor_level" invisible="not x_check_is_armor"/>
+                            <field name="product_tag_ids" widget="many2many_tags" options="{'no_create': 1}"/>
                         </group>
                     </group>
                 </sheet>

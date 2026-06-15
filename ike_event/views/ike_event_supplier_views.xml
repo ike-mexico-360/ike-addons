@@ -190,7 +190,7 @@
                             />
                         </group>
                         <group>
-                            <field name="user_amount_paid" invisible="1"/>
+                            <field name="user_amount_paid" invisible="not authorization_by_nu"/>
                         </group>
                     </group>
                     <group invisible="not cost_invalid">

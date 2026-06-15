@@ -36,58 +36,72 @@ class CustomVehicleImportWizard(models.TransientModel):
         'supplier_name': {
             'excel': 'Proveedor',
             'required': True,
+            'type': 'char',
         },
         'center_name': {
             'excel': 'Centro de atención',
             'required': True,
+            'type': 'char',
         },
         'user_login': {
             'excel': 'Correo',
             'required': True,
+            'type': 'char',
         },
         'operator_name': {
             'excel': 'Operador',
             'required': False,
+            'type': 'char',
         },
         'vehicle_ref': {
             'excel': 'Referencia del vehículo',
             'required': True,
+            'type': 'char',
         },
         'vehicle_type': {
             'excel': 'Tipo de vehículo',
             'required': True,
+            'type': 'char',
         },
         'plate': {
             'excel': 'Matrícula',
             'required': True,
+            'type': 'char',
         },
         'federal_plate': {
             'excel': 'Placas federales',
             'required': False,
+            'type': 'bool',
         },
         'tire_conditioning': {
             'excel': 'Gestiona acondicionamiento de llantas',
             'required': False,
+            'type': 'bool',
         },
         'maneuvers': {
             'excel': 'Maniobras',
             'required': False,
+            'type': 'bool',
         },
         'accessories': {
             'excel': 'Accesorios',
             'required': False,
+            'type': 'char',
         },
         'year': {
             'excel': 'Año',
             'required': False,
+            'type': 'char',
         },
         'model': {
             'excel': 'Modelo',
             'required': False,
+            'type': 'char',
         },
         'weight_category': {
             'excel': 'Categoría de peso',
             'required': False,
+            'type': 'char',
         },
     }
 
@@ -243,7 +257,7 @@ class CustomVehicleImportWizard(models.TransientModel):
                 excel_name = self._normalize_header(cfg['excel'])
                 col_idx = header_map.get(excel_name)
                 cell = row[col_idx] if col_idx is not None and col_idx < len(row) else False
-                values[key] = self._normalize_value(cell)
+                values[key] = self._cast_cell_value(key, cell)
 
             missing_required = []
             for key, cfg in self.COLUMN_MAP.items():
@@ -448,14 +462,16 @@ class CustomVehicleImportWizard(models.TransientModel):
         vehicle_ref = (row.get('vehicle_ref') or '').strip()
         plate = (row.get('plate') or '').strip()
         model = (row.get('model') or '').strip()
+        weigth_category = (row.get('weight_category') or '').strip()
+        federal_plates = row.get('federal_plate', False)
+        tire_conditioning = row.get('tire_conditioning', False)
+        maneuvers = row.get('maneuvers', False)
+        accessories = (row.get('accessories') or '').strip()
+        year = (row.get('year') or '').strip()
         model_name = ""
         brand_name = ""
         if model:
             brand_name, model_name = model.split('/')
-        # vehicle_type = (row.get('vehicle_type') or '').strip()
-
-        _logger.info("Modelo %s", model_name)
-        _logger.info("Brand: %s", brand_name)
 
         if not vehicle_ref:
             raise UserError(_("Could not create vehicle without reference."))
@@ -469,24 +485,50 @@ class CustomVehicleImportWizard(models.TransientModel):
 
         model = VehicleModel.search([('name', '=', model_name.strip())], limit=1)
 
-        _logger.info("Modelo: %s", model)
-
         if not model:
             brand = VehicleModelBrand.search([('name', '=', brand_name)], limit=1)
             if not brand:
                 brand = VehicleModelBrand.create({
                     'name': brand_name,
                 })
+            weigth_vehicle_category = self.env['custom.vehicle.weight.category']
+            if weigth_category:
+                weigth_vehicle_category = self.env['custom.vehicle.weight.category'].search([
+                    ('name', '=', weigth_category),
+                ], limit=1)
             model = VehicleModel.create({
                 'name': model_name,
                 'brand_id': brand.id,
+                'x_vehicle_weight_category_id': weigth_vehicle_category.id,
             })
+        # Establecer la categoría de peso si no existe
+        if model and not model.x_vehicle_weight_category_id and weigth_category:
+            weigth_vehicle_category = self.env['custom.vehicle.weight.category'].search([
+                ('name', '=', weigth_category),
+            ], limit=1)
+            if weigth_vehicle_category:
+                model.write({
+                    'x_vehicle_weight_category_id': weigth_vehicle_category.id,
+                })
+
+        accessory_ids = self.env['product.product']
+        if accessories:
+            accessories = accessories.split(',')
+            accessories = [a.strip() for a in accessories]
+            accessories_domain = self.env['product.product'].get_accessories_domain()
+            accessories_domain.append(('name', 'in', accessories))
+            accessory_ids = self.env['product.product'].search(accessories_domain)
 
         vals = {
             'model_id': model.id,
             'license_plate': plate or False,
             'x_vehicle_ref': vehicle_ref,
             'x_vehicle_service_state': 'available',
+            'x_federal_license_plates': federal_plates,
+            'x_manages_tire_conditioning': tire_conditioning,
+            'x_maneuvers': maneuvers,
+            'x_accessories': accessory_ids.ids,
+            'model_year': year or False,
         }
 
         return Vehicle.create(vals)
@@ -690,10 +732,53 @@ class CustomVehicleImportWizard(models.TransientModel):
                 <p><b>%s</b> %s</p>
                 <p><b>%s</b> %s</p>
             </div>
-        """ % (_("Total rows evaluated:"), _("Rows processed:"), _("Rows skipped:"), total_count, processed_count, skipped_count)
+        """ % (_("Total rows evaluated:"), total_count, _("Rows processed:"), processed_count, _("Rows skipped:"), skipped_count)
 
     def _normalize_header(self, value):
         return (value or '').strip().lower()
+
+    def _cast_cell_value(self, field_key, value):
+        field_cfg = self.COLUMN_MAP.get(field_key, {})
+        field_type = field_cfg.get('type', 'char')
+
+        value = self._normalize_value(value)
+
+        if value is False:
+            return False
+
+        if field_type == 'bool':
+            return self._to_bool(value)
+
+        if field_type == 'int':
+            if value in (False, '', None):
+                return False
+            try:
+                return int(float(value))
+            except (ValueError, TypeError):
+                raise UserError(_("The value '%s' in column '%s' is not a valid integer.") % (
+                    value, field_cfg.get('excel', field_key)
+                ))
+
+        return value
+
+    def _to_bool(self, value):
+        if isinstance(value, bool):
+            return value
+
+        if isinstance(value, (int, float)):
+            return bool(value)
+
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            true_values = {'1', 'true', 't', 'yes', 'y', 'si', 'sí', 'verdadero', 'x'}
+            false_values = {'0', 'false', 'f', 'no', 'n', 'falso', ''}
+
+            if normalized in true_values:
+                return True
+            if normalized in false_values:
+                return False
+
+        raise UserError(_("Could not convert value '%s' to boolean.") % value)
 
     def _normalize_value(self, value):
         if value is None:

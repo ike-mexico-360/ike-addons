@@ -664,18 +664,21 @@ class IkeEventSupplierLink(models.Model):
             amount_subtotal = 0.0
             amount_total = 0.0
             amount_vat = 0.0
+            cost_invalid = False
 
             for line in rec.supplier_product_ids:
                 if not line.display_type:
                     amount_subtotal += line.cost_price
                     amount_vat += line.vat
                     amount_total = amount_subtotal + amount_vat
+                    if not cost_invalid:
+                        cost_invalid = line.cost_price == 0
 
             rec.amount_concept_subtotal = amount_subtotal
             rec.amount_concept_vat = amount_vat
             rec.amount_concept_total = amount_total
 
-            rec.cost_invalid = amount_subtotal == 0
+            rec.cost_invalid = cost_invalid
 
     @api.depends('supplier_product_ids.base_subtotal', 'supplier_product_ids.base_vat')
     def _compute_base_amount_supplier_product(self):

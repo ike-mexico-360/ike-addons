@@ -73,6 +73,7 @@
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='product_qty']" position="attributes">
                 <attribute name="readonly">parent.x_event_id</attribute>
+                <attribute name="groups">!base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_support</attribute>
             </xpath>
             <!-- <xpath expr="//field[@name='order_line']/list/field[@name='name']" position="attributes">
                 <attribute name="column_invisible">1</attribute>
@@ -165,11 +166,22 @@
                 <attribute name="column_invisible">1</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='x_price_unit_event']" position="after">
-                <field name="product_qty" string="Ike quantity" optional="show" readonly="parent.x_event_id" invisible="display_type"/>
+                <field name="product_qty"
+                    string="Ike quantity"
+                    optional="show"
+                    readonly="parent.x_event_id"
+                    invisible="display_type"
+                    groups="base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_support"/>
+                <field name="product_qty"
+                    string="Ike quantity"
+                    optional="show"
+                    readonly="1"
+                    invisible="display_type"
+                    groups="!base.group_system,custom_master_catalog.custom_group_ccc_boss"/>
                 <field name="price_subtotal" string="Ike price" optional="show" readonly="1" invisible="display_type"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='product_qty'][2]" position="attributes">
-                <attribute name="column_invisible">1</attribute>
+                <attribute name="column_invisible">0</attribute>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='price_subtotal'][2]" position="attributes">
                 <attribute name="column_invisible">1</attribute>
@@ -336,10 +348,10 @@
                                 <field name="invoice_lines" column_invisible="True"/>
                                 <field name="sequence" widget="handle" column_invisible="1"/>
                                 <!-- optional="show" allows name (description) to be editable -->
-                                <field
+                                <!-- <field
                                     name="product_id"
                                     widget="ike_label_section_and_note_field"
-                                    readonly="1"
+                                    readonly="0"
                                     required="not display_type and not is_downpayment"
                                     context="{
                                         'partner_id':parent.partner_id,
@@ -349,15 +361,13 @@
                                         'display_default_code': 0,
                                         'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list',
                                     }"
-                                    groups="base.group_system,custom_master_catalog.custom_group_ccc_boss"
+                                    groups="!base.group_system,custom_master_catalog.custom_group_ccc_boss"
                                     force_save="1"
                                     options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
-                                    domain="x_product_domain"/>
-
+                                    domain="x_product_domain"/> -->
                                 <field
                                     name="product_id"
                                     widget="ike_label_section_and_note_field"
-                                    groups="custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_support"
                                     readonly="x_covered or display_type or x_mandatory"
                                     required="not display_type and not is_downpayment"
                                     context="{

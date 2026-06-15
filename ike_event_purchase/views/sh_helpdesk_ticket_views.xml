@@ -39,8 +39,23 @@
             <xpath expr="//header/button[@name='action_ticket_start']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
+            <xpath expr="//header/button[@name='action_done']" position="attributes">
+                <attribute name="invisible">is_done_stage</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_reply']" position="attributes">
+                <attribute name="invisible">is_done_stage</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_closed']" position="attributes">
+                <attribute name="invisible">is_done_stage</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_open']" position="attributes">
+                <attribute name="invisible">is_done_stage</attribute>
+            </xpath>
+            <xpath expr="//header/button[@name='action_closed']" position="attributes">
+                <attribute name="invisible">is_done_stage</attribute>
+            </xpath>
             <xpath expr="//header/button[@name='create_task']" position="attributes">
-                <attribute name="invisible">1</attribute>
+                <attribute name="invisible">1 or is_done_stage</attribute>
             </xpath>
             <xpath expr="//header/button[@name='action_approve']" position="after">
                 <field name="in_progress_stage_boolean" invisible="1" />

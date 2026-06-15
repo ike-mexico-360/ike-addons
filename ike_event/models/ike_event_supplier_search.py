@@ -250,6 +250,7 @@ class IkeEvent_Search(models.Model):
 
         # Global Variables
         sequence_conf = 1
+        maneuver_id = self.env.ref('ike_event.ike_product_tag_maneuvers').id
         # To Filter supplier geographical areas
         assignation_type_conf = ''
         if assignation_type == 'electronic':
@@ -373,16 +374,15 @@ class IkeEvent_Search(models.Model):
                 vehicles_domain.append(
                     ('x_federal_license_plates', '=', True),
                 )
-            # Accessories & Maneuvers
+            # Accessories
             if len(service_accessory_ids):
                 vehicles_domain.append(('x_maneuvers', '=', True))
                 for accessory_id in service_accessory_ids:
                     vehicles_domain.append(('x_accessories', 'in', [accessory_id]))
-            else:
-                # Maneuvers
-                product_tag_names = self.service_product_ids.mapped('product_id.product_tag_ids.name')
-                if 'maniobras' in product_tag_names:  # cSpell: ignore maniobras
-                    vehicles_domain.append(('x_maneuvers', '=', True))
+            # Maneuvers
+            product_tag_ids = self.service_product_ids.mapped('product_id.product_tag_ids.id')
+            if maneuver_id in product_tag_ids:
+                vehicles_domain.append(('x_maneuvers', '=', True))
 
             # * LOGGER 4: Vehicles Domain
             _logger.info("IKE EVENT - DEBUG - 4: %s", vehicles_domain)

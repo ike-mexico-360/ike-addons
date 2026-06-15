@@ -2247,7 +2247,6 @@
                 <t>
                     <p>
                         <strong>Event concluded</strong><br/>
-                        <strong>Concluded by: </strong><t t-out="user.name"/>
                     </p>
                 </t>
             </field>

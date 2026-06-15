@@ -6,6 +6,13 @@ class ShHelpdeskTicket(models.Model):
 
     x_event_id = fields.Many2one('ike.event', string='Event', ondelete='set null')
     in_progress_stage_boolean = fields.Boolean(compute='_compute_in_progress_stage_boolean')
+    is_done_stage = fields.Boolean(compute='_compute_is_done_stage')
+
+    @api.depends('stage_id')
+    def _compute_is_done_stage(self):
+        done_stage = self.env.ref('sh_all_in_one_helpdesk.done_stage').id
+        for rec in self:
+            rec.is_done_stage = rec.stage_id.id == done_stage
 
     @api.depends('stage_id')
     def _compute_in_progress_stage_boolean(self):

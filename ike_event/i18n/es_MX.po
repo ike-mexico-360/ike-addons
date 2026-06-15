@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-01 22:14+0000\n"
-"PO-Revision-Date: 2026-06-01 22:14+0000\n"
+"POT-Creation-Date: 2026-06-10 15:27+0000\n"
+"PO-Revision-Date: 2026-06-10 15:27+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1175,6 +1175,11 @@ msgstr "Mesa de control"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__cost_price
 msgid "Cost"
 msgstr "Costo"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__cost_invalid
+msgid "Cost Invalid"
+msgstr "Costo inválido"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__cost_matrix_line_id
@@ -3022,6 +3027,11 @@ msgid "Mandatory"
 msgstr "Obligatorio"
 
 #. module: ike_event
+#: model:product.tag,name:ike_event.ike_product_tag_maneuvers
+msgid "Maneuvers"
+msgstr "Maniobras"
+
+#. module: ike_event
 #: model:ike.event.supplier.assignment.type,name:ike_event.ike_supplier_assignment_manual
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event__supplier_search_type__manual
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__assignation_type__manual
@@ -3787,11 +3797,6 @@ msgstr "Variante del producto"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__products_count
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__products_count
 msgid "Products Count"
-msgstr ""
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__products_invalid
-msgid "Products Invalid"
 msgstr ""
 
 #. module: ike_event
@@ -5187,7 +5192,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_link_add_form_view
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_link_form_view
 msgid "There are zero costs."
-msgstr "El costo cero."
+msgstr "Hay costos en cero."
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_service_summary_search
@@ -5789,8 +5794,7 @@ msgstr "No tienes disponibles servicios"
 #. odoo-javascript
 #: code:addons/ike_event/static/src/widgets/ike_affiliations_widget/ike_affiliations_widget.xml:0
 msgid "You have services available"
-msgstr "Tienes disponibles servicios
-"
+msgstr "Tienes servicios disponibles"
 
 #. module: ike_event
 #. odoo-python
