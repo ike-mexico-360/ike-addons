@@ -45,6 +45,7 @@ class IkeEvent(models.Model):
                     reason_name=reason_name
                 )._create_message_binnacle([
                     "ike_event_binnacle.ike_binnacle_stage_9_2",
+                    "ike_event_binnacle.ike_binnacle_stage_7_23_1",
                     'ike_event_binnacle.ike_binnacle_stage_3_1'
                 ])
 
@@ -273,10 +274,10 @@ class IkeEvent(models.Model):
         encryption = self.env['custom.model.encryption']
 
         value = encryption.x_decrypt_aes256(
-            self.user_membership_id.key_identification
+            self.user_membership_id.second_key_identification
         )
 
-        mask = self.membership_display_mask
+        mask = self.user_membership_id.x_display_mask_second
 
         if value and mask:
             value = self._apply_mask(value, mask)
@@ -331,6 +332,21 @@ class IkeEvent(models.Model):
             if rec.user_by == 'by_other':
                 rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_2_5"])
         return result
+
+    def write(self, vals):
+        if 'user_additional_phone' in vals and not self.env.context.get('skip_phone_binnacle'):
+            old_phones = {rec.id: rec.user_additional_phone or '' for rec in self}
+
+            res = super().write(vals)
+
+            new_phone = vals['user_additional_phone'] or ''
+            for rec in self:
+                old_phone = old_phones.get(rec.id, '')
+                if new_phone.replace(" ", "") != old_phone.replace(" ", ""):
+                    rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_3"])
+            return res
+
+        return super().write(vals)
 
     def _action_set_user_assigned(self):
         self.ensure_one()
@@ -405,16 +421,38 @@ class IkeEvent(models.Model):
         for rec in self:
             previous_stage = previous_stages.get(rec.id)
 
+            generic_suppliers = rec.selected_supplier_ids.filtered(
+                lambda x: x.is_generic_supplier and x.purchase_supplier_id
+            )
+
+            if generic_suppliers:
+                suppliers = []
+
+                for supplier in rec.selected_supplier_ids:
+                    suppliers.append({
+                        "supplier": supplier.supplier_id.display_name,
+                        "purchase_supplier": supplier.purchase_supplier_id.display_name if supplier.purchase_supplier_id else "",
+                        "truck": supplier.truck_id.license_plate or supplier.truck_id.name or "",
+                        "assigned": supplier.assigned or "",
+                    })
+
+                rec.with_context(
+                    suppliers=suppliers,
+                )._create_message_binnacle(
+                    ["ike_event_binnacle.ike_binnacle_stage_11_7"]
+                )
+
             if rec.stage_id != previous_stage:
-                if rec.stage_id == self.env.ref('ike_event.ike_event_stage_closed'):
+                if rec.stage_id == self.env.ref("ike_event.ike_event_stage_closed"):
                     rec._create_message_binnacle([
                         "ike_event_binnacle.ike_binnacle_stage_10_5",
-                        "ike_event_binnacle.ike_binnacle_stage_10_2"
+                        "ike_event_binnacle.ike_binnacle_stage_10_2",
                     ])
-                elif rec.stage_id == self.env.ref('ike_event.ike_event_stage_verifying'):
+
+                elif rec.stage_id == self.env.ref("ike_event.ike_event_stage_verifying"):
                     rec._create_message_binnacle([
                         "ike_event_binnacle.ike_binnacle_stage_10_3",
-                        "ike_event_binnacle.ike_binnacle_stage_10_5"
+                        "ike_event_binnacle.ike_binnacle_stage_10_5",
                     ])
 
         return result
@@ -427,6 +465,15 @@ class IkeEvent(models.Model):
                 "ike_event_binnacle.ike_binnacle_stage_10_5",
                 "ike_event_binnacle.ike_binnacle_stage_10_2"])
         return result
+
+    # def action_completed(self):
+    #     result = super().action_completed()
+    #     for rec in self:
+    #         if rec.stage_ref == 'completed':
+    #             rec._create_message_binnacle([
+    #                 "ike_event_binnacle.ike_binnacle_stage_10_1"
+    #             ])
+    #     return result
 
 
 class IkeEventSupplier(models.Model):
@@ -692,7 +739,18 @@ class IkeEventMembershipAuthorization(models.Model):
     _inherit = 'ike.event.membership.authorization'
 
     def action_authorized(self):
+        old_second_keys = {
+            rec.id: rec.nus_membership_id.second_key_identification or ''
+            for rec in self
+        }
         result = super().action_authorized()
+
+        for rec in self:
+            new_second_key = rec.nus_membership_id.second_key_identification or ''
+            if old_second_keys[rec.id] != new_second_key:
+                rec.event_id._create_message_binnacle(
+                    ["ike_event_binnacle.ike_binnacle_stage_7_23_2"]
+                )
         for rec in self:
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_2_1"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_2_2"])

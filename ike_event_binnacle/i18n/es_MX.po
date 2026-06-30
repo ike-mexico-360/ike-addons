@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-10 18:03+0000\n"
-"PO-Revision-Date: 2026-06-10 18:03+0000\n"
+"POT-Creation-Date: 2026-06-29 23:35+0000\n"
+"PO-Revision-Date: 2026-06-29 23:35+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,6 +23,11 @@ msgstr ""
 #. module: ike_event_binnacle
 #: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_23_1
 msgid "  Binnacle stage mail template 7_23_1 "
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_7_23_2
+msgid "  Binnacle stage mail template 7_23_2 "
 msgstr ""
 
 #. module: ike_event_binnacle
@@ -53,6 +58,7 @@ msgstr ""
 #. module: ike_event_binnacle
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_23
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_23_1
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_23_2
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_24
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_25
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_7_26
@@ -250,6 +256,17 @@ msgstr ""
 "            "
 
 #. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_api_msg
+msgid ""
+"<span><strong>API supplier</strong>\n"
+"                <t t-out=\"ctx.get('body_html_content', '')\"/>\n"
+"            </span>"
+msgstr ""
+"<span><strong>API Proveedor</strong>\n"
+"                <t t-out=\"ctx.get('body_html_content', '')\"/>\n"
+"            </span>"
+
+#. module: ike_event_binnacle
 #: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_5_6
 msgid ""
 "<strong>Search type:</strong>\n"
@@ -420,11 +437,6 @@ msgstr ""
 "                    </div>\n"
 "                </t>\n"
 "            "
-
-#. module: ike_event_binnacle
-#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_api_msg
-msgid "<t t-out=\"ctx.get('body_html_content', '')\"/>"
-msgstr ""
 
 #. module: ike_event_binnacle
 #: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_5
@@ -715,6 +727,29 @@ msgid ""
 msgstr ""
 "<t>\n"
 "                     <strong>Datos del vehículo</strong>\n"
+"                </t>\n"
+"            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_7_23_2
+msgid ""
+"<t>\n"
+"                    <div t-if=\"object.get_decrypted_second_key_identification()\">\n"
+"                        <strong>\n"
+"                            <t t-out=\"object.user_membership_id.membership_plan_id.account_id.x_second_key_identification_id.label or 'Second key'\"/>:\n"
+"                        </strong>\n"
+"                        <t t-out=\"object.get_decrypted_second_key_identification()\"/>\n"
+"                    </div>\n"
+"                </t>\n"
+"            "
+msgstr ""
+"<t>\n"
+"                    <div t-if=\"object.get_decrypted_second_key_identification()\">\n"
+"                        <strong>\n"
+"                            <t t-out=\"object.user_membership_id.membership_plan_id.account_id.x_second_key_identification_id.label or 'Segunda clave:'\"/>:\n"
+"                        </strong>\n"
+"                        <t t-out=\"object.get_decrypted_second_key_identification()\"/>\n"
+"                    </div>\n"
 "                </t>\n"
 "            "
 
@@ -2967,7 +3002,7 @@ msgid ""
 "                                        <t t-out=\"sl.product_id.display_name\"/>\n"
 "                                    </td>\n"
 "                                    <td style=\"border:1px solid #000; padding:6px;\">\n"
-"                                        <t t-out=\"sl.quantity\"/>\n"
+"                                        <t t-out=\"sl.base_quantity\"/>\n"
 "                                    </td>\n"
 "                                    <td style=\"border:1px solid #000; padding:6px;\">\n"
 "                                        <t t-out=\"'${:,.2f}'.format(sl.base_unit_price)\"/>\n"
@@ -2981,7 +3016,7 @@ msgid ""
 "                            <!-- Subtotal por link -->\n"
 "                            <tr style=\"font-weight:bold; background-color:#f5f5f5;\">\n"
 "                                <td colspan=\"3\" style=\"border:1px solid #000; padding:6px; text-align:right;\">\n"
-"                                    Subtotal <t t-out=\"link.supplier_id.name\"/>\n"
+"                                    Subtotal - <t t-out=\"link.supplier_id.name\"/>\n"
 "                                </td>\n"
 "                                <td style=\"border:1px solid #000; padding:6px;\">\n"
 "                                    <t t-out=\"'${:,.2f}'.format(sum(supplier_lines.mapped('base_cost_price')))\"/>\n"
@@ -2993,7 +3028,7 @@ msgid ""
 "                        <!-- Total general -->\n"
 "                        <tr style=\"font-weight:bold; background-color:#4a90e2; color:white;\">\n"
 "                            <td colspan=\"3\" style=\"border:1px solid #000; padding:6px; text-align:right;\">\n"
-"                                TOTAL\n"
+"                                Total\n"
 "                            </td>\n"
 "                            <td style=\"border:1px solid #000; padding:6px;\">\n"
 "                                <t t-out=\"'${:,.2f}'.format(sum(all_lines.mapped('base_cost_price')))\"/>\n"
@@ -3077,7 +3112,7 @@ msgstr ""
 "                                        <t t-out=\"sl.product_id.display_name\"/>\n"
 "                                    </td>\n"
 "                                    <td style=\"border:1px solid #000; padding:6px;\">\n"
-"                                        <t t-out=\"sl.quantity\"/>\n"
+"                                        <t t-out=\"sl.base_quantity\"/>\n"
 "                                    </td>\n"
 "                                    <td style=\"border:1px solid #000; padding:6px;\">\n"
 "                                        <t t-out=\"'${:,.2f}'.format(sl.base_unit_price)\"/>\n"
@@ -3091,7 +3126,7 @@ msgstr ""
 "                            <!-- Subtotal por link -->\n"
 "                            <tr style=\"font-weight:bold; background-color:#f5f5f5;\">\n"
 "                                <td colspan=\"3\" style=\"border:1px solid #000; padding:6px; text-align:right;\">\n"
-"                                    Subtotal <t t-out=\"link.supplier_id.name\"/>\n"
+"                                    Subtotal - <t t-out=\"link.supplier_id.name\"/>\n"
 "                                </td>\n"
 "                                <td style=\"border:1px solid #000; padding:6px;\">\n"
 "                                    <t t-out=\"'${:,.2f}'.format(sum(supplier_lines.mapped('base_cost_price')))\"/>\n"
@@ -3103,7 +3138,7 @@ msgstr ""
 "                        <!-- Total general -->\n"
 "                        <tr style=\"font-weight:bold; background-color:#4a90e2; color:white;\">\n"
 "                            <td colspan=\"3\" style=\"border:1px solid #000; padding:6px; text-align:right;\">\n"
-"                                TOTAL\n"
+"                                Total\n"
 "                            </td>\n"
 "                            <td style=\"border:1px solid #000; padding:6px;\">\n"
 "                                <t t-out=\"'${:,.2f}'.format(sum(all_lines.mapped('base_cost_price')))\"/>\n"
@@ -3161,7 +3196,7 @@ msgid ""
 "                                        <t t-out=\"sl.product_id.display_name\"/>\n"
 "                                    </td>\n"
 "                                    <td style=\"border:1px solid #000; padding:6px;\">\n"
-"                                        <t t-out=\"sl.quantity\"/>\n"
+"                                        <t t-out=\"sl.base_quantity\"/>\n"
 "                                    </td>\n"
 "                                    <td style=\"border:1px solid #000; padding:6px;\">\n"
 "                                        <t t-out=\"'${:,.2f}'.format(sl.unit_price)\"/>\n"
@@ -3174,7 +3209,7 @@ msgid ""
 "\n"
 "                            <tr style=\"font-weight:bold; background-color:#f5f5f5;\">\n"
 "                                <td colspan=\"3\" style=\"border:1px solid #000; padding:6px; text-align:right;\">\n"
-"                                    Subtotal <t t-out=\"supp.name\"/>\n"
+"                                    Subtotal - <t t-out=\"supp.name\"/>\n"
 "                                </td>\n"
 "                                <td style=\"border:1px solid #000; padding:6px;\">\n"
 "                                    <t t-out=\"'${:,.2f}'.format(sum(supplier_lines.mapped('cost_price')))\"/>\n"
@@ -3185,7 +3220,7 @@ msgid ""
 "\n"
 "                        <tr style=\"font-weight:bold; background-color:#4a90e2; color:white;\">\n"
 "                            <td colspan=\"3\" style=\"border:1px solid #000; padding:6px; text-align:right;\">\n"
-"                                TOTAL\n"
+"                                Total\n"
 "                            </td>\n"
 "                            <td style=\"border:1px solid #000; padding:6px;\">\n"
 "                                <t t-out=\"'${:,.2f}'.format(sum(all_lines.mapped('cost_price')))\"/>\n"
@@ -3253,7 +3288,7 @@ msgstr ""
 "\n"
 "                            <tr style=\"font-weight:bold; background-color:#f5f5f5;\">\n"
 "                                <td colspan=\"3\" style=\"border:1px solid #000; padding:6px; text-align:right;\">\n"
-"                                    Subtotal <t t-out=\"supp.name\"/>\n"
+"                                    Subtotal - <t t-out=\"supp.name\"/>\n"
 "                                </td>\n"
 "                                <td style=\"border:1px solid #000; padding:6px;\">\n"
 "                                    <t t-out=\"'${:,.2f}'.format(sum(supplier_lines.mapped('cost_price')))\"/>\n"
@@ -3264,7 +3299,7 @@ msgstr ""
 "\n"
 "                        <tr style=\"font-weight:bold; background-color:#4a90e2; color:white;\">\n"
 "                            <td colspan=\"3\" style=\"border:1px solid #000; padding:6px; text-align:right;\">\n"
-"                                TOTAL\n"
+"                                Total\n"
 "                            </td>\n"
 "                            <td style=\"border:1px solid #000; padding:6px;\">\n"
 "                                <t t-out=\"'${:,.2f}'.format(sum(all_lines.mapped('cost_price')))\"/>\n"
@@ -3275,6 +3310,51 @@ msgstr ""
 "                </table>\n"
 "            </t>\n"
 "            "
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_11_7
+msgid ""
+"<t>\n"
+"                <t t-set=\"suppliers\" t-value=\"ctx.get('suppliers', [])\"/>\n"
+"                <table style=\"border: 1px solid black; width:100%;\">\n"
+"                    <thead style=\"background-color:#4a90e2; color:white;\">\n"
+"                        <tr>\n"
+"                            <th style=\"border:1px solid #000;\">Supplier</th>\n"
+"                            <th style=\"border:1px solid #000;\">Truck</th>\n"
+"                            <th style=\"border:1px solid #000;\">Assigned To</th>\n"
+"                        </tr>\n"
+"                    </thead>\n"
+"                    <tbody>\n"
+"                        <tr t-foreach=\"suppliers\" t-as=\"line\">\n"
+"                            <td style=\"border:1px solid #000;\"><t t-out=\"line['supplier']\"/></td>\n"
+"                            <td style=\"border:1px solid #000;\"><t t-out=\"line['truck'] or '-'\"/></td>\n"
+"                            <td style=\"border:1px solid #000;\"><t t-out=\"line['purchase_supplier'] or '-'\"/></td>\n"
+"                        </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"            </t>\n"
+"        "
+msgstr ""
+"<t>\n"
+"                <t t-set=\"suppliers\" t-value=\"ctx.get('suppliers', [])\"/>\n"
+"                <table style=\"border: 1px solid black; width:100%;\">\n"
+"                    <thead style=\"background-color:#4a90e2; color:white;\">\n"
+"                        <tr>\n"
+"                            <th style=\"border:1px solid #000;\">Proveedor</th>\n"
+"                            <th style=\"border:1px solid #000;\">Vehículo</th>\n"
+"                            <th style=\"border:1px solid #000;\">Asginado a</th>\n"
+"                        </tr>\n"
+"                    </thead>\n"
+"                    <tbody>\n"
+"                        <tr t-foreach=\"suppliers\" t-as=\"line\">\n"
+"                            <td style=\"border:1px solid #000;\"><t t-out=\"line['supplier']\"/></td>\n"
+"                            <td style=\"border:1px solid #000;\"><t t-out=\"line['truck'] or '-'\"/></td>\n"
+"                            <td style=\"border:1px solid #000;\"><t t-out=\"line['purchase_supplier'] or '-'\"/></td>\n"
+"                        </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"            </t>\n"
+"        "
 
 #. module: ike_event_binnacle
 #: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_1_4
@@ -3329,8 +3409,8 @@ msgstr "Categoría API"
 
 #. module: ike_event_binnacle
 #: model:ike.event.binnacle.category,name:ike_event_binnacle.ike_binnacle_category_api
-msgid "API Message"
-msgstr "Mensaje API"
+msgid "API Message - summary"
+msgstr "Resumen"
 
 #. module: ike_event_binnacle
 #: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__message_needaction
@@ -3419,6 +3499,11 @@ msgstr "Html de Bitácora"
 #. module: ike_event_binnacle
 #: model:ir.model.fields,field_description:ike_event_binnacle.field_ike_event_binnacle__binnacle_template_id
 msgid "Binnacle Template"
+msgstr ""
+
+#. module: ike_event_binnacle
+#: model:mail.template,name:ike_event_binnacle.ike_binnacle_stage_mail_template_11_7
+msgid "Binnacle stage 11 7"
 msgstr ""
 
 #. module: ike_event_binnacle
@@ -4232,6 +4317,7 @@ msgstr ""
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_11_4
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_11_5
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_11_6
+#: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_11_7
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_1_1
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_1_2
 #: model:mail.template,subject:ike_event_binnacle.ike_binnacle_stage_mail_template_1_3

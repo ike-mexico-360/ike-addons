@@ -1804,6 +1804,28 @@
             <field name="sequence">23</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_23_1"/>
         </record>
+        <record id="ike_binnacle_stage_mail_template_7_23_2"  model="mail.template">
+            <field name="name">  Binnacle stage mail template 7_23_2 </field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">  Reference {{ object.name or 'n/a' }} </field>
+            <field name="body_html" type="html">
+                <t>
+                    <div t-if="object.get_decrypted_second_key_identification()">
+                        <strong>
+                            <t t-out="object.user_membership_id.membership_plan_id.account_id.x_second_key_identification_id.label or 'Second key'"/>:
+                        </strong>
+                        <t t-out="object.get_decrypted_second_key_identification()"/>
+                    </div>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_stage_7_23_2" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="step_number">7</field>
+            <field name="sequence">23</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_7_23_2"/>
+        </record>
         <record id="ike_binnacle_stage_mail_template_7_24"  model="mail.template">
             <field name="name">  Binnacle stage mail template 7_24 </field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
@@ -2354,7 +2376,7 @@
 
                             <tr style="font-weight:bold; background-color:#f5f5f5;">
                                 <td colspan="3" style="border:1px solid #000; padding:6px; text-align:right;">
-                                    Subtotal <t t-out="supp.name"/>
+                                    Subtotal - <t t-out="supp.name"/>
                                 </td>
                                 <td style="border:1px solid #000; padding:6px;">
                                     <t t-out="'${:,.2f}'.format(sum(supplier_lines.mapped('cost_price')))"/>
@@ -2475,7 +2497,7 @@
                                         <t t-out="sl.product_id.display_name"/>
                                     </td>
                                     <td style="border:1px solid #000; padding:6px;">
-                                        <t t-out="sl.quantity"/>
+                                        <t t-out="sl.base_quantity"/>
                                     </td>
                                     <td style="border:1px solid #000; padding:6px;">
                                         <t t-out="'${:,.2f}'.format(sl.base_unit_price)"/>
@@ -2489,7 +2511,7 @@
                             <!-- Subtotal por link -->
                             <tr style="font-weight:bold; background-color:#f5f5f5;">
                                 <td colspan="3" style="border:1px solid #000; padding:6px; text-align:right;">
-                                    Subtotal <t t-out="link.supplier_id.name"/>
+                                    Subtotal - <t t-out="link.supplier_id.name"/>
                                 </td>
                                 <td style="border:1px solid #000; padding:6px;">
                                     <t t-out="'${:,.2f}'.format(sum(supplier_lines.mapped('base_cost_price')))"/>
@@ -2501,7 +2523,7 @@
                         <!-- Total general -->
                         <tr style="font-weight:bold; background-color:#4a90e2; color:white;">
                             <td colspan="3" style="border:1px solid #000; padding:6px; text-align:right;">
-                                TOTAL
+                                Total
                             </td>
                             <td style="border:1px solid #000; padding:6px;">
                                 <t t-out="'${:,.2f}'.format(sum(all_lines.mapped('base_cost_price')))"/>
@@ -2676,6 +2698,39 @@
             <field name="sequence">6</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_11_6"/>
         </record>
+        <record id="ike_binnacle_stage_mail_template_11_7" model="mail.template">
+        <field name="name">Binnacle stage 11 7</field>
+        <field name="model_id" ref="ike_event.model_ike_event"/>
+        <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+        <field name="body_html" type="html">
+            <t>
+                <t t-set="suppliers" t-value="ctx.get('suppliers', [])"/>
+                <table style="border: 1px solid black; width:100%;">
+                    <thead style="background-color:#4a90e2; color:white;">
+                        <tr>
+                            <th style="border:1px solid #000;">Supplier</th>
+                            <th style="border:1px solid #000;">Truck</th>
+                            <th style="border:1px solid #000;">Assigned To</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="suppliers" t-as="line">
+                            <td style="border:1px solid #000;"><t t-out="line['supplier']"/></td>
+                            <td style="border:1px solid #000;"><t t-out="line['truck'] or '-'"/></td>
+                            <td style="border:1px solid #000;"><t t-out="line['purchase_supplier'] or '-'"/></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </t>
+        </field>
+    </record>
+         <record id="ike_binnacle_stage_11_7" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="step_number">11</field>
+            <field name="sequence">7</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_11_7"/>
+        </record>
 
 
         <!-- API Message workflow -->
@@ -2684,14 +2739,17 @@
             <field name="name">API Category</field>
         </record>
         <record id="ike_binnacle_category_api" model="ike.event.binnacle.category">
-            <field name="name">API Message</field>
+            <field name="name">API Message - summary</field>
             <field name="parent_id" ref="ike_event_binnacle.ike_binnacle_category_api_parent"/>
         </record>
         <record id="ike_binnacle_stage_mail_template_api_msg" model="mail.template">
             <field name="name">Binnacle template API message</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
-            <field name="body_html" type="html"><t t-out="ctx.get('body_html_content', '')"/></field>
+            <field name="body_html" type="html">
+                <strong>API supplier</strong>
+                <t t-out="ctx.get('body_html_content', '')"/>
+            </field>
         </record>
         <record id="ike_binnacle_api_msg" model="ike.event.binnacle">
             <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_api"/>

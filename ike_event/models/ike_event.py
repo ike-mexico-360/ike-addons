@@ -1131,7 +1131,7 @@ class IkeEvent(models.Model):
             )
         ]
         inactive_domain = [('stage_id.ref', 'in', ['draft'])]
-        my_events_domain = [('write_uid', '=', self.env.uid)]
+        my_events_domain = [('assigned_user_id', '=', self.env.uid)]
         capturing_event_domain = [('stage_id.ref', 'in', ['capturing'])]
         searching_event_domain = [('stage_id.ref', 'in', ['searching'])]
         assigned_event_domain = [('stage_id.ref', 'in', ['assigned'])]
@@ -1149,8 +1149,8 @@ class IkeEvent(models.Model):
             'all_verifying_events': IKE_EVENT.search_count(verifying_events_domain),
 
             'my_active_events': IKE_EVENT.search_count(active_domain + my_events_domain),
-            'my_draft_events': IKE_EVENT.search_count(capturing_event_domain + my_events_domain),
-            'my_capturing_events': IKE_EVENT.search_count(inactive_domain + my_events_domain),
+            'my_draft_events': IKE_EVENT.search_count(inactive_domain + my_events_domain),
+            'my_capturing_events': IKE_EVENT.search_count(capturing_event_domain + my_events_domain),
             'my_searching_events': IKE_EVENT.search_count(searching_event_domain + my_events_domain),
             'my_assigned_events': IKE_EVENT.search_count(assigned_event_domain + my_events_domain),
             'my_in_progress_events': IKE_EVENT.search_count(in_progress_event_domain + my_events_domain),

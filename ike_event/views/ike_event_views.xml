@@ -12,7 +12,7 @@
                 <group name="my_events">
                     <filter string="My Events" name="my_events"
                         domain="[
-                            ('stage_ref', 'not in', ['verifying', 'closed', 'cancel', 'cancel_subsequently', 'cancel_verifying', 'cancel_closed']),
+                            ('stage_ref', 'not in', ['cancel', 'cancel_subsequently', 'cancel_verifying', 'cancel_closed']),
                             ('assigned_user_id', '=', uid)
                         ]"/>
                     <filter string="My events active last 7 days"
@@ -58,7 +58,7 @@
                     <filter string="Completed Events" name="all_completed"
                         domain="[('stage_id.ref', '=', 'completed')]"/>
                     <filter string="Verifying Events" name="all_verifying"
-                        domain="[('stage_id.ref', 'in', ['verifying', 'cancel_verifying'])]"/>
+                        domain="[('stage_id.ref', 'in', ['verifying'])]"/>
                     <filter string="Close Events" name="all_close"
                         domain="[('stage_id.ref', 'in', ['closed', 'cancel_closed'])]"/>
                     <filter string="Cancelled Events" name="all_cancelled"
