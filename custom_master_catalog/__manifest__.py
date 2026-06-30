@@ -9,6 +9,7 @@
     'version': '18.0.1.0.3',
     'depends': [
         'base',
+        'base_geolocalize',
         'web',
         'portal',
         'custom_disable_records',

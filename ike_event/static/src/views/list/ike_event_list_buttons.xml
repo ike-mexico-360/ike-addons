@@ -3,40 +3,110 @@
 
     <t t-name="ike_event.IkeEventListButtons">
         <div class="o_purchase_dashboard container-fluid py-4 border-bottom bg-view" t-if="state.showIkeListButtons">
-            <div class="row justify-content-between gap-3 gap-lg-0">
-                <div class="col-12 col-lg-5 col-xl-5 col-xxl-3 flex-grow-1 flex-lg-grow-0 flex-shrink-0">
-                    <div class="grid gap-4">
-                        <div class="g-col-3 g-col-sm-3 d-flex align-items-center py-2 justify-content-end text-end justify-content-lg-start text-lg-start text-break">
+            <div class="overflow-auto">
+                <div class="grid text-nowrap gap-1" style="min-width: 1200px;">
+                    <div class="g-col-1">
+                        <div class="text-capitalize text-break fw-normal">
                             All Events
                         </div>
-                        <div class="g-col-9 g-col-sm-9 grid gap-1">
-                            <div class="g-col-6 p-0" t-on-click="setSearchContext" title="All Active Events" filter_name="all_active">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                    <div class="fs-2" t-out="eventData['all_active_events']"/>Active
-                                </a>
-                            </div>
-                            <div class="g-col-6 p-0" t-on-click="setSearchContext" title="All Draft Events" filter_name="all_draft">
-                                <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
-                                    <div class="fs-2" t-out="eventData['all_draft_events']"/>Draft
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid gap-4">
-                        <div class="g-col-3 g-col-sm-3 d-flex align-items-center py-2 justify-content-end text-end justify-content-lg-start text-lg-start text-break">
+                        <div class="mt-5 text-capitalize text-break fw-normal">
                             My Events
                         </div>
-                        <div class="g-col-9 g-col-sm-9 grid gap-2">
-                            <div class="g-col-6 p-0" t-on-click="setSearchContext" title="My Active Events" filter_name="all_active,my_events">
-                                <a href="#" class="btn btn-light d-flex align-items-center w-100 h-100 p-0 border-0 bg-100 fw-normal">
-                                    <div class="w-100 p-2" t-out="eventData['my_active_events']"/>
-                                </a>
-                            </div>
-                            <div class="g-col-6 p-0" t-on-click="setSearchContext" title="My Draft Events" filter_name="all_draft,my_events">
-                                <a href="#" class="btn btn-light d-flex align-items-center w-100 h-100 p-0 border-0 bg-100 fw-normal">
-                                    <div class="w-100 p-2" t-out="eventData['my_draft_events']"/>
-                                </a>
-                            </div>
+                    </div>
+                    <div class="g-col-1">
+                        <div class="p-0" t-on-click="setSearchContext" title="All Active Events" filter_name="all_active">
+                            <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                <div class="fs-2" t-out="eventData['all_active_events']"/>Active
+                            </a>
+                        </div>
+                        <div class="p-0 mt-2" t-on-click="setSearchContext" title="My Active Events"  filter_name="all_active,my_events">
+                            <a href="#" class="btn btn-light w-100 border-0 fw-normal">
+                                <div t-out="eventData['my_active_events']"/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="g-col-1">
+                        <div class="p-0" t-on-click="setSearchContext" title="All Draft Events" filter_name="all_draft">
+                            <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                <div class="fs-2" t-out="eventData['all_draft_events']"/>Draft
+                            </a>
+                        </div>
+                        <div class="p-0 mt-2" t-on-click="setSearchContext" title="My Draft Events" filter_name="all_draft,my_events">
+                            <a href="#" class="btn btn-light w-100 border-0 fw-normal">
+                                <div t-out="eventData['my_draft_events']"/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="g-col-1">
+                        <div class="p-0" t-on-click="setSearchContext" title="All Capturing Detail Events" filter_name="all_capturing">
+                            <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                <div class="fs-2" t-out="eventData['all_capturing_events']"/>Capturing
+                            </a>
+                        </div>
+                        <div class="p-0 mt-2" t-on-click="setSearchContext" title="My Capturing Events" filter_name="all_capturing,my_events">
+                            <a href="#" class="btn btn-light w-100 border-0 fw-normal">
+                                <div t-out="eventData['my_capturing_events']"/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="g-col-1">
+                        <div class="p-0" t-on-click="setSearchContext" title="All Searching Supplier Events" filter_name="all_searching">
+                            <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                <div class="fs-2" t-out="eventData['all_searching_events']"/>Searching
+                            </a>
+                        </div>
+                        <div class="p-0 mt-2" t-on-click="setSearchContext" title="My Searching Supplier Events" filter_name="all_searching,my_events">
+                            <a href="#" class="btn btn-light w-100 border-0 fw-normal">
+                                <div t-out="eventData['my_searching_events']"/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="g-col-1">
+                        <div class="p-0" t-on-click="setSearchContext" title="All Assigned Events" filter_name="all_assigned">
+                            <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                <div class="fs-2" t-out="eventData['all_assigned_events']"/>Assigned
+                            </a>
+                        </div>
+                        <div class="p-0 mt-2" t-on-click="setSearchContext" title="My Assigned Events" filter_name="all_assigned,my_events">
+                            <a href="#" class="btn btn-light w-100 border-0 fw-normal">
+                                <div t-out="eventData['my_assigned_events']"/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="g-col-1">
+                        <div class="p-0" t-on-click="setSearchContext" title="All In progress Events" filter_name="all_in_progress">
+                            <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                <div class="fs-2" t-out="eventData['all_in_progress_events']"/>In progress
+                            </a>
+                        </div>
+                        <div class="p-0 mt-2" t-on-click="setSearchContext" title="My In Progress Events" filter_name="all_in_progress,my_events">
+                            <a href="#" class="btn btn-light w-100 border-0 fw-normal">
+                                <div t-out="eventData['my_in_progress_events']"/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="g-col-1">
+                        <div class="p-0" t-on-click="setSearchContext" title="All Assistance Completed Events" filter_name="all_completed">
+                            <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                <div class="fs-2" t-out="eventData['all_completed_events']"/>Assistance Completed
+                            </a>
+                        </div>
+                        <div class="p-0 mt-2" t-on-click="setSearchContext" title="My Assistance Completed Events" filter_name="all_completed,my_events">
+                            <a href="#" class="btn btn-light w-100 border-0 fw-normal">
+                                <div t-out="eventData['my_completed_events']"/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="g-col-1">
+                        <div class="p-0" t-on-click="setSearchContext" title="All verifying CCC Events" filter_name="all_verifying">
+                            <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                <div class="fs-2" t-out="eventData['all_verifying_events']"/>Verifying
+                            </a>
+                        </div>
+                        <div class="p-0 mt-2" t-on-click="setSearchContext" title="My Verification CCC Events" filter_name="all_verifying,my_events">
+                            <a href="#" class="btn btn-light w-100 border-0 fw-normal">
+                                <div t-out="eventData['my_verifying_events']"/>
+                            </a>
                         </div>
                     </div>
                 </div>

@@ -36,7 +36,7 @@
                 <t t-set="icon" t-value="'/ike_event_portal/static/src/assets/white_user.png'"/>
 
             </t>
-            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_admin') or request.env.user.has_group('ike_event_portal.custom_group_portal_supervisor')">
+            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_admin')">
                 <t t-set="title">Cranes</t>
                 <t t-set="url" t-value="'/provider/portal/trucks'"/>
                 <t t-set="text">Cranes Portal</t>

@@ -2,10 +2,30 @@
 <templates id="template" xml:space="preserve">
 
     <t t-name="ike_event.IkeStageTrackingComment">
-        <div class="d-flex gap-2">
-            <i t-att-class="{'text-warning': state.trackingTimeWarning}" class="fa fa-sticky-note cursor-pointer" t-on-click="openCommentForm"/>
-            <i t-att-style="state.maxWaitTimeWarning ? '' : 'color: transparent !important;'"
-                class="fa fa-exclamation-triangle text-danger ike_blinking"/>
+        <div class="d-flex gap-1 w-100 py-2 px-1" t-on-click="(ev) => this.prevent(ev)" style="cursor: default;">
+            <span t-if="!state.trackingTimeWarning"
+                class="cursor-pointer" t-on-click="(ev) => this.openCommentList(ev)" title="Comments">
+                <i class="fa fa-sticky-note" />
+            </span>
+            <t t-else="">
+                <t t-if="state.comments['user']">
+                    <span
+                        t-att-class="{'text-warning': tracking_time and state.comments['user'].elapsed_time_seconds &gt;= tracking_time}"
+                        class="cursor-pointer" t-on-click="(ev) => this.openCommentForm(ev, 'user')" title="Nu User">
+                        <i class="fa fa-user" />
+                    </span>
+                </t>
+                <t t-foreach="supplierNumbers" t-as="number" t-key="number_index">
+                    <div class="d-flex gap-1">
+                        <span
+                            t-att-class="{'text-warning': tracking_time and state.comments[number].elapsed_time_seconds &gt;= tracking_time}"
+                            class="cursor-pointer" t-on-click="(ev) => this.openCommentForm(ev, number)"
+                            t-att-title="state.comments[number].event_line_vehicle_id[1]">
+                            <t t-out="number" />.<i class="fa fa-truck" />
+                        </span>
+                    </div>
+                </t>
+            </t>
         </div>
     </t>
 

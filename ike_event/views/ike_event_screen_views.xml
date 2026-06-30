@@ -147,9 +147,9 @@
                                             <span>of your program.</span>
                                         </div>
                                         <!-- Se pidio cambio para que este en el widget del header -->
-                                        <!-- <div>
+                                        <div>
                                             <button name="action_show_history_wizard" string="View history" type="object" class="btn btn-link"/>
-                                        </div> -->
+                                        </div>
                                     </div>
                                 </div>
 
@@ -168,9 +168,9 @@
                                             </strong>
                                             <span>of your program.</span>
                                         </div>
-                                        <!-- <div>
+                                        <div>
                                             <button name="action_show_history_wizard" string="View history" type="object" class="btn btn-link"/>
-                                        </div> -->
+                                        </div>
                                     </div>
                                 </div>
                                 <separator class="col-12 my-1" string="Service type" name="separator_service_type"/>

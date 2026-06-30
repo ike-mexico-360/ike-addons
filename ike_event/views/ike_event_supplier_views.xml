@@ -190,7 +190,7 @@
                             />
                         </group>
                         <group>
-                            <field name="user_amount_paid" invisible="not authorization_by_nu"/>
+                            <field name="user_amount_paid" invisible="1"/>
                         </group>
                     </group>
                     <group invisible="not cost_invalid">
@@ -342,9 +342,7 @@
                 <field name="product_id" widget="ike_label_section_and_note_field" readonly="1"
                     options="{'no_open': 1}" />
                 <field name="name" />
-                <field name="quantity" readonly="1"/>
-                <field name="cost_price" readonly="1" />
-                <!-- <field name="uom_id" readonly="1" options="{'no_open': 1}" /> -->
+                <field name="base_quantity" />
                 <field name="base_unit_price" />
                 <field name="base_cost_price" readonly="1" />
                 <!-- <field name="base_vat" readonly="1" /> -->
@@ -510,6 +508,9 @@
                 <field name="supplier_id" readonly="1"
                     optional="hide"
                     options="{'no_open': 1}"/>
+                <field name="purchase_supplier_id" readonly="1"
+                    optional="hide"
+                    options="{'no_open': 1}"/>
                 <field name="truck_id" readonly="1"
                     optional="hide"
                     options="{'no_open': 1}"/>
@@ -518,8 +519,7 @@
                 <field name="product_id" readonly="1"
                     options="{'no_open': 1}" />
                 <field name="name" column_invisible="1" />
-                <field name="quantity" readonly="1"/>
-                <field name="cost_price" />
+                <field name="base_quantity" />
                 <field name="base_unit_price" readonly="context.get('from_review_cost', False)"/>
                 <field name="base_cost_price" readonly="1" sum="Agreement Cost"/>
                 <field name="tax_ids" column_invisible="1" widget="many2many_tags" optional="hide" readonly="1"/>

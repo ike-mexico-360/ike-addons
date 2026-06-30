@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, markup, onWillStart, useState } from "@odoo/owl";
+import { Component, markup, onWillStart, onWillUnmount, useState, useRef } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 import { addLoadingEffect } from '@web/core/utils/ui';
@@ -22,6 +22,8 @@ export class PurchaseOrderDetails extends Component {
         this.orm = useService("orm");
         this.notification = useService("notification");
 
+        this.composerRef = useRef('composerTextarea');
+
         this.state = useState({
             loading: true,
             order_data: null,
@@ -31,6 +33,27 @@ export class PurchaseOrderDetails extends Component {
             product_ids: [],
             invalid_lines: new Set(),
             highlight_change_reason: false,
+            xml_just_validated: false,
+            composerBody: '',
+            composerFiles: [],
+            isSendingMessage: false,
+        });
+
+        // escuchar validación de XML
+        this.__xmlValidatedHandler = async () => {
+            console.log("Handler xml_validated ejecutado");
+            await this._loadOrderData();
+            this.state.xml_just_validated = true;
+            console.log("xml_just_validated:", this.state.xml_just_validated);
+            console.log("cfdi_is_valid:", this.state.order_data.cfdi_is_valid);
+
+        };
+        console.log("Disparando evento xml_validated...");
+        document.addEventListener("xml_validated", this.__xmlValidatedHandler);
+        console.log("Listener xml_validated registrado");
+        // limpiar listener al destruir el componente
+        onWillUnmount(() => {
+            document.removeEventListener("xml_validated", this.__xmlValidatedHandler);
         });
 
         // Cargar datos de la orden al iniciar el componente
@@ -69,130 +92,12 @@ export class PurchaseOrderDetails extends Component {
         return formatDateTime(date);
     }
 
-    // async _loadOrderData() {
-    //     this.state.loading = true;
-    //     try {
-    //         const order_data = await this.orm.webSearchRead(
-    //             'purchase.order',
-    //             [
-    //                 ['id', '=', this.props.order_id]
-    //             ],
-    //             {
-    //                 specification: {
-    //                     id: {},
-    //                     name: {},
-    //                     state: {},
-    //                     partner_id: {
-    //                         fields: {
-    //                             id: {},
-    //                             name: {},
-    //                         }
-    //                     },
-    //                     x_event_public_id: {
-    //                         fields: {
-    //                             id: {},
-    //                             name: {},
-    //                         }
-    //                     },
-    //                     message_ids: {
-    //                         fields: {
-    //                             id: {},
-    //                             body: {},
-    //                             date: {},
-    //                             author_id: {
-    //                                 fields: {
-    //                                     id: {},
-    //                                     name: {},
-    //                                 }
-    //                             },
-    //                             subtype_id: {
-    //                                 fields: {
-    //                                     id: {},
-    //                                     name: {},
-    //                                 }
-    //                             },
-    //                             tracking_value_ids: {
-    //                                 fields: {
-    //                                     id: {},
-    //                                     field_info: {},
-    //                                     old_value_char: {},
-    //                                     new_value_char: {},
-    //                                     o2m_record_id: {},
-    //                                     new_value_integer: {},
-    //                                     old_value_integer: {},
-    //                                     new_value_float: {},
-    //                                     old_value_float: {}
-    //                                 }
-    //                             },
-    //                             o2m_tracking_command_ids: {
-    //                                 fields: {
-    //                                     id: {},
-    //                                 }
-    //                             },
-    //                         }
-    //                     },
-    //                     x_dispute_state: {},
-    //                     x_dispute_approved: {},
-    //                     x_change_comments: {},
-    //                     amount_untaxed: {},
-    //                     amount_untaxed_dispute: {},
-    //                     amount_untaxed_approved: {},
-    //                     amount_untaxed_event: {},
-    //                     order_line: {
-    //                         fields: {
-    //                             id: {},
-    //                             name: {},
-    //                             display_name: {},
-    //                             product_id: {
-    //                                 fields: {
-    //                                     id: {},
-    //                                     name: {},
-    //                                     image_1024: {},
-    //                                 },
-    //                             },
-    //                             product_qty: {},
-    //                             product_uom: {
-    //                                 fields: {
-    //                                     id: {},
-    //                                     name: {},
-    //                                     display_name: {},
-    //                                 },
-    //                             },
-    //                             price_unit: {},
-    //                             taxes_id: {
-    //                                 fields: {
-    //                                     id: {},
-    //                                     name: {},
-    //                                     display_name: {},
-    //                                 },
-    //                             },
-    //                             x_price_unit_dispute: {},
-    //                             x_product_qty_dispute: {},
-    //                             x_price_unit_approved: {},
-    //                             x_product_qty_approved: {},
-    //                             x_product_qty_event: {},
-    //                             x_price_unit_event: {},
-    //                         },
-    //                     },
-    //                     x_dispute_iteration_count: {},
-    //                 }
-    //             }
-    //         );
-    //         this.state.order_data = order_data.records[0];
-    //         // const allTrackingIds = this.state.order_data.message_ids.flatMap((m) => (m.tracking_value_ids || []).map((tv) => tv.id));
-    //         // if (allTrackingIds.length > 0) {
-    //         //     const allTrackingFields = await this.orm.read('mail.tracking.value', allTrackingIds, []);
-    //         //     console.log('mail.tracking.value — all fields:', allTrackingFields);
-    //         // }
-    //         await this._loadO2mTrackings(this.state.order_data.message_ids);
-    //     } catch (e) {
-    //         this.notification.add(_t("Error loading order data: ") + e.message, {
-    //             type: "danger", sticky: true
-    //         });
-    //     } finally {
-    //         this.state.loading = false;
-    //     }
-    // }
+    formatNumber(value) {
+        if (value === null || value === undefined || value === '') return '';
+        const num = parseFloat(value);
+        if (isNaN(num)) return value;
+        return num.toFixed(2);
+    }
 
     async _loadComplementaryData() {
         try {
@@ -251,6 +156,127 @@ export class PurchaseOrderDetails extends Component {
 
     messageBody(body) {
         return markup(body || '');
+    }
+
+    get isInRfqList() {
+        return this.state.order_data?.state === 'sent';
+    }
+
+    get isInPurchaseOrderList() {
+        return ['purchase', 'done', 'cancel'].includes(this.state.order_data.state);
+    }
+
+    get canSendMessage() {
+        return (this.state.composerBody.trim().length > 0 || this.state.composerFiles.length > 0)
+            && !this.state.isSendingMessage;
+    }
+
+    onComposerInput(ev) {
+        this.state.composerBody = ev.target.value;
+    }
+
+    onFileSelect(ev) {
+        const MAX_SIZE = 10 * 1024 * 1024;
+        const files = Array.from(ev.target.files);
+        const readers = files.map((file) => {
+            if (file.size > MAX_SIZE) {
+                this.notification.add(_t("File '%s' exceeds the 10 MB limit", file.name), { type: 'warning' });
+                return null;
+            }
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve({
+                    name: file.name,
+                    type: file.type || 'application/octet-stream',
+                    size: file.size,
+                    data: e.target.result.split(',')[1],
+                    preview: file.type.startsWith('image/') ? e.target.result : null,
+                });
+                reader.readAsDataURL(file);
+            });
+        }).filter(Boolean);
+
+        Promise.all(readers).then((loaded) => {
+            this.state.composerFiles = [...this.state.composerFiles, ...loaded];
+        });
+        ev.target.value = '';
+    }
+
+    removeFile(index) {
+        this.state.composerFiles = this.state.composerFiles.filter((_, i) => i !== index);
+    }
+
+    onDirectFileSelect(ev) {
+        const MAX_SIZE = 10 * 1024 * 1024;
+        const files = Array.from(ev.target.files);
+        const readers = files.map((file) => {
+            if (file.size > MAX_SIZE) {
+                this.notification.add(_t("File '%s' exceeds the 10 MB limit", file.name), { type: 'warning' });
+                return null;
+            }
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve({
+                    name: file.name,
+                    type: file.type || 'application/octet-stream',
+                    data: e.target.result.split(',')[1],
+                });
+                reader.readAsDataURL(file);
+            });
+        }).filter(Boolean);
+
+        ev.target.value = '';
+        Promise.all(readers).then((loaded) => this._uploadDirectFiles(loaded));
+    }
+
+    _uploadDirectFiles = async (files) => {
+        if (!files.length) return;
+        try {
+            const result = await rpc('/my/purchase/' + this.props.order_id + '/upload_files', {
+                attachments: files.map((f) => ({ name: f.name, data: f.data, mimetype: f.type })),
+            });
+            if (result.success) {
+                this.state.order_data.order_attachment_ids = result.attachments;
+            } else {
+                this.notification.add(_t("Error: ") + result.error, { type: 'danger' });
+            }
+        } catch (e) {
+            this.notification.add(_t("Error uploading files: ") + (e?.data?.message || e.message), {
+                type: 'danger', sticky: true,
+            });
+        }
+    }
+
+    postMessage = async (ev) => {
+        if (!this.canSendMessage) return;
+        const disableBtn = addLoadingEffect(ev.currentTarget);
+        this.state.isSendingMessage = true;
+        try {
+            const result = await rpc('/my/purchase/' + this.props.order_id + '/post_message', {
+                body: this.state.composerBody,
+                attachments: this.state.composerFiles.map((f) => ({
+                    name: f.name,
+                    data: f.data,
+                    mimetype: f.type,
+                })),
+            });
+            if (result.success) {
+                this.state.composerBody = '';
+                this.state.composerFiles = [];
+                if (this.composerRef.el) this.composerRef.el.value = '';
+                await this._loadOrderData();
+                this.notification.add(_t("Message sent"), { type: 'success' });
+            } else {
+                this.notification.add(_t("Error: ") + result.error, { type: 'danger' });
+            }
+        } catch (e) {
+            this.notification.add(_t("Error sending message: ") + (e?.data?.message || e.message), {
+                type: 'danger', sticky: true
+            });
+        } finally {
+            this.state.isSendingMessage = false;
+            disableBtn();
+        }
     }
 
     get requireChangeReason() {
@@ -435,7 +461,7 @@ export class PurchaseOrderDetails extends Component {
             disableBtn();
             return;
         }
-        if (this.requireChangeReason && !(this.state.order_data.x_change_comments || '').trim()) {
+        if (!(this.state.order_data.x_change_comments || '').trim()) {
             this.notification.add(_t("You must specify a reason for the change"), {
                 type: "warning"
             });
@@ -512,6 +538,14 @@ export class PurchaseOrderDetails extends Component {
             });
             return false;
         }
+    }
+    download_cfdi_pdf2 = () => {
+        const invoiceId = this.state.order_data?.invoice;
+        if (!invoiceId) {
+            this.notification.add(_t("No validated CFDI found for this order."), { type: "warning" });
+            return;
+        }
+        window.open(`/my/purchase/download_cfdi_pdf2/${invoiceId}`, '_blank');
     }
 }
 

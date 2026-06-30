@@ -5,7 +5,7 @@ import requests
 from collections import defaultdict
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError
-from odoo.exceptions import ValidationError
+# from odoo.exceptions import ValidationError
 from markupsafe import Markup
 from werkzeug.urls import url_encode
 
@@ -52,6 +52,33 @@ class PurchaseOrder(models.Model):
         compute='_compute_x_event_public_id',
         store=True
     )
+    x_origin_events = fields.Text(
+        string='Origin events',
+        help="Events of the lines."
+    )
+
+    # External flow
+    x_external_api_record = fields.Boolean(
+        string='External API Record', default=False,
+        help="Technical: Record created by external API.")
+    x_record_tenant = fields.Char(
+        string='Record Tenant',
+        help="Technical: Tenant of record, to syncronize with SAP at consolidation. External record")
+    x_app_code = fields.Char(
+        string='App Code',
+        help="Technical: App code of record, to syncronize with SAP at consolidation. External record")
+    x_sap_company_code = fields.Char(
+        string='SAP Company Code',
+        help="Technical: SAP company code, to syncronize with SAP at consolidation. External record")
+    x_sap_document_currency = fields.Char(
+        string='SAP Document Currency',
+        help="Technical: SAP document currency, to syncronize with SAP at consolidation. External record")
+    x_client_code = fields.Char(
+        string='Client Code',
+        help="Technical: Client code, to syncronize with SAP at consolidation. External record")
+    x_external_body = fields.Json(
+        string='External Body',
+        help="Technical: Body of the external record, to syncronize with SAP at consolidation. External record")
 
     @api.depends('x_event_id')
     def _compute_x_event_public_id(self):
@@ -315,7 +342,7 @@ class PurchaseOrder(models.Model):
             )
         # if self.partner_id.x_has_consolidation:
         #     self.x_action_consolidate()
-        self.x_action_start_consolidation()
+        # self.x_action_start_consolidation()
 
     def x_action_send_new_values_rfq(self):
         """ Send new values to RFQ. Show again in portal """
@@ -479,35 +506,51 @@ class PurchaseOrder(models.Model):
         concept_line_cache = {}
 
         for rfq in rfqs:
-            membership_plan_id = rfq.x_membership_plan_id.id
-            sub_service_id = rfq.x_sub_service_id.id
-            cache_key = (sub_service_id, membership_plan_id)
+            if not rfq.x_external_api_record:
+                membership_plan_id = rfq.x_membership_plan_id.id
+                sub_service_id = rfq.x_sub_service_id.id
+                cache_key = (sub_service_id, membership_plan_id)
 
-            if cache_key not in concept_line_cache:
-                concept_line = self.env['custom.membership.plan.product.line'].search([
-                    ('sub_service_ids', 'in', [sub_service_id]),
-                    ('membership_plan_id', '=', membership_plan_id),
-                ], limit=1)
-                concept_line_cache[cache_key] = concept_line
-            concept_line = concept_line_cache[cache_key]
+                if cache_key not in concept_line_cache:
+                    concept_line = self.env['custom.membership.plan.product.line'].search([
+                        ('sub_service_ids', 'in', [sub_service_id]),
+                        ('membership_plan_id', '=', membership_plan_id),
+                    ], limit=1)
+                    concept_line_cache[cache_key] = concept_line
+                concept_line = concept_line_cache[cache_key]
 
-            if not concept_line:
-                _logger.warning(
-                    "No concept line found for RFQ id=%s, sub_service_id=%s, membership_plan_id=%s",
-                    rfq.id,
-                    sub_service_id,
-                    membership_plan_id,
-                )
-                continue
+                if not concept_line:
+                    _logger.warning(
+                        "No concept line found for RFQ id=%s, sub_service_id=%s, membership_plan_id=%s",
+                        rfq.id,
+                        sub_service_id,
+                        membership_plan_id,
+                    )
+                    continue
 
-            sap_key = (concept_line.sap_id_outgoing, concept_line.product_description_po)
+                sap_id_income = concept_line.sap_id_income
+                sap_id_outgoing = concept_line.sap_id_outgoing
+                product_description_po = concept_line.product_description_po
+                event_name = rfq.x_event_id.name
+                sap_product_id = concept_line.sub_service_ids[:1].id
+            else:
+                first_order_line = rfq.order_line[:1]
+                sap_id_income = first_order_line.x_sap_code_income
+                sap_id_outgoing = first_order_line.x_sap_code_outgoing
+                product_description_po = ""  # Se envía vacío para no mostrarlo en la linea, el widget oculta el nombre
+                event_name = first_order_line.x_parent_expedient
+                sap_product_id = rfq.x_sub_service_id.id
+
+            sap_key = (sap_id_outgoing, product_description_po)  # ToDo: Es la forma correcta?
 
             grouped_concept_lines[sap_key].append({
                 'rfq': rfq,
                 'subtotal': sum(rfq.order_line.mapped('price_subtotal')),
-                'concept_line': concept_line,
-                'event': rfq.x_event_id.id,
-                'event_name': rfq.x_event_id.name,
+                'sap_product_id': sap_product_id,
+                'sap_product_description': product_description_po,
+                'sap_code_outgoing': sap_id_outgoing,
+                'sap_code_income': sap_id_income,
+                'event_name': event_name,
             })
 
         return grouped_concept_lines
@@ -524,15 +567,18 @@ class PurchaseOrder(models.Model):
             for item in concept_lines:
                 rfq = item['rfq']
                 subtotal = item['subtotal']
-                concept_line = item['concept_line']
-                event_id = item['event']
+                # concept_line = item['concept_line']
+                product_id = item['sap_product_id']
+                sap_product_description = item['sap_product_description']
+                sap_code_income = item['sap_code_income']
+                sap_code_outgoing = item['sap_code_outgoing']
+                # event_id = item['event']
                 event_name = item['event_name']
-                product_id = concept_line.sub_service_ids[:1].id
 
                 if not product_id:
                     _logger.warning(
-                        "Concept line id=%s has no product configured in sub_service_ids. RFQ id=%s",
-                        concept_line.id,
+                        "SAP income=%s has no product configured in sub_service_ids. RFQ id=%s",
+                        sap_code_income,
                         rfq.id,
                     )
                     continue
@@ -540,31 +586,61 @@ class PurchaseOrder(models.Model):
                 if rfq.name not in origin_names:
                     origin_names.append(rfq.name)
 
-                order_lines.append(Command.create({
-                    'name': "[%s] %s - %s - %s" % (
-                        concept_line.sap_id_outgoing,
-                        concept_line.product_description_po,
+                if not sap_product_description:
+                    line_name = "[%s] %s - %s" % (
+                        sap_code_outgoing,
                         rfq.name,
                         event_name,
-                    ),
+                    )
+                else:
+                    line_name = "[%s] %s - %s - %s" % (
+                        sap_code_outgoing,
+                        sap_product_description,
+                        rfq.name,
+                        event_name,
+                    )
+
+                order_lines.append(Command.create({
+                    'name': line_name,
                     'product_id': product_id,
                     'product_qty': 1,
                     'price_unit': subtotal,
-                    'x_concept_line_id': concept_line.id,
-                    'x_parent_event_id': event_id,
+                    # 'x_concept_line_id': concept_line.id,
+                    'x_sap_product_description': sap_product_description,
+                    'x_sap_code_income': sap_code_income,
+                    'x_sap_code_outgoing': sap_code_outgoing,
+                    'x_parent_expedient': event_name,
                 }))
 
                 original_pos |= rfq
 
             if not order_lines:
                 continue
-            new_po_vals.append({
-                'partner_id': first_order.partner_id.id,
-                'origin': ', '.join(origin_names),
-                'order_line': order_lines,
-                'x_sub_service_id': first_order.x_sub_service_id.id,
-                'x_membership_plan_id': first_order.x_membership_plan_id.id,
-            })
+
+            if not first_order.x_external_api_record:
+                new_po_vals.append({
+                    'partner_id': first_order.partner_id.id,
+                    'origin': ', '.join(origin_names),
+                    'order_line': order_lines,
+                    'x_sub_service_id': first_order.x_sub_service_id.id,
+                    'x_membership_plan_id': first_order.x_membership_plan_id.id,
+                })
+            else:
+                new_po_vals.append({
+                    'partner_id': first_order.partner_id.id,
+                    'origin': ', '.join(origin_names),
+                    'order_line': order_lines,
+                    'x_sub_service_id': first_order.x_sub_service_id.id,
+                    'x_membership_plan_id': first_order.x_membership_plan_id.id,
+                    "company_id": first_order.company_id.id,
+                    "x_client_code": first_order.x_client_code,
+                    "x_record_tenant": first_order.x_record_tenant,
+                    "x_app_code": first_order.x_app_code,
+                    "x_sap_company_code": first_order.x_sap_company_code,
+                    "x_sap_document_currency": first_order.x_sap_document_currency,
+                    "x_external_api_record": True,  # Flag para diferenciar las órdenes de compra externas
+                    "x_external_body": first_order.x_external_body,
+                })
 
         return new_po_vals, original_pos
 
@@ -765,29 +841,65 @@ class PurchaseOrder(models.Model):
         purchase_reponses = []
         for purchase in self:
             account_id = purchase.x_membership_plan_id.account_id
+            if not purchase.x_external_api_record:
+                tenants = "adff7f6a-e97d-11eb-9a03-0242ac130003"  # MX Tenant
+                app_code = "IKE360"  # Identificador de la aplicación
+                company_code = account_id.x_invoice_company_id[0].name if account_id.x_invoice_company_id else "ARSA"
+                document_currency = "MXN"
+                client_code = str(account_id.parent_id.x_ref_sap).zfill(10)
+                lines = []
+                for line in purchase.order_line:
+                    # ToDo: Remover la lógica en unos 2 meses aprox, debe leerse solo el primer campo, se deja para los
+                    # * registros que ya existen y tienen el dato en x_concept_line_id, para cubrir ambos escenarios,
+                    # * dando prioridad a los que ya tienen valor en ese campo
+                    if not line.x_concept_line_id:  # Nuevos registros
+                        material_number = line.x_sap_code_income
+                        material = line.x_sap_code_outgoing
+                        expedient_name = line.x_parent_expedient
+                    else:  # Registros viejos
+                        material_number = line.x_concept_line_id.sap_id_income
+                        material = line.x_concept_line_id.sap_id_outgoing
+                        expedient_name = line.x_parent_event_id.name
+
+                    lines.append({
+                        "supplierMaterialNumber": material_number,
+                        "orderQuantity": str(line.product_qty),
+                        "netPriceAmount": str(line.price_unit),
+                        "material": material,
+                        "purchaseOrderQuantityUnit": "SER",
+                        "expediente": expedient_name,
+                    })
+            else:
+                tenants = purchase.x_record_tenant
+                app_code = purchase.x_app_code
+                company_code = purchase.x_sap_company_code
+                document_currency = purchase.x_sap_document_currency
+                client_code = purchase.x_client_code
+                lines = []
+                for line in purchase.order_line:
+                    lines.append({
+                        "supplierMaterialNumber": line.x_sap_code_income,  # Valor SAP ingeso de Plan de cobertura
+                        "orderQuantity": str(line.product_qty),
+                        "netPriceAmount": str(line.price_unit),
+                        "material": line.x_sap_code_outgoing,  # Valor SAP egreso de Plan de cobertura
+                        "purchaseOrderQuantityUnit": "SER",
+                        "expediente": line.x_parent_expedient,
+                    })
+
             body = {
                 "identifier": {
-                    "tenants": "adff7f6a-e97d-11eb-9a03-0242ac130003",  # MX Tenant
-                    "app": "IKE360"  # Identificador de la aplicación
+                    "tenants": tenants,
+                    "app": app_code
                 },
                 "sap": {
-                    "companyCode": account_id.x_invoice_company_id[0].name if account_id.x_invoice_company_id else "ARSA",
+                    "companyCode": company_code,
                     "supplier": str(purchase.partner_id.x_ref_sap).zfill(10),
-                    "documentCurrency": str(purchase.currency_id.name),
+                    "documentCurrency": document_currency,
                     "copago": "",  # * Se envía vacío
-                    "incotermsLocation1": str(account_id.parent_id.x_ref_sap).zfill(10),
+                    "incotermsLocation1": client_code,
                     "incotermsLocation2": "",  # * Se envía vacío
                     "toPurchaseOrderItem": {
-                        "results": [
-                            {
-                                "supplierMaterialNumber": line.x_concept_line_id.sap_id_income,  # Valor SAP ingeso de Plan de cobertura
-                                "orderQuantity": str(line.product_qty),
-                                "netPriceAmount": str(line.price_unit),
-                                "material": line.x_concept_line_id.sap_id_outgoing,  # Valor SAP egreso de Plan de cobertura
-                                "purchaseOrderQuantityUnit": "SER",
-                                "expediente": str(line.x_parent_event_id.name)
-                            } for line in purchase.order_line
-                        ]
+                        "results": lines
                     }
                 }
             }

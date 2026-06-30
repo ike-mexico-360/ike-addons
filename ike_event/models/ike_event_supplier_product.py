@@ -155,8 +155,9 @@ class IkeEventSupplierProduct(models.Model):
 
     event_supplier_link_id = fields.Many2one('ike.event.supplier.link', 'Event Supplier', required=True, ondelete='cascade')
     supplier_id = fields.Many2one(string='Supplier', related='event_supplier_link_id.supplier_id', store=True, readonly=True)
-    truck_id = fields.Many2one('fleet.vehicle', string='Vehicle', compute='_compute_truck_id', readonly=True)
-    license_plate = fields.Char(string='License Plate', compute='_compute_truck_id', readonly=True)
+    purchase_supplier_id = fields.Many2one('res.partner', string="Assigned supplier", compute='_compute_event_supplier_id', readonly=True)
+    truck_id = fields.Many2one('fleet.vehicle', string='Vehicle', compute='_compute_event_supplier_id', readonly=True)
+    license_plate = fields.Char(string='License Plate', compute='_compute_event_supplier_id', readonly=True)
     event_id = fields.Many2one(related='event_supplier_link_id.event_id')
 
     # === AMOUNT FIELDS === #
@@ -173,6 +174,7 @@ class IkeEventSupplierProduct(models.Model):
 
     # Base fields
     cost_matrix_line_id = fields.Many2one('custom.supplier.cost.matrix.line', ondelete='set null')
+    base_quantity = fields.Integer('Agreement Quantity', default=1)
     base_unit_price = fields.Float('Agreement Unit Price', default=0.0)
     base_cancel_price = fields.Float('Agreement Cancel Cost', default=0.0)
     base_cost_price = fields.Float('Agreement Cost', compute='_compute_base_amount', store=True)
@@ -196,19 +198,20 @@ class IkeEventSupplierProduct(models.Model):
 
     from_portal = fields.Boolean(default=False, readonly=True)
 
-    @api.depends('event_supplier_link_id.event_id.selected_supplier_ids.truck_id')
-    def _compute_truck_id(self):
+    @api.depends('event_supplier_link_id.event_id.selected_supplier_ids')
+    def _compute_event_supplier_id(self):
         for rec in self:
 
-            supplier_id = self.env['ike.event.supplier'].search([
+            event_supplier_id = self.env['ike.event.supplier'].search([
                 ('event_id', '=', rec.event_id.id),
                 ('supplier_id', '=', rec.supplier_id.id),
                 ('supplier_link_id', '=', rec.event_supplier_link_id.id),
                 ('selected', '=', True),
             ], limit=1)
 
-            rec.truck_id = supplier_id.truck_id
-            rec.license_plate = supplier_id.truck_id.license_plate
+            rec.truck_id = event_supplier_id.truck_id
+            rec.license_plate = event_supplier_id.truck_id.license_plate
+            rec.purchase_supplier_id = event_supplier_id.purchase_supplier_id
 
     # === ONCHANGES === #
     @api.onchange('product_id')
@@ -253,15 +256,15 @@ class IkeEventSupplierProduct(models.Model):
                 rec.vat = vat
                 rec.subtotal = subtotal
 
-    @api.depends('quantity', 'base_unit_price', 'tax_ids')
+    @api.depends('base_quantity', 'base_unit_price', 'tax_ids')
     def _compute_base_amount(self):
         for rec in self:
             if not rec.is_net:
-                base_cost = rec.quantity * rec.base_unit_price
+                base_cost = rec.base_quantity * rec.base_unit_price
 
                 base_tax_amount = 0.0
                 if rec.tax_ids:
-                    taxes = rec.tax_ids.compute_all(rec.base_unit_price, quantity=rec.quantity)
+                    taxes = rec.tax_ids.compute_all(rec.base_unit_price, quantity=rec.base_quantity)
                     base_tax_amount = sum(t['amount'] for t in taxes['taxes'])
 
                 base_vat = base_tax_amount
@@ -304,6 +307,10 @@ class IkeEventSupplierProduct(models.Model):
 
                 if excluded:
                     domain.append(('id', 'not in', excluded))
+
+            # No Nu VIP + Second supplier
+            if not rec.event_id.user_id.vip_user and rec.supplier_number > 1:
+                domain.append(('x_additional_ok', '=', True))
 
             rec.product_add_domain = domain
 
@@ -385,7 +392,7 @@ class IkeEventSupplierProduct(models.Model):
                 sibling_ids = self.env['ike.event.supplier.link'].search([
                     ('id', '!=', current_id.id),
                     ('event_id', '=', current_id.event_id.id),
-                    ('event_id.supplier_search_number', '=', current_id.event_id.supplier_search_number),
+                    ('supplier_number', '=', current_id.supplier_number),
                 ])
                 if sibling_ids:
                     sibling_ids.add_products_horizontally(lines)

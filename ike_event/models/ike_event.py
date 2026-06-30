@@ -4,6 +4,8 @@ import json
 import logging
 import requests
 
+from collections import defaultdict
+
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.tools.safe_eval import safe_eval
@@ -25,16 +27,22 @@ class IkeEvent(models.Model):
     stage_id = fields.Many2one(tracking=True)
     # Stage Tracking Comments
     current_stage_date = fields.Datetime(compute='_compute_current_stage_date')
-    current_elapsed_time_minutes = fields.Integer(compute='_compute_current_stage_date')
-    stage_apply_max_wait_time = fields.Boolean(related='stage_id.apply_max_wait_time')
+    current_elapsed_time_seconds = fields.Integer(compute='_compute_current_stage_date')
+    current_stage_comment_ids = fields.One2many(
+        'ike.event.stage.comment', 'event_id',
+        string='Stage Comments',
+        compute='_compute_current_stage_comment_ids')
     stage_max_wait_time_minutes = fields.Integer(related='stage_id.max_wait_time_minutes')
-    stage_apply_tracking_time = fields.Boolean(related='stage_id.apply_tracking_time')
     stage_tracking_time_minutes = fields.Integer(related='stage_id.tracking_time_minutes')
 
     # nu fields
     nu_name = fields.Char('Nu user name')
     vip_user = fields.Boolean(related="user_id.vip_user", string='VIP User')
     user_membership_id = fields.Many2one('custom.membership.nus', 'Membership')
+    account_id = fields.Many2one(
+        "res.partner",
+        string="Account",
+        related='user_membership_id.membership_plan_id.account_id')
     user_phone = fields.Char(related='user_id.phone', string='Main Phone')
     membership_display_mask = fields.Char(related='user_membership_id.x_display_mask', string='Display Mask')
     key_identification = fields.Char(related='user_membership_id.key_identification', string='Key Identification')
@@ -387,6 +395,11 @@ class IkeEvent(models.Model):
         })
         trackings = self.env.cr.dictfetchall()
         now = fields.Datetime.now()
+        valid_stage_ids = self.env['ike.event.stage'].search([
+            '|',
+            ('max_wait_time_minutes', '>', 0),
+            ('max_wait_time_minutes', '>', 0)
+        ])
         for rec in self:
             record_trackings = [
                 tracking for tracking in trackings
@@ -396,7 +409,49 @@ class IkeEvent(models.Model):
                 rec.current_stage_date = record_trackings[0]['create_date']
             else:
                 rec.current_stage_date = rec.create_date
-            rec.current_elapsed_time_minutes = (now - rec.current_stage_date).total_seconds() // 60
+            if rec.stage_id.id in valid_stage_ids.ids:
+                rec.current_elapsed_time_seconds = (now - rec.current_stage_date).total_seconds()
+            else:
+                rec.current_elapsed_time_seconds = 0
+
+    def _compute_current_stage_comment_ids(self):
+        valid_stage_ids = self.env['ike.event.stage'].search([
+            '|',
+            ('max_wait_time_minutes', '>', 0),
+            ('max_wait_time_minutes', '>', 0)
+        ])
+        query = """
+            SELECT
+                c.event_id
+                ,MAX(c.id) AS id
+            FROM ike_event_stage_comment c
+            INNER JOIN ike_event e on e.id = c.event_id
+            WHERE event_id IN %(record_ids)s
+                AND c.stage_id IN %(stage_ids)s
+                AND c.stage_id = e.stage_id
+            GROUP BY
+                c.event_id
+                ,c.stage_id
+                ,c.comment_type
+                ,c.supplier_number
+            ORDER BY c.supplier_number
+            ;
+        """
+        self.env.cr.execute(query, {
+            "record_ids": tuple(self.ids),
+            "stage_ids": tuple(valid_stage_ids.ids),
+        })
+        comments = self.env.cr.dictfetchall()
+        comments_by_event = defaultdict(list)
+
+        for comment in comments:
+            comments_by_event[comment['event_id']].append(comment['id'])
+
+        for rec in self:
+            if rec.stage_id.id in valid_stage_ids.ids:
+                rec.current_stage_comment_ids = [Command.set(comments_by_event.get(rec.id, []))]
+            else:
+                rec.current_stage_comment_ids = None
 
     @api.depends('selected_supplier_ids', 'selected_supplier_ids.stage_id')
     def _compute_selected_pending_suppliers(self):
@@ -1043,8 +1098,21 @@ class IkeEvent(models.Model):
         result = {
             'all_active_events': 0,
             'all_draft_events': 0,
+            'all_capturing_events': 0,
+            'all_searching_events': 0,
+            'all_assigned_events': 0,
+            'all_in_progress_events': 0,
+            'all_completed_events': 0,
+            'all_verifying_events': 0,
+
             'my_active_events': 0,
             'my_draft_events': 0,
+            'my_capturing_events': 0,
+            'my_searching_events': 0,
+            'my_assigned_events': 0,
+            'my_in_progress_events': 0,
+            'my_completed_events': 0,
+            'my_verifying_events': 0,
         }
         IKE_EVENT = self.env['ike.event']
         active_domain = [
@@ -1064,11 +1132,30 @@ class IkeEvent(models.Model):
         ]
         inactive_domain = [('stage_id.ref', 'in', ['draft'])]
         my_events_domain = [('write_uid', '=', self.env.uid)]
+        capturing_event_domain = [('stage_id.ref', 'in', ['capturing'])]
+        searching_event_domain = [('stage_id.ref', 'in', ['searching'])]
+        assigned_event_domain = [('stage_id.ref', 'in', ['assigned'])]
+        in_progress_event_domain = [('stage_id.ref', 'in', ['in_progress'])]
+        completed_events_domain = [('stage_id.ref', 'in', ['completed'])]
+        verifying_events_domain = [('stage_id.ref', 'in', ['verifying'])]
         result.update({
             'all_active_events': IKE_EVENT.search_count(active_domain),
             'all_draft_events': IKE_EVENT.search_count(inactive_domain),
+            'all_capturing_events': IKE_EVENT.search_count(capturing_event_domain),
+            'all_searching_events': IKE_EVENT.search_count(searching_event_domain),
+            'all_assigned_events': IKE_EVENT.search_count(assigned_event_domain),
+            'all_in_progress_events': IKE_EVENT.search_count(in_progress_event_domain),
+            'all_completed_events': IKE_EVENT.search_count(completed_events_domain),
+            'all_verifying_events': IKE_EVENT.search_count(verifying_events_domain),
+
             'my_active_events': IKE_EVENT.search_count(active_domain + my_events_domain),
-            'my_draft_events': IKE_EVENT.search_count(inactive_domain + my_events_domain),
+            'my_draft_events': IKE_EVENT.search_count(capturing_event_domain + my_events_domain),
+            'my_capturing_events': IKE_EVENT.search_count(inactive_domain + my_events_domain),
+            'my_searching_events': IKE_EVENT.search_count(searching_event_domain + my_events_domain),
+            'my_assigned_events': IKE_EVENT.search_count(assigned_event_domain + my_events_domain),
+            'my_in_progress_events': IKE_EVENT.search_count(in_progress_event_domain + my_events_domain),
+            'my_completed_events': IKE_EVENT.search_count(completed_events_domain + my_events_domain),
+            'my_verifying_events': IKE_EVENT.search_count(verifying_events_domain + my_events_domain),
         })
         return result
 
@@ -1109,6 +1196,7 @@ class IkeEvent(models.Model):
             'domain': [
                 ('id', '!=', self.id),
                 ('user_id', '=', self.user_id.id),
+                ('user_membership_id', '=', self.user_membership_id.id),
                 ('sub_service_id', '=', self.sub_service_id.id),
                 ('stage_id', 'in', (closed_stage.id, completed_stage.id)),
             ],
@@ -1154,9 +1242,51 @@ class IkeEvent(models.Model):
                     'target': 'new',
                 }
 
+            # Assign agreement cost when choosing supplier
+            supplier_generic_ids = rec.selected_supplier_ids.filtered(
+                lambda x: x.is_generic_supplier and x.purchase_supplier_id)
+
+            if supplier_generic_ids:
+                for supplier_id in supplier_generic_ids:
+                    supplier_product_ids = supplier_id.supplier_product_ids.filtered(
+                        lambda x: not x.display_type).mapped('product_id')
+
+                    purchase_supplier_id = supplier_id.purchase_supplier_id
+
+                    matrix_cost_line_ids = supplier_id.event_id.get_supplier_product_matrix_lines(
+                        purchase_supplier_id.id, supplier_product_ids.ids)
+
+                    for product_line_id  in supplier_product_ids:
+                        cost_line_id = matrix_cost_line_ids.filtered(
+                            lambda x: x.concept_id.id == product_line_id.id
+                            and x.supplier_status_id.ref == 'concluded')
+
+                        cancel_cost_line_id = matrix_cost_line_ids.filtered(
+                            lambda x: x.concept_id.id == product_line_id.id
+                            and x.supplier_status_id.ref == 'cancelled')
+
+                        supplier_product = supplier_id.supplier_product_ids.filtered(
+                            lambda x: x.product_id.id == product_line_id.id and not x.display_type)
+
+                        total_base_unit_price = cost_line_id[0].cost if cost_line_id else 0
+                        total_base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
+
+                        if supplier_product:
+                            supplier_product.write({
+                                'base_unit_price': total_base_unit_price,
+                                'base_cancel_price': total_base_cancel_price,
+                            })
+
         # Current Flow
         for rec in self:
+            supplier_product_ids = rec.selected_supplier_ids.supplier_product_ids.filtered(
+                lambda x: not x.display_type)
+
+            for product_id in supplier_product_ids:
+                product_id.base_quantity = product_id.quantity
+
             total_amount = sum(rec.selected_supplier_ids.mapped('base_amount_concept_subtotal'))
+
             if total_amount <= rec.covered_amount:
                 rec.action_close()
             else:

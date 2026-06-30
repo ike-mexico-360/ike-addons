@@ -139,6 +139,20 @@ class ResPartner(models.Model):
         default=False,
         tracking=True,
     )
+    x_negotiation_type = fields.Selection(
+        string='Type of negotiation',
+        selection=[
+            ('base_base', 'Base - Base'),
+            ('base_destination', 'Base - Destination'),
+            ('origin_destination', 'Origin - Destination'),
+            ('base_concepts', 'Base - Concepts'),
+        ],
+        help='Base - Base: Base location to destination point to base.\n'
+        'Base - Destination: Crane location at destination point or base at destination point.\n'
+        'Origin - Destination: Origin point to destination point.\n'
+        'Base - Concepts: Suppliers with agreed cost based on basic concepts, without calculation of distances.',
+        tracking=True,
+    )
 
     @api.depends("x_exclusive_account_ids", "x_special_account_ids")
     def _compute_x_allowed_account_ids(self):

@@ -137,7 +137,7 @@ class IkeEvent(models.Model):
         return {
             "name": supplier_product_id.product_id.name,
             "product_id": supplier_product_id.product_id.id,
-            "product_qty": supplier_product_id.quantity,
+            "product_qty": supplier_product_id.base_quantity,
             "price_unit": supplier_product_id.base_unit_price,
             "currency_id": self.env.company.currency_id.id,
             "x_supplier_product_id": supplier_product_id.id,  # Link to supplier_product_id

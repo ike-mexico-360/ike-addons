@@ -80,6 +80,8 @@ class ProductProduct(models.Model):
         help="Evidence photos required for this subservice (Assistview)."
     )
     active = fields.Boolean(readonly=True)
+    x_sap_code_income = fields.Char(string="SAP Income Code", tracking=True, help="Technical: SAP income code")
+    x_sap_code_outgoing = fields.Char(string="SAP Outgoing Code", tracking=True, help="Technical: SAP outgoing code")
 
     @api.constrains('name', 'sale_ok', 'sh_product_subscribe', 'purchase_ok', 'x_accessory_ok', 'categ_id', 'uom_id')
     def _check_unique_subservice(self):

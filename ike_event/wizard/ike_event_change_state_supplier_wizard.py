@@ -1,8 +1,15 @@
+import logging
 import time
+import requests
+import threading
 from datetime import timedelta
 
-from odoo import api, fields, models, _
+
+from odoo import api, fields, models, _, SUPERUSER_ID
+from odoo.modules.registry import Registry
 from odoo.exceptions import ValidationError
+
+_logger = logging.getLogger(__name__)
 
 
 class IkeEventChangeStateSupplierWizard(models.TransientModel):
@@ -498,6 +505,9 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             binnacle_comment=comment,
         ).action_arrive()
 
+        # Use here to ensure execute only on 'arrived' stage at first time
+        self._notify_stage_change_to_external_supplier(supplier, datetime, 'llego', user, comment)
+
     def _action_contacted(self, supplier, vals, datetime, user, comment):
         already_contacted = bool(supplier.first_contacted_date or supplier.contacted_date)
 
@@ -529,6 +539,9 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             binnacle_current_date=datetime,
             binnacle_comment=comment,
         ).action_contact()
+
+        # Use here to ensure execute only on 'contacted' stage at first time
+        self._notify_stage_change_to_external_supplier(supplier, datetime, 'contactado', user, comment)
 
     def _action_on_route_2(self, supplier, vals, datetime, user, comment):
         already_on_route = bool(supplier.first_on_route_to_destination_start_date or supplier.on_route_to_destination_start_date)
@@ -625,3 +638,73 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             binnacle_current_date=datetime,
             binnacle_comment=comment,
         ).action_finalize()
+
+        # Use here to ensure execute only on 'finalized' stage at first time
+        self._notify_stage_change_to_external_supplier(supplier, datetime, 'finalizado', user, comment)
+
+    def _notify_stage_change_to_external_supplier(self, supplier, action_date, action_name, user_id, comment):
+        # Send notification to external
+        try:
+            neutralized = self.env['ir.config_parameter'].sudo().get_param('database.is_neutralized')
+            if neutralized:
+                return
+
+            if supplier.supplier_id.x_has_external_notification:
+                db_name = self.env.cr.dbname
+                record_ids = self.ids
+                vehicle_uid = supplier.truck_id.x_vehicle_ref
+                event_id = supplier.event_id.id
+                action_date_str = action_date.strftime('%Y-%m-%d %H:%M:%S')
+                # stages = dict(self._fields['stage_selected'].get_description(self.env)['selection'])
+                action_name_str = action_name  # stages.get(action_name)
+                responsible_name = self.env['res.users'].browse(user_id).name or ''
+
+                @self.env.cr.postcommit.add
+                def send_notifications_with_new_cursor():
+                    threading.Thread(
+                        target=self._async_send_notification,
+                        args=(
+                            db_name, record_ids, '_send_external_notifcation',
+                            vehicle_uid, event_id, action_date_str, action_name_str, responsible_name, comment
+                        ),
+                        daemon=True,
+                    ).start()
+        except Exception as e:
+            _logger.error('Error sending notification to external supplier: %s', e)
+
+    def _send_external_notifcation(
+            self, vehicle_uid: str, event_id: int, action_date: str, action_name: str, responsible_name: str, comment: str):
+        external_url = self.env['ir.config_parameter'].sudo().get_param('ike_event.stage_change_external_notification_url')
+        if not external_url:
+            _logger.warning("No se ha configurado la URL de notificación a proveedores externos")
+            return
+
+        body = {
+            "uuid_grua": vehicle_uid,
+            "id_evento": event_id,
+            "fecha_hora": action_date,
+            "estado": action_name,
+            "responsable": responsible_name,
+            "comentario": comment
+        }
+        _logger.info(f"External notification at manual stage change (Body): {body}")
+        external_response = requests.post(
+            external_url,
+            json=body,
+            headers={
+                "Content-Type": "application/json",
+            }
+        )
+        if external_response:
+            _logger.info(f"External notification at manual stage change (Response): {external_response.json()}")
+
+    def _async_send_notification(self, db_name, record_ids, action_name, *args):
+        """Thread to send notification"""
+        db_registry = Registry(db_name)
+        with db_registry.cursor() as cr:
+            env = api.Environment(cr, SUPERUSER_ID, {})
+
+            records = env['ike.event.change.state.supplier.wizard'].browse(record_ids).sudo()
+            method = getattr(records, action_name, None)
+            if callable(method):
+                method(*args)

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-10 15:27+0000\n"
-"PO-Revision-Date: 2026-06-10 15:27+0000\n"
+"POT-Creation-Date: 2026-06-28 02:21+0000\n"
+"PO-Revision-Date: 2026-06-28 02:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -115,7 +115,9 @@ msgstr "Accesorios"
 #. module: ike_event
 #. odoo-javascript
 #: code:addons/ike_event/static/src/widgets/ike_affiliations_widget/ike_affiliations_widget.xml:0
+#: model:ir.model.fields,field_description:ike_event.field_ike_event__account_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count__account_id
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_service_count_search
 msgid "Account"
 msgstr "Cuenta"
@@ -291,6 +293,11 @@ msgid "Agreement Cost"
 msgstr "Costo convenio"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__base_quantity
+msgid "Agreement Quantity"
+msgstr "Cantidad convenio"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__base_amount_concept_subtotal
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__base_subtotal
 msgid "Agreement Subtotal"
@@ -331,6 +338,24 @@ msgstr "Todos los eventos activos"
 #. module: ike_event
 #. odoo-javascript
 #: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "All Assigned Events"
+msgstr "Todos los eventos en asignado"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "All Assistance Completed Events"
+msgstr "Todos los eventos en asistencia concluida"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "All Capturing Detail Events"
+msgstr "Todos los eventos en capturando detalles"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 msgid "All Draft Events"
 msgstr "Todos los eventos en borrador"
 
@@ -339,6 +364,24 @@ msgstr "Todos los eventos en borrador"
 #: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 msgid "All Events"
 msgstr "Todos los eventos"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "All In progress Events"
+msgstr "Todos los eventos en progreso"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "All Searching Supplier Events"
+msgstr "Todos los eventos en búsqueda de proveedor"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "All verifying CCC Events"
+msgstr "Todos los eventos en verificación CCC"
 
 #. module: ike_event
 #. odoo-python
@@ -381,18 +424,6 @@ msgstr "Aplicación móvil"
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "Applicant"
 msgstr "Solicitante"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event__stage_apply_max_wait_time
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage__apply_max_wait_time
-msgid "Apply Max Wait Time"
-msgstr "Aplica tiempo máximo de espera"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event__stage_apply_tracking_time
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage__apply_tracking_time
-msgid "Apply Tracking Time"
-msgstr "Aplica tiempo de rastreo"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_cancellation_reason_view_form
@@ -501,14 +532,17 @@ msgstr "Duración de la asignación"
 #. module: ike_event
 #. odoo-python
 #: code:addons/ike_event/models/ike_event_summary.py:0
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_assignation_type
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__assignation_type
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__assignation_type
 msgid "Assignation Type"
 msgstr "Tipo de Asignación"
 
 #. module: ike_event
+#. odoo-javascript
 #. odoo-python
 #: code:addons/ike_event/models/ike_event_summary.py:0
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 #: model:ike.event.stage,name:ike_event.ike_event_stage_assigned
 #: model:ike.service.stage,name:ike_event.ike_service_stage_assigned
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_assignation_date
@@ -563,6 +597,7 @@ msgstr ""
 #. module: ike_event
 #. odoo-python
 #: code:addons/ike_event/models/ike_event_supplier.py:0
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__purchase_supplier_id
 msgid "Assigned supplier"
 msgstr "Proveedor asignado"
 
@@ -604,6 +639,8 @@ msgid "Assignment event wizard"
 msgstr "wizard asignación de evento"
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 #: model:ike.event.stage,name:ike_event.ike_event_stage_completed
 msgid "Assistance Completed"
 msgstr "Asistencia concluida"
@@ -885,6 +922,8 @@ msgid "Cancelled subsequently Events"
 msgstr "Eventos Cancelado posterior"
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 #: model:ike.event.stage,name:ike_event.ike_event_stage_capturing
 msgid "Capturing"
 msgstr "Capturando detalles"
@@ -984,14 +1023,24 @@ msgid "Comment"
 msgstr "Comentario"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__comment_type
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_search
+msgid "Comment Type"
+msgstr "Tipo de comentario"
+
+#. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_change_state_supplier_wizard_form
 msgid "Comment change status"
 msgstr "Comentario del cambio de estado"
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/widgets/ike_stage_comment/ike_stage_comment.js:0
+#: code:addons/ike_event/static/src/widgets/ike_stage_comment/ike_stage_comment.xml:0
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence__comments
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__stage_comment_ids
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_evidece_form
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_form
 msgid "Comments"
 msgstr "Comentarios"
 
@@ -1308,9 +1357,9 @@ msgid "Current Amount"
 msgstr "Monto actual"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event__current_elapsed_time_minutes
-msgid "Current Elapsed Time Minutes"
-msgstr "Minutos actuales transcurridos"
+#: model:ir.model.fields,field_description:ike_event.field_ike_event__current_elapsed_time_seconds
+msgid "Current Elapsed Time Seconds"
+msgstr "Segundos actuales transcurridos"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__current_stage_date
@@ -1330,6 +1379,7 @@ msgstr "Afiliaciones"
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_history_view_search
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_form
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_list
 msgid "Date"
 msgstr "Fecha"
 
@@ -1682,7 +1732,9 @@ msgid "EVENT ID:"
 msgstr ""
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_list
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_form
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_list
 msgid "Elapsed"
 msgstr "Transcurrido"
 
@@ -1696,9 +1748,9 @@ msgid "Elapsed Time"
 msgstr "Tiempo transcurrido"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__elapsed_time_minutes
-msgid "Elapsed Time (minutes)"
-msgstr "Tiempo transcurrido (minutos)"
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__elapsed_time_seconds
+msgid "Elapsed Time (seconds)"
+msgstr "Tiempo transcurrido (segundos)"
 
 #. module: ike_event
 #: model:ike.event.supplier.assignment.type,name:ike_event.ike_supplier_assignment_electronic
@@ -1733,6 +1785,7 @@ msgid "Estimated Cost"
 msgstr "Costo estimado"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_estimated_distance
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__estimated_distance
 msgid "Estimated Distance"
 msgstr "Distancia estimada"
@@ -1740,6 +1793,7 @@ msgstr "Distancia estimada"
 #. module: ike_event
 #. odoo-python
 #: code:addons/ike_event/models/ike_event_summary.py:0
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_estimated_duration
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__estimated_duration
 msgid "Estimated Duration"
 msgstr "Duración estimada"
@@ -1763,11 +1817,13 @@ msgid "Estimated distance to reach the destination, in kilometers."
 msgstr "Distancia estimada para llegar al destino, en minutos."
 
 #. module: ike_event
+#: model:ir.model.fields,help:ike_event.field_ike_event_stage_comment__event_line_estimated_distance
 #: model:ir.model.fields,help:ike_event.field_ike_event_supplier__estimated_distance
 msgid "Estimated distance to reach the user, in kilometers."
 msgstr "Distancia estimada para llegar al usuario, en kilómetros."
 
 #. module: ike_event
+#: model:ir.model.fields,help:ike_event.field_ike_event_stage_comment__event_line_estimated_duration
 #: model:ir.model.fields,help:ike_event.field_ike_event_supplier__estimated_duration
 msgid "Estimated duration to arrive to the user, in minutes."
 msgstr "Duración estimada para llegar al usuario, en kilómetros."
@@ -1891,6 +1947,11 @@ msgstr "Flujo del evento"
 #: model:ir.model,name:ike_event.model_ike_event_flow_detail
 msgid "Event Flow Detail"
 msgstr "Detalle del flujo del evento"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_id
+msgid "Event Line"
+msgstr "Línea de evento"
 
 #. module: ike_event
 #: model:ir.model,name:ike_event.model_ike_event_manual_supplier_wizard
@@ -2440,6 +2501,7 @@ msgstr "Radio de geocerca (m)"
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_service_count_search
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_service_summary_search
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_search
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_search
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_stage_search
 msgid "Group By"
@@ -2665,6 +2727,12 @@ msgstr "Eventos en progreso"
 
 #. module: ike_event
 #. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "In progress"
+msgstr "En progreso"
+
+#. module: ike_event
+#. odoo-javascript
 #: code:addons/ike_event/static/src/widgets/ike_line_progress/ike_line_progress.xml:0
 msgid "Inicio: Ruta al usuario"
 msgstr ""
@@ -2797,7 +2865,7 @@ msgstr "Identificador de clave"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__key_identification
 msgid "Key identification"
-msgstr ""
+msgstr "Código de identificación"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__lang
@@ -3106,8 +3174,9 @@ msgstr "Plan de cobertura"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__membership_validity
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__membership_validity
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__nu_user_membership_validity
 msgid "Membership Validity"
-msgstr ""
+msgstr "Membresía activa"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_has_error
@@ -3197,6 +3266,30 @@ msgstr ""
 #. module: ike_event
 #. odoo-javascript
 #: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "My Assigned Events"
+msgstr "Mis eventos en asignado"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "My Assistance Completed Events"
+msgstr "Mis eventos en asistencia concluida"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "My Capturing Events"
+msgstr "Mis eventos en capturando detalles"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "My Verification CCC Events"
+msgstr "Mis eventos en verificación"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 msgid "My Draft Events"
 msgstr "Mis eventos en borrador"
 
@@ -3206,6 +3299,18 @@ msgstr "Mis eventos en borrador"
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
 msgid "My Events"
 msgstr "Mis eventos"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "My In Progress Events"
+msgstr "Mis eventos en progreso"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "My Searching Supplier Events"
+msgstr "Mis eventos en buscando proveedor"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
@@ -3392,19 +3497,47 @@ msgid "Notify"
 msgstr "Notificar"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__nu_user_membership_account
+msgid "Nu Account"
+msgstr "Cuenta Nu"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__nu_user_membership_key_identification
+msgid "Nu Code"
+msgstr "Código Nu"
+
+#. module: ike_event
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_evidence__evidence_type__nu_evidence
 msgid "Nu Evidence"
-msgstr ""
+msgstr "Evidencia Nu"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__nu_user_membership_id
+msgid "Nu Membership"
+msgstr "Afiliación Nu"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__nu_user_phone
+msgid "Nu Phone"
+msgstr "Teléfono Nu"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/widgets/ike_stage_comment/ike_stage_comment.xml:0
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__nu_user_id
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_stage_comment__comment_type__user
+msgid "Nu User"
+msgstr "Usuario Nu"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence__nu_user_code
 msgid "Nu User Code"
-msgstr "Código de usuario nu"
+msgstr "Código Nu"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_evidence__nu_user_sign
 msgid "Nu User Sign"
-msgstr "Firma de usuario nu"
+msgstr "Firma Nu"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__duplicate_user_data
@@ -3415,7 +3548,7 @@ msgstr "Datos Nu"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__nu_name
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__nu_name
 msgid "Nu user name"
-msgstr "Nombre de usuario"
+msgstr "Nombre de usuario nu"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__message_needaction_counter
@@ -3578,6 +3711,7 @@ msgstr "Fecha de apertura"
 #. odoo-python
 #: code:addons/ike_event/models/ike_event_summary.py:0
 #: code:addons/ike_event/models/ike_event_supplier.py:0
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_vehicle_driver
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__assigned
 msgid "Operator"
 msgstr "Operador"
@@ -3656,34 +3790,45 @@ msgstr "Periodo del evento"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__supplier_phone
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_supplier_phone
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone
 msgid "Phone"
 msgstr "Teléfono"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p1
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_supplier_phone_1
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone_1
 msgid "Phone 1"
-msgstr ""
+msgstr "Teléfono 1"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p2
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_supplier_phone_2
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone_2
 msgid "Phone 2"
-msgstr ""
+msgstr "Teléfono 2"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p3
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_supplier_phone_3
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone_3
 msgid "Phone 3"
-msgstr ""
+msgstr "Teléfono 3"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p4
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_supplier_phone_4
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone_4
 msgid "Phone 4"
-msgstr ""
+msgstr "Teléfono 4"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p5
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_supplier_phone_5
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone_5
 msgid "Phone 5"
-msgstr ""
+msgstr "Teléfono 5"
 
 #. module: ike_event
 #. odoo-python
@@ -3694,6 +3839,7 @@ msgstr "Directorio telefónico"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_phones_form_view
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_form
 msgid "Phones"
 msgstr "Teléfonos"
 
@@ -4154,6 +4300,8 @@ msgid "Search icon..."
 msgstr "Buscar ícono..."
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 #: model:ike.event.stage,name:ike_event.ike_event_stage_searching
 msgid "Searching"
 msgstr "Buscando proveedor"
@@ -4262,7 +4410,6 @@ msgstr "Enviar información por whatsapp"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_product__sequence
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_stage__sequence
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__sequence
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__stage_sequence
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__sequence
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__sequence
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__sequence
@@ -4470,6 +4617,7 @@ msgstr "Respuestas de la encuesta del servicio"
 #. odoo-python
 #: code:addons/ike_event/models/ike_event_summary.py:0
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__truck_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_vehicle_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__truck_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__truck_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__aux_truck_id
@@ -4545,7 +4693,7 @@ msgstr "Tipo de servicio"
 #. module: ike_event
 #: model:ir.model,name:ike_event.model_product_category
 msgid "Services"
-msgstr "Categoría del producto"
+msgstr "Servicios"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__services_allowed
@@ -4654,8 +4802,14 @@ msgstr "Consulta de especialista"
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_flow_search
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_service_summary_search
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_search
 msgid "Stage"
 msgstr "Etapa"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event__current_stage_comment_ids
+msgid "Stage Comments"
+msgstr "Comentarios de la etapa"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__stage_ref
@@ -4679,6 +4833,11 @@ msgstr "Ref. de la etapa"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__stage_ref
 msgid "Stage Reference"
 msgstr "Referencia de etapa"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__stage_sequence
+msgid "Stage Sequence"
+msgstr "Secuencia"
 
 #. module: ike_event
 #. odoo-javascript
@@ -4904,10 +5063,12 @@ msgstr "Resumen superior"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_change_state_supplier_wizard__supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_manual_supplier_wizard__supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__ike_event_supplier_id
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__event_line_supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__supplier_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__supplier_id
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_stage_comment__comment_type__supplier
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_product_list_view
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 msgid "Supplier"
@@ -4938,6 +5099,7 @@ msgstr "Enlace de proveedor"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_authorization__supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_product__supplier_number
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_stage_comment__supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__supplier_number
@@ -4951,6 +5113,7 @@ msgstr "Enlace de proveedor"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_base__event_supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__event_supplier_number
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__event_supplier_number
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_search
 msgid "Supplier Number"
 msgstr "No. de proveedor"
 
@@ -5611,6 +5774,8 @@ msgid "Vehicle Type"
 msgstr "Tipo de vehículo"
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 #: model:ike.event.stage,name:ike_event.ike_event_stage_verifying
 msgid "Verifying"
 msgstr "Verificación CCC"
@@ -5673,6 +5838,7 @@ msgstr "Ver detalles"
 #. module: ike_event
 #. odoo-javascript
 #: code:addons/ike_event/static/src/widgets/ike_affiliations_widget/ike_affiliations_widget.xml:0
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "View history"
 msgstr "Ver historial"
 
@@ -5685,6 +5851,11 @@ msgstr "Ver detalle de costo del servicio"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_assignment_type__wait_time
 msgid "Wait Time"
 msgstr "Tiempo de espera"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_list
+msgid "Warnings"
+msgstr "Advertencias"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_supplier_popup_form
@@ -5829,6 +6000,12 @@ msgid "ZIP"
 msgstr "C.P."
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/widgets/ike_stage_comment/ike_stage_elapsed.js:0
+msgid "day"
+msgstr "día"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_membership_authorization__name
 msgid "name"
 msgstr "Nombre"
@@ -5853,31 +6030,6 @@ msgstr ""
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_wizard__service_id
 msgid "service"
 msgstr "Servicio"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p1
-msgid "tel_p1"
-msgstr "Teléfono 1"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p2
-msgid "tel_p2"
-msgstr "Teléfono 2"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p3
-msgid "tel_p3"
-msgstr "Teléfono 3"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p4
-msgid "tel_p4"
-msgstr "Teléfono 4"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p5
-msgid "tel_p5"
-msgstr "Teléfono 5"
 
 #. module: ike_event
 #: model:ir.model,name:ike_event.model_ir_websocket

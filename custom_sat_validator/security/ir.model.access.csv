@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_custom_sat_validator_user,custom.sat.validator.user,model_custom_sat_validator,base.group_user,1,1,1,1
 access_custom_sat_validator_manager,custom_sat_validator_manager,model_custom_sat_validator,,1,1,1,1
+access_custom_sat_validator_portal_finance,custom_sat_validator_portal_finance,model_custom_sat_validator,ike_event_portal.custom_group_portal_finance,1,1,1,0
+access_custom_sat_validator_ccc_boss,custom_sat_validator_ccc_boss,model_custom_sat_validator,custom_master_catalog.custom_group_ccc_boss,1,1,1,0

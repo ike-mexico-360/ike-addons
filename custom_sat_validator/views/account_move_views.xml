@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_move_form_inherit_xml_uuid" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.xml.uuid</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='ref']" position="after">
+                <field name="x_xml_uuid"
+                       invisible="move_type not in ('in_invoice', 'in_refund')"
+                       readonly="1"/>
+            </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/list//field[@name='product_id']" position="after">
+                <field name="x_xml_line_description"
+                       optional="show"
+                       placeholder="Original XML text"
+                       readonly="1"/>
+                <field name="purchase_line_id"
+                       optional="show"
+                       placeholder="purchase_line_id"
+                       readonly="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

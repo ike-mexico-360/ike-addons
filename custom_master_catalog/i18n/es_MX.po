@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-03 20:14+0000\n"
-"PO-Revision-Date: 2026-06-03 20:14+0000\n"
+"POT-Creation-Date: 2026-06-17 18:11+0000\n"
+"PO-Revision-Date: 2026-06-17 18:11+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -393,7 +393,7 @@ msgstr "Tipo de dirección"
 #. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_res_country_state__name
 msgid ""
-"Administrative divisions of a country. E.g. Fed. State, Departement, Canton"
+"Administrative divisions of a country. E.g. Fed. State, Department, Canton"
 msgstr ""
 "División administrativa de un país. Por ejemplo: entidad federativa, "
 "provincia, ayuntamiento"
@@ -542,6 +542,35 @@ msgid "BI Queries"
 msgstr "Consultas BI"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__base_base
+msgid "Base - Base"
+msgstr "Base - Base"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_res_partner__x_negotiation_type
+#: model:ir.model.fields,help:custom_master_catalog.field_res_users__x_negotiation_type
+msgid ""
+"Base - Base: Base location to destination point to base.\n"
+"Base - Destination: Crane location at destination point or base at destination point.\n"
+"Origin - Destination: Origin point to destination point.\n"
+"Base - Concepts: Suppliers with agreed cost based on basic concepts, without calculation of distances."
+msgstr ""
+"Base - Base: Ubicación base a punto destino a base.\n"
+"Base - Destination: Ubicación grúa a punto destino o base a punto destino.\n"
+"Origin - Destination: Origin point to destination point.\n"
+"Base - Concepts: Proveedores con costo convenio por conceptos base, sin calcular distancias calculation."
+
+#. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__base_concepts
+msgid "Base - Concepts"
+msgstr "Base - Conceptos"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__base_destination
+msgid "Base - Destination"
+msgstr "Base - Destino"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__base_concept_id
 msgid "Base Concept"
 msgstr "Concepto base"
@@ -616,52 +645,6 @@ msgstr ""
 #: model:res.groups,name:custom_master_catalog.custom_group_event_cabin_supervisor
 msgid "Cabin Supervisor"
 msgstr "Supervisor de cabina"
-
-#. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_type__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source_field__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographic_subservice_wizard__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_pre_work_entry_type__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_mapping__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality_code__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_weight_category__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model_category__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_product_category__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_product_template__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_res_config_settings__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_res_country__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_res_country_state__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__can_be_disabled
-#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__can_be_disabled
-msgid "Can Be Disabled"
-msgstr "Puede ser deshabilitado"
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_import_postal_codes_view_form
@@ -1006,6 +989,12 @@ msgstr "Coordinador CDS"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_cost_by_km
 msgid "Cost by Km"
 msgstr "Costo por km"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "Could not convert value '%s' to boolean."
+msgstr ""
 
 #. module: custom_master_catalog
 #. odoo-python
@@ -2237,7 +2226,7 @@ msgstr "Importar vehículos"
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.action_custom_vehicle_import_wizard
 msgid "Importar usuarios de proveedor"
-msgstr "Importar usuarios de proveedor"
+msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__imported_records
@@ -2448,6 +2437,7 @@ msgstr "Última actualización el"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_latitude
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_form
 msgid "Latitude"
 msgstr "Latitud"
 
@@ -2462,8 +2452,14 @@ msgid "Load metadata"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_form
+msgid "Location"
+msgstr "Ubicación"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source_field__field_longitude
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_longitude
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_form
 msgid "Longitude"
 msgstr "Longitud"
 
@@ -2730,12 +2726,6 @@ msgid "Name..."
 msgstr "Nombre..."
 
 #. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_calendar_event_id
-#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_calendar_event_id
-msgid "Next Activity Calendar Event"
-msgstr ""
-
-#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_date_deadline
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_date_deadline
 msgid "Next Activity Deadline"
@@ -2788,9 +2778,26 @@ msgstr "Sin comillas"
 
 #. module: custom_master_catalog
 #. odoo-python
-#: code:addons/custom_master_catalog/wizard/custom_import_postal_codes.py:0
 #: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "No se encontró vehículo con referencia '%s'."
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_import_postal_codes.py:0
 msgid "No se ha cargado ningún archivo."
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "No se indicó referencia del vehículo."
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "No se pudo crear vehículo con referencia '%s': %s"
 msgstr ""
 
 #. module: custom_master_catalog
@@ -2812,19 +2819,9 @@ msgid "Nombre"
 msgstr ""
 
 #. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__error_file_name
-msgid "Nombre archivo errores"
-msgstr ""
-
-#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_list
 msgid "Nombre comercial"
-msgstr ""
-
-#. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__file_name
-msgid "Nombre de archivo"
 msgstr ""
 
 #. module: custom_master_catalog
@@ -2976,6 +2973,11 @@ msgid "Operator"
 msgstr "Operador"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__origin_destination
+msgid "Origin - Destination"
+msgstr "Origen - Destino"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__origin_type
 msgid "Origin Type"
 msgstr "Tipo de origen"
@@ -3113,6 +3115,12 @@ msgid "Portal"
 msgstr ""
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/res_partner.py:0
+msgid "Postal Code not found"
+msgstr "Código postal no encontrado"
+
+#. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_custom_pre_work_entry_type
 msgid "Pre-Work Entry Type"
 msgstr "Tipo de entrada de trabajo"
@@ -3129,6 +3137,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__priority
 msgid "Priority"
 msgstr "Prioridad"
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_custom_vehicle_import_wizard_form
+msgid "Procesar"
+msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_product_template
@@ -3187,31 +3200,6 @@ msgstr "Cantidad"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__quote
 msgid "Quote"
 msgstr "Comillas"
-
-#. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_type__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_weight_category__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model_category__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_res_country__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_res_country_state__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__rating_ids
-#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__rating_ids
-msgid "Ratings"
-msgstr ""
 
 #. module: custom_master_catalog
 #: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_fleet_vehicle_action
@@ -3604,6 +3592,11 @@ msgid "Sub-Services"
 msgstr "Subservicios"
 
 #. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_custom_subservice_concept_line
+msgid "Sub-service Concept Line"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_tree
@@ -3938,6 +3931,7 @@ msgstr ""
 "Ejemplo: 03100"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_custom_supplier_coverage_configuration__vat
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner__x_parent_vat
 #: model:ir.model.fields,help:custom_master_catalog.field_res_users__x_parent_vat
 msgid ""
@@ -3984,6 +3978,11 @@ msgstr "El archivo debe ser del tipo: %s"
 
 #. module: custom_master_catalog
 #. odoo-python
+#: code:addons/custom_master_catalog/models/res_partner.py:0
+msgid "The postal code \"%s\" does not exist in the geographic Zones catalog."
+msgstr "El código postal \"%s\" no existe en el catálogo de zonas geográficas."
+#. module: custom_master_catalog
+#. odoo-python
 #: code:addons/custom_master_catalog/models/res_partner_supplier.py:0
 msgid "The postal code must be between 01000 and 99999"
 msgstr "El código postal debe estar entre 01000 y 99999"
@@ -4004,6 +4003,12 @@ msgstr "El proveedor debe ser único"
 #: code:addons/custom_master_catalog/models/other/custom_supplier_coverage_configuration.py:0
 msgid "The supplier must be unique. It is disabled."
 msgstr "El proveedor debe ser único. Está deshabilitado."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "The value '%s' in column '%s' is not a valid integer."
+msgstr ""
 
 #. module: custom_master_catalog
 #. odoo-python
@@ -4051,6 +4056,12 @@ msgstr ""
 #: model:ir.model,name:custom_master_catalog.model_custom_type_event
 msgid "Type of Event"
 msgstr "Tpo de evento"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_negotiation_type
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_negotiation_type
+msgid "Type of negotiation"
+msgstr "Tipo de negociación"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_exception_decoration
@@ -4475,11 +4486,6 @@ msgstr "Código postal obligatorio"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
 msgid "already exists ("
 msgstr "ya existe ("
-
-#. module: custom_master_catalog
-#: model:ir.model,name:custom_master_catalog.model_custom_subservice_concept_line
-msgid "custom.subservice.concept.line"
-msgstr ""
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_account_view_form

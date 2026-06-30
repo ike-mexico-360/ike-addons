@@ -213,6 +213,7 @@
             <xpath expr="//field[@name='sh_purchase_ticket_ids']" position="after">
                 <field name="x_dispute_state" invisible="1"/>
                 <field name="x_event_id" readonly="1" invisible="x_event_id == False"/>
+                <field name="x_origin_events" string="Expedient" readonly="1" invisible="not x_external_api_record or state not in ('to_consolidate', 'consolidated')"/>
             </xpath>
             <xpath expr="//button[@name='action_create_purchase_ticket']" position="attributes">
                 <attribute name="groups">base.group_system</attribute>

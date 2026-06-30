@@ -69,6 +69,9 @@
                             <th t-if="show_approved_columns" class="py-3 px-3 text-end" style="width: 150px; max-width: 200px;">
                                 <t t-out="translate('Approved Price')"/>
                             </th>
+                            <!-- <th t-if="isInPurchaseOrderList" class="py-3 px-3">
+                                <t t-out="translate('Origin Event')"/>
+                            </th> -->
                             <th class="py-3 px-3 rounded-end"></th>
                         </tr>
                     </thead>
@@ -96,7 +99,7 @@
                                 <tr>
                                     <!-- Concept -->
                                     <td class="align-content-center">
-                                        <span t-out="line.x_concept_line_id.display_name or line.display_name" t-if="!is_new_line"/>
+                                        <span t-out="line.display_name" t-if="!is_new_line"/>
                                         <t t-if="is_new_line">
                                             <select class="form-control" name="product_id"
                                             t-att-style="state.invalid_lines.has(line.id + '_product_id') ? 'border: 1px solid red' : ''"
@@ -112,15 +115,15 @@
                                         </t>
                                     </td>
                                     <td class="text-end align-content-center" t-if="['sent', 'to_consolidate', 'consolidated'].includes(state.order_data.state)">
-                                        <t t-out="line.x_product_qty_event" t-if="!is_new_line" />
+                                        <t t-out="formatNumber(line.x_product_qty_event)" t-if="!is_new_line" />
                                     </td>
                                     <td class="text-end align-content-center" t-if="['sent', 'to_consolidate', 'consolidated'].includes(state.order_data.state)">
-                                        <t t-out="line.x_price_unit_event" t-if="!is_new_line"/>
+                                        <t t-out="formatNumber(line.x_price_unit_event)" t-if="!is_new_line"/>
                                     </td>
                                     <!-- Quantity -->
                                     <td class="text-end align-content-center">
                                         <div t-if="!is_new_line">
-                                            <span t-out="line.product_qty"/>
+                                            <span t-out="formatNumber(line.product_qty)"/>
                                         </div>
                                     </td>
                                     <!-- Price -->
@@ -132,26 +135,26 @@
                                     />
                                     </t>
                                     <t t-else=""> -->
-                                        <t t-out="line.price_unit"/>
+                                        <t t-out="formatNumber(line.price_unit)"/>
                                         <!-- </t> -->
                                     </td>
                                     <!-- Dispute fields -->
                                     <td class="text-end align-content-center" t-if="show_dispute_columns">
-                                        <t t-out="line.x_product_qty_dispute" t-if="show_dispute_values"/>
+                                        <t t-out="formatNumber(line.x_product_qty_dispute)" t-if="show_dispute_values"/>
                                         <input t-if="is_new_line || state.show_dispute_fields" type="number" class="form-control text-end"
-                                    t-att-value="line.x_product_qty_dispute" t-on-change="(ev) => onchange_disputed_value(line.id, 'x_product_qty_dispute', +ev.target.value)"
+                                    t-att-value="formatNumber(line.x_product_qty_dispute)" t-on-change="(ev) => onchange_disputed_value(line.id, 'x_product_qty_dispute', +ev.target.value)"
                                     t-att-style="state.invalid_lines.has(line.id + '_x_product_qty_dispute') ? 'border: 1px solid red' : ''"
                                 />
                                     </td>
                                     <td class="text-end align-content-center" t-if="show_dispute_columns">
-                                        <t t-out="line.x_price_unit_dispute" t-if="show_dispute_values"/>
+                                        <t t-out="formatNumber(line.x_price_unit_dispute)" t-if="show_dispute_values"/>
                                         <input t-if="is_new_line || state.show_dispute_fields" type="number" class="form-control text-end"
-                                    t-att-value="line.x_price_unit_dispute" t-on-change="(ev) => onchange_disputed_value(line.id, 'x_price_unit_dispute', +ev.target.value)"
+                                    t-att-value="formatNumber(line.x_price_unit_dispute)" t-on-change="(ev) => onchange_disputed_value(line.id, 'x_price_unit_dispute', +ev.target.value)"
                                     t-att-style="state.invalid_lines.has(line.id + '_x_price_unit_dispute') ? 'border: 1px solid red' : ''"
                                 />
                                     </td>
                                     <td class="text-end align-content-center" t-if="show_approved_columns">
-                                        <t t-out="line.x_product_qty_approved" t-if="!is_new_line"/>
+                                        <t t-out="formatNumber(line.x_product_qty_approved)" t-if="!is_new_line"/>
                                     </td>
                                     <td t-if="is_new_line">
                                         <button class="btn btn-sm btn-outline-danger rounded-pill px-3" t-on-click="() => remove_line(line.id)">
@@ -159,8 +162,11 @@
                                         </button>
                                     </td>
                                     <td class="text-end align-content-center" t-if="show_approved_columns">
-                                        <t t-out="line.x_price_unit_approved" t-if="!is_new_line"/>
+                                        <t t-out="formatNumber(line.x_price_unit_approved)" t-if="!is_new_line"/>
                                     </td>
+                                    <!-- <td t-if="isInPurchaseOrderList" class="align-content-center">
+                                        <t t-out="line.x_origin_event || ''"/>
+                                    </td> -->
                                     <td class="py-3 px-3"></td>
                                 </tr>
                             </t>
@@ -172,23 +178,24 @@
                             <td class="py-3 px-3 text-end" t-if="['sent', 'to_consolidate', 'consolidated'].includes(state.order_data.state)">
                             </td>
                             <td class="py-3 px-3 text-end" t-if="['sent', 'to_consolidate', 'consolidated'].includes(state.order_data.state)">
-                                <span t-out="state.order_data.amount_untaxed_event"/>
+                                <span t-out="formatNumber(state.order_data.amount_untaxed_event)"/>
                             </td>
                             <td class="py-3 px-3 text-end">
                             </td>
                             <td class="py-3 px-3 text-end">
-                                <span t-out="state.order_data.amount_untaxed"/>
+                                <span t-out="formatNumber(state.order_data.amount_untaxed)"/>
                             </td>
                             <td t-if="show_dispute_columns" class="py-3 px-3 text-end">
                             </td>
                             <td t-if="show_dispute_columns" class="py-3 px-3 text-end">
-                                <span t-out="state.order_data.amount_untaxed_dispute"/>
+                                <span t-out="formatNumber(state.order_data.amount_untaxed_dispute)"/>
                             </td>
                             <td t-if="show_approved_columns" class="py-3 px-3 text-end">
                             </td>
                             <td t-if="show_approved_columns" class="py-3 px-3 text-end">
-                                <span t-out="state.order_data.amount_untaxed_approved"/>
+                                <span t-out="formatNumber(state.order_data.amount_untaxed_approved)"/>
                             </td>
+                            <!-- <td t-if="isInPurchaseOrderList" class="py-3 px-3"></td> -->
                             <td class="py-3 px-3"></td>
                         </tr>
                     </tbody>
@@ -200,7 +207,7 @@
                         <t t-out="translate('Add concept')"/>
                     </button>
                 </div>
-                <div class="col-12 mb-3" t-if="requireChangeReason">
+                <div class="col-12 mb-3">
                     <span>
                         <t t-out="translate('Specify the reason for the change')"/>
                     </span>
@@ -216,6 +223,86 @@
                     </button>
                 </div>
             </div>
+            <!-- Files Section -->
+            <!-- <div t-if="isInRfqList" class="card border-0 shadow-sm rounded-3 mt-4">
+                <div class="card-header bg-light d-flex align-items-center gap-2 py-2">
+                    <i class="fa fa-paperclip text-primary"/>
+                    <span class="fw-bold text-primary"><t t-out="translate('Files')"/></span>
+                </div>
+                <div class="card-body">
+                    <t t-set="imageAtts" t-value="(state.order_data.order_attachment_ids || []).filter(a => a.mimetype and a.mimetype.startsWith('image/'))"/>
+                    <t t-set="otherAtts" t-value="(state.order_data.order_attachment_ids || []).filter(a => !a.mimetype or !a.mimetype.startsWith('image/'))"/>
+                    <div t-if="imageAtts.length" class="d-flex flex-wrap gap-2 mb-3">
+                        <t t-foreach="imageAtts" t-as="att" t-key="att.id">
+                            <a t-att-href="'/web/image/' + att.id" target="_blank">
+                                <img t-att-src="'/web/image/' + att.id"
+                                     class="rounded border"
+                                     style="width:120px; height:90px; object-fit:cover;"/>
+                            </a>
+                        </t>
+                    </div>
+                    <div t-if="otherAtts.length" class="d-flex flex-wrap gap-2 mb-3">
+                        <t t-foreach="otherAtts" t-as="att" t-key="att.id">
+                            <a t-att-href="'/web/content/' + att.id + '?download=true'" target="_blank"
+                               class="badge bg-light text-dark border text-decoration-none py-2 px-3">
+                                <i class="fa fa-file me-1"/>
+                                <t t-out="att.name"/>
+                            </a>
+                        </t>
+                    </div>
+                    <label class="text-primary" style="cursor:pointer;">
+                        <i class="fa fa-plus-circle me-1"/>
+                        <t t-out="translate('Attach files')"/>
+                        <input type="file" class="d-none" multiple="multiple" t-on-change="onDirectFileSelect"/>
+                    </label>
+                </div>
+            </div> -->
+
+            <!-- Message Composer -->
+            <div t-if="isInRfqList" class="card border-0 shadow-sm rounded-3 mt-4">
+                <div class="card-header bg-light d-flex align-items-center gap-2 py-2">
+                    <i class="fa fa-comment text-primary"/>
+                    <span class="fw-bold text-primary"><t t-out="translate('Send a Message')"/></span>
+                </div>
+                <div class="card-body pb-2">
+                    <textarea class="form-control mb-2"
+                        t-ref="composerTextarea"
+                        rows="3"
+                        t-att-placeholder="translate('Write a message...')"
+                        t-on-input="onComposerInput"/>
+                    <!-- Selected file previews -->
+                    <div t-if="state.composerFiles.length" class="d-flex flex-wrap gap-2 mb-2">
+                        <t t-foreach="state.composerFiles" t-as="file" t-key="file_index">
+                            <div class="d-flex align-items-center gap-1 border rounded px-2 py-1 bg-light">
+                                <img t-if="file.preview" t-att-src="file.preview"
+                                     style="max-height:32px; max-width:40px; object-fit:cover;" class="rounded"/>
+                                <i t-else="" class="fa fa-paperclip text-muted"/>
+                                <small t-out="file.name" class="text-truncate" style="max-width:120px;"/>
+                                <button type="button" class="btn btn-sm p-0 ms-1 text-danger border-0 bg-transparent"
+                                        t-on-click="() => removeFile(file_index)">
+                                    <i class="fa fa-times"/>
+                                </button>
+                            </div>
+                        </t>
+                    </div>
+                    <!-- Actions row -->
+                    <div class="d-flex justify-content-between align-items-center pt-1">
+                        <!-- <label class="btn btn-sm btn-outline-secondary rounded-pill px-3 mb-0" style="cursor:pointer;">
+                            <i class="fa fa-paperclip me-1"/>
+                            <t t-out="translate('Attach')"/>
+                            <input type="file" class="d-none" multiple="multiple" t-on-change="onFileSelect"/>
+                        </label> -->
+                        <button class="btn btn-sm btn-primary rounded-pill px-3"
+                                t-on-click="postMessage"
+                                t-att-disabled="!canSendMessage">
+                            <i class="fa fa-paper-plane me-1"/>
+                            <t t-out="state.isSendingMessage ? translate('Sending...') : translate('Send')"/>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Message History -->
             <div class="mt-4" t-if="state.order_data.message_ids.length">
                 <h5 class="mb-3">
                     <t t-out="translate('Messages')"/>
@@ -229,6 +316,28 @@
                             </div>
                             <!-- Message body (may contain HTML) -->
                             <div t-out="messageBody(msg.body)" t-if="msg.body"/>
+                            <!-- Attachments -->
+                            <t t-if="msg.attachment_ids and msg.attachment_ids.length">
+                                <div class="d-flex flex-wrap gap-2 mt-2">
+                                    <t t-foreach="msg.attachment_ids" t-as="att" t-key="att.id">
+                                        <t t-if="att.mimetype and att.mimetype.startsWith('image/')">
+                                            <a t-att-href="'/web/image/' + att.id" target="_blank">
+                                                <img t-att-src="'/web/image/' + att.id"
+                                                     class="img-thumbnail"
+                                                     style="max-height:100px; max-width:150px; object-fit:cover;"/>
+                                            </a>
+                                        </t>
+                                        <t t-else="">
+                                            <a t-att-href="'/web/content/' + att.id + '?download=true'"
+                                               target="_blank"
+                                               class="badge bg-light text-dark border text-decoration-none py-2 px-3">
+                                                <i class="fa fa-paperclip me-1"/>
+                                                <t t-out="att.name"/>
+                                            </a>
+                                        </t>
+                                    </t>
+                                </div>
+                            </t>
                             <!-- Regular field tracking changes (non-O2M) -->
                             <t t-set="regularTrackings" t-value="(msg.tracking_value_ids || []).filter((tv) => !tv.o2m_record_id)"/>
                             <ul class="mb-0 mt-2 small text-muted" t-if="regularTrackings.length">

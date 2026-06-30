@@ -47,23 +47,23 @@
                 </group>
                 <group name="events_stage">
                     <filter string="Draft Events" name="all_draft" domain="[('stage_id.ref', '=', 'draft')]"/>
-                    <filter string="Events in capturing details" name="filter_capturing"
+                    <filter string="Events in capturing details" name="all_capturing"
                         domain="[('stage_id.ref', '=', 'capturing')]"/>
-                    <filter string="Events searching for supplier" name="filter_searching"
+                    <filter string="Events searching for supplier" name="all_searching"
                         domain="[('stage_id.ref', '=', 'searching')]"/>
-                    <filter string="Assigned Events" name="filter_assigned"
+                    <filter string="Assigned Events" name="all_assigned"
                         domain="[('stage_id.ref', '=', 'assigned')]"/>
-                    <filter string="In Progress Events" name="filter_in_progress"
+                    <filter string="In Progress Events" name="all_in_progress"
                         domain="[('stage_id.ref', '=', 'in_progress')]"/>
-                    <filter string="Completed Events" name="filter_completed"
+                    <filter string="Completed Events" name="all_completed"
                         domain="[('stage_id.ref', '=', 'completed')]"/>
-                    <filter string="Verifying Events" name="filter_verifying"
+                    <filter string="Verifying Events" name="all_verifying"
                         domain="[('stage_id.ref', 'in', ['verifying', 'cancel_verifying'])]"/>
-                    <filter string="Close Events" name="filter_close"
+                    <filter string="Close Events" name="all_close"
                         domain="[('stage_id.ref', 'in', ['closed', 'cancel_closed'])]"/>
-                    <filter string="Cancelled Events" name="filter_cancelled"
+                    <filter string="Cancelled Events" name="all_cancelled"
                         domain="[('stage_id.ref', '=', 'cancel')]"/>
-                    <filter string="Cancelled subsequently Events" name="filter_cancelled"
+                    <filter string="Cancelled subsequently Events" name="all_cancelled"
                         domain="[('stage_id.ref', '=', 'cancel_subsequently')]"/>
                 </group>
                 <group name="type_search">
@@ -76,6 +76,7 @@
                 </group>
                 <group expand="1" string="Group By">
                     <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/>
+                    <filter string="Account" name="account_id" context="{'group_by':'account_id'}"/>
                     <filter string="Stage" name="stage" domain="[]" context="{'group_by':'stage_id'}"/>
                     <filter string="Service" name="service" domain="[]" context="{'group_by':'service_id'}"/>
                     <filter string="Subservice" name="subservice" domain="[]" context="{'group_by':'sub_service_id'}"/>
@@ -99,22 +100,33 @@
                 </header>
                 <field name="name"/>
                 <field name="event_date" optional="show"/>
+                <field name="account_id" optional="show"/>
                 <field name="user_id"/>
                 <field name="service_id"/>
                 <field name="sub_service_id" context="{'display_default_code': 0}"/>
-                <field name="selected_supplier_ids" widget="many2many_tags" />
                 <field name="stage_id" widget="badge"/>
                 <field name="stage_ref" column_invisible="1"/>
+                <field name="selected_supplier_ids" widget="many2many_tags">
+                    <list>
+                        <field name="supplier_id"/>
+                        <field name="supplier_number"/>
+                        <field name="truck_id"/>
+                    </list>
+                </field>
                 <!-- Stage Tracking -->
-                <!--
-                <field name="current_stage_date" column_invisible="1"/>
-                <field name="current_elapsed_time_minutes" column_invisible="1"/>
-                <field name="stage_apply_max_wait_time" column_invisible="1"/>
                 <field name="stage_max_wait_time_minutes" column_invisible="1"/>
-                <field name="stage_apply_tracking_time" column_invisible="1"/>
                 <field name="stage_tracking_time_minutes" column_invisible="1"/>
-                <widget name="ike_stage_tracking_comment"/>
-                -->
+                <field name="current_stage_date" column_invisible="1"/>
+                <field name="current_stage_comment_ids" string="Warnings" widget="ike_stage_tracking_comment">
+                    <list>
+                        <field name="comment_type"/>
+                        <field name="supplier_number"/>
+                        <field name="elapsed_time_seconds"/>
+                        <field name="create_date"/>
+                        <field name="sequence"/>
+                    </list>
+                </field>
+                <field name="current_elapsed_time_seconds" string="Elapsed" widget="ike_stage_elapsed" width="90px"/>
             </list>
         </field>
     </record>
@@ -409,6 +421,7 @@
                                 <list>
                                     <field name="folio"/>
                                     <field name="supplier_id"/>
+                                    <field name="purchase_supplier_id" optional="hide"/>
                                     <field name="truck_id"/>
                                     <field name="state"/>
                                     <field name="stage_id"/>

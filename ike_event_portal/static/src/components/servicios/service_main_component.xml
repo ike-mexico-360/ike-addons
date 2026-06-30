@@ -117,7 +117,7 @@
                                         <h6 class="fw-bold text-primary mb-0">
                                             <i class="fa fa-calculator me-2"/><t t-out="translate('Service Costs')"/>
                                         </h6>
-                                        <button t-if="!state.modal.isAddingConcept"
+                                        <button t-if="!state.modal.isAddingConcept and !isEventFinalized"
                                             type="button"
                                             class="btn btn-success btn-sm rounded-pill px-3"
                                             t-on-click="onAddConceptClick">
@@ -188,6 +188,7 @@
                                                                    t-att-value="item.quantity"
                                                                    min="0"
                                                                    step="1"
+                                                                   t-att-disabled="isEventFinalized ? true : undefined"
                                                                    t-on-change="(ev) => this.onCostItemFieldChange(item.id, 'quantity', ev)"/>
                                                         </td>
                                                         <td class="py-3 px-3 text-center">
@@ -201,6 +202,7 @@
                                                                        t-att-value="item.unit_price"
                                                                        min="0"
                                                                        step="0.01"
+                                                                       t-att-disabled="isEventFinalized ? true : undefined"
                                                                        t-on-change="(ev) => this.onCostItemFieldChange(item.id, 'unit_price', ev)"/>
                                                             </div>
                                                         </td>
@@ -217,7 +219,7 @@
                                                             <t t-out="formatCurrency(item.subtotal)"/>
                                                         </td>
                                                         <td class="py-3 px-3 text-center">
-                                                            <button t-if="item.from_portal"
+                                                            <button t-if="item.from_portal and !isEventFinalized"
                                                                     type="button"
                                                                     class="btn btn-outline-danger btn-sm"
                                                                     t-att-title="translate('Delete concept')"
@@ -234,6 +236,7 @@
                                     <div class="d-flex justify-content-end mt-3">
                                         <button type="button"
                                                 class="btn btn-primary rounded-pill px-4"
+                                                t-if="!isEventFinalized"
                                                 t-on-click="onSendAdditionalConceptsRequest">
                                             <i class="fa fa-paper-plane me-2"/><t t-out="translate('Send request for additional concepts')"/>
                                         </button>

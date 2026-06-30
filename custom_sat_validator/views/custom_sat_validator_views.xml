@@ -30,6 +30,16 @@
                             type="object"
                             class="oe_highlight"
                             invisible="state in ['validated']"/>
+                    <button name="action_force_validate_xml_from_sat"
+                            string="Validate (Only XML in SAT)"
+                            type="object"
+                            groups="base.group_no_one"
+                            class="oe_highlight"/>
+                    <button name="action_draft"
+                            string="Return draft"
+                            type="object"
+                            groups="base.group_no_one"
+                            class="oe_highlight"/>
 
                     <field name="state" widget="statusbar" statusbar_visible="draft,xml_error,validated"/>
                 </header>
@@ -41,6 +51,7 @@
                     <group string="Purchase Order">
                         <group>
                             <field name="purchase_id" readonly="state == 'validated'"/>
+                            <field name="invoice_id" readonly="1"/>
                         </group>
                     </group>
 
@@ -54,9 +65,10 @@
                     <group string="Extracted XML Data (Automated)" invisible="not sat_uuid">
                         <group>
                             <field name="sat_uuid"/>
-                            <field name="total_amount"/>
+                            <field name="xml_invoice_date"/>
                         </group>
                         <group>
+                            <field name="total_amount"/>
                             <field name="emisor_rfc"/>
                             <field name="receptor_rfc"/>
                         </group>
@@ -87,19 +99,4 @@
         <field name="context"></field>
     </record>
 
-    <!-- Menuitem -->
-    <menuitem
-        id="menu_custom_sat_validator_root"
-        name="SAT Services"
-        groups="base.group_system,custom_master_catalog.custom_group_ccc_analyst"
-        sequence="10"
-        />
-    <menuitem
-        id="menu_custom_sat_validator_sub"
-        name="CFDI Live Check"
-        parent="menu_custom_sat_validator_root"
-        action="action_custom_sat_validator"
-        groups="base.group_system,custom_master_catalog.custom_group_ccc_analyst"
-        sequence="10"
-        />
 </odoo>

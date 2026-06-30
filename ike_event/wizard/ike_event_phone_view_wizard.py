@@ -12,11 +12,11 @@ class IkeEvenPhoneWizard(models.Model):
         string='Supplier',
     )
 
-    x_phone_p1 = fields.Char(related='ike_event_supplier_id.supplier_id.x_phone_p1')
-    x_phone_p2 = fields.Char(related='ike_event_supplier_id.supplier_id.x_phone_p2')
-    x_phone_p3 = fields.Char(related='ike_event_supplier_id.supplier_id.x_phone_p3')
-    x_phone_p4 = fields.Char(related='ike_event_supplier_id.supplier_id.x_phone_p4')
-    x_phone_p5 = fields.Char(related='ike_event_supplier_id.supplier_id.x_phone_p5')
+    x_phone_p1 = fields.Char(related='ike_event_supplier_id.supplier_id.x_phone_p1', string='Phone 1')
+    x_phone_p2 = fields.Char(related='ike_event_supplier_id.supplier_id.x_phone_p2', string='Phone 2')
+    x_phone_p3 = fields.Char(related='ike_event_supplier_id.supplier_id.x_phone_p3', string='Phone 3')
+    x_phone_p4 = fields.Char(related='ike_event_supplier_id.supplier_id.x_phone_p4', string='Phone 4')
+    x_phone_p5 = fields.Char(related='ike_event_supplier_id.supplier_id.x_phone_p5', string='Phone 5')
 
     x_phone_p1_classification_id = fields.Many2one(related='ike_event_supplier_id.supplier_id.x_phone_p1_classification_id')
     x_phone_p2_classification_id = fields.Many2one(related='ike_event_supplier_id.supplier_id.x_phone_p2_classification_id')

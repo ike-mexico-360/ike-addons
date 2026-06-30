@@ -277,6 +277,7 @@ class IkeEvent_Search(models.Model):
         if not latitude or not longitude:
             raise UserError(_('No latitude/longitude was assigned to the location.'))
 
+        # Event models variables
         municipality, vehicle_category_id = self._get_event_service_variables()
         service_vehicle_type_ids, service_accessory_ids = self._get_event_sub_service_variables()
 
@@ -552,6 +553,7 @@ class IkeEvent_Search(models.Model):
             SELECT DISTINCT
                 ga.partner_id as supplier_center_id
                 ,ga.parent_id as supplier_id
+                ,su.x_negotiation_type
                 ,gap.priority
                 ,su.x_is_special_accounts
                 ,su.x_is_exclusive_accounts
@@ -573,24 +575,96 @@ class IkeEvent_Search(models.Model):
 
         return supplier_centers_data
 
-    def _set_covered_amount(self, total_max_distance_km):
-        self.ensure_one()
-        membership_service_line_id = self.user_membership_id.membership_plan_id.product_line_ids.filtered(
-            lambda x: self.sub_service_id in x.sub_service_ids)
-        if membership_service_line_id and membership_service_line_id.limit_ids:
-            limit_id = membership_service_line_id.limit_ids.filtered(
-                lambda x:
-                    total_max_distance_km >= x.limit_coverage_min and total_max_distance_km <= x.limit_coverage_max
-                    and x.amount > self.covered_amount
+    def _get_vehicles_data(self, vehicles_domain, max_radius_km):
+        service_vehicle_ids = self.env['fleet.vehicle'].search(vehicles_domain, order='x_center_id')
+
+        service_vehicles_data = [{
+            'id': rec.id,
+            'ref': rec.x_vehicle_ref,
+            'driver_id': rec.driver_id.id,
+            'driver_name': rec.driver_id.name,
+            'license_plate': rec.license_plate,
+            'vehicle_type': rec.vehicle_type,
+            'supplier_id': rec.x_partner_id.id,
+            'center_id': rec.x_center_id.id,
+            'latitude': rec.x_latitude,
+            'longitude': rec.x_longitude,
+            'negotiation_type': rec.x_partner_id.x_negotiation_type,
+            'center_latitude': rec.x_center_id.partner_latitude,
+            'center_longitude': rec.x_center_id.partner_longitude,
+            'distance_m': 0,
+            'duration_s': 0,
+        } for rec in service_vehicle_ids]
+
+        supplier_base_origin = {}
+        vehicles_osrm = []
+
+        origin_latitude = self.location_latitude
+        origin_longitude = self.location_longitude
+
+        for vehicle in service_vehicles_data:
+            negotiation_type = vehicle['negotiation_type']
+            center_id = vehicle['center_id']
+            vehicle_latitude = float(vehicle['latitude'])
+            vehicle_longitude = float(vehicle['longitude'])
+            center_latitude = float(vehicle['center_latitude'])
+            center_longitude = float(vehicle['center_longitude'])
+            if not negotiation_type or negotiation_type in ['base_base', 'base_destination']:
+                vehicle['latitude'] = center_latitude
+                vehicle['longitude'] = center_longitude
+                # Base to Origin
+                if center_latitude and center_longitude:
+                    if center_id not in supplier_base_origin:
+                        supplier_base_origin[center_id] = self._get_osrm_distance(
+                            center_latitude, center_longitude,
+                            origin_latitude, origin_longitude
+                        )
+                    vehicle = supplier_base_origin[center_id] | vehicle
+                if negotiation_type == 'base_destination':
+                    if self.use_external_locations:
+                        vehicles_osrm.append(vehicle['ref'])
+                    else:
+                        osrm_distance = self._get_osrm_distance(
+                            vehicle_latitude, vehicle_longitude,
+                            origin_latitude, origin_longitude
+                        )
+                        vehicle = osrm_distance | vehicle
+            elif negotiation_type == 'origin_destination':
+                vehicle['latitude'] = origin_latitude
+                vehicle['longitude'] = origin_longitude
+                vehicle['distance_m'] = 0
+                vehicle['duration_s'] = 0
+
+        if len(vehicles_osrm):
+            vehicles_osrm_data = self._get_external_vehicles_location(
+                float(self.location_latitude),
+                float(self.location_longitude),
+                vehicle_refs=[str(x) for x in vehicles_osrm],
+                radius_m=float(max_radius_km * 1000),
+                max_distance_m=float(max_radius_km * 1.4 * 1000),
             )
-            if limit_id:
-                self.sudo().write({
-                    'covered_amount': limit_id[0].amount,
-                })
-                if self.authorized_amount < self.covered_amount:
-                    self.sudo().write({
-                        'authorized_amount': limit_id[0].amount,
-                    })
+
+            if len(vehicles_osrm_data):
+                for vehicle in service_vehicles_data:
+                    data = next(
+                        (x for x in vehicles_osrm_data if x['vehicle_ref'] == vehicle['ref']),
+                        None
+                    )
+                    if data:
+                        vehicle['latitude'] = data.get('lat', None)
+                        vehicle['longitude'] = data.get('lng', None)
+                        vehicle['distance_m'] = data.get('distance_m', 0) / 1000
+                        vehicle['duration_s'] = data.get('duration_s', 0) / 60
+                        vehicle['osrm'] = True
+
+        return service_vehicles_data
+
+    def _get_osrm_distance(self, lat, lng, lat_dest, lng_dest):
+        return {
+            'distance_m': 5000,
+            'duration_s': 10,
+            'osrm': True,
+        }
 
     def get_supplier_products_matrix_line_ids(
         self,
@@ -894,6 +968,25 @@ class IkeEvent_Search(models.Model):
                 'covered': product_line_id.covered,
             }))
         return sorted(products_data, key=lambda x: x[2].get('sequence'))
+
+    def _set_covered_amount(self, total_max_distance_km):
+        self.ensure_one()
+        membership_service_line_id = self.user_membership_id.membership_plan_id.product_line_ids.filtered(
+            lambda x: self.sub_service_id in x.sub_service_ids)
+        if membership_service_line_id and membership_service_line_id.limit_ids:
+            limit_id = membership_service_line_id.limit_ids.filtered(
+                lambda x:
+                    total_max_distance_km >= x.limit_coverage_min and total_max_distance_km <= x.limit_coverage_max
+                    and x.amount > self.covered_amount
+            )
+            if limit_id:
+                self.sudo().write({
+                    'covered_amount': limit_id[0].amount,
+                })
+                if self.authorized_amount < self.covered_amount:
+                    self.sudo().write({
+                        'authorized_amount': limit_id[0].amount,
+                    })
 
     # === PROCESS METHODS === #
     def _process_suppliers_data(self, service_suppliers, assignation_type, priority=None):

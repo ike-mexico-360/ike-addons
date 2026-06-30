@@ -150,6 +150,46 @@ class CustomerPortal(PurchasePortal):
             _logger.error(f"Error at get_supplier_product_matrix_lines: {str(e)}")
             return {"success": False, "message": str(e)}
 
+    @http.route(
+        ["/my/purchase/<int:order_id>/post_message"],
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=False,
+    )
+    def post_purchase_order_message(self, order_id, body=None, attachments=None, **kw):
+        try:
+            # Get the purchase order
+            purchase_order = request.env['purchase.order'].browse(order_id)
+
+            # Check if user has access to this purchase order
+            if not purchase_order.exists():
+                return {"success": False, "error": _("Purchase order not found")}
+
+            # Post the message
+            message = purchase_order.message_post(
+                body=body,
+                message_type='comment',
+                subtype_id=request.env.ref('mail.mt_comment').id,
+            )
+
+            # Handle attachments if provided
+            if attachments:
+                for attachment_data in attachments:
+                    request.env['ir.attachment'].create({
+                        'name': attachment_data.get('name', 'attachment'),
+                        'type': 'binary',
+                        'datas': attachment_data.get('data', ''),
+                        'mimetype': attachment_data.get('mimetype', 'application/octet-stream'),
+                        'res_model': 'mail.message',
+                        'res_id': message.id,
+                    })
+
+            return {"success": True, "message_id": message.id}
+        except Exception as e:
+            _logger.error(f"Error posting message to purchase order {order_id}: {str(e)}")
+            return {"success": False, "error": str(e)}
+
 
 class PurchaseOrderController(http.Controller):
 
@@ -202,7 +242,7 @@ class PurchaseOrderController(http.Controller):
                     'product_uom': {'fields': {'id': {}, 'name': {}, 'display_name': {}}},
                     'price_unit': {},
                     'taxes_id': {'fields': {'id': {}, 'name': {}, 'display_name': {}}},
-                    'x_concept_line_id': {'fields': {'id': {}, 'display_name': {}}},
+                    # 'x_concept_line_id': {'fields': {'id': {}, 'display_name': {}}},
                     'x_price_unit_dispute': {},
                     'x_product_qty_dispute': {},
                     'x_price_unit_approved': {},

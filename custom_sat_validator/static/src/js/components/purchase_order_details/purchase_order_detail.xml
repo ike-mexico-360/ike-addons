@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="custom_sat_validator.PurchaseOrderDetailsInherit"
+    t-inherit="ike_event_purchase.PurchaseOrderDetails"
+    t-inherit-mode="extension">
+
+        <xpath expr="//tr[contains(@class, 'fw-bold')]" position="after">
+            <!-- <div t-if="request.env.user.has_group('base.group_system') or request.env.user.has_group('ike_event_portal.custom_group_portal_finance')"
+                 class="card p-3 mt-3 border rounded"> -->
+                <t t-if="state.order_data.cfdi_is_valid and state.order_data.tax_totals">
+
+                    <t t-foreach="state.order_data.tax_totals.subtotals"
+                    t-as="subtotal"
+                    t-key="subtotal.name">
+
+                        <t t-foreach="subtotal.tax_groups"
+                        t-as="tax_group"
+                        t-key="tax_group.id">
+
+                            <tr>
+                                <td></td>
+
+                                <td class="text-end">
+                                    <span t-out="tax_group.group_name"/>
+                                </td>
+
+                                <td class="text-end">
+                                    <span t-out="tax_group.tax_amount_currency.toFixed(2)"/>
+                                </td>
+                            </tr>
+
+                        </t>
+                    </t>
+
+                    <tr class="fw-bold">
+                        <td></td>
+
+                        <td class="text-end">
+                            Total
+                        </td>
+
+                        <td class="text-end">
+                            <span t-out="state.order_data.tax_totals.total_amount_currency.toFixed(2)"/>
+                        </td>
+                    </tr>
+                </t>
+            <!-- </div> -->
+        </xpath>
+    </t>
+</templates>

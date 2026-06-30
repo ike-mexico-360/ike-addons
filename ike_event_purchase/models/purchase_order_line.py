@@ -13,6 +13,7 @@ class PurchaseOrderLine(models.Model):
         'ike.event.supplier.product', 'Supplier Product', copy=False,
         help="Technical: Link to event concept product")
 
+    # ToDo: Remove this field aprox, 2 months ago. 'x_concept_line_id'
     x_concept_line_id = fields.Many2one(
         'custom.membership.plan.product.line', 'Concept Line', copy=False,
         help="Technical: Link to membership plan concept line")
@@ -33,12 +34,26 @@ class PurchaseOrderLine(models.Model):
     x_product_qty_event = fields.Integer('Event Quantity', related='x_supplier_product_id.quantity')
     x_price_subtotal_event = fields.Monetary(compute='_x_compute_amount_event', string='Subtotal event', aggregator=None, store=True)
 
+    # ToDo: Remove this field aprox, 2 months ago. 'x_parent_event_id'
     x_parent_event_id = fields.Many2one('ike.event', 'Event', help="Techinical: Refer to the event of the purchase order")
+    x_parent_expedient = fields.Char(string='Parent Expedient', help="Techinical: Refer to the event of the purchase order")
+    x_sap_code_income = fields.Char(string='SAP Code Income', help="Techinical: Refer to the event of the purchase order")
+    x_sap_code_outgoing = fields.Char(string='SAP Code Outgoing', help="Techinical: Refer to the event of the purchase order")
+    x_sap_product_description = fields.Char(string='SAP Product Description', help="Techinical: Refer to the event of the purchase order")
 
     x_covered = fields.Boolean('Covered', default=False)
     x_mandatory = fields.Boolean('Mandatory', default=False)
 
     x_product_domain = fields.Binary(compute='_x_compute_product_domain')
+
+    # External flow
+    x_external_api_record = fields.Boolean(
+        string='External API Record', default=False,
+        help="Technical: Record created by external API.")
+    # x_supplier_material_number = fields.Char(
+    #     string='Supplier Material Number', help="Technical: SAP income code")
+    # x_material = fields.Char(
+    #     string='Material', help="Technical: SAP outgoing code")
 
     # === ONCHANGES === #
     @api.onchange('product_id')
@@ -81,7 +96,7 @@ class PurchaseOrderLine(models.Model):
     def _x_compute_product_domain(self):
         for rec in self:
             selected_product_ids = rec.order_id.order_line.filtered(
-                lambda l: l.product_id and l.id != rec.id
+                lambda line: line.product_id and line.id != rec.id
             ).mapped('product_id').ids
 
             domain = [

@@ -85,4 +85,5 @@
         <field name="perm_create" eval="True"/>
         <field name="perm_unlink" eval="False"/>
     </record>
+
 </odoo>

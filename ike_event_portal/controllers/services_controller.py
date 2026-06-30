@@ -60,6 +60,18 @@ class PortalUserAccount(CustomerPortal):
                 order="id DESC",
             )
 
+            # Deduplicate by (supplier_id, event_id) to avoid showing the same
+            # supplier+event combination multiple times in the portal list.
+            seen = set()
+            unique_supplier_lines = []
+            for line in supplier_lines:
+                key = (line.supplier_id.id, line.event_id.id)
+                if key in seen:
+                    continue
+                seen.add(key)
+                unique_supplier_lines.append(line)
+            supplier_lines = unique_supplier_lines
+
             if supplier_lines:
                 results = []
 
@@ -378,7 +390,7 @@ class PortalUserAccount(CustomerPortal):
     )
     def request_authorization(self, event_supplier_id):
         try:
-            supplier = request.env["ike.event.supplier"].browse(event_supplier_id)
+            supplier = request.env["ike.event.supplier"].sudo().browse(event_supplier_id)
             supplier.action_request_authorization()
             return {"success": True}
         except Exception as e:

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menuitem -->
+    <menuitem
+        id="menu_custom_sat_validator_root"
+        name="SAT Services"
+        groups="base.group_system,custom_master_catalog.custom_group_ccc_boss"
+        sequence="10"
+        />
+    <menuitem
+        id="menu_custom_sat_validator_sub"
+        name="CFDI Live Check"
+        parent="menu_custom_sat_validator_root"
+        action="action_custom_sat_validator"
+        groups="base.group_system,custom_master_catalog.custom_group_ccc_boss"
+        sequence="10"
+        />
+    <menuitem
+        id="menu_custom_sat_validator_config"
+        name="Settings"
+        parent="custom_sat_validator.menu_custom_sat_validator_root"
+        action="action_custom_sat_validator_config"
+        groups="base.group_system,custom_master_catalog.custom_group_ccc_boss"
+        sequence="100"
+        />
+</odoo>

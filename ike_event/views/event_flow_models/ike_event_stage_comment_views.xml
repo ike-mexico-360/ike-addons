@@ -1,6 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- View ike.event.stage.comment search -->
+    <record id="view_ike_event_stage_comment_search" model="ir.ui.view">
+        <field name="name">view.ike.event.stage.comment.search</field>
+        <field name="model">ike.event.stage.comment</field>
+        <field name="arch" type="xml">
+            <search>
+                <group expand="1" string="Group By">
+                    <filter string="Stage" name="group_by_stage" domain="[]" context="{'group_by':'stage_id'}"/>
+                    <filter string="Comment Type" name="group_by_comment_type" domain="[]" context="{'group_by':'comment_type'}"/>
+                    <filter string="Supplier Number" name="group_by_supplier_number" domain="[]" context="{'group_by':'supplier_number'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
 
+    <!-- View ike.event.stage.comment list -->
+    <record id="view_ike_event_stage_comment_list" model="ir.ui.view">
+        <field name="name">view.ike.event.stage.comment.list</field>
+        <field name="model">ike.event.stage.comment</field>
+        <field name="arch" type="xml">
+            <list expand="1">
+                <field name="create_date" string="Date" />
+                <field name="stage_id" />
+                <field name="sequence" optional="hide" />
+                <field name="comment_type" optional="hide"/>
+                <field name="supplier_number"/>
+                <field name="event_line_id" column_invisible="1"/>
+                <field name="event_line_supplier_id"/>
+                <field name="elapsed_time_seconds" column_invisible="1" />
+                <field name="duration_text" string="Elapsed" optional="hide" />
+                <field name="duration_minutes" widget="integer" options="{'postfix': 'minutes'}" optional="show" />
+                <field name="comment" />
+            </list>
+        </field>
+    </record>
     <!-- View ike.event.stage.comment form -->
     <record id="view_ike_event_stage_comment_form" model="ir.ui.view">
         <field name="name">view.ike.event.stage.comment.form</field>
@@ -9,11 +43,28 @@
             <form>
                 <sheet>
                     <group>
-                        <group>
-                            <field name="event_id" readonly="1" options="{'no_open': True}"/>
+                        <field name="event_id" readonly="1" options="{'no_open': True}"/>
+                        <field name="comment_type" invisible="1"/>
+                    </group>
+                    <group>
+                        <group invisible="comment_type != 'user'">
+                            <field name="nu_user_id" options="{'no_create': 1, 'no_open': 1}"/>
+                            <field name="nu_user_phone" />
+                            <field name="nu_user_membership_validity" />
+                            <field name="nu_user_membership_account" />
+                        </group>
+                        <group invisible="comment_type != 'supplier'">
+                            <field name="event_line_id" readonly="1" options="{'no_open': True}" invisible="1"/>
+                            <field name="event_line_supplier_id" options="{'no_open': True}"/>
+                            <field name="event_line_vehicle_id" options="{'no_open': True}"/>
+                            <field name="event_line_vehicle_driver"/>
+                            <field name="event_line_estimated_distance"/>
+                            <field name="event_line_estimated_duration"/>
+                            <field name="event_line_assignation_type"/>
                         </group>
                         <group invisible="id > 0">
                             <field name="stage_id" readonly="1" options="{'no_open': True}"/>
+                            <field name="supplier_number" readonly="1" invisible="comment_type != 'supplier'"/>
                             <field name="sequence" readonly="1"/>
                             <field name="comment"/>
                             <div class="d-flex justify-content-end gap-1">
@@ -22,19 +73,37 @@
                             <field name="previous_date" readonly="1" invisible="1"/>
                         </group>
                     </group>
-                    <group>
-                        <field name="stage_comment_ids" readonly="1" nolabel="1" widget="one2many">
-                            <list>
-                                <field name="create_date" string="Date"/>
-                                <field name="stage_id"/>
-                                <field name="sequence" optional="hide"/>
-                                <field name="elapsed_time_minutes" column_invisible="1"/>
-                                <field name="duration_text" string="Elapsed" optional="show"/>
-                                <field name="duration_minutes" widget="integer" options="{'postfix': 'minutes'}" optional="show"/>
-                                <field name="comment"/>
-                            </list>
-                        </field>
-                    </group>
+                    <notebook>
+                        <page name="comments" string="Comments">
+                            <field name="stage_comment_ids" readonly="1" nolabel="1" widget="one2many">
+                                <list>
+                                    <field name="create_date" string="Date" />
+                                    <field name="stage_id" />
+                                    <field name="sequence" optional="hide" />
+                                    <field name="elapsed_time_seconds" column_invisible="1" />
+                                    <field name="duration_text" string="Elapsed" optional="show" />
+                                    <field name="duration_minutes" widget="integer" options="{'postfix': 'minutes'}" optional="show" />
+                                    <field name="comment" />
+                                </list>
+                            </field>
+                        </page>
+                        <page name="phones" string="Phones">
+                            <label for="event_line_supplier_phone" string="Phones" />
+                            <div>
+                                <field name="event_line_supplier_phone" readonly="1" />
+                                <br />
+                                <field name="event_line_supplier_phone_1" readonly="1" />
+                                <br />
+                                <field name="event_line_supplier_phone_2" readonly="1" />
+                                <br />
+                                <field name="event_line_supplier_phone_3" readonly="1" />
+                                <br />
+                                <field name="event_line_supplier_phone_4" readonly="1" />
+                                <br />
+                                <field name="event_line_supplier_phone_5" readonly="1" />
+                            </div>
+                        </page>
+                    </notebook>
                 </sheet>
                 <footer>
                     <button string="Close" special="cancel" invisible="id" data-hotkey="shift-x"/>

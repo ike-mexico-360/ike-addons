@@ -50,13 +50,21 @@ document.addEventListener("click", async function (ev) {
                 const resultDiv = document.getElementById("xml_validation_result");
 
                 if (response.success) {
+                    const alertClass = response.state === "xml_error" || response.state === "error"
+                        ? "alert-danger"
+                        : "alert-success";
+
                     resultDiv.innerHTML = `
-                        <div class="alert alert-success mt-3">
+                        <div class="alert ${alertClass} mt-3">
                             <strong>Status:</strong> ${response.state}<br/>
                             <strong>SAT Status:</strong> ${response.sat_status}<br/>
                             <strong>Log:</strong> ${response.validation_log}
                         </div>
                     `;
+                    // Notificar al componente OWL para que recargue los datos
+                    document.dispatchEvent(new CustomEvent("xml_validated", {
+                        detail: { sat_status: response.sat_status }
+                    }));
                 } else {
                     resultDiv.innerHTML = `
                         <div class="alert alert-danger mt-3">

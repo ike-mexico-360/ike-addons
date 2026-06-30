@@ -87,6 +87,39 @@ class ResPartner(models.Model):
             self.x_is_account = False
             self.x_is_ike = False
 
+    @api.onchange('zip')
+    def onchange_zip(self):
+        if not self.zip:
+            self.city = False
+            self.state_id = False
+            self.country_id = False
+            return
+
+        zip_code = self.zip
+
+        code_record = self.env['custom.state.municipality.code'].search(
+            [('zip_code', '=', zip_code), ('active', '=', True)],
+            limit=1
+        )
+
+        if not code_record:
+            self.zip = False
+            self.city = False
+            self.state_id = False
+            self.country_id = False
+            return {
+                'warning': {
+                    'title': _('Postal Code not found'),
+                    'message': _('The postal code "%s" does not exist in the geographic Zones catalog.') % zip_code,
+                }
+            }
+
+        municipality = code_record.municipality_id
+
+        self.city = municipality.name
+        self.state_id = municipality.state_id
+        self.country_id = municipality.country_id
+
     @api.onchange('x_use_parent_invoice_info')
     def _onchange_x_use_parent_invoice_info(self):
         if self.x_use_parent_invoice_info:

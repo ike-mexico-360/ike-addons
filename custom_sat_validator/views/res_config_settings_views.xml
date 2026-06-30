@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_sat" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.sat.validator</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="SAT Validator" string="SAT Validator" name="custom_sat_validator">
+                    <block title="XML Validation" name="xml_validation_block">
+                        <setting id="xml_max_days_setting"
+                                 string="Date Restrictions"
+                                 help="Set the maximum day limit allowed for XML emission relative to the Purchase Order date.">
+                            <div class="content-group">
+                                <div class="row mt16">
+                                    <label for="x_xml_max_days_old" class="col-lg-4 o_light_label"/>
+                                    <field name="x_xml_max_days_old" class="col-lg-2"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_custom_sat_validator_config" model="ir.actions.act_window">
+        <field name="name">Settings</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+        <field name="context">{'module' : 'custom_sat_validator'}</field>
+    </record>
+</odoo>

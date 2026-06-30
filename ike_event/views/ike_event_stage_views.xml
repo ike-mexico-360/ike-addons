@@ -9,9 +9,7 @@
             <list create="0" delete="0" duplicate="0" editable="bottom">
                 <field name="sequence" readonly="1"/>
                 <field name="name" readonly="1"/>
-                <field name="apply_max_wait_time"/>
                 <field name="max_wait_time_minutes"/>
-                <field name="apply_tracking_time"/>
                 <field name="tracking_time_minutes"/>
             </list>
         </field>

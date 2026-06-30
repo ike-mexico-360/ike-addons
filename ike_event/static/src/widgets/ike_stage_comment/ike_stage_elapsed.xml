@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-name="ike_event.IkeStageElapsed">
+        <div class="d-flex gap-1 justify-content-end">
+            <span>
+                <i t-att-style="state.maxWaitTimeWarning ? '' : 'color: transparent !important;'"
+                    class="fa fa-exclamation-triangle text-danger ike_blinking" />
+                <span class="ms-1" t-out="state.valueFormatted" />
+            </span>
+        </div>
+    </t>
+
+</templates>

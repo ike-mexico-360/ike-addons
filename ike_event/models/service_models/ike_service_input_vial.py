@@ -20,6 +20,7 @@ class IkeServiceVial(models.Model):
         'vehicle_plate',
         'vehicle_color',
         'vehicle_year',
+        'vehicle_category_id',
     ]
 
     identification_type = fields.Selection([

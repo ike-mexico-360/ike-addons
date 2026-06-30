@@ -2059,5 +2059,29 @@ msgstr "La hora ha sido registrada exitosamente."
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "You have a new service available."
+msgstr "Tienes un nuevo servicio disponible."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "The Contacted time must be registered first"
+msgstr "Primero se debe registrar la hora de contacto"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Finalized timestamp is already registered"
+msgstr "El tiempo de finalización ya esta registrado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Finalized time must be after the contacted date"
+msgstr "La hora definitiva debe ser posterior a la fecha de contacto"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
 msgid "Error registering clock"
 msgstr "Error al registrar el reloj"

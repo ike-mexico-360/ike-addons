@@ -438,6 +438,122 @@ class IkeEventSupplier(models.Model):
             '6': self.action_finalize,
         }
 
+        if progress_state == '1':
+            # On Route
+            on_route_to_user_start_date = fields.Datetime.now()
+            on_route_to_user_id = self.env.user
+            on_route_to_start_comment = f'{self.supplier_id.display_name} - {on_route_to_user_start_date}'
+
+            if not self.first_on_route_to_user_start_date:
+                self.write({
+                    'first_on_route_to_user_start_date': on_route_to_user_start_date,
+                    'first_on_route_to_start_user_id': on_route_to_user_id.id,
+                    'first_on_route_to_start_comment': _(
+                        f'On Route - Datetime: {on_route_to_user_start_date}'
+                    ),
+                })
+
+            self.write({
+                'on_route_to_user_start_date': on_route_to_user_start_date,
+                'on_route_to_start_user_id': on_route_to_user_id.id,
+                'on_route_to_start_comment': on_route_to_start_comment,
+            })
+
+        elif progress_state == '2':
+            # Arrived
+            arrive_date = fields.Datetime.now()
+            arrive_user_id = self.env.user
+            arrive_comment = f'{self.supplier_id.display_name} - {arrive_date}'
+
+            if not self.first_on_route_to_user_end_date:
+                self.write({
+                    'first_on_route_to_user_end_date': arrive_date,
+                    'first_on_route_to_end_user_id': arrive_user_id.id,
+                    'first_on_route_to_end_comment': arrive_comment,
+                })
+
+            self.write({
+                'on_route_to_user_end_date': arrive_date,
+                'on_route_to_end_user_id': arrive_user_id.id,
+                'on_route_to_end_comment': arrive_comment,
+            })
+
+        elif progress_state == '3':
+            # Contacted
+            contacted_date = fields.Datetime.now()
+            contacted_user_id = self.env.user
+            contacted_comment = f'{self.supplier_id.display_name} - {contacted_date}'
+
+            if not self.first_contacted_date:
+                self.write({
+                    'first_contacted_date': contacted_date,
+                    'first_contacted_user_id': contacted_user_id.id,
+                    'first_contacted_comment': contacted_comment,
+                })
+
+            self.write({
+                'contacted_date': contacted_date,
+                'contacted_user_id': contacted_user_id.id,
+                'contacted_comment': contacted_comment,
+            })
+
+        elif progress_state == '4':
+            # On Route to Destiny
+            on_route_to_destination_start_date = fields.Datetime.now()
+            on_route_to_destination_start_user_id = self.env.user
+            on_route_to_destination_start_comment = f'{self.supplier_id.display_name} - {on_route_to_destination_start_date}'
+
+            if not self.first_on_route_to_destination_start_date:
+                self.write({
+                    'first_on_route_to_destination_start_date': on_route_to_destination_start_date,
+                    'first_on_route_to_destination_start_user_id': on_route_to_destination_start_user_id.id,
+                    'first_on_route_to_destination_start_comment': on_route_to_destination_start_comment,
+                })
+
+            self.write({
+                'on_route_to_destination_start_date': on_route_to_destination_start_date,
+                'on_route_to_destination_start_user_id': on_route_to_destination_start_user_id.id,
+                'on_route_to_destination_start_comment': on_route_to_destination_start_comment,
+            })
+
+        elif progress_state == '5':
+            # Arrived to destination
+            on_route_to_destination_end_date = fields.Datetime.now()
+            on_route_to_destination_end_user_id = self.env.user
+            on_route_to_destination_end_comment = f'{self.supplier_id.display_name} - {on_route_to_destination_end_date}'
+
+            if not self.first_on_route_to_destination_end_date:
+                self.write({
+                    'first_on_route_to_destination_end_date': on_route_to_destination_end_date,
+                    'first_on_route_to_destination_end_user_id': on_route_to_destination_end_user_id.id,
+                    'first_on_route_to_destination_end_comment': on_route_to_destination_end_comment,
+                })
+
+            self.write({
+                'on_route_to_destination_end_date': on_route_to_destination_end_date,
+                'on_route_to_destination_end_user_id': on_route_to_destination_end_user_id.id,
+                'on_route_to_destination_end_comment': on_route_to_destination_end_comment,
+            })
+
+        elif progress_state == '6':
+            # Finalized
+            finalized_date = fields.Datetime.now()
+            finalized_user_id = self.env.user
+            finalized_comment = f'{self.supplier_id.display_name} - {finalized_date}'
+
+            if not self.first_finalized_date:
+                self.write({
+                    'first_finalized_date': finalized_date,
+                    'first_finalized_user_id': finalized_user_id.id,
+                    'first_finalized_comment': finalized_comment,
+                })
+
+            self.write({
+                'finalized_date': finalized_date,
+                'finalized_user_id': finalized_user_id.id,
+                'finalized_comment': finalized_comment,
+            })
+
         action = actions.get(str(progress_state))
         if action:
             action()

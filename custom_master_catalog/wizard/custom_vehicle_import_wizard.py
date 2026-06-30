@@ -124,6 +124,14 @@ class CustomVehicleImportWizard(models.TransientModel):
         },
     }
 
+    IMPORT_CONTEXT = {
+        'tracking_disable': True,
+        'mail_create_nolog': True,
+        'mail_notrack': True,
+        'mail_create_nosubscribe': True,
+        'no_reset_password': True,
+    }
+
     @api.onchange('file', 'file_name')
     def _onchange_file(self):
         if self.file_name:
@@ -134,6 +142,9 @@ class CustomVehicleImportWizard(models.TransientModel):
 
     def action_import(self):
         self.ensure_one()
+
+        # Cache runtime en memoria; se llena conforme el import avanza.
+        runtime_cache = self._init_runtime_cache()
 
         rows = self._read_import_file()
         if not rows:
@@ -154,15 +165,15 @@ class CustomVehicleImportWizard(models.TransientModel):
 
         for row in prepared_rows:
             try:
-                resolution = self._resolve_row_relations(row)
-                row_errors = self._validate_row(row, resolution)
+                resolution = self._resolve_row_relations(runtime_cache, row)
+                row_errors = self._validate_row(runtime_cache, row, resolution)
 
                 if row_errors:
                     skipped_count += 1
                     error_rows.append(self._build_error_row(row, row_errors))
                     continue
 
-                self._process_valid_row(row, resolution)
+                self._process_valid_row(runtime_cache, row, resolution)
                 processed_count += 1
 
             except Exception as exc:
@@ -184,6 +195,26 @@ class CustomVehicleImportWizard(models.TransientModel):
             'view_mode': 'form',
             'res_id': self.id,
             'target': 'new',
+        }
+
+    def _init_runtime_cache(self):
+        """
+        Cache por importación.
+        Guarda encontrados y también misses (False) para no repetir queries.
+        """
+        return {
+            'users_by_login': {},
+            'suppliers_by_name': {},
+            'centers_by_key': {},
+            'vehicles_by_ref': {},
+            'relations_by_user_id': {},
+            'vehicles_by_driver_partner_id': {},
+            'vehicle_models_by_name': {},
+            'vehicle_brands_by_name': {},
+            'weight_categories_by_name': {},
+            'vehicle_types_by_name': {},
+            'accessories_by_name': {},
+            'partners_by_email': {},
         }
 
     def _read_import_file(self):
@@ -278,21 +309,55 @@ class CustomVehicleImportWizard(models.TransientModel):
 
         return result
 
-    def _resolve_row_relations(self, row):
+    def _resolve_row_relations(self, runtime_cache, row):
         return {
-            'user': self._resolve_user(row),
-            'supplier': self._resolve_supplier(row),
-            'center': self._resolve_center(row),
-            'vehicle': self._resolve_vehicle(row),
+            'user': self._resolve_user(runtime_cache, row),
+            'supplier': self._resolve_supplier(runtime_cache, row),
+            'center': self._resolve_center(runtime_cache, row),
+            'vehicle': self._resolve_vehicle(runtime_cache, row),
         }
 
+    # ==========================================================
+    # CACHE HELPERS
+    # ==========================================================
+    def _cache_get(self, runtime_cache, bucket_name, key):
+        bucket = runtime_cache.setdefault(bucket_name, {})
+        if key in bucket:
+            return bucket[key]
+        return None
+
+    def _cache_set(self, runtime_cache, bucket_name, key, value):
+        bucket = runtime_cache.setdefault(bucket_name, {})
+        bucket[key] = value or False
+        return bucket[key]
+
+    def _get_or_search(self, runtime_cache, bucket_name, key, model_name, domain):
+        """
+        Obtiene del cache si ya se consultó.
+        Si no existe en cache, consulta ORM una sola vez y memoriza el resultado,
+        incluyendo False para evitar consultas repetidas cuando no se encuentra.
+        """
+        bucket = runtime_cache.setdefault(bucket_name, {})
+        if key in bucket:
+            return bucket[key]
+
+        record = self.env[model_name].sudo().search(domain, limit=1)
+        bucket[key] = record or False
+        return bucket[key]
+
     # === RESOLVE RELATIONS === #
-    def _resolve_user(self, row):
-        login = row.get('user_login')
+    def _resolve_user(self, runtime_cache, row):
+        login = (row.get('user_login') or '').strip()
         if not login:
             return {'record': False, 'errors': [_("Did not indicate email to search user.")]}
 
-        user = self.env['res.users'].sudo().search([('login', '=', login)], limit=1)
+        user = self._get_or_search(
+            runtime_cache,
+            'users_by_login',
+            login,
+            'res.users',
+            [('login', '=', login)],
+        )
 
         if user:
             return {'record': user, 'errors': []}
@@ -301,7 +366,8 @@ class CustomVehicleImportWizard(models.TransientModel):
             return {'record': False, 'errors': [_("User not found with login '%s'.") % login]}
 
         try:
-            user = self._create_user_from_row(row)
+            user = self._create_user_from_row(runtime_cache, row)
+            self._cache_set(runtime_cache, 'users_by_login', login, user)
             return {'record': user, 'errors': []}
         except Exception as exc:
             _logger.exception("Error creating user from import. login=%s", login)
@@ -310,16 +376,18 @@ class CustomVehicleImportWizard(models.TransientModel):
                 'errors': [_("Could not create user with login '%s': %s") % (login, str(exc))]
             }
 
-    def _resolve_supplier(self, row):
-        name = row.get('supplier_name')
+    def _resolve_supplier(self, runtime_cache, row):
+        name = (row.get('supplier_name') or '').strip()
         if not name:
             return {'record': False, 'errors': [_("No supplier name was indicated.")]}
 
-        supplier = self.env['res.partner'].sudo().search([
-            ('name', '=', name),
-            ('disabled', '=', False),
-            ('x_is_supplier', '=', True),
-        ], limit=1)
+        supplier = self._get_or_search(
+            runtime_cache,
+            'suppliers_by_name',
+            name,
+            'res.partner',
+            [('name', '=', name), ('disabled', '=', False), ('x_is_supplier', '=', True)],
+        )
 
         if supplier:
             return {'record': supplier, 'errors': []}
@@ -328,23 +396,34 @@ class CustomVehicleImportWizard(models.TransientModel):
             return {'record': False, 'errors': [_("Supplier not found with name '%s'.") % name]}
 
         try:
-            supplier = self._create_supplier_from_row(row)
+            supplier = self._create_supplier_from_row(runtime_cache, row)
+            self._cache_set(runtime_cache, 'suppliers_by_name', name, supplier)
             return {'record': supplier, 'errors': []}
         except Exception as exc:
             _logger.exception("Error creating supplier from import")
             return {'record': False, 'errors': [_("Could not create supplier '%s': %s") % (name, str(exc))]}
 
-    def _resolve_center(self, row):
+    def _resolve_center(self, runtime_cache, row):
         name = (row.get('center_name') or '').strip()
+        supplier_name = (row.get('supplier_name') or '').strip()
+
         if not name:
             return {'record': False, 'errors': [_("No center name was indicated.")]}
 
-        center = self.env['res.partner'].sudo().search([
-            ('name', '=', name),
-            ('disabled', '=', False),
-            ('type', '=', 'center'),
-            ('parent_id.x_is_supplier', '=', True),
-        ], limit=1)
+        cache_key = (name, supplier_name)
+        center = self._get_or_search(
+            runtime_cache,
+            'centers_by_key',
+            cache_key,
+            'res.partner',
+            [
+                ('name', '=', name),
+                ('disabled', '=', False),
+                ('type', '=', 'center'),
+                ('parent_id.name', '=', supplier_name),
+                ('parent_id.x_is_supplier', '=', True),
+            ],
+        )
 
         if center:
             return {'record': center, 'errors': []}
@@ -353,7 +432,8 @@ class CustomVehicleImportWizard(models.TransientModel):
             return {'record': False, 'errors': [_("Center not found with name '%s'.") % name]}
 
         try:
-            center = self._create_center_from_row(row)
+            center = self._create_center_from_row(runtime_cache, row)
+            self._cache_set(runtime_cache, 'centers_by_key', cache_key, center)
             return {'record': center, 'errors': []}
         except Exception as exc:
             _logger.exception("Error creating center from import. center=%s", name)
@@ -362,14 +442,18 @@ class CustomVehicleImportWizard(models.TransientModel):
                 'errors': [_("Could not create center '%s': %s") % (name, str(exc))]
             }
 
-    def _resolve_vehicle(self, row):
-        vehicle_ref = row.get('vehicle_ref')
+    def _resolve_vehicle(self, runtime_cache, row):
+        vehicle_ref = (row.get('vehicle_ref') or '').strip()
         if not vehicle_ref:
             return {'record': False, 'errors': [_("No se indicó referencia del vehículo.")]}
 
-        vehicle = self.env['fleet.vehicle'].sudo().search([
-            ('x_vehicle_ref', '=', vehicle_ref),
-        ], limit=1)
+        vehicle = self._get_or_search(
+            runtime_cache,
+            'vehicles_by_ref',
+            vehicle_ref,
+            'fleet.vehicle',
+            [('x_vehicle_ref', '=', vehicle_ref)],
+        )
 
         if vehicle:
             return {'record': vehicle, 'errors': []}
@@ -381,7 +465,8 @@ class CustomVehicleImportWizard(models.TransientModel):
             }
 
         try:
-            vehicle = self._create_vehicle_from_row(row)
+            vehicle = self._create_vehicle_from_row(runtime_cache, row)
+            self._cache_set(runtime_cache, 'vehicles_by_ref', vehicle_ref, vehicle)
             return {'record': vehicle, 'errors': []}
         except Exception as exc:
             _logger.exception("Error creando vehículo desde import. ref=%s", vehicle_ref)
@@ -391,11 +476,11 @@ class CustomVehicleImportWizard(models.TransientModel):
             }
 
     # === CREATE METHODS === #
-    def _create_user_from_row(self, row):
-        Users = self.env['res.users'].sudo().with_context(no_reset_password=True)
-        Partner = self.env['res.partner'].sudo()
+    def _create_user_from_row(self, runtime_cache, row):
+        Users = self.env['res.users'].sudo().with_context(**self.IMPORT_CONTEXT)
+        Partner = self.env['res.partner'].sudo().with_context(**self.IMPORT_CONTEXT)
 
-        login = (row.get('user_login') or '').strip()
+        login = (row.get('user_login') or '').strip().lower()
         operator_name = (row.get('operator_name') or '').strip() or login
 
         if not login:
@@ -403,12 +488,16 @@ class CustomVehicleImportWizard(models.TransientModel):
 
         existing_user = Users.search([('login', '=', login)], limit=1)
         if existing_user:
+            self._cache_set(runtime_cache, 'users_by_login', login, existing_user)
             return existing_user
 
-        partner = Partner.search([
-            ('email', '=', login),
-            ('x_is_supplier', '=', False),
-        ], limit=1)
+        partner = self._get_or_search(
+            runtime_cache,
+            'partners_by_email',
+            login,
+            'res.partner',
+            [('email', '=', login), ('x_is_supplier', '=', False)],
+        )
 
         if not partner:
             partner = Partner.create({
@@ -417,6 +506,7 @@ class CustomVehicleImportWizard(models.TransientModel):
                 'company_type': 'person',
                 'x_is_supplier': False,
             })
+            self._cache_set(runtime_cache, 'partners_by_email', login, partner)
         else:
             partner_vals = {}
             if operator_name and not partner.name:
@@ -426,8 +516,6 @@ class CustomVehicleImportWizard(models.TransientModel):
             if partner_vals:
                 partner.write(partner_vals)
 
-        portal_group = self.env.ref('base.group_portal', raise_if_not_found=False)
-
         vals = {
             'name': operator_name,
             'login': login,
@@ -436,15 +524,24 @@ class CustomVehicleImportWizard(models.TransientModel):
         }
 
         user = Users.create(vals)
-
-        if portal_group:
+        user_group_ids = self._get_user_group_ids(user)
+        if user_group_ids:
             user.write({
-                'groups_id': [(6, 0, [portal_group.id])],
+                'groups_id': [(6, 0, user_group_ids)],
             })
 
+        self._cache_set(runtime_cache, 'users_by_login', login, user)
         return user
 
-    def _create_supplier_from_row(self, row):
+    def _get_user_group_ids(self, user):
+        groups = []
+        # Usuario Portal
+        portal_group = self.env.ref('base.group_portal', raise_if_not_found=False)
+        if portal_group:
+            groups.append(portal_group.id)
+        return groups
+
+    def _create_supplier_from_row(self, runtime_cache, row):
         vals = {
             'name': row.get('supplier_name'),
             'x_is_supplier': True,
@@ -452,89 +549,143 @@ class CustomVehicleImportWizard(models.TransientModel):
             'company_type': 'company',
             'supplier_rank': 1,
         }
-        return self.env['res.partner'].sudo().create(vals)
+        supplier = self.env['res.partner'].sudo().with_context(**self.IMPORT_CONTEXT).create(vals)
+        self._cache_set(runtime_cache, 'suppliers_by_name', supplier.name, supplier)
+        return supplier
 
-    def _create_vehicle_from_row(self, row):
-        Vehicle = self.env['fleet.vehicle'].sudo()
-        VehicleModel = self.env['fleet.vehicle.model'].sudo()
-        VehicleModelBrand = self.env['fleet.vehicle.model.brand'].sudo()
+    def _create_vehicle_from_row(self, runtime_cache, row):
+        Vehicle = self.env['fleet.vehicle'].sudo().with_context(**self.IMPORT_CONTEXT)
+        VehicleModel = self.env['fleet.vehicle.model'].sudo().with_context(**self.IMPORT_CONTEXT)
+        VehicleModelBrand = self.env['fleet.vehicle.model.brand'].sudo().with_context(**self.IMPORT_CONTEXT)
 
         vehicle_ref = (row.get('vehicle_ref') or '').strip()
         plate = (row.get('plate') or '').strip()
         model = (row.get('model') or '').strip()
-        weigth_category = (row.get('weight_category') or '').strip()
+        weight_category = (row.get('weight_category') or '').strip()
+        vehicle_type = (row.get('vehicle_type') or '').strip()
         federal_plates = row.get('federal_plate', False)
         tire_conditioning = row.get('tire_conditioning', False)
         maneuvers = row.get('maneuvers', False)
         accessories = (row.get('accessories') or '').strip()
         year = (row.get('year') or '').strip()
+
         model_name = ""
         brand_name = ""
         if model:
-            brand_name, model_name = model.split('/')
+            if '/' in model:
+                brand_name, model_name = [x.strip() for x in model.split('/', 1)]
+            else:
+                model_name = model
 
         if not vehicle_ref:
             raise UserError(_("Could not create vehicle without reference."))
 
-        existing = Vehicle.search([('x_vehicle_ref', '=', vehicle_ref)], limit=1)
+        existing = self._get_or_search(
+            runtime_cache,
+            'vehicles_by_ref',
+            vehicle_ref,
+            'fleet.vehicle',
+            [('x_vehicle_ref', '=', vehicle_ref)],
+        )
         if existing:
             return existing
 
         if not model_name:
             raise UserError(_("Could not create vehicle '%s' without the model data.") % vehicle_ref)
 
-        model = VehicleModel.search([('name', '=', model_name.strip())], limit=1)
+        model_rec = self._get_or_search(
+            runtime_cache,
+            'vehicle_models_by_name',
+            model_name,
+            'fleet.vehicle.model',
+            [('name', '=', model_name)],
+        )
 
-        if not model:
-            brand = VehicleModelBrand.search([('name', '=', brand_name)], limit=1)
-            if not brand:
-                brand = VehicleModelBrand.create({
-                    'name': brand_name,
-                })
-            weigth_vehicle_category = self.env['custom.vehicle.weight.category']
-            if weigth_category:
-                weigth_vehicle_category = self.env['custom.vehicle.weight.category'].search([
-                    ('name', '=', weigth_category),
-                ], limit=1)
-            model = VehicleModel.create({
+        weight_vehicle_category = False
+        if weight_category:
+            weight_vehicle_category = self._get_or_search(
+                runtime_cache,
+                'weight_categories_by_name',
+                weight_category,
+                'custom.vehicle.weight.category',
+                [('name', '=', weight_category)],
+            )
+
+        if not model_rec:
+            brand = False
+            if brand_name:
+                brand = self._get_or_search(
+                    runtime_cache,
+                    'vehicle_brands_by_name',
+                    brand_name,
+                    'fleet.vehicle.model.brand',
+                    [('name', '=', brand_name)],
+                )
+                if not brand:
+                    brand = VehicleModelBrand.create({
+                        'name': brand_name,
+                    })
+                    self._cache_set(runtime_cache, 'vehicle_brands_by_name', brand_name, brand)
+
+            model_rec = VehicleModel.create({
                 'name': model_name,
-                'brand_id': brand.id,
-                'x_vehicle_weight_category_id': weigth_vehicle_category.id,
+                'brand_id': brand.id if brand else False,
+                'x_vehicle_weight_category_id': weight_vehicle_category.id if weight_vehicle_category else False,
             })
+            self._cache_set(runtime_cache, 'vehicle_models_by_name', model_name, model_rec)
+
         # Establecer la categoría de peso si no existe
-        if model and not model.x_vehicle_weight_category_id and weigth_category:
-            weigth_vehicle_category = self.env['custom.vehicle.weight.category'].search([
-                ('name', '=', weigth_category),
-            ], limit=1)
-            if weigth_vehicle_category:
-                model.write({
-                    'x_vehicle_weight_category_id': weigth_vehicle_category.id,
-                })
+        if model_rec and not model_rec.x_vehicle_weight_category_id and weight_category and weight_vehicle_category:
+            model_rec.write({
+                'x_vehicle_weight_category_id': weight_vehicle_category.id,
+            })
 
         accessory_ids = self.env['product.product']
         if accessories:
-            accessories = accessories.split(',')
-            accessories = [a.strip() for a in accessories]
-            accessories_domain = self.env['product.product'].get_accessories_domain()
-            accessories_domain.append(('name', 'in', accessories))
-            accessory_ids = self.env['product.product'].search(accessories_domain)
+            accessory_names = [a.strip() for a in accessories.split(',') if a.strip()]
+            Product = self.env['product.product'].sudo()
+            base_domain = Product.get_accessories_domain()
+            for accessory_name in accessory_names:
+                accessory = self._get_or_search(
+                    runtime_cache,
+                    'accessories_by_name',
+                    accessory_name,
+                    'product.product',
+                    base_domain + [('name', '=', accessory_name)],
+                )
+                if accessory:
+                    accessory_ids |= accessory
+
+        # Tipo de vehículo
+        vehicle_type_id = False
+        if vehicle_type:
+            vehicle_type_id = self._get_or_search(
+                runtime_cache,
+                'vehicle_types_by_name',
+                vehicle_type,
+                'custom.vehicle.type',
+                [('name', '=', vehicle_type)],
+            )
 
         vals = {
-            'model_id': model.id,
+            'model_id': model_rec.id,
             'license_plate': plate or False,
             'x_vehicle_ref': vehicle_ref,
             'x_vehicle_service_state': 'available',
             'x_federal_license_plates': federal_plates,
             'x_manages_tire_conditioning': tire_conditioning,
             'x_maneuvers': maneuvers,
-            'x_accessories': accessory_ids.ids,
+            'x_accessories': [(6, 0, accessory_ids.ids)] if accessory_ids else False,
             'model_year': year or False,
+            'x_vehicle_type': vehicle_type_id.id if vehicle_type_id else False,
         }
 
-        return Vehicle.create(vals)
+        vehicle = Vehicle.create(vals)
+        self._cache_set(runtime_cache, 'vehicles_by_ref', vehicle_ref, vehicle)
+        return vehicle
 
-    def _create_center_from_row(self, row):
-        Partner = self.env['res.partner'].sudo()
+    def _create_center_from_row(self, runtime_cache, row):
+        Partner = self.env['res.partner'].sudo().with_context(**self.IMPORT_CONTEXT)
 
         center_name = (row.get('center_name') or '').strip()
         supplier_name = (row.get('supplier_name') or '').strip()
@@ -545,23 +696,28 @@ class CustomVehicleImportWizard(models.TransientModel):
         if not supplier_name:
             raise UserError(_("Could not create center '%s' without supplier.") % center_name)
 
-        supplier = Partner.search([
-            ('name', '=', supplier_name),
-            ('disabled', '=', False),
-            ('x_is_supplier', '=', True),
-        ], limit=1)
+        supplier = self._get_or_search(
+            runtime_cache,
+            'suppliers_by_name',
+            supplier_name,
+            'res.partner',
+            [('name', '=', supplier_name), ('disabled', '=', False), ('x_is_supplier', '=', True)],
+        )
 
         if not supplier:
             if self.RELATION_POLICIES['supplier']['allow_create']:
-                supplier = self._create_supplier_from_row(row)
+                supplier = self._create_supplier_from_row(runtime_cache, row)
             else:
                 raise UserError(_("Supplier '%s' does not exist to create center '%s'.") % (supplier_name, center_name))
 
-        existing_center = Partner.search([
-            ('name', '=', center_name),
-            ('parent_id', '=', supplier.id),
-            ('type', '=', 'center'),
-        ], limit=1)
+        cache_key = (center_name, supplier_name)
+        existing_center = self._get_or_search(
+            runtime_cache,
+            'centers_by_key',
+            cache_key,
+            'res.partner',
+            [('name', '=', center_name), ('parent_id', '=', supplier.id), ('type', '=', 'center')],
+        )
         if existing_center:
             return existing_center
 
@@ -569,15 +725,17 @@ class CustomVehicleImportWizard(models.TransientModel):
             'name': center_name,
             'parent_id': supplier.id,
             'type': 'center',
-            'company_type': 'person',  # ? debe ser company?
+            'company_type': 'company',
             'disabled': False,
             'x_is_supplier': False,
         }
 
-        return Partner.create(vals)
+        center = Partner.create(vals)
+        self._cache_set(runtime_cache, 'centers_by_key', cache_key, center)
+        return center
 
     # === AUXILIAR METHODS === #
-    def _validate_row(self, row, resolution):
+    def _validate_row(self, runtime_cache, row, resolution):
         errors = []
 
         if row.get('_skip_prevalidation'):
@@ -598,15 +756,33 @@ class CustomVehicleImportWizard(models.TransientModel):
                 % (center.display_name, supplier.display_name)
             )
 
-        if user:
-            existing_rel = self.env['res.partner.supplier_users.rel'].sudo().search([
-                ('user_id', '=', user.id),
-            ], limit=1)
+        if user and center:
+            expected_user_type = 'operator'
+
+            existing_rel = self._get_or_search(
+                runtime_cache,
+                'relations_by_user_id',
+                user.id,
+                'res.partner.supplier_users.rel',
+                [('user_id', '=', user.id)],
+            )
+
             if existing_rel:
-                errors.append(
-                    _("User '%s' already assigned in supplier-user relation.")
-                    % (user.display_name,)
+                # Si ya existe exactamente la misma relación, no es error.
+                same_relation = (
+                    existing_rel.center_of_attention_id == center
+                    and existing_rel.user_type == expected_user_type
                 )
+
+                if not same_relation:
+                    errors.append(
+                        _("User '%s' already assigned in supplier-user relation with center '%s' and type '%s'.")
+                        % (
+                            user.display_name,
+                            existing_rel.center_of_attention_id.display_name or '',
+                            existing_rel.user_type or '',
+                        )
+                    )
 
         if user and vehicle:
             user_partner = user.partner_id
@@ -617,11 +793,14 @@ class CustomVehicleImportWizard(models.TransientModel):
                     % (vehicle.display_name, vehicle.driver_id.display_name)
                 )
 
-            other_vehicle = self.env['fleet.vehicle'].sudo().search([
-                ('driver_id', '=', user_partner.id),
-                ('id', '!=', vehicle.id),
-            ], limit=1)
-            if other_vehicle:
+            other_vehicle = self._get_or_search(
+                runtime_cache,
+                'vehicles_by_driver_partner_id',
+                user_partner.id,
+                'fleet.vehicle',
+                [('driver_id', '=', user_partner.id)],
+            )
+            if other_vehicle and other_vehicle.id != vehicle.id:
                 errors.append(
                     _("User '%s' already assigned as driver in vehicle '%s'.")
                     % (user.display_name, other_vehicle.display_name)
@@ -629,7 +808,7 @@ class CustomVehicleImportWizard(models.TransientModel):
 
         return errors
 
-    def _process_valid_row(self, row, resolution):
+    def _process_valid_row(self, runtime_cache, row, resolution):
         user = resolution['user']['record']
         center = resolution['center']['record']
         vehicle = resolution['vehicle']['record']
@@ -639,7 +818,12 @@ class CustomVehicleImportWizard(models.TransientModel):
             'user_type': 'operator',
             'center_of_attention_id': center.id,
         }
-        relation = self.env['res.partner.supplier_users.rel'].sudo().create(rel_vals)
+        relation = self.env['res.partner.supplier_users.rel'].sudo().with_context(
+            **self.IMPORT_CONTEXT
+        ).create(rel_vals)
+
+        # Actualizar cache de relación creada durante esta misma importación
+        self._cache_set(runtime_cache, 'relations_by_user_id', user.id, relation)
 
         user_partner = user.partner_id
         if vehicle and user_partner:
@@ -654,7 +838,11 @@ class CustomVehicleImportWizard(models.TransientModel):
             else:
                 # Tentativo para futuro: reemplazar si se habilita política de actualización
                 pass
-            vehicle.sudo().write(vehicle_data)
+
+            vehicle.sudo().with_context(**self.IMPORT_CONTEXT).write(vehicle_data)
+
+            # Actualizar cache de asignación conductor -> vehículo
+            self._cache_set(runtime_cache, 'vehicles_by_driver_partner_id', user_partner.id, vehicle)
 
         return relation
 

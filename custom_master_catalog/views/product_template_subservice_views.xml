@@ -39,6 +39,8 @@
                             <field name="x_description" readonly="disabled" widget="text"/>
                             <field name="x_min_required_photos"/>
                             <field name="x_min_required_photos_assistview"/>
+                            <field name="x_sap_code_income" groups="base.group_no_one" />
+                            <field name="x_sap_code_outgoing" groups="base.group_no_one" />
                             <field name="create_date" invisible="1"/>
                             <field name="disabled" invisible="1" />
                             <field name="active" invisible="1" />

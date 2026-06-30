@@ -11,6 +11,26 @@ import { _t } from "@web/core/l10n/translation";
 import { usePagination } from "../pagination/pagination_service";
 import { PaginationComponent } from "../pagination/pagination_component";
 import { CancelServiceDialog } from "../dialogs/cancel_service_dialog";
+// Sound notification sounds configuration
+const NOTIFICATION_SOUNDS = {
+    success: '/ike_event_portal/static/src/sounds/success.mp3',
+    info: '/ike_event_portal/static/src/sounds/mixkit-correct-answer-tone-2870.wav',
+    warning: '/ike_event_portal/static/src/sounds/warning.mp3',
+    danger: '/ike_event_portal/static/src/sounds/error.mp3',
+};
+
+// Play sound notification
+const playNotificationSound = (soundUrl) => {
+    if (soundUrl) {
+        try {
+            const audio = new Audio(soundUrl);
+            audio.volume = 0.7;
+            audio.play().catch(err => console.warn('Audio play failed:', err));
+        } catch (error) {
+            console.error('Audio error:', error);
+        }
+    }
+};
 
 const IKE_SUPPLIER_CHANNEL = "ike_channel_supplier_";
 
@@ -51,6 +71,7 @@ export class ServicesMainComponent extends Component {
                 eventId: null,
                 supplierId: null,
                 eventSupplierId: null,
+                stage: null,
                 relojes: null,
                 isLoadingRelojes: false,
             },
@@ -171,6 +192,12 @@ export class ServicesMainComponent extends Component {
         this.notification.add(message, { type, sticky, title });
     }
 
+    showNotificationWithSound({ message, type = 'info', sticky = true, title }) {
+        const soundUrl = NOTIFICATION_SOUNDS[type] || null;
+        playNotificationSound(soundUrl);
+        this.notification.add(message, { type, sticky, title });
+    }
+
     subscribeToEventSupplierNotification() {
         this.busService.subscribe('ike_supplier_lines_reload_2', async (payload) => {
             for (const item of payload.data) {
@@ -192,6 +219,8 @@ export class ServicesMainComponent extends Component {
         if (!event_supplier) return;
 
         if (ACTIVE_STATES.includes(item.state)) {
+            this.showNotification({ title: _t("Service Updated"), message: _t('You have a new service available.'), type: 'info' });
+            this.skipSupplierFromEvent(event_supplier.event_id);
             await this._handleActiveService(event_supplier);
         } else if (REMOVED_STATES.includes(item.state) && event_supplier.supplier_id == this.supplier_id) {
             this._handleRemovedService(event_supplier);
@@ -200,7 +229,6 @@ export class ServicesMainComponent extends Component {
 
     async _handleActiveService(event_supplier) {
         const event = await this.getEventById(event_supplier.event_id);
-        this.removeServiceById(event_supplier.event_supplier_id);
         this.fetchAndAppendService(event_supplier, event);
     }
 
@@ -483,6 +511,7 @@ export class ServicesMainComponent extends Component {
             eventId: null,
             supplierId: null,
             eventSupplierId: null,
+            stage: null,
             relojes: null,
             isLoadingRelojes: false,
         };
@@ -503,6 +532,7 @@ export class ServicesMainComponent extends Component {
             this.state.modal.travelTrackingUrl = event_supplier.travel_tracking_url;
             this.state.modal.eventSupplierId = event_supplier_id;
             this.state.modal.linkSupplierId = supplier_link_id;
+            this.state.modal.stage = event_supplier.stage ?? null;
 
             const [rawCostsData] = await Promise.all([
                 this.loadConceptsByEventSupplierId(supplier_link_id),
@@ -554,7 +584,7 @@ export class ServicesMainComponent extends Component {
             title: _t("Confirm Clock Registration"),
             body: _t("Are you sure you want to register the current time for the '%s' stage? This action cannot be undone.", labels[stage] || stage),
             confirm: async () => await this._stampReloj(stage),
-            cancel: () => {},
+            cancel: () => { },
         });
     }
 
@@ -593,7 +623,12 @@ export class ServicesMainComponent extends Component {
         return temp.textContent || temp.innerText || '';
     }
 
+    get isEventFinalized() {
+        return this.state.modal.stage === 'finalized';
+    }
+
     onAddConceptClick() {
+        if (this.isEventFinalized) return;
         this.state.modal.isAddingConcept = true;
         this.state.modal.newConcept = { product_id: null, estimated_quantity: 1, quantity: 1, is_net: false };
     }
@@ -798,6 +833,11 @@ export class ServicesMainComponent extends Component {
             this.showNotification({ title: _t("Error loading available concepts"), message: _t(err?.data?.message || err.message), type: 'danger' });
             this.state.modal.availableProducts = [];
         }
+    }
+
+    skipSupplierFromEvent(event_id) {
+        const toRemove = this.state.services.filter(s => s.event_id === event_id);
+        toRemove.forEach(s => this.removeServiceById(s.event_supplier_id));
     }
 
     get paginatedServices() {

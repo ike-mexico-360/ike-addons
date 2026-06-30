@@ -169,7 +169,7 @@
                                 <field name="vehicle_category_id"
                                     widget="ike_many2one" required="identification_type in ['manual', 'manual_manual']" nolabel="1" colspan="2"
                                     options="{'no_open': True, 'no_create': True}"
-                                    domain="[('disabled', '=', False)]"
+                                    domain="[('disabled', '=', False), ('x_service_id', '!=', False)]"
                                     context="{'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_model_category_view_list', 'hide_disabled_enabled_filters': 1}"/>
                                 <field name="vehicle_plate"
                                    widget="ike_char" required="identification_type in ['manual', 'manual_manual']" nolabel="1" colspan="2"/>
@@ -251,8 +251,13 @@
                             <div class="d-flex justify-content-end gap-1">
                                 <button string="Return" class="btn-secondary o_discard"
                                         special="cancel" data-hotkey="x" />
+                                <!-- Botón deshabilitado si faltan datos -->
+                                <button string="Continue" class="btn-primary o_save" disabled="1"
+                                        special="save" data-hotkey="s" invisible="can_continue"/>
+                                <!-- Botón habilitado -->
                                 <button string="Continue" class="btn-primary o_save"
-                                        special="save" data-hotkey="s" />
+                                        special="save" data-hotkey="s" invisible="not can_continue"/>
+                                <field name="can_continue" invisible="1"/>
                             </div>
                         </group>
                     </group>

@@ -261,6 +261,14 @@
                                 </group>
                             </group>
                         </page>
+                        <page name="Location" string="Location">
+                            <group>
+                                <group>
+                                    <field name="partner_latitude" string="Latitude" readonly="disabled"/>
+                                    <field name="partner_longitude" string="Longitude" readonly="disabled"/>
+                                </group>
+                            </group>
+                        </page>
                     </notebook>
                 </sheet>
                 <chatter/>
