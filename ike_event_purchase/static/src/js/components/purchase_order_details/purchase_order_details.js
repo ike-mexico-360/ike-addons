@@ -92,6 +92,11 @@ export class PurchaseOrderDetails extends Component {
         return formatDateTime(date);
     }
 
+    stripHtml(value) {
+        if (!value) return '';
+        return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    }
+
     formatNumber(value) {
         if (value === null || value === undefined || value === '') return '';
         const num = parseFloat(value);
@@ -422,7 +427,7 @@ export class PurchaseOrderDetails extends Component {
                 has_matrix_cost = true;
             }
             if (product?.uom_id) {
-                extra = { price_unit: price_unit, has_matrix_cost: has_matrix_cost, product_uom: product.uom_id.id, product_uom_name: product.uom_id.display_name };
+                extra = { price_unit: price_unit, x_base_unit_price: price_unit, has_matrix_cost: has_matrix_cost, product_uom: product.uom_id.id, product_uom_name: product.uom_id.display_name };
             }
         }
 
@@ -525,13 +530,30 @@ export class PurchaseOrderDetails extends Component {
         }
 
         try {
-            await this.orm.write("purchase.order", [this.props.order_id], {
-                // Incrementar x_dispute_iteration_count en 1
-                x_dispute_iteration_count: this.state.order_data.x_dispute_iteration_count + 1,
-                x_change_comments: this.state.order_data.x_change_comments,
-                order_line: commands,
+            // comment to fix new rule access res.partner
+            // await this.orm.write("purchase.order", [this.props.order_id], {
+            //     // Incrementar x_dispute_iteration_count en 1
+            //     x_dispute_iteration_count: this.state.order_data.x_dispute_iteration_count + 1,
+            //     x_change_comments: this.state.order_data.x_change_comments,
+            //     order_line: commands,
+            // });
+            // return true;
+            // fix new rule access res.partner
+            const response = await rpc("/provider/portal/purchase/save_dispute", {
+                order_id: this.props.order_id,
+                dispute_count: this.state.order_data.x_dispute_iteration_count + 1,
+                change_comments: this.state.order_data.x_change_comments,
+                order_lines: commands,
             });
+
+            if (response && response.success) {
             return true;
+            } else {
+                this.notification.add(_t("Error sending dispute: ") + (response?.error || "Unknown error"), {
+                    type: "danger", sticky: true
+                });
+                return false;
+            }
         } catch (e) {
             this.notification.add(_t("Error sending dispute: ") + (e?.data?.message || e.message), {
                 type: "danger", sticky: true

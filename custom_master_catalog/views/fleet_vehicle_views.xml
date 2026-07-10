@@ -82,14 +82,14 @@
                                 readonly="disabled" required="1"/>
                             <field name="x_ref_supplier" readonly="1" />
                             <!-- ToDo: Probablemente este campo deba ser readonly ya que es el equivalente a crane uuid, se habilita para pruebas -->
-                            <field name="x_vehicle_ref" readonly="disabled" />
+                            <field name="x_vehicle_ref" readonly="disabled" required="1"/>
                             <field name="x_economic_number" readonly="disabled" />
                             <field name="x_center_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}" invisible="x_partner_id == False"
                                 domain="[('disabled', '=', False), ('parent_id', '=', x_partner_id)]" string="Center of attention"  context="{'edit': False}" required="1"/>
                             <field name="x_vehicle_type" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
                                 context="{'list_view_ref': 'custom_master_catalog.custom_vehicle_type_view_list'}" readonly="disabled"
                                 domain="[('disabled', '=', False)]"/>
-                            <field name="license_plate" placeholder="e.g. PAE 326" readonly="disabled"/>
+                            <field name="license_plate" placeholder="e.g. PAE 326" readonly="disabled" required="1"/>
                             <field name="x_vehicles_axes" readonly="disabled"/>
                             <field name="x_federal_license_plates" readonly="disabled"/>
                             <field name="x_manages_tire_conditioning" readonly="disabled"/>

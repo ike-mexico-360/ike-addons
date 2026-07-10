@@ -27,6 +27,19 @@ class IkeEvent(models.Model):
         for rec in self:
             rec.x_ticket_ids_count = len(rec.x_ticket_ids)
 
+    @api.model
+    def get_can_be_disabled(self):
+        """ Inherit and override to restrict disabling capabilities based on specific user groups. """
+        res = super().get_can_be_disabled()
+        # List of allowed technical group XML IDs
+        allowed_groups = [
+            'base.group_system',
+        ]
+        has_permission = any(self.env.user.has_group(group) for group in allowed_groups)
+        if not has_permission:
+            return False
+        return res
+
     # ACTIONS
     def x_action_view_purchases(self):
         self.ensure_one()
@@ -139,6 +152,7 @@ class IkeEvent(models.Model):
             "product_id": supplier_product_id.product_id.id,
             "product_qty": supplier_product_id.base_quantity,
             "price_unit": supplier_product_id.base_unit_price,
+            "x_base_unit_price": supplier_product_id.base_unit_price,
             "currency_id": self.env.company.currency_id.id,
             "x_supplier_product_id": supplier_product_id.id,  # Link to supplier_product_id
             "x_covered": supplier_product_id.covered,

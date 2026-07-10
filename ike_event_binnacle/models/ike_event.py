@@ -328,7 +328,6 @@ class IkeEvent(models.Model):
     def action_set_user_data(self):
         result = super(IkeEvent, self).action_set_user_data()
         for rec in self:
-            rec.assigned_user_id = rec._action_set_user_assigned()
             if rec.user_by == 'by_other':
                 rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_2_5"])
         return result
@@ -350,23 +349,7 @@ class IkeEvent(models.Model):
 
     def _action_set_user_assigned(self):
         self.ensure_one()
-        binnacle_category = self.env.ref('ike_event_binnacle.ike_binnacle_stage_3_1')
-
-        message = self.env['mail.message'].search([
-            ('model', '=', 'ike.event'),
-            ('res_id', '=', self.id),
-            ('event_binnacle_id', '=', binnacle_category.id)
-        ], limit=1)
-
-        if not message or not message.author_id:
-            return False
-
-        user = self.env['res.users'].search(
-            [('partner_id', '=', message.author_id.id)],
-            limit=1
-        )
-
-        return user.id if user else False
+        return self.env.user.id
 
     def action_set_user_service_data(self):
         result = super(IkeEvent, self).action_set_user_service_data()
@@ -690,7 +673,9 @@ class IkeEventSupplierPublic(models.Model):
     def action_supplier_cancel(self, cancel_reason_id=None, reason_text=None):
         result = super().action_supplier_cancel(cancel_reason_id, reason_text)
         for rec in self:
-            rec.sudo().event_id.with_context(supplier=rec.supplier_id.name)._create_message_binnacle([
+            sudo_rec = rec.sudo()
+            supplier_name = sudo_rec.supplier_id.name
+            sudo_rec.event_id.with_context(supplier=supplier_name)._create_message_binnacle([
                 "ike_event_binnacle.ike_binnacle_stage_8_3"
             ])
         return result
@@ -709,6 +694,8 @@ class IkeEventSupplierLink(models.Model):
 
     def action_request_authorization(self):
         result = super().action_request_authorization()
+        if self.env.context.get('from_view_detail'):
+            return result
         for rec in self:
             rec.event_id.with_context(
                 supplier_link_id=rec.id
@@ -727,6 +714,7 @@ class IkeEventAffiliationUser(models.TransientModel):
         result = super().action_save()
         for rec in self:
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_1"])
+            rec.event_id.assigned_user_id = rec.event_id._action_set_user_assigned()
             if self.event_id.user_membership_id.membership_plan_id.account_id.authorizer:
                 rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_23"])
                 rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_24"])
@@ -829,5 +817,21 @@ class IkeEventConfirmWizard(models.TransientModel):
                     )._create_message_binnacle(
                         ["ike_event_binnacle.ike_binnacle_stage_9_1"]
                     )
+
+            return result
+
+    class IkeEventStage(models.Model):
+        _inherit = 'ike.event.stage.comment'
+
+        def action_dummy_save(self):
+            result = super().action_dummy_save()
+
+            for rec in self:
+                rec.event_id.with_context(
+                    stage_name=rec.stage_id.name,
+                    comment=rec.comment,
+                    comment_type=rec.comment_type,
+                    duration_text=rec.duration_text,
+                )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_stage_comment"])
 
             return result

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_authorized_amount_request_list" model="ir.ui.view">
+        <field name="name">ike.event.authorized.amount.request.list</field>
+        <field name="model">ike.event.authorized.amount.request</field>
+        <field name="arch" type="xml">
+            <list decoration-success="state == 'approved'" decoration-danger="state == 'rejected'">
+                <field name="name"/>
+                <field name="event_id"/>
+                <field name="purchase_order_id"/>
+                <field name="requester_id"/>
+                <field name="authorizer_id"/>
+                <field name="current_authorized_amount" widget="monetary"/>
+                <field name="requested_amount" widget="monetary"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="validation_status" widget="badge"/>
+                <field name="state" widget="badge"/>
+                <field name="approved_date"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_authorized_amount_request_form" model="ir.ui.view">
+        <field name="name">ike.event.authorized.amount.request.form</field>
+        <field name="model">ike.event.authorized.amount.request</field>
+        <field name="arch" type="xml">
+            <form string="Authorized Amount Increase Request">
+                <header>
+                    <button name="action_cancel" type="object" string="Cancel" invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,approved,rejected,cancelled"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="purchase_order_id" options="{'no_create': True}"/>
+                            <field name="event_id" options="{'no_create': True}"/>
+                            <field name="requester_id"/>
+                            <field name="authorizer_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="current_authorized_amount" widget="monetary"/>
+                            <field name="disputed_amount" widget="monetary"/>
+                            <field name="requested_amount" widget="monetary"/>
+                            <field name="approved_by" invisible="state != 'approved'"/>
+                            <field name="approved_date" invisible="state != 'approved'"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="reason" placeholder="Explain why the authorized amount must be increased..."/>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_authorized_amount_request" model="ir.actions.act_window">
+        <field name="name">Authorized Amount Increase Requests</field>
+        <field name="res_model">ike.event.authorized.amount.request</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

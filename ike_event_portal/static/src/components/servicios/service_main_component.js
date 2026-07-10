@@ -104,47 +104,11 @@ export class ServicesMainComponent extends Component {
 
     async loadConceptsByEventSupplierId(supplier_link_id) {
         try {
-            const result = await this.orm.webSearchRead(
-                'ike.event.supplier.product',
-                [
-                    ['event_supplier_link_id', '=', supplier_link_id],
-                    ['display_type', 'not in', ['line_section', 'line_note']],
-                    ['parent_product_id', '=', false],
-                ],
-                {
-                    specification: {
-                        id: {},
-                        supplier_id: {
-                            fields: {
-                                id: {},
-                                name: {},
-                            },
-                        },
-                        product_id: {
-                            fields: {
-                                id: {},
-                                name: {},
-                                display_name: {},
-                            },
-                        },
-                        quantity: {},
-                        uom_id: {
-                            fields: {
-                                id: {},
-                                name: {},
-                                display_name: {},
-                            },
-                        },
-                        unit_price: {},
-                        cost_price: {},
-                        vat: {},
-                        subtotal: {},
-                        from_portal: {},
-                    },
-                    context: { lang: this.user.lang || 'es_MX' },
-                }
-            );
-            return result.records;
+            const records = await rpc('/provider/portal/services/get_concepts', {
+                supplier_link_id: supplier_link_id,
+            });
+
+            return records || [];
         } catch (err) {
             this.showNotification({ title: _t("Error loading service concepts"), message: _t(err?.data?.message || err.message || "An unknown error occurred"), type: 'danger' });
             return [];
@@ -219,8 +183,9 @@ export class ServicesMainComponent extends Component {
         if (!event_supplier) return;
 
         if (ACTIVE_STATES.includes(item.state)) {
-            this.showNotification({ title: _t("Service Updated"), message: _t('You have a new service available.'), type: 'info' });
-            this.skipSupplierFromEvent(event_supplier.event_id);
+            //this.showNotification({ title: _t("Service Updated"), message: _t('You have a new service available.'), type: 'info' });
+            if (item.state === 'notified')
+                this.showNotificationWithSound({ title: _t("New Service Available"), message: _t('You have a new service available.'), type: 'info' });
             await this._handleActiveService(event_supplier);
         } else if (REMOVED_STATES.includes(item.state) && event_supplier.supplier_id == this.supplier_id) {
             this._handleRemovedService(event_supplier);
@@ -833,11 +798,6 @@ export class ServicesMainComponent extends Component {
             this.showNotification({ title: _t("Error loading available concepts"), message: _t(err?.data?.message || err.message), type: 'danger' });
             this.state.modal.availableProducts = [];
         }
-    }
-
-    skipSupplierFromEvent(event_id) {
-        const toRemove = this.state.services.filter(s => s.event_id === event_id);
-        toRemove.forEach(s => this.removeServiceById(s.event_supplier_id));
     }
 
     get paginatedServices() {

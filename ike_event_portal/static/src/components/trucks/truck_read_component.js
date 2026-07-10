@@ -19,15 +19,36 @@ export class TruckReadComponent extends Component {
         this.orm = useService("orm");
         this.notification = useService("notification");
         this.user = user;
+        this.translate = _t;
         this.state = useState({
             truck: null,
             isLoading: true,
             canEditDriver: false,
+            // Driver modal
             showEditDriverModal: false,
             availableDrivers: [],
             isLoadingDrivers: false,
             selectedDriverId: '',
             isSaving: false,
+            // Vehicle type modal
+            showEditVehicleTypeModal: false,
+            availableVehicleTypes: [],
+            selectedVehicleTypeId: '',
+            // Center modal
+            showEditCenterModal: false,
+            availableCenters: [],
+            selectedCenterId: '',
+            // License plate modal
+            showEditPlateModal: false,
+            editedPlate: '',
+            // Axes modal
+            showEditAxesModal: false,
+            editedAxes: 0,
+            // Accessories modal
+            showEditAccessoriesModal: false,
+            editedManeuvers: false,
+            editedFederalPlates: false,
+            editedTireConditioning: false,
         });
 
         onWillStart(async () => {
@@ -120,6 +141,195 @@ export class TruckReadComponent extends Component {
             this.state.availableDrivers = [];
         } finally {
             this.state.isLoadingDrivers = false;
+        }
+    }
+
+    // === VEHICLE TYPE ===
+    async openEditVehicleTypeModal() {
+        this.state.showEditVehicleTypeModal = true;
+        this.state.selectedVehicleTypeId = this.state.truck.x_vehicle_type
+            ? this.state.truck.x_vehicle_type[0].toString() : '';
+        try {
+            const result = await rpc('/provider/portal/trucks/vehicle_types');
+            this.state.availableVehicleTypes = result.success ? result.vehicle_types : [];
+        } catch (err) {
+            this.state.availableVehicleTypes = [];
+        }
+    }
+
+    closeEditVehicleTypeModal() {
+        this.state.showEditVehicleTypeModal = false;
+        this.state.selectedVehicleTypeId = '';
+    }
+
+    async saveVehicleType() {
+        this.state.isSaving = true;
+        try {
+            const typeId = this.state.selectedVehicleTypeId ? parseInt(this.state.selectedVehicleTypeId) : false;
+            const result = await rpc('/provider/portal/trucks/update_fields', {
+                truck_id: this.props.truckId,
+                fields: { x_vehicle_type: typeId }
+            });
+            if (!result.success) {
+                this.showNotification({ title: _t("Error"), message: _t(result.error), type: 'danger' });
+                return;
+            }
+            this.showNotification({ title: _t("Updated"), message: _t("Vehicle type updated."), type: 'success' });
+            await this.loadTruckDetail();
+            this.closeEditVehicleTypeModal();
+        } catch (err) {
+            this.showNotification({ title: _t("Error"), message: _t(err?.data?.message || err.message), type: 'danger' });
+        } finally {
+            this.state.isSaving = false;
+        }
+    }
+
+    // === CENTER ===
+    async openEditCenterModal() {
+        this.state.showEditCenterModal = true;
+        this.state.selectedCenterId = this.state.truck.x_center_id
+            ? this.state.truck.x_center_id[0].toString() : '';
+        try {
+            const result = await rpc('/provider/portal/trucks/centers');
+            this.state.availableCenters = result.success ? result.centers : [];
+        } catch (err) {
+            this.state.availableCenters = [];
+        }
+    }
+
+    closeEditCenterModal() {
+        this.state.showEditCenterModal = false;
+        this.state.selectedCenterId = '';
+    }
+
+    async saveCenter() {
+        this.state.isSaving = true;
+        try {
+            const centerId = this.state.selectedCenterId ? parseInt(this.state.selectedCenterId) : false;
+            const result = await rpc('/provider/portal/trucks/update_fields', {
+                truck_id: this.props.truckId,
+                fields: { x_center_id: centerId }
+            });
+            if (!result.success) {
+                this.showNotification({ title: _t("Error"), message: _t(result.error), type: 'danger' });
+                return;
+            }
+            this.showNotification({ title: _t("Updated"), message: _t("Centro de atención updated."), type: 'success' });
+            await this.loadTruckDetail();
+            this.closeEditCenterModal();
+        } catch (err) {
+            this.showNotification({ title: _t("Error"), message: _t(err?.data?.message || err.message), type: 'danger' });
+        } finally {
+            this.state.isSaving = false;
+        }
+    }
+
+    // === LICENSE PLATE ===
+    openEditPlateModal() {
+        this.state.editedPlate = this.state.truck.license_plate || '';
+        this.state.showEditPlateModal = true;
+    }
+
+    closeEditPlateModal() {
+        this.state.showEditPlateModal = false;
+        this.state.editedPlate = '';
+    }
+
+    onPlateInput(ev) {
+        this.state.editedPlate = ev.target.value;
+    }
+
+    async savePlate() {
+        this.state.isSaving = true;
+        try {
+            const result = await rpc('/provider/portal/trucks/update_fields', {
+                truck_id: this.props.truckId,
+                fields: { license_plate: this.state.editedPlate }
+            });
+            if (!result.success) {
+                this.showNotification({ title: _t("Error"), message: _t(result.error), type: 'danger' });
+                return;
+            }
+            this.showNotification({ title: _t("Updated"), message: _t("Matrícula updated."), type: 'success' });
+            await this.loadTruckDetail();
+            this.closeEditPlateModal();
+        } catch (err) {
+            this.showNotification({ title: _t("Error"), message: _t(err?.data?.message || err.message), type: 'danger' });
+        } finally {
+            this.state.isSaving = false;
+        }
+    }
+
+    // === AXES ===
+    openEditAxesModal() {
+        this.state.editedAxes = this.state.truck.x_vehicles_axes || 0;
+        this.state.showEditAxesModal = true;
+    }
+
+    closeEditAxesModal() {
+        this.state.showEditAxesModal = false;
+        this.state.editedAxes = 0;
+    }
+
+    onAxesInput(ev) {
+        this.state.editedAxes = parseInt(ev.target.value) || 0;
+    }
+
+    async saveAxes() {
+        this.state.isSaving = true;
+        try {
+            const result = await rpc('/provider/portal/trucks/update_fields', {
+                truck_id: this.props.truckId,
+                fields: { x_vehicles_axes: this.state.editedAxes }
+            });
+            if (!result.success) {
+                this.showNotification({ title: _t("Error"), message: _t(result.error), type: 'danger' });
+                return;
+            }
+            this.showNotification({ title: _t("Guardado"), message: _t("Ejes actualizados."), type: 'success' });
+            await this.loadTruckDetail();
+            this.closeEditAxesModal();
+        } catch (err) {
+            this.showNotification({ title: _t("Error"), message: _t(err?.data?.message || err.message), type: 'danger' });
+        } finally {
+            this.state.isSaving = false;
+        }
+    }
+
+    // === ACCESSORIES ===
+    openEditAccessoriesModal() {
+        this.state.editedManeuvers = this.state.truck.x_maneuvers || false;
+        this.state.editedFederalPlates = this.state.truck.x_federal_license_plates || false;
+        this.state.editedTireConditioning = this.state.truck.x_manages_tire_conditioning || false;
+        this.state.showEditAccessoriesModal = true;
+    }
+
+    closeEditAccessoriesModal() {
+        this.state.showEditAccessoriesModal = false;
+    }
+
+    async saveAccessories() {
+        this.state.isSaving = true;
+        try {
+            const result = await rpc('/provider/portal/trucks/update_fields', {
+                truck_id: this.props.truckId,
+                fields: {
+                    x_maneuvers: this.state.editedManeuvers,
+                    x_federal_license_plates: this.state.editedFederalPlates,
+                    x_manages_tire_conditioning: this.state.editedTireConditioning,
+                }
+            });
+            if (!result.success) {
+                this.showNotification({ title: _t("Error"), message: _t(result.error), type: 'danger' });
+                return;
+            }
+            this.showNotification({ title: _t("Guardado"), message: _t("Accesorios actualizados."), type: 'success' });
+            await this.loadTruckDetail();
+            this.closeEditAccessoriesModal();
+        } catch (err) {
+            this.showNotification({ title: _t("Error"), message: _t(err?.data?.message || err.message), type: 'danger' });
+        } finally {
+            this.state.isSaving = false;
         }
     }
 

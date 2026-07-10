@@ -22,29 +22,40 @@ class PurchaseOrderLine(models.Model):
     price_unit = fields.Float(sub_tracking=True)
     product_qty = fields.Float(sub_tracking=True)
     # Dispute
-    x_price_unit_dispute = fields.Float('Dispute Price', copy=False, sub_tracking=True)
+    x_price_unit_dispute = fields.Float('Dispute unit Price', copy=False, sub_tracking=True)
     x_product_qty_dispute = fields.Float('Dispute Quantity', copy=False, sub_tracking=True, default=1)
-    x_price_subtotal_dispute = fields.Monetary(compute='_x_compute_amount_dispute', string='Subtotal dispute', aggregator=None, store=True)
+    x_price_subtotal_dispute = fields.Monetary(
+        compute='_x_compute_amount_dispute',
+        string='Subtotal dispute',
+        aggregator=None, store=True)
     # Approved
-    x_price_unit_approved = fields.Float('Approved Price', copy=False, sub_tracking=True)
-    x_product_qty_approved = fields.Float('Approved Quantity', copy=False, sub_tracking=True, default=1)
-    x_price_subtotal_approved = fields.Monetary(compute='_x_compute_amount_approved', string='Subtotal approved', aggregator=None, store=True)
+    x_price_unit_approved = fields.Float('CCC unit Price', copy=False, sub_tracking=True)
+    x_product_qty_approved = fields.Float('CCC Quantity', copy=False, sub_tracking=True, default=1)
+    x_price_subtotal_approved = fields.Monetary(
+        compute='_x_compute_amount_approved',
+        string='Subtotal CCC',
+        aggregator=None,
+        store=True)
     # Event values
-    x_price_unit_event = fields.Float('Event Price', related='x_supplier_product_id.cost_price')
-    x_product_qty_event = fields.Integer('Event Quantity', related='x_supplier_product_id.quantity')
-    x_price_subtotal_event = fields.Monetary(compute='_x_compute_amount_event', string='Subtotal event', aggregator=None, store=True)
+    x_price_unit_event = fields.Float('CDS unit Price ', related='x_supplier_product_id.cost_price')
+    x_product_qty_event = fields.Integer('CDS Quantity ', related='x_supplier_product_id.quantity')
+    x_price_subtotal_event = fields.Monetary(compute='_x_compute_amount_event', string='CDS ubtotal ', aggregator=None, store=True)
 
     # ToDo: Remove this field aprox, 2 months ago. 'x_parent_event_id'
     x_parent_event_id = fields.Many2one('ike.event', 'Event', help="Techinical: Refer to the event of the purchase order")
     x_parent_expedient = fields.Char(string='Parent Expedient', help="Techinical: Refer to the event of the purchase order")
     x_sap_code_income = fields.Char(string='SAP Code Income', help="Techinical: Refer to the event of the purchase order")
     x_sap_code_outgoing = fields.Char(string='SAP Code Outgoing', help="Techinical: Refer to the event of the purchase order")
-    x_sap_product_description = fields.Char(string='SAP Product Description', help="Techinical: Refer to the event of the purchase order")
+    x_sap_product_description = fields.Char(
+        string='SAP Product Description',
+        help="Techinical: Refer to the event of the purchase order")
 
     x_covered = fields.Boolean('Covered', default=False)
     x_mandatory = fields.Boolean('Mandatory', default=False)
 
     x_product_domain = fields.Binary(compute='_x_compute_product_domain')
+
+    x_base_unit_price = fields.Float('Agreement cost', copy=False, readonly=True, sub_tracking=True)
 
     # External flow
     x_external_api_record = fields.Boolean(
@@ -194,6 +205,12 @@ class PurchaseOrderLine(models.Model):
                 if vals['product_id'] != line.product_id.id:
                     update_covered = True
                     break
+
+        if 'x_product_qty_approved' in vals:
+            vals['product_qty'] = vals['x_product_qty_approved']
+
+        if 'x_price_unit_approved' in vals:
+            vals['price_unit'] = vals['x_price_unit_approved']
 
         res = super().write(vals)
 

@@ -893,6 +893,12 @@ class IkeEventSupplierLink(models.Model):
     def action_accept_authorization(self):
         self.ensure_one()
         event_id = self.event_id.sudo()
+
+        if not self.type_authorization_id and not self.reason_authorizer_id:
+            raise ValidationError(
+                _("Authorization is not possible because there are incomplete authorization fields.")
+            )
+
         authorized_amount = max(event_id.previous_amount + event_id.current_amount, event_id.covered_amount)
         authorizer = (
             self.nu_user_id.display_name

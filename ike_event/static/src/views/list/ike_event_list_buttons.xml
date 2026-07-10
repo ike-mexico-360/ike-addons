@@ -98,6 +98,30 @@
                         </div>
                     </div>
                     <div class="g-col-1">
+                        <div class="p-0" t-on-click="setSearchContext" title="All Cancelled Subsequently Events" filter_name="all_cancel_subsequently">
+                            <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                <div class="fs-2" t-out="eventData['all_cancel_subsequently_events']"/>Cancelled Subsequently
+                            </a>
+                        </div>
+                        <div class="p-0 mt-2" t-on-click="setSearchContext" title="My Cancelled Subsequently Events" filter_name="all_cancel_subsequently,my_events">
+                            <a href="#" class="btn btn-light w-100 border-0 fw-normal">
+                                <div t-out="eventData['my_cancel_subsequently_events']"/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="g-col-1">
+                        <div class="p-0" t-on-click="setSearchContext" title="All Cancelled Verifying Events" filter_name="all_cancel_verifying">
+                            <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                <div class="fs-2" t-out="eventData['all_cancel_verifying_events']"/>Cancelled Verifying
+                            </a>
+                        </div>
+                        <div class="p-0 mt-2" t-on-click="setSearchContext" title="My Cancelled Verifying Events" filter_name="all_cancel_verifying,my_events">
+                            <a href="#" class="btn btn-light w-100 border-0 fw-normal">
+                                <div t-out="eventData['my_cancel_verifying_events']"/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="g-col-1">
                         <div class="p-0" t-on-click="setSearchContext" title="All verifying CCC Events" filter_name="all_verifying">
                             <a href="#" class="btn btn-primary w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
                                 <div class="fs-2" t-out="eventData['all_verifying_events']"/>Verifying

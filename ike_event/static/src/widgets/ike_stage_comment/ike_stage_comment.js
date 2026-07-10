@@ -109,6 +109,10 @@ export class IkeStageTrackingComment extends Component {
         ev.stopPropagation();
         const comment = this.state.comments[commentKey];
 
+        const title = comment.comment_type === "user"
+            ? _t("Comments - Nu User")
+            : _t("Comments - Supplier");
+
         const ike_uuid = this.props.record.context.ike_uuid;
         let context = {
             default_event_id: this.props.record.resId,
@@ -124,7 +128,7 @@ export class IkeStageTrackingComment extends Component {
         let tracking_time = this.tracking_time;
 
         this.dialog.add(FormViewDialog, {
-            title: _t("Tracking Log"),
+            title: title,
             resId: false,
             resModel: "ike.event.stage.comment",
             context: context,

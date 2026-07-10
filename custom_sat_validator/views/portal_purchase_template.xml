@@ -3,7 +3,7 @@
     <template id="ike_event_portal_my_purchase_order" name="Purchase Order Detail" inherit_id="purchase.portal_my_purchase_order">
         <xpath expr="//a[@id='print_invoice_report']" position="after">
 
-            <div t-if="request.env.user.has_group('base.group_system') or request.env.user.has_group('ike_event_portal.custom_group_portal_finance')"
+            <div t-if="order.state in ('consolidated', 'to_consolidate') and (request.env.user.has_group('ike_event_portal.custom_group_portal_finance'))"
                  class="card p-3 mt-3 border rounded">
 
                 <label class="form-label fw-bold">

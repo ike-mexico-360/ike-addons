@@ -78,6 +78,10 @@ class ResPartner(models.Model):
         domain=[('x_is_account', '=', True)],
         string='Accounts')
 
+    # === FIELDS: LOCATION === #
+    partner_latitude = fields.Float(tracking=True)
+    partner_longitude = fields.Float(tracking=True)
+
     # === ONCHANGE === #
     @api.onchange('is_company')
     def _onchange_is_company_type(self):

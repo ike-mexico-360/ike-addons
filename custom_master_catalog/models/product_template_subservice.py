@@ -97,7 +97,6 @@ class ProductProduct(models.Model):
         for rec in self:
             domain = self.get_concepts_domain()
             domain.append(('x_categ_id', 'in', [self.categ_id.id, False]))
-            domain.append(('disabled', '=', False))
             rec.x_concepts_domain = domain
 
     @api.depends('name')
@@ -185,5 +184,4 @@ class CustomSubserviceConceptLine(models.Model):
         for rec in self:
             domain = self.env['product.product'].get_concepts_domain()
             domain.append(('x_categ_id', 'in', [self.categ_id.id, False]))
-            domain.append(('disabled', '=', False))
             rec.concepts_domain = domain

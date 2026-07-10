@@ -143,7 +143,7 @@ class CustomSupplierUploadCostMatrix(models.Model):
             },
             'Concepto': {
                 'name': 'concept_id', 'required': True,
-                'domain': self.env['product.product'].get_concepts_domain() + [('disabled', '=', False)]
+                'domain': self.env['product.product'].get_concepts_domain(),
             },
             # * Cambia 'vehicle_category_id' por 'subservice_specification_id'
             'Categoría': {

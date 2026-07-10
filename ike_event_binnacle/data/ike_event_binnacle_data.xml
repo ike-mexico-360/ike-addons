@@ -1167,6 +1167,16 @@
                 <t t-if="link">
                     <t t-set="link" t-value="link[0]"/>
 
+                    <strong>Supplier:</strong>
+
+                    <t t-if="link.supplier_id">
+                        <t t-out="link.supplier_id.display_name"/>
+                    </t>
+                    <t t-else="">
+                        <em>No supplier assigned.</em>
+                    </t>
+                    <br/>
+
                     <!-- CONCEPTS PENDING AUTHORIZATION -->
                     <strong>Concepts additionals:</strong>
 
@@ -2755,6 +2765,35 @@
             <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_api"/>
             <field name="sequence">90</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_api_msg"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_stage_comment" model="mail.template">
+            <field name="name">Binnacle stage mail template stage comment</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <p>
+                        <strong>Comment type:</strong>
+                        <t t-if="ctx.get('comment_type') == 'user'">
+                            Nu User
+                        </t>
+                        <t t-elif="ctx.get('comment_type') == 'supplier'">
+                            Supplier
+                        </t>
+                    </p>
+                    <p>
+                        <strong>Comment:</strong>
+                        <t t-out="ctx.get('comment')"/>
+                    </p>
+                </t>
+            </field>
+        </record>
+
+        <record id="ike_binnacle_stage_stage_comment" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="sequence">95</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_stage_comment"/>
         </record>
     </data>
 </odoo>

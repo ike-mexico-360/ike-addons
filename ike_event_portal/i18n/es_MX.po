@@ -2059,6 +2059,12 @@ msgstr "La hora ha sido registrada exitosamente."
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "New Service Available"
+msgstr "Nuevo Servicio Disponible"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
 msgid "You have a new service available."
 msgstr "Tienes un nuevo servicio disponible."
 
@@ -2085,3 +2091,333 @@ msgstr "La hora definitiva debe ser posterior a la fecha de contacto"
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
 msgid "Error registering clock"
 msgstr "Error al registrar el reloj"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Guardar"
+msgstr "Guardar"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Servicio"
+msgstr "Servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Sin asignar"
+msgstr "Sin asignar"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Seleccionar tipo"
+msgstr "Seleccionar tipo"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Seleccionar centro"
+msgstr "Seleccionar centro"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Seleccionar chofer"
+msgstr "Seleccionar chofer"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Número de matrícula"
+msgstr "Número de matrícula"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Cargando detalles..."
+msgstr "Cargando detalles..."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "-- Sin tipo --"
+msgstr "-- Sin tipo --"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "-- Sin centro --"
+msgstr "-- Sin centro --"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Editar accesorios"
+msgstr "Editar accesorios"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Editar"
+msgstr "Editar"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Ej. ABC-1234"
+msgstr "Ej. ABC-1234"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Tipo de vehículo"
+msgstr "Tipo de vehículo"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Loading details..."
+msgstr "Cargando detalles..."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Truck Details"
+msgstr "Detalles de la grúa"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Back to list"
+msgstr "Volver a la lista"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Vehicle Information"
+msgstr "Información del vehículo"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Model"
+msgstr "Modelo"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Provider"
+msgstr "Proveedor"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Vehicle Type"
+msgstr "Tipo de vehículo"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Service Center"
+msgstr "Centro de atención"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "License Plate"
+msgstr "Matrícula"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Axes"
+msgstr "Ejes"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Service and Operation"
+msgstr "Servicio y Operación"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Assigned Driver"
+msgstr "Chofer asignado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Unassigned"
+msgstr "Sin asignar"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Service"
+msgstr "Servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Associated Subservices"
+msgstr "Subservicios asociados"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "No subservices"
+msgstr "Sin subservicios"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Service Status"
+msgstr "Estado de servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Accessories"
+msgstr "Accesorios"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Edit accessories"
+msgstr "Editar accesorios"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Maneuvers"
+msgstr "Maniobras"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Federal Plates"
+msgstr "Placas federales"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Manages Tire Conditioning"
+msgstr "Gestiona acondicionamiento de llantas"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Select type"
+msgstr "Seleccionar tipo"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "-- No type --"
+msgstr "-- Sin tipo --"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Saving..."
+msgstr "Guardando..."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Save"
+msgstr "Guardar"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Select center"
+msgstr "Seleccionar centro"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "-- No center --"
+msgstr "-- Sin centro --"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "License plate number"
+msgstr "Número de matrícula"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "e.g. ABC-1234"
+msgstr "Ej. ABC-1234"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Number of axes"
+msgstr "Número de ejes"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Loading available drivers..."
+msgstr "Cargando choferes disponibles..."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Select driver"
+msgstr "Seleccionar chofer"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "-- Unassigned --"
+msgstr "-- Sin asignar --"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Edit"
+msgstr "Editar"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "available"
+msgstr "Disponible"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Available"
+msgstr "Disponible"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Not Available"
+msgstr "No disponible"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "In Service"
+msgstr "En servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
+msgid "Disabled"
+msgstr "Deshabilitado"

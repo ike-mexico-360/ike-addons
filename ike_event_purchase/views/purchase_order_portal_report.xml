@@ -1,0 +1,334 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="paperformat_portal_purchase_orders" model="report.paperformat">
+        <field name="name">Portal Purchase Orders Statement</field>
+        <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">8</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="dpi">90</field>
+    </record>
+
+    <record id="action_report_portal_purchase_orders" model="ir.actions.report">
+        <field name="name">Portal Purchase Orders Statement</field>
+        <field name="model">purchase.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ike_event_purchase.report_portal_purchase_orders</field>
+        <field name="report_file">ike_event_purchase.report_portal_purchase_orders</field>
+        <field name="paperformat_id" ref="ike_event_purchase.paperformat_portal_purchase_orders"/>
+        <field name="print_report_name">'Estado de cuenta'</field>
+    </record>
+
+    <template id="report_portal_purchase_orders">
+        <t t-call="web.html_container">
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+            <style>
+                @page {
+                    margin: 9mm 10mm 10mm 10mm;
+                }
+                body {
+                    margin: 0;
+                    padding: 0;
+                }
+                .statement-page {
+                    color: #070b35;
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 11px;
+                    line-height: 1.25;
+                    padding: 0;
+                }
+                .statement-header {
+                    border-bottom: 3px solid #1a00a8;
+                    display: table;
+                    margin: 0 0 12px 0;
+                    padding: 0 0 10px 0;
+                    width: 100%;
+                }
+                .statement-brand,
+                .statement-title {
+                    display: table-cell;
+                    vertical-align: top;
+                }
+                .statement-logo {
+                    max-height: 38px;
+                    max-width: 110px;
+                }
+                .statement-title {
+                    text-align: right;
+                }
+                .statement-title h1 {
+                    color: #15006a;
+                    font-size: 22px;
+                    font-weight: 700;
+                    margin: 0 0 4px 0;
+                }
+                .statement-title div {
+                    color: #4b4f75;
+                    font-size: 11px;
+                }
+                .statement-supplier {
+                    color: #070b35;
+                    font-size: 11px;
+                    margin-top: 8px;
+                }
+                .statement-supplier strong {
+                    color: #15006a;
+                    display: block;
+                    font-size: 13px;
+                }
+                .statement-filters {
+                    background: #fafbff;
+                    border: 1px solid #dfe3f1;
+                    margin: 0 0 10px 0;
+                    padding: 7px 9px;
+                }
+                .statement-filter-chip {
+                    color: #070b35;
+                    display: inline-block;
+                    margin-right: 12px;
+                    white-space: nowrap;
+                }
+                .statement-filter-chip strong {
+                    color: #2437c7;
+                }
+                .statement-summary {
+                    border-collapse: separate;
+                    border-spacing: 0 0;
+                    margin-bottom: 8px;
+                    width: 100%;
+                }
+                .statement-summary td {
+                    background: #eef1ff;
+                    border: 1px solid #cfd5f5;
+                    padding: 7px 9px;
+                    width: 100%;
+                }
+                .statement-label {
+                    color: #2437c7;
+                    display: block;
+                    font-size: 9px;
+                    font-weight: 700;
+                    margin-bottom: 3px;
+                    text-transform: uppercase;
+                }
+                .statement-value {
+                    color: #020728;
+                    display: block;
+                    font-size: 14px;
+                    font-weight: 700;
+                }
+                .statement-indicators {
+                    border-collapse: separate;
+                    border-spacing: 0 0;
+                    margin-bottom: 14px;
+                    width: 100%;
+                }
+                .statement-indicators td {
+                    background: #ffffff;
+                    border: 1px solid #dfe3f1;
+                    padding: 6px 8px;
+                    width: 25%;
+                }
+                .statement-indicators td + td {
+                    border-left: 6px solid #ffffff;
+                }
+                .statement-indicators .statement-value {
+                    font-size: 12px;
+                }
+                .statement-table {
+                    border-collapse: collapse;
+                    width: 100%;
+                }
+                .statement-table th {
+                    background: #16006f;
+                    color: #ffffff;
+                    font-size: 9px;
+                    font-weight: 700;
+                    padding: 7px 8px;
+                    text-align: left;
+                    text-transform: uppercase;
+                }
+                .statement-table td {
+                    border-bottom: 1px solid #dfe3f1;
+                    padding: 8px;
+                    vertical-align: top;
+                }
+                .statement-table tr:nth-child(even) td {
+                    background: #f8f9fd;
+                }
+                .statement-right {
+                    text-align: right;
+                }
+                .statement-order {
+                    color: #15006a;
+                    font-size: 13px;
+                    font-weight: 700;
+                }
+                .statement-muted {
+                    color: #68708c;
+                    font-size: 10px;
+                }
+                .statement-totals-wrap {
+                    display: table;
+                    margin-top: 14px;
+                    width: 100%;
+                }
+                .statement-note,
+                .statement-totals {
+                    display: table-cell;
+                    vertical-align: top;
+                }
+                .statement-note {
+                    color: #4b4f75;
+                    padding-right: 18px;
+                    width: 55%;
+                }
+                .statement-totals {
+                    width: 45%;
+                }
+                .statement-total-line {
+                    display: table;
+                    width: 100%;
+                }
+                .statement-total-line span {
+                    border-bottom: 1px solid #e2e5f2;
+                    display: table-cell;
+                    padding: 5px 0;
+                }
+                .statement-total-line span:last-child {
+                    font-weight: 700;
+                    text-align: right;
+                }
+                .statement-grand span {
+                    border-bottom: 0;
+                    border-top: 2px solid #16006f;
+                    color: #15006a;
+                    font-size: 14px;
+                    font-weight: 700;
+                    padding-top: 8px;
+                }
+            </style>
+            <div class="statement-page">
+                <div class="statement-header">
+                    <div class="statement-brand">
+                        <img t-if="company.logo" class="statement-logo" t-att-src="image_data_uri(company.logo)"/>
+                    </div>
+                    <div class="statement-title">
+                        <h1>Estado de cuenta</h1>
+                        <div>Reporte PDF descargable de ordenes de compra</div>
+                        <div><span t-esc="len(docs)"/> ordenes incluidas</div>
+                        <div class="statement-supplier">
+                            <span>Proveedor</span>
+                            <strong t-esc="supplier_info['name']"/>
+                            <span t-if="supplier_info['details']" t-esc="supplier_info['details']"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="statement-filters" t-if="applied_filters">
+                    <span class="statement-label">Filtros aplicados</span>
+                    <t t-foreach="applied_filters" t-as="filter_item">
+                        <span class="statement-filter-chip">
+                            <strong t-esc="filter_item[0]"/>:
+                            <span t-esc="filter_item[1]"/>
+                        </span>
+                    </t>
+                </div>
+
+                <table class="statement-summary">
+                    <tr>
+                        <td>
+                            <span class="statement-label">Ordenes</span>
+                            <span class="statement-value" t-esc="len(docs)"/>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="statement-indicators">
+                    <tr>
+                        <td>
+                            <span class="statement-label">Pedidos sin facturar</span>
+                            <span class="statement-value" t-esc="uninvoiced_order_count"/>
+                        </td>
+                        <td>
+                            <span class="statement-label">Monto pendiente de facturar</span>
+                            <span class="statement-value" t-esc="format_money(pending_invoice_amount, company.currency_id)"/>
+                        </td>
+                        <td>
+                            <span class="statement-label">Facturas</span>
+                            <span class="statement-value" t-esc="invoice_count"/>
+                        </td>
+                        <td>
+                            <span class="statement-label">Subtotal facturado</span>
+                            <span class="statement-value" t-esc="format_money(invoiced_amount, company.currency_id)"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span class="statement-label">Subtotal pagado</span>
+                            <span class="statement-value" t-esc="format_money(paid_amount, company.currency_id)"/>
+                        </td>
+                        <td>
+                            <span class="statement-label">Pendiente a pagar</span>
+                            <span class="statement-value" t-esc="format_money(pending_payment_amount, company.currency_id)"/>
+                        </td>
+                        <td>
+                            <span class="statement-label">Facturas rechazadas</span>
+                            <span class="statement-value" t-esc="rejected_invoice_count"/>
+                        </td>
+                        <td>
+                            <span class="statement-label">Saldo cuenta</span>
+                            <span class="statement-value" t-esc="format_money(paid_amount, company.currency_id)"/>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="statement-table">
+                    <thead>
+                        <tr>
+                            <th>Orden</th>
+                            <th>Evento</th>
+                            <th>Fecha</th>
+                            <th class="statement-right">Subtotal</th>
+                            <th class="statement-right">Impuestos</th>
+                            <th class="statement-right">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="docs" t-as="order">
+                            <tr>
+                                <td>
+                                    <div class="statement-order" t-esc="clean_text(order.name)"/>
+                                    <div class="statement-muted" t-if="order.x_ref_sap">SAP <span t-esc="clean_text(order.x_ref_sap)"/></div>
+                                </td>
+                                <td>
+                                    <div t-esc="order_event(order)"/>
+                                    <div class="statement-muted" t-if="order.x_origin_events and order.x_event_id">Origen: <span t-esc="clean_text(order.x_origin_events)"/></div>
+                                </td>
+                                <td>
+                                    <div t-esc="format_statement_date(order.date_approve or order.date_order)"/>
+                                </td>
+                                <td class="statement-right" t-esc="format_money(order.amount_untaxed, order.currency_id)"/>
+                                <td class="statement-right" t-esc="format_money(order.amount_tax, order.currency_id)"/>
+                                <td class="statement-right">
+                                    <strong t-esc="format_money(order.amount_total, order.currency_id)"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <div class="statement-totals-wrap">
+                    <div class="statement-note">
+                        Este estado de cuenta resume las ordenes de compra incluidas en la consulta actual del portal.
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,124 @@
+.o_list_table thead th .text-truncate {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: unset !important;
+}
+
+.o_list_table thead th {
+    height: auto !important;
+}
+
+/* ===== Dispute ===== */
+.o_list_table th[data-name="x_price_unit_dispute"],
+.o_list_table td[data-name="x_price_unit_dispute"] {
+    min-width: 120px !important;
+}
+.o_list_table th[data-name="x_product_qty_dispute"],
+.o_list_table td[data-name="x_product_qty_dispute"] {
+    min-width: 90px !important;
+}
+.o_list_table th[data-name="x_price_subtotal_dispute"],
+.o_list_table td[data-name="x_price_subtotal_dispute"] {
+    min-width: 120px !important;
+}
+
+/* ===== Approved ===== */
+.o_list_table th[data-name="x_price_unit_approved"],
+.o_list_table td[data-name="x_price_unit_approved"] {
+    min-width: 120px !important;
+}
+.o_list_table th[data-name="x_product_qty_approved"],
+.o_list_table td[data-name="x_product_qty_approved"] {
+    min-width: 90px !important;
+}
+.o_list_table th[data-name="x_price_subtotal_approved"],
+.o_list_table td[data-name="x_price_subtotal_approved"] {
+    min-width: 120px !important;
+}
+
+/* ===== Event (CDS) ===== */
+.o_list_table th[data-name="x_price_unit_event"],
+.o_list_table td[data-name="x_price_unit_event"] {
+    min-width: 120px !important;
+}
+.o_list_table th[data-name="x_product_qty_event"],
+.o_list_table td[data-name="x_product_qty_event"] {
+    min-width: 90px !important;
+}
+.o_list_table th[data-name="x_price_subtotal_event"],
+.o_list_table td[data-name="x_price_subtotal_event"] {
+    min-width: 120px !important;
+}
+
+
+// /* ===========================
+//    Encabezados personalizados (con especificidad reforzada)
+//    =========================== */
+
+// /* ===== CDS (Event) - Morado ===== */
+
+// /* Event quantity - CDS */
+// .o_list_renderer .o_list_table.table thead tr th[data-name="x_product_qty_event"] {
+//     background-color: #E7D9F7 !important;
+// }
+
+// /* Event unit price - CDS */
+// .o_list_renderer .o_list_table.table thead tr th[data-name="x_price_unit_event"] {
+//     background-color: #E7D9F7 !important;
+// }
+
+// /* Event subtotal - CDS */
+// .o_list_renderer .o_list_table.table thead tr th[data-name="x_price_subtotal_event"] {
+//     background-color: #E7D9F7 !important;
+// }
+
+// /* ===== Final - Verde ===== */
+
+// /* Final quantity */
+// .o_list_renderer .o_list_table.table thead tr th[data-name="product_qty"] {
+//     background-color: #D4EFD4 !important;
+// }
+
+// /* Final cost unit */
+// .o_list_renderer .o_list_table.table thead tr th[data-name="price_unit"] {
+//     background-color: #D4EFD4 !important;
+// }
+
+// /* Final subtotal */
+// .o_list_renderer .o_list_table.table thead tr th[data-name="price_subtotal"] {
+//     background-color: #D4EFD4 !important;
+// }
+
+// /* ===== Dispute - Rojo/Rosa (sin cambio) ===== */
+
+// /* Dispute quantity */
+// .o_list_renderer .o_list_table.table thead tr th[data-name="x_product_qty_dispute"] {
+//     background-color: #FDECEC !important;
+// }
+
+// /* Dispute unit price */
+// .o_list_renderer .o_list_table.table thead tr th[data-name="x_price_unit_dispute"] {
+//     background-color: #FDECEC !important;
+// }
+
+// /* Dispute subtotal */
+// .o_list_renderer .o_list_table.table thead tr th[data-name="x_price_subtotal_dispute"] {
+//     background-color: #FDECEC !important;
+// }
+
+// /* ===== Approved - Azul (sin cambio, o dime si quieres otro color) ===== */
+
+// /* Approved quantity */
+// .o_list_renderer .o_list_table.table thead tr th[data-name="x_product_qty_approved"] {
+//     background-color: #c0dffc !important;
+// }
+
+// /* Approved unit price */
+// .o_list_renderer .o_list_table.table thead tr th[data-name="x_price_unit_approved"] {
+//     background-color: #c0dffc !important;
+// }
+
+// /* Approved subtotal */
+// .o_list_renderer .o_list_table.table thead tr th[data-name="x_price_subtotal_approved"] {
+//     background-color: #c0dffc !important;
+// }

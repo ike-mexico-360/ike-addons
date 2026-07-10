@@ -34,74 +34,106 @@ class CustomVehicleImportWizard(models.TransientModel):
 
     COLUMN_MAP = {
         'supplier_name': {
-            'excel': 'Proveedor',
+            'excel': 'x_partner_id',
             'required': True,
             'type': 'char',
+            'description': 'Proveedor (x_partner_id)',
         },
         'center_name': {
-            'excel': 'Centro de atención',
+            'excel': 'x_center_id',
             'required': True,
             'type': 'char',
+            'description': 'Centro de atención (x_center_id)',
         },
         'user_login': {
             'excel': 'Correo',
             'required': True,
             'type': 'char',
+            'description': 'Correo',
+        },
+        'user_password': {
+            'excel': 'password',
+            'required': False,
+            'type': 'char',
+            'description': 'Contraseña (password)',
         },
         'operator_name': {
             'excel': 'Operador',
-            'required': False,
+            'required': True,
             'type': 'char',
+            'description': 'Operador',
         },
         'vehicle_ref': {
-            'excel': 'Referencia del vehículo',
+            'excel': 'x_vehicle_ref',
             'required': True,
             'type': 'char',
+            'description': 'Referencia del vehículo (x_vehicle_ref)',
         },
         'vehicle_type': {
-            'excel': 'Tipo de vehículo',
+            'excel': 'x_vehicle_type',
             'required': True,
             'type': 'char',
+            'description': 'Tipo de vehículo (x_vehicle_type)',
         },
         'plate': {
-            'excel': 'Matrícula',
+            'excel': 'license_plate',
             'required': True,
             'type': 'char',
+            'description': 'Matrícula (license_plate)',
         },
         'federal_plate': {
-            'excel': 'Placas federales',
+            'excel': 'x_federal_license_plates',
             'required': False,
             'type': 'bool',
+            'description': 'Placas federales (x_federal_license_plates)',
         },
-        'tire_conditioning': {
-            'excel': 'Gestiona acondicionamiento de llantas',
-            'required': False,
-            'type': 'bool',
-        },
-        'maneuvers': {
-            'excel': 'Maniobras',
-            'required': False,
-            'type': 'bool',
-        },
-        'accessories': {
-            'excel': 'Accesorios',
+        'economic_number': {
+            'excel': 'x_economic_number',
             'required': False,
             'type': 'char',
+            'description': 'Número económico (x_economic_number)',
+        },
+        'vehicle_service_state': {
+            'excel': 'x_vehicle_service_state',
+            'required': True,
+            'type': 'char',
+            'description': 'Estado dela unidad (x_vehicle_service_state)',
+        },
+        'tire_conditioning': {
+            'excel': 'x_manages_tire_conditioning',
+            'required': False,
+            'type': 'bool',
+            'description': 'Gestiona acondicionamiento de llantas (x_manages_tire_conditioning)',
+        },
+        'maneuvers': {
+            'excel': 'x_maneuvers',
+            'required': False,
+            'type': 'bool',
+            'description': 'Maniobras (x_maneuvers)',
+        },
+        'accessories': {
+            'excel': 'x_accessories',
+            'required': False,
+            'type': 'char',
+            'description': 'Accesorios (x_accessories)',
         },
         'year': {
             'excel': 'Año',
             'required': False,
             'type': 'char',
+            'description': 'Año',
         },
         'model': {
-            'excel': 'Modelo',
-            'required': False,
+            'excel': 'model_id',
+            'required': True,
             'type': 'char',
+            'description': 'Modelo (model_id)',
         },
         'weight_category': {
             'excel': 'Categoría de peso',
             'required': False,
             'type': 'char',
+            'description': 'Categoría de peso',
         },
     }
 
@@ -207,7 +239,7 @@ class CustomVehicleImportWizard(models.TransientModel):
             'suppliers_by_name': {},
             'centers_by_key': {},
             'vehicles_by_ref': {},
-            'relations_by_user_id': {},
+            'relations_by_key': {},
             'vehicles_by_driver_partner_id': {},
             'vehicle_models_by_name': {},
             'vehicle_brands_by_name': {},
@@ -215,6 +247,7 @@ class CustomVehicleImportWizard(models.TransientModel):
             'vehicle_types_by_name': {},
             'accessories_by_name': {},
             'partners_by_email': {},
+            'vehicle_service_states': self.get_selection_label_key_dict('fleet.vehicle', 'x_vehicle_service_state'),
         }
 
     def _read_import_file(self):
@@ -444,8 +477,16 @@ class CustomVehicleImportWizard(models.TransientModel):
 
     def _resolve_vehicle(self, runtime_cache, row):
         vehicle_ref = (row.get('vehicle_ref') or '').strip()
+        vehicle_service_state = (row.get('vehicle_service_state') or '').strip()
         if not vehicle_ref:
             return {'record': False, 'errors': [_("No se indicó referencia del vehículo.")]}
+
+        if not vehicle_service_state:
+            return {'record': False, 'errors': [_("No se indicó estado del vehículo.")]}
+
+        odoo_vehicle_service_state = runtime_cache['vehicle_service_states'].get(vehicle_service_state)
+        if not odoo_vehicle_service_state:
+            return {'record': False, 'errors': [_("No se encontró estado del vehículo con estado '%s'.") % vehicle_service_state]}
 
         vehicle = self._get_or_search(
             runtime_cache,
@@ -482,6 +523,7 @@ class CustomVehicleImportWizard(models.TransientModel):
 
         login = (row.get('user_login') or '').strip().lower()
         operator_name = (row.get('operator_name') or '').strip() or login
+        password = (row.get('user_password') or 'Ike360.2026.6#!').strip()
 
         if not login:
             raise UserError(_("Could not create user without email/login."))
@@ -521,9 +563,13 @@ class CustomVehicleImportWizard(models.TransientModel):
             'login': login,
             'email': login,
             'partner_id': partner.id,
+            'active': True,
+            'company_id': self.env.company.id,
+            'lang': "es_MX",
         }
 
         user = Users.create(vals)
+        user.write({'password': password})
         user_group_ids = self._get_user_group_ids(user)
         if user_group_ids:
             user.write({
@@ -564,6 +610,8 @@ class CustomVehicleImportWizard(models.TransientModel):
         weight_category = (row.get('weight_category') or '').strip()
         vehicle_type = (row.get('vehicle_type') or '').strip()
         federal_plates = row.get('federal_plate', False)
+        economic_number = (row.get('economic_number') or '').strip()
+        vehicle_service_state = (row.get('vehicle_service_state') or '').strip()
         tire_conditioning = row.get('tire_conditioning', False)
         maneuvers = row.get('maneuvers', False)
         accessories = (row.get('accessories') or '').strip()
@@ -667,11 +715,14 @@ class CustomVehicleImportWizard(models.TransientModel):
                 [('name', '=', vehicle_type)],
             )
 
+        odoo_vehicle_service_state = runtime_cache['vehicle_service_states'].get(vehicle_service_state)
+
         vals = {
             'model_id': model_rec.id,
             'license_plate': plate or False,
             'x_vehicle_ref': vehicle_ref,
-            'x_vehicle_service_state': 'available',
+            'x_economic_number': economic_number,
+            'x_vehicle_service_state': odoo_vehicle_service_state,
             'x_federal_license_plates': federal_plates,
             'x_manages_tire_conditioning': tire_conditioning,
             'x_maneuvers': maneuvers,
@@ -758,31 +809,23 @@ class CustomVehicleImportWizard(models.TransientModel):
 
         if user and center:
             expected_user_type = 'operator'
+            rel_key = (user.id, center.id, expected_user_type)
 
             existing_rel = self._get_or_search(
                 runtime_cache,
-                'relations_by_user_id',
-                user.id,
+                'relations_by_key',
+                rel_key,
                 'res.partner.supplier_users.rel',
-                [('user_id', '=', user.id)],
+                [
+                    ('user_id', '=', user.id),
+                    ('center_of_attention_id', '=', center.id),
+                    ('user_type', '=', expected_user_type),
+                ],
             )
 
-            if existing_rel:
-                # Si ya existe exactamente la misma relación, no es error.
-                same_relation = (
-                    existing_rel.center_of_attention_id == center
-                    and existing_rel.user_type == expected_user_type
-                )
-
-                if not same_relation:
-                    errors.append(
-                        _("User '%s' already assigned in supplier-user relation with center '%s' and type '%s'.")
-                        % (
-                            user.display_name,
-                            existing_rel.center_of_attention_id.display_name or '',
-                            existing_rel.user_type or '',
-                        )
-                    )
+            if existing_rel and existing_rel.center_of_attention_id == center and existing_rel.user_type == expected_user_type:
+                # misma relación, no es error
+                pass
 
         if user and vehicle:
             user_partner = user.partner_id
@@ -813,17 +856,31 @@ class CustomVehicleImportWizard(models.TransientModel):
         center = resolution['center']['record']
         vehicle = resolution['vehicle']['record']
 
-        rel_vals = {
-            'user_id': user.id,
-            'user_type': 'operator',
-            'center_of_attention_id': center.id,
-        }
-        relation = self.env['res.partner.supplier_users.rel'].sudo().with_context(
-            **self.IMPORT_CONTEXT
-        ).create(rel_vals)
+        rel_key = (user.id, center.id, 'operator')
+
+        relation = self._get_or_search(
+            runtime_cache,
+            'relations_by_key',
+            rel_key,
+            'res.partner.supplier_users.rel',
+            [
+                ('user_id', '=', user.id),
+                ('center_of_attention_id', '=', center.id),
+                ('user_type', '=', 'operator'),
+            ],
+        )
+
+        if not relation:
+            relation = self.env['res.partner.supplier_users.rel'].sudo().with_context(
+                **self.IMPORT_CONTEXT
+            ).create({
+                'user_id': user.id,
+                'user_type': 'operator',
+                'center_of_attention_id': center.id,
+            })
 
         # Actualizar cache de relación creada durante esta misma importación
-        self._cache_set(runtime_cache, 'relations_by_user_id', user.id, relation)
+        self._cache_set(runtime_cache, 'relations_by_key', rel_key, relation)
 
         user_partner = user.partner_id
         if vehicle and user_partner:
@@ -975,3 +1032,7 @@ class CustomVehicleImportWizard(models.TransientModel):
             value = value.strip()
             return value or False
         return value
+
+    def get_selection_label_key_dict(self, model_name, field_name):
+        selection = dict(self.env[model_name]._fields[field_name]._description_selection(self.env))
+        return {label: key for key, label in selection.items()}

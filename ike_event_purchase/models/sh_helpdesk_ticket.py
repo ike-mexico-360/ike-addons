@@ -23,10 +23,9 @@ class ShHelpdeskTicket(models.Model):
     def action_reply(self):
         """ Override of `sh.helpdesk.ticket.action_reply` to send new values to RFQ. """
         res = super().action_reply()
-        for rec in self:
-            if rec.sh_purchase_order_ids:
-                for order in rec.sh_purchase_order_ids:
-                    order.x_action_send_new_values_rfq()
+        ctx = res.get('context', {})
+        ctx['x_sh_helpdesk_ticket_ids'] = self.ids
+        res['context'] = ctx
         return res
 
     def action_done(self):

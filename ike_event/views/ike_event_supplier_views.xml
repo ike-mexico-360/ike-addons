@@ -202,7 +202,11 @@
                 <footer>
                     <button name="action_request_authorization" string="Save and Request Authorization"
                             type="object" class="btn-primary"
-                            invisible="cost_invalid or (not context.get('from_event_authorization', False) and not context.get('from_add_concept', False))"/>
+                            invisible="cost_invalid or (not context.get('from_event_authorization', False) and not context.get('from_add_concept', False)) or context.get('from_view_detail', False)"/>
+                    <button name="action_request_authorization" string="Save"
+                            type="object" class="btn-primary"
+                            invisible="cost_invalid or not context.get('from_view_detail', False)"
+                            context="{'from_view_detail': True}"/>
 
                     <!-- ERP Manager TESTING -->
                     <button name="action_accept_authorization" string="Authorize"

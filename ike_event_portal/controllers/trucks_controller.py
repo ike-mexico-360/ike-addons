@@ -174,6 +174,48 @@ class PortalAccount(CustomerPortal):
                 'error': str(e)
             }
 
+    @http.route(['/provider/portal/trucks/vehicle_types'], type='json', auth='user')
+    def get_vehicle_types(self, **kw):
+        try:
+            types = request.env['custom.vehicle.type'].sudo().search_read(
+                [], ['id', 'name']
+            )
+            return {'success': True, 'vehicle_types': types}
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route(['/provider/portal/trucks/centers'], type='json', auth='user')
+    def get_centers(self, **kw):
+        try:
+            user_id = request.env.user
+            request.env.cr.execute("""
+                SELECT supplier_id AS id
+                FROM res_partner_supplier_users_rel
+                WHERE user_id = %s
+            """, (user_id.id,))
+            result = request.env.cr.fetchone()
+            supplier_id = result[0] if result else 0
+            centers = request.env['res.partner'].sudo().search_read(
+                [('parent_id', '=', supplier_id), ('x_is_center', '=', True)],
+                ['id', 'name']
+            )
+            return {'success': True, 'centers': centers}
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
+    @http.route(['/provider/portal/trucks/update_fields'], type='json', auth='user')
+    def update_truck_fields(self, truck_id, fields, **kw):
+        try:
+            truck = request.env['fleet.vehicle'].sudo().browse(truck_id)
+            if not truck.exists():
+                return {'success': False, 'error': 'Truck not found'}
+            allowed = {'x_vehicle_type', 'x_center_id', 'license_plate', 'x_maneuvers', 'x_federal_license_plates', 'x_manages_tire_conditioning', 'x_vehicles_axes'}
+            vals = {k: v for k, v in fields.items() if k in allowed}
+            truck.write(vals)
+            return {'success': True}
+        except Exception as e:
+            return {'success': False, 'error': str(e)}
+
     @http.route(['/provider/portal/trucks/update_driver'], type='json', auth='user')
     def update_truck_driver(self, truck_id, driver_id, **kw):
         """

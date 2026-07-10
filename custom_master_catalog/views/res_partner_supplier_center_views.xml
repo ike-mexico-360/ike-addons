@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="name" string="Center of attention"/>
-                <field name="parent_id" string="Supplier"/>
+                <field name="parent_id" string="Supplier" domain="[('is_company', '=', True), ('x_is_supplier', '=', True), ('disabled', '=', False)]"/>
                 <field name="x_parent_vat"/>
                 <field name="phone"/>
                 <field name="email"/>

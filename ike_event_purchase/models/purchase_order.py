@@ -5,7 +5,8 @@ import requests
 from collections import defaultdict
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError
-# from odoo.exceptions import ValidationError
+from odoo.tools import float_compare
+from odoo.exceptions import ValidationError
 from markupsafe import Markup
 from werkzeug.urls import url_encode
 
@@ -25,6 +26,13 @@ class PurchaseOrder(models.Model):
     x_services_allowed = fields.Integer(related='x_event_id.services_allowed')
     x_covered_amount = fields.Float(related='x_event_id.covered_amount')
     x_authorized_amount = fields.Float(related="x_event_id.authorized_amount")
+    x_dispute_authorized_amount = fields.Monetary(
+        string='Dispute Authorized Amount',
+        currency_field='currency_id',
+        copy=False,
+        readonly=True,
+        tracking=True,
+    )
     x_excess_amount = fields.Float(string="Excess amount", compute="_compute_excess_amount")
     x_sub_service_id = fields.Many2one('product.product', string='Subservice')
     x_nu_user_id = fields.Many2one('custom.nus', string='NU User', help="Technical: NU linked to the event of the purchase order")
@@ -46,6 +54,16 @@ class PurchaseOrder(models.Model):
     x_dispute_iteration_count = fields.Integer(
         string='Dispute Iteration Count', default=0,
         help="Technical: The number of times the order has been send dispute.")
+    x_authorized_amount_request_ids = fields.One2many(
+        comodel_name='ike.event.authorized.amount.request',
+        inverse_name='purchase_order_id',
+        string='Authorized Amount Increase Requests',
+        readonly=True,
+    )
+    x_authorized_amount_request_count = fields.Integer(
+        string='Increase Requests',
+        compute='_compute_authorized_amount_request_count',
+    )
     x_event_public_id = fields.Many2one(
         'ike.event.public',
         string='Event Public',
@@ -107,23 +125,101 @@ class PurchaseOrder(models.Model):
         compute='_x_amount_all_dispute',
         tracking=True)
     amount_untaxed_approved = fields.Monetary(
-        string='Untaxed Amount Approved',
+        string='Untaxed Amount CCC',
         store=True,
         readonly=True,
         compute='_x_amount_all_approved',
         tracking=True)
     amount_untaxed_event = fields.Monetary(
-        string='Untaxed Amount Event',
+        string='Untaxed Amount CDS',
         store=True, readonly=True,
         compute='_x_amount_all_event',
         tracking=True)
 
-    @api.depends('x_covered_amount', 'x_authorized_amount')
+    @api.depends('x_covered_amount', 'x_dispute_authorized_amount')
     def _compute_excess_amount(self):
-        if self.x_authorized_amount > self.x_covered_amount:
-            self.x_excess_amount = self.x_authorized_amount - self.x_covered_amount
+        for record in self:
+            if record.x_dispute_authorized_amount > record.x_covered_amount:
+                record.x_excess_amount = (
+                    record.x_dispute_authorized_amount - record.x_covered_amount
+                )
+            else:
+                record.x_excess_amount = 0
+
+    @api.depends('x_authorized_amount_request_ids')
+    def _compute_authorized_amount_request_count(self):
+        for record in self:
+            record.x_authorized_amount_request_count = len(
+                record.x_authorized_amount_request_ids
+            )
+
+    def _check_can_request_authorized_amount_increase(self):
+        self.ensure_one()
+        allowed_groups = (
+            'custom_master_catalog.custom_group_ccc_analyst',
+            'custom_master_catalog.custom_group_ccc_coordinator',
+            'custom_master_catalog.custom_group_ccc_boss',
+        )
+        if not any(self.env.user.has_group(group) for group in allowed_groups):
+            raise UserError(_('Only CCC users can request an authorized amount increase.'))
+        if not self.x_event_id:
+            raise UserError(_('The cost review must be linked to an event.'))
+        if self.x_dispute_state != 'submitted':
+            raise UserError(_('The supplier dispute must be submitted first.'))
+        if float_compare(
+            self.amount_untaxed_dispute,
+            self.x_dispute_authorized_amount,
+            precision_rounding=self.currency_id.rounding,
+        ) <= 0:
+            raise UserError(_('The disputed amount does not exceed the authorized amount.'))
+
+    def action_request_authorized_amount_increase(self):
+        self.ensure_one()
+        self._check_can_request_authorized_amount_increase()
+        request = self.x_authorized_amount_request_ids.filtered(
+            lambda item: item.state == 'draft'
+        )[:1]
+        action = self.env['ir.actions.actions']._for_xml_id(
+            'ike_event_purchase.action_authorized_amount_request'
+        )
+        action['views'] = [
+            (
+                self.env.ref(
+                    'ike_event_purchase.view_authorized_amount_request_form'
+                ).id,
+                'form',
+            )
+        ]
+        if request:
+            action['res_id'] = request.id
         else:
-            self.x_excess_amount = 0
+            action['context'] = {
+                'default_purchase_order_id': self.id,
+                'default_current_authorized_amount': self.x_dispute_authorized_amount,
+                'default_disputed_amount': self.amount_untaxed_dispute,
+                'default_requested_amount': self.amount_untaxed_dispute,
+                'default_requester_id': self.env.user.id,
+            }
+        return action
+
+    def action_view_authorized_amount_requests(self):
+        self.ensure_one()
+        action = self.env['ir.actions.actions']._for_xml_id(
+            'ike_event_purchase.action_authorized_amount_request'
+        )
+        action['domain'] = [('purchase_order_id', '=', self.id)]
+        action['context'] = {'default_purchase_order_id': self.id}
+        if self.x_authorized_amount_request_count == 1:
+            action['views'] = [
+                (
+                    self.env.ref(
+                        'ike_event_purchase.view_authorized_amount_request_form'
+                    ).id,
+                    'form',
+                )
+            ]
+            action['res_id'] = self.x_authorized_amount_request_ids.id
+        return action
 
     @api.onchange('order_line')
     def _onchange_order_line_check_reason(self):
@@ -157,19 +253,38 @@ class PurchaseOrder(models.Model):
 
         self.x_require_change_reason = False
 
-    # Queda en des uso, debido a que siempre se enviará la cotización automáticamente
-    # @api.model_create_multi
-    # def create(self, vals_list):
-    #     res = super().create(vals_list)
-    #     # Si es creado desde eventos
-    #     if self._context.get('ike_event_purchase'):
-    #         for purchase_id in res:
-    #             purchase_id._x_ike_check_automatic_rfq()
-    #     return res
+    @api.model_create_multi
+    def create(self, vals_list):
+        orders = super().create(vals_list)
+        for order, vals in zip(orders, vals_list, strict=True):
+            if order.x_event_id and 'x_dispute_authorized_amount' not in vals:
+                super(PurchaseOrder, order).write({
+                    'x_dispute_authorized_amount': order.x_authorized_amount,
+                })
+        return orders
 
     def write(self, vals):
+        if (
+            'x_dispute_authorized_amount' in vals
+            and not self.env.context.get('authorized_dispute_amount_update')
+        ):
+            raise UserError(_(
+                'The dispute authorized amount can only be changed through '
+                'an approved increase request.'
+            ))
         comments = vals.pop('x_change_comments', None)
+        initialize_dispute_amount = (
+            'x_event_id' in vals and 'x_dispute_authorized_amount' not in vals
+        )
         result = super().write(vals)
+        if initialize_dispute_amount:
+            for rec in self.filtered(
+                lambda order: order.x_event_id
+                and not order.x_dispute_authorized_amount
+            ):
+                super(PurchaseOrder, rec).write({
+                    'x_dispute_authorized_amount': rec.x_authorized_amount,
+                })
         if comments:
             for rec in self.filtered('x_event_id'):
                 rec.sudo().message_post(
@@ -308,6 +423,15 @@ class PurchaseOrder(models.Model):
     def x_action_approve_dispute(self):
         """ Comprador acepta la propuesta del proveedor desde el ticket. """
         self.ensure_one()
+        if float_compare(
+            self.amount_untaxed_dispute,
+            self.x_dispute_authorized_amount,
+            precision_rounding=self.currency_id.rounding,
+        ) > 0:
+            raise UserError(_(
+                'The supplier dispute exceeds the authorized amount. '
+                'Request and obtain an authorized amount increase before approving it.'
+            ))
         for line in self.order_line:
             vals = {}
             if line.x_price_unit_dispute:
@@ -562,6 +686,7 @@ class PurchaseOrder(models.Model):
         for _sap_key, concept_lines in grouped_concept_lines.items():
             first_order = concept_lines[0]['rfq']
             origin_names = []
+            origin_events = []
             order_lines = []
 
             for item in concept_lines:
@@ -585,6 +710,8 @@ class PurchaseOrder(models.Model):
 
                 if rfq.name not in origin_names:
                     origin_names.append(rfq.name)
+                if event_name not in origin_events:
+                    origin_events.append(event_name)
 
                 if not sap_product_description:
                     line_name = "[%s] %s - %s" % (
@@ -621,6 +748,7 @@ class PurchaseOrder(models.Model):
                 new_po_vals.append({
                     'partner_id': first_order.partner_id.id,
                     'origin': ', '.join(origin_names),
+                    'x_origin_events': ', '.join(origin_events),
                     'order_line': order_lines,
                     'x_sub_service_id': first_order.x_sub_service_id.id,
                     'x_membership_plan_id': first_order.x_membership_plan_id.id,
@@ -629,6 +757,7 @@ class PurchaseOrder(models.Model):
                 new_po_vals.append({
                     'partner_id': first_order.partner_id.id,
                     'origin': ', '.join(origin_names),
+                    'x_origin_events': ', '.join(origin_events),
                     'order_line': order_lines,
                     'x_sub_service_id': first_order.x_sub_service_id.id,
                     'x_membership_plan_id': first_order.x_membership_plan_id.id,

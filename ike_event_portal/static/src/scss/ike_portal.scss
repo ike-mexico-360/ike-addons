@@ -77,6 +77,14 @@
     text-align: center;
 }
 
+.portal-main-container_purchase {
+    max-width: 80vw !important;
+    margin-left: calc(-50vw + 50%) !important;
+    margin-right: calc(-50vw + 50%) !important;
+    padding: 2rem;
+    box-sizing: border-box;
+}
+
 /* Costs table header styling */
 .table thead tr.bg-primary th.rounded-start {
     border-top-left-radius: 0.5rem;

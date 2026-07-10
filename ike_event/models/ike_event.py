@@ -42,7 +42,8 @@ class IkeEvent(models.Model):
     account_id = fields.Many2one(
         "res.partner",
         string="Account",
-        related='user_membership_id.membership_plan_id.account_id')
+        related='user_membership_id.membership_plan_id.account_id',
+        domain="['x_is_account', '=', True]")
     user_phone = fields.Char(related='user_id.phone', string='Main Phone')
     membership_display_mask = fields.Char(related='user_membership_id.x_display_mask', string='Display Mask')
     key_identification = fields.Char(related='user_membership_id.key_identification', string='Key Identification')
@@ -1104,6 +1105,9 @@ class IkeEvent(models.Model):
             'all_in_progress_events': 0,
             'all_completed_events': 0,
             'all_verifying_events': 0,
+            'all_cancel_subsequently_events': 0,
+            'all_cancel_verifying_events': 0,
+            'all_cancel_closed_events': 0,
 
             'my_active_events': 0,
             'my_draft_events': 0,
@@ -1113,6 +1117,9 @@ class IkeEvent(models.Model):
             'my_in_progress_events': 0,
             'my_completed_events': 0,
             'my_verifying_events': 0,
+            'my_cancel_subsequently_events': 0,
+            'my_cancel_verifying_events': 0,
+            'my_cancel_closed_events': 0,
         }
         IKE_EVENT = self.env['ike.event']
         active_domain = [
@@ -1138,6 +1145,9 @@ class IkeEvent(models.Model):
         in_progress_event_domain = [('stage_id.ref', 'in', ['in_progress'])]
         completed_events_domain = [('stage_id.ref', 'in', ['completed'])]
         verifying_events_domain = [('stage_id.ref', 'in', ['verifying'])]
+        cancel_subsequently_events_domain = [('stage_id.ref', 'in', ['cancel_subsequently'])]
+        cancel_verifying_events_domain = [('stage_id.ref', 'in', ['cancel_verifying'])]
+        cancel_closed_domain = [('stage_id.ref', 'in', ['cancel_closed'])]
         result.update({
             'all_active_events': IKE_EVENT.search_count(active_domain),
             'all_draft_events': IKE_EVENT.search_count(inactive_domain),
@@ -1147,6 +1157,9 @@ class IkeEvent(models.Model):
             'all_in_progress_events': IKE_EVENT.search_count(in_progress_event_domain),
             'all_completed_events': IKE_EVENT.search_count(completed_events_domain),
             'all_verifying_events': IKE_EVENT.search_count(verifying_events_domain),
+            'all_cancel_subsequently_events': IKE_EVENT.search_count(cancel_subsequently_events_domain),
+            'all_cancel_verifying_events': IKE_EVENT.search_count(cancel_verifying_events_domain),
+            'all_cancel_closed_events': IKE_EVENT.search_count(cancel_closed_domain),
 
             'my_active_events': IKE_EVENT.search_count(active_domain + my_events_domain),
             'my_draft_events': IKE_EVENT.search_count(inactive_domain + my_events_domain),
@@ -1156,6 +1169,9 @@ class IkeEvent(models.Model):
             'my_in_progress_events': IKE_EVENT.search_count(in_progress_event_domain + my_events_domain),
             'my_completed_events': IKE_EVENT.search_count(completed_events_domain + my_events_domain),
             'my_verifying_events': IKE_EVENT.search_count(verifying_events_domain + my_events_domain),
+            'my_cancel_subsequently_events': IKE_EVENT.search_count(cancel_subsequently_events_domain + my_events_domain),
+            'my_cancel_verifying_events': IKE_EVENT.search_count(cancel_verifying_events_domain + my_events_domain),
+            'my_cancel_closed_events': IKE_EVENT.search_count(cancel_closed_domain + my_events_domain),
         })
         return result
 

@@ -29,7 +29,7 @@ export class IkePhoneField extends PhoneField {
             return value;
         }
         value = value.replace(/[+\s()]/g, ''); // Remove All formatted symbols
-        const regexPhone = /^\d{10,12}$/;
+        const regexPhone = /^\d{10}$/;
         if (regexPhone.test(value)) {
             return value;
         } else {

@@ -60,17 +60,6 @@ class PortalUserAccount(CustomerPortal):
                 order="id DESC",
             )
 
-            # Deduplicate by (supplier_id, event_id) to avoid showing the same
-            # supplier+event combination multiple times in the portal list.
-            seen = set()
-            unique_supplier_lines = []
-            for line in supplier_lines:
-                key = (line.supplier_id.id, line.event_id.id)
-                if key in seen:
-                    continue
-                seen.add(key)
-                unique_supplier_lines.append(line)
-            supplier_lines = unique_supplier_lines
 
             if supplier_lines:
                 results = []
@@ -156,7 +145,7 @@ class PortalUserAccount(CustomerPortal):
             if not event_supplier_id:
                 return {"success": False, "error": "event_supplier_id field is required"}
 
-            supplier_line = request.env["ike.event.supplier.public"].search(
+            supplier_line = request.env["ike.event.supplier.public"].sudo().search(
                 [
                     ("id", "=", event_supplier_id),
                 ],
@@ -679,3 +668,53 @@ class PortalUserAccount(CustomerPortal):
         except Exception as e:
             _logger.error(f"Error getting vehicle {vehicle_id}: {str(e)}")
             return []
+
+
+class ProviderPortalServices(http.Controller):
+
+    @http.route('/provider/portal/services/get_concepts', type='json', auth='user', methods=['POST'])
+    def get_concepts_by_supplier(self, supplier_link_id):
+        """
+        Bypasses Record Rules restrictions on res.partner by executing
+        the supplier concepts fetch operation with elevated sudo() privileges.
+        """
+        # 1. Define the domain identical to the one used in JS
+        domain = [
+            ('event_supplier_link_id', '=', supplier_link_id),
+            ('display_type', 'not in', ['line_section', 'line_note']),
+            ('parent_product_id', '=', False),
+        ]
+
+        # 2. Execute the search query using SUDO
+        # Note: .sudo() is applied to mitigate the AccessError on res.partner (supplier_id)
+        records = request.env['ike.event.supplier.product'].sudo().search(domain)
+
+        # 3. Manually map the fields to emulate the exact structure of web_read
+        result_records = []
+        for rec in records:
+            result_records.append({
+                'id': rec.id,
+                'supplier_id': {
+                    'id': rec.supplier_id.id,
+                    'name': rec.supplier_id.name,
+                } if rec.supplier_id else False,
+                'product_id': {
+                    'id': rec.product_id.id,
+                    'name': rec.product_id.name,
+                    'display_name': rec.product_id.display_name,
+                } if rec.product_id else False,
+                'quantity': rec.quantity,
+                'uom_id': {
+                    'id': rec.uom_id.id,
+                    'name': rec.uom_id.name,
+                    'display_name': rec.uom_id.display_name,
+                } if rec.uom_id else False,
+                'unit_price': rec.unit_price,
+                'cost_price': rec.cost_price,
+                'vat': rec.vat,
+                'subtotal': rec.subtotal,
+                'from_portal': rec.from_portal,
+            })
+
+        # Return the expected format required by the frontend mapping
+        return result_records

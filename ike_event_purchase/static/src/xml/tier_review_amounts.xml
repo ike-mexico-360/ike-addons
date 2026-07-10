@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ike_event_purchase.TierReviewAmounts"
+       t-inherit="base_tier_validation.Collapse"
+       t-inherit-mode="extension">
+        <xpath expr="//th[@name='th_comment']" position="before">
+            <th t-if="showIncreaseAmounts()"
+                name="th_increase_requested_amount" class="text-end">
+                Monto solicitado
+            </th>
+            <th t-if="showIncreaseAmounts()"
+                name="th_increase_approved_amount" class="text-end">
+                Monto aprobado
+            </th>
+        </xpath>
+        <xpath expr="//td[@name='td_comment']" position="before">
+            <td t-if="showIncreaseAmounts()"
+                name="td_increase_requested_amount" class="text-end text-nowrap">
+                <span t-out="formatIncreaseAmount(review.increase_requested_amount, review.increase_currency_id)"/>
+            </td>
+            <td t-if="showIncreaseAmounts()"
+                name="td_increase_approved_amount" class="text-end text-nowrap">
+                <span t-if="review.increase_approved_amount"
+                      t-out="formatIncreaseAmount(review.increase_approved_amount, review.increase_currency_id)"/>
+            </td>
+        </xpath>
+    </t>
+</templates>

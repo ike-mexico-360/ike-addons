@@ -39,7 +39,7 @@ patch(IkeEventScreenFormController.prototype, {
         const { resModel: serviceResModel, resId: serviceResId } = this.state.serviceInputViewProps;
         const { resModel: subServiceResModel, resId: subServiceResId } = this.state.subServiceInputViewProps;
         const { resModel: surveyResModel, resId: surveyResId } = this.state.subServiceSurveyInputViewProps;
-        const eventId = this.props.resId;
+        const eventId = this.model.root.resId;
         const { service_id, sub_service_id } = this.model.root.data;
         const service_data = await this.orm.searchRead(serviceResModel, [['id', '=', serviceResId]], ['vehicle_brand', 'vehicle_model', 'vehicle_category_id']);
         const vehicle = {
@@ -85,6 +85,8 @@ patch(IkeEventScreenFormController.prototype, {
 
         // Fleet extra data
         let accessories_domain = await this.orm.call('product.product', 'get_accessories_domain', []);
+        let concepts_domain = await this.orm.call('product.product', 'get_concepts_domain', []);
+        concepts_domain.push(["x_product_id", "=", sub_service_id[0]]);
 
         const specIds = await this.orm.search(
             "custom.subservice.specification",
@@ -93,7 +95,7 @@ patch(IkeEventScreenFormController.prototype, {
 
         const [concepts, accessories, vehicle_types] = await Promise.all([
             this.orm.searchRead(
-                "product.product", [["x_product_id", "=", sub_service_id[0]], ["disabled", "=", false]], ["id", "name", "x_check_is_armor", "x_armor_level"]),
+                "product.product", concepts_domain, ["id", "name", "x_check_is_armor", "x_armor_level"]),
             this.orm.searchRead(
                 "product.product", accessories_domain, ["id", "name"]),
             this.orm.searchRead(
@@ -105,6 +107,11 @@ patch(IkeEventScreenFormController.prototype, {
                     ["subservice_specification_ids", "in", specIds]
                 ], ["id", "name"]),
         ]);
+
+        if (!eventId) {
+            console.error('No se encontró evento con ID:', eventId);
+            return;
+        }
 
         // IA Data
         const data = {
@@ -166,39 +173,51 @@ patch(IkeEventScreenFormController.prototype, {
             // Validar ID antes de intentar escribir en el sub-servicio
             if (subServiceResId) {
                 if (hasAccessories) {
-                    await this.orm.write(
-                        subServiceResModel,
-                        [subServiceResId],
-                        {
-                            suggested_accessories: suggestedAccessories.map(a => a.id),
-                            service_accessory_ids: [[6, 0, suggestedAccessories.map(a => a.id)]],
-                        }
-                    );
+                    try {
+                        await this.orm.write(
+                            subServiceResModel,
+                            [subServiceResId],
+                            {
+                                suggested_accessories: suggestedAccessories.map(a => a.id),
+                                service_accessory_ids: [[6, 0, suggestedAccessories.map(a => a.id)]],
+                            }
+                        );
+                    } catch (error) {
+                        console.error('Error guardando datos de accesorios sugeridos:', error);
+                    }
                 }
 
                 if (hasVehicleTypes) {
-                    await this.orm.write(
-                        subServiceResModel,
-                        [subServiceResId],
-                        {
-                            suggested_vehicle_types: suggestedVehicleTypes.map(v => v.name.toUpperCase()),
-                            service_vehicle_type_ids: [[6, 0, suggestedVehicleTypes.map(v => v.id)]],
-                        }
-                    );
+                    try {
+                        await this.orm.write(
+                            subServiceResModel,
+                            [subServiceResId],
+                            {
+                                suggested_vehicle_types: suggestedVehicleTypes.map(v => v.name.toUpperCase()),
+                                service_vehicle_type_ids: [[6, 0, suggestedVehicleTypes.map(v => v.id)]],
+                            }
+                        );
+                    } catch (error) {
+                        console.error('Error guardando datos de tipos de vehículos sugeridos:', error);
+                    }
                 }
             } else {
                 console.warn('subServiceResId inválido, omitiendo escritura del sub-servicio:', subServiceResId);
             }
 
             // ia_suggestion_done siempre se guarda, independiente de si hay conceptos
-            await this.orm.write("ike.event", [eventId], {
-                ...(hasConcepts && {
-                    ia_suggestion_product_ids: suggestedConcepts?.map(c => c.id),
-                }),
-                ia_suggestion_done: true,
-            });
+            try {
+                await this.orm.write("ike.event", [eventId], {
+                    ...(hasConcepts && {
+                        ia_suggestion_product_ids: suggestedConcepts?.map(c => c.id),
+                    }),
+                    ia_suggestion_done: true,
+                });
+            } catch (error) {
+                console.error('Error guardando datos de sugerencia de vehículos:', error);
+            }
         } catch (error) {
-            console.error('Error guardando datos de sugerencia de vehículos', error);
+            console.error('Error guardando datos de sugerencia de IA', error);
         }
     }
 });

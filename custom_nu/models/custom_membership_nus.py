@@ -81,7 +81,7 @@ class CustomMembershipNus(models.Model):
             else:
                 record.display_name = ''
 
-    # === ONVHANGE === #
+    # === ONCHANGE === #
     @api.onchange('membership_plan_id')
     def onchange_membership_plan_dates(self):
         """

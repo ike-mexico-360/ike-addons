@@ -63,8 +63,10 @@
                         domain="[('stage_id.ref', 'in', ['closed', 'cancel_closed'])]"/>
                     <filter string="Cancelled Events" name="all_cancelled"
                         domain="[('stage_id.ref', '=', 'cancel')]"/>
-                    <filter string="Cancelled subsequently Events" name="all_cancelled"
+                    <filter string="Cancelled subsequently Events" name="all_cancel_subsequently"
                         domain="[('stage_id.ref', '=', 'cancel_subsequently')]"/>
+                    <filter string="Cancelled Verifying Events" name="all_cancel_verifying"
+                        domain="[('stage_id.ref', '=', 'cancel_verifying')]"/>
                 </group>
                 <group name="type_search">
                     <filter string="Electronic search" name="filter_search_electronic"
@@ -95,7 +97,7 @@
         <field name="arch" type="xml">
             <!-- class="ike-show-table-buttons" is used to show the buttons in the list view -->
             <!-- js_class="ike_event_screen_list" is used to use the custom renderer -->
-            <list js_class="ike_event_screen_list" class="ike-show-table-buttons" edit="0" duplicate="0" delete="0">
+            <list js_class="ike_event_screen_list" class="ike-show-table-buttons" edit="0" duplicate="0" delete="0" import="false">
                 <header>
                 </header>
                 <field name="name"/>
@@ -127,6 +129,7 @@
                     </list>
                 </field>
                 <field name="current_elapsed_time_seconds" string="Elapsed" widget="ike_stage_elapsed" width="90px"/>
+                <field name="assigned_user_id" optional="hide"/>
             </list>
         </field>
     </record>
@@ -337,7 +340,8 @@
                                         <field name="elapsed_time" column_invisible="1"/>
                                         <field name="manual_notification" column_invisible="1"/>
                                         <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
-                                        <button name="action_view_products" string="View Details" type="object" class="btn-link"/>
+                                        <button name="action_view_products" string="View Details" type="object" class="btn-link"
+                                            context="{'from_view_detail': True}"/>
                                         <!-- <button name="action_view_supplier_data" string="Edit" type="object" class="btn-link"
                                             column_invisible="parent.supplier_search_type not in ['manual', 'manual_manual']"/> -->
                                     </list>

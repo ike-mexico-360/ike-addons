@@ -23,9 +23,9 @@
     <record id="custom_master_catalog.custom_group_event_cabin_supervisor" model="res.groups">
         <field name="implied_ids" eval="[(4, ref('group_ike_event_admin'))]"/>
     </record>
-    <record id="custom_master_catalog.custom_group_event_coordinator" model="res.groups">
+    <!-- <record id="custom_master_catalog.custom_group_event_coordinator" model="res.groups">
         <field name="implied_ids" eval="[(4, ref('group_ike_event_admin'))]"/>
-    </record>
+    </record> -->
     <record id="custom_master_catalog.custom_group_ccc_analyst" model="res.groups">
         <field name="implied_ids" eval="[(4, ref('group_ike_event_user'))]"/>
     </record>
@@ -86,4 +86,24 @@
         <field name="perm_unlink" eval="False"/>
     </record>
 
+    <record id="rule_ike_event_coordinator_cds_own_records" model="ir.rule">
+        <field name="name">Event Coordinator CDS: Own Events Only</field>
+        <field name="model_id" ref="model_ike_event"/> <field name="domain_force">['|', ('assigned_user_id', '=', user.id), ('assigned_user_id', '=', False)]</field>
+        <field name="groups" eval="[(4, ref('custom_master_catalog.custom_group_event_coordinator'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_ike_event_supervisor_manager_all_records" model="ir.rule">
+        <field name="name">Supervisor/Manager CDS: All Events</field>
+        <field name="model_id" ref="model_ike_event"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('custom_master_catalog.custom_group_supervisor_cds'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="True"/>
+        <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
 </odoo>

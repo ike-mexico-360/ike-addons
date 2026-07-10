@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-28 02:21+0000\n"
-"PO-Revision-Date: 2026-06-28 02:21+0000\n"
+"POT-Creation-Date: 2026-07-02 21:25+0000\n"
+"PO-Revision-Date: 2026-07-02 21:25+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -346,6 +346,24 @@ msgstr "Todos los eventos en asignado"
 #: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 msgid "All Assistance Completed Events"
 msgstr "Todos los eventos en asistencia concluida"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "All Cancelled Concluded Events"
+msgstr "Todos los eventos en cancelación concluida"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "All Cancelled Subsequently Events"
+msgstr "Todos los eventos en cancelado posterior"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "All Cancelled Verifying Events"
+msgstr "Todos los eventos en verificando cancelación"
 
 #. module: ike_event
 #. odoo-javascript
@@ -692,6 +710,14 @@ msgid "Authorization concepts"
 msgstr "Autorización de conceptos"
 
 #. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier.py:0
+msgid ""
+"Authorization is not possible because there are incomplete authorization "
+"fields."
+msgstr "La autorización no es posible porque hay campos de autorización incompletos."
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__authorization_ids
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_authorization_view_form
 msgid "Authorizations"
@@ -880,9 +906,16 @@ msgid "Cancelled"
 msgstr "Cancelado"
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 #: model:ike.event.stage,name:ike_event.ike_event_stage_cancelled_closed
 msgid "Cancelled Concluded"
 msgstr "Cancelación concluida"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
+msgid "Cancelled Concluded Events"
+msgstr "Eventos Cancelación concluida"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
@@ -890,14 +923,23 @@ msgid "Cancelled Events"
 msgstr "Eventos cancelados"
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 #: model:ike.event.stage,name:ike_event.ike_event_stage_cancelled_subsequently
 msgid "Cancelled Subsequently"
 msgstr "Cancelado posterior"
 
 #. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 #: model:ike.event.stage,name:ike_event.ike_event_stage_cancelled_verifying
 msgid "Cancelled Verifying"
 msgstr "Verificando cancelación"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
+msgid "Cancelled Verifying Events"
+msgstr "Eventos Verificando cancelación"
 
 #. module: ike_event
 #. odoo-javascript
@@ -1043,6 +1085,18 @@ msgstr "Comentario del cambio de estado"
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_form
 msgid "Comments"
 msgstr "Comentarios"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/widgets/ike_stage_comment/ike_stage_comment.js:0
+msgid "Comments - Nu User"
+msgstr "Comentario - Usuario Nu"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/widgets/ike_stage_comment/ike_stage_comment.js:0
+msgid "Comments - Supplier"
+msgstr "Comentarios - Proveedor"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__company_id
@@ -3278,14 +3332,20 @@ msgstr "Mis eventos en asistencia concluida"
 #. module: ike_event
 #. odoo-javascript
 #: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
-msgid "My Capturing Events"
-msgstr "Mis eventos en capturando detalles"
+msgid "My Cancelled Subsequently Events"
+msgstr "Mis eventos en cancelado posterior"
 
 #. module: ike_event
 #. odoo-javascript
 #: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
-msgid "My Verification CCC Events"
-msgstr "Mis eventos en verificación"
+msgid "My Cancelled Verifying Events"
+msgstr "Mis eventos en verificando cancelación"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "My Capturing Events"
+msgstr "Mis eventos en capturando detalles"
 
 #. module: ike_event
 #. odoo-javascript
@@ -3311,6 +3371,12 @@ msgstr "Mis eventos en progreso"
 #: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
 msgid "My Searching Supplier Events"
 msgstr "Mis eventos en buscando proveedor"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/views/list/ike_event_list_buttons.xml:0
+msgid "My Verification CCC Events"
+msgstr "Mis eventos en verificación CCC"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_search
@@ -4222,6 +4288,7 @@ msgstr "URL de encuesta de satisfacción"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_link_add_form_view
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_link_form_view
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_phones_form_view
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_purchase_suppliers_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_form

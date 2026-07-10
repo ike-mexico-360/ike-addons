@@ -50,6 +50,9 @@
         <xpath expr="//span[@t-field='order.date_planned']" position="attributes">
             <attribute name="t-if">order.state not in ('sent')</attribute>
         </xpath>
+        <xpath expr="//div[@id='informations']" position="replace">
+            <div id="informations" t-if="False"/>
+        </xpath>
     </template>
     <template id="ike_event_purchase_dispute_view" name="Purchase Order Portal Content Dispute" >
         <t t-call="portal.portal_layout">

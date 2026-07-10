@@ -4,165 +4,380 @@
         <div class="portal-main-container">
             <!-- Loading State -->
             <div t-if="state.isLoading" class="text-center my-5">
-                <i class="fa fa-spinner fa-spin fa-3x"/>
-                <p>Loading Truck Details...</p>
+                <i class="fa fa-spinner fa-spin fa-3x text-primary"/>
+                <p class="mt-2 text-muted"><t t-out="translate('Loading details...')"/></p>
             </div>
+
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <div class="d-flex align-items-center">
-                    <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="icono grúa" class="me-3" style="width:30px;" />
-                    <h1 class="fw-bold mb-0">Detalles de la grúa</h1>
+                <div class="d-flex align-items-center gap-3">
+                    <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="icono grúa" style="width:32px;"/>
+                    <h1 class="fw-bold mb-0" style="font-size:1.6rem;"><t t-out="translate('Truck Details')"/></h1>
                 </div>
-                <a t-on-click="props.onCancel"  class="btn btn-secondary">
-                    <i class="fa fa-arrow-left me-1"/> Volver a la lista
+                <a t-on-click="props.onCancel" class="btn btn-outline-secondary btn-sm px-3">
+                    <i class="fa fa-arrow-left me-1"/>
+                    <t t-out="translate('Back to list')"/>
                 </a>
             </div>
+
             <!-- Success State -->
             <div t-if="!state.isLoading and state.truck">
-                <h3>Detalles de la grúa:
-                    <t t-esc="state.truck.name"/>
-                </h3>
-                <hr/>
-                <div class="row g-5">
+
+                <!-- Vehicle name banner -->
+                <div class="rounded-3 px-4 py-3 mb-4 d-flex align-items-center gap-3"
+                     style="background: linear-gradient(135deg, #e8edf8 0%, #d6e0f5 100%); border-left: 4px solid #4e73df;">
+                    <i class="fa fa-truck fa-lg text-primary"/>
+                    <span class="fw-semibold text-primary" style="font-size:1rem;">
+                        <t t-out="state.truck.name"/>
+                    </span>
+                </div>
+
+                <div class="row g-4">
+                    <!-- LEFT: Vehicle info -->
                     <div class="col-md-6">
-                        <h5 class="text-primary border-bottom pb-2 mb-4">Información del vehículo</h5>
-                        <div class="mb-3">
-                            <label class="fw-bold text-muted small">Modelo</label>
-                            <!-- Relational fields are [id, name], so we use index 1 -->
-                            <div class="fs-5">
-                                <t t-esc="state.truck.name"/>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold text-muted small">Proveedor</label>
-                            <div class="fs-5">
-                                <t t-esc="state.truck.x_partner_id ? state.truck.x_partner_id[1] : 'N/A'"/>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold text-muted small">Tipo de vehículo</label>
-                            <div class="fs-5">
-                                <t t-esc="state.truck.x_vehicle_type ? state.truck.x_vehicle_type[1] : 'N/A'"/>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold text-muted small">Centro de atención</label>
-                            <div class="fs-5">
-                                <t t-esc="state.truck.x_center_id ? state.truck.x_center_id[1] : 'N/A'"/>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6 mb-3">
-                                <label class="fw-bold text-muted small">Matrícula</label>
-                                <div class="fs-5">
-                                    <t t-esc="state.truck.license_plate"/>
-                                </div>
-                            </div>
-                            <div class="col-6 mb-3">
-                                <label class="fw-bold text-muted small">Ejes</label>
-                                <div class="fs-5">
-                                    <t t-esc="state.truck.x_vehicles_axes"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="mb-3 d-flex align-items-center">
-                            <i t-if="state.truck.x_federal_license_plates" class="fa fa-check-circle text-success me-2"/>
-                            <i t-else="" class="fa fa-times-circle text-muted me-2"/>
-                            <span>Placas federales</span>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <h5 class="text-primary border-bottom pb-2 mb-4">Servicio y Operación</h5>
-                        <div class="mb-3">
-                            <label class="fw-bold text-muted small">Chofer asignado</label>
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="fs-5">
-                                    <t t-esc="state.truck.driver_id ? state.truck.driver_id[1] : 'Sin asignar'"/>
-                                </div>
-                                <button t-if="state.canEditDriver" class="btn btn-sm btn-outline-primary" t-on-click="openEditDriverModal" title="Editar chofer">
-                                    <i class="fa fa-edit"/>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold text-muted small">Servicio</label>
-                            <div class="fs-5">
-                                <t t-esc="state.truck.x_product_category_id ? state.truck.x_product_category_id[1] : 'N/A'"/>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold text-muted small">Subservicios asociados</label>
-                            <div class="d-flex flex-wrap gap-2 mt-1">
-                                <t t-if="state.truck.x_subservice_ids and state.truck.x_subservice_ids.length">
-                                    <t t-foreach="state.truck.x_subservice_ids" t-as="subservice" t-key="subservice[0]">
-                                        <span class="badge bg-info text-dark">
-                                            <t t-esc="subservice[1]"/>
-                                        </span>
-                                    </t>
-                                </t>
-                                <span t-else="" class="text-muted fst-italic">Sin subservicios</span>
-                            </div>
-                        </div>
-                        <div class="mb-3">
-                            <label class="fw-bold text-muted small">Estado de servicio</label>
-                            <div>
-                                <span class="badge bg-info text-dark fs-6">
-                                    <t t-esc="state.truck.x_vehicle_service_state"/>
+                        <div class="card border-0 shadow-sm rounded-3 h-100">
+                            <div class="card-header bg-white border-bottom px-4 pt-3 pb-2">
+                                <span class="fw-bold text-primary" style="font-size:0.95rem;">
+                                    <i class="fa fa-car me-2"/>
+                                    <t t-out="translate('Vehicle Information')"/>
                                 </span>
                             </div>
+                            <div class="card-body px-4 py-3">
+
+                                <div class="mb-3">
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Model')"/></div>
+                                    <div class="fw-semibold" style="font-size:0.95rem;"><t t-out="state.truck.name"/></div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Provider')"/></div>
+                                    <div class="fw-semibold" style="font-size:0.95rem;">
+                                        <t t-out="state.truck.x_partner_id ? state.truck.x_partner_id[1] : 'N/A'"/>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Vehicle Type')"/></div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-semibold" style="font-size:0.95rem;">
+                                            <t t-out="state.truck.x_vehicle_type ? state.truck.x_vehicle_type[1] : 'N/A'"/>
+                                        </span>
+                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditVehicleTypeModal" t-att-title="translate('Edit')">
+                                            <i class="fa fa-pencil" style="font-size:0.8rem;"/>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Service Center')"/></div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="fw-semibold" style="font-size:0.95rem;">
+                                            <t t-out="state.truck.x_center_id ? state.truck.x_center_id[1] : 'N/A'"/>
+                                        </span>
+                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditCenterModal" t-att-title="translate('Edit')">
+                                            <i class="fa fa-pencil" style="font-size:0.8rem;"/>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('License Plate')"/></div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge rounded-pill px-3 py-1 fw-semibold" style="background:#e8edf8; color:#2c4a9e; font-size:0.85rem; letter-spacing:0.06em;">
+                                                <t t-out="state.truck.license_plate || '—'"/>
+                                            </span>
+                                            <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditPlateModal" t-att-title="translate('Edit')">
+                                                <i class="fa fa-pencil" style="font-size:0.8rem;"/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Axes')"/></div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="fw-semibold" style="font-size:0.95rem;"><t t-out="state.truck.x_vehicles_axes"/></span>
+                                            <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditAxesModal" t-att-title="translate('Edit')">
+                                                <i class="fa fa-pencil" style="font-size:0.8rem;"/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
-                        <div class="mb-3 d-flex align-items-center">
-                            <i t-if="state.truck.x_maneuvers" class="fa fa-check-circle text-success me-2"/>
-                            <i t-else="" class="fa fa-times-circle text-muted me-2"/>
-                            <span>Maniobras</span>
-                        </div>
-                        <div class="mb-3 d-flex align-items-center">
-                            <i t-if="state.truck.x_manages_tire_conditioning" class="fa fa-check-circle text-success me-2"/>
-                            <i t-else="" class="fa fa-times-circle text-muted me-2"/>
-                            <span>Gestiona acondicionamiento de llantas</span>
+                    </div>
+
+                    <!-- RIGHT: Service & Operation -->
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-3 h-100">
+                            <div class="card-header bg-white border-bottom px-4 pt-3 pb-2">
+                                <span class="fw-bold text-primary" style="font-size:0.95rem;">
+                                    <i class="fa fa-cogs me-2"/>
+                                    <t t-out="translate('Service and Operation')"/>
+                                </span>
+                            </div>
+                            <div class="card-body px-4 py-3">
+
+                                <div class="mb-3">
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Assigned Driver')"/></div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <i class="fa fa-user-circle text-secondary"/>
+                                        <span class="fw-semibold" style="font-size:0.95rem;">
+                                            <t t-out="state.truck.driver_id ? state.truck.driver_id[1] : translate('Unassigned')"/>
+                                        </span>
+                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditDriverModal" t-att-title="translate('Edit')">
+                                            <i class="fa fa-pencil" style="font-size:0.8rem;"/>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Service')"/></div>
+                                    <div class="fw-semibold" style="font-size:0.95rem;">
+                                        <t t-out="state.truck.x_product_category_id ? state.truck.x_product_category_id[1] : 'N/A'"/>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="text-muted mb-1" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Associated Subservices')"/></div>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <t t-if="state.truck.x_subservice_ids and state.truck.x_subservice_ids.length">
+                                            <t t-foreach="state.truck.x_subservice_ids" t-as="subservice" t-key="subservice[0]">
+                                                <span class="badge rounded-pill" style="background:#e0f0ff; color:#0056b3; font-size:0.78rem; font-weight:500;">
+                                                    <t t-out="subservice[1]"/>
+                                                </span>
+                                            </t>
+                                        </t>
+                                        <span t-else="" class="text-muted fst-italic" style="font-size:0.85rem;"><t t-out="translate('No subservices')"/></span>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <div class="text-muted mb-1" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Service Status')"/></div>
+                                    <span class="badge rounded-pill px-3 py-1" style="background:#d4edda; color:#155724; font-size:0.82rem;">
+                                        <i class="fa fa-circle me-1" style="font-size:0.55rem;"/>
+                                        <t t-out="translate(state.truck.x_vehicle_service_state)"/>
+                                    </span>
+                                </div>
+
+                                <div class="mb-1">
+                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                        <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Accessories')"/></div>
+                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditAccessoriesModal" t-att-title="translate('Edit accessories')">
+                                            <i class="fa fa-pencil" style="font-size:0.8rem;"/>
+                                        </button>
+                                    </div>
+                                    <div class="d-flex flex-column gap-1">
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span t-if="state.truck.x_maneuvers" class="badge rounded-circle p-1 bg-success" style="width:18px;height:18px;"><i class="fa fa-check" style="font-size:0.6rem;"/></span>
+                                            <span t-else="" class="badge rounded-circle p-1 bg-light border" style="width:18px;height:18px;"><i class="fa fa-times text-muted" style="font-size:0.6rem;"/></span>
+                                            <span style="font-size:0.88rem;"><t t-out="translate('Maneuvers')"/></span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span t-if="state.truck.x_federal_license_plates" class="badge rounded-circle p-1 bg-success" style="width:18px;height:18px;"><i class="fa fa-check" style="font-size:0.6rem;"/></span>
+                                            <span t-else="" class="badge rounded-circle p-1 bg-light border" style="width:18px;height:18px;"><i class="fa fa-times text-muted" style="font-size:0.6rem;"/></span>
+                                            <span style="font-size:0.88rem;"><t t-out="translate('Federal Plates')"/></span>
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span t-if="state.truck.x_manages_tire_conditioning" class="badge rounded-circle p-1 bg-success" style="width:18px;height:18px;"><i class="fa fa-check" style="font-size:0.6rem;"/></span>
+                                            <span t-else="" class="badge rounded-circle p-1 bg-light border" style="width:18px;height:18px;"><i class="fa fa-times text-muted" style="font-size:0.6rem;"/></span>
+                                            <span style="font-size:0.88rem;"><t t-out="translate('Manages Tire Conditioning')"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- Edit Driver Modal -->
-            <div t-if="state.showEditDriverModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+
+            <!-- Edit Vehicle Type Modal -->
+            <div t-if="state.showEditVehicleTypeModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
                 <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Editar Chofer Asignado</h5>
-                            <button type="button" class="btn-close" t-on-click="closeEditDriverModal" aria-label="Close"/>
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header border-0 pb-0">
+                            <h5 class="modal-title fw-bold"><t t-out="translate('Vehicle Type')"/></h5>
+                            <button type="button" class="btn-close" t-on-click="closeEditVehicleTypeModal" aria-label="Close"/>
                         </div>
-                        <div class="modal-body">
-                            <div t-if="state.isLoadingDrivers" class="text-center py-3">
-                                <i class="fa fa-spinner fa-spin fa-2x"/>
-                                <p>Cargando choferes disponibles...</p>
-                            </div>
-                            <div t-else="">
-                                <label class="form-label fw-bold">Seleccionar Chofer</label>
-                                <select class="form-select" t-model="state.selectedDriverId">
-                                    <option value="">-- Sin asignar --</option>
-                                    <t t-foreach="state.availableDrivers" t-as="driver" t-key="driver.id">
-                                        <option t-att-value="driver.id">
-                                            <t t-esc="driver.name"/>
-                                        </option>
-                                    </t>
-                                </select>
-                                <div t-if="state.saveError" class="alert alert-danger mt-3" role="alert">
-                                    <t t-esc="state.saveError"/>
-                                </div>
-                            </div>
+                        <div class="modal-body pt-2">
+                            <label class="form-label text-muted small"><t t-out="translate('Select type')"/></label>
+                            <select class="form-select" t-model="state.selectedVehicleTypeId">
+                                <option value=""><t t-out="translate('-- No type --')"/></option>
+                                <t t-foreach="state.availableVehicleTypes" t-as="vt" t-key="vt.id">
+                                    <option t-att-value="vt.id"><t t-out="vt.name"/></option>
+                                </t>
+                            </select>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" t-on-click="closeEditDriverModal">Cancelar</button>
-                            <button type="button" class="btn btn-primary" t-on-click="saveDriver" t-att-disabled="state.isSaving">
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditVehicleTypeModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-primary px-4" t-on-click="saveVehicleType" t-att-disabled="state.isSaving">
                                 <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
-                                <t t-if="state.isSaving">Guardando...</t>
-                                <t t-else="">Guardar</t>
+                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
+                                <t t-else="" t-out="translate('Save')"/>
                             </button>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- Edit Center Modal -->
+            <div t-if="state.showEditCenterModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header border-0 pb-0">
+                            <h5 class="modal-title fw-bold"><t t-out="translate('Service Center')"/></h5>
+                            <button type="button" class="btn-close" t-on-click="closeEditCenterModal" aria-label="Close"/>
+                        </div>
+                        <div class="modal-body pt-2">
+                            <label class="form-label text-muted small"><t t-out="translate('Select center')"/></label>
+                            <select class="form-select" t-model="state.selectedCenterId">
+                                <option value=""><t t-out="translate('-- No center --')"/></option>
+                                <t t-foreach="state.availableCenters" t-as="center" t-key="center.id">
+                                    <option t-att-value="center.id"><t t-out="center.name"/></option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditCenterModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-primary px-4" t-on-click="saveCenter" t-att-disabled="state.isSaving">
+                                <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
+                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
+                                <t t-else="" t-out="translate('Save')"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Plate Modal -->
+            <div t-if="state.showEditPlateModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header border-0 pb-0">
+                            <h5 class="modal-title fw-bold"><t t-out="translate('License Plate')"/></h5>
+                            <button type="button" class="btn-close" t-on-click="closeEditPlateModal" aria-label="Close"/>
+                        </div>
+                        <div class="modal-body pt-2">
+                            <label class="form-label text-muted small"><t t-out="translate('License plate number')"/></label>
+                            <input type="text" class="form-control" t-att-value="state.editedPlate" t-on-input="onPlateInput" t-att-placeholder="translate('e.g. ABC-1234')"/>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditPlateModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-primary px-4" t-on-click="savePlate" t-att-disabled="state.isSaving">
+                                <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
+                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
+                                <t t-else="" t-out="translate('Save')"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Axes Modal -->
+            <div t-if="state.showEditAxesModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header border-0 pb-0">
+                            <h5 class="modal-title fw-bold"><t t-out="translate('Axes')"/></h5>
+                            <button type="button" class="btn-close" t-on-click="closeEditAxesModal" aria-label="Close"/>
+                        </div>
+                        <div class="modal-body pt-2">
+                            <label class="form-label text-muted small"><t t-out="translate('Number of axes')"/></label>
+                            <input type="number" class="form-control" min="0"
+                                t-att-value="state.editedAxes"
+                                t-on-input="onAxesInput"/>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditAxesModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-primary px-4" t-on-click="saveAxes" t-att-disabled="state.isSaving">
+                                <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
+                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
+                                <t t-else="" t-out="translate('Save')"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Accessories Modal -->
+            <div t-if="state.showEditAccessoriesModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header border-0 pb-0">
+                            <h5 class="modal-title fw-bold"><t t-out="translate('Accessories')"/></h5>
+                            <button type="button" class="btn-close" t-on-click="closeEditAccessoriesModal" aria-label="Close"/>
+                        </div>
+                        <div class="modal-body pt-2">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" role="switch" id="acc_maneuvers"
+                                    t-att-checked="state.editedManeuvers"
+                                    t-on-change="(ev) => { state.editedManeuvers = ev.target.checked; }"/>
+                                <label class="form-check-label" for="acc_maneuvers"><t t-out="translate('Maneuvers')"/></label>
+                            </div>
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" role="switch" id="acc_federal_plates"
+                                    t-att-checked="state.editedFederalPlates"
+                                    t-on-change="(ev) => { state.editedFederalPlates = ev.target.checked; }"/>
+                                <label class="form-check-label" for="acc_federal_plates"><t t-out="translate('Federal Plates')"/></label>
+                            </div>
+                            <div class="form-check form-switch mb-1">
+                                <input class="form-check-input" type="checkbox" role="switch" id="acc_tire_conditioning"
+                                    t-att-checked="state.editedTireConditioning"
+                                    t-on-change="(ev) => { state.editedTireConditioning = ev.target.checked; }"/>
+                                <label class="form-check-label" for="acc_tire_conditioning"><t t-out="translate('Manages Tire Conditioning')"/></label>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditAccessoriesModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-primary px-4" t-on-click="saveAccessories" t-att-disabled="state.isSaving">
+                                <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
+                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
+                                <t t-else="" t-out="translate('Save')"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Edit Driver Modal -->
+            <div t-if="state.showEditDriverModal" class="modal show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content border-0 shadow">
+                        <div class="modal-header border-0 pb-0">
+                            <h5 class="modal-title fw-bold"><t t-out="translate('Assigned Driver')"/></h5>
+                            <button type="button" class="btn-close" t-on-click="closeEditDriverModal" aria-label="Close"/>
+                        </div>
+                        <div class="modal-body pt-2">
+                            <div t-if="state.isLoadingDrivers" class="text-center py-3">
+                                <i class="fa fa-spinner fa-spin fa-2x text-primary"/>
+                                <p class="mt-2 text-muted small"><t t-out="translate('Loading available drivers...')"/></p>
+                            </div>
+                            <div t-else="">
+                                <label class="form-label text-muted small"><t t-out="translate('Select driver')"/></label>
+                                <select class="form-select" t-model="state.selectedDriverId">
+                                    <option value=""><t t-out="translate('-- Unassigned --')"/></option>
+                                    <t t-foreach="state.availableDrivers" t-as="driver" t-key="driver.id">
+                                        <option t-att-value="driver.id"><t t-out="driver.name"/></option>
+                                    </t>
+                                </select>
+                                <div t-if="state.saveError" class="alert alert-danger mt-3 py-2 small" role="alert">
+                                    <t t-out="state.saveError"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditDriverModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-primary px-4" t-on-click="saveDriver" t-att-disabled="state.isSaving">
+                                <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
+                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
+                                <t t-else="" t-out="translate('Save')"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </t>
 </templates>

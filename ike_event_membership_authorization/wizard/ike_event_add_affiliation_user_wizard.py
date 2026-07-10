@@ -271,7 +271,7 @@ class IkeEventAffiliationUser(models.TransientModel):
                 nus_user=nus_user
             )
 
-        self.event_id.write({
+        self.event_id.with_context(skip_phone_binnacle=True).write({
             'user_id': nus_user.id,
             'user_membership_id': nus_affiliation_id.id,
             'nu_name': self.name,  # type: ignore

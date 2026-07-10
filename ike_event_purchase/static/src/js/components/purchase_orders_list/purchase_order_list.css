@@ -1,0 +1,63 @@
+.kpi-card {
+    background-color: #fff;
+    border: 1px solid #d7e0eb;
+    border-radius: 8px;
+    min-height: 110px;
+    transition: all 0.2s ease;
+}
+
+.kpi-card .card-body {
+    height: 100%;
+    padding: 1rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.kpi-title {
+    color: #2d64aa;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.3;
+    min-height: 38px;
+    margin-bottom: 0.5rem;
+}
+
+.kpi-value {
+    color: #000;
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    word-break: break-word;
+}
+
+/* Card superior */
+.card.kpi-balance-card {
+    background-color: #ebf2fc !important;
+    border: 1px solid #c7d3e3 !important;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    width: 380px;
+    min-width: 380px;
+}
+
+.card.kpi-balance-card .card-body {
+    background-color: transparent !important;
+    padding: 0.85rem 1rem;
+}
+
+.card.kpi-balance-card .text-primary {
+    color: #2d64aa !important;
+    font-weight: 500;
+}
+
+.card.kpi-balance-card strong {
+    color: #000;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+/* Espaciado entre líneas del resumen */
+.card.kpi-balance-card .d-flex + .d-flex {
+    margin-top: 0.5rem;
+}

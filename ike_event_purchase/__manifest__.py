@@ -14,17 +14,22 @@
         'sh_all_in_one_helpdesk',
         'ike_event_portal',
         'custom_o2m_track',
+        'base_tier_validation',
     ],
     "data": [
         'security/ir_module_security.xml',
         'security/ir.model.access.csv',
+        'data/authorized_amount_request_data.xml',
+        'data/authorized_amount_request_tier_data.xml',
         "data/purchase_email_data.xml",
         "data/ike_event_purchase_data.xml",
         "data/mail_template_data.xml",
         "views/ike_event_screen_views.xml",
+        "views/authorized_amount_request_views.xml",
         "views/purchase_order_views.xml",
         "views/res_partner_supplier_views.xml",
         "views/res_config_settings_views.xml",
+        "views/purchase_order_portal_report.xml",
         "views/portal_purchase_templates.xml",
         "views/sh_helpdesk_ticket_views.xml",
         "views/ike_menus.xml",
@@ -39,7 +44,10 @@
         ],
         'web.assets_backend': [
             'ike_event_purchase/static/src/xml/systray_notification_view.xml',
+            'ike_event_purchase/static/src/xml/tier_review_amounts.xml',
             'ike_event_purchase/static/src/js/chatter_notebook_widget.js',
+            'ike_event_purchase/static/src/css/*.*',
+            'ike_event_purchase/static/src/js/tier_review_amounts.js',
             'ike_event_purchase/static/src/css/chatter_fix.css',
         ]
     }

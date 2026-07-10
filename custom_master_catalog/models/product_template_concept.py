@@ -54,7 +54,7 @@ class ProductProduct(models.Model):
         'x_apply_all_services_subservices')
     def chec_unique_concept(self):
         for rec in self:
-            domain = rec.get_concepts_domain()
+            domain = rec.get_concepts_domain(hide_disabled=False)
             if self.search_count(domain + [('id', '<>', rec.id), ('name', '=', rec.name), ('disabled', '=', False)]) > 0:
                 raise ValidationError(_('A record with the same name already exists.'))
             elif self.search_count(domain + [('id', '<>', rec.id), ('name', '=', rec.name), ('disabled', '=', True)]) > 0:
@@ -231,14 +231,14 @@ class ProductProduct(models.Model):
             readonly_view = self.env.ref('custom_master_catalog.view_custom_ike_concepts_product_form_readonly')
             list_readonly_view = self.env.ref('custom_master_catalog.custom_ike_concepts_product_template_list')
             action['views'] = [(list_readonly_view.id, 'list'), (readonly_view.id, 'form')]
-        action.update({'domain': self.get_concepts_domain(), 'context': ctx})
+        action.update({'domain': self.get_concepts_domain(hide_disabled=False), 'context': ctx})
         return action
 
     @api.model
-    def get_concepts_domain(self):
+    def get_concepts_domain(self, hide_disabled=True):
         all_categ_id = self.env.ref('product.product_category_all')
         uom_ids = self._get_concepts_uom_ids()
-        return [
+        domain = [
             ('sale_ok', '=', False),
             ('sh_product_subscribe', '=', False),
             ('purchase_ok', '=', True),
@@ -248,6 +248,9 @@ class ProductProduct(models.Model):
             ('categ_id', '=', all_categ_id.id),
             ('uom_id', 'in', uom_ids),
         ]
+        if hide_disabled:
+            domain.append(['disabled', '=', False])
+        return domain
 
     def _get_concepts_uom_ids(self):
         return [

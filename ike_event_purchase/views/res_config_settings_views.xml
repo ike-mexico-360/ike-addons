@@ -11,6 +11,15 @@
                     <field name="x_time_for_automatic_purchase_generation" class="oe_inline"/><span> hours</span>
                 </setting>
             </xpath>
+            <xpath expr="//block[@name='purchase_setting_container']" position="after">
+                <block title="Purchase Portal" name="x_purchase_portal_section">
+                    <setting id="x_display_po_summary_portal"
+                                string="Portal Summary Cards"
+                                help="Display informative summary cards with total accumulated amounts in the supplier portal's purchase orders view.">
+                        <field name="x_display_po_summary_portal"/>
+                    </setting>
+                </block>
+            </xpath>
         </field>
     </record>
 

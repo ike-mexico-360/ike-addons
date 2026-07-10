@@ -282,7 +282,8 @@
                                 <field name="elapsed_time" column_invisible="1"/>
                                 <field name="manual_notification" column_invisible="1"/>
                                 <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
-                                <button name="action_view_products" string="View Details" type="object" class="btn-link"/>
+                                <button name="action_view_products" string="View Details" type="object" class="btn-link"
+                                    context="{'from_view_detail': True}"/>
                             </list>
                         </field>
                         <button string="Add Supplier" name="action_open_add_manual_supplier_wizard" type="object" class="btn-link"

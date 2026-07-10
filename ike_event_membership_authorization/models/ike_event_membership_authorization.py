@@ -384,6 +384,7 @@ class IkeEventMembershipAuthorization(models.Model):
                 'check_is_fleet': rec.check_is_fleet,
                 'check_is_special': rec.check_is_special,
                 'key_identification': rec.key_identification,
+                'second_key_identification': rec.second_key_identification
             })
             rec.action_ike_event_reload()
         if self.check_is_event_commercial:

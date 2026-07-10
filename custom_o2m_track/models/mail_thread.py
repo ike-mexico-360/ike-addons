@@ -85,6 +85,10 @@ class MailThread(models.AbstractModel):
             try:
                 o2m_tracking[record.id] = []
                 for o2m_field_name in o2m_tracked_fields.keys():
+                    # NOTE: Odoo can trigger tracking via related/computed fields. If this
+                    # One2many didn't change, it won't be in initial_values_dict. Skip to avoid KeyError.
+                    if o2m_field_name not in initial_values_dict[record.id]:
+                        continue
                     old_data = initial_values_dict[record.id][o2m_field_name]
                     current_data = getattr(record, o2m_field_name)
                     o2m_field = self.env['ir.model.fields']._get(record._name, o2m_field_name)

@@ -74,7 +74,7 @@ class IkeEventProduct(models.Model):
                 ('sh_product_subscribe', '=', False),
                 ('purchase_ok', '=', True),
                 ('x_concept_ok', '=', True),
-                ('x_additional_ok', '=', True),
+                # ('x_additional_ok', '=', True),
                 ('type', '=', 'service'),
                 ('disabled', '=', False),
                 ('list_price', '=', 0),
@@ -102,6 +102,10 @@ class IkeEventProduct(models.Model):
                 ).mapped('product_id.id')
                 if excluded:
                     domain.append(('id', 'not in', excluded))
+
+            # No Nu VIP + Second supplier
+            if not rec.event_id.user_id.vip_user and rec.supplier_number > 1:
+                domain.append(('x_additional_ok', '=', True))
 
             rec.product_domain = domain
 
