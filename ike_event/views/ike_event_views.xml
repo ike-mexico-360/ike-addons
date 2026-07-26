@@ -12,7 +12,7 @@
                 <group name="my_events">
                     <filter string="My Events" name="my_events"
                         domain="[
-                            ('stage_ref', 'not in', ['cancel', 'cancel_subsequently', 'cancel_verifying', 'cancel_closed']),
+                            ('stage_ref', 'not in', ['cancel', 'cancel_closed']),
                             ('assigned_user_id', '=', uid)
                         ]"/>
                     <filter string="My events active last 7 days"

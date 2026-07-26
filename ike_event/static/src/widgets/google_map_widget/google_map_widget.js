@@ -12,6 +12,8 @@ export class GoogleMapWidget extends Component {
         ...standardWidgetProps,
         latitude: { type: String, optional: true },
         longitude: { type: String, optional: true },
+        origin_latitude: { type: String, optional: true },
+        origin_longitude: { type: String, optional: true },
         country: { type: String, optional: true },
         state: { type: String, optional: true },
         municipality: { type: String, optional: true },
@@ -103,10 +105,12 @@ export class GoogleMapWidget extends Component {
             console.error("GoogleMapsService");
             return;
         }
+        const centerLat = this.latitude ?? this.originLatitude ?? 19.4326077;
+        const centerLng = this.longitude ?? this.originLongitude ?? -99.133208;
 
         const center = {
-            lat: this.latitude || 19.4326077,
-            lng: this.longitude || -99.133208,
+            lat: centerLat,
+            lng: centerLng,
         };
 
         this.map = new google.maps.Map(this.mapContainer.el, {
@@ -155,7 +159,12 @@ export class GoogleMapWidget extends Component {
             }
         });
 
-        this.updateMarker(this.latitude, this.longitude);
+        // this.updateMarker(this.latitude, this.longitude);
+        if (this.latitude && this.longitude) {
+            this.updateMarker(this.latitude, this.longitude);
+        } else if (this.originLatitude && this.originLongitude) {
+            this.updateMarker(this.originLatitude, this.originLongitude);
+        }
     }
 
     updateMarker(lat, lng) {
@@ -416,6 +425,21 @@ export class GoogleMapWidget extends Component {
         const val = parseFloat(this.props.record.data[this.props.longitude]);
         return isNaN(val) ? null : val;
     }
+    get originLatitude() {
+        if (!this.props.origin_latitude) {
+            return null;
+        }
+        const val = parseFloat(this.props.record.data[this.props.origin_latitude]);
+        return isNaN(val) ? null : val;
+    }
+
+    get originLongitude() {
+        if (!this.props.origin_longitude) {
+            return null;
+        }
+        const val = parseFloat(this.props.record.data[this.props.origin_longitude]);
+        return isNaN(val) ? null : val;
+    }
 }
 
 export const googleMapWidget = {
@@ -425,6 +449,8 @@ export const googleMapWidget = {
         return {
             latitude: attrs.latitude,
             longitude: attrs.longitude,
+            origin_latitude: attrs.origin_latitude,
+            origin_longitude: attrs.origin_longitude,
             country: attrs.country,
             state: attrs.state,
             municipality: attrs.municipality,

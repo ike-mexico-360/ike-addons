@@ -376,6 +376,7 @@ class IkeEventSupplier(models.Model):
         for rec in self:
             rec.stage_id = assign_stage.id
             rec.assignation_date = fields.Datetime.now()
+            rec.broadcastReload(event_reload=False)
 
     def action_on_route(self):
         supplier_on_route_stage = self.env.ref('ike_event.ike_service_stage_on_route')
@@ -396,23 +397,27 @@ class IkeEventSupplier(models.Model):
         for rec in self:
             rec.stage_id = arrived_stage.id
             rec.on_route_to_user_end_date_widget = fields.Datetime.now()
+            rec.broadcastReload(event_reload=True)
 
     def action_contact(self):
         contacted_stage = self.env.ref('ike_event.ike_service_stage_contacted')
         for rec in self:
             rec.stage_id = contacted_stage.id
+            rec.broadcastReload(event_reload=False)
 
     def action_on_route_to_the_destination(self):
         on_route_stage = self.env.ref('ike_event.ike_service_stage_on_route_2')
         for rec in self:
             rec.stage_id = on_route_stage.id
             rec.on_route_to_destination_start_date_widget = fields.Datetime.now()
+            rec.broadcastReload(event_reload=False)
 
     def action_arrive_to_the_destination(self):
         arrived_stage = self.env.ref('ike_event.ike_service_stage_arrived_2')
         for rec in self:
             rec.stage_id = arrived_stage.id
             rec.on_route_to_destination_end_date_widget = fields.Datetime.now()
+            rec.broadcastReload(event_reload=False)
 
     def action_finalize(self):
         supplier_stage_finalized = self.env.ref('ike_event.ike_service_stage_finalized').id

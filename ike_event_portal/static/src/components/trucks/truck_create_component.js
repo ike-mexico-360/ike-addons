@@ -46,20 +46,16 @@ export class TruckCreateComponent extends Component {
             try {
                 const [
                     modelsData,
-                    suppliersData,
                     vehicleTypesData,
                     fieldsData,
                     accessoriesResult
                 ] = await Promise.all([
-                    this.orm.searchRead('fleet.vehicle.model', [], []),
-                    this.orm.searchRead('res.partner', [['x_is_supplier', '=', true], ['disabled', '=', false]], ['name']),
+                    this.orm.searchRead('fleet.vehicle.model', [], ['id', 'display_name']),
                     this.orm.searchRead('custom.vehicle.type', [['disabled', '=', false]], ['name']),
                     this.orm.call('fleet.vehicle', 'fields_get', [['x_vehicle_service_state']], {}),
                     rpc('/provider/portal/trucks/accessories', {})
                 ]);
-
                 this.state.models = modelsData;
-                this.state.suppliers = suppliersData;
                 this.state.vehicle_types = vehicleTypesData;
                 this.state.service_states = fieldsData.x_vehicle_service_state.selection;
                 this.state.accessories = accessoriesResult.success ? accessoriesResult.accessories : [];

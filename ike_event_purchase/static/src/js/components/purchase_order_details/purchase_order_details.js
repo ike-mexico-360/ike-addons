@@ -6,7 +6,9 @@ import { _t } from "@web/core/l10n/translation";
 import { addLoadingEffect } from '@web/core/utils/ui';
 import { registry } from "@web/core/registry";
 import { rpc } from "@web/core/network/rpc";
+import { sprintf } from "@web/core/utils/strings";
 import { deserializeDateTime, formatDateTime } from "@web/core/l10n/dates";
+import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 var new_line_id = 0;
 
 export class PurchaseOrderDetails extends Component {
@@ -21,6 +23,8 @@ export class PurchaseOrderDetails extends Component {
     setup() {
         this.orm = useService("orm");
         this.notification = useService("notification");
+        this.dialog = useService("dialog");
+
 
         this.composerRef = useRef('composerTextarea');
 
@@ -323,18 +327,38 @@ export class PurchaseOrderDetails extends Component {
     }
 
     accept_prices = async (ev) => {
-        const disableAcceptBtn = addLoadingEffect(ev.currentTarget);
-        try {
-            await this.orm.call('purchase.order', 'x_portal_action_accept_prices', [this.props.order_id]);
-            await this._loadOrderData();
-        } catch (e) {
-            this.notification.add(_t("Error at accept prices: ") + (e?.data?.message || e.message), {
-                type: "danger", sticky: true
-            });
-        } finally {
-            disableAcceptBtn();
-        }
-    }
+        const button = ev.currentTarget;
+        const subtotal = this.state.order_data.amount_untaxed;
+        this.dialog.add(ConfirmationDialog, {
+            body: sprintf(
+                _t("Are you sure you want to accept the final subtotal of %s?"),
+                `$${subtotal}`
+            ),
+            cancelLabel: _t("Cancel"),
+            confirm: async () => {
+                const disableAcceptBtn = addLoadingEffect(button);
+                try {
+                    await this.orm.call(
+                        'purchase.order',
+                        'x_portal_action_accept_prices',
+                        [this.props.order_id]
+                    );
+                    await this._loadOrderData();
+                } catch (e) {
+                    this.notification.add(
+                        _t("Error at accept prices: ") + (e?.data?.message || e.message),
+                        {
+                            type: "danger",
+                            sticky: true,
+                        }
+                    );
+                } finally {
+                    disableAcceptBtn();
+                }
+            },
+            cancel: () => {},
+        });
+    };
 
     // Añadir linea virtual en state.order_data.order_line
     add_line = async () => {

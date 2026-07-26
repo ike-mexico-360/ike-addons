@@ -187,6 +187,13 @@ class PurchaseOrderLine(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        for vals in vals_list:
+            if 'x_product_qty_approved' in vals:
+                vals['product_qty'] = vals['x_product_qty_approved']
+
+            if 'x_price_unit_approved' in vals:
+                vals['price_unit'] = vals['x_price_unit_approved']
+
         res = super().create(vals_list)
 
         lines = res.filtered(lambda r: r.order_id.x_event_id)

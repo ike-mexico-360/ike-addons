@@ -184,9 +184,16 @@ export class ServicesMainComponent extends Component {
 
         if (ACTIVE_STATES.includes(item.state)) {
             //this.showNotification({ title: _t("Service Updated"), message: _t('You have a new service available.'), type: 'info' });
-            if (item.state === 'notified')
+            if (item.state === 'notified') {  // Nuevos servicios
                 this.showNotificationWithSound({ title: _t("New Service Available"), message: _t('You have a new service available.'), type: 'info' });
-            await this._handleActiveService(event_supplier);
+                await this._handleActiveService(event_supplier);
+            }
+            if (item.state === 'assigned') {
+                await this._handleCurrentAssignedService(event_supplier, item);
+            }
+            if (item.state === 'accepted') {
+                await this._handleAcceptedService(event_supplier, item);
+            }
         } else if (REMOVED_STATES.includes(item.state) && event_supplier.supplier_id == this.supplier_id) {
             this._handleRemovedService(event_supplier);
         }
@@ -195,6 +202,20 @@ export class ServicesMainComponent extends Component {
     async _handleActiveService(event_supplier) {
         const event = await this.getEventById(event_supplier.event_id);
         this.fetchAndAppendService(event_supplier, event);
+    }
+
+    async _handleCurrentAssignedService(event_supplier, item) {
+        const event = await this.getEventById(event_supplier.event_id);
+        this.updateSupplierService(event_supplier, event, item);
+    }
+
+    async _handleAcceptedService(event_supplier, item) {
+        const event = await this.getEventById(event_supplier.event_id);
+        this.updateSupplierService(event_supplier, event, item);
+    }
+
+    async updateSupplierService(event_supplier, event, item) {
+        await this.refreshSingleService(event_supplier.event_supplier_id);
     }
 
     _handleRemovedService(event_supplier) {
@@ -265,7 +286,7 @@ export class ServicesMainComponent extends Component {
             const event_supplier = await this._requireNotifiedEvent(event_supplier_id, _t('This service is no longer available for acceptance.'));
             if (!event_supplier) return;
             await this.orm.call('ike.event.supplier.public', 'action_accept', [event_supplier_id]);
-            await this.refreshMultipleServices(event_supplier.event_id.id, event_supplier.supplier_id.id);
+            await this.loadServices(false);
         } catch (err) {
             this.showNotification({ title: _t("Error accepting service"), message: _t(err?.data?.message || err.message || "An error occurred while accepting the service."), type: 'danger' });
         }
@@ -280,14 +301,16 @@ export class ServicesMainComponent extends Component {
             }
             const index = this.state.services.findIndex(s => s.event_supplier_id === event_supplier_id);
             if (index !== -1) {
-                Object.assign(this.state.services[index], {
+                this.state.services[index] = {
+                    ...this.state.services[index],
                     event_supplier_state: updated.event_supplier_state,
                     event_supplier_state_label: updated.event_supplier_state_label,
                     truck_name: updated.truck_name,
                     driver_name: updated.driver_name,
                     stage: updated.stage,
+                    stage_id_label: updated.stage_id_label,
                     highlighted: false,
-                });
+                };
             }
         } catch (err) {
             await this.loadServices();

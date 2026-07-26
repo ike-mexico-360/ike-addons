@@ -165,6 +165,13 @@ class PortalUserAccount(CustomerPortal):
             )
             state_field = Model._fields["state"]
             state_translations = dict(state_field._description_selection(Model.env))
+
+            # Build stage display name with user language
+            stage_name = ""
+            if supplier_line.stage_id:
+                stage = supplier_line.stage_id.with_context(lang=request.env.user.lang)
+                stage_name = stage.name or ""
+
             result = {
                 "supplier_id": supplier_line.supplier_id.id,
                 "supplier_name": supplier_line.supplier_id.name,
@@ -184,7 +191,8 @@ class PortalUserAccount(CustomerPortal):
                 ),
                 "event_supplier_summary_data": supplier_line.get_event_supplier_summary_data(),
                 "travel_tracking_url": supplier_line.get_travel_tracking_url(),
-                "stage": supplier_line.stage_ref,
+                "stage": supplier_line.stage_id.name if supplier_line.stage_id else "",
+                "stage_id_label": stage_name,
                 "supplier_link_id": supplier_line.supplier_link_id.id,
             }
 

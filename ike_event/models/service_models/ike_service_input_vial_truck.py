@@ -24,6 +24,8 @@ class IkeServiceInputVialTruck(models.Model):
     destination_label = fields.Char(related='event_id.destination_label', readonly=False)
     destination_latitude = fields.Char(related='event_id.destination_latitude', readonly=False)
     destination_longitude = fields.Char(related='event_id.destination_longitude', readonly=False)
+    origin_latitude = fields.Char(related='event_id.location_latitude', string='Origin Latitude')
+    origin_longitude = fields.Char(related='event_id.location_longitude', string='Origin Longitude')
     destination_distance = fields.Float(related='event_id.destination_distance', readonly=False)
     destination_duration = fields.Float(related='event_id.destination_duration', readonly=False)
     destination_route = fields.Json(related='event_id.destination_route', readonly=False)

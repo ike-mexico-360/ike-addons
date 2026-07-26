@@ -48,6 +48,8 @@
                             <widget name="google_map_widget"
                                     latitude="destination_latitude"
                                     longitude="destination_longitude"
+                                    origin_latitude="origin_latitude"
+                                    origin_longitude="origin_longitude"
                                     location_label="destination_label"
                                     state="state_id"
                                     country="country_id"
@@ -58,6 +60,8 @@
                                     zip_code="destination_zip_code"/>
                         </group>
                         <group>
+                            <field name="origin_latitude" invisible="1"/>
+                            <field name="origin_longitude" invisible="1"/>
                             <field name="destination_latitude"/>
                             <field name="destination_longitude"/>
                             <field name="destination_label"/>
@@ -111,6 +115,8 @@
                         <field name="stage_ref"/>
                         <field name="step_number"/>
                         <field name="event_id"/>
+                        <field name="origin_latitude" invisible="1"/>
+                        <field name="origin_longitude" invisible="1"/>
                     </group>
                     <group string="Service Destination" class="ike-group mt-0" invisible="not sections.get('destination_data')">
                         <group>
@@ -118,6 +124,8 @@
                                     latitude="destination_latitude"
                                     longitude="destination_longitude"
                                     location_label="destination_label"
+                                    origin_latitude="origin_latitude"
+                                    origin_longitude="origin_longitude"
                                     state="state_id"
                                     municipality="municipality_id"
                                     country="country_id"

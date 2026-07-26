@@ -371,6 +371,14 @@ class PurchaseOrder(models.Model):
         if self.x_dispute_state not in ('none', 'resolved'):
             raise UserError(_('There is a dispute on this order.'))
 
+        if sum(self.order_line.mapped('price_subtotal')) == 0:
+            self.sudo().message_post(
+                body=_("This review was not sent to a Purchase Order because it contains a line with a cost of 0."),
+                message_type="comment",
+                subtype_xmlid="mail.mt_note",
+            )
+            return self.write({"state": "done"})
+
         # Ejecutar asignación solo cuando la iteración sea la primera
         if self.x_dispute_iteration_count == 0:
             for line in self.order_line:

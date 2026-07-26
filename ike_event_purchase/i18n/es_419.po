@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-06 18:36+0000\n"
-"PO-Revision-Date: 2026-07-06 18:36+0000\n"
+"POT-Creation-Date: 2026-07-15 22:08+0000\n"
+"PO-Revision-Date: 2026-07-15 22:08+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -349,6 +349,34 @@ msgid "Approved Quantity"
 msgstr "Cantidad aprobada"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "Are you sure you want to accept the final subtotal of %s?"
+msgstr "¿Está seguro de que desea aceptar el subtotal final de %s?"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__message_attachment_count
+msgid "Attachment Count"
+msgstr "Cantidad de Archivos Adjuntos"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__approved_date
+msgid "Authorization Date"
+msgstr "Fecha de Autorización"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
+msgid "Authorization restarted"
+msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
+msgid "Authorize event amount increase"
+msgstr ""
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_authorized_amount
 msgid "Authorized Amount"
 msgstr "Monto autorizado"
@@ -385,7 +413,7 @@ msgstr "Cantidad CCC"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_price_unit_approved
 msgid "CCC unit Price"
-msgstr "Precio unitario CCC"
+msgstr "Costo unitario CCC"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_product_qty_event
@@ -400,7 +428,7 @@ msgstr "Subtotal CDS"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_price_unit_event
 msgid "CDS unit Price "
-msgstr "Precio unitario CDS"
+msgstr "Costo unitario CDS"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -636,7 +664,7 @@ msgstr "Disputa enviada correctamente"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_price_unit_dispute
 msgid "Dispute unit Price"
-msgstr "Precio unitario Disputado"
+msgstr "Costo unitario Disputado"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__disputed_amount
@@ -702,19 +730,19 @@ msgstr "Error al enviar disputa: "
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 msgid "Error sending message: "
-msgstr ""
+msgstr "Error al enviar mensaje: "
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 msgid "Error uploading files: "
-msgstr ""
+msgstr "Error al cargar archivos: "
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 msgid "Error: "
-msgstr ""
+msgstr "Error: "
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -759,7 +787,7 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 msgid "File '%s' exceeds the 10 MB limit"
-msgstr ""
+msgstr "El archivo '%s' supera el límite de 10 MB"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
@@ -838,6 +866,12 @@ msgstr ""
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
 msgid "Loading..."
 msgstr "Cargando..."
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/controllers/portal.py:0
+msgid "Locked"
+msgstr "Bloqueado"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_mandatory
@@ -1370,6 +1404,14 @@ msgid "This order already has an open dispute."
 msgstr "Esta orden ya tiene una disputa abierta."
 
 #. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid ""
+"This review was not sent to a Purchase Order because it contains a line with"
+" a cost of 0."
+msgstr "Esta Revisión no se enviará a una Orden de compra por ser una linea en 0"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__4
 msgid "Thursday"
 msgstr "Jueves"
@@ -1438,7 +1480,7 @@ msgstr "Pedidos sin facturar"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__price_unit
 msgid "Unit Price"
-msgstr "Precio unitario Final"
+msgstr "Cost unitario Final"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -1724,6 +1766,24 @@ msgstr ""
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "The dispute has been submitted."
+msgstr "La disputa ha sido enviada."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "The dispute has been approved."
+msgstr "La disputa ha sido aprobada."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "The dispute has been rejected."
+msgstr "La disputa ha sido rechazada."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 msgid "Company"
 msgstr "Empresa"
 
@@ -1732,6 +1792,42 @@ msgstr "Empresa"
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 msgid "Receipt Date"
 msgstr "Fecha de recepción"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "NU Name"
+msgstr "Nombre NU"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Event Date"
+msgstr "Fecha del evento"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Vehicle"
+msgstr "Vehículo"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Plate"
+msgstr "Placa"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Origin"
+msgstr "Origen"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Destination"
+msgstr "Destino"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -1768,3 +1864,33 @@ msgstr "Costo Aprobado CCC"
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 msgid "Select concept"
 msgstr "Seleccionar concepto"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Write a message..."
+msgstr "Escribe un mensaje..."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Sending..."
+msgstr "Enviando..."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Send"
+msgstr "Enviar"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "Message sent"
+msgstr "Mensaje enviado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "No validated CFDI found for this order."
+msgstr "No se encontró un CFDI validado para esta orden."

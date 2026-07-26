@@ -40,29 +40,31 @@ export class IkeTravelTrackingStatusbar extends Component {
         });
 
         onWillStart(() => {
-            const resId = this.props.record.resId;
-            if (resId) {
-                this.busChannel = `custom_ike_event_supplier_stages_${resId}`;
+            const supplierId = this.props.record.evalContext.supplier_id || this.props.record.data.supplier_id[0];
+            if (supplierId) {
+                this.busChannel = `ike_channel_supplier_${supplierId}`;
                 this.busService.addChannel(this.busChannel);
             }
         });
 
         this.broadcast_update_stage = async (message) => {
             // Verificar que el mensaje sea para este registro
-            const payload = message.payload || message;
-            if (payload.id === this.props.record.resId) {
-                // Recargar el registro completo
-                await this.props.record.load();
+            const payload = message.data || message;
+            for (const item of payload) {
+                if (item.id === this.props.record.resId) {
+                    // Recargar el registro completo
+                    await this.props.record.load();
+                }
             }
         }
 
-        this.busService.subscribe("update_ike_event_supplier_stage", this.broadcast_update_stage);
+        this.busService.subscribe("ike_supplier_lines_reload_2", this.broadcast_update_stage);
 
         // Cleanup al desmontar
         onWillUnmount(() => {
             if (this.busChannel) {
                 this.busService.deleteChannel(this.busChannel);
-                this.busService.unsubscribe("update_ike_event_supplier_stage", this.broadcast_update_stage);
+                this.busService.unsubscribe("ike_supplier_lines_reload_2", this.broadcast_update_stage);
             }
         });
     }
@@ -120,12 +122,8 @@ export const ikeTravelTrackingStatusbar = {
     component: IkeTravelTrackingStatusbar,
     additionalClasses: ["ike_travel_tracking_statusbar_container"],
     extractProps: ({ attrs, options, viewType }, dynamicInfo) => ({
-        // isDisabled: !options.clickable || dynamicInfo.readonly,
         visibleSelection: attrs.statusbar_visible?.trim().split(/\s*,\s*/g),
         matchVisibleField: options.match_visible_field,
-        // withCommand: viewType === "form",
-        // foldField: options.fold_field,
-        // domain: dynamicInfo.domain,
     }),
 };
 

@@ -436,17 +436,6 @@ class CatalogsAPIController(http.Controller):
                 # Actualizar el supplier
                 supplier = request.env['ike.event.supplier'].sudo().browse(ike_event_supplier_id['id'])
                 supplier.action_from_progress_state(progress_state)
-                # Detonar bus.bus para actualizar vista
-                if ike_event_supplier_id:
-                    line_supplier_id = ike_event_supplier_id['id']
-                    _logger.warning("Enviando bus.bus")
-                    request.env['bus.bus']._sendone(
-                        target=f'custom_ike_event_supplier_stages_{line_supplier_id}',
-                        notification_type='update_ike_event_supplier_stage',
-                        message={
-                            'id': line_supplier_id
-                        }
-                    )
 
         except BadRequest as e:
             _logger.warning(str(e))

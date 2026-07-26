@@ -428,6 +428,7 @@
                                 />
                             </div>
                             <div class="col-12 col-lg-7 col-xl-8">
+                                <field name="supplier_id" invisible="1"/>  <!-- Necesario para el bus de eventos -->
                                 <field name="stage_id" widget="ike_travel_tracking_statusbar"
                                     options="{'match_visible_field': 'ref'}" statusbar_visible="assigned,on_route,arrived,on_route_2,arrived_2,finalized"/>
                                 <!-- Widget  LineProgress Campos-->
