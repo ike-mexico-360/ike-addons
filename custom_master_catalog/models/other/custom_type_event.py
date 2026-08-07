@@ -12,6 +12,7 @@ class CustomTypeEvent(models.Model):
     name = fields.Char(required=True, tracking=True)
     description = fields.Char(tracking=True)
     requires_federal_plates = fields.Boolean(default=False, tracking=True)
+    minimum_distance_km = fields.Float(string='', digits=(10, 2))
 
     active = fields.Boolean(default=True)
     disabled = fields.Boolean(default=False, tracking=True)

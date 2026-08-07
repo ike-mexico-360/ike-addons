@@ -3,6 +3,9 @@
     <t t-name="ike_event_purchase.TierReviewAmounts"
        t-inherit="base_tier_validation.Collapse"
        t-inherit-mode="extension">
+        <xpath expr="//th[@name='th_todo_by']" position="replace">
+            <th name="th_todo_by" class="text-end">Por hacer</th>
+        </xpath>
         <xpath expr="//th[@name='th_comment']" position="before">
             <th t-if="showIncreaseAmounts()"
                 name="th_increase_requested_amount" class="text-end">

@@ -10,6 +10,18 @@
             </strong>
         </xpath>
         <xpath expr="//h3[@id='details']" position="after">
+            <!-- <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-2">
+                <h3 id="details" class="mb-0">Pricing</h3>
+
+                <a class="btn btn-secondary o_print_btn"
+                t-att-href="'/my/purchase/' + str(order.id) + '?report_type=pdf&amp;download=true&amp;access_token=' + order.access_token"
+                target="_blank">
+                    <i class="fa fa-print me-1"/>
+                    Download / Print
+                </a>
+            </div>
+
+            <h2 class="mb-0 text-break" t-field="order.amount_untaxed"/> -->
             <owl-component
                 name="ike_event_purchase.purchase_order_details"
                 t-att-props="json.dumps({'order_id': order.id})"

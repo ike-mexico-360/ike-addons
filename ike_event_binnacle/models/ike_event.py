@@ -69,7 +69,7 @@ class IkeEvent(models.Model):
                 # Get the binnacle record using the XML ID
                 binnacle = self.env.ref(xmlid, raise_if_not_found=False)
                 if not binnacle.binnacle_template_id:  # type: ignore
-                    _logger.warning(f'Binnacle record template with XML ID "{xmlid}" not found')
+                    # _logger.warning(f'Binnacle record template with XML ID "{xmlid}" not found')
                     continue
                 template_results = binnacle.with_context(  # type: ignore
                     lang=self.env.user.lang
@@ -114,7 +114,7 @@ class IkeEvent(models.Model):
                             'parent_id': False,
                         })
                         created_messages |= message
-                    _logger.info(f'Created binnacle message for event {self.name} from {xmlid}')
+                    # _logger.info(f'Created binnacle message for event {self.name} from {xmlid}')
             except Exception as e:
                 _logger.error(f'Error creating binnacle message from {xmlid}: {e}')
                 continue
@@ -389,6 +389,7 @@ class IkeEvent(models.Model):
     def action_set_user_sub_service_data(self):
         result = super(IkeEvent, self).action_set_user_sub_service_data()
         for rec in self:
+            rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_12"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_4_2"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_7"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_4_3"])
@@ -434,6 +435,7 @@ class IkeEvent(models.Model):
 
                 elif rec.stage_id == self.env.ref("ike_event.ike_event_stage_verifying"):
                     rec._create_message_binnacle([
+                        "ike_event_binnacle.ike_binnacle_stage_10_4",
                         "ike_event_binnacle.ike_binnacle_stage_10_3",
                         "ike_event_binnacle.ike_binnacle_stage_10_5",
                     ])
@@ -656,7 +658,6 @@ class IkeEventSupplier(models.Model):
     def action_timeout(self) -> list[int]:
         updated_ids = super().action_timeout()
         self_filtered = self.filtered(lambda x: x.id in updated_ids)
-        print("BINNACLE - ACTION_TIMEOUT", self_filtered.ids)
         for rec in self_filtered:
             rec.event_id.with_context(
                 supplier=rec.supplier_id.name,

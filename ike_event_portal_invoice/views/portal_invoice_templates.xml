@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_home_dian_invoices" name="Portal DIAN Invoices Integration" inherit_id="ike_event_portal.portal_my_home_ike_events">
+        <xpath expr="//div[@id='portal_ike_events_services']" position="inside">
+            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_finance')">
+                <t t-set="title">SAT Invoices</t>
+                <t t-set="url" t-value="'/provider/portal/invoice/dian'"/>
+                <t t-set="text">Electronic invoicing documents</t>
+                <t t-set="icon" t-value="'/purchase/static/src/img/calculator.svg'"/>
+            </t>
+        </xpath>
+    </template>
+</odoo>

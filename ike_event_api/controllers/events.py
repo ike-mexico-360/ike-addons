@@ -124,51 +124,163 @@ class EventAPIController(http.Controller):
 
     @http.route('/ike/event/accept', type='json', auth='user', methods=['POST'])
     def ike_event_accept(self, **kw):
-        # Este endpoint se usará para aceptar proveedores externos,
-        # se recibirá event_id, vehicle_id, acccepted_datetime, accepted_user,
-        # este ultimo será opcional, buscar el usuario del proveedor del vehículo
-        # Enviar en la respuesta el código de usuario
-
         # Validar sesión
         if not request.env.uid:
             request.env.cr.rollback()
             raise Unauthorized(_('Usuario no autenticado'))
 
-        event_id = kw.get('event_id', False)
-        vehicle_id = kw.get('vehicle_id', False)
-        accepted_datetime = kw.get('accepted_datetime', False)
+        event_id = kw.get('event_id')
+        vehicle_id = kw.get('vehicle_id')
+        accepted_datetime = kw.get('accepted_datetime')
         # accepted_user = kw.get('accepted_user', "")
 
         if not event_id or not vehicle_id or not accepted_datetime:
             raise BadRequest(_('Missing parameters'))
 
         env = request.env
-
         Supplier = env['ike.event.supplier'].sudo()
 
-        domain = [
-            ('event_id', '=', event_id),
-            ('truck_id.x_vehicle_ref', '=', vehicle_id),
-            ('state', '=', 'notified'),
-        ]
-
-        supplier = Supplier.search(domain, limit=1)
-        if not supplier:
-            raise NotFound(f"No se encontró el proveedor {vehicle_id} para el evento {event_id}")
-
         try:
+            supplier = self._resolve_supplier_for_acceptance(
+                env=env,
+                supplier_model=Supplier,
+                event_id=event_id,
+                vehicle_ref=vehicle_id,
+            )
+
             supplier.action_accept()
-            # Integrar el envío de ruta, cambia a asignado
             supplier.action_notify_operator()
-            # ToDo: Cómo integrar esto? Se necesita guardar la fecha y hora recibida
             supplier.write({'acceptance_date': accepted_datetime})
+
             return {
                 'status': 'success',
                 'user_code': supplier.event_id.user_code,
             }
+
+        except (BadRequest, NotFound):
+            raise
         except Exception as e:
-            _logger.error(f"Error on action_accept: {str(e)}")
+            _logger.exception("Error on ike_event_accept")
             raise InternalServerError(str(e))
+
+    def _resolve_supplier_for_acceptance(self, env, supplier_model, event_id, vehicle_ref):
+        # CAMINO CORTO:
+        # El vehículo recibido ya está en la línea notificada del evento
+        direct_domain = [
+            ('event_id', '=', event_id),
+            ('truck_id.x_vehicle_ref', '=', vehicle_ref),
+            ('state', '=', 'notified'),
+        ]
+        direct_suppliers = supplier_model.search(direct_domain, limit=2)
+
+        if len(direct_suppliers) == 1:
+            return direct_suppliers
+
+        if len(direct_suppliers) > 1:
+            raise NotFound(
+                _(
+                    "Se encontró más de una coincidencia para el vehículo %(vehicle)s en el evento %(event)s, contacte a su administrador.",
+                    vehicle=vehicle_ref,
+                    event=event_id,
+                )
+            )
+
+        # CAMINO LARGO:
+        # El vehículo no está actualmente asignado; intentar reasignación
+        Truck = env['fleet.vehicle'].sudo()
+
+        truck_domain = [
+            ('x_vehicle_ref', '=', vehicle_ref),
+            ('disabled', '=', False),
+        ]
+        truck = Truck.search(truck_domain, limit=2)
+
+        if not truck:
+            raise NotFound(
+                _(f"No se encontró el vehículo {vehicle_ref} para intentar la reasignación.")
+            )
+
+        if len(truck) > 1:
+            raise NotFound(
+                _(
+                    "Se encontró más de un vehículo con referencia %(vehicle)s, contacte a su administrador.",
+                    vehicle=vehicle_ref,
+                )
+            )
+
+        if truck.x_vehicle_service_state != 'available':
+            raise BadRequest(
+                _(
+                    "El vehículo %(vehicle)s no está disponible para reasignación.",
+                    vehicle=vehicle_ref,
+                )
+            )
+
+        if not truck.x_partner_id:
+            raise BadRequest(
+                _(
+                    "El vehículo %(vehicle)s no tiene proveedor asociado.",
+                    vehicle=vehicle_ref,
+                )
+            )
+
+        partner_id = truck.x_partner_id.id
+
+        preparing_stage = request.env.ref('ike_event.ike_service_stage_preparing')
+        assigned_stage = request.env.ref('ike_event.ike_service_stage_assigned')
+        # Limitar a esas lineas
+        reassignment_domain = [
+            ('event_id', '=', event_id),
+            ('supplier_id', '=', partner_id),
+            ('stage_id', 'in', (preparing_stage.id, assigned_stage.id)),
+        ]
+        reassignment_suppliers = supplier_model.search(reassignment_domain, limit=2)
+
+        if not reassignment_suppliers:
+            raise NotFound(
+                _(
+                    "No se encontró una línea del evento %(event)s para el proveedor del vehículo %(vehicle)s en etapa preparando o asignado.",
+                    event=event_id,
+                    vehicle=vehicle_ref,
+                )
+            )
+
+        if len(reassignment_suppliers) > 1:
+            raise NotFound(
+                _(
+                    "Se encontró más de una línea para el proveedor del vehículo %(vehicle)s en el evento %(event)s; no es posible reasignar automáticamente.",
+                    vehicle=vehicle_ref,
+                    event=event_id,
+                )
+            )
+
+        supplier = reassignment_suppliers
+
+        # ToDo: Criterios para considerar que no puede reasignarse
+        # Validar que el nuevo vehículo no esté presente en otra línea activa
+        # supplier_preparing_stage = request.env.ref('ike_event.ike_service_stage_preparing')
+        # supplier_finalized_stage = request.env.ref('ike_event.ike_service_stage_finalized')
+        # conflict_domain = [
+        #     ('truck_id', '=', truck.id),
+        #     ('stage_id', 'not in', [supplier_finalized_stage.id, supplier_preparing_stage.id]),
+        #     ('id', '!=', supplier.id),
+        # ]
+        # conflict_supplier = supplier_model.search(conflict_domain, limit=1)
+
+        # if conflict_supplier:
+        #     raise BadRequest(
+        #         _(
+        #             "El vehículo %(vehicle)s ya se encuentra asignado en otra línea activa.",
+        #             vehicle=vehicle_ref,
+        #         )
+        #     )
+
+        supplier.action_change_service_vehicle(truck.id)
+
+        # Releer el registro por seguridad después del cambio
+        supplier.invalidate_recordset(["truck_id", "state"])
+
+        return supplier
 
     # Terminación de recogida
     @http.route('/ike/event/send_end_format', type='http', auth='user', methods=['POST'], csrf=False)
@@ -188,7 +300,7 @@ class EventAPIController(http.Controller):
         extra_paid_amount = kw.get('extra_paid_amount', 0.0)
         comments = kw.get('comments', None)
 
-        if not service_id or not user_sign:
+        if not service_id:
             return request.make_json_response({'error': _('Missing parameters')}, status=400)
 
         try:  # Convert sevice_id to int
@@ -216,6 +328,10 @@ class EventAPIController(http.Controller):
         event_sudo = event_id.sudo()
 
         min_required_photos = event_sudo.sub_service_id.x_min_required_photos or 0
+        require_sign = event_sudo.sub_service_id.x_signature_required or False
+
+        if require_sign and not user_sign:
+            return request.make_json_response({'error': _('Missing required user sign')}, status=400)
 
         # Validar fotos solo si se requiere al menos 1
         if min_required_photos > 0:
@@ -236,16 +352,18 @@ class EventAPIController(http.Controller):
                     'side': image_side,
                 }) for image in images]
 
-            request.env['ike.event.evidence'].create({
+            evidence_data = {
                 'event_id': event_id.id,
                 'evidence_type': 'pickup',
-                # 'nu_user_code': user_code,
                 'extra_pay': extra_paid,
                 'extra_pay_amount': extra_paid_amount,
                 'comments': comments,
-                'nu_user_sign': self._ike_events_get_image_content(user_sign),
+                'nu_user_sign': False,
                 'detail_ids': detail_ids,
-            })
+            }
+            if user_sign:
+                evidence_data['nu_user_sign'] = self._ike_events_get_image_content(user_sign)
+            request.env['ike.event.evidence'].create(evidence_data)
 
         return request.make_json_response({
             'service_id': service_id,
@@ -268,7 +386,7 @@ class EventAPIController(http.Controller):
         sign_of_receive = request.httprequest.files.get('sign_of_receive')
         comments = kw.get('comments', None)
 
-        if not service_id or not name_of_receive or not sign_of_receive:
+        if not service_id or not name_of_receive:
             return request.make_json_response({'error': _('Missing parameters')}, status=400)
 
         try:
@@ -280,6 +398,10 @@ class EventAPIController(http.Controller):
         event_sudo = event_id.sudo()
 
         min_required_photos = event_sudo.sub_service_id.x_min_required_photos or 0
+        require_sign = event_sudo.sub_service_id.x_signature_required or False
+
+        if require_sign and not sign_of_receive:
+            return request.make_json_response({'error': _('Missing required sign')}, status=400)
 
         # Validar fotos solo si se requiere al menos 1
         if min_required_photos > 0:
@@ -300,13 +422,16 @@ class EventAPIController(http.Controller):
                     'side': image_side,
                 }) for image in images]
 
-            request.env['ike.event.evidence'].create({
+            evidence_data = {
                 'event_id': event_id.id,
                 'evidence_type': 'completed',
                 'comments': comments,
-                'nu_user_sign': self._ike_events_get_image_content(sign_of_receive),
+                'nu_user_sign': False,
                 'detail_ids': detail_ids,
-            })
+            }
+            if sign_of_receive:
+                evidence_data['nu_user_sign'] = self._ike_events_get_image_content(sign_of_receive)
+            request.env['ike.event.evidence'].create(evidence_data)
 
         return request.make_json_response({
             'service_id': service_id,

@@ -144,7 +144,7 @@ class CustomerPortal(PurchasePortal):
     def x_ike_my_purchase_product_get_matrix_lines(self, product_id, event_id, supplier_id, **kw):
         try:
             matrix_lines = request.env['ike.event'].sudo().browse(event_id)\
-                .get_supplier_product_matrix_lines(supplier_id, [product_id])
+                .get_supplier_product_matrix_lines_by_supplier(supplier_id, [product_id])
             _logger.warning(f"matrix_lines: {matrix_lines}")
             return {"success": True, "matrix_lines": matrix_lines.read(['cost'])}
         except Exception as e:
@@ -191,6 +191,56 @@ class CustomerPortal(PurchasePortal):
             _logger.error(f"Error posting message to purchase order {order_id}: {str(e)}")
             return {"success": False, "error": str(e)}
 
+    @http.route(
+        ["/my/purchase/<int:order_id>/upload_files"],
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=False,
+    )
+    def upload_purchase_order_files(self, order_id, attachments=None, **kw):
+        ALLOWED_MIMETYPES = {'application/pdf', 'image/png', 'image/jpeg'}
+        MAX_SIZE = 3 * 1024 * 1024
+        MAX_FILES = 2
+        try:
+            purchase_order = request.env['purchase.order'].browse(order_id)
+            if not purchase_order.exists():
+                return {"success": False, "error": _("Purchase order not found")}
+
+            attachments = attachments or []
+            existing_count = request.env['ir.attachment'].sudo().search_count([
+                ('res_model', '=', 'purchase.order'),
+                ('res_id', '=', order_id),
+            ])
+            if existing_count + len(attachments) > MAX_FILES:
+                return {"success": False, "error": _("Maximum %s files allowed per dispute.") % MAX_FILES}
+
+            for attachment_data in attachments:
+                mimetype = attachment_data.get('mimetype', 'application/octet-stream')
+                data = attachment_data.get('data', '')
+                if mimetype not in ALLOWED_MIMETYPES:
+                    return {"success": False, "error": _("File type not allowed.")}
+                if data and (len(data) * 3 / 4) > MAX_SIZE:
+                    return {"success": False, "error": _("File exceeds the 3 MB limit.")}
+                request.env['ir.attachment'].sudo().create({
+                    'name': attachment_data.get('name', 'attachment'),
+                    'type': 'binary',
+                    'datas': data,
+                    'mimetype': mimetype,
+                    'res_model': 'purchase.order',
+                    'res_id': order_id,
+                })
+
+            order_attachment_ids = request.env['ir.attachment'].sudo().search_read(
+                [('res_model', '=', 'purchase.order'), ('res_id', '=', order_id)],
+                ['id', 'name', 'mimetype', 'file_size'],
+                order='id asc',
+            )
+            return {"success": True, "attachments": order_attachment_ids}
+        except Exception as e:
+            _logger.error(f"Error uploading files to purchase order {order_id}: {str(e)}")
+            return {"success": False, "error": str(e)}
+
 
 class PurchaseOrderController(http.Controller):
 
@@ -211,12 +261,15 @@ class PurchaseOrderController(http.Controller):
 
         filters = filters or {}
         reference = (filters.get('reference') or '').strip()
+        ref_sap = (filters.get('refSap') or '').strip()
         event = (filters.get('event') or '').strip()
         date_from = (filters.get('dateFrom') or '').strip()
         date_to = (filters.get('dateTo') or '').strip()
 
         if reference:
             domain.append(('name', 'ilike', reference))
+        if ref_sap:
+            domain.append(('x_ref_sap', 'ilike', ref_sap))
         if event:
             domain = expression.AND([
                 domain,
@@ -238,7 +291,20 @@ class PurchaseOrderController(http.Controller):
             'id': {},
             'name': {},
             'state': {},
-            'partner_id': {'fields': {'id': {}, 'name': {}}},
+            'partner_id': {
+                'fields': {
+                    'id': {},
+                    'name': {},
+                    'street': {},
+                    'street2': {},
+                    'city': {},
+                    'zip': {},
+                    'state_id': {'fields': {'name': {}}},
+                    'country_id': {'fields': {'name': {}}},
+                    'vat': {},
+                    'phone': {},
+                }
+            },
             'x_event_public_id': {'fields': {'id': {}, 'name': {}}},
             'x_event_id': {'fields': {'id': {}, 'name': {}}},
             'message_ids': {
@@ -309,6 +375,9 @@ class PurchaseOrderController(http.Controller):
                 }
             },
             'x_dispute_iteration_count': {},
+            'x_ref_sap': {},
+            'x_authorized_amount': {},
+            'x_dispute_authorized_amount': {},
         }
 
         result = request.env['purchase.order'].sudo().web_search_read(
@@ -319,6 +388,26 @@ class PurchaseOrderController(http.Controller):
             return {}
 
         order_data = result['records'][0]
+
+        # Supplier contact data (address/RFC/phone), read straight off partner_id
+        supplier = order_data.get('partner_id')
+        if supplier:
+            supplier_address_parts = [
+                supplier.get('street'),
+                supplier.get('street2'),
+                supplier.get('city'),
+                supplier['state_id']['name'] if supplier.get('state_id') else False,
+                supplier.get('zip'),
+                supplier['country_id']['name'] if supplier.get('country_id') else False,
+            ]
+            order_data['x_supplier_address'] = ', '.join(part for part in supplier_address_parts if part)
+            order_data['x_supplier_vat'] = supplier.get('vat') or ''
+            order_data['x_supplier_phone'] = supplier.get('phone') or ''
+        else:
+            order_data['x_supplier_address'] = ''
+            order_data['x_supplier_vat'] = ''
+            order_data['x_supplier_phone'] = ''
+
         messages = order_data.get('message_ids', [])
 
         msg_ids_with_o2m = [
@@ -372,6 +461,43 @@ class PurchaseOrderController(http.Controller):
         else:
             order_data['x_event_info'] = None
 
+        # Invoicing company data, sourced directly from purchase.order.x_invoice_company_id.
+        # Older orders never got this field populated at creation time, so fall back to
+        # deriving it from the linked event's account (same lookup the portal used before).
+        invoice_companies = order.x_invoice_company_id
+        if not invoice_companies:
+            if order.x_event_id:
+                fallback_events = order.x_event_id
+            else:
+                names_events = order.order_line.mapped('x_parent_expedient')
+                fallback_events = request.env['ike.event'].sudo().search([('name', 'in', names_events)])
+            invoice_companies = fallback_events.account_id.x_invoice_company_id
+        _logger.info(f"Invoice company for order {order_id}: {invoice_companies}")
+
+        if invoice_companies:
+            order_data['x_invoice_company_names'] = ', '.join(invoice_companies.mapped('name'))
+            addresses = []
+            for company in invoice_companies:
+                address_parts = [
+                    company.street,
+                    company.street2,
+                    company.city,
+                    company.state_id.name if company.state_id else False,
+                    company.zip,
+                    company.country_id.name if company.country_id else False,
+                ]
+                address = ', '.join(part for part in address_parts if part)
+                if address:
+                    addresses.append(address)
+            order_data['x_invoice_company_address'] = ', '.join(addresses)
+            order_data['x_invoice_company_phone'] = ', '.join(filter(None, invoice_companies.mapped('phone')))
+            order_data['x_invoice_company_vat'] = ', '.join(filter(None, invoice_companies.mapped('vat')))
+        else:
+            order_data['x_invoice_company_names'] = ''
+            order_data['x_invoice_company_address'] = ''
+            order_data['x_invoice_company_phone'] = ''
+            order_data['x_invoice_company_vat'] = ''
+
         return order_data
 
     @http.route('/my/purchase/load_orders_analytics', type='json', auth='user', methods=['POST'], website=True)
@@ -413,11 +539,28 @@ class PurchaseOrderController(http.Controller):
                     else:
                         x_event_info.update({'vehicle_name': '', 'vehicle_plate': '', 'driver_name': ''})
 
-                # 4. Extract full multi-layered invoice metadata safely with sudo override
+                # Invoicing company, sourced directly from purchase.order.x_invoice_company_id.
+                # Older orders never got this field populated at creation time, so fall back to
+                # deriving it from the linked event's account (same lookup the portal used before).
+                invoice_companies = order.x_invoice_company_id
+                if not invoice_companies:
+                    if event:
+                        fallback_events = event
+                    else:
+                        names_events = order.order_line.mapped('x_parent_expedient')
+                        fallback_events = request.env['ike.event'].sudo().search([('name', 'in', names_events)])
+                    invoice_companies = fallback_events.account_id.x_invoice_company_id
+                x_invoice_company_names = ', '.join(invoice_companies.mapped('name')) if invoice_companies else ''
+
+                # 4. Extract full multi-layered invoice metadata safely with sudo override,
+                # scoped to the order's invoicing company
                 invoices_data = []
                 if order.invoice_ids:
+                    invoice_domain = [('id', 'in', order.invoice_ids.ids)]
+                    # if invoice_companies:
+                    #     invoice_domain.append(('commercial_partner_id', 'in', invoice_companies.ids))
                     invoices_data = request.env['account.move'].sudo().search_read(
-                        domain=[('id', 'in', order.invoice_ids.ids)],
+                        domain=invoice_domain,
                         fields=['id', 'name', 'state', 'payment_state', 'amount_total']
                     )
 
@@ -425,13 +568,18 @@ class PurchaseOrderController(http.Controller):
                     'id': order.id,
                     'name': order.name,
                     'state': order.state,
+                    'invoice_status': order.invoice_status,
+                    'x_dispute_state': order.x_dispute_state,
+                    'x_dispute_approved': order.x_dispute_approved,
                     'x_event_id': event_data,
                     'date_approve': str(order.date_approve) if order.date_approve else False,
                     'date_planned': str(order.date_planned) if order.date_planned else False,
-                    'amount_total': order.amount_total,
+                    'amount_total': order.amount_untaxed,
                     'invoice_ids': invoices_data,
                     'x_origin_events': order.x_origin_events or '',
+                    'x_ref_sap': order.x_ref_sap or '',
                     'partner_id': {'id': order.partner_id.id, 'name': order.partner_id.name} if order.partner_id else False,
+                    'x_invoice_company_names': x_invoice_company_names,
                     'x_event_public_id': {'id': order.x_event_public_id.id, 'name': order.x_event_public_id.name} if order.x_event_public_id else False,
                     'company_id': {'id': order.company_id.id, 'name': order.company_id.name} if order.company_id else False,
                     'x_event_info': x_event_info,
@@ -479,7 +627,7 @@ class PurchaseOrderController(http.Controller):
 
         try:
             # directly into the write values dictionary without manual parsing.
-            order.write({
+            order.with_context(x_skip_dispute_amount_check=True).write({
                 'x_dispute_iteration_count': dispute_count,
                 'x_change_comments': change_comments,
                 'order_line': order_lines,

@@ -25,10 +25,15 @@ export class PurchaseOrderList extends Component {
             showKpi: false,
             filters: {
                 reference: '',
+                refSap: '',
                 event: '',
                 dateFrom: '',
                 dateTo: '',
+                status: '',
             },
+            satOrderId: null,
+            satHistoryLines: [],
+            satHistoryLoading: false,
         });
 
         this.pagination = usePagination({
@@ -42,11 +47,12 @@ export class PurchaseOrderList extends Component {
     }
 
     get filteredOrders() {
-        const { reference, event, dateFrom, dateTo } = this.state.filters;
+        const { reference, refSap, event, dateFrom, dateTo, status } = this.state.filters;
         const from = dateFrom ? new Date(dateFrom) : null;
         const to = dateTo ? new Date(dateTo + 'T23:59:59') : null;
         return this.state.orders.filter(order => {
             if (reference && !(order.name || '').toLowerCase().includes(reference.toLowerCase())) return false;
+            if (refSap && !(order.x_ref_sap || '').toLowerCase().includes(refSap.toLowerCase())) return false;
             if (event) {
                 const term = event.toLowerCase();
                 const eventName = (order.x_event_id ? order.x_event_id.name : '').toLowerCase();
@@ -59,8 +65,69 @@ export class PurchaseOrderList extends Component {
                 if (from && approveDate < from) return false;
                 if (to && approveDate > to) return false;
             }
+            if (status && !this._orderMatchesStatus(order, status)) return false;
             return true;
         });
+    }
+
+    async openSatHistoryModal(orderId) {
+        this.state.satOrderId = orderId;
+        this.state.satHistoryLines = [];
+        this.state.satHistoryLoading = true;
+        try {
+            const res = await rpc('/my/purchase/get_sat_validator_history', { purchase_order_id: orderId });
+            if (res && res.error) {
+                throw new Error(res.error);
+            }
+            this.state.satHistoryLines = res.lines || [];
+        } catch (e) {
+            this.notification.add(_t("Error loading SAT validator history: ") + (e.message || e), {
+                type: "danger",
+            });
+        } finally {
+            this.state.satHistoryLoading = false;
+        }
+    }
+
+    getSatStatusBadgeClass(satStatus) {
+        if (satStatus === 'Vigente') return 'bg-success';
+        if (['Cancelado', 'Error'].includes(satStatus)) return 'bg-danger';
+        return 'bg-warning text-dark';
+    }
+
+    getSatLineStateBadgeClass(lineState) {
+        if (lineState === 'validated') return 'bg-success';
+        if (lineState === 'xml_error') return 'bg-danger';
+        return 'bg-info';
+    }
+
+    _orderMatchesStatus(order, status) {
+        switch (status) {
+            // Estado (purchase.order.state): only the 3 states the portal ever shows
+            case 'state_purchase':
+                return order.state === 'purchase';
+            case 'state_done':
+                return order.state === 'done';
+            case 'state_cancel':
+                return order.state === 'cancel';
+            // Facturación (invoice_status): Factura en espera / Parcialmente facturado / Totalmente facturado
+            case 'inv_waiting':
+            case 'inv_partial':
+            case 'inv_full':
+                return this.getInvoiceStatus(order).key === status;
+            // De pago
+            case 'pay_pending': // Por pagar
+                return (order.invoice_ids || []).some(
+                    inv => inv.state === 'posted' && ['not_paid', 'partial'].includes(inv.payment_state)
+                );
+            case 'pay_paid': { // Pagado
+                const postedInvoices = (order.invoice_ids || []).filter(inv => inv.state === 'posted');
+                if (!postedInvoices.length) return false;
+                return postedInvoices.every(inv => inv.payment_state === 'paid');
+            }
+            default:
+                return true;
+        }
     }
 
     onFilterChange(filterName, value) {
@@ -70,9 +137,11 @@ export class PurchaseOrderList extends Component {
 
     clearFilters() {
         this.state.filters.reference = '';
+        this.state.filters.refSap = '';
         this.state.filters.event = '';
         this.state.filters.dateFrom = '';
         this.state.filters.dateTo = '';
+        this.state.filters.status = '';
         this.pagination.reset();
     }
 
@@ -90,6 +159,47 @@ export class PurchaseOrderList extends Component {
         }
         const queryString = params.toString();
         window.open(`/my/purchase/download_orders_pdf${queryString ? `?${queryString}` : ''}`, '_blank');
+    }
+
+    // Suma facturada de un pedido (facturas publicadas, sin cancelar)
+    getInvoicedTotal(order) {
+        return (order.invoice_ids || [])
+            .filter(inv => inv.state === 'posted')
+            .reduce((sum, inv) => sum + (inv.amount_total || 0), 0);
+    }
+
+    // Order's own OC-lifecycle status, reusing the same labels as the Estatus filter
+    getOrderStatus(order) {
+        switch (order.state) {
+            case 'sent':
+                return { label: _t('Cost Review'), cssClass: 'bg-warning text-dark' };
+            case 'to_consolidate':
+                return { label: _t('To Consolidate'), cssClass: 'bg-info text-dark' };
+            case 'consolidated':
+                return { label: _t('Consolidated'), cssClass: 'bg-primary' };
+            case 'purchase':
+                return { label: _t('Purchase Order'), cssClass: 'bg-success' };
+            case 'done':
+                return { label: _t('Locked'), cssClass: 'bg-secondary' };
+            case 'cancel':
+                return { label: _t('Cancelled'), cssClass: 'bg-danger' };
+            default:
+                return { label: order.state, cssClass: 'bg-light text-dark' };
+        }
+    }
+
+    // Estado de facturación: leído directamente del campo purchase.order.invoice_status
+    // ('no' / 'to invoice' / 'invoiced'), la misma fuente que usa el backend de Odoo.
+    // Single source of truth shared by the "Estado Factura" column and the Status filter.
+    getInvoiceStatus(order) {
+        switch (order.invoice_status) {
+            case 'invoiced':
+                return { key: 'inv_full', label: _t('Totalmente facturado'), cssClass: 'badge-invoice-full' };
+            case 'to invoice':
+                return { key: 'inv_partial', label: _t('Parcialmente facturado'), cssClass: 'badge-invoice-partial' };
+            default: // 'no'
+                return { key: 'inv_waiting', label: _t('Factura en espera'), cssClass: 'badge-invoice-waiting' };
+        }
     }
 
     formatDate(dateStr) {

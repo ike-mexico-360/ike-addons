@@ -1,0 +1,67 @@
+.ike-ticket-status-board {
+    width: 100%;
+    overflow-x: auto;
+    padding: 4px 0 12px;
+}
+
+.ike-ticket-status-table {
+    width: 100%;
+    min-width: 760px;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 3px;
+}
+
+.ike-ticket-status-label {
+    width: 120px;
+    padding-right: 12px;
+    box-sizing: border-box;
+    font-weight: 500;
+    color: #24315f;
+    font-size: 13px;
+    text-align: left;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+.ike-ticket-status-cell {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 44px;
+    padding: 5px 8px;
+    text-align: center;
+    text-decoration: none;
+    border: 1px solid #f4f4f4;
+}
+
+.ike-ticket-status-cell:hover {
+    text-decoration: none;
+    filter: brightness(0.97);
+}
+
+.ike-ticket-status-cell-main {
+    background: #b4b4b6;
+    color: #fff;
+}
+
+.ike-ticket-status-cell-secondary {
+    min-height: 28px;
+    background: #fbfbfb;
+    color: #1f2b5f;
+}
+
+.ike-ticket-status-count {
+    display: block;
+    font-size: 18px;
+    line-height: 1.1;
+    font-weight: 600;
+}
+
+.ike-ticket-status-name {
+    display: block;
+    margin-top: 2px;
+    font-size: 11px;
+    line-height: 1.15;
+    white-space: normal;
+}

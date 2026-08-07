@@ -108,6 +108,28 @@ export class PurchaseOrderDetails extends Component {
         return num.toFixed(2);
     }
 
+    formatCurrency(value) {
+        if (value === null || value === undefined || value === '') return '';
+        const num = parseFloat(value);
+        if (isNaN(num)) return value;
+
+        const l10n = this.env.services.localization || {
+            decimalPoint: ".",
+            thousandsSep: ",",
+            grouping: [3],
+        };
+
+        const sessionInfo = window.odoo?.session_info;
+        const symbol = sessionInfo?.currency_symbol || "$";
+        const position = sessionInfo?.currency_position || "before";
+
+        const parts = num.toFixed(2).split(".");
+        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, l10n.thousandsSep);
+        const formattedNumber = parts.join(l10n.decimalPoint);
+
+        return position === "before" ? `${symbol}${formattedNumber}` : `${formattedNumber} ${symbol}`;
+    }
+
     async _loadComplementaryData() {
         try {
             const uom_domain = await this.orm.call('product.product', 'get_concepts_uom_ids', []);
@@ -216,11 +238,28 @@ export class PurchaseOrderDetails extends Component {
     }
 
     onDirectFileSelect(ev) {
-        const MAX_SIZE = 10 * 1024 * 1024;
+        const MAX_SIZE = 3 * 1024 * 1024;
+        const MAX_FILES = 3;
+        const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg'];
+        const ALLOWED_EXT = ['.pdf', '.png', '.jpg', '.jpeg'];
+
+        const current = (this.state.order_data.order_attachment_ids || []).length;
         const files = Array.from(ev.target.files);
+
+        if (current + files.length > MAX_FILES) {
+            this.notification.add(_t("Maximum %s files allowed per dispute.", MAX_FILES), { type: 'warning' });
+            ev.target.value = '';
+            return;
+        }
+
         const readers = files.map((file) => {
+            const ext = '.' + file.name.split('.').pop().toLowerCase();
+            if (!ALLOWED_TYPES.includes(file.type) && !ALLOWED_EXT.includes(ext)) {
+                this.notification.add(_t("File '%s' is not allowed. Only PDF, PNG and JPG are accepted.", file.name), { type: 'warning' });
+                return null;
+            }
             if (file.size > MAX_SIZE) {
-                this.notification.add(_t("File '%s' exceeds the 10 MB limit", file.name), { type: 'warning' });
+                this.notification.add(_t("File '%s' exceeds the 3 MB limit.", file.name), { type: 'warning' });
                 return null;
             }
             return new Promise((resolve) => {
@@ -290,6 +329,11 @@ export class PurchaseOrderDetails extends Component {
 
     get requireChangeReason() {
         return this.state.order_data.order_line.some((l) => l.x_has_dispute_changes === true);
+    }
+
+    // Concept "NU Payment" cannot have its dispute inputs edited
+    isNuPaymentLine(line) {
+        return !!(line.product_id && line.product_id.name === 'Pago NU');
     }
 
     getProductImage(line) {

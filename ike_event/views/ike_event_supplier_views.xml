@@ -147,6 +147,11 @@
                         <field name="amount_concept_vat"/>
                         <field name="amount_concept_total" class="oe_subtotal_footer_separator"/>
                     </group>
+                    <group invisible="not cost_invalid">
+                        <div class="alert alert-warning d-flex flex-wrap gap-1" role="status">
+                            There are zero costs.
+                        </div>
+                    </group>
                     <group>
                         <group invisible="not context.get('from_event_authorization', False) and not context.get('from_authorizer', False)">
                             <field name="type_authorization_id"
@@ -189,14 +194,22 @@
                                 readonly="context.get('from_authorizer', False)"
                             />
                         </group>
-                        <group>
-                            <field name="user_amount_paid" invisible="1"/>
+                        <group invisible="1">
+                            <field name="user_amount_paid" invisible="not authorization_by_nu"/>
                         </group>
                     </group>
-                    <group invisible="not cost_invalid">
-                        <div class="alert alert-warning d-flex flex-wrap gap-1" role="status">
-                            There are zero costs.
-                        </div>
+                    <group>
+                        <field name="user_payment_line_ids"
+                            widget="one2many"
+                            invisible="not authorization_by_nu"
+                            readonly="context.get('from_authorizer', False)"
+                            nolabel="1">
+                            <list editable="bottom">
+                                <field name="payment_type"/>
+                                <field name="payment_datetime" readonly="1"/>
+                                <field name="amount"/>
+                            </list>
+                        </field>
                     </group>
                 </sheet>
                 <footer>
@@ -296,15 +309,18 @@
             <form>
                 <group>
                     <group>
-                        <field name="supplier_id" readonly="1"
+                        <field name="supplier_id"
                             options="{'no_create': 1, 'no_open': 1}"
+                            readonly="1"
                             required="1"/>
                         <field name="truck_id"
                             domain="truck_domain"
                             options="{'no_create': 1, 'no_open': 1}"
-                            readonly="assignation_type not in ['manual', 'manual_manual'] or display_type"
+                            readonly="assignation_type == 'electronic' or display_type"
                             required="1"/>
                         <field name="truck_domain" invisible="1"/>
+                        <field name="assignation_type" invisible="1"/>
+                        <field name="display_type" invisible="1"/>
                     </group>
                     <group>
                         <label for="supplier_phone" string="Phones"/>
@@ -324,7 +340,7 @@
                     </group>
                 </group>
                 <footer>
-                    <button string="Save" class="btn-primary" special="save" invisible="assignation_type not in ['manual', 'manual_manual'] or display_type"/>
+                    <button string="Save" class="btn-primary" special="save" invisible="assignation_type == 'electronic' or display_type"/>
                     <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
@@ -524,8 +540,12 @@
                 <field name="product_id" readonly="1"
                     options="{'no_open': 1}" />
                 <field name="name" column_invisible="1" />
-                <field name="base_quantity" />
-                <field name="base_unit_price" readonly="context.get('from_review_cost', False)"/>
+                <field name="quantity" string="Quantity event" readonly="1" optional="show" />
+                <field name="unit_price" string="Cost unit event" readonly="1" optional="show" />
+                <field name="cost_price" string="Cost event" readonly="1" optional="show" sum="Cost"/>
+
+                <field name="base_quantity" readonly="context.get('from_review_cost', False) or unit_price &lt; 0"/>
+                <field name="base_unit_price" readonly="context.get('from_review_cost', False) or unit_price &lt; 0"/>
                 <field name="base_cost_price" readonly="1" sum="Agreement Cost"/>
                 <field name="tax_ids" column_invisible="1" widget="many2many_tags" optional="hide" readonly="1"/>
                 <field name="is_manual" column_invisible="1"/>

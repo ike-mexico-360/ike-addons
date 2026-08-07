@@ -34,24 +34,25 @@
         <field name="name">custom.supplier.cost.matrix.line.view.list</field>
         <field name="model">custom.supplier.cost.matrix.line</field>
         <field name="arch" type="xml">
-            <list delete="0" edit="0" create="0">
+            <list delete="0" create="0">
                 <field name="supplier_center_id" readonly="1"/>
-                <field name="subservice_id" context="{'display_default_code': 0}"/>
-                <field name="state_id"/>
-                <field name="geographical_area_id"/>
-                <field name="type_event_id"/>
-                <field name="concept_id"/>
-                <field name="subservice_specification_id"/>
-                <field name="cost"/>
-                <field name="account_id"/>
-                <field name="holiday_date_applies"/>
-                <field name="high_risk_area"/>
-                <field name="active_agreement"/>
-                <field name="supplier_status_id"/>
-                <field name="date_init"/>
-                <field name="date_end"/>
-                <field name="vacation_schedule_ids" widget="many2many_tags"/>
+                <field name="subservice_id" context="{'display_default_code': 0}" readonly="1"/>
+                <field name="state_id" readonly="1"/>
+                <field name="geographical_area_id" readonly="1"/>
+                <field name="type_event_id" readonly="1"/>
+                <field name="concept_id" readonly="1"/>
+                <field name="subservice_specification_id" readonly="1"/>
+                <field name="cost" readonly="1"/>
+                <field name="account_id" readonly="1"/>
+                <field name="holiday_date_applies" readonly="1"/>
+                <field name="high_risk_area" readonly="1"/>
+                <field name="active_agreement" readonly="1"/>
+                <field name="supplier_status_id" readonly="1"/>
+                <field name="date_init" readonly="1"/>
+                <field name="date_end" readonly="1"/>
+                <field name="vacation_schedule_ids" widget="many2many_tags" readonly="1"/>
                 <field name="active" column_invisible="1"/>
+                <field name="active" groups="custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_admin_system" widget="boolean_toggle"/>
                 <field name="disabled" column_invisible="1"/>
             </list>
         </field>

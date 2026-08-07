@@ -18,24 +18,6 @@
                     <i class="fa fa-file-pdf-o me-1"/><t t-out="translate('Download PDF')"/>
                   </button>
               </div>
-
-              <div class="card shadow-sm kpi-balance-card">
-                  <div class="card-body py-2 px-3">
-                      <div class="d-flex justify-content-between gap-5">
-                          <span class="text-primary">Account balance</span>
-                          <strong>
-                              <t t-esc="formatCurrency(subtotalPaidAmount)"/>
-                          </strong>
-                      </div>
-
-                      <div class="d-flex justify-content-between gap-5">
-                          <span class="text-primary">Pending payment</span>
-                          <strong>
-                              <t t-esc="formatCurrency(pendingToPayAmount)"/>
-                          </strong>
-                      </div>
-                  </div>
-              </div>
           </div>
 
           <div class="row g-3">
@@ -122,13 +104,23 @@
           <div class="row g-3 align-items-end">
             <div class="col-md-4">
               <label class="form-label small text-muted fw-semibold mb-1">
-                <i class="fa fa-search me-1"/><t t-out="translate('Reference')"/>
+                <i class="fa fa-search me-1"/><t t-out="translate('Orden de Compra')"/>
               </label>
               <input type="text"
                 class="form-control form-control-sm rounded-pill"
-                t-att-placeholder="translate('Buscar por referencia...')"
+                t-att-placeholder="translate('Buscar por orden de compra...')"
                 t-att-value="state.filters.reference"
                 t-on-input="(ev) => this.onFilterChange('reference', ev.target.value)"/>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label small text-muted fw-semibold mb-1">
+                <i class="fa fa-barcode me-1"/><t t-out="translate('Referencia SAP')"/>
+              </label>
+              <input type="text"
+                class="form-control form-control-sm rounded-pill"
+                t-att-placeholder="translate('Buscar por referencia SAP...')"
+                t-att-value="state.filters.refSap"
+                t-on-input="(ev) => this.onFilterChange('refSap', ev.target.value)"/>
             </div>
             <div class="col-md-4">
               <label class="form-label small text-muted fw-semibold mb-1">
@@ -140,16 +132,29 @@
                 t-att-value="state.filters.event"
                 t-on-input="(ev) => this.onFilterChange('event', ev.target.value)"/>
             </div>
-            <div class="col-md-4 d-flex align-items-end">
-              <button class="btn btn-sm btn-outline-secondary rounded-pill w-100"
-                t-att-title="translate('Clear filters')"
-                t-on-click="clearFilters">
-                <i class="fa fa-times me-1"/><t t-out="translate('Clear')"/>
-              </button>
+            <div class="col-md-4">
+              <label class="form-label small text-muted fw-semibold mb-1">
+                <i class="fa fa-flag me-1"/><t t-out="translate('Status')"/>
+              </label>
+              <select class="form-select form-select-sm rounded-pill"
+                t-att-value="state.filters.status"
+                t-on-change="(ev) => this.onFilterChange('status', ev.target.value)">
+                <option value=""><t t-out="translate('All')"/></option>
+                <optgroup t-att-label="translate('State')">
+                  <option value="state_purchase"><t t-out="translate('Purchase Order')"/></option>
+                  <option value="state_done"><t t-out="translate('Locked')"/></option>
+                  <option value="state_cancel"><t t-out="translate('Cancelled')"/></option>
+                </optgroup>
+                <optgroup t-att-label="translate('Invoicing')">
+                  <option value="inv_waiting"><t t-out="translate('Factura en espera')"/></option>
+                  <option value="inv_partial"><t t-out="translate('Parcialmente facturado')"/></option>
+                  <option value="inv_full"><t t-out="translate('Totalmente facturado')"/></option>
+                </optgroup>
+              </select>
             </div>
             <div class="col-md-4">
               <label class="form-label small text-muted fw-semibold mb-1">
-                <i class="fa fa-calendar-o me-1"/><t t-out="translate('Event date from')"/>
+                <i class="fa fa-calendar-o me-1"/><t t-out="translate('Fecha de la Orden de compra (Desde)')"/>
               </label>
               <input type="date"
                 class="form-control form-control-sm rounded-pill"
@@ -158,12 +163,19 @@
             </div>
             <div class="col-md-4">
               <label class="form-label small text-muted fw-semibold mb-1">
-                <i class="fa fa-calendar-o me-1"/><t t-out="translate('Event date to')"/>
+                <i class="fa fa-calendar-o me-1"/><t t-out="translate('Fecha de la Orden de compra (Hasta)')"/>
               </label>
               <input type="date"
                 class="form-control form-control-sm rounded-pill"
                 t-att-value="state.filters.dateTo"
                 t-on-change="(ev) => this.onFilterChange('dateTo', ev.target.value)"/>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <button class="btn btn-sm btn-outline-secondary rounded-pill w-100"
+                t-att-title="translate('Clear filters')"
+                t-on-click="clearFilters">
+                <i class="fa fa-times me-1"/><t t-out="translate('Clear')"/>
+              </button>
             </div>
           </div>
         </div>
@@ -173,39 +185,158 @@
           <thead>
             <tr class="active">
               <th>
-                <span class="d-none d-md-inline"><t t-out="translate('Purchase Order #')"/></span>
+                <span class="d-none d-md-inline"><t t-out="translate('Orden de Compra')"/></span>
                 <span class="d-block d-md-none"><t t-out="translate('Ref.')"/></span>
               </th>
               <th>
-                <span class="d-none d-md-inline"><t t-out="translate('Event')"/></span>
-                <span class="d-block d-md-none"><t t-out="translate('Event')"/></span>
+                <span class="d-none d-md-inline"><t t-out="translate('Referencia SAP')"/></span>
+                <span class="d-block d-md-none"><t t-out="translate('SAP')"/></span>
               </th>
               <th>
-                <span class="d-none d-md-inline"><t t-out="translate('Confirmation Date')"/></span>
-                <span class="d-block d-md-none"><t t-out="translate('Confirmation')"/></span>
+                <span class="d-none d-md-inline"><t t-out="translate('Cliente')"/></span>
+                <span class="d-block d-md-none"><t t-out="translate('Cliente')"/></span>
               </th>
               <th>
-                <span class="d-none d-md-inline"><t t-out="translate('Origin Events')"/></span>
-                <span class="d-block d-md-none"><t t-out="translate('Origins')"/></span>
+                <span class="d-none d-md-inline"><t t-out="translate('Fecha de confirmación')"/></span>
+                <span class="d-block d-md-none"><t t-out="translate('Confirmación')"/></span>
               </th>
-              <th><t t-out="translate('Total')"/></th>
+              <th>
+                <span class="d-none d-md-inline"><t t-out="translate('Eventos Origen')"/></span>
+                <span class="d-block d-md-none"><t t-out="translate('Origenes')"/></span>
+              </th>
+              <th><t t-out="translate('SubTotal')"/></th>
+              <th><t t-out="translate('SubTotal Facturado')"/></th>
+              <th><t t-out="translate('Estado Facturación')"/></th>
+              <th><t t-out="translate('Estado Factura')"/></th>
+              <th><t t-out="translate('Facturas')"/></th>
+              <th/>
             </tr>
           </thead>
           <tbody>
             <t t-foreach="pagination.paginatedItems" t-as="order" t-key="order.id">
+              <t t-set="invoiceStatus" t-value="getInvoiceStatus(order)"/>
+              <t t-set="orderStatus" t-value="getOrderStatus(order)"/>
               <tr>
                 <td>
                   <a t-att-href="'/my/purchase/' + order.id"><t t-esc="order.name"/></a>
                 </td>
-                <td><t t-esc="order.x_event_id ? order.x_event_id.name : ''"/></td>
+                <td><t t-esc="order.x_ref_sap || ''"/></td>
+                <td><t t-esc="order.x_invoice_company_names || ''"/></td>
                 <td><t t-esc="formatDate(order.date_approve)"/></td>
                 <td><t t-esc="order.x_origin_events || ''"/></td>
                 <td><t t-esc="formatCurrency(order.amount_total)"/></td>
+                <td>
+                  <t t-if="getInvoicedTotal(order)"><t t-esc="formatCurrency(getInvoicedTotal(order))"/></t>
+                </td>
+                <td>
+                  <span class="badge rounded-pill px-2 py-1" t-att-class="orderStatus.cssClass" t-esc="orderStatus.label"/>
+                </td>
+                <td>
+                  <span class="badge-invoice-status" t-att-class="invoiceStatus.cssClass" t-esc="invoiceStatus.label"/>
+                </td>
+                <td class="text-center">
+                  <!-- <t t-if="order.invoice_status === 'invoiced'"> -->
+                    <t t-foreach="(order.invoice_ids || [])" t-as="inv" t-key="inv.id">
+                      <a t-att-href="'/my/invoices/' + inv.id" target="_blank"
+                         class="btn btn-sm btn-outline-success rounded-pill px-2 mb-1">
+                        <i class="fa fa-file-text-o me-1"/>
+                      </a>
+                    </t>
+                  <!-- </t> -->
+                  <span t-esc="order.invoice_status"> </span>
+                </td>
+                <td class="text-center">
+                  <button type="button"
+                     class="btn btn-sm btn-outline-primary rounded-pill px-2"
+                     data-bs-toggle="modal"
+                     data-bs-target="#modal_history_sat_packages"
+                     t-on-click="() => this.openSatHistoryModal(order.id)"
+                     t-att-title="translate('SAT CFDI Validator')">
+                    <i class="fa fa-shield me-1"/><t t-out="translate('SAT')"/>
+                  </button>
+                </td>
               </tr>
             </t>
           </tbody>
         </table>
       </PaginationComponent>
+
+      <!-- SAT CFDI Validator: Audit Log / Uploaded Packages History modal (shared, target order via state.satOrderId) -->
+      <div class="modal fade" id="modal_history_sat_packages" tabindex="-1" aria-labelledby="modalHistoryLabel" aria-hidden="true">
+          <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 80% !important;">
+              <div class="modal-content">
+                  <div class="modal-header bg-dark text-white py-3">
+                      <h5 class="modal-title" id="modalHistoryLabel"><i class="fa fa-history me-2"/> <t t-out="translate('Audit Log of Uploaded &amp; Validated Packages')"/></h5>
+                      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body p-4">
+
+                      <div t-if="state.satHistoryLoading" class="text-center py-4">
+                          <i class="fa fa-spinner fa-spin"/> <t t-out="translate('Loading...')"/>
+                      </div>
+
+                      <div t-if="!state.satHistoryLoading and !state.satHistoryLines.length" class="alert alert-info text-center py-4 my-3">
+                          <i class="fa fa-folder-open-o fa-2x d-block mb-2 text-muted"/>
+                          <t t-out="translate('No package documents have been historically uploaded for this specific purchase order.')"/>
+                      </div>
+
+                      <div t-if="!state.satHistoryLoading and state.satHistoryLines.length" class="table-responsive border rounded shadow-sm">
+                          <table class="table table-striped table-hover align-middle m-0 table-sm">
+                              <thead class="table-secondary font-weight-bold">
+                                  <tr>
+                                      <th class="ps-3"><t t-out="translate('Folio / XML Name')"/></th>
+                                      <th><t t-out="translate('Fiscal Folio (UUID)')"/></th>
+                                      <th class="text-end"><t t-out="translate('XML Total')"/></th>
+                                      <th class="text-center"><t t-out="translate('SAT Cloud Status')"/></th>
+                                      <th class="text-center"><t t-out="translate('Workflow State')"/></th>
+                                      <th class="text-center" style="width: 120px;"><t t-out="translate('Vendor Bill')"/></th>
+                                      <th class="text-start"><t t-out="translate('Validation Log')"/></th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <t t-foreach="state.satHistoryLines" t-as="line" t-key="line.id">
+                                      <tr>
+                                          <td class="fw-bold text-dark ps-3">
+                                              <span t-out="line.name"/>
+                                          </td>
+                                          <td class="text-muted font-monospace" style="font-size: 0.85rem;">
+                                              <span t-out="line.sat_uuid || 'N/A'"/>
+                                          </td>
+                                          <td class="text-end fw-bold">
+                                              <span t-out="formatCurrency(line.total_amount)"/>
+                                          </td>
+                                          <td class="text-center">
+                                              <span t-attf-class="badge rounded-pill px-2 py-1 #{getSatStatusBadgeClass(line.sat_status)}" t-out="line.sat_status"/>
+                                          </td>
+                                          <td class="text-center">
+                                              <span t-attf-class="badge px-2 py-1 #{getSatLineStateBadgeClass(line.line_state)}" t-out="line.line_state"/>
+                                          </td>
+                                          <td class="text-center">
+                                              <a t-if="line.invoice_id"
+                                                 t-attf-href="/my/purchase/download_cfdi_pdf2/#{line.invoice_id}"
+                                                 class="btn btn-xs btn-success text-white py-1 px-2 font-weight-bold small"
+                                                 target="_blank">
+                                                  <i class="fa fa-file-pdf-o me-1"/> <t t-out="translate('PDF')"/>
+                                              </a>
+                                              <span t-else="" class="text-muted small" t-att-title="line.line_validation_log">
+                                                  <i class="fa fa-info-circle text-warning me-1"/> <t t-out="translate('Logs')"/>
+                                              </span>
+                                          </td>
+                                          <td class="text-start align-middle" style="max-width: 300px;">
+                                              <span class="small text-muted text-break" t-out="line.line_validation_log || translate('No log data available.')"/>
+                                          </td>
+                                      </tr>
+                                  </t>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+                  <div class="modal-footer bg-light p-3">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><t t-out="translate('Close Logs')"/></button>
+                  </div>
+              </div>
+          </div>
+      </div>
     </t>
   </div>
 </t>

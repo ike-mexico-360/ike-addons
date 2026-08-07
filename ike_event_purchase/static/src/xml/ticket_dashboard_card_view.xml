@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="ticket_dashboard_cards.dashboard" t-inherit-mode="extension">
+        <xpath expr="//div[@id='js_ticket_count_div']" position="replace">
+            <div id="js_ticket_count_div" class="ike-ticket-status-board">
+                <t t-set="data_dict" t-value="getTempValue"/>
+                <t t-if="data_dict">
+                    <table class="ike-ticket-status-table">
+                        <tbody>
+                            <tr>
+                                <th class="ike-ticket-status-label">Todos Los Tickets</th>
+                                <t t-foreach="data_dict" t-as="stage" t-key="stage_index">
+                                    <td>
+                                        <a href="#" class="ike-ticket-status-cell ike-ticket-status-cell-main"
+                                           t-on-click="_onClickCards"
+                                           t-attf-res_ids="#{data_dict[stage][0]}">
+                                            <span class="ike-ticket-status-count" t-esc="data_dict[stage][0].length"/>
+                                            <span class="ike-ticket-status-name" t-esc="stage"/>
+                                        </a>
+                                    </td>
+                                </t>
+                            </tr>
+                            <tr>
+                                <th class="ike-ticket-status-label">Mis Tickets</th>
+                                <t t-foreach="data_dict" t-as="stage" t-key="'my_' + stage_index">
+                                    <td>
+                                        <a href="#" class="ike-ticket-status-cell ike-ticket-status-cell-secondary"
+                                           t-on-click="_onClickCards"
+                                           t-attf-res_ids="#{data_dict[stage][1]}">
+                                            <span class="ike-ticket-status-count" t-esc="data_dict[stage][1].length"/>
+                                        </a>
+                                    </td>
+                                </t>
+                            </tr>
+                        </tbody>
+                    </table>
+                </t>
+            </div>
+        </xpath>
+    </t>
+</templates>

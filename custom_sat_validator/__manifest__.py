@@ -24,6 +24,7 @@
     "assets": {
         'web.assets_frontend': [
             'custom_sat_validator/static/src/js/components/purchase_order_details/*.*',
+            'custom_sat_validator/static/src/js/sat_validator_portal.js',
         ],
     },
     'installable': True,

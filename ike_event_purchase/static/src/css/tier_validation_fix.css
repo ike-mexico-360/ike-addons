@@ -1,0 +1,6 @@
+.ike-tier-validation-button,
+.ike-tier-validation-button.text-capitalize,
+.ike-tier-validation-button .text-capitalize,
+.text-capitalize:has(.ike-tier-validation-button) {
+    text-transform: none !important;
+}

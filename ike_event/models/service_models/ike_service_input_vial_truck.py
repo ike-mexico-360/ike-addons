@@ -47,7 +47,14 @@ class IkeServiceInputVialTruck(models.Model):
     street_ref = fields.Char(string='References')
     street_number = fields.Char()
     destination_highway = fields.Boolean(string='Is destination a Highway?')
+    event_type_id = fields.Many2one(related='event_id.event_type_id', readonly=False)
+    requires_federal_plates = fields.Boolean(related='event_id.requires_federal_plates', readonly=False)
 
     # === METHODS === #
     def set_event_summary_user_subservice_data(self):
         pass
+
+    @api.onchange('event_type_id')
+    def _onchange_event_type_id(self):
+        if self.event_type_id:
+            self.requires_federal_plates = self.event_type_id.requires_federal_plates

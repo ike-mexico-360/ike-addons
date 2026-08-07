@@ -3,6 +3,7 @@
 import json
 import logging
 import requests
+import re
 
 from collections import defaultdict
 
@@ -169,6 +170,10 @@ class IkeEvent(models.Model):
     ia_suggestion_done = fields.Boolean(default=False, copy=False)
     ia_suggestion_product_ids = fields.Json(string="AI Suggested Concepts", copy=False, default=lambda self: [])
 
+    payment_event_type_id = fields.Many2one(
+        'custom.type.event',
+        string='payment event type',
+    )
     assigned_user_id = fields.Many2one(
         'res.users',
         string='Assign',
@@ -1062,6 +1067,57 @@ class IkeEvent(models.Model):
                 rec.destination_duration = (destination_duration_s or rec.destination_duration) / 60
                 rec.destination_route = destination_route
 
+            # rec.assing_road_classification()
+
+    def assing_road_classification(self):
+        highway_event_type = self.env['custom.type.event'].search([
+            ('name', '=', 'Carretero')
+        ], limit=1, order='id desc')
+
+        not_highway_event_type = self.env['custom.type.event'].search([
+            ('name', '=', 'No carretero')
+        ], limit=1, order='id desc')
+
+        if not highway_event_type or not not_highway_event_type:
+            return
+
+        # RN-1: Distance exceeds the minimum distance
+        is_highway_by_distance = bool(
+            self.destination_distance >= highway_event_type.minimum_distance_km
+        )
+
+        # R2: match street catalog
+        origin = self.get_service_model()
+        destination = self.get_sub_service_model()
+
+        origin_text = ' '.join(filter(None, [origin.street]))  # type: ignore
+        destination_text = ' '.join(filter(None, [destination.street]))  # type: ignore
+
+        is_highway_match_street = self._is_highway_by_street(origin_text, destination_text)
+
+        if is_highway_by_distance or is_highway_match_street:
+            self.event_type_id = highway_event_type
+            self.requires_federal_plates = highway_event_type.requires_federal_plates
+            self.payment_event_type_id = highway_event_type
+        else:
+            self.event_type_id = not_highway_event_type
+            self.requires_federal_plates = not_highway_event_type.requires_federal_plates
+            self.payment_event_type_id = not_highway_event_type
+
+    def _is_highway_by_street(self, origin_street, destination_street):
+        """RN-2: Match con el catálogo de calles."""
+
+        keywords = self.env['ike.event.road.classification'].search([]).mapped('name')
+
+        for street in filter(None, (origin_street, destination_street)):
+            street = street.lower()
+
+            for keyword in keywords:
+                if keyword and re.search(rf'\b{re.escape(keyword.lower())}\b', street):
+                    return True
+
+        return False
+
     def _build_sub_service_counter_json(self):
         self.ensure_one()
         result = []
@@ -1089,6 +1145,23 @@ class IkeEvent(models.Model):
                 })
 
         return json.dumps(result)
+
+    def _create_nu_payment_concept(self, supplier_product_ids):
+        product_id = self.env.ref('ike_event.ike_product_product_nu_payment')
+
+        for link in supplier_product_ids.event_supplier_link_id:
+            amount = sum(link.user_payment_line_ids.filtered(
+                lambda x: x.payment_type == 'cash').mapped('amount'))
+
+            if not amount:
+                continue
+
+            self.env['ike.event.supplier.product'].with_context(from_internal=True).create({
+                'event_supplier_link_id': link.id,
+                'product_id': product_id.id,
+                'quantity': 1,
+                'unit_price': -amount,
+            })
 
     @api.model
     def retrieve_event_data(self):
@@ -1267,12 +1340,12 @@ class IkeEvent(models.Model):
                     supplier_product_ids = supplier_id.supplier_product_ids.filtered(
                         lambda x: not x.display_type).mapped('product_id')
 
-                    purchase_supplier_id = supplier_id.purchase_supplier_id
+                    # purchase_supplier_id = supplier_id.purchase_supplier_id
 
                     matrix_cost_line_ids = supplier_id.event_id.get_supplier_product_matrix_lines(
-                        purchase_supplier_id.id, supplier_product_ids.ids)
+                        supplier_id.truck_id.x_center_id.id, supplier_product_ids.ids)
 
-                    for product_line_id  in supplier_product_ids:
+                    for product_line_id in supplier_product_ids:
                         cost_line_id = matrix_cost_line_ids.filtered(
                             lambda x: x.concept_id.id == product_line_id.id
                             and x.supplier_status_id.ref == 'concluded')
@@ -1301,9 +1374,13 @@ class IkeEvent(models.Model):
             for product_id in supplier_product_ids:
                 product_id.base_quantity = product_id.quantity
 
-            total_amount = sum(rec.selected_supplier_ids.mapped('base_amount_concept_subtotal'))
+            rec._create_nu_payment_concept(supplier_product_ids)
 
-            if total_amount <= rec.covered_amount:
+            total_amount = sum(rec.selected_supplier_ids.mapped('base_amount_concept_subtotal'))
+            payment_nu = rec.selected_supplier_ids.supplier_link_id.supplier_product_ids.filtered(
+                lambda x: not x.display_type and x.unit_price < 0)
+
+            if total_amount <= rec.covered_amount and total_amount <= rec.authorized_amount and not payment_nu:
                 rec.action_close()
             else:
                 rec.assigned_user_id = False

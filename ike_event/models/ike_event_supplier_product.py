@@ -159,30 +159,31 @@ class IkeEventSupplierProduct(models.Model):
 
     event_supplier_link_id = fields.Many2one('ike.event.supplier.link', 'Event Supplier', required=True, ondelete='cascade')
     supplier_id = fields.Many2one(string='Supplier', related='event_supplier_link_id.supplier_id', store=True, readonly=True)
-    purchase_supplier_id = fields.Many2one('res.partner', string="Assigned supplier", compute='_compute_event_supplier_id', readonly=True)
-    truck_id = fields.Many2one('fleet.vehicle', string='Vehicle', compute='_compute_event_supplier_id', readonly=True)
-    license_plate = fields.Char(string='License Plate', compute='_compute_event_supplier_id', readonly=True)
+    event_supplier_id = fields.Many2one('ike.event.supplier', 'Event Supplier', compute='_compute_event_supplier')
+    purchase_supplier_id = fields.Many2one(related='event_supplier_id.purchase_supplier_id')
+    truck_id = fields.Many2one(related='event_supplier_id.truck_id')
+    license_plate = fields.Char(related='event_supplier_id.truck_id.license_plate')
     event_id = fields.Many2one(related='event_supplier_link_id.event_id')
 
     # === AMOUNT FIELDS === #
-    unit_price = fields.Float('Unit Cost', default=0.0)
-    quantity = fields.Integer(default=1)
+    unit_price = fields.Float(string='Unit Cost', default=0.0)
+    quantity = fields.Integer(string="Quantity", default=1)
     is_net = fields.Boolean('Net?', default=False)
     tax_ids = fields.Many2many(
         'account.tax',
         'ike_event_supplier_product_tax',
         string='Taxes')
-    cost_price = fields.Float('Cost', compute="_compute_amount", store=True)  # Without taxes
+    cost_price = fields.Float('Cost Price', compute="_compute_amount", store=True)  # Without taxes
     vat = fields.Float('VAT', compute="_compute_amount", store=True)
     subtotal = fields.Float('Subtotal', compute="_compute_amount", store=True)
 
     # Base fields
     cost_matrix_line_id = fields.Many2one('custom.supplier.cost.matrix.line', ondelete='set null')
     base_quantity = fields.Integer('Agreement Quantity', default=1)
-    base_unit_price = fields.Float('Agreement Unit Price', default=0.0)
+    base_unit_price = fields.Float('Agreement Unit Cost', default=0.0)
     base_cancel_price = fields.Float('Agreement Cancel Cost', default=0.0)
     base_cost_price = fields.Float('Agreement Cost', compute='_compute_base_amount', store=True)
-    base_vat = fields.Float('Agreement Vat', compute='_compute_base_amount', store=True)
+    base_vat = fields.Float('Agreement VAT', compute='_compute_base_amount', store=True)
     base_subtotal = fields.Float('Agreement Subtotal', compute='_compute_base_amount', store=True)
     parent_product_id = fields.Many2one('product.product')
 
@@ -202,20 +203,10 @@ class IkeEventSupplierProduct(models.Model):
 
     from_portal = fields.Boolean(default=False, readonly=True)
 
-    @api.depends('event_supplier_link_id.event_id.selected_supplier_ids')
-    def _compute_event_supplier_id(self):
+    @api.depends('event_supplier_link_id')
+    def _compute_event_supplier(self):
         for rec in self:
-
-            event_supplier_id = self.env['ike.event.supplier'].search([
-                ('event_id', '=', rec.event_id.id),
-                ('supplier_id', '=', rec.supplier_id.id),
-                ('supplier_link_id', '=', rec.event_supplier_link_id.id),
-                ('selected', '=', True),
-            ], limit=1)
-
-            rec.truck_id = event_supplier_id.truck_id
-            rec.license_plate = event_supplier_id.truck_id.license_plate
-            rec.purchase_supplier_id = event_supplier_id.purchase_supplier_id
+            rec.event_supplier_id = self.env.context.get('mapped', {}).get(str(rec.event_supplier_link_id.id), None)
 
     # === ONCHANGES === #
     @api.onchange('product_id')
@@ -356,9 +347,33 @@ class IkeEventSupplierProduct(models.Model):
         for rec in self:
             if not rec.product_id:
                 continue
-            base_unit_price, base_cancel_price = rec.event_supplier_link_id.get_product_cost(rec.product_id.id)
-            rec.base_unit_price = base_unit_price
-            rec.base_cancel_price = base_cancel_price
+            total_base_unit_price, total_base_cancel_price = rec.event_supplier_link_id.get_product_cost(
+                rec.supplier_id.id, rec.product_id.id
+            )
+            if not total_base_unit_price:
+                # BoM
+                bom_product_ids = rec.event_id._get_boom_product(rec.product_id)
+                boom_matrix_cost_line_ids = rec.event_id.get_supplier_product_matrix_lines_by_supplier(
+                    rec.supplier_id.id,
+                    bom_product_ids.ids,
+                )
+                if boom_matrix_cost_line_ids:
+                    for product_id in bom_product_ids:
+                        cost_line_id = boom_matrix_cost_line_ids.filtered(
+                            lambda x:
+                                x.concept_id.id == product_id.id
+                                and x.supplier_status_id.ref == 'concluded')
+                        cancel_cost_line_id = boom_matrix_cost_line_ids.filtered(
+                            lambda x:
+                                x.concept_id.id == product_id.id
+                                and x.supplier_status_id.ref == 'cancelled')
+
+                        total_base_unit_price += cost_line_id[0].cost if cost_line_id else 0
+                        total_base_cancel_price += cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
+
+            rec.base_unit_price = total_base_unit_price
+            rec.base_cancel_price = total_base_cancel_price
+            rec.unit_price = total_base_unit_price
 
     # === OVERRIDE === #
     @api.model_create_multi

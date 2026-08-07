@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="ike_event_purchase.max_lines_per_po_at_consolidation" model="ir.config_parameter">
+            <field name="key">ike_event_purchase.max_lines_per_po_at_consolidation</field>
+            <field name="value">50</field>
+        </record>
+
+    </data>
+</odoo>

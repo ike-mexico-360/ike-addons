@@ -58,6 +58,79 @@ class PortalXmlValidator(http.Controller):
             ]
         )
 
+    @http.route('/my/purchase/get_sat_validator_history', type='json', auth='user', methods=['POST'], website=True)
+    def get_sat_validator_history(self, purchase_order_id, **kw):
+        """
+        Returns the audit log of uploaded/validated SAT document packages for a given purchase order,
+        for display in the portal's history modal.
+        """
+        if not purchase_order_id:
+            return {'success': False, 'error': 'Missing purchase order id.', 'lines': []}
+
+        lines = request.env['custom.sat.validator.line'].sudo().search(
+            [('validator_id.purchase_id', '=', int(purchase_order_id))],
+            order='create_date desc',
+        )
+
+        return {
+            'success': True,
+            'lines': [{
+                'id': line.id,
+                'name': line.name,
+                'sat_uuid': line.sat_uuid or '',
+                'total_amount': line.total_amount,
+                'sat_status': line.sat_status,
+                'line_state': line.line_state,
+                'invoice_id': line.invoice_id.id if line.invoice_id else False,
+                'line_validation_log': line.line_validation_log or '',
+            } for line in lines],
+        }
+
+    @http.route('/my/purchase/upload_sat_packages_queue', type='json', auth='user', methods=['POST'], website=True)
+    def upload_sat_packages_queue(self, purchase_order_id, packages, **kw):
+        """
+        Receives the package queue from the portal, creates the root validator and its respective lines,
+        and executes the atomic validation workflow for each one.
+        """
+        if not purchase_order_id or not packages:
+            return {'success': False, 'error': 'Missing parameters or empty package queue.'}
+
+        purchase_id = request.env['purchase.order'].sudo().browse(int(purchase_order_id))
+        if not purchase_id.exists():
+            return {'success': False, 'error': 'Purchase order not found.'}
+
+        # 1. Create the master package (custom.sat.validator)
+        validator_vals = {
+            'name': f"Portal Package Match: {purchase_id.name}",
+            'purchase_id': purchase_id.id,
+        }
+        validator_record = request.env['custom.sat.validator'].sudo().create(validator_vals)
+
+        processed_count = 0
+
+        # 2. Iterate over the queue received from Javascript and instantiate the lines
+        for pkg in packages:
+            line_vals = {
+                'validator_id': validator_record.id,
+                'xml_file': pkg.get('xml_file'),
+                'xml_filename': pkg.get('xml_filename'),
+                'pdf_file': pkg.get('pdf_file') or False,
+                'pdf_filename': pkg.get('pdf_filename') or '',
+                'carta_porte_file': pkg.get('carta_porte_file') or False,
+            }
+
+            # Create the line (automatically handles attachment persistence via the inherited create method)
+            line_record = request.env['custom.sat.validator.line'].sudo().create(line_vals)
+
+            # Immediately execute the validation workflow, PO auditing, SAT lookup, and invoicing
+            line_record.action_process_line_workflow()
+            processed_count += 1
+
+        return {
+            'success': True,
+            'message': f"Successfully processed {processed_count} document packages for this order."
+        }
+
 
 class PurchaseOrderControllerInherit(PurchaseOrderController):
 
@@ -71,7 +144,7 @@ class PurchaseOrderControllerInherit(PurchaseOrderController):
         validator = request.env['custom.sat.validator'].sudo().search(
             [
                 ('purchase_id', '=', order_id),
-                ('cfdi_is_valid', '=', True),
+                # ('cfdi_is_valid', '=', True),
             ],
             order='id desc',
             limit=1
@@ -80,8 +153,8 @@ class PurchaseOrderControllerInherit(PurchaseOrderController):
         # Los impuestos se siguen tomando de la OC
         result['tax_totals'] = order.tax_totals
 
-        result['sat_status'] = validator.sat_status if validator else False
-        result['cfdi_is_valid'] = validator.cfdi_is_valid if validator else False
+        # result['sat_status'] = validator.sat_status if validator else False
+        # result['cfdi_is_valid'] = validator.cfdi_is_valid if validator else False
         result['validator_id'] = validator.id if validator else False
 
         return result

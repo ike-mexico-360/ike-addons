@@ -17,19 +17,19 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     _description = 'Event Change State Wizard'
 
     # === FIELDS SUPPLIER === #
-    supplier_id = fields.Many2one(
+    event_supplier_id = fields.Many2one(
         'ike.event.supplier',
         string='Supplier',
         required=True,
         readonly=True,
         ondelete='cascade'
     )
-    event_id = fields.Many2one(related='supplier_id.event_id')
-    stage_id = fields.Many2one(related='supplier_id.stage_id', string='Current state')
+    event_id = fields.Many2one(related='event_supplier_id.event_id')
+    stage_id = fields.Many2one(related='event_supplier_id.stage_id', string='Current state')
 
-    first_state_date = fields.Datetime(related='supplier_id.first_state_date')
-    first_state_user_id = fields.Many2one(related='supplier_id.first_state_user_id')
-    first_comment = fields.Text(related='supplier_id.first_comment')
+    first_state_date = fields.Datetime(related='event_supplier_id.first_state_date')
+    first_state_user_id = fields.Many2one(related='event_supplier_id.first_state_user_id')
+    first_comment = fields.Text(related='event_supplier_id.first_comment')
 
     stage_selected = fields.Selection([
         ('arrived', 'Arrived'),
@@ -38,22 +38,22 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     ], string='Stage')
 
     supplier_assignation_date = fields.Datetime(
-        related='supplier_id.assignation_date',
+        related='event_supplier_id.assignation_date',
         string='Assigned')
     supplier_on_route_to_user_end_date = fields.Datetime(
-        related='supplier_id.on_route_to_user_end_date',
+        related='event_supplier_id.on_route_to_user_end_date',
         string='Arrived')
     supplier_contacted_date = fields.Datetime(
-        related='supplier_id.contacted_date',
+        related='event_supplier_id.contacted_date',
         string='Contacted')
     supplier_finalized_date = fields.Datetime(
-        related='supplier_id.finalized_date',
+        related='event_supplier_id.finalized_date',
         string='Finalized')
 
     # === ARRIVED ===
-    first_on_route_to_user_end_date = fields.Datetime(related='supplier_id.first_on_route_to_user_end_date')
-    first_on_route_to_end_user_id = fields.Many2one(related='supplier_id.first_on_route_to_end_user_id')
-    first_on_route_to_end_comment = fields.Text(related='supplier_id.first_on_route_to_end_comment')
+    first_on_route_to_user_end_date = fields.Datetime(related='event_supplier_id.first_on_route_to_user_end_date')
+    first_on_route_to_end_user_id = fields.Many2one(related='event_supplier_id.first_on_route_to_end_user_id')
+    first_on_route_to_end_comment = fields.Text(related='event_supplier_id.first_on_route_to_end_comment')
 
     on_route_to_user_end_date = fields.Datetime(string='Arrived (datetime)')
     on_route_to_end_user_id = fields.Many2one(
@@ -63,9 +63,9 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     on_route_to_end_comment = fields.Text(string='Arrived (comment)')
 
     # === CONTACTED ===
-    first_contacted_date = fields.Datetime(related='supplier_id.first_contacted_date')
-    first_contacted_user_id = fields.Many2one(related='supplier_id.first_contacted_user_id')
-    first_contacted_comment = fields.Text(related='supplier_id.first_contacted_comment')
+    first_contacted_date = fields.Datetime(related='event_supplier_id.first_contacted_date')
+    first_contacted_user_id = fields.Many2one(related='event_supplier_id.first_contacted_user_id')
+    first_contacted_comment = fields.Text(related='event_supplier_id.first_contacted_comment')
 
     contacted_date = fields.Datetime(string='Contacted (datetime)')
     contacted_user_id = fields.Many2one(
@@ -75,9 +75,9 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     contacted_comment = fields.Text(string='Contacted (comment)')
 
     # === FINALIZED ===
-    first_finalized_date = fields.Datetime(related='supplier_id.first_finalized_date')
-    first_finalized_user_id = fields.Many2one(related='supplier_id.first_finalized_user_id')
-    first_finalized_comment = fields.Text(related='supplier_id.first_finalized_comment')
+    first_finalized_date = fields.Datetime(related='event_supplier_id.first_finalized_date')
+    first_finalized_user_id = fields.Many2one(related='event_supplier_id.first_finalized_user_id')
+    first_finalized_comment = fields.Text(related='event_supplier_id.first_finalized_comment')
 
     finalized_date = fields.Datetime(string='Finalized (datetime)')
     finalized_user_id = fields.Many2one(
@@ -94,7 +94,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     @api.depends('contacted_date', 'finalized_date')
     def _compute_editable_fields(self):
         for rec in self:
-            supplier = rec.supplier_id
+            supplier = rec.event_supplier_id
 
             rec.is_contacted_editable = supplier.on_route_to_user_end_date
             rec.is_finalized_editable = supplier.contacted_date
@@ -103,12 +103,12 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     @api.onchange('stage_selected')
     def _onchange_stage(self):
         if self.stage_selected == 'arrived':
-            self.on_route_to_user_end_date = self.supplier_id.on_route_to_user_end_date
-            self.on_route_to_end_user_id = self.supplier_id.on_route_to_end_user_id
-            self.on_route_to_end_comment = self.supplier_id.on_route_to_end_comment
+            self.on_route_to_user_end_date = self.event_supplier_id.on_route_to_user_end_date
+            self.on_route_to_end_user_id = self.event_supplier_id.on_route_to_end_user_id
+            self.on_route_to_end_comment = self.event_supplier_id.on_route_to_end_comment
 
         elif self.stage_selected == 'contacted':
-            if not self.supplier_id.on_route_to_user_end_date:
+            if not self.event_supplier_id.on_route_to_user_end_date:
                 return {
                     'warning': {
                         'title': _('Contacted: Invalid datetime'),
@@ -118,12 +118,12 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                     }
                 }
 
-            self.contacted_date = self.supplier_id.contacted_date
-            self.contacted_user_id = self.supplier_id.contacted_user_id
-            self.contacted_comment = self.supplier_id.contacted_comment
+            self.contacted_date = self.event_supplier_id.contacted_date
+            self.contacted_user_id = self.event_supplier_id.contacted_user_id
+            self.contacted_comment = self.event_supplier_id.contacted_comment
 
         elif self.stage_selected == 'finalized':
-            if not self.supplier_id.contacted_date:
+            if not self.event_supplier_id.contacted_date:
                 return {
                     'warning': {
                         'title': _('Finalized: Invalid datetime'),
@@ -133,9 +133,9 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                     }
                 }
 
-            self.finalized_date = self.supplier_id.finalized_date
-            self.finalized_user_id = self.supplier_id.finalized_user_id
-            self.finalized_comment = self.supplier_id.finalized_comment
+            self.finalized_date = self.event_supplier_id.finalized_date
+            self.finalized_user_id = self.event_supplier_id.finalized_user_id
+            self.finalized_comment = self.event_supplier_id.finalized_comment
 
     # Arrived
     @api.onchange('on_route_to_user_end_date')
@@ -144,7 +144,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         if not self.on_route_to_user_end_date:
             return
 
-        if (self.on_route_to_user_end_date != self.supplier_id.on_route_to_user_end_date):
+        if (self.on_route_to_user_end_date != self.event_supplier_id.on_route_to_user_end_date):
             self.on_route_to_end_user_id = self.env.user.id
             self.on_route_to_end_comment = False
 
@@ -162,7 +162,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 }
             }
 
-        if (self.supplier_id.assignation_date and self.on_route_to_user_end_date <= self.supplier_id.assignation_date):
+        if (self.event_supplier_id.assignation_date and self.on_route_to_user_end_date <= self.event_supplier_id.assignation_date):
             return {
                 'warning': {
                     'title': _('Arrived: Invalid datetime'),
@@ -171,11 +171,11 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                         'the date and time of the Assigned (%s)'
                     ) % (
                         self._format_datetime_tz(self.on_route_to_user_end_date),
-                        self._format_datetime_tz(self.supplier_id.assignation_date)
+                        self._format_datetime_tz(self.event_supplier_id.assignation_date)
                     )
                 }
             }
-        elif self.supplier_id.contacted_date and self.on_route_to_user_end_date >= self.supplier_id.contacted_date:
+        elif self.event_supplier_id.contacted_date and self.on_route_to_user_end_date >= self.event_supplier_id.contacted_date:
             return {
                 'warning': {
                     'title': _('Arrived: Invalid datetime'),
@@ -184,7 +184,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                         'the date and time of the Contacted (%s)',
                     ) % (
                         self._format_datetime_tz(self.on_route_to_user_end_date),
-                        self._format_datetime_tz(self.supplier_id.contacted_date)
+                        self._format_datetime_tz(self.event_supplier_id.contacted_date)
                     )
                 }
             }
@@ -196,7 +196,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         if not self.contacted_date:
             return
 
-        if (self.contacted_date != self.supplier_id.contacted_date):
+        if (self.contacted_date != self.event_supplier_id.contacted_date):
             self.contacted_user_id = self.env.user.id
             self.contacted_comment = False
 
@@ -213,20 +213,26 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 }
             }
 
-        if (self.supplier_id.on_route_to_user_end_date and self.contacted_date <= self.supplier_id.on_route_to_user_end_date):
+        if (
+            self.event_supplier_id.on_route_to_user_end_date
+            and self.contacted_date <= self.event_supplier_id.on_route_to_user_end_date
+        ):
             return {
                 'warning': {
                     'title': _('Contacted: Invalid datetime'),
                     'message': _(
                         'The date and time of Contacted (%s) is less than or equal to '
                         'the date and time of the Arrived (%s)'
-                    ) % (
-                        self._format_datetime_tz(self.contacted_date),
-                        self._format_datetime_tz(self.supplier_id.on_route_to_user_end_date)
                     )
+                    % (
+                        self._format_datetime_tz(self.contacted_date),
+                        self._format_datetime_tz(
+                            self.event_supplier_id.on_route_to_user_end_date
+                        ),
+                    ),
                 }
             }
-        elif self.supplier_id.finalized_date and self.contacted_date >= self.supplier_id.finalized_date:
+        elif self.event_supplier_id.finalized_date and self.contacted_date >= self.event_supplier_id.finalized_date:
             return {
                 'warning': {
                     'title': _('Contacted: Invalid datetime'),
@@ -235,7 +241,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                         'the date and time of the Finalized (%s)',
                     ) % (
                         self._format_datetime_tz(self.contacted_date),
-                        self._format_datetime_tz(self.supplier_id.finalized_date)
+                        self._format_datetime_tz(self.event_supplier_id.finalized_date)
                     )
                 }
             }
@@ -246,7 +252,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         if not self.finalized_date:
             return
 
-        if (self.finalized_date != self.supplier_id.finalized_date):
+        if (self.finalized_date != self.event_supplier_id.finalized_date):
             self.finalized_user_id = self.env.user.id
             self.finalized_comment = False
 
@@ -264,7 +270,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 }
             }
 
-        if (self.supplier_id.contacted_date and self.finalized_date <= self.supplier_id.contacted_date):
+        if (self.event_supplier_id.contacted_date and self.finalized_date <= self.event_supplier_id.contacted_date):
             return {
                 'warning': {
                     'title': _('Finalized: Invalid datetime'),
@@ -273,7 +279,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                         'the date and time of the Contacted (%s)'
                     ) % (
                         self._format_datetime_tz(self.finalized_date),
-                        self._format_datetime_tz(self.supplier_id.contacted_date))
+                        self._format_datetime_tz(self.event_supplier_id.contacted_date))
                 }
             }
 
@@ -283,7 +289,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         if not self.stage_selected:
             raise ValidationError(_('Please select a stage.'))
 
-        supplier = self.supplier_id
+        event_supplier = self.event_supplier_id
         vals = {}
 
         if self.stage_selected == 'arrived':
@@ -291,37 +297,55 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 event_date = fields.Datetime.context_timestamp(self, self.event_id.event_date).strftime('%d-%m-%Y %H:%M:%S')
                 raise ValidationError(_('Arrived date cannot be earlier than or equal to event date (%s)', event_date))
             else:
-                if self.supplier_id.assignation_date and self.on_route_to_user_end_date <= self.supplier_id.assignation_date:
-                    raise ValidationError(_(
-                        'The date and time of Arrived (%s) is less than or equal to '
-                        'the date and time of the Assigned (%s)',
-                        self._format_datetime_tz(self.on_route_to_user_end_date),
-                        self._format_datetime_tz(self.supplier_id.assignation_date))
+                if (
+                    self.event_supplier_id.assignation_date
+                    and self.on_route_to_user_end_date
+                    <= self.event_supplier_id.assignation_date
+                ):
+                    raise ValidationError(
+                        _(
+                            'The date and time of Arrived (%s) is less than or equal to '
+                            'the date and time of the Assigned (%s)',
+                            self._format_datetime_tz(self.on_route_to_user_end_date),
+                            self._format_datetime_tz(
+                                self.event_supplier_id.assignation_date
+                            ),
+                        )
                     )
-                elif self.supplier_id.contacted_date and self.on_route_to_user_end_date >= self.supplier_id.contacted_date:
-                    raise ValidationError(_(
-                        'The date and time of Arrived (%s) is greater than or equal to '
-                        'the date and time of the Contacted (%s)',
-                        self._format_datetime_tz(self.on_route_to_user_end_date),
-                        self._format_datetime_tz(self.supplier_id.contacted_date))
+                elif (
+                    self.event_supplier_id.contacted_date
+                    and self.on_route_to_user_end_date
+                    >= self.event_supplier_id.contacted_date
+                ):
+                    raise ValidationError(
+                        _(
+                            'The date and time of Arrived (%s) is greater than or equal to '
+                            'the date and time of the Contacted (%s)',
+                            self._format_datetime_tz(self.on_route_to_user_end_date),
+                            self._format_datetime_tz(
+                                self.event_supplier_id.contacted_date
+                            ),
+                        )
                     )
                 else:
                     self._action_on_route(
-                        supplier,
+                        event_supplier,
                         vals,
                         self.on_route_to_user_end_date - timedelta(seconds=1),
                         self.on_route_to_end_user_id.id,
-                        f'{supplier.display_name} - {self.on_route_to_user_end_date - timedelta(seconds=1)}'
+                        f'{event_supplier.display_name} - {self.on_route_to_user_end_date - timedelta(seconds=1)}',
                     )
 
-                    time.sleep(1)  # Hack, no cambia a "En progreso" el evento si se ejecuta en cola, esperamos 1 segundo
+                    time.sleep(
+                        1
+                    )  # Hack, no cambia a "En progreso" el evento si se ejecuta en cola, esperamos 1 segundo
 
                     self._action_arrived(
-                        supplier,
+                        event_supplier,
                         vals,
                         self.on_route_to_user_end_date,
                         self.env.user.id,
-                        self.on_route_to_end_comment
+                        self.on_route_to_end_comment,
                     )
 
         elif self.stage_selected == 'contacted':
@@ -329,23 +353,31 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 event_date = fields.Datetime.context_timestamp(self, self.event_id.event_date).strftime('%d-%m-%Y %H:%M:%S')
                 raise ValidationError(_('Contacted date cannot be earlier than or equal to event date (%s)', event_date))
             else:
-                if self.supplier_id.on_route_to_user_end_date and self.contacted_date <= self.supplier_id.on_route_to_user_end_date:
-                    raise ValidationError(_(
-                        'The date and time of Contacted (%s) is less than or equal to '
-                        'the date and time of the Arrived (%s)',
-                        self._format_datetime_tz(self.contacted_date),
-                        self._format_datetime_tz(self.supplier_id.on_route_to_user_end_date))
+                if (
+                    self.event_supplier_id.on_route_to_user_end_date
+                    and self.contacted_date
+                    <= self.event_supplier_id.on_route_to_user_end_date
+                ):
+                    raise ValidationError(
+                        _(
+                            'The date and time of Contacted (%s) is less than or equal to '
+                            'the date and time of the Arrived (%s)',
+                            self._format_datetime_tz(self.contacted_date),
+                            self._format_datetime_tz(
+                                self.event_supplier_id.on_route_to_user_end_date
+                            ),
+                        )
                     )
-                elif self.supplier_id.finalized_date and self.contacted_date >= self.supplier_id.finalized_date:
+                elif self.event_supplier_id.finalized_date and self.contacted_date >= self.event_supplier_id.finalized_date:
                     raise ValidationError(_(
                         'The date and time of Contacted (%s) is greater than or equal to '
                         'the date and time of the Finalized (%s)',
                         self._format_datetime_tz(self.contacted_date),
-                        self._format_datetime_tz(self.supplier_id.finalized_date))
+                        self._format_datetime_tz(self.event_supplier_id.finalized_date))
                     )
                 else:
                     self._action_contacted(
-                        supplier,
+                        event_supplier,
                         vals,
                         self.contacted_date,
                         self.contacted_user_id.id,
@@ -357,39 +389,39 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 event_date = fields.Datetime.context_timestamp(self, self.event_id.event_date).strftime('%d-%m-%Y %H:%M:%S')
                 raise ValidationError(_('Finalized date cannot be earlier than or equal to event date (%s)', event_date))
             else:
-                if self.supplier_id.contacted_date and self.finalized_date <= self.supplier_id.contacted_date:
+                if self.event_supplier_id.contacted_date and self.finalized_date <= self.event_supplier_id.contacted_date:
                     raise ValidationError(_(
                         'The date and time of Finalized (%s) is less than or equal to '
                         'the date and time of the Contacted (%s)',
                         self._format_datetime_tz(self.finalized_date),
-                        self._format_datetime_tz(self.supplier_id.contacted_date))
+                        self._format_datetime_tz(self.event_supplier_id.contacted_date))
                     )
                 else:
                     self._action_on_route_2(
-                        supplier,
+                        event_supplier,
                         vals,
                         self.finalized_date - timedelta(seconds=2),
                         self.finalized_user_id.id,
-                        f'{supplier.display_name} - {self.finalized_date - timedelta(seconds=2)}'
+                        f'{event_supplier.display_name} - {self.finalized_date - timedelta(seconds=2)}'
                     )
 
                     self._action_arrived_2(
-                        supplier,
+                        event_supplier,
                         vals,
                         self.finalized_date - timedelta(seconds=1),
                         self.finalized_user_id.id,
-                        f'{supplier.display_name} - {self.finalized_date - timedelta(seconds=1)}'
+                        f'{event_supplier.display_name} - {self.finalized_date - timedelta(seconds=1)}'
                     )
 
                     self._action_finalized(
-                        supplier,
+                        event_supplier,
                         vals,
                         self.finalized_date,
                         self.finalized_user_id.id,
                         self.finalized_comment
                     )
 
-        if not supplier.first_state_date:
+        if not event_supplier.first_state_date:
             vals.update({
                 'first_state_date': fields.Datetime.now(),
                 'first_state_user_id': self.env.user.id,
@@ -399,9 +431,9 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 ),
             })
 
-        supplier.write(vals)
+        event_supplier.write(vals)
 
-        return supplier.open_change_state_supplier_wizard()
+        return event_supplier.open_change_state_supplier_wizard()
 
     def _format_datetime_tz(self, dt):
         if not dt:
@@ -689,7 +721,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         }
         _logger.info(f"External notification at manual stage change (Body): {body}")
         external_response = requests.post(
-            external_url,
+            str(external_url),
             json=body,
             headers={
                 "Content-Type": "application/json",

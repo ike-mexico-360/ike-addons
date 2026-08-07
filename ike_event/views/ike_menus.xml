@@ -10,18 +10,18 @@
         </record> -->
         <!-- Menus -->
         <menuitem id="ike_menu_root" name="Events" web_icon="ike_event,static/description/icon.png"
-            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries">
+            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_account_event_admin,custom_master_catalog.custom_group_account_event_supervisor">
             <menuitem id="ike_menu_event" name="Events" sequence="1"
-                groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries">
+                groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_account_event_admin,custom_master_catalog.custom_group_account_event_supervisor">
                 <menuitem id="ike_menu_event_screen" name="Event Screens" sequence="1"
                     action="action_ike_event_screen"
-                    groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries" />
+                    groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_account_event_admin,custom_master_catalog.custom_group_account_event_supervisor" />
                 <menuitem id="ike_menu_event_event" name="Events" sequence="2"
                     action="action_ike_event"
                     groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
                 <menuitem id="ike_menu_event_summary" name="Event Summary" sequence="3"
                     action="action_ike_event_service_summary"
-                    groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator" />
+                    groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_account_event_admin,custom_master_catalog.custom_group_account_event_supervisor" />
                 <menuitem id="ike_menu_event_event_authorization" name="Events authorization" sequence="4"
                     action="ike_event_authorization_action"
                     groups="base.group_system,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries" />
@@ -86,12 +86,22 @@
                 <menuitem id="ike_service_stage_menu" name="Event Stages" sequence="40"
                         action="action_ike_event_stage"
                         groups="base.group_erp_manager"/>
+                <!-- <menuitem id="ike_menu_road_classification" name="Event road classification" sequence="45"
+                        action="ike_event_road_classification_view_action"
+                        groups="base.group_erp_manager"/> -->
             </menuitem>
         </menuitem>
     </data>
 
+    <record id="survey.menu_survey_type_form1" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('custom_master_catalog.custom_group_cx'))]"/>
+    </record>
+    <record id="survey.menu_survey_form" model="ir.ui.menu">
+        <field name="groups_id" eval="[(4, ref('custom_master_catalog.custom_group_cx'))]"/>
+    </record>
     <record id="survey.menu_surveys" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+        <field name="groups_id" eval="[(4, ref('custom_master_catalog.custom_group_cx'))]"/>
     </record>
     <record id="hr.menu_hr_root" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>

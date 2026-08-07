@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <function model="res.company" name="_ike_sync_helpdesk_dashboard_stages"/>
+
     <record id="cron_supplier_purchase_consolidate" model="ir.cron">
         <field name="name">Supplier Purchase Consolidate</field>
         <field name="interval_number">1</field>

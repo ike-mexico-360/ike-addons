@@ -21,6 +21,7 @@
         'sale',
         'fleet',
         'survey',
+        'product_customerinfo',
     ],
     "data": [
         "security/ir_module_security.xml",
@@ -31,6 +32,7 @@
         "views/product_product_views.xml",
         "views/product_category_service_views.xml",
         "views/product_template_subservice_views.xml",
+        "views/product_template_subservice_customerinfo_views.xml",
         "views/product_template_views.xml",
         "views/res_partner_views.xml",
         "views/res_partner_client_views.xml",

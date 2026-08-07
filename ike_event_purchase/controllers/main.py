@@ -13,20 +13,27 @@ _logger = logging.getLogger(__name__)
 class CatalogsAPIController(http.Controller):
     @http.route('/ike/purchase/create', type='json', auth='user', methods=['POST'])
     def ike_purchase_create(self, **kw):
+        def _get_subservice_id(supplier_sap_code, incoming_sap_code, outgoing_sap_code):
+            return request.env['product.customerinfo'].sudo().search([
+                ('product_code', '=', incoming_sap_code),
+                ('partner_id.x_ref_sap', '=', supplier_sap_code),
+                ('product_id.x_sap_code_outgoing', '=', outgoing_sap_code),
+            ], limit=1).product_id or request.env['product.product']
+
         self._validate_purchase_params(kw)
 
         identifier_object = kw.get('identifier', {})
         sap_object = kw.get('sap', {})
 
         # identifier data
-        tenant = identifier_object.get('tenants', '')
-        app_code = identifier_object.get('app', '')
+        tenant = identifier_object.get('tenants', '').strip()
+        app_code = identifier_object.get('app', '').strip()
 
         # SAP data
-        company_code = sap_object.get('companyCode', '')
-        supplier_code = sap_object.get('supplier', '')
-        currency = sap_object.get('documentCurrency', '')
-        client_code = sap_object.get('incotermsLocation1', '')
+        company_code = sap_object.get('companyCode', '').strip()
+        supplier_code = sap_object.get('supplier', '').strip()
+        currency = sap_object.get('documentCurrency', '').strip()
+        client_code = sap_object.get('incotermsLocation1', '').strip()
         line_results = sap_object.get('toPurchaseOrderItem', {}).get('results', [])
 
         # Buscar proveedor por código SAP
@@ -37,29 +44,31 @@ class CatalogsAPIController(http.Controller):
         if not supplier_id:
             raise NotFound(_("Supplier '%s' not found") % supplier_code)
 
+        # Buscar empresa que factura
+        x_invoice_company_id = request.env['res.partner'].search([
+            ('name', '=', company_code),
+            ('x_is_ike', '=', True)
+        ], limit=1)
+        if not x_invoice_company_id:
+            raise NotFound(_("Company '%s' not found") % company_code)
+
         # Buscar sub servicio por código SAP
-        SubService = request.env['product.product'].sudo()
-        sub_service_domain = SubService.get_subservices_domain()
         po_sub_service_id = request.env['product.product']
         temporal_products = {}
         order_line = []
         event_names = []
         for line in line_results:
-            incoming_sap_code = line.get('supplierMaterialNumber', '')
-            outgoing_sap_code = line.get('material', '')
+            incoming_sap_code = line.get('supplierMaterialNumber', '').strip()
+            outgoing_sap_code = line.get('material', '').strip()
             order_quantity = line.get('orderQuantity', 0)
             net_price = line.get('netPriceAmount', 0)
-            uom = line.get('purchaseOrderQuantityUnit', '')
-            event_name = line.get('expediente', '')
+            uom = line.get('purchaseOrderQuantityUnit', '').strip()
+            event_name = line.get('expediente', '').strip()
 
-            product_key = f"{incoming_sap_code}&{outgoing_sap_code}"
+            product_key = f"{supplier_code}&{incoming_sap_code}&{outgoing_sap_code}"
 
             if product_key not in temporal_products:
-                current_domain = sub_service_domain + [
-                    ('x_sap_code_income', '=', incoming_sap_code),
-                    ('x_sap_code_outgoing', '=', outgoing_sap_code),
-                ]
-                product_id = SubService.search(current_domain, limit=1)
+                product_id = _get_subservice_id(supplier_code, incoming_sap_code, outgoing_sap_code)
                 temporal_products[product_key] = product_id.id
             product = temporal_products[product_key]
 
@@ -67,7 +76,7 @@ class CatalogsAPIController(http.Controller):
                 po_sub_service_id = product
 
             if not product:
-                raise NotFound(f"No product found for SAP code {incoming_sap_code} and {outgoing_sap_code}")
+                raise NotFound(f"No product found for supplier {supplier_code} and SAP code incoming {incoming_sap_code} and SAP code outgoing {outgoing_sap_code}")
 
             uom_id = self._get_uom_id(uom)
 
@@ -101,6 +110,7 @@ class CatalogsAPIController(http.Controller):
             "x_record_tenant": tenant,
             "x_app_code": app_code,
             "x_sap_company_code": company_code,
+            "x_invoice_company_id": x_invoice_company_id.id,
             "x_sap_document_currency": currency,
             "x_external_api_record": True,  # Flag para diferenciar las órdenes de compra externas
             "x_external_body": kw,

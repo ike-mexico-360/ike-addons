@@ -11,6 +11,7 @@ import { _t } from "@web/core/l10n/translation";
 import { usePagination } from "../pagination/pagination_service";
 import { PaginationComponent } from "../pagination/pagination_component";
 import { CancelServiceDialog } from "../dialogs/cancel_service_dialog";
+import { SelectVehicleDialog } from "../dialogs/select_vehicle_dialog";
 // Sound notification sounds configuration
 const NOTIFICATION_SOUNDS = {
     success: '/ike_event_portal/static/src/sounds/success.mp3',
@@ -36,7 +37,7 @@ const IKE_SUPPLIER_CHANNEL = "ike_channel_supplier_";
 
 export class ServicesMainComponent extends Component {
     static template = "ike_event_portal.ServicesMainComponent";
-    static components = { PaginationComponent, CancelServiceDialog };
+    static components = { PaginationComponent, CancelServiceDialog, SelectVehicleDialog };
     translate(str) { return _t(str); }
 
     setup() {
@@ -201,6 +202,14 @@ export class ServicesMainComponent extends Component {
 
     async _handleActiveService(event_supplier) {
         const event = await this.getEventById(event_supplier.event_id);
+
+        const isDuplicate = this.state.services.some(
+            (service) =>
+                service.supplier_id === event_supplier.supplier_id
+                && service.event_id === event_supplier.event_id
+        );
+        if (isDuplicate) return;
+
         this.fetchAndAppendService(event_supplier, event);
     }
 
@@ -245,6 +254,7 @@ export class ServicesMainComponent extends Component {
                 stage_id: event.stage_id?.name,
                 stage_id_label: event.stage_id?.name,
                 event_id: event_supplier.event_id,
+                supplier_id: event_supplier.supplier_id,
                 event_supplier_id: event_supplier.event_supplier_id,
                 truck_id: event_supplier.truck_id,
                 driver_name: event_supplier.driver_name,
@@ -281,10 +291,13 @@ export class ServicesMainComponent extends Component {
         }
     }
 
-    async acceptService(event_supplier_id) {
+    async acceptService(event_supplier_id, truck_id = null) {
         try {
             const event_supplier = await this._requireNotifiedEvent(event_supplier_id, _t('This service is no longer available for acceptance.'));
             if (!event_supplier) return;
+            if (truck_id) {
+                await this.orm.call('ike.event.supplier.public', 'action_change_service_vehicle', [event_supplier_id, truck_id]);
+            }
             await this.orm.call('ike.event.supplier.public', 'action_accept', [event_supplier_id]);
             await this.loadServices(false);
         } catch (err) {
@@ -318,11 +331,11 @@ export class ServicesMainComponent extends Component {
     }
 
     onAcceptClick(event_supplier_id) {
-        this.dialog.add(ConfirmationDialog, {
-            title: _t("Confirm Acceptance"),
-            body: _t("Are you sure you want to accept this service?"),
-            confirm: async () => await this.acceptService(event_supplier_id),
-            cancel: () => { },
+        const service = this.state.services.find(s => s.event_supplier_id === event_supplier_id);
+        this.dialog.add(SelectVehicleDialog, {
+            eventSupplierId: event_supplier_id,
+            currentTruckId: service?.truck_id || null,
+            onConfirm: (truckId) => this.acceptService(event_supplier_id, truckId),
         });
     }
 
@@ -421,6 +434,7 @@ export class ServicesMainComponent extends Component {
                 stage_id: supplier_event.stage_id,
                 stage_id_label: supplier_event.stage_id_label,
                 event_id: supplier_event.event_id,
+                supplier_id: supplier_event.supplier_id,
                 event_supplier_id: supplier_event.event_supplier_id,
                 truck_id: supplier_event.truck_id,
                 driver_name: supplier_event.driver_name,
@@ -825,46 +839,6 @@ export class ServicesMainComponent extends Component {
 
     get paginatedServices() {
         return this.pagination.paginatedItems;
-    }
-
-    async refreshMultipleServices(event_id, supplier_id) {
-        try {
-            const supplierLines = await this.orm.searchRead(
-                'ike.event.supplier.public',
-                [
-                    ['event_id', '=', event_id],
-                    ['supplier_id', '=', supplier_id]
-                ],
-                []
-            );
-
-            // Index backend results by event_supplier_id for fast lookup
-            const backendMap = new Map(supplierLines.map(l => [l.event_supplier_id, l]));
-            console.log("Backend supplier lines for refresh:", supplierLines);
-            // Iterate backwards so splicing doesn't skip elements
-            for (let i = this.state.services.length - 1; i >= 0; i--) {
-                const svc = this.state.services[i];
-                if (svc.event_id !== event_id) continue;
-
-                const backendLine = backendMap.get(svc.event_supplier_id);
-
-                if (!backendLine || backendLine.event_supplier_state === 'notified') {
-                    // No longer relevant (dismissed because another operator was accepted)
-                    this.state.services.splice(i, 1);
-                } else {
-                    Object.assign(svc, {
-                        event_supplier_state: backendLine.event_supplier_state,
-                        event_supplier_state_label: backendLine.event_supplier_state_label,
-                        truck_name: backendLine.truck_name,
-                        driver_name: backendLine.driver_name,
-                        stage: backendLine.stage,
-                        highlighted: false,
-                    });
-                }
-            }
-        } catch (error) {
-            this.showNotification({ title: _t("Error refreshing services"), message: _t(error?.data?.message || error.message || "An error occurred while refreshing the services."), type: 'danger' });
-        }
     }
 }
 

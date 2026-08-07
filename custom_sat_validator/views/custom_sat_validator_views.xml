@@ -7,12 +7,7 @@
         <field name="arch" type="xml">
             <list delete="0">
                 <field name="name"/>
-                <field name="xml_filename"/>
-                <field name="emisor_rfc"/>
-                <field name="sat_uuid"/>
-                <field name="total_amount"/>
-                <field name="sat_status"/>
-                <field name="cfdi_is_valid"/>
+                <field name="state"/>
                 <field name="purchase_id"/>
             </list>
         </field>
@@ -29,7 +24,7 @@
                             string="Validate in SAT"
                             type="object"
                             class="oe_highlight"
-                            invisible="state in ['validated']"/>
+                            invisible="state in ['done']"/>
                     <button name="action_force_validate_xml_from_sat"
                             string="Validate (Only XML in SAT)"
                             type="object"
@@ -41,48 +36,146 @@
                             groups="base.group_no_one"
                             class="oe_highlight"/>
 
-                    <field name="state" widget="statusbar" statusbar_visible="draft,xml_error,validated"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
                 </header>
                 <sheet>
                     <div class="oe_title">
-                        <h1><field name="name"/></h1>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
                     </div>
 
-                    <group string="Purchase Order">
+                    <group>
                         <group>
-                            <field name="purchase_id" readonly="state == 'validated'"/>
-                            <field name="invoice_id" readonly="1"/>
+                            <field
+                                name="purchase_id"
+                                options="{'no_create': True}"
+                                readonly="state == 'done'"
+                                domain="[('state', 'in', ['purchase', 'done'])]"/>
+                        </group>
+                        <group>
                         </group>
                     </group>
 
-                    <group string="File Upload">
-                        <group>
-                            <field name="xml_filename" invisible="1"/>
-                            <field name="xml_file" filename="xml_filename" readonly="state == 'validated'"/>
-                        </group>
-                    </group>
+                    <notebook>
+                        <page string="Received Document Packages (XML, PDF, CP)" name="received_documents">
+                            <field name="document_line_ids" readonly="state == 'done'">
+                                <list create="1" edit="1" delete="1"
+                                      decoration-danger="line_state == 'xml_error'"
+                                      decoration-success="line_state == 'validated'">
 
-                    <group string="Extracted XML Data (Automated)" invisible="not sat_uuid">
-                        <group>
-                            <field name="sat_uuid"/>
-                            <field name="xml_invoice_date"/>
-                        </group>
-                        <group>
-                            <field name="total_amount"/>
-                            <field name="emisor_rfc"/>
-                            <field name="receptor_rfc"/>
-                        </group>
-                    </group>
+                                    <field name="sequence" widget="handle"/>
 
-                    <group string="SAT Audit Results">
-                        <group>
-                            <field name="sat_status"/>
-                            <field name="cfdi_is_valid"/>
-                        </group>
-                        <group>
-                            <field name="validation_log"/>
-                        </group>
-                    </group>
+                                    <field name="name" placeholder="e.g. Invoice Jan-01"/>
+
+                                    <field name="xml_filename" column_invisible="1"/>
+                                    <field
+                                        name="xml_file"
+                                        filename="xml_filename"
+                                        widget="binary"
+                                        string="XML"
+                                        options="{'accepted_file_extensions': '.xml'}"/>
+
+                                    <field name="pdf_filename" column_invisible="1"/>
+                                    <field
+                                        name="pdf_file"
+                                        filename="pdf_filename"
+                                        widget="binary"
+                                        string="PDF"
+                                        options="{'accepted_file_extensions': '.pdf'}"/>
+
+                                    <field name="carta_porte_filename" column_invisible="1"/>
+                                    <field
+                                        name="carta_porte_file"
+                                        filename="carta_porte_filename"
+                                        widget="binary"
+                                        string="Carta Porte"/>
+
+                                    <field name="sat_uuid" string="UUID" optional="show"/>
+                                    <field name="emisor_rfc" string="Vendor RFC" optional="hide"/>
+                                    <field name="total_amount" string="Total XML" sum="Total Invoiced Amount"/>
+
+                                    <field name="sat_status" widget="badge"
+                                           decoration-success="sat_status == 'Vigente'"
+                                           decoration-danger="sat_status in ['Cancelado', 'Error']"
+                                           decoration-warning="sat_status == 'No Encontrado'"/>
+
+                                    <field name="line_state" widget="badge"
+                                           decoration-info="line_state == 'draft'"
+                                           decoration-danger="line_state == 'xml_error'"
+                                           decoration-success="line_state == 'validated'"/>
+
+                                    <field name="invoice_id" string="Generated Bill" readonly="1"/>
+
+                                    <field name="line_validation_log" string="Logs / Errors" optional="hide"/>
+                                </list>
+                                <form string="Document Package Details">
+                                    <header>
+                                        <field name="line_state" widget="statusbar" statusbar_visible="draft,xml_error,validated"/>
+                                    </header>
+                                    <sheet>
+                                        <div class="oe_title">
+                                            <label for="name" class="oe_edit_only"/>
+                                            <h1><field name="name"/></h1>
+                                        </div>
+                                        <group string="Files Upload">
+                                            <group>
+                                                <field name="xml_filename" invisible="1"/>
+                                                <field
+                                                    name="xml_file"
+                                                    filename="xml_filename"
+                                                    widget="binary"
+                                                    string="XML File"
+                                                    options="{'accepted_file_extensions': '.xml'}"/>
+                                                <field name="pdf_filename" invisible="1"/>
+                                                <field
+                                                    name="pdf_file"
+                                                    filename="pdf_filename"
+                                                    widget="binary"
+                                                    string="PDF File"
+                                                    options="{'accepted_file_extensions': '.pdf'}"/>
+                                            </group>
+                                            <group>
+                                                <field name="carta_porte_filename" invisible="1"/>
+                                                <field
+                                                    name="carta_porte_file"
+                                                    filename="carta_porte_filename"
+                                                    widget="binary"
+                                                    string="Carta Porte File"/>
+                                            </group>
+                                        </group>
+                                        <group string="SAT &amp; Financial Audit Results">
+                                            <group>
+                                                <field name="sat_uuid"/>
+                                                <field name="total_amount"/>
+                                                <field name="sat_status" widget="badge"
+                                                    decoration-success="sat_status == 'Vigente'"
+                                                    decoration-danger="sat_status in ['Cancelado', 'Error']"/>
+                                            </group>
+                                            <group>
+                                                <field name="emisor_rfc"/>
+                                                <field name="receptor_rfc"/>
+                                                <field name="invoice_id" readonly="1" options="{'no_open': False}"/>
+                                            </group>
+                                        </group>
+                                        <group string="Execution Logs" invisible="not line_validation_log">
+                                            <field name="line_validation_log"
+                                                readonly="1"
+                                                nolabel="1"
+                                                class="text-success font-monospace"
+                                                invisible="line_state != 'validated'"/>
+
+                                            <field name="line_validation_log"
+                                                readonly="1"
+                                                nolabel="1"
+                                                class="text-danger font-monospace"
+                                                invisible="line_state == 'validated'"/>
+                                        </group>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
                 <chatter/>
             </form>

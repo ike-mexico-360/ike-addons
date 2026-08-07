@@ -12,6 +12,9 @@
                     <field name="x_survey_id" readonly="disabled" groups="base.group_erp_manager"/>
                     <field name="x_input_res_model" readonly="disabled" groups="base.group_erp_manager"/>
                     <field name="x_icon" widget="icon_picker" readonly="disabled" groups="base.group_erp_manager"/>
+                    <field name="x_is_origin_destination" readonly="disabled" />
+                    <field name="x_signature_required" readonly="disabled" />
+                    <field name="x_sap_code_outgoing" readonly="disabled" />
                 </group>
             </xpath>
         </field>

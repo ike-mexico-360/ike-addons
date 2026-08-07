@@ -21,7 +21,6 @@
         'data/ir_sequence_data.xml',
         'data/ike_event_service_type_data.xml',
         'security/ir.model.access.csv',
-        'wizard/ike_event_add_manual_wizard.xml',
         'wizard/ike_event_confirm_wizard.xml',
         'wizard/ike_event_vehicle_wizard.xml',
         'wizard/ike_event_duplicate_wizard.xml',
@@ -55,6 +54,7 @@
         'views/ike_event_flow_views.xml',
         'views/ike_event_service_type.xml',
         'views/ike_event_fleet_views.xml',
+        'views/ike_event_road_classification_views.xml',
         'views/ike_menus.xml',
         'security/cleanup_menus.xml',  # TODO Delete in sprint22 or after the client has updated their database with this code
         'templates/ike_event_supplier_portal_template.xml',

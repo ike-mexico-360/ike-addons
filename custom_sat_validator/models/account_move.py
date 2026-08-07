@@ -13,6 +13,14 @@ class AccountMove(models.Model):
             index=True,
             help="Unique identifier (Folio Fiscal) extracted from the provider's XML."
         )
+    x_ref_sap = fields.Char(string='SAP Reference')
+
+    x_vendor_bill_pdf_file = fields.Binary(
+        string="Vendor Bill PDF (SAT)",
+        attachment=True,
+        copy=False
+    )
+    x_vendor_bill_pdf_name = fields.Char(string="Vendor Bill PDF Name")
 
     def _generate_cfdi_pdf_bytes(self):
         """

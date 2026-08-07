@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
 from odoo import models, fields, Command, api, _
-
+from odoo.exceptions import ValidationError
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -137,6 +137,27 @@ class IkeEvent(models.Model):
 
     def action_confirm_costs(self):
         """ Confirm Costs only close the event. For now. """
+        is_assigned_user = self.assigned_user_id.id == self.env.user.id
+        is_admin_user = self.env.user.has_group('base.group_system')
+
+        if not (is_assigned_user or is_admin_user):
+            raise ValidationError(_('Only the assigned user or the administrator can validate prices'))
+
+        sum_cost_price = sum(self.selected_supplier_ids.supplier_product_ids.filtered(
+            lambda x: not x.display_type).mapped('cost_price'))
+        sum_base_cost_price = sum(self.selected_supplier_ids.supplier_product_ids.filtered(
+            lambda x: not x.display_type).mapped('base_cost_price'))
+
+        if sum_base_cost_price > sum_cost_price:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Cost confirmation'),
+                'res_model': 'ike.event.confirm.costs.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {'default_event_id': self.id},
+            }
+
         self.sudo().action_close()
 
     def action_create_purchase_orders(self):
@@ -169,12 +190,17 @@ class IkeEvent(models.Model):
         else:
             supplier_id = selected_supplier_id.supplier_id
 
+        membership_plan_id = selected_supplier_id.event_id.user_membership_id.membership_plan_id
+        account_id = membership_plan_id.account_id
+        x_invoice_company_id = account_id.x_invoice_company_id[0] if account_id.x_invoice_company_id else False
+
         return {
             "partner_id": supplier_id.id,
             "company_id": self.env.company.id,
             "x_event_id": self.id,  # Link to event_id
             "x_sub_service_id": selected_supplier_id.event_id.sub_service_id.id,
             "x_nu_user_id": selected_supplier_id.event_id.user_id.id,
-            "x_membership_plan_id": selected_supplier_id.event_id.user_membership_id.membership_plan_id.id,
+            "x_membership_plan_id": membership_plan_id.id,
+            "x_invoice_company_id": x_invoice_company_id.id,
             "date_order": fields.Datetime.now() + timedelta(hours=max_hours_to_confirm),
         }

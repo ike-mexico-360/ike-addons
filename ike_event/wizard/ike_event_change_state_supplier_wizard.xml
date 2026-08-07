@@ -9,7 +9,7 @@
                     <group name="detail_event">
                         <group>
                             <field name="event_id" options="{'no_open': True}"/>
-                            <field name="supplier_id" readonly="1" options="{'no_open': True}"/>
+                            <field name="event_supplier_id" readonly="1" options="{'no_open': True}"/>
                         </group>
                         <group>
                             <field name="stage_id" options="{'no_open': True}"/>

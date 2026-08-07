@@ -240,8 +240,12 @@
                         <field name="service_supplier_ids" nolabel="1" colspan="2"
                             widget="ike_supplier_section_and_note_field_o2m"
                             options="{'field_columns': ['supplier_id']}"
-                            context="{'default_search_number': supplier_search_number, 'form_view_ref': 'ike_event.ike_event_supplier_phones_form_view'}"
-                            readonly="supplier_search_type not in ['manual', 'manual_manual']">
+                            context="{
+                                'default_search_number': supplier_search_number,
+                                'form_view_ref': 'ike_event.ike_event_supplier_phones_form_view',
+                                'ike_update_route': True,
+                            }"
+                            readonly="supplier_search_type == 'electronic'">
                             <list create="0" delete="0">
                                 <field name="display_type" column_invisible="1" />
                                 <field name="sequence" column_invisible="1"/>
@@ -365,6 +369,21 @@
                                 readonly="1"
                                 invisible="stage_ref not in ['verifying', 'cancel_verifying']"
                                 options="{'no_open': 1}"/>
+                            <!-- <field name="payment_event_type_id"
+                                groups="base.group_system,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss"
+                                context="{
+                                    'search_view_ref': 'custom_master_catalog.custom_view_users_search',
+                                    'list_view_ref': 'custom_master_catalog.custom_view_users_list',
+                                }"
+                                options="{'no_create': 1, 'no_open': 1}"
+                                invisible="stage_ref not in ['verifying', 'cancel_verifying']"
+                                required="stage_ref in ['verifying', 'cancel_verifying']"/>
+                            <field name="payment_event_type_id"
+                                groups="custom_master_catalog.custom_group_ccc_coordinator,!base.group_system,!custom_master_catalog.custom_group_ccc_analyst,!custom_master_catalog.custom_group_ccc_boss"
+                                readonly="1"
+                                invisible="stage_ref not in ['verifying', 'cancel_verifying']"
+                                options="{'no_open': 1}"/> -->
+
                             <div class="d-flex flex-column align-items-center">
                                 <div><h3>Confirmation code: #7890</h3></div>
                                 <div class="mb-2">

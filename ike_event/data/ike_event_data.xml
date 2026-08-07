@@ -63,6 +63,19 @@
             <field name="x_icon">fa fa-stethoscope</field>
             <field name="x_survey_id" ref="survey_medical_consultation"/>
         </record>
+        <!-- Concept: payment NU -->
+        <record id="ike_product_product_nu_payment" model="product.product">
+            <field name="name">NU Payment</field>
+            <field name="sale_ok">False</field>
+            <field name="purchase_ok">True</field>
+            <field name="x_concept_ok">False</field>
+            <field name="type">service</field>
+            <field name="list_price">0</field>
+            <field name="standard_price">0</field>
+            <field name="categ_id" ref="product.product_category_all"/>
+            <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+            <field name="x_apply_all_services_subservices">True</field>
+        </record>
     </data>
 
     <!-- Event Stages -->

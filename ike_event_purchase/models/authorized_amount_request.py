@@ -103,6 +103,15 @@ class IkeEventAuthorizedAmountRequest(models.Model):
         tracking=True,
     )
     reason = fields.Text(string="Reason", required=True, tracking=True)
+    validation_status = fields.Selection(
+        selection=[
+            ("no", "Without validation"),
+            ("waiting", "Waiting"),
+            ("pending", "Pending"),
+            ("rejected", "Rejected"),
+            ("validated", "Validated"),
+        ]
+    )
     state = fields.Selection(
         selection=[
             ("draft", "Pending Authorization"),
@@ -139,7 +148,7 @@ class IkeEventAuthorizedAmountRequest(models.Model):
                 vals.update(
                     {
                         "current_authorized_amount": order.x_dispute_authorized_amount,
-                        "disputed_amount": order.amount_untaxed_dispute,
+                        "disputed_amount": order.x_dispute_authorized_amount,
                         "requester_id": self.env.user.id,
                     }
                 )
@@ -276,17 +285,6 @@ class IkeEventAuthorizedAmountRequest(models.Model):
                 _("An increase can only be requested for a submitted dispute.")
             )
         rounding = self.currency_id.rounding or 0.01
-        if (
-            float_compare(
-                order.amount_untaxed_dispute,
-                order.x_dispute_authorized_amount,
-                precision_rounding=rounding,
-            )
-            <= 0
-        ):
-            raise ValidationError(
-                _("The disputed amount does not exceed the authorized amount.")
-            )
         if (
             float_compare(
                 self.requested_amount,

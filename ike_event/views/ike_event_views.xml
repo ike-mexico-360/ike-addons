@@ -281,7 +281,12 @@
                                 <group>
                                     <field name="supplier_number" readonly="0"/>
                                     <field name="supplier_search_number" readonly="0"/>
-                                    <field name="supplier_search_type" readonly="0"/>
+                                    <div class="o_row">
+                                        <label for="supplier_search_type" class="fw-bold"/>
+                                        <field name="supplier_search_type" readonly="0"/>
+                                        <field name="supplier_search_priority" readonly="0"/>
+                                        <button name="action_search_suppliers_test" string="Search Debug" type="object" class="btn-outline-info"/>
+                                    </div>
                                     <div class="o_row" colspan="2">
                                         <button name="action_search_electronic_suppliers" string="Search Electronic (Suppliers)"
                                                 type="object" class="btn-info"/>
@@ -298,8 +303,12 @@
                                 <field name="service_supplier_ids" nolabel="1" colspan="2"
                                     widget="ike_supplier_section_and_note_field_o2m"
                                     options="{'field_columns': ['supplier_id']}"
-                                    context="{'default_search_number': supplier_search_number, 'form_view_ref': 'ike_event.ike_event_supplier_phones_form_view'}"
-                                    readonly="supplier_search_type not in ['manual', 'manual_manual']">
+                                    context="{
+                                        'default_search_number': supplier_search_number,
+                                        'form_view_ref': 'ike_event.ike_event_supplier_phones_form_view',
+                                        'ike_update_route': True,
+                                    }"
+                                    readonly="supplier_search_type == 'electronic'">
                                     <list create="0" delete="0">
                                         <field name="display_type" column_invisible="1" />
                                         <field name="sequence" column_invisible="1"/>
@@ -342,6 +351,7 @@
                                         <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
                                         <button name="action_view_products" string="View Details" type="object" class="btn-link"
                                             context="{'from_view_detail': True}"/>
+                                        <!-- <button name="action_finalize" string="Finalize" type="object" class="btn-link"/> -->
                                         <!-- <button name="action_view_supplier_data" string="Edit" type="object" class="btn-link"
                                             column_invisible="parent.supplier_search_type not in ['manual', 'manual_manual']"/> -->
                                     </list>

@@ -3,6 +3,29 @@
 
     <!-- ToDo: Se ocultan campos y botones en lo que se define su uso en el proyecto bajo petición de Mario -->
 
+    <record id="sh_all_in_one_helpdesk.sh_helpdesk_ticket_action" model="ir.actions.act_window">
+        <field name="view_mode">list,kanban,form,pivot,graph,calendar,activity</field>
+    </record>
+
+    <record id="view_sh_helpdesk_ticket_assignment_list" model="ir.ui.view">
+        <field name="name">view.sh.helpdesk.ticket.assignment.list</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" duplicate="false" delete="false">
+                <field name="name"/>
+                <field name="user_id"/>
+                <field name="partner_id" string="Proveedor"/>
+                <field name="ticket_type"/>
+                <field name="team_id"/>
+                <field name="team_head"/>
+                <field name="subject_id"/>
+                <field name="category_id"/>
+                <field name="sub_category_id"/>
+                <field name="stage_id"/>
+            </list>
+        </field>
+    </record>
+
     <record id="sh_helpdesk_ticket_form_view_inherit_ike_event_purchase" model="ir.ui.view">
         <field name="name">sh_helpdesk_ticket_form_view.inherit.ike_event_purchase</field>
         <field name="model">sh.helpdesk.ticket</field>

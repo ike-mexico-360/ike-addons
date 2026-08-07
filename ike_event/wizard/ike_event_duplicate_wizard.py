@@ -32,7 +32,7 @@ class IkeEventDuplicateWizard(models.TransientModel):
     label_account_identification = fields.Char(related="account_identification_id.label", string="Account identification")
     second_label_account_identification = fields.Char(
         related="second_account_identification_id.label",
-        string="Second account identification")
+        string="Second Account Identification")
     check_second_key = fields.Boolean(related="user_membership_id.membership_plan_id.account_id.x_check_second_key")
     decrypted_key_identification = fields.Char(
         string="Primary Key",
@@ -180,7 +180,8 @@ class IkeEventDuplicateWizard(models.TransientModel):
             })
 
         vals.update({
-            'event_date': fields.Datetime.now()
+            'event_date': fields.Datetime.now(),
+            'assigned_user_id': self.env.user.id
         })
         # CREATE NEW EVENT
         new_event_id = event_id.with_context(

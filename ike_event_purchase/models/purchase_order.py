@@ -49,6 +49,8 @@ class PurchaseOrder(models.Model):
     ], string='Dispute State', default='none')
     x_dispute_approved = fields.Boolean(string='Dispute Approved', default=False)
     x_ref_sap = fields.Char(string='SAP Reference')
+    x_invoice_company_id = fields.Many2one(
+        'res.partner', string='Client Company', domain=[('x_is_ike', '=', True)])
     x_sap_reference_received = fields.Boolean(string='SAP Reference Received', default=False)
     x_sap_connection_error_message = fields.Char(string='SAP Connection Error Message')
     x_dispute_iteration_count = fields.Integer(
@@ -166,12 +168,6 @@ class PurchaseOrder(models.Model):
             raise UserError(_('The cost review must be linked to an event.'))
         if self.x_dispute_state != 'submitted':
             raise UserError(_('The supplier dispute must be submitted first.'))
-        if float_compare(
-            self.amount_untaxed_dispute,
-            self.x_dispute_authorized_amount,
-            precision_rounding=self.currency_id.rounding,
-        ) <= 0:
-            raise UserError(_('The disputed amount does not exceed the authorized amount.'))
 
     def action_request_authorized_amount_increase(self):
         self.ensure_one()
@@ -196,8 +192,12 @@ class PurchaseOrder(models.Model):
             action['context'] = {
                 'default_purchase_order_id': self.id,
                 'default_current_authorized_amount': self.x_dispute_authorized_amount,
-                'default_disputed_amount': self.amount_untaxed_dispute,
-                'default_requested_amount': self.amount_untaxed_dispute,
+                'default_disputed_amount': (
+                    self.x_dispute_authorized_amount or False
+                ),
+                'default_requested_amount': (
+                    self.x_dispute_authorized_amount or False
+                ),
                 'default_requester_id': self.env.user.id,
             }
         return action
@@ -255,6 +255,12 @@ class PurchaseOrder(models.Model):
 
     @api.model_create_multi
     def create(self, vals_list):
+        for vals in vals_list:
+            if self._x_should_assign_project_sequence(vals):
+                sequence = self._x_get_project_purchase_sequence(vals)
+                if sequence:
+                    vals['name'] = sequence.next_by_id()
+
         orders = super().create(vals_list)
         for order, vals in zip(orders, vals_list, strict=True):
             if order.x_event_id and 'x_dispute_authorized_amount' not in vals:
@@ -262,6 +268,21 @@ class PurchaseOrder(models.Model):
                     'x_dispute_authorized_amount': order.x_authorized_amount,
                 })
         return orders
+
+    def _x_should_assign_project_sequence(self, vals):
+        current_name = vals.get('name')
+        return not current_name or current_name in ('/', 'New', _('New'))
+
+    def _x_get_project_purchase_sequence(self, vals):
+        project = self.env['project.project']
+        project_id = vals.get('project_id')
+        if project_id:
+            project = project.browse(project_id).exists()
+
+        if not project:
+            return self.env['ir.sequence']
+
+        return project.sudo().x_purchase_order_sequence_id
 
     def write(self, vals):
         if (
@@ -308,13 +329,19 @@ class PurchaseOrder(models.Model):
     @api.depends('order_line.x_price_subtotal_approved')
     def _x_amount_all_approved(self):
         for order in self:
+            skip_check = self.env.context.get('x_skip_dispute_amount_check', False)
+
             order_lines = order.order_line.filtered(lambda x: not x.display_type)
-            order.amount_untaxed_approved = sum(order_lines.mapped('x_price_subtotal_approved'))
-            # new_amount = sum(order_lines.mapped('x_price_subtotal_approved'))
-            # if new_amount > order.x_authorized_amount:
-            #     raise ValidationError(_("The approved subtotal must not exceed the authorized amount."))
-            # else:
-            #     order.amount_untaxed_approved = new_amount
+            # order.amount_untaxed_approved = sum(order_lines.mapped('x_price_subtotal_approved'))
+            new_amount = sum(order_lines.mapped('x_price_subtotal_approved'))
+            if not order.x_dispute_authorized_amount:
+                super(PurchaseOrder, order).write({
+                    'x_dispute_authorized_amount': order.x_authorized_amount,
+                })
+            if not skip_check and new_amount > order.x_dispute_authorized_amount:
+                raise ValidationError(_("The CCC subtotal must not exceed the authorized amount dispute."))
+            else:
+                order.amount_untaxed_approved = new_amount
 
     @api.depends('order_line.x_price_subtotal_event')
     def _x_amount_all_event(self):
@@ -344,8 +371,9 @@ class PurchaseOrder(models.Model):
                 ('partner_id', '=', self.partner_id.id),
             ])
             ticket_id = ticket_ids.filtered(lambda x: self.id in x.sh_purchase_order_ids.ids)
+            new_stage = self.env.company.new_stage_id
             if not ticket_id:
-                HelpdeskTicket.create({
+                ticket_id = HelpdeskTicket.create({
                     'state': 'customer_replied',
                     'partner_id': self.partner_id.id,
                     'sh_purchase_order_ids': [(6, 0, [self.id])],
@@ -353,6 +381,8 @@ class PurchaseOrder(models.Model):
                 })
             # Cuando se mande la disputa, marcar en el ticket como "Proveedor respondió"
             ticket_id.write({'state': 'customer_replied'})
+            if not ticket_id and new_stage:
+                ticket_id.write({'stage_id': new_stage.id})
 
     def x_get_dispute_url(self, confirm_type=None):
         """Create url for confirm or reject purchase dispute
@@ -417,15 +447,6 @@ class PurchaseOrder(models.Model):
             raise UserError(_('This order already has a dispute submitted.'))
 
         self.sudo()._x_start_sh_helpdesk_ticket()
-        # template = self.sudo().env.ref('ike_event_purchase.ike_event_purchase_proposal_dispute_ticket')
-        # ticket_ids_sudo = self.sudo().sh_purchase_ticket_ids
-        # for ticket in ticket_ids_sudo:
-        #     template.sudo().with_context(dict(self._context, actual_order=self.id)).send_mail(ticket.id, force_send=True)
-        #     self.sudo().message_post(
-        #         body=_('The supplier has submitted their dispute proposal on ticket #%s.') % ticket.name,
-        #         message_type='notification',
-        #         subtype_xmlid='mail.mt_note',
-        #     )
         self.x_dispute_state = 'submitted'
 
     def x_action_approve_dispute(self):
@@ -688,96 +709,119 @@ class PurchaseOrder(models.Model):
         return grouped_concept_lines
 
     def _x_build_partner_consolidated_pos(self, grouped_concept_lines):
+        def split_list(data, chunk_size):
+            for i in range(0, len(data), chunk_size):
+                yield data[i:i + chunk_size]
+
         new_po_vals = []
         original_pos = self.env['purchase.order']
+        max_lines_per_po = int(
+            self.env['ir.config_parameter'].sudo().get_param('ike_event_purchase.max_lines_per_po_at_consolidation', default=50) or 50
+        )
+        temporal_invoice_company = {}
 
         for _sap_key, concept_lines in grouped_concept_lines.items():
-            first_order = concept_lines[0]['rfq']
-            origin_names = []
-            origin_events = []
-            order_lines = []
-
-            for item in concept_lines:
-                rfq = item['rfq']
-                subtotal = item['subtotal']
-                # concept_line = item['concept_line']
-                product_id = item['sap_product_id']
-                sap_product_description = item['sap_product_description']
-                sap_code_income = item['sap_code_income']
-                sap_code_outgoing = item['sap_code_outgoing']
-                # event_id = item['event']
-                event_name = item['event_name']
-
-                if not product_id:
-                    _logger.warning(
-                        "SAP income=%s has no product configured in sub_service_ids. RFQ id=%s",
-                        sap_code_income,
-                        rfq.id,
-                    )
-                    continue
-
-                if rfq.name not in origin_names:
-                    origin_names.append(rfq.name)
-                if event_name not in origin_events:
-                    origin_events.append(event_name)
-
-                if not sap_product_description:
-                    line_name = "[%s] %s - %s" % (
-                        sap_code_outgoing,
-                        rfq.name,
-                        event_name,
-                    )
-                else:
-                    line_name = "[%s] %s - %s - %s" % (
-                        sap_code_outgoing,
-                        sap_product_description,
-                        rfq.name,
-                        event_name,
-                    )
-
-                order_lines.append(Command.create({
-                    'name': line_name,
-                    'product_id': product_id,
-                    'product_qty': 1,
-                    'price_unit': subtotal,
-                    # 'x_concept_line_id': concept_line.id,
-                    'x_sap_product_description': sap_product_description,
-                    'x_sap_code_income': sap_code_income,
-                    'x_sap_code_outgoing': sap_code_outgoing,
-                    'x_parent_expedient': event_name,
-                }))
-
-                original_pos |= rfq
-
-            if not order_lines:
+            if not concept_lines:
                 continue
 
+            first_order = concept_lines[0]['rfq']
+            chunks = list(split_list(concept_lines, max_lines_per_po))
+
+            # Resolve invoice company
+            x_invoice_company_id = False
             if not first_order.x_external_api_record:
-                new_po_vals.append({
-                    'partner_id': first_order.partner_id.id,
-                    'origin': ', '.join(origin_names),
-                    'x_origin_events': ', '.join(origin_events),
-                    'order_line': order_lines,
-                    'x_sub_service_id': first_order.x_sub_service_id.id,
-                    'x_membership_plan_id': first_order.x_membership_plan_id.id,
-                })
+                x_invoice_company_id = first_order.x_invoice_company_id
             else:
-                new_po_vals.append({
+                if first_order.x_sap_company_code not in temporal_invoice_company:
+                    invoice_company_id = self.env['res.partner'].search([
+                        ('x_is_ike', '=', True),
+                        ('name', '=', first_order.x_sap_company_code),
+                    ], limit=1)
+                    if not invoice_company_id:
+                        raise UserError(_("No company found for SAP company code %s") % first_order.x_sap_company_code)
+                    temporal_invoice_company[first_order.x_sap_company_code] = invoice_company_id
+                x_invoice_company_id = temporal_invoice_company[first_order.x_sap_company_code]
+
+            for chunk in chunks:
+                origin_names = []
+                origin_events = []
+                order_lines = []
+
+                for item in chunk:
+                    rfq = item['rfq']
+                    subtotal = item['subtotal']
+                    product_id = item['sap_product_id']
+                    sap_product_description = item['sap_product_description']
+                    sap_code_income = item['sap_code_income']
+                    sap_code_outgoing = item['sap_code_outgoing']
+                    event_name = item['event_name']
+
+                    if not product_id:
+                        _logger.warning(
+                            "SAP income=%s has no product configured in sub_service_ids. RFQ id=%s",
+                            sap_code_income,
+                            rfq.id,
+                        )
+                        continue
+
+                    if rfq.name not in origin_names:
+                        origin_names.append(rfq.name)
+                    if event_name not in origin_events:
+                        origin_events.append(event_name)
+
+                    if not sap_product_description:
+                        line_name = "[%s] %s - %s" % (
+                            sap_code_outgoing,
+                            rfq.name,
+                            event_name,
+                        )
+                    else:
+                        line_name = "[%s] %s - %s - %s" % (
+                            sap_code_outgoing,
+                            sap_product_description,
+                            rfq.name,
+                            event_name,
+                        )
+
+                    order_lines.append(Command.create({
+                        'name': line_name,
+                        'product_id': product_id,
+                        'product_qty': 1,
+                        'price_unit': subtotal,
+                        'x_sap_product_description': sap_product_description,
+                        'x_sap_code_income': sap_code_income,
+                        'x_sap_code_outgoing': sap_code_outgoing,
+                        'x_parent_expedient': event_name,
+                    }))
+
+                    original_pos |= rfq
+
+                if not order_lines:
+                    continue
+
+                vals = {
                     'partner_id': first_order.partner_id.id,
                     'origin': ', '.join(origin_names),
                     'x_origin_events': ', '.join(origin_events),
                     'order_line': order_lines,
                     'x_sub_service_id': first_order.x_sub_service_id.id,
                     'x_membership_plan_id': first_order.x_membership_plan_id.id,
-                    "company_id": first_order.company_id.id,
-                    "x_client_code": first_order.x_client_code,
-                    "x_record_tenant": first_order.x_record_tenant,
-                    "x_app_code": first_order.x_app_code,
-                    "x_sap_company_code": first_order.x_sap_company_code,
-                    "x_sap_document_currency": first_order.x_sap_document_currency,
-                    "x_external_api_record": True,  # Flag para diferenciar las órdenes de compra externas
-                    "x_external_body": first_order.x_external_body,
-                })
+                    'x_invoice_company_id': x_invoice_company_id.id or False,
+                }
+
+                if first_order.x_external_api_record:
+                    vals.update({
+                        'company_id': first_order.company_id.id,
+                        'x_client_code': first_order.x_client_code,
+                        'x_record_tenant': first_order.x_record_tenant,
+                        'x_app_code': first_order.x_app_code,
+                        'x_sap_company_code': first_order.x_sap_company_code,
+                        'x_sap_document_currency': first_order.x_sap_document_currency,
+                        'x_external_api_record': True,
+                        'x_external_body': first_order.x_external_body,
+                    })
+
+                new_po_vals.append(vals)
 
         return new_po_vals, original_pos
 
@@ -792,51 +836,12 @@ class PurchaseOrder(models.Model):
             }
         }
 
-    # def _x_ike_check_automatic_rfq(self):
-    #     """ Si los costos de convenio coinciden con los costos de evento, es candidato a ser enviado """
-    #     self.ensure_one()
-    #     auto_send_rfq = self._x_ike_check_costs()
-    #     if not auto_send_rfq:
-    #         return
-
-    #     ir_model_data = self.env['ir.model.data']
-    #     template_id = ir_model_data._xmlid_lookup('ike_event_purchase.email_template_edi_purchase')[1]
-
-    #     ctx = {
-    #         'default_model': 'purchase.order',
-    #         'default_res_ids': self.ids,
-    #         'default_template_id': template_id,
-    #         'default_composition_mode': 'comment',
-    #         'default_email_layout_xmlid': 'mail.mail_notification_layout_with_responsible_signature',
-    #         'email_notification_allow_footer': True,
-    #         'force_email': True,
-    #         'mark_rfq_as_sent': True,  # <- Esto activa el message_post de purchase.order
-    #     }
-
-    #     composer = self.env['mail.compose.message'].with_context(**ctx).create({
-    #         'model': 'purchase.order',
-    #         'res_ids': self.ids,
-    #         'template_id': template_id,
-    #         'composition_mode': 'comment',
-    #     })
-
-    #     composer.with_context(**ctx)._action_send_mail()
-        # ToDo: Se dejará algún mensaje en el chatter?
-
-    # def _x_ike_check_costs(self):
-    #     """ Validar linea por linea que coincidan los costos de convenio, si todos coincide, regresar True """
-    #     self.ensure_one()
-    #     return all(
-    #         line.x_supplier_product_id.base_unit_price == line.price_unit
-    #         for line in self.order_line
-    #     )
-
     def x_action_start_consolidation(self):
         """Verificar si el proveedor tiene la configuración para consolidar las órdenes por batch.
         Marcar como 'to_consolidate', si no tiene, consolidar la orden actual."""
         self.ensure_one()
         self.write({'state': 'to_consolidate'})
-        if not self.partner_id.x_has_consolidation:
+        if not self.sudo().partner_id.x_has_consolidation:
             self.x_action_consolidate()
 
     # - - - - - - - - - - - - - #

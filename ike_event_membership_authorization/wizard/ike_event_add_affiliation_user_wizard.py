@@ -61,7 +61,7 @@ class IkeEventAffiliationUser(models.TransientModel):
     fields_readonly = fields.Boolean(default=False)
 
     x_validation_pattern = fields.Char(string='Validation pattern', related="account_id.x_validation_pattern")
-    x_display_mask = fields.Char(string='Display mask', related="account_id.x_display_mask")
+    x_display_mask = fields.Char(string='Display Mask', related="account_id.x_display_mask")
     x_validation_pattern_second = fields.Char(string='Second validation pattern', related="account_id.x_validation_pattern_second")
     x_display_mask_second = fields.Char(string='Second display mask', related="account_id.x_display_mask_second")
 

@@ -176,7 +176,7 @@ class PurchaseOrderLine(models.Model):
             if not rec.product_id or rec.order_id.x_event_id:
                 continue
 
-            matrix_lines = rec.sudo().order_id.x_event_id.get_supplier_product_matrix_lines(rec.order_id.partner_id.id, [rec.product_id.id])
+            matrix_lines = rec.sudo().order_id.x_event_id.get_supplier_product_matrix_lines_by_supplier(rec.order_id.partner_id.id, [rec.product_id.id])
 
             cost_line = matrix_lines.filtered(
                 lambda x: x.concept_id.id == rec.product_id.id
@@ -214,9 +214,11 @@ class PurchaseOrderLine(models.Model):
                     break
 
         if 'x_product_qty_approved' in vals:
+            self.price_unit = self.x_price_unit_approved
             vals['product_qty'] = vals['x_product_qty_approved']
 
         if 'x_price_unit_approved' in vals:
+            self.product_qty = self.x_product_qty_approved
             vals['price_unit'] = vals['x_price_unit_approved']
 
         res = super().write(vals)

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_x_subservice_product_customerinfo_form" model="ir.ui.view">
+        <field name="name">x_subservice.product.customerinfo.form</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="custom_master_catalog.view_x_subservice_product_template_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='x_sap_code_income']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='x_sap_code_outgoing']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//page[@name='x_concepts']" position="after">
+                <page name="customer_material_codes" string="Customer Material Codes">
+                    <field
+                        name="variant_customer_ids"
+                        nolabel="1"
+                        readonly="disabled == True"
+                        context="{
+                            'default_product_tmpl_id': product_tmpl_id,
+                            'default_product_id': id,
+                            'form_view_ref': 'product_customerinfo.product_customerinfo_form_view'
+                        }"
+                    >
+                        <list editable="bottom">
+                            <field name="sequence" widget="handle"/>
+                            <field
+                                name="partner_id"
+                                string="Customer"
+                                domain="[('x_is_client', '=', True), ('disabled', '=', False)]"
+                                context="{'res_partner_search_mode': 'customer'}"
+                                required="1"
+                            />
+                            <field name="product_code" string="SAP Income Code"/>
+                            <field name="product_tmpl_id" column_invisible="1"/>
+                            <field name="product_id" column_invisible="1"/>
+                            <field name="company_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

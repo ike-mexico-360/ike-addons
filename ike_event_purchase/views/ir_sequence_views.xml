@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ir_sequence_view_form_inherit_ike_event_purchase" model="ir.ui.view">
+        <field name="name">ir.sequence.form.inherit.ike.event.purchase</field>
+        <field name="model">ir.sequence</field>
+        <field name="inherit_id" ref="base.sequence_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='active']" position="after">
+                <field name="x_available_for_project_purchase_orders" widget="boolean_toggle"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ir_sequence_view_tree_inherit_ike_event_purchase" model="ir.ui.view">
+        <field name="name">ir.sequence.list.inherit.ike.event.purchase</field>
+        <field name="model">ir.sequence</field>
+        <field name="inherit_id" ref="base.sequence_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='implementation']" position="before">
+                <field name="x_available_for_project_purchase_orders" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ir_sequence_view_search_inherit_ike_event_purchase" model="ir.ui.view">
+        <field name="name">ir.sequence.search.inherit.ike.event.purchase</field>
+        <field name="model">ir.sequence</field>
+        <field name="inherit_id" ref="base.view_sequence_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='inactive']" position="before">
+                <filter string="Project purchase orders" name="project_purchase_orders" domain="[('x_available_for_project_purchase_orders', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -160,7 +160,7 @@ class IkeEventSupplierSelection(models.Model):
 
         for rec in self_filtered:
             if not rec.latitude or not rec.longitude:
-                raise ValidationError('No latitude or longitude was assigned to the vehicle.')
+                raise ValidationError(_('No latitude or longitude was assigned to the vehicle.'))
             # Folio
             rec.folio = self_filtered.env['ir.sequence'].next_by_code('ike.event.supplier')
             # Acceptance Duration
@@ -217,6 +217,15 @@ class IkeEventSupplierSelection(models.Model):
 
         return self_filtered.ids
 
+    def get_selectable_vehicles(self):
+        self.ensure_one()
+        domain = list(self.truck_domain or []) + [('driver_id', '!=', False), ('x_vehicle_ref', '!=', False)]
+        vehicles = self.env['fleet.vehicle'].sudo().search(domain)
+        return [
+            {'id': vehicle.id, 'name': vehicle.name, 'license_plate': vehicle.license_plate}
+            for vehicle in vehicles
+        ]
+
     def action_reject(self) -> list[int]:
         available_ids = self._lock_records_by_state('notified')
         self_filtered = self.filtered(lambda x: x.id in available_ids)
@@ -266,6 +275,54 @@ class IkeEventSupplierSelection(models.Model):
 
         return available_ids
 
+    def action_change_service_vehicle(self, service_vehicle_id: int):
+        self.truck_id = service_vehicle_id
+        self._set_new_service_vehicle_distance()
+
+    def _set_new_service_vehicle_distance(self):
+        self.ensure_one()
+        self.name = f"{_('License Plate')}: {self.truck_id.license_plate}"
+        # Set Distance
+        origin_latitude = float(self.event_id.location_latitude)
+        origin_longitude = float(self.event_id.location_longitude)
+        if self.negotiation_type in ['base_base']:
+            # Supplier Center lat/lng
+            self.latitude = self.supplier_center_id.partner_latitude
+            self.longitude = self.supplier_center_id.partner_longitude
+            # Osrm Distance
+            data = self.event_id.get_osrm_distance(self.latitude, self.longitude, origin_latitude, origin_longitude)
+            self.estimated_distance = data.get('estimated_distance', 0)
+            self.estimated_duration = data.get('estimated_duration', 0)
+        elif self.negotiation_type in ['base_destination', 'vehicle_destination']:
+            vehicle_locations = self.event_id._get_external_vehicles_location(
+                origin_latitude,
+                origin_longitude,
+                vehicle_refs=[self.truck_id.x_vehicle_ref],
+            )
+            if len(vehicle_locations):
+                data = vehicle_locations[0]
+                self.latitude = data.get('lat', None)
+                self.longitude = data.get('lng', None)
+                self.estimated_distance = data.get('distance_m', 0) / 1000
+                self.estimated_duration = data.get('duration_s', 0) / 60
+                self.osrm = True
+            else:
+                # Supplier Center lat/lng
+                self.latitude = self.supplier_center_id.partner_latitude
+                self.longitude = self.supplier_center_id.partner_longitude
+                data = self.event_id.get_osrm_distance(self.latitude, self.longitude, origin_latitude, origin_longitude)
+                self.estimated_distance = data.get('estimated_distance', 0)
+                self.estimated_duration = data.get('estimated_duration', 0)
+        elif self.negotiation_type in ['origin_destination']:
+            self.latitude = origin_latitude
+            self.longitude = origin_longitude
+            self.estimated_distance = 0
+            self.estimated_duration = 0
+            self.cost_distance = self.cost_distance or self.estimated_duration
+            self.bypass = True
+        else:
+            pass
+
     # === PRIVATE METHODS === #
     def _notify_expiration(self):
         for rec in self:
@@ -296,7 +353,9 @@ class IkeEventSupplierSelection(models.Model):
                         next_priority = int(rec.priority) - 1
                         if next_priority >= 1:
                             rec.event_id._search_suppliers('publication', str(next_priority))
-                            rec.event_id.broadcastEventReload(3)
+                        else:
+                            rec.event_id._search_suppliers('manual')
+                        rec.event_id.broadcastEventReload(3)
                 elif rec.state == 'timeout':
                     available_siblings = rec._count_available_siblings()
                     timeout_id = rec.id
@@ -307,7 +366,9 @@ class IkeEventSupplierSelection(models.Model):
                         next_priority = int(rec.priority) - 1
                         if next_priority >= 1:
                             rec.event_id._search_suppliers('publication', str(next_priority))
-                            rec.event_id.broadcastEventReload(3)
+                        else:
+                            rec.event_id._search_suppliers('manual')
+                        rec.event_id.broadcastEventReload(3)
 
     def _count_available_siblings(self):
         self.ensure_one()
@@ -614,6 +675,6 @@ class IkeEventSupplierSelection(models.Model):
             'views': [(view_id, 'form')],
             'target': 'new',
             'context': {
-                'default_supplier_id': self.id,
+                'default_event_supplier_id': self.id,
             }
         }

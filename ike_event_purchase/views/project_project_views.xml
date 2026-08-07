@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="project_project_view_form_inherit_ike_event_purchase" model="ir.ui.view">
+        <field name="name">project.project.form.inherit.ike.event.purchase</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='group_time_managment']" position="after">
+                <group name="group_purchase_settings" string="Compras" col="1" class="row mt16 o_settings_container" groups="base.group_system,purchase.group_purchase_manager">
+                    <div>
+                        <setting class="col-lg-12" help="Use a specific sequence for purchase orders created from this project">
+                            <field name="x_purchase_order_sequence_id" domain="[('x_available_for_project_purchase_orders', '=', True)]" options="{'no_open': False}"/>
+                        </setting>
+                    </div>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

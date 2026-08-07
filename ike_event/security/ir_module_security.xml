@@ -42,6 +42,16 @@
         <field name="implied_ids" eval="[(4, ref('group_ike_event_user'))]"/>
     </record>
 
+    <record id="custom_master_catalog.custom_group_account_event_admin" model="res.groups">
+        <field name="implied_ids" eval="[
+            (4, ref('group_ike_event_user')),
+            (4, ref('custom_nu.group_custom_nus_admin')),
+            (4, ref('base.group_partner_manager')),
+        ]"/>
+    </record>
+    <record id="custom_master_catalog.custom_group_account_event_supervisor" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_ike_event_user')), (4, ref('custom_nu.group_custom_nus_user'))]"/>
+    </record>
     <record id="rule_ike_event_analyst_read_all" model="ir.rule">
         <field name="name">Ike Event: Analyst can read all</field>
         <field name="model_id" ref="model_ike_event"/>
@@ -49,6 +59,17 @@
         <field name="domain_force">[(1, '=', 1)]</field>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_ike_event_analyst_write_cancelled_verifying" model="ir.rule">
+        <field name="name">Ike Event: Analyst can write only in cancelled verifying</field>
+        <field name="model_id" ref="model_ike_event"/>
+        <field name="groups" eval="[(4, ref('custom_master_catalog.custom_group_ccc_analyst'))]"/>
+        <field name="domain_force">[('stage_id', '=', user.env.ref('ike_event.ike_event_stage_cancelled_verifying').id)]</field>
+        <field name="perm_read" eval="False"/>
+        <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
     </record>
@@ -88,7 +109,11 @@
 
     <record id="rule_ike_event_coordinator_cds_own_records" model="ir.rule">
         <field name="name">Event Coordinator CDS: Own Events Only</field>
-        <field name="model_id" ref="model_ike_event"/> <field name="domain_force">['|', ('assigned_user_id', '=', user.id), ('assigned_user_id', '=', False)]</field>
+        <field name="model_id" ref="model_ike_event"/>
+        <field name="domain_force">[
+            '|', ('assigned_user_id', '=', user.id), ('assigned_user_id', '=', False),
+            ('stage_ref', '!=', 'verifying')
+        ]</field>
         <field name="groups" eval="[(4, ref('custom_master_catalog.custom_group_event_coordinator'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>

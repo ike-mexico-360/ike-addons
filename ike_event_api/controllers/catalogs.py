@@ -184,7 +184,9 @@ class CatalogsAPIController(http.Controller):
                     ievent.destination_latitude AS latitude,
                     ievent.destination_longitude AS longitude,
                     ievent.destination_label AS destination,
-                    pp.x_min_required_photos AS min_required_photos
+                    pp.x_is_origin_destination AS is_origin_destination,
+                    pp.x_min_required_photos AS min_required_photos,
+                    pp.x_signature_required AS signature_required
                 FROM ike_event ievent
                 INNER JOIN product_category service ON service.id = ievent.service_id
                 INNER JOIN product_product pp ON pp.id = ievent.sub_service_id
@@ -241,7 +243,9 @@ class CatalogsAPIController(http.Controller):
                     ievent.destination_latitude AS latitude,
                     ievent.destination_longitude AS longitude,
                     ievent.destination_label AS destination,
-                    pp.x_min_required_photos AS min_required_photos
+                    pp.x_is_origin_destination AS is_origin_destination,
+                    pp.x_min_required_photos AS min_required_photos,
+                    pp.x_signature_required AS signature_required
                 FROM ike_event ievent
                 INNER JOIN product_category service ON service.id = ievent.service_id
                 INNER JOIN product_product pp ON pp.id = ievent.sub_service_id
@@ -298,7 +302,9 @@ class CatalogsAPIController(http.Controller):
                     ievent.destination_latitude AS latitude,
                     ievent.destination_longitude AS longitude,
                     ievent.destination_label AS destination,
-                    pp.x_min_required_photos AS min_required_photos
+                    pp.x_is_origin_destination AS is_origin_destination,
+                    pp.x_min_required_photos AS min_required_photos,
+                    pp.x_signature_required AS signature_required
                 FROM ike_event ievent
                 INNER JOIN product_category service ON service.id = ievent.service_id
                 INNER JOIN product_product pp ON pp.id = ievent.sub_service_id
@@ -485,7 +491,9 @@ class CatalogsAPIController(http.Controller):
             'progress_state': supplier_progress_state,
             'origin': None,
             'destination': None,
+            'is_origin_detination': False,
             'min_required_photos': 0,
+            'signature_required': False,
             'vehicle': {},
             'questions': [],
             'elapsed_times': [],
@@ -509,7 +517,11 @@ class CatalogsAPIController(http.Controller):
 
         # Min required photos
         if event_sudo.sub_service_id:
-            response['min_required_photos'] = event_sudo.sub_service_id.x_min_required_photos
+            response.update({
+                'is_origin_destination': event_sudo.sub_service_id.x_is_origin_destination,
+                'min_required_photos': event_sudo.sub_service_id.x_min_required_photos,
+                'signature_required': event_sudo.sub_service_id.x_signature_required,
+            })
 
         # Service
         if event_sudo.service_res_model == 'ike.service.input.vial':

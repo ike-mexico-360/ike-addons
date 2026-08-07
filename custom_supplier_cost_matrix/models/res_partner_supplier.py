@@ -19,7 +19,7 @@ class ResPartner(models.Model):
         self.ensure_one()
         action = {
             'name': _('Matriz de costos'),
-            'view_mode': 'list,form',
+            'view_mode': 'list',
             'res_model': 'custom.supplier.cost.matrix.line',
             'context': {
                 **self.env.context,
@@ -30,7 +30,7 @@ class ResPartner(models.Model):
             'view_id': False,
             'type': 'ir.actions.act_window',
             'domain': [('id', 'in', self.x_supplier_center_ids.x_cost_matrix_line_ids.ids)],
-            'views': [(False, 'list'), (False, 'form')],
+            'views': [(False, 'list')],
         }
         if len(self.x_supplier_center_ids.x_cost_matrix_line_ids) < 1:
             action['views'] = [(False, 'list')]

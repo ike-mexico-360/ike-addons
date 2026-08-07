@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-17 18:11+0000\n"
-"PO-Revision-Date: 2026-06-17 18:11+0000\n"
+"POT-Creation-Date: 2026-07-30 19:46+0000\n"
+"PO-Revision-Date: 2026-07-30 19:46+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -206,6 +206,16 @@ msgstr "Identificador de cuenta"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_account_view_form
 msgid "Account Number"
 msgstr "Número de cuenta"
+
+#. module: custom_master_catalog
+#: model:res.groups,name:custom_master_catalog.custom_group_account_event_admin
+msgid "Account Per Event (Admin)"
+msgstr "Cuenta por evento (Administrador)"
+
+#. module: custom_master_catalog
+#: model:res.groups,name:custom_master_catalog.custom_group_account_event_supervisor
+msgid "Account Per Event (Supervisor)"
+msgstr "Cuenta por evento (Supervisor)"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_account_responsible_id
@@ -544,7 +554,7 @@ msgstr "Consultas BI"
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__base_base
 msgid "Base - Base"
-msgstr "Base - Base"
+msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner__x_negotiation_type
@@ -639,6 +649,11 @@ msgstr "CL Proveedor"
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_data_source__origin_type__csv
 msgid "CSV"
+msgstr ""
+
+#. module: custom_master_catalog
+#: model:res.groups,name:custom_master_catalog.custom_group_cx
+msgid "CX"
 msgstr ""
 
 #. module: custom_master_catalog
@@ -2584,6 +2599,11 @@ msgid "Minimum Required Photos (Assistview)"
 msgstr "Mínimo requerido de fotografías (Assistview)"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__minimum_distance_km
+msgid "Minimum distance (km)"
+msgstr "Distancia mínima (km)"
+
+#. module: custom_master_catalog
 #. odoo-python
 #: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
 msgid "Missing required values: %s"
@@ -2726,6 +2746,12 @@ msgid "Name..."
 msgstr "Nombre..."
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_calendar_event_id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_date_deadline
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_date_deadline
 msgid "Next Activity Deadline"
@@ -2775,6 +2801,12 @@ msgstr "No se ha cargado ningún archivo."
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_data_source__quote__none
 msgid "No quote"
 msgstr "Sin comillas"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "No se encontró estado del vehículo con estado '%s'."
+msgstr ""
 
 #. module: custom_master_catalog
 #. odoo-python
@@ -3202,6 +3234,31 @@ msgid "Quote"
 msgstr "Comillas"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_type__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_type__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_weight_category__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model_category__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_country__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_country_state__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_fleet_vehicle_action
 msgid "Ready to manage your fleet more efficiently?"
 msgstr "¿Listo para gestionar su flota de forma más eficiente?"
@@ -3308,6 +3365,17 @@ msgstr "Filas omitidas:"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source_field__field_rule
 msgid "Rule"
 msgstr "Regla"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_sap_code_income
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_customerinfo_form
+msgid "SAP Income Code"
+msgstr "Id SAP ingreso"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_sap_code_outgoing
+msgid "SAP Outgoing Code"
+msgstr "Id SAP egreso"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_ref_sap
@@ -3891,6 +3959,16 @@ msgid "Technical configuration"
 msgstr "Configuración técnica"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_product_product__x_sap_code_income
+msgid "Technical: SAP income code"
+msgstr ""
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_product_product__x_sap_code_outgoing
+msgid "Technical: SAP outgoing code"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__template_data_sampling
 msgid "Template Data Sampling"
 msgstr ""
@@ -3981,6 +4059,7 @@ msgstr "El archivo debe ser del tipo: %s"
 #: code:addons/custom_master_catalog/models/res_partner.py:0
 msgid "The postal code \"%s\" does not exist in the geographic Zones catalog."
 msgstr "El código postal \"%s\" no existe en el catálogo de zonas geográficas."
+
 #. module: custom_master_catalog
 #. odoo-python
 #: code:addons/custom_master_catalog/models/res_partner_supplier.py:0
@@ -4148,12 +4227,6 @@ msgstr "Usuario"
 #: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
 msgid "User '%s' already assigned as driver in vehicle '%s'."
 msgstr "El usuario '%s' ya está asignado como conductor en el vehículo '%s'."
-
-#. module: custom_master_catalog
-#. odoo-python
-#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
-msgid "User '%s' already assigned in supplier-user relation."
-msgstr "El usuario '%s' ya está asignado en la relación proveedor-usuario."
 
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.res_partner_supplier_users_rel_action

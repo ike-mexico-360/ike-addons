@@ -60,7 +60,6 @@ class PortalUserAccount(CustomerPortal):
                 order="id DESC",
             )
 
-
             if supplier_lines:
                 results = []
 
@@ -201,6 +200,7 @@ class PortalUserAccount(CustomerPortal):
         except Exception as e:
             _logger.error(f"Error getting single notified supplier: {str(e)}")
             return {"success": False, "error": str(e), "supplier_event": None}
+
     @http.route(
         ["/provider/portal/services/supplier_cancel"],
         type="json",

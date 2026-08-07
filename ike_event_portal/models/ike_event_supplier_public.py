@@ -1,5 +1,5 @@
 from odoo import models, fields, api, tools, _
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, ValidationError
 
 
 class IkeEventSupplierPublic(models.Model):
@@ -41,6 +41,18 @@ class IkeEventSupplierPublic(models.Model):
 
     def action_reject(self):
         self.env['ike.event.supplier'].sudo().browse(self.id).action_reject()
+
+    def get_selectable_vehicles(self):
+        return self.env['ike.event.supplier'].sudo().browse(self.id).get_selectable_vehicles()
+
+    def action_change_service_vehicle(self, service_vehicle_id):
+        record = self.env['ike.event.supplier'].sudo().browse(self.id)
+        vehicle = self.env['fleet.vehicle'].sudo().browse(service_vehicle_id)
+        if not vehicle.exists():
+            raise ValidationError(_('Invalid vehicle.'))
+        if vehicle.x_partner_id.id != record.supplier_id.id:
+            raise ValidationError(_('The selected vehicle does not belong to this supplier.'))
+        return record.action_change_service_vehicle(vehicle.id)
     # ToDo
     # def write(self, vals):
     #     fields_names = list(vals.keys())

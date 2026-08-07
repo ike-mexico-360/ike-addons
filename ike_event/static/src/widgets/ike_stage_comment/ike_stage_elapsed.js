@@ -15,7 +15,7 @@ export class IkeStageElapsed extends Component {
     };
     static defaultProps = {};
     setup() {
-        console.log("IkeStageElapsed", this);
+        // console.log("IkeStageElapsed", this);
         this.state = useState({
             elapsedSeconds: 0,
             valueFormatted: 0,

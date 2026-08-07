@@ -61,3 +61,29 @@
 .card.kpi-balance-card .d-flex + .d-flex {
     margin-top: 0.5rem;
 }
+
+/* Estado Factura column badges */
+.badge-invoice-status {
+    display: inline-block;
+    padding: 0.35em 0.75em;
+    border-radius: 50rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.badge-invoice-waiting {
+    background-color: rgba(108, 117, 125, 0.15);
+    color: #495057;
+}
+
+.badge-invoice-partial {
+    background-color: rgba(255, 193, 7, 0.2);
+    color: #8a6100;
+}
+
+.badge-invoice-full {
+    background-color: rgba(13, 110, 253, 0.15);
+    color: #0a4bb5;
+}

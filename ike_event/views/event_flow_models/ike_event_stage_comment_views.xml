@@ -76,7 +76,7 @@
                     <notebook>
                         <page name="comments" string="Comments">
                             <field name="stage_comment_ids" readonly="1" nolabel="1" widget="one2many">
-                                <list>
+                                <list editable="bottom">
                                     <field name="create_date" string="Date" />
                                     <field name="stage_id" />
                                     <field name="sequence" optional="hide" />

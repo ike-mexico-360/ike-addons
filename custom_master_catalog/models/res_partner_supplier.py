@@ -145,7 +145,7 @@ class ResPartner(models.Model):
             ('base_base', 'Base - Base'),
             ('base_destination', 'Base - Destination'),
             ('origin_destination', 'Origin - Destination'),
-            ('base_concepts', 'Base - Concepts'),
+            # ('base_concepts', 'Base - Concepts'),
         ],
         help='Base - Base: Base location to destination point to base.\n'
         'Base - Destination: Crane location at destination point or base at destination point.\n'

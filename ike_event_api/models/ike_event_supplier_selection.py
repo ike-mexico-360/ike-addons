@@ -327,6 +327,9 @@ class IkeEventSupplierSelection(models.Model):
                                 "sub_service": {
                                     "id": rec.event_id.sub_service_id.id,
                                     "name": rec.event_id.sub_service_id.name,
+                                    "is_origin_destination": rec.event_id.sub_service_id.x_is_origin_destination or False,
+                                    "min_required_photos": rec.event_id.sub_service_id.x_min_required_photos or 0,
+                                    "signature_required": rec.event_id.sub_service_id.x_signature_required or False,
                                 },
                                 "DB": self.env.cr.dbname,  # Base de datos para distinguir de donde provienen las notificaciones
                             },

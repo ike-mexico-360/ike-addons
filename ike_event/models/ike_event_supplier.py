@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from collections import defaultdict
-
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError, ValidationError
 
@@ -27,12 +25,16 @@ class IkeEventSupplier(models.Model):
     # Search fields
     supplier_number = fields.Integer(default=1, required=True)
     search_number = fields.Integer(default=1, required=True)
+    negotiation_type = fields.Char(default='base_base')
     estimated_distance = fields.Float(help='Estimated distance to reach the user, in kilometers.', default=0.0)
     estimated_duration = fields.Float(help='Estimated duration to arrive to the user, in minutes.', default=0.0)
     estimated_cost = fields.Float(related='supplier_link_id.estimated_cost', store=True, readonly=False)
     real_distance = fields.Float(default=0.0)
     real_duration = fields.Float(default=0.0)
+    cost_distance = fields.Float(default=0.0)
+    bypass = fields.Boolean(default=False)
     user_amount_paid = fields.Float(related='supplier_link_id.user_amount_paid', readonly=False)
+    user_payment_lines_count = fields.Integer(related='supplier_link_id.user_payment_lines_count')
 
     # Assignation supplier fields
     ranking = fields.Integer(string='Ranking', default=0, readonly=True)
@@ -63,6 +65,7 @@ class IkeEventSupplier(models.Model):
     subservice_id = fields.Many2one('product.product', related='event_id.sub_service_id')
     event_supplier_summary_data = fields.Html(compute='_compute_event_supplier_summary_data')
     travel_tracking_url = fields.Char(compute='_compute_travel_tracking_url')
+
     # === STAGED LINE PROGRESS FIELDS === #
     on_route_to_user_start_date_widget = fields.Datetime()
     on_route_to_user_end_date_widget = fields.Datetime()
@@ -163,6 +166,7 @@ class IkeEventSupplier(models.Model):
     # === DETAILS FIELDS === #
     supplier_link_id = fields.Many2one('ike.event.supplier.link')
     supplier_product_ids = fields.One2many(related='supplier_link_id.supplier_product_ids', readonly=False)
+    all_supplier_product_ids = fields.One2many(related='supplier_link_id.all_supplier_product_ids')
     amount_concept_subtotal = fields.Float(related='supplier_link_id.amount_concept_subtotal', string='Subtotal')
     amount_concept_vat = fields.Float(related='supplier_link_id.amount_concept_vat', string='VAT')
     amount_concept_total = fields.Float(related='supplier_link_id.amount_concept_total', string='Total')
@@ -278,7 +282,7 @@ class IkeEventSupplier(models.Model):
                     """
 
                 # Supplier section
-                event_summary_supplier_data += "<h3 class='mt-3'>%s</h3>" % _('Assigned supplier')
+                event_summary_supplier_data += "<h3 class='mt-3'>%s</h3>" % _('Assigned Supplier')
 
                 supplier_fields = [
                     'supplier_id',
@@ -428,6 +432,80 @@ class IkeEventSupplier(models.Model):
 
             # Event Completed: validation inside
             rec.event_id.action_completed()
+
+            # Get Distance km
+            negotiation_type = rec.negotiation_type
+            total_distance_km = rec.cost_distance
+            if negotiation_type == 'base_base':
+                total_distance_km = (rec.cost_distance + (rec.event_id.destination_distance or 0)) * 2.0
+            elif negotiation_type in ['base_destination', 'vehicle_destination']:
+                total_distance_km += (rec.event_id.destination_distance or 0)
+            elif negotiation_type == 'origin_destination':
+                total_distance_km = (rec.event_id.destination_distance or 0)
+            elif negotiation_type == 'base_concept':
+                total_distance_km = 0.0
+            else:
+                total_distance_km = 0.0
+            total_distance_km = int(-(-total_distance_km // 1))  # To integer
+
+            # Add Extra Base Products Children
+            for product_line_id in rec.supplier_product_ids:
+                if product_line_id.product_id and product_line_id.base:
+                    has_children = any(
+                        x.product_id and x.parent_product_id.id == product_line_id.product_id.id
+                        for x in rec.all_supplier_product_ids
+                    )
+                    if not has_children:
+                        bom_product_ids = rec.event_id._get_boom_product(product_line_id.product_id)
+                        boom_matrix_cost_line_ids = rec.event_id.get_supplier_product_matrix_lines(
+                            rec.supplier_center_id.id, bom_product_ids.ids)
+
+                        total_base_unit_price = 0
+                        total_base_cancel_price = 0
+                        new_product_lines = []
+                        for product_id in bom_product_ids:
+                            cost_line_id = boom_matrix_cost_line_ids.filtered(
+                                lambda x:
+                                    x.concept_id.id == product_id.id
+                                    and x.supplier_status_id.ref == 'concluded')
+                            cancel_cost_line_id = boom_matrix_cost_line_ids.filtered(
+                                lambda x:
+                                    x.concept_id.id == product_id.id
+                                    and x.supplier_status_id.ref == 'cancelled')
+
+                            base_unit_price = cost_line_id[0].cost if cost_line_id else 0
+                            base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
+                            quantity = total_distance_km if product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1.0)
+                            sequence = product_line_id.sequence
+
+                            total_base_unit_price += base_unit_price
+                            total_base_cancel_price += base_cancel_price
+
+                            new_product_lines.append(Command.create({
+                                'product_id': product_id.id,
+                                'base_quantity': quantity,
+                                'base_unit_price': base_unit_price,
+                                'base_cancel_price': base_cancel_price,
+                                'unit_price': base_unit_price,
+                                'estimated_quantity': quantity,
+                                'quantity': quantity,
+                                'uom_id': product_id.uom_id.id,
+                                'tax_ids': [Command.set(product_id.taxes_id.ids)],
+                                'sequence': sequence,
+                                'covered': product_line_id.covered,
+                                'cost_matrix_line_id': cost_line_id.id,
+                                'parent_product_id': product_line_id.product_id.id,
+                            }))
+                        # Base Prices
+                        if product_line_id.base_unit_price == 0:
+                            product_line_id.base_unit_price = total_base_unit_price
+                            product_line_id.base_cancel_price = total_base_cancel_price
+                        # Add Children
+                        rec.supplier_link_id.with_context(
+                            not_add_horizontally=True,
+                            from_internal=True,
+                        ).supplier_product_ids = new_product_lines
+
             # Event reload
             rec.broadcastReload(event_reload=True)
 
@@ -632,6 +710,9 @@ class IkeEventSupplier(models.Model):
     def action_view_ike_event_service_cost(self):
         list_view = self.env.ref('ike_event.ike_event_supplier_product_service_costs_list_view').id
 
+        mapped = {}
+        for rec in self:
+            mapped[rec.supplier_link_id.id] = rec.id
         return {
             'name': _('Service costs'),
             'type': 'ir.actions.act_window',
@@ -640,13 +721,14 @@ class IkeEventSupplier(models.Model):
             'views': [(list_view, 'list')],
             'search_view_id': False,
             'domain': [
-                ('event_supplier_link_id', 'in', self.ids),
+                ('event_supplier_link_id', 'in', self.mapped('supplier_link_id.id')),
                 ('display_type', 'not in', ['line_section', 'line_note']),
                 ('parent_product_id', '=', False),
             ],
             'target': 'new',
             'context': {
                 **self.env.context,
+                'mapped': mapped,
                 'create': False,
                 'edit': False,
             },
@@ -655,6 +737,13 @@ class IkeEventSupplier(models.Model):
     def action_view_ike_event_agreement_cost_final(self):
         list_view = self.env.ref('ike_event.ike_event_supplier_product_detail_base_cost_final_list_view').id
 
+        is_assigned_user = self.event_id.assigned_user_id.id == self.env.user.id
+        is_admin_user = self.env.user.has_group('base.group_system')
+        can_edit = is_assigned_user or is_admin_user
+
+        mapped = {}
+        for rec in self:
+            mapped[rec.supplier_link_id.id] = rec.id
         return {
             'name': _('Agreement costs'),
             'type': 'ir.actions.act_window',
@@ -663,15 +752,17 @@ class IkeEventSupplier(models.Model):
             'views': [(list_view, 'list')],
             'search_view_id': False,
             'domain': [
-                ('event_supplier_link_id', 'in', self.ids),
+                ('event_supplier_link_id', 'in', self.mapped('supplier_link_id.id')),
                 ('display_type', 'not in', ['line_section', 'line_note']),
                 ('parent_product_id', '=', False),
             ],
             'target': 'new',
             'context': {
                 **self.env.context,
+                'mapped': mapped,
                 'create': False,
                 'edit': True,
+                'from_review_cost': not can_edit,
             },
         }
 
@@ -689,6 +780,7 @@ class IkeEventSupplier(models.Model):
                 **self.env.context,
                 'create': False,
                 'edit': True,
+                'ike_update_route': True,
             },
             'target': 'new',
         }
@@ -713,7 +805,7 @@ class IkeEventSupplier(models.Model):
     def action_open_travel_tracking(self):
         self.ensure_one()
         return {
-            'name': _('Assigned supplier: %s') % self.supplier_id.name,
+            'name': _('Assigned Supplier: %s') % self.supplier_id.name,
             'type': 'ir.actions.act_window',
             'res_model': 'ike.event.supplier',
             'view_mode': 'form',
@@ -727,7 +819,14 @@ class IkeEventSupplier(models.Model):
             },
         }
 
-    # === Auxiliary ===
+    # === CRUD === #
+    def write(self, vals):
+        res = super().write(vals)
+        if 'truck_id' in vals and self.env.context.get('ike_update_route', False):
+            self._set_new_service_vehicle_distance()
+        return res
+
+    # === Auxiliary === #
     @staticmethod
     def decimal_minutes_to_time(decimal_minutes):
         minutes = int(decimal_minutes)
@@ -757,12 +856,21 @@ class IkeEventSupplierLink(models.Model):
     nu_user_id = fields.Many2one(related='event_id.user_id')
     authorizer = fields.Char('Authorizer', compute="_compute_authorizer_name", store=True)
     user_amount_paid = fields.Float('Amount Paid to Supplier', default=0)
+    user_payment_line_ids = fields.One2many(
+        'ike.event.supplier.link.payment.line',
+        'link_id',
+        string='User Payment Lines',
+    )
+    user_payment_lines_count = fields.Integer(compute='_compute_user_payment_lines_count', store=True)
 
     # === LINE FIELDS === #
     supplier_product_ids = fields.One2many(
         'ike.event.supplier.product', 'event_supplier_link_id',
         domain=[('parent_product_id', '=', False)],
         string='Concepts')
+    all_supplier_product_ids = fields.One2many(
+        'ike.event.supplier.product', 'event_supplier_link_id',
+        string='All Concepts')
     amount_concept_subtotal = fields.Float(string='Subtotal', compute='_compute_amount_supplier_product', store=True)
     amount_concept_vat = fields.Float(string='VAT', compute='_compute_amount_supplier_product', store=True)
     amount_concept_total = fields.Float(string='Total', compute='_compute_amount_supplier_product', store=True)
@@ -787,7 +895,7 @@ class IkeEventSupplierLink(models.Model):
             amount_vat = 0.0
             cost_invalid = False
 
-            for line in rec.supplier_product_ids:
+            for line in rec.supplier_product_ids.filtered(lambda x: not x.display_type and x.cost_price >= 0):
                 if not line.display_type:
                     amount_subtotal += line.cost_price
                     amount_vat += line.vat
@@ -871,6 +979,11 @@ class IkeEventSupplierLink(models.Model):
 
             rec.exceeds_coverage = exceeds and has_group
 
+    @api.depends('user_payment_line_ids')
+    def _compute_user_payment_lines_count(self):
+        for rec in self:
+            rec.user_payment_lines_count = len(rec.user_payment_line_ids.ids)
+
     # === ONCHANGE === #
     @api.onchange('type_authorization_id')
     def onchange_type_authorization_id(self):
@@ -893,7 +1006,6 @@ class IkeEventSupplierLink(models.Model):
     def action_request_authorization(self):
         self.ensure_one()
         # ToDo: Send notification?
-        print("action_request_authorization")
 
     def action_accept_authorization(self):
         self.ensure_one()
@@ -935,12 +1047,11 @@ class IkeEventSupplierLink(models.Model):
         # ToDo: Reject?
         print("action_reject_authorization")
 
-    def get_product_cost(self, product_id: int):
-        supplier_id: int = self.supplier_id.id
+    def get_product_cost(self, supplier_id: int, product_id: int):
         product_ids = [product_id]
 
         # Matrix Lines
-        matrix_cost_line_ids = self.event_id.get_supplier_product_matrix_lines(supplier_id, product_ids)
+        matrix_cost_line_ids = self.event_id.get_supplier_product_matrix_lines_by_supplier(supplier_id, product_ids)
         cost_line_id = matrix_cost_line_ids.filtered(
             lambda x:
                 x.concept_id.id == product_id
@@ -960,9 +1071,18 @@ class IkeEventSupplierLink(models.Model):
             # Vehicle
             if self.aux_truck_id and self.aux_truck_id.x_partner_id.id != self.supplier_id.id:
                 self.aux_truck_id = None
+            self._onchange_set_product_costs()
+
+    @api.depends_context('add_supplier')
+    @api.onchange('aux_truck_id')
+    def _onchange_aux_truck_id(self):
+        self._onchange_set_product_costs()
+
+    def _onchange_set_product_costs(self):
+        if self.aux_truck_id:
             # Costs
             matrix_cost_line_ids = self.event_id.get_supplier_product_matrix_lines(
-                self.supplier_id.id, self.supplier_product_ids.mapped('product_id.id')
+                self.aux_truck_id.x_center_id.id, self.supplier_product_ids.mapped('product_id.id')
             )
             for product_line_id in self.supplier_product_ids:
                 cost_line_id = matrix_cost_line_ids.filtered(
@@ -1031,21 +1151,62 @@ class IkeEventSupplierLink(models.Model):
         res = super().create(vals_list)
         if self.env.context.get('add_supplier'):
             for rec in res:
-                event_supplier_id = rec.event_id.add_manual_suppliers(rec.supplier_id, rec.aux_truck_id)
+                event_supplier_id = rec.event_id.add_manual_supplier(rec.supplier_id, rec.aux_truck_id)
                 event_supplier_id.supplier_link_id = rec.id
         return res
 
     def write(self, vals):
         res = super().write(vals)
-        if 'user_amount_paid' in vals and vals['user_amount_paid'] > 0:
-            sibling_ids = self.search([
-                ('id', '!=', self.id),
-                ('event_id', '=', self.event_id.id),
-                ('user_amount_paid', '=', 0),
-            ])
-            for link_id in sibling_ids:
-                link_id.user_amount_paid = vals['user_amount_paid']
+
+        # User amount paid lines Horizontal Dragging
+        # if (
+        #     'user_payment_line_ids' in vals
+        #     and not self.env.context.get('skip_payment_lines')
+        # ):
+        #     sibling_ids = self.search([
+        #         ('id', '!=', self.id),
+        #         ('event_id', '=', self.event_id.id),
+        #         ('supplier_number', '=', self.supplier_number),
+        #     ])
+
+        #     sibling_ids.with_context(skip_payment_lines=True).write({
+        #         'user_payment_line_ids': vals['user_payment_line_ids'],
+        #     })
+
         return res
+
+
+class IkeEventSupplierLinkPaymentLine(models.Model):
+    _name = 'ike.event.supplier.link.payment.line'
+    _description = 'Event Supplier Payment Link Line'
+
+    link_id = fields.Many2one('ike.event.supplier.link', 'Event Supplier', required=True, ondelete='cascade')
+    event_id = fields.Many2one(related='link_id.event_id')
+    supplier_id = fields.Many2one(related='link_id.supplier_id')
+    supplier_number = fields.Integer(related='link_id.supplier_number')
+
+    payment_type = fields.Selection([
+        ('link', 'Payment Link'),
+        ('cash', 'Cash')
+    ], 'Payment Type', default='link', required=True)
+    payment_datetime = fields.Datetime('Payment Datetime', required=True, default=fields.Datetime.now)
+    amount = fields.Float('Amount', required=True)
+
+    @api.constrains('amount')
+    def _check_amount(self):
+        for line in self:
+            if line.amount <= 0:
+                raise ValidationError(
+                    _("The payment amount must be greater than zero.")
+                )
+
+            link = line.link_id
+            if link.authorization_by_nu and link.user_payment_line_ids:
+                total_amount_payment = sum(link.user_payment_line_ids.mapped('amount'))
+                if total_amount_payment > link.amount_concept_subtotal:
+                    raise ValidationError(
+                        _("The advance payment total exceeds the subtotal")
+                    )
 
 
 class IkeServiceStage(models.Model):

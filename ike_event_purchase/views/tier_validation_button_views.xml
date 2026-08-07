@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="tier_validation_buttons_sentence_case"
+              inherit_id="base_tier_validation.tier_validation_buttons">
+        <xpath expr="//button[@name='request_validation']" position="attributes">
+            <attribute name="string">Request validation</attribute>
+            <attribute name="class" add="ike-tier-validation-button" separator=" "/>
+        </xpath>
+        <xpath expr="//button[@name='restart_validation']" position="attributes">
+            <attribute name="string">Restart validation</attribute>
+            <attribute name="class" add="ike-tier-validation-button" separator=" "/>
+        </xpath>
+    </template>
+</odoo>

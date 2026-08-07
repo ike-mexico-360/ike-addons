@@ -45,6 +45,16 @@ class ShHelpdeskTicket(models.Model):
             self.stage_id = self.company_id.done_stage_id.id
         return res
 
+    def sh_check_access(self, vals):
+        if self.env.context.get('ike_assignment_wizard'):
+            return
+        return super().sh_check_access(vals)
+
+    def _sh_auto_assign_user(self, vals):
+        if self.env.context.get('ike_assignment_wizard') and vals.get('user_id'):
+            return
+        return super()._sh_auto_assign_user(vals)
+
     def x_action_open_purchase_order(self):
         view_id = self.env.ref('ike_event_purchase.purchase_order_helpdesk_dispute_form').id
 

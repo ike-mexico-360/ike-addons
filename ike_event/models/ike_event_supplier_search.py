@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import base64
 import json
 import logging
 import math
@@ -7,7 +8,7 @@ import requests
 
 from datetime import timedelta
 
-from odoo import models, fields, api, Command, _
+from odoo import models, fields, Command, _
 from odoo.exceptions import UserError, ValidationError
 
 from .other_models.ike_event_batcher import event_batcher
@@ -26,6 +27,7 @@ class IkeEvent_Search(models.Model):
         ('manual', 'Manual'),
         ('manual_manual', 'Manual Added'),
     ], default='electronic', string="Search Type (Supplier)", copy=False)
+    supplier_search_priority = fields.Integer()
     supplier_search_number = fields.Integer(string='Search Number (Supplier)', default=0, copy=False)
     base_supplier_number = fields.Integer(default=1, copy=False)
     use_external_locations = fields.Boolean(default=True)
@@ -76,15 +78,15 @@ class IkeEvent_Search(models.Model):
             current_authorization_ids = self.authorization_ids.filtered(lambda x: x.supplier_number <= self.supplier_number)
             # Max Distance by Supplier
             supplier_max_distances = {}
-            max_distance_km: float = 0.0
+            max_cost_distance_km: float = 0.0
             for supplier in service_suppliers:
-                if supplier['estimated_distance'] > max_distance_km:
-                    max_distance_km = supplier['estimated_distance']
-                if supplier['estimated_distance'] > supplier_max_distances.get(supplier['supplier_id'], 0):
-                    supplier_max_distances[supplier['supplier_id']] = supplier['estimated_distance']
+                if supplier['cost_distance'] > max_cost_distance_km:
+                    max_cost_distance_km = supplier['cost_distance']
+                if supplier['cost_distance'] > supplier_max_distances.get(supplier['supplier_id'], 0):
+                    supplier_max_distances[supplier['supplier_id']] = supplier['cost_distance']
 
-            # Covered Amount
-            self._set_covered_amount(max_distance_km + (self.destination_distance or 0))
+            # Covered Amount, from table
+            self._set_covered_amount(max_cost_distance_km + (self.destination_distance or 0))
 
             # Supplies
             for supplier in service_suppliers:
@@ -93,16 +95,13 @@ class IkeEvent_Search(models.Model):
                         x.supplier_id.id == supplier['supplier_id']
                         and x.supplier_number == self.supplier_number,
                 )
-                # Distance km
-                total_distance_km = supplier_max_distances.get(supplier['supplier_id'], 0) + (self.destination_distance or 0)
-                total_distance_km = int(-(-total_distance_km // 1))
 
                 # Supplier Link
                 if not supplier_link_id:
-                    # User amount paid
-                    current_user_amount_paid = (
+                    # User amount paid lines Vertical Dragging
+                    current_user_payment_line_ids = (
                         self.service_supplier_ids.filtered(
-                            lambda x: x.user_amount_paid > 0 and x.search_number < self.supplier_search_number
+                            lambda x: x.user_payment_lines_count > 0 and x.search_number < self.supplier_search_number
                         )
                         .sorted(
                             lambda x: (
@@ -110,26 +109,43 @@ class IkeEvent_Search(models.Model):
                                 -x.search_number,
                             )
                         )[:1]
-                        .supplier_link_id.user_amount_paid
+                        .supplier_link_id.user_payment_line_ids
                     )
+                    current_user_payment_lines = [
+                        Command.create(
+                            {
+                                'payment_type': x.payment_type,
+                                'payment_datetime': x.payment_datetime,
+                                'amount': x.amount,
+                            }
+                        )
+                        for x in current_user_payment_line_ids
+                    ]
+                    # Distance km
+                    total_distance_km = supplier_max_distances.get(supplier['supplier_id'], 0)
+                    if supplier['negotiation_type'] == 'base_base':
+                        total_distance_km = (total_distance_km + (self.destination_distance or 0)) * 2.0
+                    elif supplier['negotiation_type'] in ['base_destination', 'vehicle_destination']:
+                        total_distance_km += (self.destination_distance or 0)
+                    elif supplier['negotiation_type'] == 'origin_destination':
+                        total_distance_km = (self.destination_distance or 0)
+                    elif supplier['negotiation_type'] == 'base_concept':
+                        total_distance_km = 0.0
+                    else:
+                        total_distance_km = 0.0
+                    total_distance_km = int(-(-total_distance_km // 1))  # To integer
 
                     # Add link
-                    supplier_products_data = self.get_supplier_products_data(supplier['supplier_id'], total_distance_km)
+                    supplier_products_data = self.get_supplier_products_data(supplier['supplier_center_id'], total_distance_km)
                     for product_data in supplier_products_data:
                         product_data[2]['supplier_number'] = self.supplier_number
 
-                    has_zero = any(
-                        d[2].get('product_id', None) and d[2]['base_unit_price'] == 0
-                        for d in supplier_products_data
-                    )
-                    if has_zero:
-                        supplier['ignore'] = True
                     supplier_link_id = self.env['ike.event.supplier.link'].with_context(from_internal=True).create({
                         'event_id': self.id,
                         'supplier_id': supplier['supplier_id'],
                         'supplier_number': self.supplier_number,
                         'supplier_product_ids': supplier_products_data,
-                        'user_amount_paid': current_user_amount_paid,
+                        'user_payment_line_ids': current_user_payment_lines,
                     })
                     # Manual Notification
                     supplier_link_id.manual_notification = (
@@ -149,12 +165,20 @@ class IkeEvent_Search(models.Model):
                         else:
                             product_id.authorization_pending = True
 
-                # Products cost by km
-                products_cost_by_km = supplier_link_id.supplier_product_ids.filtered(
-                    lambda x: x.product_id.x_cost_by_km and not x.parent_product_id
+                    # Products cost by km
+                    products_cost_by_km = supplier_link_id.supplier_product_ids.filtered(
+                        lambda x: x.product_id.x_cost_by_km and not x.parent_product_id
+                    )
+                    if len(products_cost_by_km):
+                        products_cost_by_km.with_context(ignore_authorization=True).quantity = total_distance_km
+
+                # Zero Cost
+                has_zero = any(
+                    x.product_id and x.base_unit_price == 0
+                    for x in supplier_link_id.supplier_product_ids
                 )
-                if len(products_cost_by_km):
-                    products_cost_by_km.with_context(ignore_authorization=True).quantity = total_distance_km
+                if has_zero:
+                    supplier['ignore'] = True
 
                 # Set link totals
                 supplier['supplier_link_id'] = supplier_link_id.id
@@ -181,6 +205,7 @@ class IkeEvent_Search(models.Model):
             # Set Google Route
             if assignation_type == 'electronic':
                 for supplier in service_suppliers:
+                    # if supplier['latitude'] and supplier['longitude']:
                     destination_distance_m, destination_duration_s, destination_route = (
                         self.get_destination_route(
                             supplier['latitude'],
@@ -239,6 +264,87 @@ class IkeEvent_Search(models.Model):
 
         self.broadcastSuppliersNotifications()
 
+    def action_search_suppliers_test(self):
+        priority = self.supplier_search_priority
+        if priority == 0:
+            priority = None
+        content = self._search_suppliers_test(self.supplier_search_type, priority)
+        attachment = self.env['ir.attachment'].create({
+            'name': f'{self.name}.txt',
+            'type': 'binary',
+            'datas': base64.b64encode(content.encode('utf-8')),
+            'res_model': self._name,
+            'res_id': self.id,
+            'mimetype': 'text/plain',
+        })
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'self',
+        }
+
+    def _search_suppliers_test(self, assignation_type, priority=None):
+        self.ensure_one()
+        content = f"SEARCH: {assignation_type} {priority}\n"
+        if priority:
+            priority = str(priority)
+
+        # Algorithm
+        service_suppliers, max_suppliers, limit_max_distance_km = self._search_suppliers_algorithm(assignation_type, priority)
+
+        if len(service_suppliers):
+            # Max Distance by Supplier
+            supplier_max_distances = {}
+            max_cost_distance_km: float = 0.0
+            for supplier in service_suppliers:
+                if supplier['cost_distance'] > max_cost_distance_km:
+                    max_cost_distance_km = supplier['cost_distance']
+                if supplier['cost_distance'] > supplier_max_distances.get(supplier['supplier_id'], 0):
+                    supplier_max_distances[supplier['supplier_id']] = supplier['cost_distance']
+
+            supplier_products = {}
+            for supplier in service_suppliers:
+                content += f"supplier_id: {supplier['supplier_id']}, supplier_center_id: {supplier['supplier_center_id']}"
+                content += f", vehicle_id: {supplier['truck_id']} ({supplier['latitude']}, {supplier['longitude']})"
+                content += f", negotiation_type: {supplier['negotiation_type']}"
+                content += f", estimated_distance: {supplier['estimated_distance']}"
+                content += f", estimated_duration: {supplier['estimated_duration']}"
+                content += f", cost_distance: {supplier['cost_distance']}"
+                content += "\n"
+                if supplier['supplier_id'] in supplier_products:
+                    continue
+                # Distance km
+                total_distance_km = supplier_max_distances.get(supplier['supplier_id'], 0)
+                if supplier['negotiation_type'] == 'base_base':
+                    total_distance_km = (total_distance_km + (self.destination_distance or 0)) * 2.0
+                elif supplier['negotiation_type'] in ['base_destination', 'vehicle_destination']:
+                    total_distance_km += (self.destination_distance or 0)
+                elif supplier['negotiation_type'] == 'origin_destination':
+                    total_distance_km = (self.destination_distance or 0)
+                elif supplier['negotiation_type'] == 'base_concept':
+                    total_distance_km = 0.0
+                else:
+                    total_distance_km = 0.0
+                total_distance_km = int(-(-total_distance_km // 1))  # To integer
+
+                # Products
+                supplier_products[supplier['supplier_id']], sql = self.get_supplier_products_data_test(
+                    supplier['supplier_center_id'], total_distance_km
+                )
+
+                content += "QUERY\n" + sql + "\n"
+
+            content += "\n"
+            content += "PRODUCTS\n"
+            for key, value in supplier_products.items():
+                content += f"supplier_id: {key}: "
+                content += "\n"
+                content += json.dumps(value, indent=4, ensure_ascii=False)
+                content += "\n"
+
+        return content
+
     # === ALGORITHM === #
     def _search_suppliers_algorithm(self, assignation_type, priority=None) -> tuple[list[dict], int, float]:
         """ Algorithm """
@@ -249,9 +355,9 @@ class IkeEvent_Search(models.Model):
         _logger.info(f"IKE EVENT - DEBUG - 0: {assignation_type} {str(priority)}")
 
         # Global Variables
-        sequence_conf = 1
         maneuver_id = self.env.ref('ike_event.ike_product_tag_maneuvers').id
         # To Filter supplier geographical areas
+        sequence_conf = 1
         assignation_type_conf = ''
         if assignation_type == 'electronic':
             sequence_conf = 1
@@ -291,8 +397,6 @@ class IkeEvent_Search(models.Model):
         if municipality:
             municipalities_data.append({'id': municipality.id, 'name': municipality.name})
         if not len(municipalities_data):
-            # ? Raise 1
-            # raise UserError(_("There are no municipalities with postal code: %s.", zip_code))
             return [], max_suppliers, max_radius_km
 
         # * LOGGER 2: Municipalities
@@ -300,15 +404,8 @@ class IkeEvent_Search(models.Model):
         _logger.info(f"IKE EVENT - DEBUG - 2: {municipalities_text}")
 
         # Get Supplier Centers
-        supplier_centers_data = self._get_supplier_centers(assignation_type_conf, municipalities_data)
-        if not len(supplier_centers_data):
-            # ? Raise 2
-            # raise UserError(_(
-            #     "There are no geographic areas configured for this municipality: %s (%s).",
-            #     municipalities_text, zip_code,
-            # ))
-            return [], max_suppliers, max_radius_km
-
+        supplier_centers_data = self._get_supplier_centers(assignation_type_conf, municipalities_data, priority)
+        # Get Supplier Centers, Priority filter
         supplier_centers_data = [x for x in supplier_centers_data if not priority or x['priority'] == priority]
         if not len(supplier_centers_data):
             return [], 0, 0
@@ -389,67 +486,10 @@ class IkeEvent_Search(models.Model):
             _logger.info("IKE EVENT - DEBUG - 4: %s", vehicles_domain)
 
             # Search Vehicles
-            service_vehicle_ids = self.env['fleet.vehicle'].search(vehicles_domain, order='x_center_id')
-            service_vehicles_data = [{
-                'id': rec.id,
-                'driver_id': [rec.driver_id.id, rec.driver_id.name],
-                'license_plate': rec.license_plate,
-                'vehicle_type': rec.vehicle_type,
-                'x_partner_id': [rec.x_partner_id.id, None],
-                'x_center_id': [rec.x_center_id.id, None],
-                'x_latitude': rec.x_latitude,
-                'x_longitude': rec.x_longitude,
-            } for rec in service_vehicle_ids]
-
-            # Get External Location/Duration/Distance
-            if self.use_external_locations:
-                vehicles_location_data = self._get_external_vehicles_location(
-                    float(latitude),
-                    float(longitude),
-                    vehicle_refs=[str(x.x_vehicle_ref) for x in service_vehicle_ids],
-                    radius_m=float(max_radius_km * 1000),
-                    max_distance_m=float(max_radius_km * 1.4 * 1000),
-                )
-                if len(vehicles_location_data):
-                    for i, vehicle_id in enumerate(service_vehicle_ids):
-                        data = next(
-                            (x for x in vehicles_location_data if x['vehicle_ref'] == vehicle_id.x_vehicle_ref),
-                            None
-                        )
-                        if data:
-                            vehicle_id.x_latitude = data.get('lat', None)
-                            vehicle_id.x_longitude = data.get('lng', None)
-                            service_vehicles_data[i]['x_latitude'] = data.get('lat', None)
-                            service_vehicles_data[i]['x_longitude'] = data.get('lng', None)
-                            service_vehicles_data[i]['estimated_distance'] = data.get('distance_m', 0) / 1000
-                            service_vehicles_data[i]['estimated_duration'] = data.get('duration_s', 0) / 60
-                            service_vehicles_data[i]['osrm'] = True
+            if assignation_type == 'electronic':
+                service_vehicles_data = self._get_electronic_vehicles_data(vehicles_domain, max_radius_km)
             else:
-                service_vehicles_data = [
-                    x for x in service_vehicles_data
-                    if x['x_latitude'] and x['x_longitude']
-                ]
-            # Get Estimated Duration/Distance and priority
-            supplier_center_data = {'supplier_center_id': 0}
-            for vehicle in service_vehicles_data:
-                if supplier_center_data['supplier_center_id'] != vehicle['x_center_id'][0]:
-                    supplier_center_data = next(
-                        (x for x in supplier_centers_data if x['supplier_center_id'] == vehicle['x_center_id'][0]),
-                        {}
-                    )
-                vehicle['priority'] = supplier_center_data['priority']
-                if not vehicle.get('estimated_distance', False):
-                    estimated_distance_km = round(
-                        self.haversine_distance_km(
-                            float(latitude),
-                            float(longitude),
-                            float(vehicle["x_latitude"]),
-                            float(vehicle["x_longitude"]),
-                        ),
-                        2
-                    )
-                    vehicle['estimated_distance'] = estimated_distance_km
-                    vehicle['estimated_duration'] = self.get_estimated_duration(estimated_distance_km)
+                service_vehicles_data = self._get_vehicles_data(vehicles_domain, max_radius_km)
 
             # * LOGGER 5: Service Vehicles
             vehicles_text = ", ".join([
@@ -458,42 +498,52 @@ class IkeEvent_Search(models.Model):
             ])
             _logger.info(f"IKE EVENT - DEBUG - 5: ({str(max_radius_km)}, {str(max_arrived_time_m)}), {vehicles_text}")
 
-            # Filter vehicles max distance/duration
+            # Filter vehicles by negotiation type rules
             service_vehicles_data = [
                 x for x in service_vehicles_data
-                if (
-                    (
-                        x.get('osrm')
-                        and x['estimated_distance'] <= (max_radius_km * 1.5)
-                        and x['estimated_duration'] <= (max_arrived_time_m * 1.5)
-                    )
-                    or (
-                        x['estimated_distance'] <= max_radius_km
-                        and x['estimated_duration'] <= max_arrived_time_m
-                    )
+                if not x['no_distance']
+                and (
+                    x['estimated_distance'] > 0
+                    and x['estimated_distance'] <= (max_radius_km * 1.5)
+                    and x['estimated_duration'] <= (max_arrived_time_m * 1.5)
                 )
+                or x.get('bypass', False)
             ]
-            service_vehicles_len = len(service_vehicles_data)
 
+            # Set Priority
+            supplier_center_data = {'supplier_center_id': 0}
+            for vehicle in service_vehicles_data:
+                if supplier_center_data['supplier_center_id'] != vehicle['supplier_center_id']:
+                    supplier_center_data = next(
+                        (x for x in supplier_centers_data if x['supplier_center_id'] == vehicle['supplier_center_id']),
+                        {}
+                    )
+                vehicle['priority'] = supplier_center_data['priority']
+
+            # SERVICE VEHICLES RESULT
+            service_vehicles_len = len(service_vehicles_data)
             for i in range(0, service_vehicles_len):
                 vehicle = service_vehicles_data[i]
                 service_suppliers.append({
                     'event_id': self.id,
                     'assignation_type': assignation_type,
                     'name': f"{_('License Plate')}: {vehicle['license_plate']}",
-                    'supplier_id': vehicle['x_partner_id'][0],
-                    'supplier_center_id': vehicle['x_center_id'][0],
+                    'supplier_id': vehicle['supplier_id'],
+                    'supplier_center_id': vehicle['supplier_center_id'],
                     'state': 'available',
                     'priority': vehicle['priority'],
+                    'negotiation_type': vehicle['negotiation_type'],
                     'estimated_distance': vehicle['estimated_distance'],
                     'estimated_duration': vehicle['estimated_duration'],
-                    'timer_duration': timer_duration_s,
+                    'cost_distance': vehicle['cost_distance'],
                     'osrm': vehicle.get('osrm'),
+                    'timer_duration': timer_duration_s,
                     'is_manual': bool(assignation_type == 'manual'),
-                    'truck_id': vehicle['id'],  # Set the correct db ID
-                    'assigned': vehicle['driver_id'][1] if vehicle['driver_id'] else "",
-                    'latitude': vehicle['x_latitude'],
-                    'longitude': vehicle['x_longitude'],
+                    'truck_id': vehicle['id'],
+                    'assigned': vehicle['driver_name'],
+                    'latitude': vehicle['latitude'],
+                    'longitude': vehicle['longitude'],
+                    'bypass': vehicle.get('bypass', False),
                 })
 
         # * LOGGER 6: Service suppliers
@@ -548,8 +598,8 @@ class IkeEvent_Search(models.Model):
 
         return municipalities_data
 
-    def _get_supplier_centers(self, assignation_type_conf: str, municipalities_data: list):
-        supplier_centers_query = """
+    def _get_supplier_centers(self, assignation_type_conf: str, municipalities_data: list, priority=None):
+        query = """
             SELECT DISTINCT
                 ga.partner_id as supplier_center_id
                 ,ga.parent_id as supplier_id
@@ -562,18 +612,91 @@ class IkeEvent_Search(models.Model):
             INNER JOIN res_partner su on su.id = ga.parent_id
             INNER JOIN custom_geographical_area_product_rel gap on gap.geographical_area_id = ga.id
             WHERE
-                ga.municipality_id IN %s
+                ga.municipality_id IN %(municipality_ids)s
                 AND NOT ga.disabled AND ga.active
                 AND NOT su.disabled AND su.active
-                AND gap.product_id = %s
+                AND gap.product_id = %(subservice_id)s
         """
-        supplier_centers_query += assignation_type_conf
 
-        municipality_ids = tuple(x['id'] for x in municipalities_data)
-        self._cr.execute(supplier_centers_query, [municipality_ids, self.sub_service_id.id])
-        supplier_centers_data = self._cr.dictfetchall()
+        query += assignation_type_conf
 
-        return supplier_centers_data
+        params = {
+            "municipality_ids": tuple(x["id"] for x in municipalities_data),
+            "subservice_id": self.sub_service_id.id,
+        }
+
+        if priority is not None:
+            query += " AND gap.priority = %(priority)s::text"
+            params["priority"] = str(priority)
+        query += " ORDER BY ga.partner_id desc"
+
+        self._cr.execute(query, params)
+        return self._cr.dictfetchall()
+
+    def _get_electronic_vehicles_data(self, vehicles_domain, max_radius_km):
+        service_vehicle_ids = self.env['fleet.vehicle'].search(vehicles_domain, order='x_center_id')
+
+        service_vehicles_data = [{
+            'id': rec.id,
+            'ref': rec.x_vehicle_ref,
+            'driver_id': rec.driver_id.id,
+            'driver_name': rec.driver_id.name,
+            'license_plate': rec.license_plate,
+            'vehicle_type': rec.vehicle_type,
+            'supplier_id': rec.x_partner_id.id,
+            'supplier_center_id': rec.x_center_id.id,
+            'latitude': rec.x_latitude,
+            'longitude': rec.x_longitude,
+            'negotiation_type': 'vehicle_destination',  # Always
+            'center_latitude': rec.x_center_id.partner_latitude,
+            'center_longitude': rec.x_center_id.partner_longitude,
+            'estimated_distance': 0,
+            'estimated_duration': 0,
+            'cost_distance': 0,
+            'bypass': False,
+            'no_distance': False,  # ToPop
+        } for rec in service_vehicle_ids]
+
+        origin_latitude = float(self.location_latitude)
+        origin_longitude = float(self.location_longitude)
+
+        vehicles_osrm_data = []
+        if self.use_external_locations:
+            vehicles_osrm_data = self._get_external_vehicles_location(
+                origin_latitude,
+                origin_longitude,
+                vehicle_refs=[x['ref'] for x in service_vehicles_data],
+                radius_m=float(max_radius_km * 1000),
+                max_distance_m=float(max_radius_km * 1.4 * 1000),
+            )
+        for vehicle in service_vehicles_data:
+            data = None
+            if len(vehicles_osrm_data):
+                data = next(
+                    (x for x in vehicles_osrm_data if x['vehicle_ref'] == vehicle['ref']),
+                    None
+                )
+            if data:
+                vehicle['latitude'] = data.get('lat', None)
+                vehicle['longitude'] = data.get('lng', None)
+                vehicle['estimated_distance'] = data.get('distance_m', 0) / 1000
+                vehicle['estimated_duration'] = data.get('duration_s', 0) / 60
+                vehicle['osrm'] = True
+            elif not self.use_external_locations:
+                if not vehicle['latitude'] or not vehicle['longitude']:
+                    continue
+                if not str(vehicle['latitude']).isdigit() or not str(vehicle['longitude']).isdigit():
+                    continue
+                osrm_distance = self.get_osrm_distance(
+                    vehicle['latitude'], vehicle['longitude'],
+                    origin_latitude, origin_longitude
+                )
+                vehicle.update(osrm_distance)
+            else:
+                vehicle['no_distance'] = True
+            vehicle['cost_distance'] = vehicle['estimated_distance']
+
+        return service_vehicles_data
 
     def _get_vehicles_data(self, vehicles_domain, max_radius_km):
         service_vehicle_ids = self.env['fleet.vehicle'].search(vehicles_domain, order='x_center_id')
@@ -586,66 +709,105 @@ class IkeEvent_Search(models.Model):
             'license_plate': rec.license_plate,
             'vehicle_type': rec.vehicle_type,
             'supplier_id': rec.x_partner_id.id,
-            'center_id': rec.x_center_id.id,
+            'supplier_center_id': rec.x_center_id.id,
             'latitude': rec.x_latitude,
             'longitude': rec.x_longitude,
-            'negotiation_type': rec.x_partner_id.x_negotiation_type,
+            'negotiation_type': rec.x_partner_id.x_negotiation_type or 'base_destination',
             'center_latitude': rec.x_center_id.partner_latitude,
             'center_longitude': rec.x_center_id.partner_longitude,
-            'distance_m': 0,
-            'duration_s': 0,
+            'estimated_distance': 0,
+            'estimated_duration': 0,
+            'cost_distance': 0,
+            'no_distance': False,  # It was not possible to obtain distance
+            'bypass': False,  # At least one per supplier
         } for rec in service_vehicle_ids]
 
-        supplier_base_origin = {}
-        vehicles_osrm = []
+        base_origin_distances = {}
+        vehicle_refs = []
 
-        origin_latitude = self.location_latitude
-        origin_longitude = self.location_longitude
+        origin_latitude = float(self.location_latitude)
+        origin_longitude = float(self.location_longitude)
+
+        no_distance_suppliers = set()
 
         for vehicle in service_vehicles_data:
+            supplier_id = vehicle['supplier_id']
+            if supplier_id in no_distance_suppliers:
+                vehicle['no_distance']
+                continue
             negotiation_type = vehicle['negotiation_type']
-            center_id = vehicle['center_id']
             vehicle_latitude = float(vehicle['latitude'])
             vehicle_longitude = float(vehicle['longitude'])
+            supplier_center_id = vehicle['supplier_center_id']
             center_latitude = float(vehicle['center_latitude'])
             center_longitude = float(vehicle['center_longitude'])
-            if not negotiation_type or negotiation_type in ['base_base', 'base_destination']:
-                vehicle['latitude'] = center_latitude
-                vehicle['longitude'] = center_longitude
-                # Base to Origin
+
+            if negotiation_type in ['base_base', 'base_destination', 'base_concept'] or not negotiation_type:
                 if center_latitude and center_longitude:
-                    if center_id not in supplier_base_origin:
-                        supplier_base_origin[center_id] = self._get_osrm_distance(
+                    if supplier_center_id not in base_origin_distances:
+                        base_origin_distances[supplier_center_id] = self.get_osrm_distance(
                             center_latitude, center_longitude,
                             origin_latitude, origin_longitude
                         )
-                    vehicle = supplier_base_origin[center_id] | vehicle
-                if negotiation_type == 'base_destination':
-                    if self.use_external_locations:
-                        vehicles_osrm.append(vehicle['ref'])
+                    vehicle.update(base_origin_distances[supplier_center_id])
+                if negotiation_type in ['base_base', 'base_concept']:
+                    if base_origin_distances.get(supplier_center_id, False):
+                        # Set Center lat/lng and distance/duration
+                        vehicle.update(base_origin_distances[supplier_center_id])
+                        vehicle['latitude'] = center_latitude
+                        vehicle['longitude'] = center_longitude
+                        if negotiation_type == 'base_concept':
+                            vehicle['cost_distance'] = 0.0
                     else:
-                        osrm_distance = self._get_osrm_distance(
-                            vehicle_latitude, vehicle_longitude,
-                            origin_latitude, origin_longitude
-                        )
-                        vehicle = osrm_distance | vehicle
+                        vehicle['no_distance']
+                        no_distance_suppliers.add(supplier_id)
+                elif negotiation_type == 'base_destination':
+                    if self.use_external_locations:
+                        vehicle_refs.append(vehicle['ref'])
+                        vehicle['negotiation_type'] = 'vehicle_destination'
+                    else:
+                        # Debug/Local Only
+                        if vehicle_latitude and vehicle_latitude:
+                            osrm_distance = self.get_osrm_distance(
+                                vehicle_latitude, vehicle_longitude,
+                                origin_latitude, origin_longitude
+                            )
+                            vehicle.update(osrm_distance)
+                        elif base_origin_distances.get(supplier_center_id):
+                            vehicle.update(base_origin_distances[supplier_center_id])
+                            vehicle['latitude'] = center_latitude
+                            vehicle['longitude'] = center_longitude
+                        else:
+                            vehicle['no_distance'] = True
+                        vehicle['osrm'] = True
             elif negotiation_type == 'origin_destination':
                 vehicle['latitude'] = origin_latitude
                 vehicle['longitude'] = origin_longitude
-                vehicle['distance_m'] = 0
-                vehicle['duration_s'] = 0
+                vehicle['estimated_distance'] = 0
+                vehicle['estimated_duration'] = 0
+                vehicle['cost_distance'] = 0
+                vehicle['bypass'] = True
+            else:
+                pass
 
-        if len(vehicles_osrm):
+        if len(vehicle_refs):
             vehicles_osrm_data = self._get_external_vehicles_location(
-                float(self.location_latitude),
-                float(self.location_longitude),
-                vehicle_refs=[str(x) for x in vehicles_osrm],
+                origin_latitude,
+                origin_longitude,
+                vehicle_refs=[str(x) for x in vehicle_refs],
                 radius_m=float(max_radius_km * 1000),
                 max_distance_m=float(max_radius_km * 1.4 * 1000),
             )
 
-            if len(vehicles_osrm_data):
-                for vehicle in service_vehicles_data:
+            for vehicle in service_vehicles_data:
+                if vehicle['negotiation_type'] == 'vehicle_destination':
+                    supplier_id = vehicle['supplier_id']
+                    vehicle_latitude = float(vehicle['latitude'])
+                    vehicle_longitude = float(vehicle['longitude'])
+                    supplier_center_id = vehicle['supplier_center_id']
+                    center_latitude = float(vehicle['center_latitude'])
+                    center_longitude = float(vehicle['center_longitude'])
+
                     data = next(
                         (x for x in vehicles_osrm_data if x['vehicle_ref'] == vehicle['ref']),
                         None
@@ -653,43 +815,60 @@ class IkeEvent_Search(models.Model):
                     if data:
                         vehicle['latitude'] = data.get('lat', None)
                         vehicle['longitude'] = data.get('lng', None)
-                        vehicle['distance_m'] = data.get('distance_m', 0) / 1000
-                        vehicle['duration_s'] = data.get('duration_s', 0) / 60
+                        vehicle['estimated_distance'] = data.get('distance_m', 0) / 1000
+                        vehicle['estimated_duration'] = data.get('duration_s', 0) / 60
+                        vehicle['cost_distance'] = data.get('duration_s', 0) / 60
                         vehicle['osrm'] = True
+                    elif base_origin_distances.get(supplier_center_id):
+                        # Set Center lat/lng and distance/duration
+                        vehicle.update(base_origin_distances[supplier_center_id])
+                        vehicle['negotiation_type'] = 'base_destination'
+                        vehicle['latitude'] = center_latitude
+                        vehicle['longitude'] = center_longitude
+                    else:
+                        vehicle['no_distance'] = True
+
+        # First one of each combination supplier/supplier_center
+        seen = set()
+
+        service_vehicles_data = sorted(
+            [item for item in service_vehicles_data],
+            key=lambda x: (x['estimated_duration'])
+        )
+        service_vehicles_data = [
+            x for x in service_vehicles_data
+            if not (
+                (x["supplier_id"], x["supplier_center_id"]) in seen
+                or seen.add((x["supplier_id"], x["supplier_center_id"]))
+            )
+        ]
 
         return service_vehicles_data
 
-    def _get_osrm_distance(self, lat, lng, lat_dest, lng_dest):
-        return {
-            'distance_m': 5000,
-            'duration_s': 10,
-            'osrm': True,
-        }
-
+    # === PRODUCTS METHODS === #
     def get_supplier_products_matrix_line_ids(
         self,
-        supplier_id: int,
+        supplier_center_id: int,
         product_ids: list[int],
         status_ref: str,
     ):
         """ Get Matrix Lines ids by Query """
+        query, params = self._get_supplier_products_matrix_query(supplier_center_id, product_ids, status_ref)
+        self.env.cr.execute(query, params)
+        return self.env.cr.dictfetchall()
 
+    def _get_supplier_products_matrix_query(
+        self,
+        supplier_center_id: int,
+        product_ids: list[int],
+        status_ref: str,
+    ):
         # Variables
         municipality, vehicle_category_id = self._get_event_service_variables()
 
         if not municipality:
             return []
 
-        area_id = self.env['custom.geographical.area'].search([
-            ('municipality_id', '=', municipality.id),
-            ('partner_id.parent_id', '=', supplier_id),
-            ('active', '=', True),
-            ('disabled', '=', False),
-        ], limit=1, order='id desc')
-        if not area_id:
-            return []
-
-        supplier_center_id: int = area_id.partner_id.id
         sub_service_id: int = self.sub_service_id.id
         event_type_id: int = self.event_type_id.id
         vehicle_category_id: int = vehicle_category_id
@@ -701,21 +880,20 @@ class IkeEvent_Search(models.Model):
         event_date = event_date.date()
         is_holiday = self.env['custom.holidays'].search_count([('date', '=', event_date)], limit=1)
 
-        params = (
-            event_time,
-            is_holiday,
-            supplier_center_id,
-            sub_service_id,
-            event_type_id,
-            vehicle_category_id,
-            status_ref,
-            state_id,
-            municipality_id,
-            account_id,
-            event_date,
-            event_date,
-            product_ids,
-        )
+        params = {
+            "event_time": event_time,
+            "is_holiday": is_holiday,
+            "supplier_center_id": supplier_center_id,
+            "sub_service_id": sub_service_id,
+            "event_type_id": event_type_id,
+            "vehicle_category_id": vehicle_category_id,
+            "status_ref": status_ref,
+            "state_id": state_id,
+            "municipality_id": municipality_id,
+            "account_id": account_id,
+            "event_date": event_date,
+            "product_ids": product_ids,
+        }
 
         query = """
             WITH matrix AS (
@@ -729,8 +907,8 @@ class IkeEvent_Search(models.Model):
                     ,m.date_end
                     ,COALESCE(sc.start_time, 0) AS start_time
                     ,COALESCE(sc.end_time, 24) AS end_time
-                    ,CASE WHEN %s BETWEEN start_time AND end_time THEN 1 ELSE 0 END AS in_time
-                    ,m.holiday_date_applies::int = %s as holiday_applies
+                    ,CASE WHEN %(event_time)s BETWEEN start_time AND end_time THEN 1 ELSE 0 END AS in_time
+                    ,m.holiday_date_applies::int = %(is_holiday)s as holiday_applies
                     ,m.holiday_date_applies
                     ,st.ref AS supplier_status_ref
                     ,svc.vehicle_category_id
@@ -741,11 +919,11 @@ class IkeEvent_Search(models.Model):
                 LEFT JOIN vacation_schedule_cost_product_rel_id scr ON scr.custom_supplier_cost_product_id = m.id
                 LEFT JOIN custom_supplier_cost_product_schedule sc ON scr.custom_supplier_cost_product_schedule_id = sc.id
                 WHERE m.active AND NOT m.disabled
-                    AND supplier_center_id = %s
-                    AND m.subservice_id = %s
-                    AND m.type_event_id = %s
-                    AND svc.vehicle_category_id = %s
-                    AND st.ref = %s
+                    AND m.supplier_center_id = %(supplier_center_id)s
+                    AND m.subservice_id = %(sub_service_id)s
+                    AND m.type_event_id = %(event_type_id)s
+                    AND svc.vehicle_category_id = %(vehicle_category_id)s
+                    AND st.ref = %(status_ref)s
             )
             SELECT
                 p.id AS product_id,
@@ -755,49 +933,78 @@ class IkeEvent_Search(models.Model):
                 SELECT mm.id
                 FROM matrix mm
                 WHERE mm.product_id = p.id
-                    AND (mm.state_id IS NULL OR mm.state_id = %s)
-                    AND (mm.municipality_id IS NULL OR mm.municipality_id = %s)
-                    AND (mm.account_id IS NULL OR mm.account_id = %s)
-                    AND date_init <= %s
-                    AND (date_end IS NULL OR date_end > %s)
+                    AND (mm.state_id IS NULL OR mm.state_id = %(state_id)s)
+                    AND (mm.municipality_id IS NULL OR mm.municipality_id = %(municipality_id)s)
+                    AND (mm.account_id IS NULL OR mm.account_id = %(account_id)s)
+                    AND mm.date_init <= %(event_date)s
+                    AND (mm.date_end IS NULL OR mm.date_end > %(event_date)s)
                 ORDER BY
-                    mm.state_id,
-                    mm.municipality_id,
-                    mm.account_id,
-                    date_init DESC,
-                    date_end,
-                    mm.in_time DESC,
-                    mm.holiday_applies DESC,
-                    mm.id DESC
+                    mm.state_id
+                    ,mm.municipality_id
+                    ,mm.account_id
+                    ,date_init DESC
+                    ,date_end
+                    ,mm.in_time DESC
+                    ,mm.holiday_applies DESC
+                    ,mm.id DESC
                 LIMIT 1
             ) AS m ON TRUE
-            WHERE p.id = ANY(%s)
+            WHERE p.id = ANY(%(product_ids)s)
         """
-        # query_result = query % params
-        # print(query_result)
+        return query, params
 
-        self.env.cr.execute(query, params)
-        return self.env.cr.dictfetchall()
-
-    def get_supplier_product_matrix_lines(self, supplier_id: int, product_ids: list[int]):
+    def get_supplier_product_matrix_lines(self, supplier_center_id: int, product_ids: list[int]):
         """ Get Matrix Lines"""
         concluded_products = self.get_supplier_products_matrix_line_ids(
-            supplier_id=supplier_id,
-            product_ids=product_ids,
+            supplier_center_id,
+            product_ids,
             status_ref='concluded',
         )
         concluded_matrix_ids = [x['matrix_line_id'] for x in concluded_products if x.get('matrix_line_id')]
 
         cancelled_products = self.get_supplier_products_matrix_line_ids(
-            supplier_id=supplier_id,
-            product_ids=product_ids,
+            supplier_center_id,
+            product_ids,
             status_ref='cancelled',
         )
         cancelled_matrix_ids = [x['matrix_line_id'] for x in cancelled_products if x.get('matrix_line_id')]
 
         return self.env['custom.supplier.cost.matrix.line'].browse(concluded_matrix_ids + cancelled_matrix_ids)
 
-    def get_supplier_products_data(self, supplier_id: int, distance_km: int = 1):
+    def get_supplier_product_matrix_lines_by_supplier(self, supplier_id: int, product_ids: list[int]):
+        """ Get Matrix Lines obsolete"""
+        # Variables
+        municipality, vehicle_category_id = self._get_event_service_variables()
+
+        area_id = self.env['custom.geographical.area'].search([
+            ('municipality_id', '=', municipality.id),
+            ('partner_id.parent_id', '=', supplier_id),
+            ('active', '=', True),
+            ('disabled', '=', False),
+        ], limit=1, order='id desc')
+
+        supplier_center_id: int = area_id.partner_id.id
+        matrix = self.env['custom.supplier.cost.matrix.line']
+        if not supplier_center_id:
+            return matrix  # None
+
+        concluded_products = self.get_supplier_products_matrix_line_ids(
+            supplier_center_id,
+            product_ids,
+            status_ref='concluded',
+        )
+        concluded_matrix_ids = [x['matrix_line_id'] for x in concluded_products if x.get('matrix_line_id')]
+
+        cancelled_products = self.get_supplier_products_matrix_line_ids(
+            supplier_center_id,
+            product_ids,
+            status_ref='cancelled',
+        )
+        cancelled_matrix_ids = [x['matrix_line_id'] for x in cancelled_products if x.get('matrix_line_id')]
+
+        return matrix.browse(concluded_matrix_ids + cancelled_matrix_ids)
+
+    def get_supplier_products_data(self, supplier_center_id: int, distance_km: int = 1):
         self.ensure_one()
 
         supplier_products_data = []
@@ -821,27 +1028,31 @@ class IkeEvent_Search(models.Model):
         current_product_line_ids = self.service_product_ids.filtered(
             lambda x: x.estimated_quantity > 0 and x.supplier_number == self.supplier_number
         )
+        line_product_ids = current_product_line_ids.mapped('product_id.id')
 
         # Matrix Lines
-        matrix_cost_line_ids = self.get_supplier_product_matrix_lines(supplier_id, current_product_line_ids.mapped('product_id.id'))
+        matrix_cost_line_ids = self.get_supplier_product_matrix_lines(
+            supplier_center_id,
+            line_product_ids,
+        )
 
         # Product Lines
         for product_line_id in current_product_line_ids:
             if not product_line_id.product_id:
                 continue
             # Product Boom
-            product_ids = None
+            bom_product_ids = None
             total_base_unit_price = 0
             total_base_cancel_price = 0
             tax_ids: list[int] = product_line_id.product_id.taxes_id.ids
             if product_line_id.base:
-                product_ids = self._get_boom_product(product_line_id.product_id)
-                tax_ids = product_ids.mapped('taxes_id.id')
+                bom_product_ids = self._get_boom_product(product_line_id.product_id)
+                tax_ids = bom_product_ids.mapped('taxes_id.id')
                 boom_matrix_cost_line_ids = self.get_supplier_product_matrix_lines(
-                    supplier_id,
-                    product_ids.ids
+                    supplier_center_id,
+                    bom_product_ids.ids,
                 )
-                for product_id in product_ids:
+                for product_id in bom_product_ids:
                     cost_line_id = boom_matrix_cost_line_ids.filtered(
                         lambda x:
                             x.concept_id.id == product_id.id
@@ -862,6 +1073,7 @@ class IkeEvent_Search(models.Model):
 
                     supplier_products_data.append(Command.create({
                         'product_id': product_id.id,
+                        'base_quantity': quantity,
                         'base_unit_price': base_unit_price,
                         'base_cancel_price': base_cancel_price,
                         'unit_price': base_unit_price,
@@ -892,21 +1104,95 @@ class IkeEvent_Search(models.Model):
             sequence = product_line_id.sequence
             if not product_line_id.covered and sequence < 1000:
                 sequence += 1000
+            quantity = distance_km if product_line_id.product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1)
 
             supplier_products_data.append(Command.create({
                 'product_id': product_line_id.product_id.id,
+                'base_quantity': quantity,
                 'base_unit_price': total_base_unit_price,
                 'base_cancel_price': total_base_cancel_price,
                 'unit_price': total_base_unit_price,
                 'estimated_quantity': 1,
-                'quantity': distance_km if product_line_id.product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1),
+                'quantity': quantity,
                 'uom_id': product_line_id.uom_id.id,
                 'tax_ids': [Command.set(list(set(tax_ids)))],
                 'sequence': sequence,
                 'covered': product_line_id.covered,
+                'base': product_line_id.base,
                 'cost_matrix_line_id': cost_line_id.id if cost_line_id else None,
             }))
         return supplier_products_data
+
+    def get_supplier_products_data_test(self, supplier_center_id: int, distance_km: int = 1):
+        self.ensure_one()
+
+        supplier_products_data = []
+
+        # Product Ids
+        current_product_line_ids = self.service_product_ids.filtered(
+            lambda x: x.estimated_quantity > 0 and x.supplier_number == self.supplier_number
+        )
+
+        matrix_product_ids: list[int] = current_product_line_ids.product_id.ids
+
+        # Product Lines
+        for product_line_id in current_product_line_ids:
+            if not product_line_id.product_id:
+                continue
+            # Product Boom
+            bom_product_ids = None
+            if product_line_id.base:
+                bom_product_ids = self._get_boom_product(product_line_id.product_id)
+                matrix_product_ids += bom_product_ids.ids
+
+                for product_id in bom_product_ids:
+                    quantity = distance_km if product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1)
+
+                    supplier_products_data.append({
+                        'product_id': product_id.id,
+                        'quantity': quantity,
+                        'covered': product_line_id.covered,
+                        'parent_product_id': product_line_id.product_id.id,
+                    })
+            # Product Base/Additional
+            supplier_products_data.append({
+                'product_id': product_line_id.product_id.id,
+                'quantity': distance_km if product_line_id.product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1),
+                'covered': product_line_id.covered,
+            })
+        query, params = self._get_supplier_products_matrix_query(supplier_center_id, matrix_product_ids, 'concluded')
+        sql = self.env.cr.mogrify(query, params)
+        if isinstance(sql, bytes):
+            sql = sql.decode("utf-8")
+
+        matrix_cost_line_ids = self.get_supplier_product_matrix_lines(supplier_center_id, matrix_product_ids)
+
+        for line in supplier_products_data:
+            cost_line_id = matrix_cost_line_ids.filtered(
+                lambda x:
+                    x.concept_id.id == line['product_id']
+                    and x.supplier_status_id.ref == 'concluded')
+            cancel_cost_line_id = matrix_cost_line_ids.filtered(
+                lambda x:
+                    x.concept_id.id == line['product_id']
+                    and x.supplier_status_id.ref == 'cancelled')
+            line['base_unit_price'] = cost_line_id[0].cost if cost_line_id else 0
+            line['base_cancel_price'] = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
+
+        for line in supplier_products_data:
+            if not line.get('parent_product_id'):
+                line['base_unit_price'] = sum(
+                    x['base_unit_price'] or 0.0
+                    for x in supplier_products_data
+                    if x.get('parent_product_id') == line['product_id']
+                )
+                line['base_cancel_price'] = sum(
+                    x['base_cancel_price'] or 0.0
+                    for x in supplier_products_data
+                    if x.get('parent_product_id') == line['product_id']
+                )
+
+        return supplier_products_data, sql
 
     def _get_boom_product(self, product_id):
         product_line_id = self.sub_service_id.concept_line_ids.filtered(
@@ -957,6 +1243,7 @@ class IkeEvent_Search(models.Model):
 
             products_data.append(Command.create({
                 'product_id': product_line_id.product_id.id,
+                'base_quantity': 1,
                 'base_unit_price': 0,
                 'base_cancel_price': 0,
                 'unit_price': 0,
@@ -987,6 +1274,81 @@ class IkeEvent_Search(models.Model):
                     self.sudo().write({
                         'authorized_amount': limit_id[0].amount,
                     })
+
+    # === LOCATION METHODS === #
+    def _get_external_vehicles_location(
+        self,
+        latitude: float, longitude: float,
+        vehicle_refs: list[str],
+        radius_m: float = 1000000000, max_distance_m: float = 1000000000, max_gps_age_min: float = 60000, top: int = 100,
+    ):
+        vehicle_data = []
+        try:
+            url = "https://o0c6l0kl3e.execute-api.us-east-2.amazonaws.com/nearest-vehicles"
+            headers = {
+                "Content-Type": "application/json",
+            }
+            payload = {
+                "vehicle_ids": vehicle_refs,
+                "destination": {"lat": latitude, "lon": longitude},
+                "topX": top,
+                "radius_m": radius_m,
+                "max_distance_m": max_distance_m,
+                "max_gps_age_min": max_gps_age_min,
+            }
+            # _logger.info(f"Nearest Vehicles - Payload: {payload}")
+            response = requests.post(
+                url,
+                headers=headers, data=json.dumps(payload))
+            result = response.json()
+            items = result.get('items', [])
+            if len(items) > 0:
+                vehicle_data = [{
+                    'vehicle_ref': x.get('vehicle_id', ''),
+                    'lat': x.get('gps', {'lat': None, 'lon': None}).get('lat', None),
+                    'lng': x.get('gps', {'lat': None, 'lon': None}).get('lon', None),
+                    'distance_m': x.get('osrm', {'distance_m': 0, 'duration_s': 0}).get('distance_m', 0),
+                    'duration_s': x.get('osrm', {'distance_m': 0, 'duration_s': 0}).get('duration_s', 0),
+                } for x in items]
+            else:
+                _logger.warning(str(result))
+        except Exception as e:
+            _logger.error(f"Error geolocation location server: {str(e)}")
+        return vehicle_data
+
+    def get_osrm_distance(self, lat, lng, lat_dest, lng_dest):
+        result = {
+            'estimated_distance': 0.0,  # in km
+            'estimated_duration': 0.0,  # in min
+        }
+        try:
+            url = "https://zh90tdil2h.execute-api.us-east-2.amazonaws.com/default/route-estimate"
+            headers = {
+                "Content-Type": "application/json",
+            }
+            payload = {
+                "serviceId": "SERV-223456",
+                "origin": {
+                    "latitude": float(lat),
+                    "longitude": float(lng),
+                },
+                "destination": {
+                    "latitude": float(lat_dest),
+                    "longitude": float(lng_dest),
+                },
+                "date": "2026-01-01T10:30:00Z",
+            }
+            response = requests.post(
+                url,
+                headers=headers, data=json.dumps(payload))
+            response_json = response.json()
+            result['estimated_distance'] = response_json.get('distanceKm', 0.0)
+            result['estimated_duration'] = response_json.get('estimatedTimeMinutes', 0.0)
+            result['cost_distance'] = result['estimated_distance']
+        except Exception as e:
+            _logger.error(f"Error geolocation distance server: {str(e)}")
+        # ToDo: if error, get haversine distance
+        return result
 
     # === PROCESS METHODS === #
     def _process_suppliers_data(self, service_suppliers, assignation_type, priority=None):
@@ -1072,45 +1434,13 @@ class IkeEvent_Search(models.Model):
                 sequence += 1
                 service_supplier_ids[i].sequence = sequence
 
-    def _get_external_vehicles_location(
-        self,
-        latitude: float, longitude: float,
-        vehicle_refs: list[str],
-        radius_m: float = 1000000000, max_distance_m: float = 1000000000, max_gps_age_min: float = 60000, top: int = 100,
-    ):
-        vehicle_data = []
-        try:
-            url = "https://o0c6l0kl3e.execute-api.us-east-2.amazonaws.com/nearest-vehicles"
-            headers = {
-                "Content-Type": "application/json",
-            }
-            payload = {
-                "vehicle_ids": vehicle_refs,
-                "destination": {"lat": latitude, "lon": longitude},
-                "topX": top,
-                "radius_m": radius_m,
-                "max_distance_m": max_distance_m,
-                "max_gps_age_min": max_gps_age_min,
-            }
-            _logger.info(f"Nearest Vehicles - Payload: {payload}")
-            response = requests.post(
-                url,
-                headers=headers, data=json.dumps(payload))
-            result = response.json()
-            items = result.get('items', [])
-            if len(items) > 0:
-                vehicle_data = [{
-                    'vehicle_ref': x.get('vehicle_id', ''),
-                    'lat': x.get('gps', {'lat': None, 'lon': None}).get('lat', None),
-                    'lng': x.get('gps', {'lat': None, 'lon': None}).get('lon', None),
-                    'distance_m': x.get('osrm', {'distance_m': 0, 'duration_s': 0}).get('distance_m', 0),
-                    'duration_s': x.get('osrm', {'distance_m': 0, 'duration_s': 0}).get('duration_s', 0),
-                } for x in items]
-            else:
-                _logger.warning(str(result))
-        except Exception as e:
-            _logger.error(f"Error geolocation location server: {str(e)}")
-        return vehicle_data
+    def _with_locked_records(self):
+        if not self.ids:
+            return []
+        self._cr.execute(
+            f'SELECT id FROM {self._table} WHERE id IN %s FOR UPDATE SKIP LOCKED', [tuple(self.ids)]
+        )
+        return [row[0] for row in self.env.cr.fetchall()]
 
     # === BROADCASTS === #
     def broadcastSuppliersNotifications(self):
@@ -1189,210 +1519,44 @@ class IkeEvent_Search(models.Model):
                 'default_supplier_product_ids': products_data,
             },
         }
-        # return {
-        #     'name': _('Add Supplier'),
-        #     'type': 'ir.actions.act_window',
-        #     'res_model': 'ike.event.manual.supplier.wizard',
-        #     'view_mode': 'form',
-        #     'target': 'new',
-        #     'context': {
-        #         'default_event_id': self.id,
-        #     }
-        # }
 
-    def add_manual_suppliers_wizard(self, supplier_id, vehicle_id):
-        self.ensure_one()
-
-        self.service_supplier_ids.filtered(lambda x: x.state == 'notified').action_expire()
-
-        current_selected = self.selected_supplier_ids.filtered(
-            lambda x: x.supplier_number == self.supplier_number
-        )
-
-        if current_selected:
-            self.supplier_number += 1
-
-        if self.supplier_search_type != 'manual_manual':
-            self.supplier_search_type = 'manual_manual'
-            self.supplier_search_number += 1
-
-        last_line = self.env['ike.event.supplier'].search_read(
-            [('event_id', '=', self.id)], ['sequence'], limit=1, order='sequence desc'
-        )
-
-        # Estimated Duration/Distance
-        estimated_distance_km = 0.0
-        estimated_duration_m = 0.0
-        osrm = False
-        if self.use_external_locations:
-            vehicles_location_data = self._get_external_vehicles_location(
-                float(self.location_latitude),
-                float(self.location_longitude),
-                vehicle_refs=[str(vehicle_id.x_vehicle_ref)]
-            )
-            if len(vehicles_location_data):
-                data = vehicles_location_data[0]
-                vehicle_id.x_latitude = data.get('lat', None)
-                vehicle_id.x_longitude = data.get('lng', None)
-                estimated_distance_km = data.get('distance_m', 0) / 1000
-                estimated_duration_m = data.get('duration_s', 0) / 60
-                osrm = True
-        if not estimated_distance_km and vehicle_id.x_latitude and vehicle_id.x_longitude:
-            estimated_distance_km = round(
-                self.haversine_distance_km(
-                    float(self.location_latitude),
-                    float(self.location_longitude),
-                    float(vehicle_id.x_latitude),
-                    float(vehicle_id.x_longitude)
-                ),
-                2
-            )
-            estimated_duration_m = self.get_estimated_duration(estimated_distance_km)
-        # Distance km
-        total_distance_km = estimated_distance_km + (self.destination_distance or 0)
-        total_distance_km = int(-(-total_distance_km // 1))
-
-        # Covered Amount
-        self._set_covered_amount(total_distance_km)
-
-        # Generals
-        sequence = 1
-        if last_line:
-            sequence = last_line[0]['sequence'] + 1
-
-        current_authorization_ids = self.authorization_ids.filtered(lambda x: x.supplier_number <= self.supplier_number)
-
-        supplier_link_id = self.service_supplier_link_ids.filtered(
-            lambda x:
-                x.supplier_id.id == supplier_id.id
-                and x.supplier_number == self.supplier_number,
-        )
-        if len(supplier_link_id) > 1:
-            supplier_link_id = supplier_link_id[len(supplier_link_id) - 1]
-        # Supplier Link
-        if not supplier_link_id:
-            # User Amount Paid
-            current_user_amount_paid = (
-                self.service_supplier_ids.filtered(lambda x: x.user_amount_paid > 0)
-                .sorted(
-                    lambda x: (
-                        x.supplier_id.id != supplier_id.id,
-                        -x.search_number,
-                    )
-                )[:1]
-                .supplier_link_id.user_amount_paid
-            )
-            # Add Link
-            supplier_products_data = self.get_supplier_products_data(supplier_id.id, total_distance_km)
-            supplier_link_id = self.env['ike.event.supplier.link'].with_context(from_internal=True).create({
-                'event_id': self.id,
-                'supplier_id': supplier_id.id,
-                'supplier_number': self.supplier_number,
-                'supplier_product_ids': supplier_products_data,
-                'user_amount_paid': current_user_amount_paid or 0.0,
-            })
-            # Set Authorization Data
-            authorized = (self.previous_amount + supplier_link_id.estimated_cost) <= self.authorized_amount
-            for product_id in supplier_link_id.supplier_product_ids:
-                if authorized and product_id.covered and product_id.subtotal > 0:
-                    product_id.authorization_pending = False
-                    if current_authorization_ids:
-                        product_id.authorization_ids = [Command.create({
-                            'event_authorization_id': current_authorization_ids[0].id,
-                            'quantity': product_id.quantity,
-                            'unit_price': product_id.unit_price,
-                        })]
-                else:
-                    product_id.authorization_pending = True
-        # Manual Notification
-        supplier_link_id.manual_notification = (
-            supplier_link_id.supplier_id.x_has_external_notification or supplier_link_id.supplier_id.x_has_portal
-        )
-        # Products cost by km
-        products_cost_by_km = supplier_link_id.supplier_product_ids.filtered(
-            lambda x: x.product_id.x_cost_by_km and not x.parent_product_id
-        )
-        if len(products_cost_by_km):
-            products_cost_by_km.with_context(ignore_authorization=True).quantity = total_distance_km
-
-        # Create
-        self.service_supplier_ids = [Command.create({
-            'event_id': self.id,
-            'assignation_type': 'manual_manual',
-            'search_number': self.supplier_search_number,
-            'supplier_number': self.supplier_number,
-            'is_manual': True,
-            'name': f"{_('License Plate')}: {vehicle_id.license_plate}",
-            'supplier_id': supplier_id.id,
-            'supplier_center_id': vehicle_id.x_center_id.id,
-            'state': 'available',
-            'priority': supplier_id.priority,
-            'estimated_distance': estimated_distance_km,
-            'estimated_duration': estimated_duration_m,
-            'osrm': osrm,
-            'timer_duration': 600,
-            'truck_id': vehicle_id.id,  # Use real DB ID
-            'assigned': vehicle_id.driver_id.display_name,
-            'latitude': vehicle_id.x_latitude,
-            'longitude': vehicle_id.x_longitude,
-            'supplier_link_id': supplier_link_id.id,
-            'ranking': 0,
-            'sequence': sequence,
-        })]
-
-    def add_manual_suppliers(self, supplier_id, vehicle_id):
+    def add_manual_supplier(self, supplier_id, vehicle_id):
         self.ensure_one()
 
         last_line = self.env['ike.event.supplier'].search_read(
             [('event_id', '=', self.id)], ['sequence'], limit=1, order='sequence desc'
         )
 
+        supplier_center_id: int = vehicle_id.x_center_id.id
+        origin_latitude = float(self.location_latitude)
+        origin_longitude = float(self.location_longitude)
+        negotiation_type: str = supplier_id.x_negotiation_type
+        center_latitude: float = vehicle_id.x_center_id.partner_latitude
+        center_longitude: float = vehicle_id.x_center_id.partner_longitude
+
         # Estimated Duration/Distance
-        estimated_distance_km = 0.0
-        estimated_duration_m = 0.0
-        osrm = False
-        if self.use_external_locations:
-            vehicles_location_data = self._get_external_vehicles_location(
-                float(self.location_latitude),
-                float(self.location_longitude),
-                vehicle_refs=[str(vehicle_id.x_vehicle_ref)]
+        estimated_distance_km: float = 0.0
+        estimated_duration_m: float = 0.0
+        total_distance_km: float = 0.0
+        osrm: bool = False
+
+        if negotiation_type in ['base_base', 'base_destination']:
+            osrm_distance = self.get_osrm_distance(
+                center_latitude, center_longitude,
+                origin_latitude, origin_longitude
             )
-            if len(vehicles_location_data):
-                data = vehicles_location_data[0]
-                vehicle_id.x_latitude = data.get('lat', None)
-                vehicle_id.x_longitude = data.get('lng', None)
-                estimated_distance_km = data.get('distance_m', 0) / 1000
-                estimated_duration_m = data.get('duration_s', 0) / 60
-                osrm = True
-        if not estimated_distance_km and vehicle_id.x_latitude and vehicle_id.x_longitude:
-            estimated_distance_km = round(
-                self.haversine_distance_km(
-                    float(self.location_latitude),
-                    float(self.location_longitude),
-                    float(vehicle_id.x_latitude),
-                    float(vehicle_id.x_longitude)
-                ),
-                2
-            )
-            estimated_duration_m = self.get_estimated_duration(estimated_distance_km)
-        # Distance km
-        total_distance_km = estimated_distance_km + (self.destination_distance or 0)
-        total_distance_km = int(-(-total_distance_km // 1))
+            estimated_distance_km = osrm_distance['estimated_distance']
+            estimated_duration_m = osrm_distance['estimated_duration']
+            total_distance_km = estimated_distance_km + (self.destination_distance or 0)
+            if negotiation_type == 'base_base':
+                total_distance_km *= 2
+        elif negotiation_type == 'origin_destination':
+            total_distance_km = (self.destination_distance or 0)
+        else:
+            pass
 
         # Covered Amount
         self._set_covered_amount(total_distance_km)
-
-        # User Amount Paid
-        current_user_amount_paid = (
-            self.service_supplier_ids.filtered(lambda x: x.user_amount_paid > 0)
-            .sorted(
-                lambda x: (
-                    x.supplier_id.id != supplier_id.id,
-                    -x.search_number,
-                )
-            )[:1]
-            .supplier_link_id.user_amount_paid
-        )
 
         # Generals
         sequence = 1
@@ -1405,23 +1569,25 @@ class IkeEvent_Search(models.Model):
             'assignation_type': 'manual_manual',
             'search_number': self.supplier_search_number,
             'supplier_number': self.supplier_number,
-            'is_manual': True,
             'name': f"{_('License Plate')}: {vehicle_id.license_plate}",
             'supplier_id': supplier_id.id,
-            'supplier_center_id': vehicle_id.x_center_id.id,
+            'supplier_center_id': supplier_center_id,
+            'negotiation_type': negotiation_type,
             'state': 'available',
             'priority': supplier_id.priority,
             'estimated_distance': estimated_distance_km,
             'estimated_duration': estimated_duration_m,
+            'cost_distance': estimated_distance_km,
             'osrm': osrm,
             'timer_duration': 600,
+            'is_manual': True,
             'truck_id': vehicle_id.id,  # Use real DB ID
             'assigned': vehicle_id.driver_id.display_name,
-            'latitude': vehicle_id.x_latitude,
-            'longitude': vehicle_id.x_longitude,
+            'latitude': center_latitude,
+            'longitude': center_longitude,
+            'bypass': True,
             'ranking': 0,
             'sequence': sequence,
-            'user_amount_paid': current_user_amount_paid,
         })
         return event_supplier_id
 
@@ -1503,16 +1669,12 @@ class IkeEvent_Search(models.Model):
                     )
                     vehicle['external_duration_m'] = self.get_estimated_duration(vehicle['external_distance_km'])
             if vehicle['latitude'] and vehicle['longitude']:
-                vehicle['distance_km'] = round(
-                    self.haversine_distance_km(
-                        float(self.location_latitude),
-                        float(self.location_latitude),
-                        float(vehicle["latitude"]),
-                        float(vehicle["latitude"]),
-                    ),
-                    2
+                osrm_distance = self.get_osrm_distance(
+                    vehicle['latitude'], vehicle['longitude'],
+                    self.location_latitude, self.location_longitude,
                 )
-                vehicle['duration_m'] = self.get_estimated_duration(vehicle['distance_km'])
+                vehicle['distance_km'] = osrm_distance['estimated_distance']
+                vehicle['duration_m'] = osrm_distance['estimated_duration']
 
         wizard_id = self.env['ike.event.vehicle.wizard'].create({
             'event_id': self.id,
@@ -1528,16 +1690,7 @@ class IkeEvent_Search(models.Model):
             'context': {}
         }
 
-    # === LOCK RECORDS === #
-    def _with_locked_records(self):
-        if not self.ids:
-            return []
-        self._cr.execute(
-            f'SELECT id FROM {self._table} WHERE id IN %s FOR UPDATE SKIP LOCKED', [tuple(self.ids)]
-        )
-        return [row[0] for row in self.env.cr.fetchall()]
-
-    # === MULTI SUPPLIERS ACTIONS === #
+    # === MULTI SUPPLIERS ACTIONS (OBSOLETE?) === #
     def action_add_multi_supplier_product_data(self):
         self.ensure_one()
         numbers = self.service_supplier_ids.mapped('supplier_number')

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ike_event_portal.SelectVehicleDialog" owl="1">
+        <!-- Modal Backdrop -->
+        <div class="modal-backdrop fade show" style="z-index: 1055;"/>
+
+        <!-- Modal -->
+        <div class="modal fade show d-block" tabindex="-1" role="dialog" style="z-index: 1056;">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <!-- Header -->
+                    <div class="modal-header bg-primary text-white rounded-top-4 border-0">
+                        <h5 class="modal-title">
+                            <i class="fa fa-truck me-2"/>
+                            <t t-esc="props.title"/>
+                        </h5>
+                        <button type="button"
+                                class="btn-close btn-close-white"
+                                aria-label="Cerrar"
+                                t-on-click="onCancelClick"/>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="modal-body p-4">
+                        <!-- Loading State -->
+                        <t t-if="state.isLoading">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Cargando...</span>
+                                </div>
+                                <p class="text-muted mt-2">Cargando vehículos disponibles...</p>
+                            </div>
+                        </t>
+
+                        <t t-else="">
+                            <t t-if="!state.vehicles.length">
+                                <div class="alert alert-warning py-2 mb-0">
+                                    <i class="fa fa-exclamation-triangle me-2"/>
+                                    No hay vehículos disponibles que cumplan los requisitos de este servicio.
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <p class="text-muted mb-3">
+                                    Indique el vehículo que realmente realizará el servicio antes de aceptar:
+                                </p>
+                                <div class="mb-2">
+                                    <label class="form-label small text-muted fw-semibold mb-1">
+                                        <i class="fa fa-truck me-1"/>Vehículo
+                                    </label>
+                                    <select class="form-select rounded-pill"
+                                            t-att-value="state.selectedTruckId"
+                                            t-on-change="onVehicleChange">
+                                        <t t-foreach="state.vehicles" t-as="vehicle" t-key="vehicle.id">
+                                            <option t-att-value="vehicle.id"
+                                                    t-att-selected="state.selectedTruckId === vehicle.id">
+                                                <t t-esc="vehicle.name"/>
+                                                <t t-if="vehicle.license_plate"> — <t t-esc="vehicle.license_plate"/></t>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+                            </t>
+                        </t>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="modal-footer border-0 pt-0">
+                        <button type="button"
+                                class="btn btn-outline-secondary rounded-pill px-4"
+                                t-on-click="onCancelClick"
+                                t-att-disabled="state.isSubmitting">
+                            <i class="fa fa-times me-1"/>Cancelar
+                        </button>
+                        <button type="button"
+                                class="btn btn-primary rounded-pill px-4"
+                                t-on-click="onConfirmClick"
+                                t-att-disabled="!isValid or state.isSubmitting or state.isLoading">
+                            <t t-if="state.isSubmitting">
+                                <span class="spinner-border spinner-border-sm me-2" role="status"/>
+                                Aceptando...
+                            </t>
+                            <t t-else="">
+                                <i class="fa fa-check me-1"/>Confirmar y Aceptar
+                            </t>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

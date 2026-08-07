@@ -2,6 +2,8 @@
 
 from . import res_partner_supplier
 from . import product_product
+from . import project_project
+from . import ir_sequence
 from . import purchase_order
 from . import purchase_order_line
 from . import purchase_order_portal_report
