@@ -148,7 +148,7 @@ class IkeEvent(models.Model):
             if line_ids:
                 if line_ids[0].assignation_type == 'electronic':
                     line_ids[0].action_notify()
-                elif line_ids[0].assignation_type in ['publication', 'manual']:
+                elif line_ids[0].assignation_type in ['publication']:
                     line_ids.action_notify()
 
     def get_most_expensive_supplier(self):

@@ -165,10 +165,3 @@ class ShHelpdeskTicket(models.Model):
             status_ids = rec.sh_sla_status_ids.filtered(
                 lambda x: not x.sh_status)
             rec.sh_sla_deadline = min(status_ids.mapped('sh_deadline')) if status_ids else sh_deadline
-     
-    
-       
-            
-           
-               
-           

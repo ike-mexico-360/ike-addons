@@ -125,6 +125,7 @@ class ProductProduct(models.Model):
         return action
 
     # ==== Public Helper, to get product domain ====== #
+    @api.model
     def get_subservices_domain(self, categ_id=None):
         all_categ_id = self.env.ref('product.product_category_all')
         service_uom_id = self.env.ref('l10n_mx.product_uom_service_unit')

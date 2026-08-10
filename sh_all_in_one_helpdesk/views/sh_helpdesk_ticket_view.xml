@@ -155,6 +155,7 @@
                 <field name="write_date" string="Last Update Date" />
                 <field name="ticket_type" />
                 <field name="team_id" />
+                <field name="state" />
                 <field name="team_head" />
                 <field name="user_id" />
                 <field name="subject_id" />

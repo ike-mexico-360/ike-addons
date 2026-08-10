@@ -75,6 +75,7 @@
                 <control>
                     <create name="add_line_control" string="Add a Concept" />
                 </control>
+                <field name="event_id" column_invisible="1"/>
                 <field name="event_supplier_link_id" column_invisible="1" />
                 <field name="supplier_number" column_invisible="1" />
                 <field name="display_type" column_invisible="1" />
@@ -280,6 +281,7 @@
                         'default_is_manual': True,
                         'default_supplier_number': supplier_number,
                         'from_internal': True,
+                        'default_event_id': event_id,
                     }"/>
                 <group class="oe_subtotal_footer oe_right">
                     <field name="amount_concept_subtotal"/>
