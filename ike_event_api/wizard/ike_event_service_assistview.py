@@ -17,8 +17,10 @@ class IkeEventServiceAssistView(models.TransientModel):
 
     # ike.service.input.vial fields
     vin = fields.Char(string='VIN')
-    brand = fields.Char(string='Brand')
-    model = fields.Char(string='Model')
+    brand = fields.Char(string='Brand')  # ToDo: Remove
+    brand_id = fields.Many2one('fleet.vehicle.model.brand', string='Brand')
+    model = fields.Char(string='Model')  # ToDo: Remove
+    model_id = fields.Many2one('fleet.vehicle.model', string='Model')
     plate = fields.Char(string='Plate')
     color = fields.Char(string='Color')
     year = fields.Char(string='Year')
@@ -26,6 +28,13 @@ class IkeEventServiceAssistView(models.TransientModel):
     longitude = fields.Char(string='Longitude')
     address = fields.Char(string='Address')
     answers = fields.Json(string='Answers')
+    road_classification = fields.Selection(
+        selection=[
+            ('road', 'Carretero'),
+            ('non_road', 'No carretero'),
+        ],
+        string='Road Classification',
+    )
 
     plate_image = fields.Image(string='Plate Image')
 
@@ -57,7 +66,7 @@ class IkeEventServiceAssistView(models.TransientModel):
         service_id = self.env[self.service_res_model].browse(self.service_res_id)
         if self.service_res_model == 'ike.service.input.vial':
             service_id.write({
-                'vehicle_brand': self.brand,
+                'vehicle_brand': (self.brand or self.brand_id.name or '').strip(),
                 'vehicle_model': self.model,
                 'vehicle_plate': self.plate,
                 'vehicle_color': self.color,
@@ -72,6 +81,15 @@ class IkeEventServiceAssistView(models.TransientModel):
             if self.longitude:
                 event_data['location_longitude'] = self.longitude
                 change_latitude_or_longitude = True
+            event_type_name = {
+                'road': 'Carretero',
+                'non_road': 'No carretero',
+            }.get(self.road_classification)
+            event_type = self.env['custom.type.event'].search(
+                [('name', '=', event_type_name)],
+                limit=1,
+            ) if event_type_name else self.env['custom.type.event']
+            event_data['event_type_id'] = event_type.id or False
             if event_data:
                 self.event_id.write(event_data)
             if change_latitude_or_longitude:

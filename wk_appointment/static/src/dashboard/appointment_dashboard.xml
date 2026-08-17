@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<templates xml:space="preserve">
+	<t t-name="wk_appointment.AppointmentDashboardView">
+		<div class="appointment_dashboard_container">
+			<div class="p-3">
+				<h3>
+					<strong>
+						Appointment Management Dashboard
+					</strong>
+				</h3>
+			</div>
+			<div>
+				<div class="row m-2 navbar-calendar-container appointment-dashboard-cards shadow-sm p-2 mb-2 bg-body rounded border">
+					<div class="col-md-3 col-12 mb-sm-1 navbar-booking-card">
+						<div class="border new_appointment selected_appointment_container_1 border-grey text-light main_appointee_details align-items-center p-3 d-flex" t-on-click="getListViewonClick">
+							<div class="row new_appointment">
+								<div class="new_appointment col-md-6">
+									<div class="new_appointment">
+										<div>
+											<div class="new_appointment text-light appointment_card_info">
+												<t t-out="this.props.appointment_data.new" />
+											</div>
+										</div>
+										<div>
+											<span class="new_appointment wk_appointment_label p-0 text-light">
+												New
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3 col-12 mb-sm-1 navbar-booking-card">
+						<div class="border pending_appointment selected_appointment_container_3 border-grey text-light main_appointee_details  align-items-center p-3 d-flex" t-on-click="getListViewonClick">
+							<div class="row pending_appointment">
+								<div class="col-md-6">
+									<div class="pending_appointment">
+										<div>
+											<div class="pending_appointment appointment_card_info text-light">
+												<t t-out="this.props.appointment_data.pending" />
+											</div>
+										</div>
+										<div>
+											<span class="pending_appointment wk_appointment_label p-0 text-light">
+												Pending
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3 col-12 mb-sm-1 navbar-booking-card">
+						<div class="border approved_appointment selected_appointment_container_2 border-grey text-light main_appointee_details  align-items-center p-3 d-flex" t-on-click="getListViewonClick">
+							<div class="row approved_appointment">
+								<div class="approved_appointment col-md-6">
+									<div class="approved_appointment">
+										<div>
+											<div class="approved_appointment appointment_card_info text-light">
+												<t t-out="this.props.appointment_data.approved" />
+											</div>
+										</div>
+										<div>
+											<span class="approved_appointment wk_appointment_label p-0 text-light">
+												Approved
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3 col-12 mb-sm-1 navbar-booking-card">
+						<div class="border done_appointment selected_appointment_container_4 border-grey text-light main_appointee_details  align-items-center p-3 d-flex" t-on-click="getListViewonClick">
+							<div class="row done_appointment">
+								<div class="done_appointment col-md-6">
+									<div class="done_appointment">
+										<div>
+											<div class="done_appointment appointment_card_info text-light">
+												<t t-out="this.props.appointment_data.completed" />
+											</div>
+										</div>
+										<div>
+											<span class="done_appointment wk_appointment_label p-0 text-light">
+												Done
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-md-3 col-12 mb-sm-1 navbar-booking-card">
+						<div class="border cancelled_appointment selected_appointment_container_5 border-grey text-light main_appointee_details  align-items-center p-3 d-flex" t-on-click="getListViewonClick">
+							<div class="row cancelled_appointment">
+								<div class="cancelled_appointment col-md-6">
+									<div class="cancelled_appointment">
+										<div>
+											<div class="cancelled_appointment appointment_card_info">
+												<t t-out="this.props.appointment_data.rejected" />
+											</div>
+										</div>
+										<div>
+											<span class="cancelled_appointment wk_appointment_label p-0 text-light">
+												Cancelled
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div t-if="this.props.is_manager and this.props.is_officer" class="col-md-12 m-3 appointee_selection_container">
+				<div class="d-md-block appointee_selection">
+					<div class="d-flex align-items-center fs-5 ms-2 gap-3">
+						<label for="AppointeeSelect">
+							Appointee:
+						</label>
+						<select id="AppointeeSelectId" class="form-select" aria-label="Appointee select" t-on-change="onAppointeeChange">
+							<option value="-1" selected="true">
+								All
+							</option>
+							<t t-foreach="this.props.appointee_list" t-as="appointee" t-key="appointee['id']">
+								<option t-att-value="appointee['id']">
+									<t t-esc="appointee['name']" />
+								</option>
+							</t>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="row m-1">
+				<div class="col-md-6 m-0 p-0">
+					<div class="appointment_earning_charts m-2 p-4 rounded-3 shadow-sm mb-5 bg-body">
+						<div class="row mb-3">
+							<div class="col-md-6 ps-5">
+								<strong>
+									Total Earnings from booking
+								</strong>
+							</div>
+							<div class="col-md-6 d-flex justify-content-end gap-3">
+								<div class="dropdown bootstrap-select appointee_chart_filter">
+									<select class="selectpicker form-select" aria-label="Appointee select" tabindex="-98" t-on-change="onEarningChartChange">
+										<option t-att-value="line">
+											Line Chart
+										</option>
+										<option t-att-value="bar">
+											Bar Chart
+										</option>
+										<option t-att-value="pie">
+											Pie Chart
+										</option>
+									</select>
+								</div>
+								<div class="dropdown bootstrap-select appointee_chart_filter">
+									<select class="selectpicker form-select" aria-label="Appointee select" tabindex="-98" t-on-change="onTimeInternalChange">
+										<option t-att-value="week">
+											Weekly
+										</option>
+										<option t-att-value="month">
+											Monthly
+										</option>
+										<option t-att-value="year">
+											Yearly
+										</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<t t-if="this.props.earning_count">
+							<t t-if="state.chartType == 'Line Chart'">
+								<ChartRenderer type="'line'" config="state.appointmentEarning" />
+							</t>
+							<t t-elif="state.chartType == 'Bar Chart'">
+								<ChartRenderer type="'bar'" config="state.appointmentEarning" />
+							</t>
+							<t t-else="state.chartType == 'Pie Chart'">
+								<div class="d-flex justify-content-center">
+									<ChartRenderer type="'pie'" config="state.appointmentEarningBarChart" />
+								</div>
+							</t>
+						</t>
+						<t t-else="">
+							<div class="d-flex justify-content-center mt-5" style="height:350px !important;">
+								<h1>
+									<strong>
+										No Earnings To Display
+									</strong>
+								</h1>
+							</div>
+						</t>
+					</div>
+				</div>
+				<div class="col-md-6 m-0 p-0">
+					<div class="appointment_status_charts m-2 p-4 rounded-3 shadow-sm mb-5 bg-body">
+						<div class="d-flex justify-content-between mb-3">
+							<div class="">
+								<strong>
+									Appointments By State
+								</strong>
+							</div>
+							<div class="gap-3">
+								<div class="dropdown bootstrap-select appointee_chart_filter">
+									<select class="selectpicker form-select" aria-label="Appointee select" tabindex="-98" t-on-change="onStatusChartChange">
+										<option t-att-value="pie">
+											Pie Chart
+										</option>
+										<option t-att-value="line">
+											Line Chart
+										</option>
+										<option t-att-value="bar">
+											Bar Chart
+										</option>
+									</select>
+								</div>
+							</div>
+						</div>
+						<t t-if="this.props.status_count">
+							<t t-if="state.StatusChartType == 'Line Chart'">
+								<ChartRenderer type="'line'" config="state.appointmentStatus" />
+							</t>
+							<t t-elif="state.StatusChartType == 'Bar Chart'">
+								<ChartRenderer type="'bar'" config="state.appointmentStatus" />
+							</t>
+							<t t-else="state.StatusChartType == 'Pie Chart'">
+								<div class="d-flex justify-content-center">
+									<ChartRenderer type="'pie'" config="state.appointmentStatusBarChart" />
+								</div>
+							</t>
+						</t>
+						<t t-else="">
+							<div class="d-flex justify-content-center mt-5" style="height:380px !important;">
+								<h1>
+									<strong>
+										No Appointments To Display
+									</strong>
+								</h1>
+							</div>
+						</t>
+					</div>
+				</div>
+			</div>
+		</div>
+	</t>
+</templates>

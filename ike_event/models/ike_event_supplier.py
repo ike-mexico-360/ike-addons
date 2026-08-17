@@ -166,7 +166,6 @@ class IkeEventSupplier(models.Model):
     # === DETAILS FIELDS === #
     supplier_link_id = fields.Many2one('ike.event.supplier.link')
     supplier_product_ids = fields.One2many(related='supplier_link_id.supplier_product_ids', readonly=False)
-    all_supplier_product_ids = fields.One2many(related='supplier_link_id.all_supplier_product_ids')
     amount_concept_subtotal = fields.Float(related='supplier_link_id.amount_concept_subtotal', string='Subtotal')
     amount_concept_vat = fields.Float(related='supplier_link_id.amount_concept_vat', string='VAT')
     amount_concept_total = fields.Float(related='supplier_link_id.amount_concept_total', string='Total')
@@ -424,90 +423,35 @@ class IkeEventSupplier(models.Model):
             rec.broadcastReload(event_reload=False)
 
     def action_finalize(self):
+        self.ensure_one()
         supplier_stage_finalized = self.env.ref('ike_event.ike_service_stage_finalized').id
-        for rec in self:
-            rec.stage_id = supplier_stage_finalized
-            # Vehicle State
-            rec.truck_id.x_vehicle_service_state = 'available'
 
-            # Event Completed: validation inside
-            rec.event_id.action_completed()
+        self.stage_id = supplier_stage_finalized
+        # Vehicle State
+        self.truck_id.x_vehicle_service_state = 'available'
 
-            # Get Distance km
-            negotiation_type = rec.negotiation_type
-            total_distance_km = rec.cost_distance
-            if negotiation_type == 'base_base':
-                total_distance_km = (rec.cost_distance + (rec.event_id.destination_distance or 0)) * 2.0
-            elif negotiation_type in ['base_destination', 'vehicle_destination']:
-                total_distance_km += (rec.event_id.destination_distance or 0)
-            elif negotiation_type == 'origin_destination':
-                total_distance_km = (rec.event_id.destination_distance or 0)
-            elif negotiation_type == 'base_concept':
-                total_distance_km = 0.0
-            else:
-                total_distance_km = 0.0
-            total_distance_km = int(-(-total_distance_km // 1))  # To integer
+        # Event Completed: validation inside
+        self.event_id.action_completed()
+        if self.event_id.stage_id.ref == 'completed' and not self.is_generic_supplier and not self.purchase_supplier_id:
+            self.event_id.action_verify()
 
-            # Add Extra Base Products Children
-            for product_line_id in rec.supplier_product_ids:
-                if product_line_id.product_id and product_line_id.base:
-                    has_children = any(
-                        x.product_id and x.parent_product_id.id == product_line_id.product_id.id
-                        for x in rec.all_supplier_product_ids
-                    )
-                    if not has_children:
-                        bom_product_ids = rec.event_id._get_boom_product(product_line_id.product_id)
-                        boom_matrix_cost_line_ids = rec.event_id.get_supplier_product_matrix_lines(
-                            rec.supplier_center_id.id, bom_product_ids.ids)
+        # Get Distance km
+        negotiation_type = self.negotiation_type
+        total_distance_km = self.cost_distance
+        if negotiation_type == 'base_base':
+            total_distance_km = (self.cost_distance + (self.event_id.destination_distance or 0)) * 2.0
+        elif negotiation_type in ['base_destination', 'vehicle_destination']:
+            total_distance_km += (self.event_id.destination_distance or 0)
+        elif negotiation_type == 'origin_destination':
+            total_distance_km = (self.event_id.destination_distance or 0)
+        elif negotiation_type == 'base_concept':
+            total_distance_km = 0.0
+        else:
+            total_distance_km = 0.0
+        total_distance_km = int(-(-total_distance_km // 1))  # To integer
 
-                        total_base_unit_price = 0
-                        total_base_cancel_price = 0
-                        new_product_lines = []
-                        for product_id in bom_product_ids:
-                            cost_line_id = boom_matrix_cost_line_ids.filtered(
-                                lambda x:
-                                    x.concept_id.id == product_id.id
-                                    and x.supplier_status_id.ref == 'concluded')
-                            cancel_cost_line_id = boom_matrix_cost_line_ids.filtered(
-                                lambda x:
-                                    x.concept_id.id == product_id.id
-                                    and x.supplier_status_id.ref == 'cancelled')
-
-                            base_unit_price = cost_line_id[0].cost if cost_line_id else 0
-                            base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
-                            quantity = total_distance_km if product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1.0)
-                            sequence = product_line_id.sequence
-
-                            total_base_unit_price += base_unit_price
-                            total_base_cancel_price += base_cancel_price
-
-                            new_product_lines.append(Command.create({
-                                'product_id': product_id.id,
-                                'base_quantity': quantity,
-                                'base_unit_price': base_unit_price,
-                                'base_cancel_price': base_cancel_price,
-                                'unit_price': base_unit_price,
-                                'estimated_quantity': quantity,
-                                'quantity': quantity,
-                                'uom_id': product_id.uom_id.id,
-                                'tax_ids': [Command.set(product_id.taxes_id.ids)],
-                                'sequence': sequence,
-                                'covered': product_line_id.covered,
-                                'cost_matrix_line_id': cost_line_id.id,
-                                'parent_product_id': product_line_id.product_id.id,
-                            }))
-                        # Base Prices
-                        if product_line_id.base_unit_price == 0:
-                            product_line_id.base_unit_price = total_base_unit_price
-                            product_line_id.base_cancel_price = total_base_cancel_price
-                        # Add Children
-                        rec.supplier_link_id.with_context(
-                            not_add_horizontally=True,
-                            from_internal=True,
-                        ).supplier_product_ids = new_product_lines
-
-            # Event reload
-            rec.broadcastReload(event_reload=True)
+        # Event reload
+        self.broadcastReload(event_reload=True)
 
     def action_from_progress_state(self, progress_state):
         self.ensure_one()
@@ -723,7 +667,6 @@ class IkeEventSupplier(models.Model):
             'domain': [
                 ('event_supplier_link_id', 'in', self.mapped('supplier_link_id.id')),
                 ('display_type', 'not in', ['line_section', 'line_note']),
-                ('parent_product_id', '=', False),
             ],
             'target': 'new',
             'context': {
@@ -761,7 +704,7 @@ class IkeEventSupplier(models.Model):
                 **self.env.context,
                 'mapped': mapped,
                 'create': False,
-                'edit': True,
+                'edit': can_edit,
                 'from_review_cost': not can_edit,
             },
         }
@@ -866,11 +809,7 @@ class IkeEventSupplierLink(models.Model):
     # === LINE FIELDS === #
     supplier_product_ids = fields.One2many(
         'ike.event.supplier.product', 'event_supplier_link_id',
-        domain=[('parent_product_id', '=', False)],
         string='Concepts')
-    all_supplier_product_ids = fields.One2many(
-        'ike.event.supplier.product', 'event_supplier_link_id',
-        string='All Concepts')
     amount_concept_subtotal = fields.Float(string='Subtotal', compute='_compute_amount_supplier_product', store=True)
     amount_concept_vat = fields.Float(string='VAT', compute='_compute_amount_supplier_product', store=True)
     amount_concept_total = fields.Float(string='Total', compute='_compute_amount_supplier_product', store=True)

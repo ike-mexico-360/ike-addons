@@ -1,0 +1,18 @@
+<odoo>
+
+    <template id="portal_my_invoice_detail_custom"
+              inherit_id="account.portal_invoice_page">
+
+        <xpath expr="//div[@id='invoice_content']/div[hasclass('o_portal_html_view')]" position="before">
+
+            <div class="mb-3">
+                <owl-component
+                    name="ike_event_purchase.InvoiceDetails"
+                    t-att-props="json.dumps({'invoice_id': invoice.id})"/>
+            </div>
+
+        </xpath>
+
+    </template>
+
+</odoo>

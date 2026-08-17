@@ -177,6 +177,7 @@ class CustomSubserviceConceptLine(models.Model):
         string='Concepts')
     base_concept_id = fields.Many2one('product.product', string='Base Concept')
     concepts_domain = fields.Binary(string="Concept domain", compute="_compute_concepts_domain")
+    supplier_id = fields.Many2one('res.partner', domain=[('x_is_supplier', '=', True)])
     active = fields.Boolean(default=True)
     disabled = fields.Boolean(default=False)
 

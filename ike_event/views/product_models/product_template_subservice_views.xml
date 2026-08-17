@@ -15,6 +15,7 @@
                     <field name="x_is_origin_destination" readonly="disabled" />
                     <field name="x_signature_required" readonly="disabled" />
                     <field name="x_sap_code_outgoing" readonly="disabled" />
+                    <field name="x_generate_appointment" readonly="disabled"/>
                 </group>
             </xpath>
         </field>

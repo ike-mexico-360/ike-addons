@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ike_event_automatic_close_events_cron" model="ir.cron">
+        <field name="name">Automatically close events 'cancelled_posterior' and 'completed'</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="model_id" ref="ike_event.model_ike_event"/>
+        <field name="code">model._x_cron_automatic_close_events()</field>
+        <field name="state">code</field>
+        <field name="user_id" ref="base.user_root"/>
+    </record>
+
+</odoo>

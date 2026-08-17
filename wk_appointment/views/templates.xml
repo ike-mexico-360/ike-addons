@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : <https://store.webkul.com/license.html/> -->
+<odoo>
+	<data>
+        <template id="appoint_assets_backend" inherit_id="web.assets_backend" name="Appointment backend">
+            <xpath expr="//script[last()]" position="after">
+							<link rel="stylesheet" href="/wk_appointment/static/src/css/wk_appoint.css"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

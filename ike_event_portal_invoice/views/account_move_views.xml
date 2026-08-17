@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="account_view_move_form_inherit_event_portal" model="ir.ui.view">
+        <field name="name">view_move_form.inherit.event_portal</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="x_send_supplier_invoice" type="object" string="Test endpoint supplier" class="btn-primary" groups="base.group_no_one"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_move_form_inherit_payment_receipt" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.payment.receipt</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//page[@name='other_info']//group" position="inside">
+                <group string="Payment Support"
+                       invisible="move_type not in ('in_invoice', 'in_refund')">
+                    <field name="x_payment_receipt_filename" invisible="1"/>
+                    <field name="x_payment_receipt_file"
+                           filename="x_payment_receipt_filename"
+                           widget="binary"
+                           options="{'accepted_file_extensions': '.pdf'}"/>
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

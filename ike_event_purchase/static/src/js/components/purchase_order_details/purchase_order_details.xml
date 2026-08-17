@@ -5,19 +5,19 @@
                 <div t-if="state.order_data.x_dispute_state == 'submitted'" class="alert alert-warning alert-dismissible d-print-none" role="alert">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
                     <strong>
-                        <t t-out="translate('The dispute has been submitted.')"/>
+                        The dispute has been submitted.
                     </strong>
                 </div>
                 <div t-if="state.order_data.x_dispute_state == 'resolved' and state.order_data.x_dispute_approved" class="alert alert-success alert-dismissible d-print-none" role="alert">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
                     <strong>
-                        <t t-out="translate('The dispute has been approved.')"/>
+                        The dispute has been approved.
                     </strong>
                 </div>
                 <div t-if="state.order_data.x_dispute_state == 'rejected'" class="alert alert-danger alert-dismissible d-print-none" role="alert">
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="close"></button>
                     <strong>
-                        <t t-out="translate('The dispute has been rejected.')"/>
+                        The dispute has been rejected.
                     </strong>
                 </div>
                 <!-- Event Info -->
@@ -31,28 +31,36 @@
                                         <div t-if="state.order_data.partner_id" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-building text-primary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Supplier')"/></div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Supplier
+                                                </div>
                                                 <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.partner_id.name"/>
                                             </div>
                                         </div>
                                         <div t-if="state.order_data.x_supplier_address" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-map-marker text-primary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Supplier Address')"/></div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Supplier Address
+                                                </div>
                                                 <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_supplier_address"/>
                                             </div>
                                         </div>
                                         <div t-if="state.order_data.x_supplier_vat" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-id-card text-primary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Supplier RFC')"/></div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Supplier RFC
+                                                </div>
                                                 <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_supplier_vat"/>
                                             </div>
                                         </div>
                                         <div t-if="state.order_data.x_supplier_phone" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-phone text-primary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Supplier Phone')"/></div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Supplier Phone
+                                                </div>
                                                 <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_supplier_phone"/>
                                             </div>
                                         </div>
@@ -64,28 +72,36 @@
                                         <div t-if="state.order_data.x_invoice_company_names" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-university text-secondary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Invoicing Company')"/></div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Invoicing Company
+                                                </div>
                                                 <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_invoice_company_names"/>
                                             </div>
                                         </div>
                                         <div t-if="state.order_data.x_invoice_company_address" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-map-marker text-secondary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Address')"/></div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Address
+                                                </div>
                                                 <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_invoice_company_address"/>
                                             </div>
                                         </div>
                                         <div t-if="state.order_data.x_invoice_company_vat" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-id-card text-secondary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('RFC')"/></div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    RFC
+                                                </div>
                                                 <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_invoice_company_vat"/>
                                             </div>
                                         </div>
                                         <div t-if="state.order_data.x_invoice_company_phone" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-phone text-secondary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Phone')"/></div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Phone
+                                                </div>
                                                 <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_invoice_company_phone"/>
                                             </div>
                                         </div>
@@ -97,50 +113,73 @@
                                         <div t-if="state.order_data.x_event_public_id or state.order_data.x_event_id" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-tag text-primary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Event')"/></div>
-                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_event_public_id ? state.order_data.x_event_public_id.name : state.order_data.x_event_id.name"/>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Event
+                                                </div>
+                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="(state.order_data.x_event_public_id || state.order_data.x_event_id)?.name"/>
                                             </div>
                                         </div>
-                                        <div t-if="state.order_data.x_event_info and state.order_data.x_event_info.event_date" class="d-flex align-items-start gap-2">
+                                        <div t-if="state.order_data.x_payment_event_type_id" class="d-flex align-items-start gap-2">
+                                            <i class="fa fa-credit-card text-primary mt-1" style="width:14px;"/>
+                                            <div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Payment Event Type
+                                                </div>
+                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_payment_event_type_id.name"/>
+                                            </div>
+                                        </div>
+                                        <div t-if="state.order_data.x_event_info?.event_date" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-calendar text-primary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Event Date')"/></div>
-                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="formatDate(state.order_data.x_event_info.event_date)"/>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Event Date
+                                                </div>
+                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="formatDate(state.order_data.x_event_info?.event_date)"/>
                                             </div>
                                         </div>
                                         <div t-if="state.order_data.date_approve" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-check-circle text-success mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Confirmation Date')"/></div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Confirmation Date
+                                                </div>
                                                 <div class="fw-semibold" style="font-size:0.9rem;" t-out="formatDate(state.order_data.date_approve)"/>
                                             </div>
                                         </div>
                                         <div t-if="state.order_data.x_ref_sap" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-barcode text-secondary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Ref. SAP')"/></div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Ref. SAP
+                                                </div>
                                                 <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_ref_sap"/>
                                             </div>
                                         </div>
-                                        <div t-if="state.order_data.x_event_info and state.order_data.x_event_info.nu_name" class="d-flex align-items-start gap-2">
+                                        <div t-if="state.order_data.x_event_info?.nu_name" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-user text-primary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('NU Name')"/></div>
-                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_event_info.nu_name"/>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    NU Name
+                                                </div>
+                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_event_info?.nu_name"/>
                                             </div>
                                         </div>
                                         <t t-if="isInRfqList">
                                             <div class="d-flex align-items-start gap-2">
                                                 <i class="fa fa-money text-success mt-1" style="width:14px;"/>
                                                 <div>
-                                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Authorized Amount')"/></div>
+                                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                        Authorized Amount
+                                                    </div>
                                                     <div class="fw-semibold" style="font-size:0.9rem;" t-out="formatCurrency(state.order_data.x_authorized_amount)"/>
                                                 </div>
                                             </div>
                                             <div class="d-flex align-items-start gap-2">
                                                 <i class="fa fa-money text-warning mt-1" style="width:14px;"/>
                                                 <div>
-                                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Dispute Authorized Amount')"/></div>
+                                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                        Dispute Authorized Amount
+                                                    </div>
                                                     <div class="fw-semibold" style="font-size:0.9rem;" t-out="formatCurrency(state.order_data.x_dispute_authorized_amount)"/>
                                                 </div>
                                             </div>
@@ -153,37 +192,47 @@
                                         <div t-if="state.order_data.date_planned" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-clock-o text-warning mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Receipt Date')"/></div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Receipt Date
+                                                </div>
                                                 <div class="fw-semibold" style="font-size:0.9rem;" t-out="formatDate(state.order_data.date_planned)"/>
                                             </div>
                                         </div>
-                                        <div t-if="state.order_data.x_event_info and state.order_data.x_event_info.location_label" class="d-flex align-items-start gap-2">
+                                        <div t-if="state.order_data.x_event_info?.location_label" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-map-marker text-success mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Origin')"/></div>
-                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="stripHtml(state.order_data.x_event_info.location_label)"/>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Origin
+                                                </div>
+                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="stripHtml(state.order_data.x_event_info?.location_label)"/>
                                             </div>
                                         </div>
-                                        <div t-if="state.order_data.x_event_info and state.order_data.x_event_info.destination_label" class="d-flex align-items-start gap-2">
+                                        <div t-if="state.order_data.x_event_info?.destination_label" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-flag-checkered text-danger mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Destination')"/></div>
-                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="stripHtml(state.order_data.x_event_info.destination_label)"/>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Destination
+                                                </div>
+                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="stripHtml(state.order_data.x_event_info?.destination_label)"/>
                                             </div>
                                         </div>
-                                        <div t-if="state.order_data.x_event_info and state.order_data.x_event_info.vehicle_name" class="d-flex align-items-start gap-2">
+                                        <div t-if="state.order_data.x_event_info?.vehicle_name" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-truck text-primary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Vehicle')"/></div>
-                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_event_info.vehicle_name"/>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                    Vehicle
+                                                </div>
+                                                <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_event_info?.vehicle_name"/>
                                             </div>
                                         </div>
-                                        <div t-if="state.order_data.x_event_info and state.order_data.x_event_info.vehicle_plate" class="d-flex align-items-start gap-2">
+                                        <div t-if="state.order_data.x_event_info?.vehicle_plate" class="d-flex align-items-start gap-2">
                                             <i class="fa fa-barcode text-primary mt-1" style="width:14px;"/>
                                             <div>
-                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Plate')"/></div>
+                                                <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                   Plate
+                                                </div>
                                                 <div class="fw-semibold" style="font-size:0.9rem;">
-                                                    <span class="badge rounded-pill px-2 py-1" style="background:#e8edf8; color:#2c4a9e; font-size:0.85rem; letter-spacing:0.08em;" t-out="state.order_data.x_event_info.vehicle_plate"/>
+                                                    <span class="badge rounded-pill px-2 py-1" style="background:#e8edf8; color:#2c4a9e; font-size:0.85rem; letter-spacing:0.08em;" t-out="state.order_data.x_event_info?.vehicle_plate"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -193,24 +242,22 @@
                         </div>
                     </div>
                 </t>
-
                 <div class="row" t-if="state.order_data.state == 'sent'">
                     <div class="col-12">
                         <div class="d-flex flex-row justify-content-end">
                             <!-- ToDo: Also show when the changes have already been approved -->
                             <button class="btn text-white bg-success bg-opacity-10 rounded-pill px-3 shadow-sm me-2 mb-2" t-on-click="accept_prices" t-if="!state.show_dispute_fields &amp;&amp; ['none', 'resolved'].includes(state.order_data.x_dispute_state)">
-                                <t t-out="translate('Accept')"/>
+                                Accept
                             </button>
                             <button class="btn text-white bg-danger bg-opacity-10 rounded-pill px-3 me-2 mb-2" t-on-click="toggle_dispute_fields" t-if="!state.show_dispute_fields &amp;&amp; ['none', 'resolved'].includes(state.order_data.x_dispute_state)">
-                                <t t-out="translate('Start Dispute')"/>
+                                Start Dispute
                             </button>
                             <button class="btn text-white bg-danger bg-opacity-10 rounded-pill px-3 me-2 mb-2" t-on-click="toggle_dispute_fields" disabled="disabled" t-if="state.show_dispute_fields &amp;&amp; ['none', 'resolved'].includes(state.order_data.x_dispute_state)">
-                                <t t-out="translate('Start Dispute')"/>
+                                Start Dispute
                             </button>
                         </div>
                     </div>
                 </div>
-
                 <div class="table-responsive" style="border-radius:14px;box-shadow:0 1px 0 #e7e6e2, 0 8px 24px rgba(30,30,25,0.06);">
                     <table class="mb-0" style="border-collapse:separate; border-spacing:0; width:100%; background:#fff; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13.5px; font-variant-numeric:tabular-nums;">
                         <t t-set="show_cds_columns" t-value="['sent', 'to_consolidate', 'consolidated'].includes(state.order_data.state)"/>
@@ -222,44 +269,68 @@
                             <!-- Row 1: Group labels -->
                             <tr style="font-size:11.5px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; text-align:center;">
                                 <th rowspan="2" style="background:#f4f3f0; color:#1c1d1f; padding:10px 16px; text-align:left; white-space:nowrap;">
-                                    <t t-out="translate('Concept')"/>
+                                    Concept
                                 </th>
                                 <th rowspan="2" style="background:rgba(100,60,160,0.16); color:#4a2070; padding:10px 8px; white-space:nowrap; text-align:center;">
-                                    <t t-out="translate('Agreement Cost')"/>
+                                    Agreement Cost
                                 </th>
                                 <th t-if="show_cds_columns" colspan="3" style="background:rgba(140,138,128,0.16); color:#4a4940; padding:10px 8px; white-space:nowrap;">
-                                    <t t-out="translate('CDS Quotation')"/>
+                                    CDS Quotation
                                 </th>
                                 <th colspan="3" style="background:rgba(63,107,74,0.16); color:#2c4a34; padding:10px 8px; white-space:nowrap;">
-                                    <t t-out="translate('Final Cost')"/>
+                                    Final Cost
                                 </th>
                                 <th t-if="show_dispute_columns" colspan="3" style="background:rgba(185,129,44,0.16); color:#7a5419; padding:10px 8px; white-space:nowrap;">
-                                    <t t-out="translate('Disputed Cost')"/>
+                                    Disputed Cost
                                 </th>
                                 <th t-if="show_approved_columns" colspan="3" style="background:rgba(58,95,143,0.16); color:#254670; padding:10px 8px; white-space:nowrap;">
-                                    <t t-out="translate('CCC Approved Cost')"/>
+                                    CCC Approved Cost
                                 </th>
                                 <th t-if="has_new_lines" rowspan="2" style="background:#f4f3f0; width:40px;"></th>
                             </tr>
                             <!-- Row 2: Sub-column labels -->
                             <tr style="font-size:11px; font-weight:600; letter-spacing:0.03em; text-transform:uppercase; text-align:center; border-bottom:1.5px solid rgba(0,0,0,0.06);">
                                 <t t-if="show_cds_columns">
-                                    <th style="background:rgba(140,138,128,0.2); color:#4a4940; padding:9px 8px; white-space:nowrap; min-width:70px;"><t t-out="translate('Quantity')"/></th>
-                                    <th style="background:rgba(140,138,128,0.2); color:#4a4940; padding:9px 8px; white-space:nowrap; min-width:80px;"><t t-out="translate('Unit Price CTO')"/></th>
-                                    <th style="background:rgba(140,138,128,0.2); color:#4a4940; padding:9px 8px; white-space:nowrap; min-width:80px;"><t t-out="translate('Subtotal')"/></th>
+                                    <th style="background:rgba(140,138,128,0.2); color:#4a4940; padding:9px 8px; white-space:nowrap; min-width:70px;">
+                                        Quantity
+                                    </th>
+                                    <th style="background:rgba(140,138,128,0.2); color:#4a4940; padding:9px 8px; white-space:nowrap; min-width:80px;">
+                                        Unit Price CTO
+                                    </th>
+                                    <th style="background:rgba(140,138,128,0.2); color:#4a4940; padding:9px 8px; white-space:nowrap; min-width:80px;">
+                                        Subtotal
+                                    </th>
                                 </t>
-                                <th style="background:rgba(63,107,74,0.2); color:#2c4a34; padding:9px 8px; white-space:nowrap; min-width:70px;"><t t-out="translate('Quantity')"/></th>
-                                <th style="background:rgba(63,107,74,0.2); color:#2c4a34; padding:9px 8px; white-space:nowrap; min-width:80px;"><t t-out="translate('Unit Price CTO')"/></th>
-                                <th style="background:rgba(63,107,74,0.2); color:#2c4a34; padding:9px 8px; white-space:nowrap; min-width:80px;"><t t-out="translate('Subtotal')"/></th>
+                                <th style="background:rgba(63,107,74,0.2); color:#2c4a34; padding:9px 8px; white-space:nowrap; min-width:70px;">
+                                    Quantity
+                                </th>
+                                <th style="background:rgba(63,107,74,0.2); color:#2c4a34; padding:9px 8px; white-space:nowrap; min-width:80px;">
+                                    Unit Price CTO
+                                </th>
+                                <th style="background:rgba(63,107,74,0.2); color:#2c4a34; padding:9px 8px; white-space:nowrap; min-width:80px;">
+                                    Subtotal
+                                </th>
                                 <t t-if="show_dispute_columns">
-                                    <th style="background:rgba(185,129,44,0.2); color:#7a5419; padding:9px 8px; white-space:nowrap; min-width:70px;"><t t-out="translate('Quantity')"/></th>
-                                    <th style="background:rgba(185,129,44,0.2); color:#7a5419; padding:9px 8px; white-space:nowrap; min-width:80px;"><t t-out="translate('Unit Price CTO')"/></th>
-                                    <th style="background:rgba(185,129,44,0.2); color:#7a5419; padding:9px 8px; white-space:nowrap; min-width:80px;"><t t-out="translate('Subtotal')"/></th>
+                                    <th style="background:rgba(185,129,44,0.2); color:#7a5419; padding:9px 8px; white-space:nowrap; min-width:70px;">
+                                        Quantity
+                                    </th>
+                                    <th style="background:rgba(185,129,44,0.2); color:#7a5419; padding:9px 8px; white-space:nowrap; min-width:80px;">
+                                        Unit Price CTO
+                                    </th>
+                                    <th style="background:rgba(185,129,44,0.2); color:#7a5419; padding:9px 8px; white-space:nowrap; min-width:80px;">
+                                        Subtotal
+                                    </th>
                                 </t>
                                 <t t-if="show_approved_columns">
-                                    <th style="background:rgba(58,95,143,0.2); color:#254670; padding:9px 8px; white-space:nowrap; min-width:70px;"><t t-out="translate('Quantity')"/></th>
-                                    <th style="background:rgba(58,95,143,0.2); color:#254670; padding:9px 8px; white-space:nowrap; min-width:80px;"><t t-out="translate('Unit Price CTO')"/></th>
-                                    <th style="background:rgba(58,95,143,0.2); color:#254670; padding:9px 8px; white-space:nowrap; min-width:80px;"><t t-out="translate('Subtotal')"/></th>
+                                    <th style="background:rgba(58,95,143,0.2); color:#254670; padding:9px 8px; white-space:nowrap; min-width:70px;">
+                                        Quantity
+                                    </th>
+                                    <th style="background:rgba(58,95,143,0.2); color:#254670; padding:9px 8px; white-space:nowrap; min-width:80px;">
+                                        Unit Price CTO
+                                    </th>
+                                    <th style="background:rgba(58,95,143,0.2); color:#254670; padding:9px 8px; white-space:nowrap; min-width:80px;">
+                                        Subtotal
+                                    </th>
                                 </t>
                             </tr>
                         </thead>
@@ -290,7 +361,9 @@
                                                 <select class="form-select form-select-sm" name="product_id"
                                                 t-att-style="state.invalid_lines.has(line.id + '_product_id') ? 'border:1px solid #dc3545;' : ''"
                                                 t-on-change="(ev) => onchange_disputed_value(line.id, 'product_id', +ev.target.value)">
-                                                    <option value=""><t t-out="translate('Select concept')"/></option>
+                                                    <option value="">
+                                                        Select concept
+                                                    </option>
                                                     <t t-foreach="state.product_ids" t-as="product" t-key="product_index">
                                                         <option t-att-value="product.id" t-out="product.name"/>
                                                     </t>
@@ -375,7 +448,7 @@
                             <!-- Subtotal row -->
                             <tr style="border-top:2px solid #1c1d1f; font-weight:700; font-size:14px;">
                                 <td style="padding:13px 16px; text-align:left; color:#1c1d1f;">
-                                    <t t-out="translate('Subtotal')"/>
+                                    Subtotal
                                 </td>
                                 <td style="padding:13px 8px; text-align:right; background:rgba(100,60,160,0.18); color:#4a2070;"></td>
                                 <t t-if="show_cds_columns">
@@ -411,12 +484,12 @@
                 <div class="row text-center mb-3" t-if="state.show_dispute_fields">
                     <div class="col-12 mb-3 mt-3">
                         <button class="btn text-white bg-primary bg-opacity-10 rounded-pill px-3" t-on-click="add_line">
-                            <t t-out="translate('Add concept')"/>
+                            Add concept
                         </button>
                     </div>
                     <div class="col-12 mb-3">
                         <span>
-                            <t t-out="translate('Specify the reason for the change')"/>
+                            Specify the reason for the change
                         </span>
                         <input t-if="state.show_dispute_fields" type="text" class="form-control text-start"
                         t-att-value="state.order_data.x_change_comments" required="true" t-ref="x_change_comments"
@@ -426,7 +499,7 @@
                     </div>
                     <div class="col-12">
                         <button class="btn text-white bg-success bg-opacity-10 rounded-pill px-3 shadow-sm me-2" t-on-click="send_dispute" t-if="state.show_dispute_fields">
-                            <t t-out="translate('Send Dispute')"/>
+                            Send Dispute
                         </button>
                     </div>
                 </div>
@@ -434,7 +507,9 @@
                 <div t-if="isInRfqList" class="card border-0 shadow-sm rounded-3 mt-4">
                     <div class="card-header bg-light d-flex align-items-center gap-2 py-2">
                         <i class="fa fa-paperclip text-primary"/>
-                        <span class="fw-bold text-primary"><t t-out="translate('Files')"/></span>
+                        <span class="fw-bold text-primary">
+                            Files
+                        </span>
                     </div>
                     <div class="card-body">
                         <t t-set="imageAtts" t-value="(state.order_data.order_attachment_ids || []).filter(a => a.mimetype and a.mimetype.startsWith('image/'))"/>
@@ -459,13 +534,13 @@
                         </div>
                         <label class="text-primary" style="cursor:pointer;">
                             <i class="fa fa-plus-circle me-1"/>
-                            <t t-out="translate('Attach files')"/>
+                            Attach files
                             <input type="file" class="d-none" multiple="multiple"
                                 accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg"
                                 t-on-change="onDirectFileSelect"/>
                         </label>
                         <div class="text-muted mt-1" style="font-size:0.75rem;">
-                            <t t-out="translate('PDF, PNG, JPG only · Max 2 files · Max 3 MB each')"/>
+                            'PDF, PNG, JPG only · Max 2 files · Max 3 MB each'
                         </div>
                     </div>
                 </div>
@@ -474,14 +549,14 @@
                     <div class="card-header bg-light d-flex align-items-center gap-2 py-2">
                         <i class="fa fa-comment text-primary"/>
                         <span class="fw-bold text-primary">
-                            <t t-out="translate('Send a Message')"/>
+                            Send a Message
                         </span>
                     </div>
                     <div class="card-body pb-2">
                         <textarea class="form-control mb-2"
                         t-ref="composerTextarea"
                         rows="3"
-                        t-att-placeholder="translate('Write a message...')"
+                        placeholder="Write a message..."
                         t-on-input="onComposerInput"/>
                         <!-- Selected file previews -->
                         <div t-if="state.composerFiles.length" class="d-flex flex-wrap gap-2 mb-2">
@@ -509,7 +584,7 @@
                                 t-on-click="postMessage"
                                 t-att-disabled="!canSendMessage">
                                 <i class="fa fa-paper-plane me-1"/>
-                                <t t-out="state.isSendingMessage ? translate('Sending...') : translate('Send')"/>
+                                <t t-out="state.isSendingMessage ? 'Sending...' : 'Send'"/>
                             </button>
                         </div>
                     </div>
@@ -517,7 +592,7 @@
                 <!-- Message History -->
                 <div class="mt-4" t-if="state.order_data.message_ids.length">
                     <h5 class="mb-3">
-                        <t t-out="translate('Messages')"/>
+                        <t t-out="Messages"/>
                     </h5>
                     <t t-foreach="state.order_data.message_ids" t-as="msg" t-key="msg.id">
                         <div class="d-flex mb-3 gap-2">
@@ -592,7 +667,7 @@
                 <!-- Spinner loader -->
                 <div class="text-center py-4">
                     <i class="fa fa-spinner fa-spin"/>
-                    <t t-out="translate('Loading...')"/>
+                    <t t-out="Loading"/>
                 </div>
             </t>
         </div>

@@ -252,6 +252,21 @@ class ProductProduct(models.Model):
             domain.append(['disabled', '=', False])
         return domain
 
+    # Updated portal to only fetch concepts matching the event's service and subservice. Portal dispute
+    @api.model
+    def get_concepts_domain_portal(self, service_id, subservice_id, hide_disabled=True):
+        domain_base = self.get_concepts_domain(hide_disabled=hide_disabled)
+
+        domain_base.extend([
+            '|',
+            ('x_apply_all_services_subservices', '=', True),
+            '|',
+            ('x_product_id', '=', subservice_id),
+            ('categ_id', '=', service_id),
+        ])
+
+        return domain_base
+
     def _get_concepts_uom_ids(self):
         return [
             self.env.ref('uom.product_uom_km').id,  # KM

@@ -1,0 +1,73 @@
+.navbar-booking-card{
+    color:black; 
+    width: 20%; 
+    border-radius: 10px;
+}
+.appointment_card_info{
+    font-size:21px; 
+    text-align: left; 
+    font-weight:700; 
+    color:white;
+}
+
+.appointment_earning_charts{
+    border: 2px solid lightgrey !important;
+}
+
+.appointment_status_charts{
+    border: 2px solid lightgrey !important;
+}
+
+.appointment_dashboard_container{
+    padding: 5px;
+}
+
+.selected_appointment_container_1{
+    background: #2DAA9E;
+}
+
+.selected_appointment_container_2{
+    background: #00879E;
+}
+
+.selected_appointment_container_3{
+    background: #FFB200;
+}
+
+.selected_appointment_container_4{
+    background: #3A7D44;
+}
+
+.selected_appointment_container_5{
+    background: #E52020;
+}
+
+.appointee_selection_container{
+    width: 97%;
+}
+
+.appointee_selection{
+    width: 300px;
+    font-weight:500
+}
+
+.appointee_chart_filter{
+    width: 200px;
+}
+
+.appointment-dashboard-cards{
+    border: 2px solid lightgrey !important;
+}
+
+.o_action_manager{
+    overflow:auto !important;
+}
+
+#appointment_chart_canvas{
+    height:380px !important;
+  }
+
+#AppointeeSelectId{
+    background-color: #BDE5F8!important;
+}
+

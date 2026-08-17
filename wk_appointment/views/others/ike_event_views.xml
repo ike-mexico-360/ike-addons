@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ike_event_search_inherit_wk_appointment" model="ir.ui.view">
+        <field name="name">ike.event.search.inherit.wk.appointment</field>
+        <field name="model">ike.event</field>
+        <field name="inherit_id" ref="ike_event.view_ike_event_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='my_events']" position="after">
+                <filter
+                    string="Visible Appointments"
+                    name="visible_appointments"
+                    domain="[
+                        ('appointment_type', '=', True),
+                        ('event_date', '&lt;=', (datetime.datetime.now() + relativedelta(hours=3)).to_utc().strftime('%Y-%m-%d %H:%M:%S'))
+                    ]"
+                />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_ike_event_list_inherit_wk_appointment" model="ir.ui.view">
+        <field name="name">ike.event.list.inherit.wk.appointment</field>
+        <field name="model">ike.event</field>
+        <field name="inherit_id" ref="ike_event.view_ike_event_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="appointment_type" string="Schedule" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -101,7 +101,7 @@ class PortalXmlValidator(http.Controller):
 
         # 1. Create the master package (custom.sat.validator)
         validator_vals = {
-            'name': f"Portal Package Match: {purchase_id.name}",
+            # 'name': f"Portal Package Match: {purchase_id.name}",
             'purchase_id': purchase_id.id,
         }
         validator_record = request.env['custom.sat.validator'].sudo().create(validator_vals)

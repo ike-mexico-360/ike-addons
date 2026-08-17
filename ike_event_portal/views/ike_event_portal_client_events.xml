@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_client_events_home" inherit_id="ike_event_portal.portal_my_home_ike_events" priority="60">
+        <xpath expr="//div[@id='portal_ike_events_category']" position="inside">
+            <t t-call="portal.portal_docs_entry" t-if="is_client_portal">
+                <t t-set="title">Events</t>
+                <t t-set="url" t-value="'/my/events'"/>
+                <t t-set="text">Consult your service events</t>
+                <t t-set="placeholder_count" t-value="'client_event_count'"/>
+                <t t-set="icon" t-value="'/ike_event_portal/static/src/assets/white_service.png'"/>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="portal_client_events_breadcrumbs" inherit_id="portal.portal_breadcrumbs" priority="30">
+        <xpath expr="//ol[hasclass('o_portal_submenu')]" position="inside">
+            <li t-if="page_name == 'client_events'" class="breadcrumb-item active">Events</li>
+        </xpath>
+    </template>
+
+    <template id="portal_client_events" name="Client Events">
+        <t t-call="portal.portal_layout">
+            <div class="portal-main-container">
+                <div class="container-fluid">
+                    <div class="d-flex align-items-center mb-1 pb-1">
+                        <div class="bg-primary bg-opacity-10 rounded-3 p-2 me-3 d-flex align-items-center justify-content-center"
+                            style="width:48px; height:48px;">
+                            <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="Events" style="width:28px;"/>
+                        </div>
+                        <div>
+                            <h2 class="fw-bold mb-0 text-dark">Events</h2>
+                            <small class="text-muted">
+                                <t t-out="event_count"/> event(s) found
+                            </small>
+                        </div>
+                    </div>
+
+                    <form method="get" action="/my/events"
+                        class="card border-0 shadow-sm rounded-3 mb-4 ike_client_event_filters">
+                        <div class="card-body py-3">
+                            <div class="row g-3 align-items-end">
+                                <div class="col-md-2">
+                                    <label class="form-label small text-muted fw-semibold mb-1" for="client_event_search">
+                                        <i class="fa fa-search me-1"/>Expedient
+                                    </label>
+                                    <input id="client_event_search" type="search" name="search"
+                                        class="form-control form-control-sm rounded-pill"
+                                        placeholder="Search expedient..." t-att-value="search"/>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small text-muted fw-semibold mb-1" for="client_event_account">
+                                        <i class="fa fa-building me-1"/>Account
+                                    </label>
+                                    <select id="client_event_account" name="account_id" class="form-select form-select-sm rounded-pill">
+                                        <option value="">All accounts</option>
+                                        <option t-foreach="accounts" t-as="account" t-key="account.id"
+                                            t-att-value="account.id"
+                                            t-att-selected="account.id == selected_account_id and 'selected' or None">
+                                            <t t-out="account.name"/>
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small text-muted fw-semibold mb-1" for="client_event_assignation_date_from">
+                                        <i class="fa fa-calendar me-1"/>Assignment Date From
+                                    </label>
+                                    <input id="client_event_assignation_date_from" type="date" name="assignation_date_from"
+                                        class="form-control form-control-sm rounded-pill" t-att-value="assignation_date_from"/>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small text-muted fw-semibold mb-1" for="client_event_assignation_date_to">
+                                        <i class="fa fa-calendar me-1"/>Assignment Date To
+                                    </label>
+                                    <input id="client_event_assignation_date_to" type="date" name="assignation_date_to"
+                                        class="form-control form-control-sm rounded-pill" t-att-value="assignation_date_to"/>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small text-muted fw-semibold mb-1" for="client_event_contacted_date_from">
+                                        <i class="fa fa-calendar me-1"/>Contact Date From
+                                    </label>
+                                    <input id="client_event_contacted_date_from" type="date" name="contacted_date_from"
+                                        class="form-control form-control-sm rounded-pill" t-att-value="contacted_date_from"/>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label small text-muted fw-semibold mb-1" for="client_event_contacted_date_to">
+                                        <i class="fa fa-calendar me-1"/>Contact Date To
+                                    </label>
+                                    <input id="client_event_contacted_date_to" type="date" name="contacted_date_to"
+                                        class="form-control form-control-sm rounded-pill" t-att-value="contacted_date_to"/>
+                                </div>
+                                <div class="col-md-1">
+                                    <label class="form-label small text-muted fw-semibold mb-1" for="client_event_service">
+                                        <i class="fa fa-cog me-1"/>Service
+                                    </label>
+                                    <select id="client_event_service" name="service_id" class="form-select form-select-sm rounded-pill">
+                                        <option value="">All</option>
+                                        <option t-foreach="available_services" t-as="service" t-key="service.id"
+                                            t-att-value="service.id"
+                                            t-att-selected="service.id == selected_service_id and 'selected' or None">
+                                            <t t-out="service.name"/>
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <label class="form-label small text-muted fw-semibold mb-1" for="client_event_stage">
+                                        <i class="fa fa-tasks me-1"/>Stage
+                                    </label>
+                                    <select id="client_event_stage" name="stage_id" class="form-select form-select-sm rounded-pill">
+                                        <option value="">All</option>
+                                        <option t-foreach="available_stages" t-as="stage" t-key="stage.id"
+                                            t-att-value="stage.id"
+                                            t-att-selected="stage.id == selected_stage_id and 'selected' or None">
+                                            <t t-out="stage.name"/>
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1">
+                                    <label class="form-label small text-muted fw-semibold mb-1" for="client_event_sortby">Order</label>
+                                    <select id="client_event_sortby" name="sortby" class="form-select form-select-sm rounded-pill">
+                                        <option t-foreach="sortings.items()" t-as="sorting" t-key="sorting[0]"
+                                            t-att-value="sorting[0]"
+                                            t-att-selected="sorting[0] == sortby and 'selected' or None">
+                                            <t t-if="sorting[0] == 'date_desc'">Newest</t>
+                                            <t t-elif="sorting[0] == 'date_asc'">Oldest</t>
+                                            <t t-else="">Expedient</t>
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col-md-1 d-flex align-items-end">
+                                    <a href="/my/events" class="btn btn-sm btn-outline-secondary rounded-pill w-100" title="Clear filters">
+                                        <i class="fa fa-times"/>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="o_portal_content">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <form method="get" action="/my/events" class="d-flex align-items-center gap-2">
+                                <input type="hidden" name="account_id" t-att-value="selected_account_id or ''"/>
+                                <input type="hidden" name="stage_id" t-att-value="selected_stage_id or ''"/>
+                                <input type="hidden" name="service_id" t-att-value="selected_service_id or ''"/>
+                                <input type="hidden" name="assignation_date_from" t-att-value="assignation_date_from"/>
+                                <input type="hidden" name="assignation_date_to" t-att-value="assignation_date_to"/>
+                                <input type="hidden" name="contacted_date_from" t-att-value="contacted_date_from"/>
+                                <input type="hidden" name="contacted_date_to" t-att-value="contacted_date_to"/>
+                                <input type="hidden" name="search" t-att-value="search"/>
+                                <input type="hidden" name="sortby" t-att-value="sortby"/>
+                                <span class="text-muted">Show</span>
+                                <select name="items_per_page" class="form-select form-select-sm" onchange="this.form.submit()">
+                                    <option t-foreach="items_per_page_options" t-as="option" t-key="option"
+                                        t-att-value="option"
+                                        t-att-selected="option == items_per_page and 'selected' or None">
+                                        <t t-out="option"/>
+                                    </option>
+                                </select>
+                                <span class="text-muted">records</span>
+                            </form>
+                            <span class="text-muted">
+                                Showing <strong><t t-out="page_start"/></strong>
+                                to <strong><t t-out="page_end"/></strong>
+                                of <strong><t t-out="event_count"/></strong> records
+                            </span>
+                        </div>
+
+                        <div class="table-responsive rounded-3 shadow-sm">
+                            <table class="table table-hover table-striped align-middle mb-0" style="border-collapse: separate; border-spacing: 0;">
+                                <thead>
+                                    <tr class="bg-dark text-white">
+                                        <th class="text-nowrap py-3 px-3 border-0">Expedient</th>
+                                        <th class="text-nowrap py-3 px-3 border-0"><t t-out="account_identifier_label"/></th>
+                                        <th class="text-nowrap py-3 px-3 border-0">Assignment Date</th>
+                                        <th class="text-nowrap py-3 px-3 border-0">Contact Date</th>
+                                        <th class="text-nowrap py-3 px-3 border-0">Client</th>
+                                        <th class="text-nowrap py-3 px-3 border-0">Service</th>
+                                        <th class="text-nowrap py-3 px-3 border-0">Vehicle</th>
+                                        <th class="py-3 px-3 border-0">Origin</th>
+                                        <th class="py-3 px-3 border-0">Destination</th>
+                                        <th class="text-nowrap py-3 px-3 border-0">ETA</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="event_rows" t-as="row" t-key="row['event'].id" class="border-bottom">
+                                        <t t-set="event" t-value="row['event']"/>
+                                        <td class="text-nowrap py-3 px-3 border-0">
+                                            <span class="fw-semibold text-primary"><t t-out="event.name"/></span>
+                                        </td>
+                                        <td class="text-nowrap py-3 px-3 border-0"><t t-out="row['account_code']"/></td>
+                                        <td class="text-nowrap py-3 px-3 border-0">
+                                            <span t-if="row['assignation_date']" t-out="row['assignation_date']" t-options="{'widget': 'datetime'}"/>
+                                            <span t-else="">-</span>
+                                        </td>
+                                        <td class="text-nowrap py-3 px-3 border-0">
+                                            <span t-if="row['contacted_date']" t-out="row['contacted_date']" t-options="{'widget': 'datetime'}"/>
+                                            <span t-else="">-</span>
+                                        </td>
+                                        <td class="py-3 px-3 border-0"><t t-out="row['client']"/></td>
+                                        <td class="py-3 px-3 border-0">
+                                            <div><t t-out="event.service_id.name or '-'"/></div>
+                                            <small class="text-muted" t-if="event.sub_service_id"><t t-out="event.sub_service_id.name"/></small>
+                                        </td>
+                                        <td class="py-3 px-3 border-0"><t t-out="row['vehicle']"/></td>
+                                        <td class="py-3 px-3 border-0"><small class="text-muted"><i class="fa fa-map-marker text-danger me-1"/><t t-out="row['origin']"/></small></td>
+                                        <td class="py-3 px-3 border-0"><small class="text-muted"><i class="fa fa-map-marker text-danger me-1"/><t t-out="row['destination']"/></small></td>
+                                        <td class="text-nowrap py-3 px-3 border-0 text-center">
+                                            <span class="badge rounded-pill bg-info bg-opacity-10 px-3 py-2"><t t-out="row['eta']"/></span>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="not events">
+                                        <td colspan="9" class="text-center text-muted py-5">No events match the selected filters.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="mt-3" t-if="pager"><t t-call="portal.pager"/></div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

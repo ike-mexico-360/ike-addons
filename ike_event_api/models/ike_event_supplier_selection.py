@@ -513,7 +513,7 @@ class IkeEventSupplierSelection(models.Model):
         #     else:
         #         _logger.warning(f"Error sending notification ({origin}): {response}")
 
-    def send_cancel_notification_to_external(self, str, cancel_reason_id, reason_text, origin: str = 'internal'):
+    def send_cancel_notification_to_external(self, cancel_reason_id, reason_text, origin: str = 'internal'):
         external_supplier_notification_url =\
             self.env['ir.config_parameter'].sudo().get_param('ike_event.app.url.cancel_external_notification')
         if not external_supplier_notification_url:
@@ -536,7 +536,7 @@ class IkeEventSupplierSelection(models.Model):
             )
             try:
                 notification_data = external_notification_response.json()
-                if notification_data.get('error', True):
+                if not notification_data.get('errors', False):
                     _logger.info(
                         f"External notification sent successfully"
                         f" ({supplier.event_id.id}/{supplier.truck_id.x_vehicle_ref}): {notification_data}")

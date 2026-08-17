@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+    <data>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~ TREE VIEW ~~~~~~~~~~~~~~~~~~~~~~ -->
+
+        <record id="inherit_view_partner_tree" model="ir.ui.view">
+            <field name="name">res.partner.tree.appoint</field>
+            <field name="model">res.partner</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <list string="Appointment Members">
+                    <field name="name"/>
+                    <field name="appoint_group_ids" widget="many2many_tags"/>
+                    <field name="email"/>
+                    <field name="mobile"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="appoint_person_charge" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="available_for_appoint" invisible="1"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~ FORM VIEW ~~~~~~~~~~~~~~~~~~~~~~ -->
+        <record id="inherit_view_partner_form" model="ir.ui.view">
+            <field name="name">res.partner.form.appoint</field>
+            <field name="model">res.partner</field>
+            <field name="mode">primary</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Appointment">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <field name="active" invisible="1"/>
+                            <!-- <button class="oe_stat_button" name="toggle_active" type="object" groups="wk_appointment.appointment_officer_group"
+                                icon="fa-archive text-success"
+                                invisible="active == True">
+								<span class="o_stat_text text-success">Active</span>
+							</button>
+							<button class="oe_stat_button" name="toggle_active" type="object" groups="wk_appointment.appointment_officer_group"
+                                icon="fa-archive text-danger"
+                                invisible="active == True">
+								<span class="o_stat_text text-danger">Archive</span>
+							</button> -->
+						</div>
+                        <widget name="web_ribbon" text="Archived" bg_color="bg-danger" invisible="active == True"/>
+                        <field name="image_1920" widget="image" class="oe_avatar" options="{&quot;preview_image&quot;: &quot;image_128&quot;}"/>
+                            <div class="oe_title">
+                            <div class="oe_edit_only">
+                                <label for="name"/>
+                            </div>
+                            <h1>
+                                <field name="name" default_focus="1" placeholder="Name" required="1"/>
+                            </h1>
+                            <div class="mt8">
+                                <field name="allow_multi_appoints" help="If it is enabled then this member can handle multiple appointments in a particular timeslot."/>
+                                <label for="allow_multi_appoints" string="Allow Multiple Appointments"
+                                    help="If it is enabled then this member can handle multiple appointments in a particular timeslot."/>
+                            </div>
+                        </div>
+                        <group>
+                            <field name="parent_id" invisible="1"/>
+                            <group>
+                                <label for="street" string="Address"/>
+                                <div>
+                                    <field name="street" placeholder="Street..."/>
+                                    <field name="street2" />
+                                    <div class="address_format">
+                                        <field name="type" invisible="1"/>
+                                        <field name="city" placeholder="City" style="width: 40%%"/>
+                                        <field name="state_id" class="oe_no_button" placeholder="State" style="width: 37%%" options='{"no_open": True, "no_create": True}'/>
+                                        <field name="zip" placeholder="ZIP" style="width: 22%%"/>
+                                    </div>
+                                    <field name="country_id" placeholder="Country" class="oe_no_button" options='{"no_open": True, "no_create": True}'/>
+                                </div>
+                                <field name="website" widget="url" placeholder="e.g. www.odoo.com"/>
+                                <field name="color" invisible="1"/>
+                                <field name="appoint_group_ids" widget="many2many_tags" required="1"
+                                    options="{'color_field': 'color', 'no_create': True, 'no_edit':True}"
+                                    placeholder="Groups..."/>
+                                <label for="use_addr_as_appoint"/>
+                                <div class="oe_inline d-flex">
+                                    <field name="use_addr_as_appoint" no_label="1" class="oe_inline"/>
+                                    <label for="use_addr_as_appoint" class="oe_inline" string="Enable to use Appointee address as an Appointment address"/>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="phone" placeholder="e.g. +32.81.81.37.00"/>
+                                <field name="mobile"/>
+                                <field name="available_for_appoint" invisible="1"/>
+                                <!-- <field name="email" widget="email" attrs="{'required': [('user_ids','!=', [])]}" readonly="1"/> -->
+                                <field name="email" widget="email" required="1"/>
+                                <field name="title" options='{"no_open": True,"no_create": True}'/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="appoint_person_charge" widget="monetary" options="{'currency_field': 'currency_id'}"
+                                    help="This charge will be used to make appointments chargable.If no charge is mentioned here,
+                                    then the charge of corresponding appointment group will be applied."
+                                    required="1"/>
+                                <label for="appoint_product_id" groups="wk_appointment.appointment_officer_group"/>
+                                <div class="oe_inline" groups="wk_appointment.appointment_officer_group">
+                                    <field name="appoint_product_id" options="{'no_create_edit': True, 'no_create': True, 'no_quick_create': True}"
+                                        help="This product will be used for managing pricelist while
+                                        applying appointment charges.
+                                        If no product is selected and pricelist is enabled from settings then the pricelist
+                                        for this person will be managed through Appointment group Product."
+                                        />
+                                    <label for="appoint_product_id" class="oe_inline"
+                                         string="Product should be selected here in order to manage pricelist."
+                                    />
+                                </div>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page name="general_info" string="General Information">
+                                <group>
+                                    <group>
+                                        <field name="work_exp" placeholder="e.g. 1-2 years" help="Add Working Experience for this member"/>
+                                        <field name="specialist" placeholder="person's specialization..." help="Add the specialization of the member"/>
+                                    </group>
+                                </group>
+                                <group>
+                                    <field name="about_person" placeholder="Describe about the person(max 125 words)..."/>
+                                </group>
+                            </page>
+                            
+                            <page name="appoint_timeslots" string="TimeSlots" invisible="available_for_appoint != True">
+                                <separator string="Select TimeSlots"/>
+                                    <field name="appointment_day_slots">
+                                        <list>
+                                            <field name="day"/>
+                                            <field name="time_slots_ids" widget="many2many_tags"/>
+                                        </list>
+                                    </field>
+                            </page>
+                            
+                            <page string="All Appointments">
+                                <field name="booked_appointment_ids" readonly="1"
+                                    help="This shows all the appointments that are booked for this member."
+                                    options="{'no_create_edit':True,'no_edit':True,'no_create':True,'no_quick_create':True,'no_open':True}">
+                                    <list string="" decoration-info="appoint_state == 'new'" decoration-muted="appoint_state == 'done'"
+                                        decoration-warning="appoint_state == 'pending'" decoration-success="appoint_state == 'approved'"
+                                        decoration-primary="appoint_state == 'rejected'">
+                                        <field name="name"/>
+                                        <field name="customer"/>
+                                        <field name="appoint_date"/>
+                                        <field name="time_from" widget="float_time"/>
+                                        <field name="time_to" widget="float_time"/>
+                                        <field name="appoint_state"/>
+                                    </list>
+                                </field>
+                            </page>
+							<page string="Internal Notes">
+								<field name="comment" placeholder="Internal Note..."/>
+							</page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="inherit_view_partner_form_for_officer_group" model="ir.ui.view">
+            <field name="name">res.partner.form.appoint</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="wk_appointment.inherit_view_partner_form"/>
+            <field name="mode">primary</field>
+            <field name="groups_id" eval="[(6, 0, [ref('wk_appointment.appointment_officer_group')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form//field[@name='appointment_day_slots']" position="attributes">
+                    <attribute name="options">{}</attribute>
+                    <attribute name="widget">one2many_list</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="inherit_view_partner_kanban_view">
+            <field name="name">Group Member kanban View</field>
+            <field name="model">res.partner</field>
+            <field name="type">kanban</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="color"/>
+                    <field name="name"/>
+                    <field name="title"/>
+                    <field name="email"/>
+                    <field name="phone"/>
+                    <field name="street"/>
+                    <field name="street2"/>
+                    <field name="zip"/>
+                    <field name="city"/>
+                    <field name="country_id"/>
+                    <field name="mobile"/>
+                     <field name="image_128"/>
+                    <field name="state_id"/>
+                    <field name="appoint_group_ids"/>
+                    <field name="id"/>
+                    <field name="parent_id"/>
+                    <templates>
+                        <t t-name="kanban-menu">
+                            <ul class="oe_kanban_colorpicker" data-field="color"/>
+                        </t>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card oe_kanban_global_click">
+                                <div class="oe_kanban_content oe_kanban_details">
+                                    <div class="o_kanban_image">
+                                        <a type="open">
+                                            <t t-if="record.image_128">
+                                                <img alt="Not Found" t-att-src="kanban_image('res.partner', 'image_128', record.id.raw_value)"/>
+                                            </t>
+                                            <t t-if="!record.image_128">
+                                                <img alt="Not Found" t-att-src='_s + "/base/static/src/img/avatar.png"' class="o_kanban_image"/>
+                                            </t>
+                                        </a>
+                                    </div>
+                                    <div name="tags">
+                                            <ul>
+                                                <li t-if="record.name">
+                                                    <b>
+                                                        <field name="name"/>
+                                                    </b>
+                                            </li>
+                                                <li t-if="record.mobile">
+                                                    <field name="mobile"/>
+                                                </li>
+                                                <li t-if="record.email">
+		                                	<field name="email"/>
+							</li>
+                                            <li t-if="record.appoint_group_ids">
+                                                <span class="oe_kanban_list_many2many">
+                                                    <field name="appoint_group_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                                                </span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="inherit_base_res_partner_form" model="ir.ui.view">
+            <field name="name">appoint.inherit.res.partner</field>
+            <field name="model">res.partner</field>
+            <field name="inherit_id" ref="base.view_partner_form"/>
+            <field name="arch" type="xml">
+              <xpath expr="//page[@name='sales_purchases']//group[@name='misc']" position="after">
+                 <group name="appointment" string="Appointment">
+
+                    <label for="available_for_appoint" string="Is an Appointee"/>
+                    <div>
+                        <field name="available_for_appoint" class="oe_inline" />
+                        <label for="available_for_appoint" string="Enable To make this user an Appointee." class="oe_inline"/>
+                    </div>
+                    <field name="appoint_person_charge" invisible="available_for_appoint == False" required="1"/>
+                    <field name="appoint_product_id" invisible="available_for_appoint == False" options="{'no_create': True}"/>
+
+                </group>
+              </xpath>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="appoint_mgmt_team_member_action">
+            <field name="name">Appointee</field>
+            <field name="res_model">res.partner</field>
+            <field name="path">appointment-appointee</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="binding_view_types">form</field>
+            <field name="context">{'default_available_for_appoint': 1, 'show_appoint_member': 1}</field>
+            <field name="domain">[('available_for_appoint', '=', True), ('id','in',['get_appointee_id()'])]</field>
+            <field name="help" type="html">
+              <p>
+                Here is a list of all the Appointment Groups members created. You
+                can click on any record to get the detailed Information About these Groups Members.
+              </p>
+            </field>
+        </record>
+        <record id="appoint_mgmt_team_member_action_for_kanban" model="ir.actions.act_window.view">
+            <field name="view_mode">kanban</field>
+            <field name="sequence">1</field>
+            <field name="view_id" ref="wk_appointment.inherit_view_partner_kanban_view"/>
+            <field name="act_window_id" ref="wk_appointment.appoint_mgmt_team_member_action"/>
+        </record>
+        <record id="appoint_mgmt_team_member_action_for_tree" model="ir.actions.act_window.view">
+            <field name="view_mode">list</field>
+            <field name="sequence">2</field>
+            <field name="view_id" ref="wk_appointment.inherit_view_partner_tree"/>
+            <field name="act_window_id" ref="wk_appointment.appoint_mgmt_team_member_action"/>
+        </record>
+        <record id="appoint_mgmt_team_member_action_for_form" model="ir.actions.act_window.view">
+            <field name="view_mode">form</field>
+            <field name="sequence">3</field>
+            <field name="view_id" ref="wk_appointment.inherit_view_partner_form_for_officer_group"/>
+            <field name="act_window_id" ref="wk_appointment.appoint_mgmt_team_member_action"/>
+        </record>
+
+    </data>
+</odoo>

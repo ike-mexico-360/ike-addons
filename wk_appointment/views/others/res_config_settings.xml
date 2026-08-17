@@ -1,0 +1,35 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <record id="res_config_settings_view_form_appointment" model="ir.ui.view">
+            <field name="name">res.config.settings.view.form.inherit.portal</field>
+            <field name="model">res.config.settings</field>
+            <field name="inherit_id" ref="wk_appointment.appoint_config_settings_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//block[@name='operations_setting_container']" position="after">
+                    <block title="Appointment Settings" name="appointment_setting_container">
+                        <setting string="Generate appointments">
+                            <div class="content-group">
+                                <div class="row mb-2">
+                                    <label for="appointment_wait_time" class="col-auto o_light_label"/>
+                                    <div class="col-auto">
+                                        <field name="appointment_wait_time" class="oe_inline"/>
+                                        <span class="ms-2">min</span>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <label for="events_display_wait_time" class="col-auto o_light_label"/>
+                                    <div class="col-auto">
+                                        <field name="events_display_wait_time" class="oe_inline"/>
+                                        <span class="ms-2">min</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

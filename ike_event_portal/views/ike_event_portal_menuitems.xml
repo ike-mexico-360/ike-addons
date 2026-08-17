@@ -28,7 +28,7 @@
 
         <!-- category -->
         <div id="portal_ike_events_category" position="inside">
-            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_admin')">
+            <t t-call="portal.portal_docs_entry" t-if="not is_client_portal and request.env.user.has_group('ike_event_portal.custom_group_portal_admin')">
                 <t t-set="title">Users</t>
                 <t t-set="url" t-value="'/provider/portal/users'"/>
                 <t t-set="text">Users portal</t>
@@ -36,7 +36,7 @@
                 <t t-set="icon" t-value="'/ike_event_portal/static/src/assets/white_user.png'"/>
 
             </t>
-            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_admin')">
+            <t t-call="portal.portal_docs_entry" t-if="not is_client_portal and request.env.user.has_group('ike_event_portal.custom_group_portal_admin')">
                 <t t-set="title">Cranes</t>
                 <t t-set="url" t-value="'/provider/portal/trucks'"/>
                 <t t-set="text">Cranes Portal</t>
@@ -47,21 +47,21 @@
 
         <!-- services -->
         <div id="portal_ike_events_services" position="inside">
-            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_supervisor')">
+            <t t-call="portal.portal_docs_entry" t-if="not is_client_portal and request.env.user.has_group('ike_event_portal.custom_group_portal_supervisor')">
                 <t t-set="title">Services</t>
                 <t t-set="url" t-value="'/provider/portal/services'"/>
                 <t t-set="text">Services Portal</t>
                 <t t-set="placeholder_count" t-value="'ike_event_service_count'"/>
                 <t t-set="icon" t-value="'/ike_event_portal/static/src/assets/white_service.png'"/>
             </t>
-            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_finance')">
+            <t t-call="portal.portal_docs_entry" t-if="not is_client_portal and request.env.user.has_group('ike_event_portal.custom_group_portal_finance')">
                 <t t-set="title">Requests for Quotation</t>
                 <t t-set="url" t-value="'/my/rfq'"/>
                 <t t-set="text">Follow your Requests for Quotation</t>
                 <t t-set="placeholder_count" t-value="'rfq_count'"/>
                 <t t-set="icon" t-value="'/web/static/img/rfq.svg'"/>
             </t>
-            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('ike_event_portal.custom_group_portal_finance')">
+            <t t-call="portal.portal_docs_entry" t-if="not is_client_portal and request.env.user.has_group('ike_event_portal.custom_group_portal_finance')">
                 <t t-set="title">Our Orders</t>
                 <t t-set="url" t-value="'/my/purchase'"/>
                 <t t-set="text">Follow orders you have to fulfill</t>

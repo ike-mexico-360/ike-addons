@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- LIST (TREE) VIEW -->
+    <record id="custom_purchase_order_finance_report_view_list" model="ir.ui.view">
+        <field name="name">custom.purchase.report.finance.view.list</field>
+        <field name="model">custom.purchase.report.finance</field>
+        <field name="arch" type="xml">
+            <list string="Purchase and Invoice Analysis"
+                  decoration-muted="invoice_status == 'no'"
+                  decoration-info="invoice_status == 'to invoice'"
+                  decoration-success="invoice_status == 'invoiced'">
+                <field name="order_id" optional="show"/>
+                <field name="date_approve" optional="show"/>
+                <field name="partner_id" optional="show"/>
+                <field name="origin" optional="show"/>
+                <field name="x_origin_events" optional="show"/>
+                <field name="x_po_ref_sap" optional="show"/>
+                <field name="x_invoice_ref_sap" optional="show"/>
+                <field name="amount_total" widget="monetary" sum="Sum of Total" optional="show"/>
+                <field name="invoice_status" widget="badge" optional="show"
+                    decoration-muted="invoice_status == 'no'"
+                    decoration-info="invoice_status == 'to invoice'"
+                    decoration-success="invoice_status == 'invoiced'"/>
+                <field name="x_status_invoice" widget="badge" optional="hide"
+                    decoration-muted="x_status_invoice == 'under_review'"
+                    decoration-info="x_status_invoice == 'accepted'"
+                    decoration-success="x_status_invoice == 'paid'"
+                    decoration-warning="x_status_invoice == 'rejected'"
+                    decoration-danger="x_status_invoice == 'cancelled'"/>
+
+                <!-- Added Invoice Fields -->
+                <field name="invoice_id" optional="show"/>
+                <field name="invoice_date" optional="show"/>
+                <!-- <field name="invoice_state" widget="badge" optional="show"
+                       decoration-info="invoice_state == 'draft'"
+                       decoration-success="invoice_state == 'posted'"/> -->
+                <field name="invoice_payment_state" widget="badge" optional="hide"
+                       decoration-success="invoice_payment_state in ('paid', 'in_payment')"
+                       decoration-warning="invoice_payment_state == 'partial'"
+                       decoration-danger="invoice_payment_state == 'not_paid'"/>
+
+                <!-- User and Company Fields -->
+                <field name="user_id" optional="hide" widget="many2one_avatar_user"/>
+                <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+                <field name="currency_id" column_invisible="True"/>
+
+                <!-- Totals -->
+                <!-- <field name="amount_untaxed" optional="hide" widget="monetary" sum="Sum of Untaxed Total"/>
+                <field name="state" optional="hide" widget="badge"
+                       decoration-info="state in ('draft', 'sent')"
+                       decoration-success="state in ('purchase', 'done')"/> -->
+            </list>
+        </field>
+    </record>
+
+    <!-- SEARCH VIEW (FILTERS & GROUP BY) -->
+    <record id="view_custom_purchase_order_finance_search" model="ir.ui.view">
+        <field name="name">report.purchase.order.finance.search</field>
+        <field name="model">custom.purchase.report.finance</field>
+        <field name="arch" type="xml">
+            <search string="Purchases and Invoices">
+                <!-- Quick Search Fields -->
+                <field name="order_id"/>
+                <field name="partner_id"/>
+                <field name="invoice_id"/>
+                <field name="invoice_name"/>
+                <field name="origin"/>
+                <field name="x_origin_events"/>
+                <field name="x_po_ref_sap"/>
+                <field name="x_invoice_ref_sap"/>
+
+                <!-- Predefined Filters -->
+                <separator/>
+                <filter string="Invoiced" name="invoiced" domain="[('invoice_status','=','invoiced')]"/>
+                <filter string="To Invoice" name="to_invoice" domain="[('invoice_status','=','to invoice')]"/>
+                <filter string="Posted Invoice" name="inv_posted" domain="[('invoice_state','=','posted')]"/>
+                <separator/>
+                <filter string="Confirmation Date Last Year" name="later_than_a_year_ago"
+                        domain="[('date_approve', '&gt;=', ((context_today()-relativedelta(years=1)).strftime('%Y-%m-%d')))]"/>
+
+                <filter name="filter_date_order" date="date_order"/>
+                <filter name="filter_date_approve" date="date_approve" default_period="month"/>
+                <filter name="filter_invoice_date" date="invoice_date"/>
+
+                <!-- Extended Filters -->
+                <group expand="0" string="Extended Filters">
+                    <field name="user_id"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    <field name="date_order"/>
+                    <field name="date_approve"/>
+                    <field name="invoice_date"/>
+                </group>
+
+                <!-- Group By Options -->
+                <group expand="1" string="Group By">
+                    <filter string="Vendor" name="group_partner_id" context="{'group_by':'partner_id'}"/>
+                    <filter string="Vendor Country" name="country_id" context="{'group_by':'country_id'}"/>
+                    <!-- <filter string="Buyer" name="user_id" context="{'group_by':'user_id'}"/> -->
+                    <filter string="Purchase Order" name="group_order_id" context="{'group_by':'order_id'}"/>
+                    <!-- <filter string="Order Status" name="status" context="{'group_by':'state'}"/> -->
+                    <filter string="PO Invoice Status" name="group_invoice_status" context="{'group_by':'invoice_status'}"/>
+                    <separator/>
+                    <filter string="Invoice" name="group_invoice_id" context="{'group_by':'invoice_id'}"/>
+                    <!-- <filter string="Invoice Status" name="group_invoice_state" context="{'group_by':'invoice_state'}"/> -->
+                    <filter string="Invoice Statuses" name="group_x_status_invoice" context="{'group_by':'x_status_invoice'}"/>
+                    <filter string="Payment Status" name="group_payment_state" context="{'group_by':'invoice_payment_state'}"/>
+                    <separator/>
+                    <filter string="Company" name="company" context="{'group_by':'company_id'}" groups="base.group_multi_company"/>
+                    <separator/>
+                    <filter string="Order Date" name="order_month" context="{'group_by': 'date_order:month'}"/>
+                    <filter string="Confirmation Date" name="group_date_approve_month" context="{'group_by': 'date_approve:month'}"/>
+                    <filter string="Invoice Date" name="group_invoice_date_month" context="{'group_by': 'invoice_date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_custom_purchase_order_finance_report_all" model="ir.actions.act_window">
+        <field name="name">Purchase and Invoice Analysis</field>
+        <field name="res_model">custom.purchase.report.finance</field>
+        <field name="view_mode">list</field>
+        <field name="view_id"></field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                No Purchase Analysis
+            </p>
+            <p>
+                This analysis allows you to easily check and analyze your purchase orders linked with vendor invoices.
+            </p>
+        </field>
+        <field name="target">current</field>
+    </record>
+</odoo>

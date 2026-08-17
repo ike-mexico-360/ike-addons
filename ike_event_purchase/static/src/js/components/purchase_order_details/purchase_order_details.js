@@ -131,9 +131,11 @@ export class PurchaseOrderDetails extends Component {
     }
 
     async _loadComplementaryData() {
+        const service_id = this.state.order_data?.x_event_id?.service_id?.id || false;
+        const subservice_id = this.state.order_data?.x_sub_service_id?.id || false;
         try {
             const uom_domain = await this.orm.call('product.product', 'get_concepts_uom_ids', []);
-            const concepts_domain = await this.orm.call('product.product', 'get_concepts_domain', []);
+            const concepts_domain = await this.orm.call('product.product', 'get_concepts_domain_portal', [service_id, subservice_id]);
             const [uom_ids, product_ids] = await Promise.all([
                 this.orm.searchRead(
                     'uom.uom',
@@ -168,22 +170,6 @@ export class PurchaseOrderDetails extends Component {
             });
         }
     }
-
-    // async _loadO2mTrackings(messages) {
-    //     const ids = messages
-    //         .filter((m) => m.o2m_tracking_command_ids?.length > 0)
-    //         .map((m) => m.id);
-    //     if (!ids.length) return;
-    //     const o2mTrackingsMap = await this.orm.call(
-    //         'mail.message',
-    //         'get_o2m_tracking_format',
-    //         [ids, 'purchase.order']
-    //     );
-    //     console.log("O2M Trackings Map:", o2mTrackingsMap);
-    //     for (const msg of messages) {
-    //         msg.o2mTrackings = o2mTrackingsMap[msg.id] || [];
-    //     }
-    // }
 
     messageBody(body) {
         return markup(body || '');
@@ -387,6 +373,7 @@ export class PurchaseOrderDetails extends Component {
                         'x_portal_action_accept_prices',
                         [this.props.order_id]
                     );
+                    this.notification.add(_t("Prices accepted successfully"), { type: "success" });
                     await this._loadOrderData();
                 } catch (e) {
                     this.notification.add(
@@ -598,15 +585,6 @@ export class PurchaseOrderDetails extends Component {
         }
 
         try {
-            // comment to fix new rule access res.partner
-            // await this.orm.write("purchase.order", [this.props.order_id], {
-            //     // Incrementar x_dispute_iteration_count en 1
-            //     x_dispute_iteration_count: this.state.order_data.x_dispute_iteration_count + 1,
-            //     x_change_comments: this.state.order_data.x_change_comments,
-            //     order_line: commands,
-            // });
-            // return true;
-            // fix new rule access res.partner
             const response = await rpc("/provider/portal/purchase/save_dispute", {
                 order_id: this.props.order_id,
                 dispute_count: this.state.order_data.x_dispute_iteration_count + 1,

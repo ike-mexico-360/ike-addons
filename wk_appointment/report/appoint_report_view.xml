@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!--  ~~~~~~~~~~~~~~~~~ Pivot VIEW ~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <record id="appoint_mgmt_book_appoint_report_pivot_view" model="ir.ui.view">
+            <field name="name">Appointment Pivot View</field>
+            <field name="model">appointment.report</field>
+             <field name="arch" type="xml">
+                 <pivot string="Appointment Analysis" disable_linking="True">
+                     <field name="appoint_group_id" type="row"/>
+                     <field name="appoint_date" type="col"/>
+                     <field name="nbr" type="measure"/>
+                     <field name="price_total" type="measure"/>
+                 </pivot>
+             </field>
+        </record>
+
+        <!--  ~~~~~~~~~~~~~~~~~ Graph VIEW ~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <record id="appoint_mgmt_book_appoint_report_graph_view" model="ir.ui.view">
+            <field name="name">Appointment Graph View</field>
+            <field name="model">appointment.report</field>
+            <field name="arch" type="xml">
+                <graph string="Appointment Lines" type="bar">
+                    <field name="appoint_group_id" type="row"/>
+                    <field name="price_total" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!--  ~~~~~~~~~~~~~~~~~ FILTER VIEW ~~~~~~~~~~~~~~~~~~~~~~~ -->
+        <record model='ir.ui.view' id='appoint_mgmt_book_appoint_report_filter_view'>
+            <field name="name">appointment.lines.filter</field>
+            <field name="model">appointment.report</field>
+            <field name="type">search</field>
+            <field name="arch"  type="xml">
+                <search string="Search Appointment">
+                    <field name="appoint_date"/>
+                    <group string="Group By">
+                        <filter name="group_appoint_customer" string="Customer"
+                            context="{'group_by': 'customer'}"/>
+                        <separator/>
+                        <filter name="group_appoint_person" string="Group Members"
+                            context="{'group_by': 'appoint_person_id'}"/>
+                        <separator/>
+                        <filter name="group_appoint_group" string="Appointment Groups"
+                            context="{'group_by': 'appoint_group_id'}"/>
+                        <separator/>
+                        <filter name="group_appoint_product" string="Appointment Product"
+                            context="{'group_by': 'appoint_product_id'}"/>
+                        <separator/>
+                        <filter name="group_appoint_source" string="Source of Booking"
+                            context="{'group_by': 'source'}"/>
+                        <filter name="group_time_slot_day" string="Day"
+                            context="{'group_by': 'time_slot_day'}"/>
+                            <separator/>
+                        <filter string="Today" name="today"
+                            domain="[('appoint_date', '=', current_date)]"/>
+                        <separator/>
+                        <filter string="This Month" name="this_month"
+                            domain="[('appoint_date', '&gt;=', context_today().strftime('%%Y-%%m-01'))]"/>
+                        <filter string="Last Month" name="last_month"
+                            domain="['&amp;', ('appoint_date', '&gt;=', (context_today() - relativedelta(months=1)).strftime('%%Y-%%m-01')), ('appoint_date', '&lt;', context_today().strftime('%%Y-%%m-01'))]"/>
+                        <filter string="Next Month" name="next_month"
+                            domain="['&amp;', ('appoint_date', '&gt;=', (context_today() + relativedelta(months=1)).strftime('%%Y-%%m-01')), ('appoint_date', '&gt;', context_today().strftime('%%Y-%%m-01'))]"/>
+                        <separator/>
+                        <filter string="This Year" name="thisyear"
+                            domain="['|', ('appoint_date', '=', False), '&amp;',('appoint_date','&lt;=', time.strftime('%%Y-12-31')),('appoint_date','&gt;=',time.strftime('%%Y-01-01'))]" help="Appointments with period in current year"/>
+                        <separator/>
+                        <filter name="appoint_state_new" string="New Appointment"
+                            domain="[('appoint_state', '=', 'new')]"/>
+                        <filter name="appoint_state_pending" string="Pending Appointment"
+                            domain="[('appoint_state', '=', 'pending')]"/>
+                        <filter name="appoint_state_app" string="Approved Appointment"
+                            domain="[('appoint_state', '=', 'approved')]"/>
+                        <filter name="appoint_state_rej" string="Rejected Appointment"
+                            domain="[('appoint_state', '=', 'rejected')]"/>
+                        <filter name="appoint_state_done" string="Done Appointment"
+                            domain="[('appoint_state', '=', 'done')]"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="appoint_mgmt_appoint_analysis_action">
+            <field name="name">Appointments Analysis</field>
+            <field name="res_model">appointment.report</field>
+            <field name="path">appointment-analysis</field>
+            <field name="view_mode">graph,pivot</field>
+            <field name="context">{'search_default_group_appoint_group': 1,}</field>
+            <field name="view_id" ref="wk_appointment.appoint_mgmt_book_appoint_report_graph_view"/>
+        </record>
+
+    </data>
+</odoo>

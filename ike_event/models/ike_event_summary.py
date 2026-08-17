@@ -161,6 +161,12 @@ class IkeEventSummary(models.Model):
                             'value': service_supplier_id.assigned,
                         },
                         {
+                            'name': 'type_event',
+                            'string': _('Type event'),
+                            'type': 'char',  # This is a hack to avoid the float to be rendered as a string
+                            'value': f"{(rec.event_id.event_type_id.display_name)}",
+                        },
+                        {
                             'name': 'estimated_duration_' + str(index),
                             'string': _('Estimated Duration'),
                             'type': 'char',

@@ -86,9 +86,9 @@
                 <menuitem id="ike_service_stage_menu" name="Event Stages" sequence="40"
                         action="action_ike_event_stage"
                         groups="base.group_erp_manager"/>
-                <!-- <menuitem id="ike_menu_road_classification" name="Event road classification" sequence="45"
+                <menuitem id="ike_menu_road_classification" name="Event road classification" sequence="45"
                         action="ike_event_road_classification_view_action"
-                        groups="base.group_erp_manager"/> -->
+                        groups="base.group_erp_manager"/>
             </menuitem>
         </menuitem>
     </data>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_in_invoice_bill_tree_inherit_x_status" model="ir.ui.view">
+        <field name="name">account.out.invoice.tree.inherit.x.status</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_in_invoice_bill_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='status_in_payment']" position="after">
+                <field name="x_status_invoice" widget="badge"
+                       decoration-info="x_status_invoice == 'under_review'"
+                       decoration-success="x_status_invoice in ('accepted', 'paid')"
+                       decoration-danger="x_status_invoice in ('rejected', 'cancelled')"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_move_form_inherit_gross_sale" model="ir.ui.view">
+        <field name="name">account.move.form.inherit.gross.sale</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='amount_residual']" position="after">
+                <field name="x_gross_sale" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

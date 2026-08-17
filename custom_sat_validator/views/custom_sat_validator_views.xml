@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <!-- Search view -->
+    <record id="view_custom_sat_validator_search" model="ir.ui.view">
+        <field name="name">custom.sat.validator.view.search</field>
+        <field name="model">custom.sat.validator</field>
+        <field name="arch" type="xml">
+            <search string="Search SAT Validator">
+                <field name="name" string="Reference"/>
+                <field name="purchase_id"/>
+
+                <filter string="Draft" name="filter_draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Done" name="filter_done" domain="[('state', '=', 'done')]"/>
+
+                <group expand="0" string="Group By">
+                    <filter string="Status" name="group_by_state" context="{'group_by': 'state'}"/>
+                    <filter string="Purchase Order" name="group_by_purchase_id" context="{'group_by': 'purchase_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
     <!-- List view -->
     <record id="view_custom_sat_validator_list" model="ir.ui.view">
         <field name="name">custom.sat.validator.view.list</field>
@@ -116,7 +137,7 @@
                                     <sheet>
                                         <div class="oe_title">
                                             <label for="name" class="oe_edit_only"/>
-                                            <h1><field name="name"/></h1>
+                                            <h1><field name="name" readonly="1"/></h1>
                                         </div>
                                         <group string="Files Upload">
                                             <group>
@@ -144,10 +165,12 @@
                                                     string="Carta Porte File"/>
                                             </group>
                                         </group>
+
                                         <group string="SAT &amp; Financial Audit Results">
                                             <group>
                                                 <field name="sat_uuid"/>
-                                                <field name="total_amount"/>
+                                                <field name="subtotal_amount" widget="monetary"/>
+                                                <field name="total_amount" widget="monetary"/>
                                                 <field name="sat_status" widget="badge"
                                                     decoration-success="sat_status == 'Vigente'"
                                                     decoration-danger="sat_status in ['Cancelado', 'Error']"/>
@@ -158,7 +181,24 @@
                                                 <field name="invoice_id" readonly="1" options="{'no_open': False}"/>
                                             </group>
                                         </group>
-                                        <group string="Execution Logs" invisible="not line_validation_log">
+
+                                        <!-- NOTEBOOK WITH XML LINES & LOGS -->
+                                        <notebook>
+                                            <page string="XML Concept Lines" name="xml_lines">
+                                                <field name="xml_line_ids" readonly="line_state == 'validated'">
+                                                    <list editable="bottom">
+                                                        <field name="company_currency_id" column_invisible="True"/>
+                                                        <field name="product_name"/>
+                                                        <field name="quantity"/>
+                                                        <field name="price_unit" widget="monetary"/>
+                                                        <field name="subtotal" widget="monetary"/>
+                                                        <field name="tax_ids" widget="many2many_tags"/>
+                                                        <field name="purchase_order_line_ids" widget="many2many_tags"/>
+                                                    </list>
+                                                </field>
+                                            </page>
+                                            <page string="Execution Logs" name="execution_logs" invisible="not line_validation_log">
+                                                <group>
                                             <field name="line_validation_log"
                                                 readonly="1"
                                                 nolabel="1"
@@ -171,6 +211,8 @@
                                                 class="text-danger font-monospace"
                                                 invisible="line_state == 'validated'"/>
                                         </group>
+                                            </page>
+                                        </notebook>
                                     </sheet>
                                 </form>
                             </field>
@@ -188,6 +230,7 @@
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">custom.sat.validator</field>
         <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_custom_sat_validator_search"/>
         <field name="domain">[]</field>
         <field name="context"></field>
     </record>

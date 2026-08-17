@@ -49,7 +49,7 @@
                             'display_default_code': 0,
                             'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list',
                         }"
-                        options="{'no_create': 1, 'no_open': 1}"
+                        options="{'no_create': 1, 'no_open': 1, 'excludes_it_self': 1}"
                         placeholder="Search a concept"
                         readonly="covered or display_type"
                         force_save="1"/>
@@ -92,10 +92,11 @@
                             'display_default_code': 0,
                             'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'
                         }"
-                    options="{'no_create': 1, 'no_open': 1}"
+                    options="{'no_create': 1, 'no_open': 1, 'excludes_it_self': 1}"
                     readonly="covered or display_type"
                     force_save="1"/>
                 <field name="product_add_domain" column_invisible="1" />
+                <field name="parent_product_id"/>
                 <field name="name" column_invisible="1" />
                 <field name="estimated_quantity" optional="hide"/>
                 <field name="quantity" />
@@ -497,6 +498,7 @@
                 <field name="license_plate" optional="hide"/>
                 <field name="product_id"
                     options="{'no_create': 1, 'no_open': 1}"/>
+                <field name="parent_product_id" optional="show"/>
                 <field name="covered" string="For coverage"/>
                 <field name="estimated_quantity" optional="hide"/>
                 <field name="quantity"/>

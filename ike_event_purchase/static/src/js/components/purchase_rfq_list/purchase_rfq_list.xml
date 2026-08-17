@@ -1,7 +1,7 @@
 <t t-name="ike_event_purchase.PurchaseRfqList" owl="1">
   <div class="o_purchase_order_list">
     <t t-if="state.loading">
-      <div class="text-center"><t t-out="translate('Loading...')"/></div>
+      <div class="text-center">Loading...</div>
     </t>
     <t t-else="">
       <!-- Filters Bar -->
@@ -10,29 +10,29 @@
           <div class="row g-3 align-items-end">
             <div class="col-md-5">
               <label class="form-label small text-muted fw-semibold mb-1">
-                <i class="fa fa-search me-1"/><t t-out="translate('Reference')"/>
+                <i class="fa fa-search me-1"/>Quotation
               </label>
               <input type="text"
                 class="form-control form-control-sm rounded-pill"
-                t-att-placeholder="translate('Buscar por referencia...')"
+                placeholder="Search by Quotation..."
                 t-att-value="state.filters.reference"
                 t-on-input="(ev) => this.onFilterChange('reference', ev.target.value)"/>
             </div>
             <div class="col-md-5">
               <label class="form-label small text-muted fw-semibold mb-1">
-                <i class="fa fa-calendar me-1"/><t t-out="translate('Event')"/>
+                <i class="fa fa-calendar me-1"/>Event
               </label>
               <input type="text"
                 class="form-control form-control-sm rounded-pill"
-                t-att-placeholder="translate('Buscar por evento...')"
+                placeholder="Search by event..."
                 t-att-value="state.filters.event"
                 t-on-input="(ev) => this.onFilterChange('event', ev.target.value)"/>
             </div>
             <div class="col-md-2 d-flex align-items-end">
               <button class="btn btn-sm btn-outline-secondary rounded-pill w-100"
-                t-att-title="translate('Clear filters')"
+                title="Clear filters"
                 t-on-click="clearFilters">
-                <i class="fa fa-times"/>
+                <i class="fa fa-times"/>Clear
               </button>
             </div>
           </div>
@@ -43,15 +43,15 @@
           <thead>
             <tr class="active">
               <th class="text-start">
-                <span class="d-none d-md-inline"><t t-out="translate('Request for Quotation #')"/></span>
-                <span class="d-block d-md-none"><t t-out="translate('Ref.')"/></span>
+                <span class="d-none d-md-inline">Request for Quotation</span>
+                <span class="d-block d-md-none">Ref.</span>
               </th>
-              <th class="text-start"><t t-out="translate('Event')"/></th>
+              <th class="text-start">Event</th>
               <th class="text-start"></th>
-              <th class="text-start"><t t-out="translate('Deadline')"/></th>
-              <th class="text-start"><t t-out="translate('IKE Price')"/></th>
-              <th class="text-start"><t t-out="translate('Untaxed Amount Dispute')"/></th>
-              <th class="text-start"><t t-out="translate('Untaxed Amount Approved')"/></th>
+              <th class="text-start">Deadline</th>
+              <th class="text-start">IKE Price</th>
+              <th class="text-start">Untaxed Amount Dispute</th>
+              <th class="text-start">Untaxed Amount Approved</th>
             </tr>
           </thead>
           <tbody>
@@ -63,7 +63,7 @@
                 <td class="text-start"><t t-esc="rfq.x_event_id ? rfq.x_event_id.name : ''"/></td>
                 <td class="text-start">
                   <t t-if="rfq.state === 'to_consolidate' or rfq.state === 'consolidated'">
-                    <span class="badge bg-success"><t t-out="translate('Accepted')"/></span>
+                    <span class="badge bg-success">Accepted</span>
                   </t>
                 </td>
                 <td class="text-start"><t t-esc="formatDate(rfq.date_order)"/></td>

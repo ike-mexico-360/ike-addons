@@ -92,6 +92,14 @@ class IkeServiceInputVialTruck(models.Model):
         'ike_service_vial_generic_accessories_rel',
         'sub_service_id', 'accessories_id',
         string='Accessories', copy=False)
+    event_type_id = fields.Many2one(related='event_id.event_type_id', readonly=False)
+    requires_federal_plates = fields.Boolean(related='event_id.requires_federal_plates', readonly=False)
+
+    # ==== ONCHANGE ==== #
+    @api.onchange('event_type_id')
+    def _onchange_event_type_id(self):
+        if self.event_type_id:
+            self.requires_federal_plates = self.event_type_id.requires_federal_plates
 
     # === SUMMARY === #
     def set_event_summary_user_subservice_data(self):

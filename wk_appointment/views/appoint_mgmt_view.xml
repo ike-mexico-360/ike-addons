@@ -1,0 +1,438 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+    <data>
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~ SCHEDULAR ACTION ~~~~~~~~~~~~~~~~~~~~~~ -->
+        <record forcecreate="True" model="ir.cron" id="send_mail_for_reminder_scheduler">
+            <field name="name">Send Mail Reminder Scheduler</field>
+            <field name="model_id" ref="model_appointment"/>
+            <field name="state">code</field>
+            <field name="code">model.send_mail_for_reminder_scheduler_queue()</field>
+            <field name="user_id" ref="base.user_root"/>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="active" eval="True"/>
+        </record>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Appointment Tree View ~~~~~~~~~~~~~~~~ -->
+        <record model="ir.ui.view" id="appoint_mgmt_book_appointment_tree_view">
+            <field name="name">Appointment Tree</field>
+            <field name="model">appointment</field>
+            <field name="type">list</field>
+            <field name="priority" eval="False"/>
+            <field name="arch" type="xml">
+                <list string="Appointment" decoration-success="appoint_state=='approved'" decoration-warning="appoint_state=='pending'"
+                    decoration-info="appoint_state=='done'" decoration-danger="appoint_state=='rejected'">
+                    <field name="name"/>
+                    <field name="customer"/>
+                    <field name="appoint_date"/>
+                    <field name="create_date"/>
+                    <field name="time_from" widget="float_time"/>
+                    <field name="time_to" widget="float_time"/>
+                    <field name="appoint_group_id"/>
+                    <field name="appoint_person_id"/>
+                    <field name="appoint_state"/>
+                    <field name="amount_total" sum="Total: " widget="monetary"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Appointment Form View ~~~~~~~~~~~~~~~~ -->
+        <record model="ir.ui.view" id="appoint_mgmt_book_appointment_form_view">
+            <field name="name">Appointment Form</field>
+            <field name="model">appointment</field>
+            <field name="type">form</field>
+            <field name="priority" eval="False"/>
+            <field name="arch" type="xml">
+                <form string="Appointment">
+                    <header>
+                        <button name="button_set_to_pending" string="Reset" title="Click to set reset this appointment" groups="wk_appointment.appointment_appointee_group"
+										type="object" invisible = "appoint_state in ['pending','new','done'] or id == False or invoice_id != False"/>
+                        <button name="button_set_to_pending" class="oe_highlight" string="Set to Pending" title="Click to set this appointment to pending"
+                        groups="wk_appointment.appointment_appointee_group"
+										type="object" invisible = "appoint_state in ['pending','approved', 'rejected','done'] or id == False"/>
+                        <button name="button_approve_appoint" class="oe_highlight" string="Approve" title="Click to approve this appointment"
+                        groups="wk_appointment.appointment_appointee_group"
+										type="object" invisible = "appoint_state in ['approved', 'rejected','done'] or id == False"/>
+                        <button name="button_create_invoice" class="oe_highlight" string="Create Invoice" title="Click to create invoice for this customer" groups="wk_appointment.appointment_manager_group"
+							type="object" invisible = "appoint_state not in ['approved','done'] or invoice_id != False"/>
+                        <button name="button_reject_appoint_action" class="oe_highlight" string="Reject" title="Click to reject this appointment "
+                        groups="wk_appointment.appointment_appointee_group"
+										type="object" invisible = "appoint_state in ['approved','rejected','done'] or id == False or invoice_id != False"/>
+                        <button name="button_done_appoint" class="oe_highlight" string="Done" title="Click to make the appointment status done."
+                                         groups="wk_appointment.appointment_appointee_group"
+                                        type="object" invisible="appoint_state in ['new','pending','rejected','done']"/>
+						<field name="appoint_state" widget="statusbar" statusbar_visible="new,pending,approved,rejected"/>
+					</header>
+                    
+                    <sheet>
+                        <field name="invoice_id" invisible="1"/>
+                        <div class="oe_button_box" name="button_box" groups="wk_appointment.appointment_manager_group">
+                            <button
+                                name="action_view_invoice" type="object"
+    							icon="fa-pencil-square-o"
+                                class="oe_stat_button oe_center"
+    							string="View Invoice"
+                                invisible = "invoice_id == False"/>
+                        </div>
+                        <widget name="web_ribbon" text="Paid" invisible = "payment_state != 'paid'"/>
+                        <h1>
+                            <field name="name" readonly="1" class="oe_title"/>
+                        </h1>
+                        <group style="margin:0px;margin-bottom:0px;">
+                            <group>
+                                <field name="customer" options="{'no_open': True}"
+                                readonly="appoint_state in ['approved','done','rejected']"
+                                    help="Customer for whom the appointment is to be booked."/>
+                                    <field name="appoint_group_id" string="Appointment With"
+                                        required="1"
+                                        help="Appointment Group with whom the appointment is to be booked."
+                                        readonly="appoint_state in ['approved','done','rejected']"
+                                        domain="['|',('company_id','=',company_id),('company_id', '=', False)]"
+                                        options="{'no_open': True, 'no_create_edit': True, 'no_quick_create': True, 'no_create': True}" />
+                                    <field name="appoint_group_person_ids" invisible="1"/>
+                                    <field name="appoint_person_id" string="Appointee"
+                                        required="1"
+                                        context="{'default_available_for_appoint': 1,'form_view_ref': 'wk_appointment.inherit_view_partner_form'}"
+                                        readonly="appoint_state in ['approved','done','rejected']"
+                                        options="{'no_create': True, 'no_quick_create': True}"
+                                        domain="['|',('company_id','=',company_id),('company_id', '=', False),('id', 'in', appoint_group_person_ids)]"/>
+                                    <field name="person_time_slot_ids" invisible="1" widget="many2many_tags"/>
+                                <label for="time_slot"/>
+                                <div>
+                                    <field name="time_slot" nolabel="1" placeholder="Slot timings.."
+                                        options="{'no_open': True, 'no_create_edit': True}"
+                                        readonly="appoint_state in ['approved','done','rejected']"
+                                        domain="[('id', 'in', person_time_slot_ids)]"/>
+                                    <div>
+                                        <span class="oe_inline" invisible="time_slot_day == False"> On  </span>
+                                        <field name="time_slot_day" nolabel="1" readonly="1" placeholder="Day" class="oe_inline"/>
+                                    </div>
+                                </div>
+                            </group>
+                            <group>
+                                <field name="appoint_date" placeholder="Appointment date.." string="Appointment Date" readonly="appoint_state in ['approved','done','rejected']"/>
+                                <field name="source" readonly="appoint_state in ['approved','done','rejected']" options="{'no_open': True}"/>
+                                <field name="create_date" readonly="1" string="Create Date" widget="date"
+                                invisible ="id == False"/>
+                                <field name="company_id" invisible="1"/>
+                                <field name="pricelist_id" groups="product.group_product_pricelist" readonly="invoice_id != False" options="{'no_open':True,'no_create': True}"
+                                    />
+                                <field name="company_id" groups="base.group_multi_company" invisible="1"/>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="payment_state" invisible="1"/>
+                                <field name="app_dt_start" invisible="1"/>
+                                <field name="app_dt_stop" invisible="1"/>
+                                <field name="allday" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Charge" name="appoint_lines">
+                                <field name="appoint_lines" context="{'default_name':''}" readonly="appoint_state in ['approved','done','rejected']">
+                                    <list editable="bottom">
+                                        <field name="appoint_id" invisible="1"/>
+                                        <field name="appoint_product_id" required="1"
+                                            options="{'no_create_edit': True, 'no_open': True}"/>
+                                        <field name="name"/>
+                                        <field name="product_qty" invisible="1"/>
+                                        <field name="price_unit"/>
+                                        <field name="tax_id" widget="many2many_tags"/>
+                                        <field name="price_subtotal" invisible="0"/>
+                                        <field name="price_tax" invisible="1"/>
+                                        <field name="price_total" invisible="1"/>
+                                    </list>
+                                    <form string="Invoice Line">
+                                        <group>
+                                            <group>
+                                                <field name="appoint_product_id"/>
+                                                <label for="product_qty" invisible="1"/>
+                                                <div invisible="1">
+                                                    <field name="product_qty" class="oe_inline"/>
+                                                </div>
+                                                <field name="price_unit"/>
+                                            </group>
+                                            <group>
+                                                <field name="tax_id" widget="many2many_tags" options="{'no_create': True}"/>
+                                            </group>
+                                        </group>
+                                        <label for="name"/>
+                                        <field name="name"/>
+                                    </form>
+                                </field>
+                                <group class="oe_subtotal_footer oe_right" colspan="2" name="appoint_total">
+                                    <field name="amount_untaxed" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                    <field name="amount_tax" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                    <div class="oe_subtotal_footer_separator oe_inline o_td_label">
+                                        <label for="amount_total" />
+                                    </div>
+                                    <field name="amount_total" nolabel="1" class="oe_subtotal_footer_separator" widget='monetary' options="{'currency_field': 'currency_id'}"/>
+                                    <field name="id" invisible="1"/>
+                                    <div colspan="2" class="oe_right" style="margin-top: 10px;margin-bottom: 10px;" invisible="id == False or appoint_state in ['new','pending','rejected']" >
+                                        <strong>
+                                            <span style="padding:10px;" class="alert alert-danger"  role="status" invisible="amount_total == 0.0 or invoice_id != False">
+                                                Not yet Invoiced !!
+                                            </span>
+                                            <span style="padding:10px;" class="alert alert-warning"  role="status" invisible="amount_total != 0.0 or invoice_id == False or payment_state == 'paid'">
+                                                Invoice not paid !!
+                                            </span>
+                                            <span style="padding:10px;" class="alert alert-success"  role="status" invisible="amount_total != 0.0 or invoice_id == False or payment_state != 'paid'">
+                                                Invoice Paid !!
+                                            </span>
+                                            <span style="padding:10px;" class="alert alert-info"  role="status" invisible="amount_total != 0.0">
+                                                Free !!
+                                            </span>
+                                        </strong>
+                                    </div>
+                                </group>
+
+                                <field name="description" class="oe_inline" placeholder="Describe about this appointment..." nolabel="1" colspan="2"/>
+                                <div class="oe_clear"/>
+                            </page>
+                            <page string="Other Info">
+								<group invisible="invoice_id == False" name="appoint_invoice_details">
+									<group string="Invoice">
+										<field name="invoice_id" invisible="0" readonly="1" options="{'no_create_edit': True, 'no_open': True}"/>
+                                        <field name="invoice_status"/>
+									</group>
+									<br/>
+								</group>
+                                <group string="Reminder">
+                                    <label for="enable_notify_reminder" string="Notify Using Mail"/>
+                                    <div>
+                                        <field name="enable_notify_reminder" nolabel="1" class="oe_inline"  readonly="appoint_state in ['done','rejected']"/>
+                                        <label for="remind_time" string="Send Reminder for this appointment" class="oe_inline"/>
+                                        <br/>
+                                        <field name="remind_time" nolabel="1" class="oe_inline" placeholder="Reminder Time.."
+                                            required = "enable_notify_reminder == True" invisible="enable_notify_reminder == False" readonly="appoint_state in ['done','rejected']"
+                                            style="margin-right:5px;"/>
+                                        <field name="remind_in" nolabel="1" class="oe_inline"
+                                            required = "enable_notify_reminder == True" invisible="enable_notify_reminder == False" readonly="appoint_state in ['done','rejected']"
+                                            />
+                                    </div>
+                                </group>
+                            </page>
+                            <page string="Contacts &amp; Addresses">
+								<group>
+		                            <group string="Address">
+										<label for="app_street1" string="Address"/>
+										<div>
+											<field name="app_street1" placeholder="Street..."  help="This Address will be used as an Appointment address"/>
+                                            <field name="app_street2" placeholder="Street..."/>
+											<div class="address_format">
+												<field name="app_city" placeholder="City" style="width: 40%%"/>
+												<field name="app_state_id" class="oe_no_button" placeholder="State" style="width: 37%%" options='{"no_open": True, "no_create": True}'/>
+												<field name="app_zip" placeholder="ZIP" style="width: 22%%"/>
+											</div>
+											<field name="app_country_id" placeholder="Country" class="oe_no_button" options='{"no_open": True, "no_create": True}'/>
+										</div>
+		    	                    </group>
+                                    <group string="Contact">
+                                        <group>
+                                            <field name="app_email" placeholder="abc123@webkul.com"/>
+                                            <field name="app_phone" placeholder="Mobile Number"/>
+                                        </group>
+                                   </group>
+                                </group>
+                                <group>
+                                    <group></group>
+                                    <group>
+                                        <button name="compute_appointment_address" type="object"
+                                            icon="fa-history"
+                                            class="oe_right"
+                                            style="margin-bottom: -25px;"
+                                            string="Refresh Contact Details"
+                                            invisible = "appoint_state == 'done'"/>
+                                    </group>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- <record model="ir.ui.view" id="appoint_mgmt_book_appointment_form_view_for_user_group">
+            <field name="name">Appointment Form inherit for user group</field>
+            <field name="model">appointment</field>
+            <field name="inherit_id" ref="wk_appointment.appoint_mgmt_book_appointment_form_view"/>
+            <field name="groups_id" eval="[(6, 0, [ref('wk_appointment.appointment_officer_group')])]"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form//field[@name='customer']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="//form//field[@name='appoint_group_id']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="//form//field[@name='appoint_person_id']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="//form//field[@name='source']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+                <xpath expr="//form//field[@name='appoint_lines']" position="attributes">
+                    <attribute name="readonly">0</attribute>
+                </xpath>
+            </field>
+        </record> -->
+
+        <!-- ~~~~~~~~~~~~~~~~~ CALENDAR VIEW ~~~~~~~~~~~~~~~~~~~~~~~ -->
+
+        <record id="appoint_mgmt_book_appointment_calendar_view" model="ir.ui.view">
+            <field name="name">Appointment Calendar View</field>
+            <field name="model">appointment</field>
+            <field name="arch" type="xml">
+                <calendar date_start="app_dt_start" date_stop="app_dt_stop" hide_time="true"
+                    string="Appointments Management" mode="month" color="customer" quick_create="0">
+                    <field name="customer" avatar_field="image_128"/>
+                    <field name="appoint_person_id"/>
+                    <field name="source"/>
+                    <field name="appoint_state"/>
+                    <field name="time_slot"/>
+                    <field name="amount_total" widget="monetary"/>
+                </calendar>
+            </field>
+        </record>
+
+		<record model="ir.ui.view" id="appoint_mgmt_book_appointment_kanban_view">
+            <field name="name">appointment.kanban</field>
+            <field name="model">appointment</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="name"/>
+                    <field name="color"/>
+                    <field name="customer"/>
+                    <field name="appoint_date"/>
+                    <field name="appoint_state"/>
+					<field name="appoint_group_id"/>
+                    <field name="invoice_id"/>
+                    <field name="invoice_status"/>
+                    <field name="appoint_lines"/>
+                    <field name="amount_total"/>
+                    <field name="time_from"/>
+                    <field name="time_to"/>
+                    <field name="time_slot"/>
+                    <field name="payment_state"/>
+                    <templates>
+                        <t t-name="kanban-menu">
+                            <ul class="oe_kanban_colorpicker" data-field="color"/>
+                        </t>
+                        <t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card oe_kanban_global_click">				
+                                <div class="o_kanban_record_top mb8">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title"><span><b><t t-esc="record.name.value"/></b></span></strong>
+                                    </div>
+                                    <strong>
+										<field name="appoint_state" widget="label_selection" options="{'classes': { 'pending': 'warning', 'approved': 'success', 'rejected': 'danger', 'done': 'default'}}"/>
+                                    </strong>
+                                </div>
+                                <div class="o_kanban_record_top mb8">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <i class="fa fa-user" aria-hidden="false" style="color:dimgray;" title="Customer"></i>
+                                            <span><t t-esc="record.customer.value"/></span></strong>
+                                    </div>
+                                    <strong>
+                                        <i class="fa fa-calendar" aria-hidden="false" style="margin:2px;" title="Date"></i>
+                                        <t t-esc="record.appoint_date.value and record.appoint_date.value.split(' ')[0] or False"/>
+                                    </strong>
+                                </div>
+                                <div class="o_kanban_record_top mb8 pull-left" t-if="record.time_slot.value">
+                                    <strong>
+                                        <i class="fa fa-clock-o" aria-hidden="false" title="Timeslot"></i>
+                                        <t t-esc="record.time_slot.value"/>
+                                    </strong>
+                                </div>
+                                <div class="o_kanban_record_top mb8 o_kanban_record_headings pull-left">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title"> <b>With:</b> <span><field name="appoint_person_id"/></span></strong>
+                                        <strong t-if="record.appoint_group_id.value">(<field name="appoint_group_id"/>)</strong>
+                                    </div>
+                                    <strong>
+                                        <div class="oe_right" invisible = "id == False or appoint_state in ['pending','new','rejected']">
+                                            <!-- <span t-out="record.invoice_id.value"/> -->
+                                            <strong>
+                                                <span t-if="record.amount_total.value != 0.0 and !record.invoice_id.value" class="text-danger">
+                                                    Not Invoiced
+                                                </span>
+                                                <span t-if="record.amount_total.value != 0.0 and record.invoice_id.value and record.payment_state.raw_value != 'paid'"
+                                                    class="text-warning">
+                                                    Invoice Unpaid
+                                                </span>
+                                                <span t-if="record.amount_total.value != 0.0 and record.invoice_id.value and record.payment_state.raw_value == 'paid'" class="text-success">
+                                                    Invoice Paid
+                                                </span>
+                                                <span t-if="record.amount_total.value == 0.0" class="text-primary">
+                                                    Free
+                                                </span>
+                                            </strong>
+                                        </div>
+                                    </strong>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~ SEARCH VIEW ~~~~~~~~~~~~~~~~~~~~~~ -->
+        <record model='ir.ui.view' id='inherit_appoint_appoint_filter'>
+            <field name="name">appointment.filter</field>
+            <field name="model">appointment</field>
+            <field name="type">search</field>
+            <field name="arch"  type="xml">
+                <search string="Search Appointment">
+                    <field name="appoint_state"/>
+                    <field name="appoint_date"/>
+                    <field name="name" string="Name" filter_domain="['|',('name','ilike',self),('name','=',self)]"/>
+                    <group string="Group By">
+                        <filter name="group_appoint_states_new" string="New" domain="[('appoint_state', '=', 'new')]"/>
+                        <filter name="group_appoint_states_approved" string="Approved" domain="[('appoint_state', '=', 'approved')]"/>
+                        <filter name="group_appoint_states_rejected" string="Rejected" domain="[('appoint_state', '=', 'rejected')]"/>
+                        <!-- <filter name="appoint_date_today" string="Today" domain="[('appoint_date', '&gt;=', current_date),('appoint_date', '&lt;=', current_date)]"/> -->
+                        <filter name="appoint_date_today" string="Today" domain="[('appoint_date', '=', current_date)]"/>
+                        <filter name="group_appoint_state" string="States" context="{'group_by': 'appoint_state'}"/>
+                    </group>
+               </search>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="appoint_mgmt_all_appointment_action">
+            <field name="name">Appointments</field>
+            <field name="res_model">appointment</field>
+            <field name="path">appointment-all</field>
+            <field name="view_mode">kanban,calendar,list,form</field>
+            <field name="context">{'search_default_appoint_date_today': 1, 'search_default_group_appoint_state': 2, }</field>
+            <field name="binding_view_types">form</field>
+            <field name="help" type="html">
+              <p>
+                Here is a list of all the Appointments created. You
+                can click on any record to get the detailed Information About these appointments.
+              </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="appoint_mgmt_book_appointment_action">
+            <field name="name">Appointment</field>
+            <field name="res_model">appointment</field>
+            <field name="path">appointment-new</field>
+            <field name="view_mode">calendar,kanban,list,form</field>
+            <field name="context">{'default_name': 'New'}</field>
+            <field name="binding_view_types">form</field>
+            <field name="help" type="html">
+              <p>
+                Here is a list of all the Appointments created. You
+                can click on any record to get the detailed Information About these appointments.
+              </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

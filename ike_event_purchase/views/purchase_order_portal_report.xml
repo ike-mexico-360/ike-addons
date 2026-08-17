@@ -24,6 +24,16 @@
         <field name="print_report_name">'Estado de cuenta'</field>
     </record>
 
+    <record id="action_report_portal_invoices" model="ir.actions.report">
+        <field name="name">Portal Invoices Statement</field>
+        <field name="model">account.move</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">ike_event_purchase.report_portal_invoices</field>
+        <field name="report_file">ike_event_purchase.report_portal_invoices</field>
+        <field name="paperformat_id" ref="ike_event_purchase.paperformat_portal_purchase_orders"/>
+        <field name="print_report_name">'Facturas'</field>
+    </record>
+
     <template id="report_portal_purchase_orders">
         <t t-call="web.html_container">
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -142,6 +152,7 @@
                 }
                 .statement-table {
                     border-collapse: collapse;
+                    table-layout: fixed;
                     width: 100%;
                 }
                 .statement-table th {
@@ -152,6 +163,9 @@
                     padding: 7px 8px;
                     text-align: left;
                     text-transform: uppercase;
+                }
+                .statement-table thead .statement-heading-center {
+                    text-align: center;
                 }
                 .statement-table td {
                     border-bottom: 1px solid #dfe3f1;
@@ -164,6 +178,10 @@
                 .statement-right {
                     text-align: right;
                 }
+                .statement-date,
+                .statement-money {
+                    white-space: nowrap;
+                }
                 .statement-order {
                     color: #15006a;
                     font-size: 13px;
@@ -172,6 +190,9 @@
                 .statement-muted {
                     color: #68708c;
                     font-size: 10px;
+                }
+                .statement-event {
+                    font-size: 11px;
                 }
                 .statement-totals-wrap {
                     display: table;
@@ -289,14 +310,24 @@
                 </table>
 
                 <table class="statement-table">
+                    <colgroup>
+                        <col style="width: 9%;"/>
+                        <col style="width: 27%;"/>
+                        <col style="width: 9%;"/>
+                        <col style="width: 12%;"/>
+                        <col style="width: 12%;"/>
+                        <col style="width: 14%;"/>
+                        <col style="width: 17%;"/>
+                    </colgroup>
                     <thead>
                         <tr>
-                            <th>Orden</th>
-                            <th>Evento</th>
-                            <th>Fecha</th>
-                            <th class="statement-right">Subtotal</th>
-                            <th class="statement-right">Impuestos</th>
-                            <th class="statement-right">Total</th>
+                            <th class="statement-heading-center">Orden</th>
+                            <th class="statement-heading-center">Evento</th>
+                            <th class="statement-heading-center">Fecha</th>
+                            <th class="statement-heading-center">Subtotal</th>
+                            <th class="statement-heading-center">Impuestos</th>
+                            <th class="statement-heading-center">Total</th>
+                            <th class="statement-heading-center">Estado de facturación</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -307,17 +338,18 @@
                                     <div class="statement-muted" t-if="order.x_ref_sap">SAP <span t-esc="clean_text(order.x_ref_sap)"/></div>
                                 </td>
                                 <td>
-                                    <div t-esc="order_event(order)"/>
+                                    <div class="statement-event" t-esc="order_event(order)"/>
                                     <div class="statement-muted" t-if="order.x_origin_events and order.x_event_id">Origen: <span t-esc="clean_text(order.x_origin_events)"/></div>
                                 </td>
-                                <td>
+                                <td class="statement-date">
                                     <div t-esc="format_statement_date(order.date_approve or order.date_order)"/>
                                 </td>
-                                <td class="statement-right" t-esc="format_money(order.amount_untaxed, order.currency_id)"/>
-                                <td class="statement-right" t-esc="format_money(order.amount_tax, order.currency_id)"/>
-                                <td class="statement-right">
+                                <td class="statement-right statement-money" t-esc="format_money(order.amount_untaxed, order.currency_id)"/>
+                                <td class="statement-right statement-money" t-esc="format_money(order.amount_tax, order.currency_id)"/>
+                                <td class="statement-right statement-money">
                                     <strong t-esc="format_money(order.amount_total, order.currency_id)"/>
                                 </td>
+                                <td class="statement-heading-center" t-esc="invoice_status(order)"/>
                             </tr>
                         </t>
                     </tbody>
@@ -328,6 +360,298 @@
                         Este estado de cuenta resume las ordenes de compra incluidas en la consulta actual del portal.
                     </div>
                 </div>
+            </div>
+        </t>
+    </template>
+
+     <template id="report_portal_invoices">
+        <t t-call="web.html_container">
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+            <meta charset="utf-8"/>
+
+            <style>
+                @page {
+                    margin: 9mm 10mm 10mm 10mm;
+                }
+                body {
+                    margin: 0;
+                    padding: 0;
+                }
+                .statement-page {
+                    color: #070b35;
+                    font-family: Arial, Helvetica, sans-serif;
+                    font-size: 11px;
+                    line-height: 1.25;
+                }
+                .statement-header {
+                    border-bottom: 3px solid #1a00a8;
+                    display: table;
+                    width: 100%;
+                    margin-bottom: 12px;
+                    padding-bottom: 10px;
+                }
+                .statement-brand,
+                .statement-title {
+                    display: table-cell;
+                    vertical-align: top;
+                }
+                .statement-logo {
+                    max-height: 38px;
+                    max-width: 110px;
+                }
+                .statement-title {
+                    text-align: right;
+                }
+                .statement-title h1 {
+                    color: #15006A;
+                    font-size: 22px;
+                    margin: 0;
+                }
+                .statement-title div {
+                    color: #4b4f75;
+                    font-size: 11px;
+                }
+                .statement-filters {
+                    background: #fafbff;
+                    border: 1px solid #dfe3f1;
+                    margin: 0 0 10px 0;
+                    padding: 7px 9px;
+                }
+                .statement-filter-chip {
+                    color: #070b35;
+                    display: inline-block;
+                    margin-right: 12px;
+                    white-space: nowrap;
+                }
+                .statement-filter-chip strong {
+                    color: #2437c7;
+                }
+                .statement-indicators {
+                    border-collapse: separate;
+                    border-spacing: 0 0;
+                    margin-bottom: 14px;
+                    width: 100%;
+                }
+                .statement-indicators td {
+                    background: #ffffff;
+                    border: 1px solid #dfe3f1;
+                    padding: 6px 8px;
+                    width: 25%;
+                }
+                .statement-indicators td + td {
+                    border-left: 6px solid #ffffff;
+                }
+                .statement-label {
+                    color: #2437c7;
+                    display: block;
+                    font-size: 9px;
+                    font-weight: 700;
+                    margin-bottom: 3px;
+                    text-transform: uppercase;
+                }
+                .statement-value {
+                    color: #020728;
+                    display: block;
+                    font-size: 12px;
+                    font-weight: 700;
+                }
+                .statement-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 15px;
+                    table-layout: fixed;
+                }
+                .statement-table th {
+                    background: #16006F;
+                    color: white;
+                    padding: 8px;
+                    font-size: 9px;
+                    text-transform: uppercase;
+                    text-align: center;
+                }
+                .statement-table td {
+                    padding: 8px;
+                    border-bottom: 1px solid #DFE3F1;
+                    font-size: 10px;
+                    overflow-wrap: anywhere;
+                    word-wrap: break-word;
+                    word-break: break-word;
+                    vertical-align: top;
+                }
+                .statement-table tr:nth-child(even) td {
+                    background: #F8F9FD;
+                }
+                .statement-right {
+                    text-align: right;
+                }
+                .statement-table thead th {
+                    text-align: center;
+                }
+                .statement-date,
+                .statement-money {
+                    white-space: nowrap;
+                }
+                .statement-order {
+                    color: #15006A;
+                    font-weight: bold;
+                }
+                .statement-muted {
+                    color: #68708c;
+                    font-size: 10px;
+                }
+            </style>
+
+            <div class="statement-page">
+
+                <!-- Header -->
+
+                <div class="statement-header">
+
+                    <div class="statement-brand">
+                        <img t-if="company.logo"
+                             class="statement-logo"
+                             t-att-src="image_data_uri(company.logo)"/>
+                    </div>
+
+                    <div class="statement-title">
+                        <h1>Estado de cuenta</h1>
+
+                        <div>Reporte PDF descargable de facturas</div>
+
+                        <div>
+                            <span t-esc="len(docs)"/> facturas incluidas
+                        </div>
+
+                        <div class="statement-supplier" style="color:#070b35; font-size:11px; margin-top:8px;">
+                            <span>Proveedor</span>
+                            <strong style="color:#15006A; display:block; font-size:13px;" t-esc="supplier_info['name']"/>
+                            <span t-if="supplier_info['details']" t-esc="supplier_info['details']"/>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Filtros -->
+
+                <div class="statement-filters" t-if="applied_filters">
+                    <span class="statement-label">Filtros aplicados</span>
+                    <t t-foreach="applied_filters" t-as="filter_item">
+                        <span class="statement-filter-chip">
+                            <strong t-esc="filter_item[0]"/>:
+                            <span t-esc="filter_item[1]"/>
+                        </span>
+                    </t>
+                </div>
+
+                <table class="statement-summary" style="border-collapse:separate; border-spacing:0; margin-bottom:8px; width:100%;">
+                    <tr>
+                        <td style="background:#eef1ff; border:1px solid #cfd5f5; padding:7px 9px;">
+                            <span class="statement-label">Total facturas</span>
+                            <span class="statement-value" t-esc="len(docs)"/>
+                        </td>
+                    </tr>
+                </table>
+
+                <table class="statement-indicators">
+                    <tr>
+                        <td>
+                            <span class="statement-label">Subtotal de facturas</span>
+                            <span class="statement-value"
+                                t-esc="format_money(invoiced_amount, docs[0].currency_id)"/>
+                        </td>
+                        <td>
+                            <span class="statement-label">Facturas pagadas</span>
+                            <span class="statement-value" t-esc="paid_invoice_count"/>
+                        </td>
+                        <td>
+                            <span class="statement-label">Monto pagado</span>
+                            <span class="statement-value"
+                                t-esc="format_money(paid_amount, docs[0].currency_id)"/>
+                        </td>
+                        <td>
+                            <span class="statement-label">Pendiente a pagar</span>
+                            <span class="statement-value"
+                                t-esc="format_money(pending_payment_amount, docs[0].currency_id)"/>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- Tabla -->
+
+                <table class="statement-table">
+
+                    <colgroup>
+                        <col style="width: 20%;"/>
+                        <col style="width: 23%;"/>
+                        <col style="width: 13%;"/>
+                        <col style="width: 13%;"/>
+                        <col style="width: 18%;"/>
+                        <col style="width: 13%;"/>
+                    </colgroup>
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Factura</th>
+                            <th>Proveedor</th>
+                            <th>Fecha de factura</th>
+                            <th>Vencimiento</th>
+                            <th class="statement-right">Cantidad por pagar</th>
+                            <th>Estado</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        <t t-foreach="docs" t-as="invoice">
+
+                            <tr>
+
+                                <td>
+                                    <div class="statement-order">
+                                        <span t-esc="clean_text(invoice.name)"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span t-esc="clean_text(invoice.partner_id.name)"/>
+                                </td>
+                                <td class="statement-date">
+                                    <span t-esc="format_statement_date(invoice.invoice_date)"/>
+                                </td>
+                                <td class="statement-date">
+                                    <span t-esc="format_statement_date(invoice.invoice_date_due)"/>
+                                </td>
+                                <td class="statement-right statement-money">
+                                    <strong t-esc="format_money(invoice.amount_total, invoice.currency_id)"/>
+                                </td>
+                                <td>
+                                    <t t-if="invoice.state == 'cancel'">
+                                        Cancelada
+                                    </t>
+                                    <t t-elif="invoice.payment_state == 'paid'">
+                                        Pagada
+                                    </t>
+                                    <t t-elif="invoice.payment_state == 'not_paid'">
+                                        Pendiente de pago
+                                    </t>
+                                    <t t-elif="invoice.payment_state == 'partial'">
+                                        Pago parcial
+                                    </t>
+                                    <t t-elif="invoice.payment_state == 'in_payment'">
+                                        En proceso de pago
+                                    </t>
+                                    <t t-else="">
+                                        <span t-esc="invoice.payment_state"/>
+                                    </t>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
             </div>
         </t>
     </template>

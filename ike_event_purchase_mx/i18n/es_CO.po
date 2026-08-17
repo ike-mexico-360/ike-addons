@@ -1,0 +1,70 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ike_event_purchase_co
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-12 17:46+0000\n"
+"PO-Revision-Date: 2026-08-12 17:46+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ike_event_purchase_co
+#: model:ir.model.fields.selection,name:ike_event_purchase_co.selection__purchase_order__x_status_invoice__accepted
+msgid "Accepted"
+msgstr "Aceptada"
+
+#. module: ike_event_purchase_co
+#: model:ir.model.fields.selection,name:ike_event_purchase_co.selection__purchase_order__x_status_invoice__cancelled
+msgid "Cancelled"
+msgstr "Cancelada"
+
+#. module: ike_event_purchase_co
+#: model:ir.model.fields,field_description:ike_event_purchase_co.field_purchase_order__x_create_date_invoice
+msgid "Invoice Creation Date"
+msgstr "Fecha de creación de factura"
+
+#. module: ike_event_purchase_co
+#: model:ir.model.fields,field_description:ike_event_purchase_co.field_purchase_order__x_status_invoice
+msgid "Invoice Status"
+msgstr "Estado de la factura"
+
+#. module: ike_event_purchase_co
+#: model:ir.model,name:ike_event_purchase_co.model_account_move
+msgid "Journal Entry"
+msgstr "Asiento contable"
+
+#. module: ike_event_purchase_co
+#: model:ir.model.fields.selection,name:ike_event_purchase_co.selection__purchase_order__x_status_invoice__paid
+msgid "Paid"
+msgstr "Pagada"
+
+#. module: ike_event_purchase_co
+#: model:ir.model,name:ike_event_purchase_co.model_purchase_order
+msgid "Purchase Order"
+msgstr "Orden de compra"
+
+#. module: ike_event_purchase_co
+#: model:ir.model.fields.selection,name:ike_event_purchase_co.selection__purchase_order__x_status_invoice__rejected
+msgid "Rejected"
+msgstr "Rechazada"
+
+#. module: ike_event_purchase_co
+#: model:ir.model.fields,help:ike_event_purchase_co.field_purchase_order__x_create_date_invoice
+msgid ""
+"Stores the exact creation date (create_date) of the linked vendor "
+"bill/invoice."
+msgstr ""
+"Guarda la fecha exacta de creación (create_date) de la factura de proveedor "
+"vinculada."
+
+#. module: ike_event_purchase_co
+#: model:ir.model.fields.selection,name:ike_event_purchase_co.selection__purchase_order__x_status_invoice__under_review
+msgid "Under Review"
+msgstr "En revisión"

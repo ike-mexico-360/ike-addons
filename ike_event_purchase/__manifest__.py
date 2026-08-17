@@ -26,6 +26,7 @@
         "data/ike_event_purchase_data.xml",
         "data/mail_template_data.xml",
         'data/ir_config_parameter_data.xml',
+        "data/custom_consolidation_month_day_data.xml",
         "wizard/sh_helpdesk_ticket_assignment_wizard.xml",
         "wizard/ike_event_confirm_costs_wizard.xml",
         "views/ike_event_screen_views.xml",
@@ -38,13 +39,19 @@
         "views/res_config_settings_views.xml",
         "views/purchase_order_portal_report.xml",
         "views/portal_purchase_templates.xml",
+        "views/helpdesk_stages_views.xml",
         "views/sh_helpdesk_ticket_views.xml",
+        "views/account_move_views.xml",
+        "views/account_payment_views.xml",
+        "report/custom_purchase_report_finance_views.xml",
         "views/ike_menus.xml",
     ],
     "assets": {
         'web.assets_frontend': [
             'ike_event_purchase/static/src/js/purchase_portal_sidebar.js',
+            'ike_event_purchase/static/src/js/components/invoices_order_list/*.*',
             'ike_event_purchase/static/src/js/components/purchase_order_details/*.*',
+            'ike_event_purchase/static/src/js/components/invoices_order_details/*.*',
             'ike_event_purchase/static/src/js/components/purchase_order_dispute/*.*',
             'ike_event_purchase/static/src/js/components/purchase_orders_list/*.*',
             'ike_event_purchase/static/src/js/components/purchase_rfq_list/*.*',
@@ -57,6 +64,7 @@
             'ike_event_purchase/static/src/css/*.*',
             'ike_event_purchase/static/src/js/tier_review_amounts.js',
             'ike_event_purchase/static/src/css/chatter_fix.css',
+            'ike_event_purchase/static/src/fields/helpdesk_stage_elapsed/*.*',
         ]
     }
 }

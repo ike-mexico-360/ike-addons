@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import timedelta
 from odoo import models, fields, Command, api, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -166,6 +166,18 @@ class IkeEvent(models.Model):
                 purchase_ids = rec._x_create_grouped_purchase_orders()
                 for purchase in purchase_ids:
                     purchase.action_rfq_send_one_step()
+                    supplier_ids = rec.selected_supplier_ids.filtered(lambda x: x.supplier_id.id == purchase.partner_id.id)
+                    supplier_cancelled = all(
+                        supplier.state in ['cancel', 'cancel_event', 'cancel_supplier']
+                        for supplier in supplier_ids
+                    )
+                    supplier_reason_from_supplier = all(
+                        supplier.cancel_reason_id.from_supplier
+                        for supplier in supplier_ids
+                    )
+
+                    if supplier_cancelled and supplier_reason_from_supplier and purchase.amount_untaxed == 0:
+                        purchase.button_confirm()
 
     def x_get_values_for_purchase_line(self, supplier_product_id):
         return {
@@ -192,15 +204,21 @@ class IkeEvent(models.Model):
 
         membership_plan_id = selected_supplier_id.event_id.user_membership_id.membership_plan_id
         account_id = membership_plan_id.account_id
-        x_invoice_company_id = account_id.x_invoice_company_id[0] if account_id.x_invoice_company_id else False
+        x_invoice_company_id = account_id.x_invoice_company_id[0].id if account_id.x_invoice_company_id else False
+
+        company_id = self.env.company
+        if not company_id.x_default_purchase_project_id:
+            raise UserError(_("No default purchase project has been configured for this company."))
 
         return {
             "partner_id": supplier_id.id,
-            "company_id": self.env.company.id,
+            "company_id": company_id.id,
             "x_event_id": self.id,  # Link to event_id
             "x_sub_service_id": selected_supplier_id.event_id.sub_service_id.id,
             "x_nu_user_id": selected_supplier_id.event_id.user_id.id,
+            "x_customer_id": account_id.parent_id.id,
             "x_membership_plan_id": membership_plan_id.id,
-            "x_invoice_company_id": x_invoice_company_id.id,
+            "x_invoice_company_id": x_invoice_company_id,
             "date_order": fields.Datetime.now() + timedelta(hours=max_hours_to_confirm),
+            "project_id": company_id.x_default_purchase_project_id.id,
         }

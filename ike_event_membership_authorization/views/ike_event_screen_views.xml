@@ -61,7 +61,7 @@
                     name="action_view_authorization"
                     type="object"
                     invisible="membership_authorization_status in ['authorized']"
-                    groups="custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_commercial_supervisor">
+                    groups="!base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_commercial_supervisor">
                 </button>
                 <div invisible="not event_coverage_authorizer or membership_authorization_id.state == 'rejected'" class="d-flex justify-content-center">
                     <p>Approved by the responsible authorizer</p>

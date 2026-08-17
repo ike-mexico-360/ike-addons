@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ike_event_screen_form_inherit_appointment" model="ir.ui.view">
+        <field name="name">view.ike.event.screen.form.inherit.appointment</field>
+        <field name="model">ike.event</field>
+        <field name="inherit_id" ref="ike_event.view_ike_event_screen_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='service_type_id']/parent::div" position="after">
+                <separator class="col-12 my-1" string="Scheduled per Event" name="separator_appointment"/>
+                <group class="col-12 mt-3">
+                    <group >
+                        <field name="appointment_type"
+                            widget="ike_checkbox_radio"
+                            nolabel="1"
+                            required="stage_ref != 'draft'"/>
+                    </group>
+                    <group invisible="not appointment_type">
+                        <field name="event_date" String="Event date" required="appointment_type" widget="datetime_widget"/>
+                        <field name="appointment_min_date" invisible="1"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

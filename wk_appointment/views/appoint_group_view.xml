@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+    <data>
+
+        <record id="appoint_mgmt_appoint_group_tree_view" model="ir.ui.view">
+            <field name="name">Appointment Person Group Tree</field>
+            <field name="model">appointment.person.group</field>
+            <field name="type">list</field>
+            <field name="arch" type="xml">
+                <list string="Appointment Person Group Tree">
+                    <field name="group_name"/>
+                    <field name="group_image" invisible="1"/>
+                    <field name="appoint_person_ids" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="group_charge" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                    
+                </list>
+            </field>
+        </record>
+
+        <record id="appoint_mgmt_appoint_group_form_view" model="ir.ui.view">
+            <field name="name">Appointment Person Group Form</field>
+            <field name="model">appointment.person.group</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Appointment Person Group Form">
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <!-- <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="toggle_active" type="object"
+                                icon="fa-archive text-success"
+                                invisible="active == True">
+								<span class="o_stat_text text-success">Active</span>
+							</button>
+							<button class="oe_stat_button" name="toggle_active" type="object"
+                                icon="fa-archive text-danger"
+                                invisible="active != True">
+								<span class="o_stat_text text-danger">Archive</span>
+							</button>
+						</div> -->
+                        <widget name="web_ribbon" text="Archived" bg_color="bg-danger" invisible="active == True"/>
+                        <field name="group_image" widget="image" class="oe_avatar" />
+                        <div class="oe_title">
+                            <div class="oe_edit_only">
+                                <label for="group_name"/>
+                            </div>
+                            <h1>
+                                <field name="group_name" default_focus="1" required="1" placeholder="i.e. Doctors, Lawyers, etc"/>
+                            </h1>
+                            <div invisible="1">
+                                <field name="general"/>
+                                <b><label for="general"/></b>
+                            </div>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="currency_id" invisible="1"/>
+                                <field name="group_charge" widget="monetary" options="{'currency_field': 'currency_id'}" required="1"
+                                    help="If no charge is given in Appointment Person then,
+                                        the charge of corresponding group will be used to make appointments chargable."/>
+                                <field name="product_tmpl_id" required="1" domain="['|',('company_id','=',company_id),('company_id', '=', False)]"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                                <field name="company_id" groups="!base.group_multi_company" invisible="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Group Members">
+                                <field name="appoint_person_ids"
+                                    domain="[('available_for_appoint', '=', True)]"
+                                    options="{'no_open': True, 'no_create_edit': True}"
+                                    context="{'form_view_ref' : 'wk_appointment.inherit_view_partner_form',
+                                    'default_available_for_appoint': 1,}"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="appoint_mgmt_appoint_group_kanban_view">
+            <field name="name">Appointment Group kanban View</field>
+            <field name="model">appointment.person.group</field>
+            <field name="type">kanban</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_mobile">
+                    <field name="color"/>
+                    <field name="group_name"/>
+                    <field name="group_image"/>
+                    <field name="appoint_person_ids"/>
+                    <field name="appoint_members_count"/>
+                    <field name="currency_id"/>
+                    <field name="group_charge"/>
+                    <field name="id"/>
+                    <templates>
+                        <t t-name="kanban-menu">
+                            <ul class="oe_kanban_colorpicker" data-field="color"/>
+                        </t>
+						<t t-name="kanban-box">
+                            <div t-attf-class="oe_kanban_color_#{kanban_getcolor(record.color.raw_value)} oe_kanban_card oe_kanban_global_click">
+                            <div class="oe_kanban_content oe_kanban_details">
+                                <div class="o_kanban_image">
+                                    <a type="open">
+                <t t-if="record.group_image">
+                                                <img alt="Not Found" t-att-src="kanban_image('appointment.person.group', 'group_image', record.id.raw_value)"/>
+                                            </t>
+                                            <t t-if="!record.group_image">
+                                                <img alt="Not Found" t-att-src='_s + "/base/static/src/img/avatar.png"' class="o_kanban_image"/>
+                                            </t>
+                                        </a>
+                                    </div>
+                                    <div name="tags">
+                                    <ul>
+                                        <li t-if="record.group_name">
+                                            <b style="font-size:18px;">
+                                                <field name="group_name"/>
+                                            </b>
+                                        </li>
+                                        <li t-if="record.appoint_person_ids">
+                                            <i class="fa fa-users" aria-hidden="true" title="Members"></i> <field name="appoint_members_count"/> Members
+                                        </li>
+                                        <li t-if="record.group_charge">
+                                            <field name="currency_id" invisible="1"/>
+                                            <i class="fa fa-money" aria-hidden="true" title="Group Charge"></i>
+                                            <field name="group_charge" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+						</t>
+					</templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="appoint_mgmt_appoint_group_action">
+            <field name="name">Appointment Group</field>
+            <field name="res_model">appointment.person.group</field>
+            <field name="path">appointment-group</field>
+            <field name="view_mode">kanban,list,form</field>
+            <field name="binding_view_types">form</field>
+            <field name="context">{'default_general': True,}</field>
+            <field name="help" type="html">
+              <p>
+                Here is a list of all the Appointment Groups created. You
+                can click on any record to get the detailed Information About these Groups.
+              </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

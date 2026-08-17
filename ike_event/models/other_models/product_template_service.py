@@ -14,3 +14,4 @@ class ProductProduct(models.Model):
     ], string='Input Model')
     x_is_origin_destination = fields.Boolean(string='Is Origin - Destination', default=False, tracking=True)
     x_signature_required = fields.Boolean(string='Signature required', default=False, tracking=True)
+    x_generate_appointment = fields.Boolean(string="Generate Appointment")

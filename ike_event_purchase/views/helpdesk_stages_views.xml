@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="helpdesk_stages_form_view_inherit_ike_event_purchase" model="ir.ui.view">
+        <field name="name">helpdesk.stages.form.view.inherit.ike.event.purchase</field>
+        <field name="model">helpdesk.stages</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.helpdesk_stages_form_view"/>
+        <field name="arch" type="xml">
+            <field name="sh_group_ids" position="after">
+                <field name="x_max_wait_time_minutes"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="helpdesk_stages_tree_view_inherit_ike_event_purchase" model="ir.ui.view">
+        <field name="name">helpdesk.stages.list.view.inherit.ike.event.purchase</field>
+        <field name="model">helpdesk.stages</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.helpdesk_stages_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="x_max_wait_time_minutes"/>
+            </field>
+        </field>
+    </record>
+</odoo>

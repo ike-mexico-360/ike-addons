@@ -57,6 +57,7 @@
         "views/other/custom_uom_uom_views.xml",
         "views/other/custom_product_mapping_views.xml",
         "views/other/custom_account_identification_views.xml",
+        "views/other/custom_metropolitan_zone_views.xml",
         "views/other/custom_account_type_views.xml",
         "views/other/custom_state_municipality_views.xml",
         "views/other/custom_holidays_views.xml",

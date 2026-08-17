@@ -40,7 +40,9 @@ export class IkeEventServiceAssistviewController extends FormController {
             const vals = { received_assistview: true };
 
             if (message?.brand) vals.brand = message.brand;
+            if (message?.brand_id) vals.brand_id = message.brand_id;
             if (message?.model) vals.model = message.model;
+            if (message?.model_id) vals.model_id = message.model_id;
             if (message?.plate) vals.plate = message.plate;
             if (message?.color) vals.color = message.color;
             if (message?.year) vals.year = message.year;
@@ -48,6 +50,13 @@ export class IkeEventServiceAssistviewController extends FormController {
                 if (message.location.address) vals.address = message.location.address;
                 if (message.location.latitude) vals.latitude = String(message.location.latitude);
                 if (message.location.longitude) vals.longitude = String(message.location.longitude);
+            }
+            if (Object.prototype.hasOwnProperty.call(message, "carretero")) {
+                vals.road_classification = message.carretero === true
+                    ? "road"
+                    : message.carretero === false
+                        ? "non_road"
+                        : false;
             }
             if (message?.answers) vals.answers = JSON.parse(JSON.stringify(message.answers));
             if (message?.plate_image) vals.plate_image = message.plate_image;

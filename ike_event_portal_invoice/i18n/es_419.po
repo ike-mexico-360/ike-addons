@@ -1,0 +1,369 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ike_event_portal_invoice
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-23 18:07+0000\n"
+"PO-Revision-Date: 2026-07-23 18:07+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "(document name)"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model:ir.actions.report,print_report_name:ike_event_portal_invoice.action_report_invoice_custom
+msgid "(object._get_report_base_filename())"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<span>Amount</span>"
+msgstr "<span>Importe</span>"
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<span>Description</span>"
+msgstr "<span>Descripción</span>"
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<span>Disc.%</span>"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<span>Quantity</span>"
+msgstr "<span>Cantidad</span>"
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<span>Taxes</span>"
+msgstr "<span>Impuestos</span>"
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<span>Unit Price</span>"
+msgstr "<span>Precio unitario</span>"
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<strong>Credit Note Date</strong>"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<strong>Customer Code</strong>"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<strong>Date</strong>"
+msgstr "<strong>Fecha</strong>"
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<strong>Delivery Date</strong>"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<strong>Due Date</strong>"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<strong>Incoterm</strong>"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<strong>Invoice Date</strong>"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<strong>Reference</strong>"
+msgstr "<strong>Referencia</strong>"
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "<strong>Source</strong>"
+msgstr "<strong>Origen</strong>"
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "Bacon Burger"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.custom_report_invoice_document
+msgid "Company tagline"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.portal_my_home_dian_invoices
+msgid "DIAN Invoices"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "El importe total de la factura debe ser mayor a cero."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "El importe total de la factura no es válido para el envío."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"El parámetro ike_event_portal.invoice.timeout debe ser un entero mayor a 0."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "El servicio devolvió un error (HTTP %(code)s): %(message)s"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"El servicio devolvió un error HTTP %(code)s.\n"
+"Respuesta: %(response)s"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"El servicio rechazó la factura con los siguientes errores:\n"
+"%s"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.portal_my_home_dian_invoices
+msgid "Electronic invoicing documents"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"Factura enviada al servicio externo correctamente.<br/><b>Documento "
+"Odoo:</b> %(move)s<br/><b>Folio externo:</b> %(external)s"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"Faltan parámetros de configuración del servicio:\n"
+"- %s"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model:ir.model,name:ike_event_portal_invoice.model_account_move
+msgid "Journal Entry"
+msgstr "Asiento contable"
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "La factura debe estar publicada antes de enviarse."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "La factura debe tener al menos una línea contable válida."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "La factura debe tener fecha de factura."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"La factura debe tener referencia de proveedor en el campo 'Referencia'."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "La factura no tiene compañía asociada."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "La factura no tiene moneda definida."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "La factura no tiene proveedor asociado."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"La línea '%(line)s' no cuenta con los datos requeridos para MIRO_ITEMS:\n"
+"- %(fields)s"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"La línea '%(line)s' no está vinculada a una línea de compra. El servicio "
+"requiere PO_NUMBER y PO_ITEM."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"La referencia del proveedor no puede exceder 16 caracteres. Valor actual: "
+"'%s'"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"No fue posible conectar con el servicio de facturas de proveedor. Verifica "
+"la URL, red o VPN."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "No fue posible convertir un importe a formato decimal válido."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"No fue posible enviar la factura porque el servicio tardó demasiado en "
+"responder."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "No fue posible generar o recuperar el PDF de la factura."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "No hay líneas válidas para construir MIRO_ITEMS."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "No se encontró el XML de la factura. El servicio lo requiere."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"No se encontró el código de sociedad requerido para el campo COMPANY_CODE."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"No se encontró el número de proveedor requerido para el campo SUPPLIER."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid ""
+"Ocurrió un error técnico al intentar enviar la factura al servicio externo."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model:ir.model.fields,field_description:ike_event_portal_invoice.field_account_bank_statement_line__x_payment_receipt_file
+#: model:ir.model.fields,field_description:ike_event_portal_invoice.field_account_move__x_payment_receipt_file
+msgid "Payment Receipt"
+msgstr "Comprobante de pago"
+
+#. module: ike_event_portal_invoice
+#: model:ir.model.fields,field_description:ike_event_portal_invoice.field_account_bank_statement_line__x_payment_receipt_filename
+#: model:ir.model.fields,field_description:ike_event_portal_invoice.field_account_move__x_payment_receipt_filename
+msgid "Payment Receipt Filename"
+msgstr "Nombre del archivo del comprobante de pago"
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.view_move_form_inherit_payment_receipt
+msgid "Payment Support"
+msgstr "Soporte de pago"
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "Sin contenido"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "Sin descripción"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "Sin folio devuelto"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "Sin identificador"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#. odoo-python
+#: code:addons/ike_event_portal_invoice/models/account_move.py:0
+msgid "Solo se pueden enviar facturas de proveedor."
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_portal_invoice.account_view_move_form_inherit_event_portal
+msgid "Test endpoint supplier"
+msgstr ""
+
+#. module: ike_event_portal_invoice
+#: model:ir.model.fields,help:ike_event_portal_invoice.field_account_bank_statement_line__x_payment_receipt_file
+#: model:ir.model.fields,help:ike_event_portal_invoice.field_account_move__x_payment_receipt_file
+msgid "Upload the payment receipt or proof of payment for this invoice."
+msgstr "Adjunte el recibo de pago o comprobante de pago de esta factura."

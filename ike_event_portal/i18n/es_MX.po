@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-20 23:14+0000\n"
-"PO-Revision-Date: 2026-04-20 23:14+0000\n"
+"POT-Creation-Date: 2026-08-07 16:39+0000\n"
+"PO-Revision-Date: 2026-08-07 16:39+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -44,6 +44,51 @@ msgstr ""
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
 msgid "Actions"
 msgstr "Acciones"
+
+#. module: ike_event_portal
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+msgid "Account identifier"
+msgstr "Identificador de cuenta"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Assignment Date From"
+msgstr "Fecha de asignación desde"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Assignment Date To"
+msgstr "Fecha de asignación hasta"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Contact Date From"
+msgstr "Fecha de contacto desde"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Contact Date To"
+msgstr "Fecha de contacto hasta"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<i class=\"fa fa-calendar me-1\"/>Assignment Date From"
+msgstr "<i class=\"fa fa-calendar me-1\"/>Fecha de asignación desde"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<i class=\"fa fa-calendar me-1\"/>Assignment Date To"
+msgstr "<i class=\"fa fa-calendar me-1\"/>Fecha de asignación hasta"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<i class=\"fa fa-calendar me-1\"/>Contact Date From"
+msgstr "<i class=\"fa fa-calendar me-1\"/>Fecha de contacto desde"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<i class=\"fa fa-calendar me-1\"/>Contact Date To"
+msgstr "<i class=\"fa fa-calendar me-1\"/>Fecha de contacto hasta"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -480,6 +525,7 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
 msgid "Event Status"
 msgstr "Estado evento"
 
@@ -541,6 +587,7 @@ msgstr "Expediente"
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
 msgid "Date"
 msgstr "Fecha"
 
@@ -553,12 +600,14 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
 msgid "From Date"
 msgstr "Fecha desde"
 
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
 msgid "To Date"
 msgstr "Fecha hasta"
 
@@ -987,6 +1036,42 @@ msgstr ""
 
 #. module: ike_event_portal
 #. odoo-python
+#: code:addons/ike_event_portal/controllers/services_controller.py:0
+msgid "Portal - Arrived"
+msgstr "Portal - Llegó"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/services_controller.py:0
+msgid "Portal - Arrived to destination"
+msgstr "Portal - LLego al destino"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/services_controller.py:0
+msgid "Portal - Contacted"
+msgstr "Portal - Contactado"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/services_controller.py:0
+msgid "Portal - Finalized"
+msgstr "Portal - Finalizado"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/services_controller.py:0
+msgid "Portal - On route"
+msgstr "Portal - En ruta"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/services_controller.py:0
+msgid "Portal - On route to destination"
+msgstr "Portal - En ruta al destino"
+
+#. module: ike_event_portal
+#. odoo-python
 #: code:addons/ike_event_portal/models/ike_event.py:0
 msgid "Portal Extras"
 msgstr ""
@@ -1212,6 +1297,7 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
 msgid "Subservice"
 msgstr "Subservicio"
 
@@ -1306,6 +1392,7 @@ msgstr ""
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
 msgid "All"
 msgstr "Todos"
 
@@ -2421,3 +2508,246 @@ msgstr "En servicio"
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
 msgid "Disabled"
 msgstr "Deshabilitado"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events_breadcrumbs
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events_home
+msgid "Events"
+msgstr "Eventos"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events_home
+msgid "Consult your service events"
+msgstr "Consulta tus eventos de servicio"
+
+#. module: ike_event_portal
+msgid "Consult the service events for your accounts."
+msgstr "Consulta los eventos de servicio de tus cuentas."
+
+#. module: ike_event_portal
+msgid "events"
+msgstr "eventos"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Account"
+msgstr "Cuenta"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "All accounts"
+msgstr "Todas las cuentas"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Stage"
+msgstr "Etapa"
+
+#. module: ike_event_portal
+msgid "All stages"
+msgstr "Todas las etapas"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Service"
+msgstr "Servicio"
+
+#. module: ike_event_portal
+msgid "All services"
+msgstr "Todos los servicios"
+
+#. module: ike_event_portal
+msgid "From"
+msgstr "Desde"
+
+#. module: ike_event_portal
+msgid "To"
+msgstr "Hasta"
+
+#. module: ike_event_portal
+msgid "Search"
+msgstr "Buscar"
+
+#. module: ike_event_portal
+msgid "Expedient, user, origin or destination"
+msgstr "Expediente, usuario, origen o destino"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Order"
+msgstr "Orden"
+
+#. module: ike_event_portal
+msgid "Apply"
+msgstr "Aplicar"
+
+#. module: ike_event_portal
+msgid "Clear"
+msgstr "Limpiar"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Expedient"
+msgstr "Expediente"
+
+#. module: ike_event_portal
+msgid "Open date"
+msgstr "Fecha de apertura"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "User"
+msgstr "Usuario"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Origin"
+msgstr "Origen"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Destination"
+msgstr "Destino"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "No events match the selected filters."
+msgstr "No hay eventos que coincidan con los filtros seleccionados."
+
+#. module: ike_event_portal
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Newest"
+msgstr "Más recientes"
+
+#. module: ike_event_portal
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Oldest"
+msgstr "Más antiguos"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "event(s) found"
+msgstr "evento(s) encontrado(s)"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Search expedient..."
+msgstr "Buscar expediente..."
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Show"
+msgstr "Mostrar"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "records"
+msgstr "registros"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Showing"
+msgstr "Mostrando"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Apply filters"
+msgstr "Aplicar filtros"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Clear filters"
+msgstr "Limpiar filtros"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<i class=\"fa fa-search me-1\"/>Expedient"
+msgstr "<i class=\"fa fa-search me-1\"/>Expediente"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<i class=\"fa fa-building me-1\"/>Account"
+msgstr "<i class=\"fa fa-building me-1\"/>Cuenta"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<i class=\"fa fa-calendar me-1\"/>From Date"
+msgstr "<i class=\"fa fa-calendar me-1\"/>Fecha desde"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<i class=\"fa fa-calendar me-1\"/>To Date"
+msgstr "<i class=\"fa fa-calendar me-1\"/>Fecha hasta"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<i class=\"fa fa-cog me-1\"/>Service"
+msgstr "<i class=\"fa fa-cog me-1\"/>Servicio"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<i class=\"fa fa-tasks me-1\"/>Stage"
+msgstr "<i class=\"fa fa-tasks me-1\"/>Etapa"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<option value=\"\">All accounts</option>"
+msgstr "<option value=\"\">Todas las cuentas</option>"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<option value=\"\">All</option>"
+msgstr "<option value=\"\">Todos</option>"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<span class=\"text-muted\">Show</span>"
+msgstr "<span class=\"text-muted\">Mostrar</span>"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "<span class=\"text-muted\">records</span>"
+msgstr "<span class=\"text-muted\">registros</span>"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "to"
+msgstr "a"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "of"
+msgstr "de"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "VIN"
+msgstr "VIN"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Assignment Date"
+msgstr "Fecha de asignación"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Contact Date"
+msgstr "Fecha de contacto"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Client"
+msgstr "Cliente"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Vehicle"
+msgstr "Vehículo"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "ETA"
+msgstr "ETA"

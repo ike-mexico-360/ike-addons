@@ -15,6 +15,7 @@ class CustomSatValidator(models.Model):
     _name = 'custom.sat.validator'
     _description = 'Autonomous SAT CFDI Validator (Multi-Package Container)'
     _inherit = ['mail.thread']
+    _order = 'id desc'
 
     name = fields.Char(string="Reference", required=True, copy=False, readonly=True, default=lambda self: 'New')
 

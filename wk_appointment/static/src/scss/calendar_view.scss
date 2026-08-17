@@ -1,0 +1,55 @@
+
+.main_appointee_details {
+    font-family: sans-serif;
+    font-weight: 500;
+    font-size: 12px;
+    color: black !important;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.dashboard-panel {
+    overflow: auto;
+}
+
+.selected_appointment_container {
+    box-shadow: 0px 4px 16px -2px lightblue;
+    border-radius: 5px;
+    
+    .wk_appointment_label{
+        color: #475569;
+        font-size: 14px;
+    }
+}
+.navbar-calendar-container {
+    height: auto;
+    align-items: normal !important;
+}
+
+@media (max-width: 615px) {
+    .navbar-booking-card{
+        width: 100% !important;
+    }
+}
+
+.button-container {
+    position: relative;
+}
+
+.book-appointment-button {
+    position: relative;
+    padding: 7px 7px;
+    color: #fff;
+    background-color: #48A6A7;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    overflow: hidden;
+    outline: none;
+    transition: background-color 0.3s ease;
+}
+
+.book-appointment-button:hover {
+    background-color: #3674B5;
+}
+  

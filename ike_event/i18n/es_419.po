@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-05 19:35+0000\n"
-"PO-Revision-Date: 2026-08-05 19:35+0000\n"
+"POT-Creation-Date: 2026-08-06 19:00+0000\n"
+"PO-Revision-Date: 2026-08-06 19:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -2570,6 +2570,11 @@ msgid "General Consultation"
 msgstr "Consulta general"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_product_product__x_generate_appointment
+msgid "Generate Appointment"
+msgstr "Genera cita"
+
+#. module: ike_event
 #: model:ir.model.fields.selection,name:ike_event.selection__product_category__x_input_res_model__ike_service_input_generic
 #: model:ir.model.fields.selection,name:ike_event.selection__product_product__x_input_res_model__ike_service_input_generic_sub
 msgid "Generic"
@@ -3855,7 +3860,7 @@ msgstr "Abrir"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__event_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_base__event_date
 msgid "Open Date"
-msgstr "Fecha de apertura"
+msgstr "Fecha del evento"
 
 #. module: ike_event
 #. odoo-python
@@ -4272,6 +4277,7 @@ msgstr "Campos requeridos"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical__requires_federal_plates
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__requires_federal_plates
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__requires_federal_plates
+#: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_generic__requires_federal_plates
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__requires_federal_plates
 msgid "Requires Federal Plates"
 msgstr "Necesita placas federales"
@@ -5720,6 +5726,14 @@ msgstr "Tipo"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__type_authorization_id
 msgid "Type Authorization"
 msgstr "Tipo autorización"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_summary.py:0
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_generic_screen_form
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_truck_screen_form
+msgid "Type event"
+msgstr "Tipo de evento"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_generic_screen_form

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<templates xml:space="preserve">
+	<t t-name="wk_appointment.AppointeeSelection" t-inherit="web.CalendarController" t-inherit-mode="extension" owl="1">
+		<xpath expr="//div[hasclass('o_calendar_container')]/div/div" position="before">
+			<div t-if="wkGetModel() and (model.meta.AppointeeData.is_manager or model.meta.AppointeeData.is_officer)" class="d-md-block" style="width:225px;">
+				<div class="d-flex align-items-center fs-5 ms-2" style="gap:5px; color:#1E293B;">
+					<label for="AppointeeSelect" style="font-weight:500">
+						Appointee:
+					</label>
+					<select id="AppointeeSelectId" class="form-select" aria-label="Appointee select" t-on-change="onAppointeeChange" style="background-color: #BDE5F8;">
+						<option value="-1" selected="true">
+							All
+						</option>
+						<t t-foreach="model.meta.AppointeeData.appointee_list" t-as="appointee" t-key="appointee['id']">
+							<option t-att-value="appointee['id']">
+								<t t-esc="appointee['name']" />
+							</option>
+						</t>
+					</select>
+				</div>
+			</div>
+		</xpath>
+		<xpath expr="//div[hasclass('o_calendar_container')]" position="before">
+			<div class="row m-2 navbar-calendar-container" t-if="wkGetModel()">
+				<div class="book-appointment-btn button-container mb-2" t-if="model.meta.AppointeeData.is_manager">
+					<div class="d-flex justify-content-between book-appointment-button" style="width: 186px;" t-on-click="bookAnAppointment">
+						<img src="/wk_appointment/static/src/icons/book.png" title="Book Appointments" style="width: 26px;" />
+						<p style="padding-top: 4px;
+                                        margin: 0px;
+                                       ">
+							Book An Appointment
+						</p>
+					</div>
+				</div>
+				<div class="col-md-3 col-12 mb-sm-1 navbar-booking-card" style="color:black; width: 300px;">
+					<div class="border new_appointment selected_appointment_container border-grey text-light main_appointee_details  align-items-center p-4 d-flex" t-on-click="getListViewonClick">
+						<div class="d-flex align-items-center new_appointment border-end">
+							<div class="me-3">
+								<img src="/wk_appointment/static/src/icons/new.png" title="New Appointments" style="width: 45px;" />
+							</div>
+						</div>
+						<div class="ms-4 new_appointment">
+							<div>
+								<div class="new_appointment " style="font-size:21px; text-align: left; font-weight:700; color:black;">
+									<t t-esc="model.meta.AppointeeData.new_appointment_count" />
+								</div>
+							</div>
+							<div style="color:black;">
+								<span class="new_appointment wk_appointment_label p-0">
+									New Appointments
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3 col-12 mb-sm-1 navbar-booking-card" style="color:black; width: 300px;">
+					<div class="border pending_appointment selected_appointment_container border-grey text-light main_appointee_details  align-items-center p-4 d-flex" t-on-click="getListViewonClick">
+						<div class="d-flex align-items-center pending_appointment border-end">
+							<div class="me-3">
+								<img src="/wk_appointment/static/src/icons/pending.png" title="Pending Appointments" style="width: 45px;" />
+							</div>
+						</div>
+						<div class="ms-4 pending_appointment">
+							<div>
+								<div class="pending_appointment " style="font-size:21px; text-align: left; font-weight:700; color:black;">
+									<t t-esc="model.meta.AppointeeData.pending_appointment_count" />
+								</div>
+							</div>
+							<div style="color:black;">
+								<span class="pending_appointment wk_appointment_label">
+									Pending
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3 col-12 mb-sm-1 navbar-booking-card" style="color:black; width: 300px;">
+					<div class="border approved_appointment selected_appointment_container border-grey text-light main_appointee_details  align-items-center p-4 d-flex" t-on-click="getListViewonClick">
+						<div class="d-flex align-items-center approved_appointment border-end">
+							<div class="me-3">
+								<img src="/wk_appointment/static/src/icons/approved.png" title="Approved Appointments" style="width: 45px;" />
+							</div>
+						</div>
+						<div class="ms-3 approved_appointment">
+							<div>
+								<span class="approved_appointment " style="font-size:21px; text-align: left; font-weight:700; color:black;">
+									<t t-esc="model.meta.AppointeeData.approved_appointment_count" />
+								</span>
+							</div>
+							<div style="color:black;">
+								<span class="approved_appointment wk_appointment_label">
+									Approved
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="col-md-3 col-12 mb-sm-1 navbar-booking-card" style="color:black; width: 300px;">
+					<div class="border done_appointment selected_appointment_container border-grey text-light main_appointee_details  align-items-center p-4 d-flex" t-on-click="getListViewonClick">
+						<div class="d-flex align-items-center done_appointment border-end">
+							<div class="me-3">
+								<img src="/wk_appointment/static/src/icons/completed.png" title="Done Appointments" style="width: 45px;" />
+							</div>
+						</div>
+						<div class="ms-4 done_appointment">
+							<div>
+								<span class="done_appointment " style="font-size:21px; text-align: left; font-weight:700; color:black;">
+									<t t-esc="model.meta.AppointeeData.completed_appointment_count" />
+								</span>
+							</div>
+							<div style="color:black;">
+								<span class="done_appointment wk_appointment_label">
+									Done
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+				<div class="col-md-3 col-12 mb-sm-1 navbar-booking-card" style="color:black; width: 300px;">
+					<div class="border cancelled_appointment selected_appointment_container border-grey text-light main_appointee_details  align-items-center p-4 d-flex" t-on-click="getListViewonClick">
+						<div class="d-flex align-items-center cancelled_appointment border-end">
+							<div class="me-3">
+								<img src="/wk_appointment/static/src/icons/cancelled.png" title="Rejected Appointments" style="width: 45px;" />
+							</div>
+						</div>
+						<div class="ms-2 cancelled_appointment">
+							<div>
+								<div class="cancelled_appointment " style="font-size:21px; text-align: left; font-weight:700; color:black;">
+									<t t-esc="model.meta.AppointeeData.rejected_appointment_count" />
+								</div>
+							</div>
+							<div style="color:black;">
+								<span class="cancelled_appointment wk_appointment_label">
+									Cancelled
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+		</xpath>
+	</t>
+</templates>

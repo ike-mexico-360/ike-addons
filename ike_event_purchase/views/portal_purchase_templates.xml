@@ -91,6 +91,13 @@
             </t>
         </xpath>
     </template>
+    <template id="portal_my_invoices_page" name="Portal My Invoices">
+        <t t-call="portal.portal_layout">
+            <div class="container my-4">
+                <owl-component name="ike_event_purchase.InvoiceOrderList"/>
+            </div>
+        </t>
+    </template>
     <template id="ike_event_portal_my_purchase_order" name="Purchase Order Detail" inherit_id="purchase.portal_my_purchase_order">
         <xpath expr="//t[@t-set='title']//h2[@t-field='order.amount_total']" position="attributes">
             <attribute name="t-field">order.amount_untaxed</attribute>

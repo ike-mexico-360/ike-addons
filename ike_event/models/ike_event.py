@@ -1067,7 +1067,7 @@ class IkeEvent(models.Model):
                 rec.destination_duration = (destination_duration_s or rec.destination_duration) / 60
                 rec.destination_route = destination_route
 
-            # rec.assing_road_classification()
+                rec.assing_road_classification()
 
     def assing_road_classification(self):
         highway_event_type = self.env['custom.type.event'].search([
@@ -1094,28 +1094,65 @@ class IkeEvent(models.Model):
         destination_text = ' '.join(filter(None, [destination.street]))  # type: ignore
 
         is_highway_match_street = self._is_highway_by_street(origin_text, destination_text)
+        is_highway_metropolitan = self._is_same_metropolitan_zone(origin, destination)
 
-        if is_highway_by_distance or is_highway_match_street:
-            self.event_type_id = highway_event_type
-            self.requires_federal_plates = highway_event_type.requires_federal_plates
-            self.payment_event_type_id = highway_event_type
+        if is_highway_by_distance:
+            event_type = highway_event_type
+            print("POR DISTANCIAAAAA")
+
+        elif is_highway_metropolitan:
+            event_type = highway_event_type
+            print("POR METORPOLITAN O ENTIDAD")
+
+        elif is_highway_match_street:
+            event_type = highway_event_type
+            print("POR POR CALLEEEEE")
+
         else:
-            self.event_type_id = not_highway_event_type
-            self.requires_federal_plates = not_highway_event_type.requires_federal_plates
-            self.payment_event_type_id = not_highway_event_type
+            event_type = not_highway_event_type
+
+        self.event_type_id = event_type
+        self.requires_federal_plates = event_type.requires_federal_plates
+        self.payment_event_type_id = event_type
+
+    def _is_same_metropolitan_zone(self, origin, destination):
+        origin_in_zone = self.env['custom.metropolitan.zone'].search([
+            ('municipality_ids', 'in', origin.municipality_id.id)
+        ])
+
+        destination_in_zone = self.env['custom.metropolitan.zone'].search([
+            ('municipality_ids', 'in', destination.municipality_id.id)
+        ])
+
+        if origin.municipality_id.id != destination.municipality_id.id:
+            if not origin_in_zone and not destination_in_zone:
+                return True
+            if origin_in_zone.id == destination_in_zone.id:
+                return False
+            return True
+        return False
 
     def _is_highway_by_street(self, origin_street, destination_street):
-        """RN-2: Match con el catálogo de calles."""
+        """RN-2: Match street by catalog pattern"""
 
-        keywords = self.env['ike.event.road.classification'].search([]).mapped('name')
+        keywords = self.env['ike.event.road.classification'].search([
+            ('disabled', '=', False)
+        ]).mapped('name')
+
+        keywords = {
+            name.strip().lower()
+            for name in keywords
+            if name
+        }
 
         for street in filter(None, (origin_street, destination_street)):
-            street = street.lower()
+            street = street.strip().lower()
 
             for keyword in keywords:
-                if keyword and re.search(rf'\b{re.escape(keyword.lower())}\b', street):
-                    return True
+                match = keyword in street
 
+                if match:
+                    return True
         return False
 
     def _build_sub_service_counter_json(self):
@@ -1357,13 +1394,13 @@ class IkeEvent(models.Model):
                         supplier_product = supplier_id.supplier_product_ids.filtered(
                             lambda x: x.product_id.id == product_line_id.id and not x.display_type)
 
-                        total_base_unit_price = cost_line_id[0].cost if cost_line_id else 0
-                        total_base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
+                        base_unit_price = cost_line_id[0].cost if cost_line_id else 0
+                        base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
 
                         if supplier_product:
                             supplier_product.write({
-                                'base_unit_price': total_base_unit_price,
-                                'base_cancel_price': total_base_cancel_price,
+                                'base_unit_price': base_unit_price,
+                                'base_cancel_price': base_cancel_price,
                             })
 
         # Current Flow
@@ -1467,6 +1504,9 @@ class IkeEvent(models.Model):
         self.stage_id = stage_id.id
         self.cancel_reason_id = cancel_reason_id
         self.cancel_user_id = self.env.user.id
+
+        if self.stage_id.id == self.env.ref('ike_event.ike_event_stage_cancelled_subsequently').id:
+            self.action_verify()
 
     # === ACTION DUPLICATE === #
     def action_duplicate(self):
@@ -1640,3 +1680,27 @@ class IkeEvent(models.Model):
             _logger.error(f"Error geolocation routes server: {str(e)}")
 
         return destination_distance_m, destination_duration_s, destination_route
+
+    # Este proceso debe validar si se quedó algun evento en los estatus Asistencia Concluida y Cancelado Posterior
+    @api.model
+    def _x_cron_automatic_close_events(self, max_records=50):
+        """ This process close automatically events that are in stage 'cancelled_posterior' and 'completed'
+        and have selected generic suppliers or purchase suppliers
+        """
+        concluded_stage_id = self.env.ref('ike_event.ike_event_stage_completed').id
+        cancelled_subsequently_stage_id = self.env.ref('ike_event.ike_event_stage_cancelled_subsequently').id
+
+        domain = [
+            ("stage_id", "in", [concluded_stage_id, cancelled_subsequently_stage_id]),
+            ("selected_supplier_ids", "not any", [
+                ("is_generic_supplier", "=", True),
+                ("purchase_supplier_id", "=", False)
+            ]),
+        ]
+        event_ids = self.search(domain, limit=max_records)
+        event_count = self.search_count(domain)
+
+        _logger.info(f"Procesando {len(event_ids)} / {event_count}")
+
+        if event_ids:
+            event_ids.action_verify()

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="purchase_order_view_tree_inherit_custom_co" model="ir.ui.view">
+        <field name="name">purchase.order.tree.inherit.custom.co</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="after">
+                <field name="x_status_invoices" optional="show"/>
+                <field name="x_upload_invoices_date" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="purchase_order_form_inherit_ike_mx" model="ir.ui.view">
+        <field name="name">purchase.order.form.inherit.ike.mx</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']/tree/field[last()]" position="after">
+                <field name="x_status_invoice" optional="hide"/>
+                <field name="x_upload_invoice_date" optional="hide"/>
+                <field name="invoice_lines" optional="hide" widget="many2many_tags"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+    <data>
+
+        <record id="appoint_mgmt_appoint_source_tree_view" model="ir.ui.view">
+            <field name="name">Appointment Person Source Tree</field>
+            <field name="model">appointment.source</field>
+            <field name="type">list</field>
+            <field name="arch" type="xml">
+                <list string="Appointment Person Source Tree" editable="bottom">
+                    <field name="name" placeholder="i.e. Visit, Phone, Email, etc"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- <record id="appoint_mgmt_appoint_source_form_view" model="ir.ui.view">
+            <field name="name">Appointment Person Source Form</field>
+            <field name="model">appointment.source</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Appointment Person Source Form">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record> -->
+
+        <record model="ir.actions.act_window" id="appoint_mgmt_appoint_source_action">
+            <field name="name">Appointment Source</field>
+            <field name="res_model">appointment.source</field>
+            <field name="path">appointment-source</field>
+            <field name="view_mode">list</field>
+            <field name="binding_view_types">form</field>
+            <field name="help" type="html">
+              <p>
+                Here is a list of all the Appointment Sources created. You
+                can click on any record to get the detailed Information About these Sources.
+              </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

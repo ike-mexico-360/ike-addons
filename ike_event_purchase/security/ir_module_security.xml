@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="custom_group_ike_finance" model="res.groups">
+        <field name="name">IKE Finance</field>
+        <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
+    </record>
+
     <record id="rule_purchase_order_portal_finance" model="ir.rule">
         <field name="name">Portal Finance: Limited Supplier PO</field>
         <field name="model_id" ref="purchase.model_purchase_order"/>

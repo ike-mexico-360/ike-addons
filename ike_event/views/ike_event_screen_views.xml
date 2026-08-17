@@ -19,16 +19,25 @@
                     <button name="action_open_duplicate_wizard" string="Duplicate Expedient"
                             confirm="Are you sure?"
                             type="object" class="btn-info"
-                            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds"
+                            groups="base.group_system,custom_master_catalog.custom_group_supervisor_cds"
                             invisible="stage_ref in ['draft']"/>
+                    <button name="action_open_duplicate_wizard" string="Duplicate Expedient"
+                            confirm="Are you sure?"
+                            type="object" class="btn-info"
+                            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator"
+                            invisible="stage_ref in ['draft', 'verifying']"/>
                     <button name="open_cancel_wizard" string="Cancel"
                             confirm="Are you sure?"
                             type="object" class="btn-danger"
                             invisible="not id or stage_ref in ['completed', 'verifying', 'closed', 'cancel', 'cancel_subsequently', 'cancel_verifying', 'cancel_closed']"/>
                     <button name="action_directory_center_attention" string="Directories center attention"
                             type="object" class="btn-primary"
-                            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support"
+                            groups="base.group_system,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support"
                             invisible="stage_ref in ['draft', 'capturing', 'cancel', 'cancel_subsequently']"/>
+                    <button name="action_directory_center_attention" string="Directories center attention"
+                            type="object" class="btn-primary"
+                            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator"
+                            invisible="stage_ref in ['draft', 'capturing', 'cancel', 'cancel_subsequently', 'verifying']"/>
                     <field name="stage_id" widget="ike_statusbar_duration" options="{'clickable': 0, 'fold_field': 'fold'}"/>
                 </header>
                 <sheet class="ike-sheet">
@@ -225,14 +234,8 @@
                             <field name="supplier_search_number" readonly="1" groups="base.group_no_one"/>
                             <field name="supplier_search_type" readonly="1" groups="base.group_no_one"/>
                             <div class="o_row" colspan="2">
-                                <button name="action_search_electronic_suppliers" string="Search Electronic (Suppliers)"
+                                <button name="action_search_electronic_suppliers" string="Search Suppliers"
                                         type="object" class="btn-info"/>
-                                <button name="action_search_publication_suppliers_3" string="Search Publication 3 (Suppliers)"
-                                        type="object" class="btn-info"/>
-                                <button name="action_search_manual_suppliers" string="Search Manual (Suppliers)"
-                                        type="object" class="btn-info"/>
-                                <!-- <button name="action_delete_suppliers" string="Delete Searched (Suppliers)"
-                                        type="object" class="btn-danger" groups="base.group_erp_manager"/> -->
                             </div>
                         </group>
                     </group>
@@ -369,7 +372,7 @@
                                 readonly="1"
                                 invisible="stage_ref not in ['verifying', 'cancel_verifying']"
                                 options="{'no_open': 1}"/>
-                            <!-- <field name="payment_event_type_id"
+                            <field name="payment_event_type_id"
                                 groups="base.group_system,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss"
                                 context="{
                                     'search_view_ref': 'custom_master_catalog.custom_view_users_search',
@@ -382,7 +385,7 @@
                                 groups="custom_master_catalog.custom_group_ccc_coordinator,!base.group_system,!custom_master_catalog.custom_group_ccc_analyst,!custom_master_catalog.custom_group_ccc_boss"
                                 readonly="1"
                                 invisible="stage_ref not in ['verifying', 'cancel_verifying']"
-                                options="{'no_open': 1}"/> -->
+                                options="{'no_open': 1}"/>
 
                             <div class="d-flex flex-column align-items-center">
                                 <div><h3>Confirmation code: #7890</h3></div>

@@ -13,3 +13,7 @@ class ProjectProject(models.Model):
         domain="[('x_available_for_project_purchase_orders', '=', True)]",
         help='Secuencia nativa de Odoo que se usará para numerar las órdenes de compra de este proyecto.',
     )
+    x_ref_app = fields.Char(
+        string='Reference app',
+        help='Code of the application that created this project',
+    )

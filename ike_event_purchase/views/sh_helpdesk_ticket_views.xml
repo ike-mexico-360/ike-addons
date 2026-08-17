@@ -31,6 +31,10 @@
         <field name="model">sh.helpdesk.ticket</field>
         <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_form_view"/>
         <field name="arch" type="xml">
+            <xpath expr="//header/field[@name='stage_id']" position="attributes">
+                <attribute name="widget">statusbar_duration</attribute>
+            </xpath>
+
             <xpath expr="//header/button[@name='preview_ticket']" position="attributes">
                 <attribute name="invisible">1</attribute>
             </xpath>
@@ -88,6 +92,19 @@
             </xpath>
             <xpath expr="//header/button[@name='action_approve']" position="attributes">
                 <attribute name="invisible">cancel_stage_boolean == True or done_stage_boolean == True or closed_stage_boolean == True or in_progress_stage_boolean == True</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sh_helpdesk_ticket_form_view_inherit_ike_event_purchase_list" model="ir.ui.view">
+        <field name="name">sh_helpdesk_ticket_form_view.inherit.ike_event_purchase_list</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="x_stage_max_wait_time_minutes" column_invisible="1"/>
+                <field name="current_stage_date" column_invisible="1"/>
+                <field name="current_elapsed_time_seconds" string="Elapsed" widget="helpdesk_stage_elapsed" width="90px"/>
             </xpath>
         </field>
     </record>

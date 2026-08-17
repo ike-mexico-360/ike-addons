@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from . import custom_import_xml_invoice_line
 from . import custom_sat_validator_line
 from . import custom_sat_validator
 from . import account_move

@@ -103,37 +103,30 @@ class PurchaseOrderLine(models.Model):
         for line in self:
             line.x_price_subtotal_event = line.x_price_unit_event * line.x_product_qty_event
 
-    @api.depends('product_id', 'order_id.order_line.product_id')
+    @api.depends('product_id', 'order_id.order_line.product_id', 'order_id.state')
     def _x_compute_product_domain(self):
         for rec in self:
             selected_product_ids = rec.order_id.order_line.filtered(
                 lambda line: line.product_id and line.id != rec.id
             ).mapped('product_id').ids
 
-            domain = [
-                ('sale_ok', '=', False),
-                ('sh_product_subscribe', '=', False),
-                ('purchase_ok', '=', True),
-                ('x_concept_ok', '=', True),
-                ('type', '=', 'service'),
-                ('disabled', '=', False),
-                ('list_price', '=', 0),
-                ('id', 'not in', selected_product_ids),
-                ('uom_id', 'in', [
-                    self.env.ref('uom.product_uom_km').id,
-                    self.env.ref('uom.product_uom_day').id,
-                    self.env.ref('uom.product_uom_hour').id,
-                    self.env.ref('l10n_mx.product_uom_service_unit').id,
-                    self.env.ref('uom.product_uom_unit').id,
-                    self.env.ref('uom.product_uom_litre').id
-                ]),
-                '|',
-                ('x_apply_all_services_subservices', '=', True),
-                ('x_categ_id', 'in', [rec.order_id.x_event_id.service_id.id, False]),
-                '|',
-                ('x_product_id', 'in', [rec.order_id.x_event_id.sub_service_id.id]),
-                ('x_product_id', '=', False),
-            ]
+            if rec.order_id.state in ('purchase', 'done'):
+                domain = self.env['product.product'].get_subservices_domain()
+                domain.extend([
+                    ('id', 'not in', selected_product_ids),
+                    ('disabled', '=', False),
+                ])
+            else:
+                domain = self.env['product.product'].get_concepts_domain()
+                domain.extend([
+                    ('id', 'not in', selected_product_ids),
+                    '|',
+                    ('x_apply_all_services_subservices', '=', True),
+                    ('x_categ_id', 'in', [rec.order_id.x_event_id.service_id.id, False]),
+                    '|',
+                    ('x_product_id', 'in', [rec.order_id.x_event_id.sub_service_id.id]),
+                    ('x_product_id', '=', False),
+                ])
 
             rec.x_product_domain = domain
 

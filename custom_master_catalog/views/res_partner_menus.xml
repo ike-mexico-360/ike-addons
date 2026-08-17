@@ -258,11 +258,16 @@
             action="custom_state_municipality_action"
             groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support,custom_group_bi_queries"
             sequence="20"/>
+        <menuitem id="custom_metropolitan_zone_menu"
+            name="Metropolitan Zones"
+            action="action_custom_metropolitan_zone"
+            groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory"
+            sequence="25"/>
         <menuitem id="custom_import_postal_codes_sepomex_menu"
             name="Import Postal Codes"
             action="custom_import_postal_codes_action"
             groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory"
-            sequence="25"/>
+            sequence="30"/>
     </menuitem>
     <menuitem id="custom_subservice_specification_action_menu"
         name="Subservice specifications"

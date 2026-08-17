@@ -1,0 +1,148 @@
+<?xml version="1.0" ?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+
+<odoo>
+    <data noupdate="1">
+
+        <!--Mail to customer on new appointment -->
+        <record id="appoint_mgmt_new_appoint_mail_to_customer" model="mail.template">
+            <field name="name">Mail to Customer On New Appointment</field>
+            <field name="email_from">{{object.create_uid.company_id.partner_id.email or ''}}</field>
+            <field name="subject"> New Appointment Successfully created at {{object.create_uid.company_id.name}}</field>
+            <field name="email_to">{{object.customer.email or ''}}</field>
+            <field name="email_cc">{{object.create_uid.company_id.partner_id.email or ''}}</field>
+            <field name="model_id" ref="wk_appointment.model_appointment"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">{{object.customer.lang}}</field>
+            <field name="body_html" type="html">
+                    <p>Dear <t t-out="object.customer.name"/> , </p>
+                        <br/>
+                        <p>A new Appointment Request has been successfully generated.</p>
+                        <p>Please wait while the status of this appointment will be updated.</p>
+                        <br/>
+                        <b>Date :</b> <t t-out="object.appoint_date"/>
+                        <t t-if="object.time_slot">
+                            <b>Time :</b> <t t-out="object.time_slot.name"/>
+                        </t>
+                        <b>Appointment With:  </b> <t t-out="object.appoint_person_id.name or ''"/>
+                        <br/>
+                        <p>Thank you,</p>
+
+                        <p>(<t t-out="object.create_uid.company_id.name"/>)</p>
+            </field>
+        </record>
+
+        <!-- Mail to Appointee on new appointment -->
+        <record id="appoint_mgmt_new_appoint_mail_to_appointee" model="mail.template">
+            <field name="name">Mail to Appointee On New Appointment</field>
+            <field name="email_from">{{object.create_uid.company_id.partner_id.email or ''}}</field>
+            <field name="email_to">{{object.appoint_person_id.email or ''}}</field>
+            <field name="subject">New Appointment Created</field>
+            <field name="email_cc">{{object.create_uid.company_id.partner_id.email or ''}}</field>
+            <field name="model_id" ref="wk_appointment.model_appointment"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">{{object.customer.lang}}</field>
+            <field name="body_html" type="html">
+              <p>Dear <t t-out="object.appoint_person_id.name"/> , </p>
+                        <br/>
+                        <p>A new Appointment Request has been successfully generated.</p>
+                        <p>Kindly update the status of this appointment.</p>
+                        <br/>
+                        <b>Date :</b> <t t-out="object.appoint_date"/>
+                        <t t-if="object.time_slot">
+                            <b>Time :</b> <t t-out="object.time_slot.name"/>
+                        </t>
+                        <b>Customer Name:  </b> <t t-out="object.customer.name or ''"/>
+                        <br/>
+                        <p>Thank you,</p>
+                        <p>(<t t-out="object.create_uid.company_id.name"/>)</p>
+            </field>
+        </record>
+
+        <!-- Mail to company on new appointment -->
+        <record id="appoint_mgmt_new_appoint_mail_to_admin" model="mail.template">
+            <field name="name">Mail to Company On New Appointment</field>
+            <field name="email_from">{{object.customer.email or ''}}</field>
+            <field name="email_to">{{object.create_uid.company_id.email or ''}}</field>
+            <field name="subject">New Appointment Created</field>
+            <field name="email_cc">{{object.create_uid.company_id.partner_id.email or ''}}</field>
+            <field name="model_id" ref="wk_appointment.model_appointment"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">{{object.customer.lang}}</field>
+            <field name="body_html" type="html">
+              <p>Dear <t t-out="object.create_uid.company_id.name"/> , </p>
+                        <br/>
+                        <p>A new Appointment Request has been successfully generated.</p>
+                        <p>Kindly update the status of this appointment.</p>
+                        <br/>
+                        <b>Date :</b> <t t-out="object.appoint_date"/>
+                        <t t-if="object.time_slot">
+                            <b>Time :</b> <t t-out="object.time_slot.name"/>
+                        </t>
+                        <b>Customer Name:  </b> <t t-out="object.customer.name or ''"/>
+                        <br/>
+                        <p>Thank you,</p>
+                        <p>(<t t-out="object.create_uid.company_id.name"/>)</p>
+            </field>
+        </record>
+
+        <!--Mail to customer on approve appointment -->
+        <record id="appoint_mgmt_email_template_to_customer" model="mail.template">
+            <field name="name">Mail to Customer On Approve Appointment</field>
+            <field name="email_from">{{object.create_uid.company_id.partner_id.email or ''}}</field>
+            <field name="subject"> Appointment Confirmed at {{object.create_uid.company_id.name}}</field>
+            <field name="email_to">{{object.customer.email or ''}}</field>
+            <field name="email_cc">{{object.create_uid.company_id.partner_id.email or ''}}</field>
+            <field name="model_id" ref="wk_appointment.model_appointment"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">{{object.customer.lang}}</field>
+            <field name="body_html" type="html">
+              <p>Dear <t t-out="object.customer.name" />, </p>
+                        <br/>
+                        <p>Your Appointment at <t t-out="object.create_uid.company_id.name"/> has been confirmed.</p>
+                        <p>Kindly be on time.</p>
+                        <br/>
+                        <b>Date :</b> <t t-out="object.appoint_date"/>
+                        <t t-if="object.time_slot">
+                         <b>Time :</b> <t t-out="object.time_slot.name"/>
+                        </t>
+                        <b>Appointment With:  </b> <t t-out="object.appoint_person_id.name or ''"/>
+                        <br/>
+                        <p>You can reply to this email if you have any questions.</p><br/>
+                        <p>Thank you,</p>
+
+                        <p style="color:black;" class="font-italic">
+                            <t t-if="object.appoint_person_id.user_id.name">
+                                <t t-out="object.appoint_person_id.user_id.name or ''"/>
+                            </t>
+                        </p>
+                        <p>(<t t-out="object.create_uid.company_id.name or ''"/>)</p>
+            </field>
+        </record>
+
+        <record id="appoint_mgmt_reject_email_template_to_customer" model="mail.template">
+            <field name="name">Mail to Customer On Reject Appointment</field>
+            <field name="email_from">{{object.create_uid.company_id.partner_id.email or ''}}</field>
+            <field name="subject"> Appointment Rejected at {{object.create_uid.company_id.name}}</field>
+            <field name="email_to">{{object.customer.email or ''}}</field>
+            <field name="email_cc">{{object.create_uid.company_id.partner_id.email or ''}}</field>
+            <field name="model_id" ref="wk_appointment.model_appointment"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">{{object.customer.lang}}</field>
+            <field name="body_html" type="html">
+              <p>Dear <t t-out="object.customer.name"/> , </p>
+                        <br/>
+                        <p>Your Appointment has been Rejected due to <t t-out="object.reject_reason"/>.</p>
+                        <p>You can reply to this email regarding any query.</p><br/>
+                        <p>Thank you,</p>
+                        <p t-if="object.appoint_person_id.user_id.name" style="color:black;"><i>
+                            <t t-out="object.appoint_person_id.user_id.name or ''"/>
+                    </i></p>
+                        <p>(<t t-out="object.create_uid.company_id.name"/>)</p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

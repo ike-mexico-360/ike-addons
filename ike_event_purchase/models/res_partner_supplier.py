@@ -2,6 +2,7 @@ from dateutil.relativedelta import relativedelta
 from datetime import date, timedelta
 from odoo import models, fields, api
 import logging
+import calendar
 _logger = logging.getLogger(__name__)
 
 
@@ -17,6 +18,7 @@ class ResPartnerSupplier(models.Model):
         ('biweekly', 'Biweekly'),
         ('triweekly', 'Triweekly'),
         ('monthly', 'Monthly'),
+        ('custom_month_days', 'Custom Month Days'),
     ], string='Consolidation Frequency', default='weekly', tracking=True)
 
     x_consolidation_day_of_week = fields.Selection([
@@ -32,8 +34,17 @@ class ResPartnerSupplier(models.Model):
     x_consolidation_day_of_month = fields.Integer(
         string='Day of Month', default=1, tracking=True)
 
+    x_consolidation_day_of_month_ids = fields.Many2many(
+        'custom.consolidation.month.day',
+        string='Days of Month',
+        help="Technical: Days of month for consolidation.")
+
     x_consolidation_next_date = fields.Date(
         string='Next Consolidation Date', tracking=True)
+
+    x_advanced_portal = fields.Boolean(
+        string='Advanced portal', default=False, tracking=True, copy=False,
+        help="Enable invoice and purchase advanced portal items.")
 
     # Mapeo de selección (0=Sunday) → weekday() de Python (0=Monday)
     # Sunday=0 → weekday()=6
@@ -65,6 +76,30 @@ class ResPartnerSupplier(models.Model):
             if next_date <= today:
                 next_date = (today + relativedelta(months=1)).replace(day=day)
 
+        elif freq == 'custom_month_days':
+            selected_days = sorted(self.x_consolidation_day_of_month_ids.mapped('day'))
+
+            if not selected_days:
+                next_date = False
+            else:
+                next_date = False
+                cursor = today
+
+                for _i in range(24):  # margen suficiente para encontrar una fecha válida
+                    last_day = calendar.monthrange(cursor.year, cursor.month)[1]
+                    valid_days = [d for d in selected_days if d <= last_day]
+
+                    if cursor.year == today.year and cursor.month == today.month:
+                        future_days = [d for d in valid_days if d > today.day]
+                    else:
+                        future_days = valid_days
+
+                    if future_days:
+                        next_date = cursor.replace(day=future_days[0])
+                        break
+
+                    cursor = (cursor + relativedelta(months=1)).replace(day=1)
+
         else:
             delta_map = {'weekly': 7, 'biweekly': 14, 'triweekly': 21}
             delta_days = delta_map[freq]
@@ -87,10 +122,14 @@ class ResPartnerSupplier(models.Model):
 
         self.x_consolidation_next_date = next_date
 
-    @api.onchange('x_has_consolidation', 'x_consolidation_frequency', 'x_consolidation_day_of_week', 'x_consolidation_day_of_month')
+    @api.onchange(
+        'x_has_consolidation', 'x_consolidation_frequency', 'x_consolidation_day_of_week', 'x_consolidation_day_of_month',
+        'x_consolidation_day_of_month_ids')
     def _onchange_consolidation_config(self):
         if self.x_has_consolidation and self.x_consolidation_frequency:
             self._x_compute_next_consolidation_date()
+        else:
+            self.x_consolidation_next_date = False
 
     @api.model
     def _x_cron_consolidate_orders(self):

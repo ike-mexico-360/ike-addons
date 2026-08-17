@@ -28,7 +28,6 @@ const playNotificationSound = (soundUrl) => {
             audio.volume = 0.7;
             audio.play().catch(err => console.warn('Audio play failed:', err));
         } catch (error) {
-            console.error('Audio error:', error);
         }
     }
 };
@@ -184,7 +183,6 @@ export class ServicesMainComponent extends Component {
         if (!event_supplier) return;
 
         if (ACTIVE_STATES.includes(item.state)) {
-            //this.showNotification({ title: _t("Service Updated"), message: _t('You have a new service available.'), type: 'info' });
             if (item.state === 'notified') {  // Nuevos servicios
                 this.showNotificationWithSound({ title: _t("New Service Available"), message: _t('You have a new service available.'), type: 'info' });
                 await this._handleActiveService(event_supplier);
@@ -225,6 +223,10 @@ export class ServicesMainComponent extends Component {
 
     async updateSupplierService(event_supplier, event, item) {
         await this.refreshSingleService(event_supplier.event_supplier_id);
+        if (this.state.modal.show && this.state.modal.eventSupplierId === event_supplier.event_supplier_id) {
+            this.state.modal.stage = event_supplier.stage ?? this.state.modal.stage;
+            await this.loadRelojes(event_supplier.event_supplier_id);
+        }
     }
 
     _handleRemovedService(event_supplier) {

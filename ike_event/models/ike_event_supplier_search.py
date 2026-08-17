@@ -136,7 +136,10 @@ class IkeEvent_Search(models.Model):
                     total_distance_km = int(-(-total_distance_km // 1))  # To integer
 
                     # Add link
-                    supplier_products_data = self.get_supplier_products_data(supplier['supplier_center_id'], total_distance_km)
+                    supplier_products_data = self.get_supplier_products_data(
+                        supplier['supplier_center_id'],
+                        supplier['supplier_id'],
+                        total_distance_km)
                     for product_data in supplier_products_data:
                         product_data[2]['supplier_number'] = self.supplier_number
 
@@ -330,8 +333,9 @@ class IkeEvent_Search(models.Model):
 
                 # Products
                 supplier_products[supplier['supplier_id']], sql = self.get_supplier_products_data_test(
-                    supplier['supplier_center_id'], total_distance_km
-                )
+                    supplier['supplier_center_id'],
+                    supplier['supplier_id'],
+                    total_distance_km)
 
                 content += "QUERY\n" + sql + "\n"
 
@@ -1004,7 +1008,7 @@ class IkeEvent_Search(models.Model):
 
         return matrix.browse(concluded_matrix_ids + cancelled_matrix_ids)
 
-    def get_supplier_products_data(self, supplier_center_id: int, distance_km: int = 1):
+    def get_supplier_products_data(self, supplier_center_id: int, supplier_id: int, distance_km: int = 1):
         self.ensure_one()
 
         supplier_products_data = []
@@ -1028,102 +1032,72 @@ class IkeEvent_Search(models.Model):
         current_product_line_ids = self.service_product_ids.filtered(
             lambda x: x.estimated_quantity > 0 and x.supplier_number == self.supplier_number
         )
-        line_product_ids = current_product_line_ids.mapped('product_id.id')
+
+        # Products Boom
+        bom_products = []
+
+        for product_line_id in current_product_line_ids:
+            if not product_line_id.product_id:
+                continue
+            if product_line_id.base:
+                bom_product_ids = self._get_boom_product(product_line_id.product_id, supplier_id)
+                for product_id in bom_product_ids:
+                    bom_products.append({
+                        'product_line_id': product_line_id,
+                        'product_id': product_id,
+                        'parent_product_id': product_line_id.product_id.id,
+                    })
+            else:
+                bom_products.append({
+                    'product_line_id': product_line_id,
+                    'product_id': product_line_id.product_id,
+                    'parent_product_id': None,
+                })
 
         # Matrix Lines
         matrix_cost_line_ids = self.get_supplier_product_matrix_lines(
             supplier_center_id,
-            line_product_ids,
+            [x['product_id'].id for x in bom_products],
         )
 
-        # Product Lines
-        for product_line_id in current_product_line_ids:
-            if not product_line_id.product_id:
-                continue
-            # Product Boom
-            bom_product_ids = None
-            total_base_unit_price = 0
-            total_base_cancel_price = 0
-            tax_ids: list[int] = product_line_id.product_id.taxes_id.ids
-            if product_line_id.base:
-                bom_product_ids = self._get_boom_product(product_line_id.product_id)
-                tax_ids = bom_product_ids.mapped('taxes_id.id')
-                boom_matrix_cost_line_ids = self.get_supplier_product_matrix_lines(
-                    supplier_center_id,
-                    bom_product_ids.ids,
-                )
-                for product_id in bom_product_ids:
-                    cost_line_id = boom_matrix_cost_line_ids.filtered(
-                        lambda x:
-                            x.concept_id.id == product_id.id
-                            and x.supplier_status_id.ref == 'concluded')
-                    cancel_cost_line_id = boom_matrix_cost_line_ids.filtered(
-                        lambda x:
-                            x.concept_id.id == product_id.id
-                            and x.supplier_status_id.ref == 'cancelled')
+        for product in bom_products:
+            product_line_id = product['product_line_id']
+            product_id = product['product_id']
+            cost_line_id = matrix_cost_line_ids.filtered(
+                lambda x:
+                    x.concept_id.id == product_id.id
+                    and x.supplier_status_id.ref == 'concluded')
+            cancel_cost_line_id = matrix_cost_line_ids.filtered(
+                lambda x:
+                    x.concept_id.id == product_id.id
+                    and x.supplier_status_id.ref == 'cancelled')
 
-                    base_unit_price = cost_line_id[0].cost if cost_line_id else 0
-                    base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
-                    quantity = distance_km if product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1)
-                    total_base_unit_price += (base_unit_price * quantity)
-                    total_base_cancel_price += base_cancel_price
-                    sequence = product_line_id.sequence
-                    if not product_line_id.covered and sequence < 1000:
-                        sequence += 1000
-
-                    supplier_products_data.append(Command.create({
-                        'product_id': product_id.id,
-                        'base_quantity': quantity,
-                        'base_unit_price': base_unit_price,
-                        'base_cancel_price': base_cancel_price,
-                        'unit_price': base_unit_price,
-                        'estimated_quantity': 1,
-                        'quantity': quantity,
-                        'uom_id': product_id.uom_id.id,
-                        'tax_ids': [Command.set(product_id.taxes_id.ids)],
-                        'sequence': sequence,
-                        'covered': product_line_id.covered,
-                        'cost_matrix_line_id': cost_line_id.id,
-                        'parent_product_id': product_line_id.product_id.id,
-                    }))
-            # Product Base/Additional
-            cost_line_id = None
-            cancel_cost_line_id = None
-            if not product_line_id.base:
-                cost_line_id = matrix_cost_line_ids.filtered(
-                    lambda x:
-                        x.concept_id.id == product_line_id.product_id.id
-                        and x.supplier_status_id.ref == 'concluded')
-                cancel_cost_line_id = matrix_cost_line_ids.filtered(
-                    lambda x:
-                        x.concept_id.id == product_line_id.product_id.id
-                        and x.supplier_status_id.ref == 'cancelled')
-                total_base_unit_price = cost_line_id[0].cost if cost_line_id else 0
-                total_base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
-
+            base_unit_price = cost_line_id[0].cost if cost_line_id else 0
+            base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
+            quantity = distance_km if product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1)
             sequence = product_line_id.sequence
             if not product_line_id.covered and sequence < 1000:
                 sequence += 1000
-            quantity = distance_km if product_line_id.product_id.x_cost_by_km else (product_line_id.estimated_quantity or 1)
-
+            # Add
             supplier_products_data.append(Command.create({
-                'product_id': product_line_id.product_id.id,
+                'product_id': product_id.id,
                 'base_quantity': quantity,
-                'base_unit_price': total_base_unit_price,
-                'base_cancel_price': total_base_cancel_price,
-                'unit_price': total_base_unit_price,
+                'base_unit_price': base_unit_price,
+                'base_cancel_price': base_cancel_price,
+                'unit_price': base_unit_price,
                 'estimated_quantity': 1,
                 'quantity': quantity,
-                'uom_id': product_line_id.uom_id.id,
-                'tax_ids': [Command.set(list(set(tax_ids)))],
+                'uom_id': product_id.uom_id.id,
+                'tax_ids': [Command.set(product_id.taxes_id.ids)],
                 'sequence': sequence,
                 'covered': product_line_id.covered,
-                'base': product_line_id.base,
-                'cost_matrix_line_id': cost_line_id.id if cost_line_id else None,
+                'cost_matrix_line_id': cost_line_id.id,
+                'parent_product_id': product['parent_product_id'],
             }))
+
         return supplier_products_data
 
-    def get_supplier_products_data_test(self, supplier_center_id: int, distance_km: int = 1):
+    def get_supplier_products_data_test(self, supplier_center_id: int, supplier_id: int, distance_km: int = 1):
         self.ensure_one()
 
         supplier_products_data = []
@@ -1142,7 +1116,7 @@ class IkeEvent_Search(models.Model):
             # Product Boom
             bom_product_ids = None
             if product_line_id.base:
-                bom_product_ids = self._get_boom_product(product_line_id.product_id)
+                bom_product_ids = self._get_boom_product(product_line_id.product_id, supplier_id)
                 matrix_product_ids += bom_product_ids.ids
 
                 for product_id in bom_product_ids:
@@ -1194,7 +1168,21 @@ class IkeEvent_Search(models.Model):
 
         return supplier_products_data, sql
 
-    def _get_boom_product(self, product_id):
+    def _get_boom_product(self, product_id, supplier_id: int):
+        product_line_id = self.env['custom.subservice.concept.line'].search([
+            ('subservice_id', '=', self.sub_service_id.id),
+            ('base_concept_id', '=', product_id.id),
+            ('event_type_id', '=', self.event_type_id.id),
+            '|',
+            ('supplier_id', '=', supplier_id),
+            ('supplier_id', '=', False),
+        ], limit=1, order='supplier_id desc')
+        if product_line_id:
+            return product_line_id.concepts_ids
+
+        return product_id
+
+    def _get_boom_product_old(self, product_id):
         product_line_id = self.sub_service_id.concept_line_ids.filtered(
             lambda x:
                 x.base_concept_id.id == product_id.id

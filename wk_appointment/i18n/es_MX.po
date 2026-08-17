@@ -1,0 +1,2355 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* wk_appointment
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-07 19:46+0000\n"
+"PO-Revision-Date: 2026-08-07 19:46+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: wk_appointment
+#: model:mail.template,subject:wk_appointment.appoint_mgmt_email_template_to_customer
+msgid " Appointment Confirmed at {{object.create_uid.company_id.name}}"
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,subject:wk_appointment.appoint_mgmt_reject_email_template_to_customer
+msgid " Appointment Rejected at {{object.create_uid.company_id.name}}"
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,subject:wk_appointment.appoint_mgmt_new_appoint_mail_to_customer
+msgid ""
+" New Appointment Successfully created at "
+"{{object.create_uid.company_id.name}}"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__app_state_id
+msgid " State "
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__appoint_members_count
+msgid " Total Appointment Members"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__nbr
+msgid "# of Lines"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "&amp;nbsp;"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.actions.report,print_report_name:wk_appointment.appoint_mgmt_appoint_report
+msgid "'%s' % (object.customer.name)"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_kanban_view
+msgid "<b>With:</b>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_kanban_view
+msgid ""
+"<i class=\"fa fa-calendar\" aria-hidden=\"false\" style=\"margin:2px;\" "
+"title=\"Date\"/>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_kanban_view
+msgid "<i class=\"fa fa-clock-o\" aria-hidden=\"false\" title=\"Timeslot\"/>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_appoint_group_kanban_view
+msgid "<i class=\"fa fa-money\" aria-hidden=\"true\" title=\"Group Charge\"/>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_kanban_view
+msgid ""
+"<i class=\"fa fa-user\" aria-hidden=\"false\" style=\"color:dimgray;\" "
+"title=\"Customer\"/>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_appoint_group_kanban_view
+msgid "<i class=\"fa fa-users\" aria-hidden=\"true\" title=\"Members\"/>"
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,body_html:wk_appointment.appoint_mgmt_new_appoint_mail_to_appointee
+msgid ""
+"<p>Dear <t t-out=\"object.appoint_person_id.name\"/> , </p>\n"
+"                        <br/>\n"
+"                        <p>A new Appointment Request has been successfully generated.</p>\n"
+"                        <p>Kindly update the status of this appointment.</p>\n"
+"                        <br/>\n"
+"                        <b>Date :</b> <t t-out=\"object.appoint_date\"/>\n"
+"                        <t t-if=\"object.time_slot\">\n"
+"                            <b>Time :</b> <t t-out=\"object.time_slot.name\"/>                        \n"
+"                        </t>\n"
+"                        <b>Customer Name:  </b> <t t-out=\"object.customer.name or ''\"/>\n"
+"                        <br/>\n"
+"                        <p>Thank you,</p>\n"
+"                        <p>(<t t-out=\"object.create_uid.company_id.name\"/>)</p>\n"
+"            "
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,body_html:wk_appointment.appoint_mgmt_new_appoint_mail_to_admin
+msgid ""
+"<p>Dear <t t-out=\"object.create_uid.company_id.name\"/> , </p>\n"
+"                        <br/>\n"
+"                        <p>A new Appointment Request has been successfully generated.</p>\n"
+"                        <p>Kindly update the status of this appointment.</p>\n"
+"                        <br/>\n"
+"                        <b>Date :</b> <t t-out=\"object.appoint_date\"/>\n"
+"                        <t t-if=\"object.time_slot\">\n"
+"                            <b>Time :</b> <t t-out=\"object.time_slot.name\"/>                        \n"
+"                        </t>\n"
+"                        <b>Customer Name:  </b> <t t-out=\"object.customer.name or ''\"/>\n"
+"                        <br/>\n"
+"                        <p>Thank you,</p>\n"
+"                        <p>(<t t-out=\"object.create_uid.company_id.name\"/>)</p>\n"
+"            "
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,body_html:wk_appointment.appoint_mgmt_new_appoint_mail_to_customer
+msgid ""
+"<p>Dear <t t-out=\"object.customer.name\"/> , </p>\n"
+"                        <br/>\n"
+"                        <p>A new Appointment Request has been successfully generated.</p>\n"
+"                        <p>Please wait while the status of this appointment will be updated.</p>\n"
+"                        <br/>\n"
+"                        <b>Date :</b> <t t-out=\"object.appoint_date\"/>\n"
+"                        <t t-if=\"object.time_slot\">\n"
+"                            <b>Time :</b> <t t-out=\"object.time_slot.name\"/>\n"
+"                        </t>\n"
+"                        <b>Appointment With:  </b> <t t-out=\"object.appoint_person_id.name or ''\"/>\n"
+"                        <br/>\n"
+"                        <p>Thank you,</p>\n"
+"\n"
+"                        <p>(<t t-out=\"object.create_uid.company_id.name\"/>)</p>\n"
+"            "
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,body_html:wk_appointment.appoint_mgmt_reject_email_template_to_customer
+msgid ""
+"<p>Dear <t t-out=\"object.customer.name\"/> , </p>\n"
+"                        <br/>\n"
+"                        <p>Your Appointment has been Rejected due to <t t-out=\"object.reject_reason\"/>.</p>\n"
+"                        <p>You can reply to this email regarding any query.</p><br/>\n"
+"                        <p>Thank you,</p>\n"
+"                        <p t-if=\"object.appoint_person_id.user_id.name\" style=\"color:black;\"><i>\n"
+"                            <t t-out=\"object.appoint_person_id.user_id.name or ''\"/>\n"
+"                    </i></p>\n"
+"                        <p>(<t t-out=\"object.create_uid.company_id.name\"/>)</p>\n"
+"            "
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,body_html:wk_appointment.appoint_mgmt_email_template_to_customer
+msgid ""
+"<p>Dear <t t-out=\"object.customer.name\"/>, </p>\n"
+"                        <br/>\n"
+"                        <p>Your Appointment at <t t-out=\"object.create_uid.company_id.name\"/> has been confirmed.</p>\n"
+"                        <p>Kindly be on time.</p>\n"
+"                        <br/>\n"
+"                        <b>Date :</b> <t t-out=\"object.appoint_date\"/>\n"
+"                        <t t-if=\"object.time_slot\">\n"
+"                         <b>Time :</b> <t t-out=\"object.time_slot.name\"/>\n"
+"                        </t>\n"
+"                        <b>Appointment With:  </b> <t t-out=\"object.appoint_person_id.name or ''\"/>\n"
+"                        <br/>\n"
+"                        <p>You can reply to this email if you have any questions.</p><br/>\n"
+"                        <p>Thank you,</p>\n"
+"\n"
+"                        <p style=\"color:black;\" class=\"font-italic\">\n"
+"                            <t t-if=\"object.appoint_person_id.user_id.name\">\n"
+"                                <t t-out=\"object.appoint_person_id.user_id.name or ''\"/>\n"
+"                            </t>\n"
+"                        </p>\n"
+"                        <p>(<t t-out=\"object.create_uid.company_id.name or ''\"/>)</p>\n"
+"            "
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,body_html:wk_appointment.reminder_mail_to_customer
+msgid ""
+"<p>Hello <t t-out=\"object.customer.display_name\"/>,</p>\n"
+"                                    <p>This is a reminder mail.</p>\n"
+"                                    <p>Your Appointment <t t-out=\"object.name\"/> has been scheduled on <t t-out=\"object.appoint_date\"/> and the details are as follows :-</p>\n"
+"                                    <table>\n"
+"                                        <tr>\n"
+"                                            <td><b>Appointment </b></td>\n"
+"                                            <td>: <t t-out=\"object.name\"/></td>\n"
+"                                        </tr>\n"
+"                                        <tr>\n"
+"                                            <td><b>Date </b></td>\n"
+"                                            <td>: <t t-out=\"object.appoint_date\"/></td>\n"
+"                                        </tr>\n"
+"                                        <tr>\n"
+"                                            <td><b>Appointment With </b></td>\n"
+"                                            <td>: <t t-out=\"object.appoint_person_id.name\"/> </td>\n"
+"                                        </tr>\n"
+"                                        <t t-if=\"object.time_slot\">\n"
+"                                            <tr>\n"
+"                                                <td><b>Timeslot </b></td>\n"
+"                                                <td>: <t t-out=\"object.time_slot.name\"/> </td>\n"
+"                                            </tr>\n"
+"                                        </t>\n"
+"                                        <tr>\n"
+"                                            <td><b>Status </b></td>\n"
+"                                            <td style=\"text-transform:capitalize;\"><b>: <t t-out=\"object.appoint_state\"/></b></td>\n"
+"                                        </tr>\n"
+"                                    </table>\n"
+"                                    <p>Kindly be on time.</p>\n"
+"                                    <p>Thank you,</p>\n"
+"                                    <p>(<t t-out=\"object.create_uid.company_id.name\"/>)</p>\n"
+"            "
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.res_config_settings_view_form_appointment
+msgid "<span class=\"ms-2\">min</span>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "<span class=\"oe_inline\" invisible=\"time_slot_day == False\"> On  </span>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "<span> Appointment # </span>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid ""
+"<strong>\n"
+"                                            <span style=\"padding:10px;\" class=\"alert alert-danger\" role=\"status\" invisible=\"amount_total == 0.0 or invoice_id != False\">\n"
+"                                                Not yet Invoiced !!\n"
+"                                            </span>\n"
+"                                            <span style=\"padding:10px;\" class=\"alert alert-warning\" role=\"status\" invisible=\"amount_total != 0.0 or invoice_id == False or payment_state == 'paid'\">\n"
+"                                                Invoice not paid !!\n"
+"                                            </span>\n"
+"                                            <span style=\"padding:10px;\" class=\"alert alert-success\" role=\"status\" invisible=\"amount_total != 0.0 or invoice_id == False or payment_state != 'paid'\">\n"
+"                                                Invoice Paid !!\n"
+"                                            </span>\n"
+"                                            <span style=\"padding:10px;\" class=\"alert alert-info\" role=\"status\" invisible=\"amount_total != 0.0\">\n"
+"                                                Free !!\n"
+"                                            </span>\n"
+"                                        </strong>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "<strong> Appointment Date : </strong>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "<strong> Appointment With : </strong>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "<strong> TimeSlot : </strong>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "<strong>Appointment Address : </strong>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "<strong>Booking Date : </strong>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "<strong>Invoice Status: </strong>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "<strong>Subtotal</strong>"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "<strong>Total</strong>"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_partner__about_person
+#: model:ir.model.fields,field_description:wk_appointment.field_res_users__about_person
+msgid "About"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__access_warning
+msgid "Access warning"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_ir_actions_act_window
+msgid "Action Window"
+msgstr "Ventana de acción"
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__active
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__active
+msgid "Active"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.actions.act_window,name:wk_appointment.appoint_reject_addreason_wizard_action
+msgid "Add Reject Reason"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Add Working Experience for this member"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_reject_addreason_wizard_form_view
+msgid "Add a Reason for Rejection"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_slottime_form_view
+msgid "Add a description..."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Add the specialization of the member"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Address"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+msgid "All"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_all_appoint_menu
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "All Appointments"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__allday
+msgid "All Day"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Allow Multiple Appointment"
+msgstr "Permitir múltiples citas"
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__allow_multi_appoints
+#: model:ir.model.fields,field_description:wk_appointment.field_res_partner__allow_multi_appoints
+#: model:ir.model.fields,field_description:wk_appointment.field_res_users__allow_multi_appoints
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Allow Multiple Appointments"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "Amount"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Apply Pricelist"
+msgstr "Aplicar lista de precios"
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/ir_ui_menu.py:0
+#: model:ir.actions.act_window,name:wk_appointment.appoint_mgmt_team_member_action
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__appoint_person_id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_day_slots__appointee_id
+#: model:res.groups,name:wk_appointment.appointment_appointee_group
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Appointee"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_partner__appoint_product_id
+#: model:ir.model.fields,field_description:wk_appointment.field_res_users__appoint_product_id
+msgid "Appointee Product"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+msgid "Appointee select"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+msgid "Appointee:"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_customer_menu
+msgid "Appointees"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.actions.act_window,name:wk_appointment.appoint_mgmt_book_appointment_action
+#: model:ir.model,name:wk_appointment.model_appointment
+#: model:ir.module.category,name:wk_appointment.appointment_security_category
+#: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_appointment_main_menu
+#: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_appointment_sub_menu
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_tree_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_base_res_partner_form
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Appointment"
+msgstr "Cita"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_pivot_view
+msgid "Appointment Analysis"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__group_charge
+#: model:ir.model.fields,field_description:wk_appointment.field_res_partner__appoint_person_charge
+#: model:ir.model.fields,field_description:wk_appointment.field_res_users__appoint_person_charge
+msgid "Appointment Charge"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.actions.act_window,name:wk_appointment.appoint_config_settings_action
+msgid "Appointment Configuration Settings"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__notify_customer_on_approve_appoint
+msgid "Appointment Confirmation Mail"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.actions.client,name:wk_appointment.appointment_dashboard_action
+msgid "Appointment Dashboard"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__appoint_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__appoint_date
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Appointment Date"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_appointment_day_slots
+#: model:ir.model.fields,field_description:wk_appointment.field_res_partner__appointment_day_slots
+#: model:ir.model.fields,field_description:wk_appointment.field_res_users__appointment_day_slots
+msgid "Appointment Day Slots"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "Appointment Free of Charge"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.actions.act_window,name:wk_appointment.appoint_mgmt_appoint_group_action
+#: model:ir.model,name:wk_appointment.model_appointment_person_group
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__appoint_group_id
+#: model:ir.model.fields,field_description:wk_appointment.field_res_partner__appoint_group_ids
+#: model:ir.model.fields,field_description:wk_appointment.field_res_users__appoint_group_ids
+msgid "Appointment Group"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__appoint_group_person_ids
+msgid "Appointment Group Persons"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Appointment Group with whom the appointment is to be booked."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_appoint_group_menu
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "Appointment Groups"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_appointment_lines
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__appoint_lines
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_graph_view
+msgid "Appointment Lines"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+msgid "Appointment Management Dashboard"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_tree
+msgid "Appointment Members"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__appoint_person_ids
+msgid "Appointment Person"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_appoint_group_form_view
+msgid "Appointment Person Group Form"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_appoint_group_tree_view
+msgid "Appointment Person Group Tree"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_appoint_source_tree_view
+msgid "Appointment Person Source Tree"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__person_time_slot_ids
+msgid "Appointment Persons Timeslot"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "Appointment Product"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__appoint_id
+msgid "Appointment Reference"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__notify_customer_on_reject_appoint
+msgid "Appointment Reject Mail"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_appoint_rejectreason_wizard
+msgid "Appointment Reject Reason"
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,subject:wk_appointment.reminder_mail_to_customer
+msgid "Appointment Reminder"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.actions.report,name:wk_appointment.appoint_mgmt_appoint_report
+msgid "Appointment Report"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__appointment_wait_time
+msgid "Appointment Scheduling Wait Time"
+msgstr "Tiempo de espera para la programación de citas"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.res_config_settings_view_form_appointment
+msgid "Appointment Settings"
+msgstr "Configuración de citas"
+
+#. module: wk_appointment
+#: model:ir.actions.act_window,name:wk_appointment.appoint_mgmt_slottime_action
+msgid "Appointment SlotTime"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.actions.act_window,name:wk_appointment.appoint_mgmt_appoint_source_action
+#: model:ir.model,name:wk_appointment.model_appointment_source
+#: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_appoint_source_menu
+msgid "Appointment Source"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__appoint_state
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__appoint_state
+msgid "Appointment State"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_appointment_report
+msgid "Appointment Statistics"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_slottime_day_menu
+msgid "Appointment Time Slots"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_appointment_timeslot
+msgid "Appointment TimeSlot"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__appoint_group_id
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Appointment With"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "Appointment cannot be made Done before Appointment Date."
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "Appointment cannot be made Done before Slottime."
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/res_partner.py:0
+msgid "Appointment charge cannot be less than zero"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "Appointment date cannot be before today."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Appointment date.."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.actions.act_window,name:wk_appointment.appoint_mgmt_all_appointment_action
+#: model:ir.model.fields,field_description:wk_appointment.field_res_partner__booked_appointment_ids
+#: model:ir.model.fields,field_description:wk_appointment.field_res_users__booked_appointment_ids
+msgid "Appointments"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.actions.act_window,name:wk_appointment.appoint_mgmt_appoint_analysis_action
+#: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_appoint_analysis_menu
+msgid "Appointments Analysis"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+msgid "Appointments By State"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_calendar_view
+msgid "Appointments Management"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "Appointments with period in current year"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Approve"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment__appoint_state__approved
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment_report__appoint_state__approved
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_appoint_appoint_filter
+msgid "Approved"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "Approved Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+msgid "Approved Appointments"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+msgid "Bar Chart"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+msgid "Book An Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+msgid "Book Appointments"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_partner__available_for_appoint
+#: model:ir.model.fields,field_description:wk_appointment.field_res_users__available_for_appoint
+msgid "Can be Appointment Group Member"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_reject_addreason_wizard_form_view
+msgid "Cancel"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+msgid "Cancelled"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Charge"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "Charge for Appointment Group"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "Charge for Appointment Person"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_res_partner__available_for_appoint
+#: model:ir.model.fields,help:wk_appointment.field_res_users__available_for_appoint
+msgid "Check this box if this contact is available for Appointment."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appointment_day_slots_form_view
+msgid "Choose a day"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__app_city
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "City"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Click to approve this appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Click to create invoice for this customer"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Click to make the appointment status done."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Click to reject this appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Click to set reset this appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Click to set this appointment to pending"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__color
+msgid "Color"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__color
+msgid "Color Index"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__company_id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__company_id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__company_id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__company_id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_source__company_id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__company_id
+msgid "Company"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_res_config_settings
+msgid "Config Settings"
+msgstr "Ajustes de configuración"
+
+#. module: wk_appointment
+#: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_config_sub_menu
+msgid "Configuration"
+msgstr "Configuración"
+
+#. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_res_partner
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Contacts & Addresses"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__app_country_id
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Country"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__date
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Create Date"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Create Invoice"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appoint_rejectreason_wizard__create_uid
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__create_uid
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_day_slots__create_uid
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__create_uid
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__create_uid
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_source__create_uid
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appoint_rejectreason_wizard__create_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__create_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_day_slots__create_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__create_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__create_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_source__create_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__currency_id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__currency_id
+msgid "Currency"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__customer
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__customer
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "Customer"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/res_config.py:0
+msgid "Customer Invoices"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment__access_url
+msgid "Customer Portal URL"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Customer for whom the appointment is to be booked."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_appointment_dashboard_sub_menu
+msgid "Dashboard"
+msgstr "Tablero"
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__time_slot_day
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_day_slots__day
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__time_slot_day
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Day"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment__remind_in__days
+msgid "Day(s)"
+msgstr ""
+
+#. module: wk_appointment
+#: model:product.template,name:wk_appointment.appoint_product_demo2_product_template
+msgid "Dentist Product"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Describe about the person(max 125 words)..."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Describe about this appointment..."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__description
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__name
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__desc
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "Description"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appoint_rejectreason_wizard__display_name
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__display_name
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_day_slots__display_name
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__display_name
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__display_name
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__display_name
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_source__display_name
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment__appoint_state__done
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment_report__appoint_state__done
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Done"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "Done Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+msgid "Done Appointments"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__app_email
+msgid "Email Id"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Email Template"
+msgstr "Plantilla de correo electrónico"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_base_res_partner_form
+msgid "Enable To make this user an Appointee."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__apply_pricelist
+msgid "Enable to manage pricelists for appointments"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__enable_notify_customer_on_approve_appoint
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Enable to send mail on Appointment Confirmation"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__enable_notify_customer_on_reject_appoint
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Enable to send mail on Appointment Reject"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__enable_notify_reminder
+msgid "Enable to send mail reminder before appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Enable to send mail reminder before appointment."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__enable_notify_admin_on_new_appoint
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Enable to send mail to admin on New Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__enable_notify_appointee_on_new_appoint
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Enable to send mail to appointee on New Appointment"
+msgstr "Enviar correo al asistente al crear una nueva cita"
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__enable_notify_customer_on_new_appoint
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Enable to send mail to customer on New Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Enable to use Appointee address as an Appointment address"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__end_time
+msgid "End Time"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_kanban_view
+msgid "Free"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment_day_slots__day__friday
+msgid "Friday"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__general
+msgid "General"
+msgstr ""
+
+#. module: wk_appointment
+#: model:product.template,name:wk_appointment.appoint_product_demo1_product_template
+msgid "General Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "General Information"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.res_config_settings_view_form_appointment
+msgid "Generate appointments"
+msgstr "Generar citas"
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__group_name
+msgid "Group"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_appoint_appoint_filter
+msgid "Group By"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__group_image
+msgid "Group Image"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__appoint_person_id
+msgid "Group Member"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_appoint_group_form_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "Group Members"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__product_tmpl_id
+msgid "Group Product"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appoint_group.py:0
+msgid "Group charge cannot be less than zero"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Groups..."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.actions.act_window,help:wk_appointment.appoint_mgmt_appoint_group_action
+msgid ""
+"Here is a list of all the Appointment Groups created. You\n"
+"                can click on any record to get the detailed Information About these Groups."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.actions.act_window,help:wk_appointment.appoint_mgmt_team_member_action
+msgid ""
+"Here is a list of all the Appointment Groups members created. You\n"
+"                can click on any record to get the detailed Information About these Groups Members."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.actions.act_window,help:wk_appointment.appoint_mgmt_appoint_source_action
+msgid ""
+"Here is a list of all the Appointment Sources created. You\n"
+"                can click on any record to get the detailed Information About these Sources."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.actions.act_window,help:wk_appointment.appoint_mgmt_slottime_action
+msgid ""
+"Here is a list of all the Appointment Timeslots created. You\n"
+"                can click on any record to get the detailed Information About these Timeslots."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.actions.act_window,help:wk_appointment.appoint_mgmt_all_appointment_action
+#: model_terms:ir.actions.act_window,help:wk_appointment.appoint_mgmt_book_appointment_action
+msgid ""
+"Here is a list of all the Appointments created. You\n"
+"                can click on any record to get the detailed Information About these appointments."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment__remind_in__hours
+msgid "Hour(s)"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appoint_rejectreason_wizard__id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_day_slots__id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_source__id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__id
+msgid "ID"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment__message_has_error
+#: model:ir.model.fields,help:wk_appointment.field_appointment__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_res_config_settings__allow_multi_appoints
+msgid ""
+"If it is enabled then Group Members can handle multiple appointments in a "
+"particular timeslot,         if not then group members can handle only a "
+"single appointment in a given time slot.This setting can also be managed"
+"         member wise for each member from thier profile."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_res_partner__use_addr_as_appoint
+#: model:ir.model.fields,help:wk_appointment.field_res_users__use_addr_as_appoint
+msgid ""
+"If it is enabled then the address of this member will be used as an "
+"appointment address."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_res_partner__allow_multi_appoints
+#: model:ir.model.fields,help:wk_appointment.field_res_users__allow_multi_appoints
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid ""
+"If it is enabled then this member can handle multiple appointments in a "
+"particular timeslot."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_appoint_group_form_view
+msgid ""
+"If no charge is given in Appointment Person then,"
+"                                         the charge of corresponding group "
+"will be used to make appointments chargable."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment_person_group__active
+#: model:ir.model.fields,help:wk_appointment.field_appointment_timeslot__active
+msgid ""
+"If unchecked, it will allow you to hide this record without removing it."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment__pricelist_id
+msgid "If you change the pricelist, only newly added lines will be affected."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Internal Note..."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Internal Notes"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "Invalid Move !!"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__invoice_id
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Invoice"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Invoice Line"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_kanban_view
+msgid "Invoice Paid"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__payment_state
+msgid "Invoice Payment Status"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__invoice_status
+msgid "Invoice Status"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_kanban_view
+msgid "Invoice Unpaid"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_base_res_partner_form
+msgid "Is an Appointee"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "Last Month"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appoint_rejectreason_wizard__write_uid
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__write_uid
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_day_slots__write_uid
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__write_uid
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__write_uid
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_source__write_uid
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appoint_rejectreason_wizard__write_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__write_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_day_slots__write_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__write_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_person_group__write_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_source__write_date
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+msgid "Line Chart"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Mail &amp; Notification Settings"
+msgstr "Configuración de correo y notificaciones"
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__notify_reminder_mail_template
+msgid "Mail Notification Reminder"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Mail Reminder for Appointment"
+msgstr "Recordatorio por correo para la cita"
+
+#. module: wk_appointment
+#: model:mail.template,name:wk_appointment.appoint_mgmt_new_appoint_mail_to_appointee
+msgid "Mail to Appointee On New Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,name:wk_appointment.appoint_mgmt_new_appoint_mail_to_admin
+msgid "Mail to Company On New Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,name:wk_appointment.appoint_mgmt_email_template_to_customer
+msgid "Mail to Customer On Approve Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,name:wk_appointment.appoint_mgmt_new_appoint_mail_to_customer
+msgid "Mail to Customer On New Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,name:wk_appointment.appoint_mgmt_reject_email_template_to_customer
+msgid "Mail to Customer On Reject Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model:res.groups,name:wk_appointment.appointment_manager_group
+msgid "Manager"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_appoint_group_kanban_view
+msgid "Members"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_reject_addreason_wizard_form_view
+msgid "Mention reason here..."
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "Mention reason to reject appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_ir_ui_menu
+msgid "Menu"
+msgstr "Menú"
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__app_phone
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Mobile Number"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_slottime_form_view
+msgid "Mon,Tues,.."
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment_day_slots__day__monday
+msgid "Monday"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+msgid "Monthly"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_appoint_appoint_filter
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Name"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment__appoint_state__new
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_appoint_appoint_filter
+msgid "New"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_book_appoint_menu
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "New Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,subject:wk_appointment.appoint_mgmt_new_appoint_mail_to_admin
+#: model:mail.template,subject:wk_appointment.appoint_mgmt_new_appoint_mail_to_appointee
+msgid "New Appointment Created"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__notify_admin_on_new_appoint
+msgid "New Appointment Mail to Admin"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__notify_appointee_on_new_appoint
+msgid "New Appointment Mail to Appointee"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__notify_customer_on_new_appoint
+msgid "New Appointment Mail to Customer"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+msgid "New Appointments"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "Next Month"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+msgid "No Appointments To Display"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+msgid "No Earnings To Display"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_appoint_group_kanban_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_kanban_view
+msgid "Not Found"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_kanban_view
+msgid "Not Invoiced"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Notify Using Mail"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__enable_notify_reminder
+msgid "Notify using Mail"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__name
+msgid "Number"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: wk_appointment
+#: model:res.groups,name:wk_appointment.appointment_officer_group
+msgid "Officer"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Operations"
+msgstr "Operaciones"
+
+#. module: wk_appointment
+#: model:product.template,name:wk_appointment.appoint_product_demo5_product_template
+msgid "Other Appointments"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Other Info"
+msgstr ""
+
+#. module: wk_appointment
+#: model:product.template,name:wk_appointment.appoint_product_demo4_product_template
+msgid "Pathologist Product"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment__appoint_state__pending
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment_report__appoint_state__pending
+msgid "Pending"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "Pending Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+msgid "Pending Appointments"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+msgid "Pie Chart"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "Please define an accounting sales journal for the company %s (%s)."
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appoint_timeslot.py:0
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "Please enter a valid hour between 00:00 and 24:00"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "Please enter a valid start and end time."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__access_url
+msgid "Portal Access URL"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__pricelist_id
+msgid "Pricelist"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__appoint_product_id
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__appoint_product_id
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__appoint_product_ids
+msgid "Product"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Product should be selected here in order to manage pricelist."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__product_qty
+msgid "Quantity"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appoint_rejectreason_wizard__add_reason
+msgid "Reason for Rejection"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Refresh Contact Details"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Reject"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__reject_reason
+msgid "Reject Reason"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment__appoint_state__rejected
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment_report__appoint_state__rejected
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_appoint_appoint_filter
+msgid "Rejected"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "Rejected Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
+msgid "Rejected Appointments"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__remind_in
+msgid "Remind In"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Reminder"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__is_mail_sent
+msgid "Reminder Mail Send"
+msgstr ""
+
+#. module: wk_appointment
+#: model:mail.template,name:wk_appointment.reminder_mail_to_customer
+msgid "Reminder Mail to Customer"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__remind_time
+msgid "Reminder Time"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Reminder Time.."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_appointment_analysis_sub_menu
+msgid "Reporting"
+msgstr "Reportes"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Reset"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__user_id
+msgid "Salesperson"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment_day_slots__day__saturday
+msgid "Saturday"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_reject_addreason_wizard_form_view
+msgid "Save"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__events_display_wait_time
+msgid "Scheduled Events Display Wait Time"
+msgstr "Tiempo de espera para mostrar eventos programados"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_appoint_appoint_filter
+msgid "Search Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__access_token
+msgid "Security Token"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appointment_day_slots_form_view
+msgid "Select Slots"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Select TimeSlots"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.actions.server,name:wk_appointment.send_mail_for_reminder_scheduler_ir_actions_server
+msgid "Send Mail Reminder Scheduler"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Send Reminder for this appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Send mail to Admin on New Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Send mail to Appointee on New Appointment"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Send mail to customer on Appointment Confirmation"
+msgstr "Enviar correo al cliente al confirmar la cita"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Send mail to customer on Appointment Reject"
+msgstr "Enviar correo al cliente al rechazar la cita"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Send mail to customer on New Appointment"
+msgstr "Enviar correo al cliente al crear una nueva cita"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "Service Product for Appointment"
+msgstr "Producto de servicio para citas"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Set to Pending"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.ui.menu,name:wk_appointment.appoint_config_settings_menu
+msgid "Settings"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__name
+msgid "Slot"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_slottime_form_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_slottime_tree_view
+msgid "Slot Time"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "Slot timings.."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__source
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__source
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_source__name
+msgid "Source"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "Source of Booking"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_partner__specialist
+#: model:ir.model.fields,field_description:wk_appointment.field_res_users__specialist
+msgid "Specialist"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__app_dt_start
+msgid "Start Datetime"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__start_time
+msgid "Start Time"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "State"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_appoint_appoint_filter
+msgid "States"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__app_dt_stop
+msgid "Stop Datetime"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__app_street1
+msgid "Street"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "Street..."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__app_street2
+msgid "Street2"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__price_subtotal
+msgid "Subtotal"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment_day_slots__day__sunday
+msgid "Sunday"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__price_tax
+msgid "Tax"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__amount_tax
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__tax_id
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "Taxes"
+msgstr ""
+
+#. module: wk_appointment
+#: model:product.template,name:wk_appointment.appoint_product_demo3_product_template
+msgid "Technicians Product"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appoint_timeslot.py:0
+msgid "The start time should be less than end time."
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "There are no appointment lines."
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid ""
+"There is already an appointment booked for this person with this timeslot. "
+"Please select any other slot."
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "There is no invoiceable line."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "This Address will be used as an Appointment address"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "This Month"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+msgid "This Year"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid ""
+"This charge will be used to make appointments chargable.If no charge is "
+"mentioned here,                                     then the charge of "
+"corresponding appointment group will be applied."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment_person_group__product_tmpl_id
+msgid ""
+"This product will be used for applying appointment        charges while "
+"booking an appointment."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid ""
+"This product will be used for managing pricelist while"
+"                                         applying appointment charges."
+"                                         If no product is selected and "
+"pricelist is enabled from settings then the pricelist"
+"                                         for this person will be managed "
+"through Appointment group Product."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_res_partner__appoint_product_id
+#: model:ir.model.fields,help:wk_appointment.field_res_users__appoint_product_id
+msgid ""
+"This product will be used for managing pricelist while        applying "
+"appointment charges."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "This shows all the appointments that are booked for this member."
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appoint_timeslot.py:0
+#: model:ir.model.constraint,message:wk_appointment.constraint_appointment_timeslot_timeslot_day_starttime_endtime_unique
+msgid "This slot already exist."
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+msgid "This slot time cannot be selected for today."
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment_day_slots__day__thursday
+msgid "Thursday"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__time_from
+msgid "Time From"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__time_slot
+msgid "Time Slot"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_day_slots__time_slots_ids
+msgid "Time Slots"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__time_to
+msgid "Time To"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_slottime_form_view
+msgid "Time must be given in 24 hours format i.e. HH:MM"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "TimeSlots"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__timerange
+msgid "Timerange"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_appoint_appoint_filter
+msgid "Today"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__amount_total
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__price_total
+msgid "Total"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+msgid "Total Earnings from booking"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__price_total
+msgid "Total With Tax"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_report__price_subtotal
+msgid "Total Without Tax"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_tree_view
+msgid "Total:"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment_day_slots__day__tuesday
+msgid "Tuesday"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment_lines__price_unit
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_report
+msgid "Unit Price"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__amount_untaxed
+msgid "Untaxed Amount"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_partner__use_addr_as_appoint
+#: model:ir.model.fields,field_description:wk_appointment.field_res_users__use_addr_as_appoint
+msgid "Use Appointee Address"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "View Invoice"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,help:wk_appointment.field_appointment__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/appointment.py:0
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment_day_slots__day__wednesday
+msgid "Wednesday"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+msgid "Weekly"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_res_partner__work_exp
+#: model:ir.model.fields,field_description:wk_appointment.field_res_users__work_exp
+msgid "Working Experience"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-javascript
+#: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
+msgid "Yearly"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "ZIP"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_appointment__app_zip
+msgid "ZipCode"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
+msgid "abc123@webkul.com"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "e.g. +32.81.81.37.00"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "e.g. 1-2 years"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "e.g. www.odoo.com"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_appoint_group_form_view
+msgid "i.e. Doctors, Lawyers, etc"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_appoint_source_tree_view
+msgid "i.e. Visit, Phone, Email, etc"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields.selection,name:wk_appointment.selection__appointment_report__appoint_state__new
+msgid "new"
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
+msgid "person's specialization..."
+msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "⇒ Enable to manage pricelists on appointments."
+msgstr "⇒ Habilite esta opción para gestionar listas de precios en las citas."
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid ""
+"⇒ Enabling/disabling this setting will automatically activate/deactivate 'Allow Multiple\n"
+"                                    Appointments' field in the appointment person form while creating a new group member.\n"
+"                                    The setting can also be manually managed directly from the appointment person form."
+msgstr ""
+"⇒ Activar/desactivar esta configuración habilitará/deshabilitará automáticamente el campo \"Permitir múltiples\n"
+"                                    citas\" en el formulario de la persona de cita al crear un nuevo miembro.\n"
+"                                    del grupo. Esta configuración también puede gestionarse manualmente directamente desde el formulario de la persona de cita."
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
+msgid "⇒ Select the default Product for Appointment"
+msgstr "⇒ Seleccione el producto predeterminado para la cita"

@@ -176,7 +176,7 @@
                             </div>
                         </group>
                     </group>
-                    <!-- <group string="Type event" name="user_sub_service_data" invisible="not sections.get('user_sub_service_data')">
+                    <group string="Type event" name="user_sub_service_data" invisible="not sections.get('user_sub_service_data')">
                         <div class="d-flex flex-column" style="gap: 8px; width: fit-content;">
                             <div>
                                 <field name="event_type_id"
@@ -190,7 +190,7 @@
                                     nolabel="1"/>
                             </div>
                         </div>
-                    </group> -->
+                    </group>
                     <group string="Type of service vehicle" name="user_sub_service_data" invisible="not sections.get('user_sub_service_data')">
                         <field name="service_vehicle_type_domain" invisible="1"/>
                         <!-- Mostrar campo filtrado por defecto en el paso 1 -->

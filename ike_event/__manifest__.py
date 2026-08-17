@@ -20,6 +20,7 @@
         'data/ike_event_flow_data.xml',
         'data/ir_sequence_data.xml',
         'data/ike_event_service_type_data.xml',
+        'data/automatic_event_close_cron.xml',
         'security/ir.model.access.csv',
         'wizard/ike_event_confirm_wizard.xml',
         'wizard/ike_event_vehicle_wizard.xml',

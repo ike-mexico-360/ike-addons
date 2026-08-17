@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+    <data>
+
+        <record model="ir.ui.view" id="appoint_slottime_tree_view">
+            <field name="name">SlotTime Tree</field>
+            <field name="model">appointment.timeslot</field>
+            <field name="type">list</field>
+            <field name="priority" eval="False"/>
+            <field name="arch" type="xml">
+                <list string="Slot Time">
+                    <field name="name"/>
+                    <field name="start_time" widget="float_time"/>
+                    <field name="end_time" widget="float_time"/>
+                    <field name="company_id" groups="base.group_multi_company"/>
+                </list>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="appoint_slottime_form_view">
+            <field name="name">SlotTime Form</field>
+            <field name="model">appointment.timeslot</field>
+            <field name="type">form</field>
+            <field name="priority" eval="False"/>
+            <field name="arch" type="xml">
+                <form string="Slot Time">
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+						    <!-- <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+						        <field name="active" widget="boolean_button" options='{"terminology": "archive"}'/>
+						    </button> -->
+                            <field name="active" invisible="1"/>
+                            <!-- <button class="oe_stat_button" name="toggle_active" type="object"
+                                icon="fa-archive text-success"
+                                invisible="active == True">
+								<span class="o_stat_text text-success">Active</span>
+							</button>
+							<button class="oe_stat_button" name="toggle_active" type="object"
+                                icon="fa-archive text-danger"
+                                invisible="active != True">
+								<span class="o_stat_text text-danger">Archive</span>
+							</button> -->
+						</div>
+                        <widget name="web_ribbon" text="Archived" bg_color="bg-danger" invisible="active == True"/>
+                        <div class="oe_title">
+                            <div class="oe_edit_only">
+                                <label for="name"/>
+                            </div>
+                            <h1>
+                                <field name="name" placeholder="Mon,Tues,.." readonly="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="start_time" widget="float_time" placeholder="00:00"
+                                    help="Time must be given in 24 hours format i.e. HH:MM"/>
+                                <field name="end_time" widget="float_time" placeholder="00:00"
+                                    help="Time must be given in 24 hours format i.e. HH:MM"/>
+                                <field name="company_id" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                            <div>
+                                <label for="desc"/>
+                                <field name="desc" placeholder="Add a description..." nolabel="1"/>
+                            </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="appointment_day_slots_form_view">
+            <field name="name">SlotTime Form</field>
+            <field name="model">appointment.day.slots</field>
+            <field name="type">form</field>
+            <field name="priority" eval="False"/>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <group>
+                            <field name="day" placeholder="Choose a day"/>
+                        </group>
+                    </group>
+                    <separator string="Select Slots"/>
+                    <field name="time_slots_ids" />
+                </form>
+            </field>
+        </record>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~ SEARCH VIEW ~~~~~~~~~~~~~~~~~~~~~~ -->
+
+        <!-- <record model='ir.ui.view' id='appoint_mgmt_slottime_filter'>
+            <field name="name">appointment.timeslot.filter</field>
+            <field name="model">appointment.timeslot</field>
+            <field name="type">search</field>
+            <field name="arch"  type="xml">
+                <search string="Search Appointment TimeSlot">
+                    <field name="name" string="Name" filter_domain="['|',('name','ilike',self),('name','=',self)]"/>
+                    <group string="Group By">
+                        <filter name="group_day" string="Day" context="{'group_by': 'day'}"/>
+                        <filter name="day_monday" string="Monday" domain="[('day', '=', 'monday')]"/>
+                        <filter name="day_tuesday" string="Tuesday" domain="[('day', '=', 'tuesday')]"/>
+                        <filter name="day_wednesday" string="Wednesday" domain="[('day', '=', 'wednesday')]"/>
+                        <filter name="day_thursday" string="Thursday" domain="[('day', '=', 'thursday')]"/>
+                        <filter name="day_friday" string="Friday" domain="[('day', '=', 'friday')]"/>
+                        <filter name="day_saturday" string="Saturday" domain="[('day', '=', 'saturday')]"/>
+                        <filter name="day_sunday" string="Sunday" domain="[('day', '=', 'sunday')]"/>
+                    </group>
+               </search>
+            </field>
+        </record> -->
+
+        <record model="ir.actions.act_window" id="appoint_mgmt_slottime_action">
+            <field name="name">Appointment SlotTime</field>
+            <field name="res_model">appointment.timeslot</field>
+            <field name="path">appointment-slottime</field>
+            <field name="view_mode">list,form</field>
+            <field name="binding_view_types">form</field>
+            <field name="context">{"default_name":"NEW",}</field>
+            <field name="view_id" ref="appoint_slottime_tree_view"/>
+            <field name="help" type="html">
+              <p>
+                Here is a list of all the Appointment Timeslots created. You
+                can click on any record to get the detailed Information About these Timeslots.
+              </p>
+            </field>
+        </record>
+
+    </data>
+</odoo>

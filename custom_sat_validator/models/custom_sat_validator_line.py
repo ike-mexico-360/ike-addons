@@ -61,6 +61,12 @@ class CustomSatValidatorLine(models.Model):
 
     invoice_id = fields.Many2one('account.move', string="Generated Vendor Bill", readonly=True, copy=False)
 
+    xml_line_ids = fields.One2many(
+        'custom.import.xml.invoice.line',
+        'sat_line_id',
+        string='XML Lines'
+    )
+
     # --- ATOMIC ATTACHMENT SYNCHRONIZATION ---
     @api.model_create_multi
     def create(self, vals_list):
@@ -216,21 +222,34 @@ class CustomSatValidatorLine(models.Model):
 
     def _validate_receptor_rfc(self, xml_receptor_rfc):
         self.ensure_one()
-        company_rfc = self.env.company.vat
+        client_partner = self.validator_id.purchase_id.x_invoice_company_id
 
+        # 1. Check if the Client field is defined on the Purchase Order
+        if not client_partner:
+            self.write({
+                'line_state': 'xml_error',
+                'cfdi_is_valid': False,
+                'line_validation_log': _("Validation Error: The Purchase Order '%s' does not have a Client assigned.") % self.validator_id.purchase_id.name
+            })
+            return False
+
+        company_rfc = client_partner.vat
+
+        # 2. Check if the assigned Client has a configured RFC (VAT)
         if not company_rfc:
             self.write({
                 'line_state': 'xml_error',
                 'cfdi_is_valid': False,
-                'line_validation_log': _("Validation Error: Your active company '%s' does not have an RFC (VAT) configured.") % self.env.company.name
+                'line_validation_log': _("Validation Error: The Client '%s' configured in the Purchase Order does not have a RFC (VAT).") % client_partner.name
             })
             return False
 
+        # 3. Compare XML Receiver RFC vs Purchase Order Client RFC
         if xml_receptor_rfc.strip().upper() != company_rfc.strip().upper():
             self.write({
                 'line_state': 'xml_error',
                 'cfdi_is_valid': False,
-                'line_validation_log': _("XML Error: The XML receiver RFC (%s) does not match your company RFC (%s).") % (xml_receptor_rfc, company_rfc)
+                'line_validation_log': _("XML Error: The XML receiver RFC (%s) does not match the Purchase Order Client RFC (%s - %s).") % (xml_receptor_rfc, company_rfc, client_partner.name)
             })
             return False
         return True
@@ -243,7 +262,7 @@ class CustomSatValidatorLine(models.Model):
             self.write({
                 'line_state': 'xml_error',
                 'cfdi_is_valid': False,
-                'line_validation_log': _("Odoo Error: The supplier '%s' on the PO does not have an RFC configured.") % self.validator_id.purchase_id.partner_id.name
+                'line_validation_log': _("Validation Error: The supplier '%s' on the PO does not have an RFC configured.") % self.validator_id.purchase_id.partner_id.name
             })
             return False
 
@@ -317,6 +336,55 @@ class CustomSatValidatorLine(models.Model):
             return False
         return True
 
+    def _process_xml_lines(self, xml_doc, namespaces):
+        """ Extracts SAT CFDI XML lines (Conceptos) and registers them in custom.import.xml.invoice.line """
+        self.ensure_one()
+
+        # Unlink previous lines to avoid duplicated records on re-validation
+        self.xml_line_ids.unlink()
+
+        concept_nodes = xml_doc.xpath("//cfdi:Concepto", namespaces=namespaces)
+        if not concept_nodes:
+            return
+
+        parent = self.validator_id
+        po_lines = parent.purchase_id.order_line.filtered(lambda l: l.qty_to_invoice > 0) if parent.purchase_id else False
+        matched_po_line_ids = []
+
+        line_vals = []
+        for line in concept_nodes:
+            quantity = float(line.get("Cantidad") or 1.0)
+            description = line.get("Descripcion") or "Imported Line"
+            unit_price = float(line.get("ValorUnitario") or 0.0)
+            xml_subtotal = float(line.get("Importe") or 0.0)
+
+            # Extract line specific taxes
+            line_taxes = self._get_xml_line_taxes(line, namespaces)
+
+            # Match with Purchase Order Line if PO is linked
+            matched_po_line = self._find_matching_purchase_line(
+                po_lines=po_lines,
+                xml_subtotal=xml_subtotal,
+                matched_po_ids=matched_po_line_ids
+            )
+            matched_po_ids = []
+            if matched_po_line:
+                matched_po_line_ids.append(matched_po_line.id)
+                matched_po_ids.append(matched_po_line.id)
+
+            line_vals.append((0, 0, {
+                'product_name': description,
+                'quantity': quantity,
+                'price_unit': unit_price,
+                'subtotal': xml_subtotal,
+                'tax_ids': [(6, 0, line_taxes)] if line_taxes else False,
+                'purchase_order_line_ids': [(6, 0, matched_po_ids)] if matched_po_ids else False,
+                'company_id': self.env.company.id,
+            }))
+
+        if line_vals:
+            self.write({'xml_line_ids': line_vals})
+
     # --- PARSING AND EXTRACTION ---
     def _parse_and_extract_xml_data(self):
         self.ensure_one()
@@ -354,6 +422,9 @@ class CustomSatValidatorLine(models.Model):
         xml_subtotal_float = float(xml_doc.get("SubTotal") or 0.0)
         xml_total_float = float(xml_doc.get("Total") or 0.0)
         extracted_uuid = timbre_node[0].get("UUID")
+
+        # --- EXTRACT AND RECORD LINE DETAILS FROM XML ---
+        self._process_xml_lines(xml_doc, namespaces)
 
         self.write({
             'name': extracted_folio,
@@ -660,31 +731,14 @@ class CustomSatValidatorLine(models.Model):
         invoice_vals['invoice_line_ids'] = matched_lines
         parent = self.validator_id
 
-        if parent.purchase_id:
-            if global_tax_ids:
-                for po_line in parent.purchase_id.order_line:
-                    po_line.write({'taxes_id': [(6, 0, global_tax_ids)]})
-            else:
-                concept_nodes = xml_doc.xpath("//cfdi:Concepto", namespaces=namespaces)
-                po_lines = parent.purchase_id.order_line.filtered(lambda l: l.qty_to_invoice > 0)
-                matched_po_ids = []
-
-                for line in concept_nodes:
-                    xml_subtotal = float(line.get("Importe") or 0.0)
-                    po_line = self._find_matching_purchase_line(
-                        po_lines=po_lines,
-                        xml_subtotal=xml_subtotal,
-                        matched_po_ids=matched_po_ids
-                    )
-                    if po_line:
-                        matched_po_ids.append(po_line.id)
-                        line_specific_taxes = self._get_xml_line_taxes(line, namespaces)
-                        if line_specific_taxes:
-                            po_line.write({'taxes_id': [(6, 0, line_specific_taxes)]})
-
         ctx = dict(self.env.context, default_purchase_id=parent.purchase_id.id)
         invoice = self.env['account.move'].with_context(ctx).create(invoice_vals)
-        invoice.action_post()
+
+        for line in invoice.invoice_line_ids:
+            if line.purchase_line_id and line.tax_ids:
+                line.purchase_line_id.write({
+                    'taxes_id': [(6, 0, line.tax_ids.ids)]
+                })
 
         self.write({'invoice_id': invoice.id})
 

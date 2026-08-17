@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+    <data noupdate="1">
+
+      <!-- Sequence for appointment -->
+      <record model="ir.sequence" id="appoint_mgmt_appointment_seq">
+        <field name="name">Appointment Sequence</field>
+        <field name="code">appointment</field>
+        <field name="prefix">APT/%(range_year)s/</field>
+        <field name="padding">4</field>
+        <field name="company_id" eval="False"/>
+      </record>
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~ Dashboard Data ~~~~~~~~~~~~~~~~~~~~~ -->
+        <!-- <record model="appointment.dashboard" id="new_appointment_dashboard">
+            <field name="name">New Appointment</field>
+            <field name="color">4</field>
+            <field name="state">new</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record model="appointment.dashboard" id="pending_appointment_dashboard">
+            <field name="name">Pending Appointment</field>
+            <field name="color">3</field>
+            <field name="state">pending</field>
+            <field name="sequence">2</field>
+        </record>
+
+        <record model="appointment.dashboard" id="approved_appointment_dashboard">
+            <field name="name">Approved Appointment</field>
+            <field name="color">10</field>
+            <field name="state">approved</field>
+            <field name="sequence">3</field>
+        </record>
+
+        <record model="appointment.dashboard" id="done_appointment_dashboard">
+            <field name="name">Done Appointment</field>
+            <field name="color">11</field>
+            <field name="state">done</field>
+            <field name="sequence">4</field>
+        </record>
+
+        <record model="appointment.dashboard" id="rejected_appointment_dashboard">
+            <field name="name">Rejected Appointment</field>
+            <field name="color">1</field>
+            <field name="state">rejected</field>
+            <field name="sequence">5</field>
+        </record> -->
+
+        <!-- ~~~~~~~~~~~~~~~~~~~~~~ Appointment Source ~~~~~~~~~~~~~~~~~~~ -->
+        <record id="appoint_source1" model="appointment.source">
+            <field name="name">Visit</field>
+        </record>
+
+        <record id="appoint_source2" model="appointment.source">
+            <field name="name">Phone</field>
+        </record>
+
+        <record id="appoint_source3" model="appointment.source">
+            <field name="name">Website</field>
+        </record>
+
+        <record id="appoint_product_category" model="product.category">
+            <field name="name">Appointment</field>
+        </record>
+        <record id="appoint_product_demo1" model="product.product">
+            <field name="name">General Appointment</field>
+            <field name="type">service</field>
+            <field name="list_price">50</field>
+            <field name="categ_id" ref="appoint_product_category"/>
+            <field name="taxes_id" eval="[(6,0,[])]"></field>
+            <field name="supplier_taxes_id" eval="[(6,0,[])]"></field>
+        </record>
+
+        <record id="appoint_product_demo2" model="product.product">
+            <field name="name">Dentist Product</field>
+            <field name="type">service</field>
+            <field name="list_price">20</field>
+            <field name="categ_id" ref="appoint_product_category"/>
+            <field name="taxes_id" eval="[(6,0,[])]"></field>
+            <field name="supplier_taxes_id" eval="[(6,0,[])]"></field>
+        </record>
+
+        <record id="appoint_product_demo3" model="product.product">
+            <field name="name">Technicians Product</field>
+            <field name="type">service</field>
+            <field name="list_price">60</field>
+            <field name="categ_id" ref="appoint_product_category"/>
+            <field name="taxes_id" eval="[(6,0,[])]"></field>
+            <field name="supplier_taxes_id" eval="[(6,0,[])]"></field>
+        </record>
+
+        <record id="appoint_product_demo4" model="product.product">
+            <field name="name">Pathologist Product</field>
+            <field name="type">service</field>
+            <field name="list_price">40</field>
+            <field name="categ_id" ref="appoint_product_category"/>
+            <field name="taxes_id" eval="[(6,0,[])]"></field>
+            <field name="supplier_taxes_id" eval="[(6,0,[])]"></field>
+        </record>
+
+        <record id="appoint_product_demo5" model="product.product">
+            <field name="name">Other Appointments</field>
+            <field name="type">service</field>
+            <field name="list_price">25</field>
+            <field name="categ_id" ref="appoint_product_category"/>
+            <field name="taxes_id" eval="[(6,0,[])]"></field>
+            <field name="supplier_taxes_id" eval="[(6,0,[])]"></field>
+        </record>
+
+        <function
+            model="ir.default"
+            name="set"
+            eval="('res.config.settings','appoint_product_ids',[ref('wk_appointment.appoint_product_demo1'),
+                ref('wk_appointment.appoint_product_demo2'), ref('wk_appointment.appoint_product_demo3'),
+                ref('wk_appointment.appoint_product_demo4'), ref('wk_appointment.appoint_product_demo5'), ])"
+            />
+
+        <function model="ir.default"
+            name="set" eval="('res.config.settings', 'enable_notify_reminder', True)"/>
+
+        <function model="ir.default"
+            name="set" eval="('res.config.settings', 'notify_reminder_mail_template', False)"/>
+
+        <function model="ir.default"
+            name="set" eval="('res.config.settings', 'notify_customer_on_approve_appoint', False)"/>
+
+        <function model="ir.default"
+            name="set" eval="('res.config.settings', 'enable_notify_customer_on_approve_appoint', True)"/>
+
+        <function model="ir.default"
+            name="set" eval="('res.config.settings', 'notify_customer_on_reject_appoint', False)"/>
+
+        <function model="ir.default"
+            name="set" eval="('res.config.settings', 'enable_notify_customer_on_reject_appoint', True)"/>
+
+        <function model="ir.default"
+	   name="set" eval="('res.config.settings', 'notify_customer_on_new_appoint', False)"/>
+
+        <function model="ir.default"
+            name="set" eval="('res.config.settings', 'enable_notify_customer_on_new_appoint', True)"/>
+
+        <function model="ir.default"
+            name="set" eval="('res.config.settings', 'notify_admin_on_new_appoint', False)"/>
+
+        <function model="ir.default"
+            name="set" eval="('res.config.settings', 'enable_notify_admin_on_new_appoint', True)"/>
+        
+        <function model="ir.default"
+            name="set" eval="('res.config.settings', 'enable_notify_appointee_on_new_appoint', True)"/>
+        
+        <function model="ir.default"
+            name="set" eval="('res.config.settings', 'notify_appointee_on_new_appoint', False)"/>
+
+        <function model="ir.default"
+            name="set" eval="('res.config.settings', 'allow_multi_appoints', True)"/>
+
+	<function model="ir.default"
+            name="set" eval="('res.config.settings', 'apply_pricelist', True)"/>
+    </data>
+</odoo>

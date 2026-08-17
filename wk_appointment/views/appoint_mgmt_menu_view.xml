@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+    <data>
+
+        <menuitem name="Appointment"
+			id="appoint_mgmt_appointment_main_menu"
+			sequence="1"
+			web_icon="wk_appointment,static/description/icon.png"
+		/>
+
+        <menuitem name="Dashboard"
+            id="appoint_mgmt_appointment_dashboard_sub_menu"
+            parent="appoint_mgmt_appointment_main_menu"
+            sequence="0"
+            action="appointment_dashboard_action"
+            groups="wk_appointment.appointment_appointee_group"
+        />
+
+        <menuitem name="Appointment"
+            id="appoint_mgmt_appointment_sub_menu"
+            parent="appoint_mgmt_appointment_main_menu"
+            sequence="2"
+            groups="wk_appointment.appointment_appointee_group"
+        />
+
+        <menuitem name="Reporting"
+            id="appoint_mgmt_appointment_analysis_sub_menu"
+            parent="appoint_mgmt_appointment_main_menu"
+            sequence="2"
+            groups="wk_appointment.appointment_appointee_group"
+        />
+
+        <menuitem name="Configuration"
+            id="appoint_mgmt_config_sub_menu"
+            parent="appoint_mgmt_appointment_main_menu"
+            sequence="3"
+            groups="wk_appointment.appointment_appointee_group"
+        />
+
+        <menuitem name= "Settings"
+            id="appoint_config_settings_menu"
+            parent= "wk_appointment.appoint_mgmt_config_sub_menu"
+            action="wk_appointment.appoint_config_settings_action"
+            sequence="1"
+            groups="wk_appointment.appointment_manager_group"
+            />
+
+        <menuitem name="Appointees"
+            id="appoint_mgmt_customer_menu"
+            parent="wk_appointment.appoint_mgmt_config_sub_menu"
+            action="wk_appointment.appoint_mgmt_team_member_action"
+            sequence="2"
+            groups="wk_appointment.appointment_appointee_group"
+        />
+
+        <menuitem name="New Appointment"
+            id="appoint_mgmt_book_appoint_menu"
+            parent="appoint_mgmt_appointment_sub_menu"
+            action="wk_appointment.appoint_mgmt_book_appointment_action"
+            sequence="1"
+            groups="wk_appointment.appointment_appointee_group"
+            />
+            
+
+        <menuitem name="All Appointments"
+            id="appoint_mgmt_all_appoint_menu"
+            parent="appoint_mgmt_appointment_sub_menu"
+            action="wk_appointment.appoint_mgmt_all_appointment_action"
+            sequence="2"
+            groups="wk_appointment.appointment_appointee_group"
+            />
+
+
+        <menuitem name="Appointments Analysis"
+            id="appoint_mgmt_appoint_analysis_menu"
+            parent="appoint_mgmt_appointment_analysis_sub_menu"
+            action="wk_appointment.appoint_mgmt_appoint_analysis_action"
+            sequence="1"
+            groups="wk_appointment.appointment_appointee_group"
+            />
+
+        <menuitem name="Appointment Groups"
+            id="appoint_mgmt_appoint_group_menu"
+            parent="wk_appointment.appoint_mgmt_config_sub_menu"
+            action="wk_appointment.appoint_mgmt_appoint_group_action"
+            sequence="2"
+            groups="wk_appointment.appointment_officer_group"
+        />
+
+        <menuitem name="Appointment Time Slots"
+            id="appoint_mgmt_slottime_day_menu"
+            parent="wk_appointment.appoint_mgmt_config_sub_menu"
+            action="wk_appointment.appoint_mgmt_slottime_action"
+            sequence="3"
+            groups="wk_appointment.appointment_officer_group"
+        />
+        
+        <menuitem name="Appointment Source"
+            id="appoint_mgmt_appoint_source_menu"
+            parent="wk_appointment.appoint_mgmt_config_sub_menu"
+            action="wk_appointment.appoint_mgmt_appoint_source_action"
+            sequence="4"
+            groups="wk_appointment.appointment_officer_group"
+        />
+
+    </data>
+</odoo>

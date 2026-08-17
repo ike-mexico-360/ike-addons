@@ -15,6 +15,12 @@ class CustomStateMunicipality(models.Model):
     country_id = fields.Many2one('res.country', required=True, index=True)
     state_id = fields.Many2one('res.country.state', required=True, index=True)
     red_zone = fields.Boolean(default=False, tracking=True)
+    metropolitan_zone_ids = fields.Many2many(
+        'custom.metropolitan.zone',
+        'municipality_id',
+        'metropolitan_zone_id',
+        string='Metropolitan Zones'
+    )
     c_estado = fields.Integer(string='Sepomex estado', required=True)
     c_mnpio = fields.Integer(string='Sepomex municipio', required=True)
     c_delta = fields.Char(compute='_compute_c_delta', store=True, index='trigram')

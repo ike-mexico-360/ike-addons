@@ -10,4 +10,21 @@
             </t>
         </xpath>
     </template>
+
+     <template id="portal_my_home_menu_invoice_custom" inherit_id="account.portal_my_home_menu_invoice">
+        <xpath expr="//a[@t-if='invoice']" position="attributes">
+            <attribute name="t-attf-href">
+                /my/provider/invoices
+            </attribute>
+        </xpath>
+    </template>
+
+     <template id="portal_invoice_page_remove_chatter" inherit_id="account.portal_invoice_page">
+        <xpath expr="//div[@id='invoice_communication']" position="replace"/>
+    </template>
+
+    <template id="portal_record_sidebar_remove_odoo" inherit_id="portal.portal_record_sidebar">
+        <xpath expr="//div[contains(@class, 'text-muted')]" position="replace">
+        </xpath>
+    </template>
 </odoo>

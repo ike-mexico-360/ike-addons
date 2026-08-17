@@ -8,7 +8,7 @@ from odoo.exceptions import UserError
 from odoo.tools import float_compare
 from odoo.exceptions import ValidationError
 from markupsafe import Markup
-from werkzeug.urls import url_encode
+from werkzeug.urls import url_encode  # type: ignore
 
 _logger = logging.getLogger(__name__)
 
@@ -21,7 +21,9 @@ class PurchaseOrder(models.Model):
         ('consolidated', 'Consolidated'),
         ('purchase',),  # Ancla de posición
     ])
-    x_event_id = fields.Many2one('ike.event', string='Event', ondelete='set null')
+    x_event_id = fields.Many2one('ike.event', string='Event', ondelete='set null', copy=False)
+    x_event_type_id = fields.Many2one(related="x_event_id.payment_event_type_id", string='Payment event type', store=True,)
+    x_payment_event_type_id = fields.Many2one(related="x_event_id.payment_event_type_id", string='Payment event type', store=True,)
     x_services_available = fields.Integer(related='x_event_id.services_available')
     x_services_allowed = fields.Integer(related='x_event_id.services_allowed')
     x_covered_amount = fields.Float(related='x_event_id.covered_amount')
@@ -46,16 +48,19 @@ class PurchaseOrder(models.Model):
         ('submitted', 'Submitted'),
         ('resolved', 'Resolved'),
         ('rejected', 'Rejected'),
-    ], string='Dispute State', default='none')
-    x_dispute_approved = fields.Boolean(string='Dispute Approved', default=False)
-    x_ref_sap = fields.Char(string='SAP Reference')
+    ], string='Dispute State', default='none', copy=False)
+    x_dispute_approved = fields.Boolean(string='Dispute Approved', default=False, copy=False)
+    x_ref_sap = fields.Char(string='SAP Reference', copy=False)
+    x_customer_id = fields.Many2one(
+        'res.partner', string='Customer', domain=[('x_is_client', '=', True), ('disabled', '=', False)])
     x_invoice_company_id = fields.Many2one(
-        'res.partner', string='Client Company', domain=[('x_is_ike', '=', True)])
-    x_sap_reference_received = fields.Boolean(string='SAP Reference Received', default=False)
-    x_sap_connection_error_message = fields.Char(string='SAP Connection Error Message')
+        'res.partner', string='Client Company', domain=[('x_is_ike', '=', True), ('disabled', '=', False)])
+    x_sap_reference_received = fields.Boolean(string='SAP Reference Received', default=False, copy=False)
+    x_sap_connection_error_message = fields.Char(string='SAP Connection Error Message', copy=False)
     x_dispute_iteration_count = fields.Integer(
         string='Dispute Iteration Count', default=0,
-        help="Technical: The number of times the order has been send dispute.")
+        help="Technical: The number of times the order has been send dispute.",
+        copy=False)
     x_authorized_amount_request_ids = fields.One2many(
         comodel_name='ike.event.authorized.amount.request',
         inverse_name='purchase_order_id',
@@ -74,7 +79,8 @@ class PurchaseOrder(models.Model):
     )
     x_origin_events = fields.Text(
         string='Origin events',
-        help="Events of the lines."
+        help="Events of the lines.",
+        copy=False,
     )
 
     # External flow
@@ -99,14 +105,6 @@ class PurchaseOrder(models.Model):
     x_external_body = fields.Json(
         string='External Body',
         help="Technical: Body of the external record, to syncronize with SAP at consolidation. External record")
-
-    @api.depends('x_event_id')
-    def _compute_x_event_public_id(self):
-        for record in self:
-            if record.x_event_id:
-                record.x_event_public_id = record.sudo().x_event_id.id
-            else:
-                record.x_event_public_id = False
 
     # Add tracking native field
     order_line = fields.One2many(tracking=True)
@@ -137,6 +135,14 @@ class PurchaseOrder(models.Model):
         store=True, readonly=True,
         compute='_x_amount_all_event',
         tracking=True)
+
+    @api.depends('x_event_id')
+    def _compute_x_event_public_id(self):
+        for record in self:
+            if record.x_event_id:
+                record.x_event_public_id = record.sudo().x_event_id.id
+            else:
+                record.x_event_public_id = False
 
     @api.depends('x_covered_amount', 'x_dispute_authorized_amount')
     def _compute_excess_amount(self):
@@ -625,6 +631,30 @@ class PurchaseOrder(models.Model):
                 'The following orders have an open or submitted dispute and cannot be consolidated:\n%s'
             ) % '\n'.join(disputed_pos.mapped('name')))
 
+        po_without_partner = self.filtered(lambda po: not po.partner_id)
+        if po_without_partner:
+            raise UserError(_(
+                'The following orders have no partner and cannot be consolidated:\n%s'
+            ) % '\n'.join(po_without_partner.mapped('name')))
+
+        po_without_customer = self.filtered(lambda po: not po.x_customer_id)
+        if po_without_customer:
+            raise UserError(_(
+                'The following orders have no customer and cannot be consolidated:\n%s'
+            ) % '\n'.join(po_without_customer.mapped('name')))
+
+        po_without_sub_service = self.filtered(lambda po: not po.x_sub_service_id)
+        if po_without_sub_service:
+            raise UserError(_(
+                'The following orders have no sub service and cannot be consolidated:\n%s'
+            ) % '\n'.join(po_without_sub_service.mapped('name')))
+
+        po_without_project = self.filtered(lambda po: not po.project_id)
+        if po_without_project:
+            raise UserError(_(
+                'The following orders have no project and cannot be consolidated:\n%s'
+            ) % '\n'.join(po_without_project.mapped('name')))
+
     def _x_prepare_consolidated_purchase_orders(self, rfqs):
         grouped_rfqs = self._x_group_rfqs_by_partner_and_subservice(rfqs)
 
@@ -647,7 +677,7 @@ class PurchaseOrder(models.Model):
         grouped_ids = defaultdict(list)
 
         for rfq in rfqs:
-            grouped_ids[(rfq.partner_id.id, rfq.x_sub_service_id.id)].append(rfq.id)
+            grouped_ids[(rfq.partner_id.id, rfq.x_sub_service_id.id, rfq.project_id.id)].append(rfq.id)
 
         return {
             key: self.env['purchase.order'].browse(rfq_ids)
@@ -715,9 +745,6 @@ class PurchaseOrder(models.Model):
 
         new_po_vals = []
         original_pos = self.env['purchase.order']
-        max_lines_per_po = int(
-            self.env['ir.config_parameter'].sudo().get_param('ike_event_purchase.max_lines_per_po_at_consolidation', default=50) or 50
-        )
         temporal_invoice_company = {}
 
         for _sap_key, concept_lines in grouped_concept_lines.items():
@@ -725,6 +752,9 @@ class PurchaseOrder(models.Model):
                 continue
 
             first_order = concept_lines[0]['rfq']
+            max_lines_per_po = int(
+                first_order.company_id.x_max_lines_per_po_at_consolidation or 50
+            )
             chunks = list(split_list(concept_lines, max_lines_per_po))
 
             # Resolve invoice company
@@ -807,12 +837,14 @@ class PurchaseOrder(models.Model):
                     'x_sub_service_id': first_order.x_sub_service_id.id,
                     'x_membership_plan_id': first_order.x_membership_plan_id.id,
                     'x_invoice_company_id': x_invoice_company_id.id or False,
+                    'project_id': first_order.project_id.id,
                 }
 
                 if first_order.x_external_api_record:
                     vals.update({
                         'company_id': first_order.company_id.id,
                         'x_client_code': first_order.x_client_code,
+                        'x_customer_id': first_order.x_customer_id.id,
                         'x_record_tenant': first_order.x_record_tenant,
                         'x_app_code': first_order.x_app_code,
                         'x_sap_company_code': first_order.x_sap_company_code,
@@ -983,12 +1015,17 @@ class PurchaseOrder(models.Model):
         purchase_reponses = []
         for purchase in self:
             account_id = purchase.x_membership_plan_id.account_id
+            tenant = self.env['ir.config_parameter'].sudo().get_param('ike_event_purchase.tenant')
+
+            if not tenant:
+                raise UserError(_("No tenant found., ensure you have configured the tenant in ike_event_purchase.tenant parameter."))
+
             if not purchase.x_external_api_record:
-                tenants = "adff7f6a-e97d-11eb-9a03-0242ac130003"  # MX Tenant
+                # tenants = "adff7f6a-e97d-11eb-9a03-0242ac130003"  # MX Tenant
                 app_code = "IKE360"  # Identificador de la aplicación
                 company_code = account_id.x_invoice_company_id[0].name if account_id.x_invoice_company_id else "ARSA"
                 document_currency = "MXN"
-                client_code = str(account_id.parent_id.x_ref_sap).zfill(10)
+                client_code = str(account_id.parent_id.x_ref_sap).zfill(10) or str(purchase.x_customer_id.x_ref_sap).zfill(10)
                 lines = []
                 for line in purchase.order_line:
                     # ToDo: Remover la lógica en unos 2 meses aprox, debe leerse solo el primer campo, se deja para los
@@ -1012,13 +1049,19 @@ class PurchaseOrder(models.Model):
                         "expediente": expedient_name,
                     })
             else:
-                tenants = purchase.x_record_tenant
-                app_code = purchase.x_app_code
+                # tenants = purchase.x_record_tenant
+                app_code = purchase.project_id.x_ref_app
                 company_code = purchase.x_sap_company_code
                 document_currency = purchase.x_sap_document_currency
-                client_code = purchase.x_client_code
+                client_code = purchase.x_client_code or str(purchase.x_customer_id.x_ref_sap).zfill(10)
+
+                if not app_code:
+                    raise UserError(_("No reference app code found for this project."))
+
                 lines = []
-                for line in purchase.order_line:
+                auxiliar_count = 0
+                for line in purchase.order_line.sorted('id'):
+                    auxiliar_count += 10
                     lines.append({
                         "supplierMaterialNumber": line.x_sap_code_income,  # Valor SAP ingeso de Plan de cobertura
                         "orderQuantity": str(line.product_qty),
@@ -1026,11 +1069,12 @@ class PurchaseOrder(models.Model):
                         "material": line.x_sap_code_outgoing,  # Valor SAP egreso de Plan de cobertura
                         "purchaseOrderQuantityUnit": "SER",
                         "expediente": line.x_parent_expedient,
+                        "x_SAP_po_line": auxiliar_count,
                     })
 
             body = {
                 "identifier": {
-                    "tenants": tenants,
+                    "tenants": tenant,
                     "app": app_code
                 },
                 "sap": {
@@ -1128,3 +1172,10 @@ class PurchaseOrder(models.Model):
 
         suppliers = self.env['ike.event.supplier'].browse(supplier_links.ids)
         return suppliers.action_view_ike_event_service_cost()
+
+    def x_action_reactivate_cost_review(self):
+        self.ensure_one()
+        self.button_unlock()
+        self.button_cancel()
+        self.button_draft()
+        self.action_rfq_send_one_step()

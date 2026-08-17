@@ -1,0 +1,158 @@
+<templates id="template" xml:space="preserve">
+    <t t-name="ike_event_purchase.InvoiceDetails">
+        <div>
+            <t t-if="state.invoice_data">
+
+                <!-- Header cards: Cliente / Empresa Facturadora / Fechas -->
+                <div class="card border-0 rounded-3 mb-3" style="background: linear-gradient(135deg, #f8f9ff 0%, #eef1fb 100%); border-left: 4px solid #4e73df !important;">
+                    <div class="card-body py-3 px-4">
+                        <div class="row g-4">
+
+                            <!-- Column 1: Proveedor (partner_id de la factura) -->
+                            <div class="col-12 col-lg-4">
+                                <div class="d-flex flex-column gap-3">
+                                    <div t-if="state.invoice_data.partner_id" class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-building text-primary mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('Supplier')"/>
+                                            </div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.invoice_data.partner_id.name"/>
+                                        </div>
+                                    </div>
+                                    <div t-if="state.invoice_data.x_supplier_address" class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-map-marker text-primary mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('Supplier Address')"/>
+                                            </div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.invoice_data.x_supplier_address"/>
+                                        </div>
+                                    </div>
+                                    <div t-if="state.invoice_data.x_supplier_vat" class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-id-card text-primary mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('Supplier RFC')"/>
+                                            </div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.invoice_data.x_supplier_vat"/>
+                                        </div>
+                                    </div>
+                                    <div t-if="state.invoice_data.x_supplier_phone" class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-phone text-primary mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('Supplier Phone')"/>
+                                            </div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.invoice_data.x_supplier_phone"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Column 2: Empresa Facturadora (company_id) -->
+                            <div class="col-12 col-lg-4">
+                                <div class="d-flex flex-column gap-2 rounded-3 p-2 h-100" style="background:rgba(78,115,223,0.06); border-left:3px solid rgba(78,115,223,0.4);">
+                                    <div t-if="state.invoice_data.company_id" class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-university text-secondary mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('Invoicing Company')"/>
+                                            </div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.invoice_data.company_id.name"/>
+                                        </div>
+                                    </div>
+                                    <div t-if="state.invoice_data.x_company_address" class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-map-marker text-secondary mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('Address')"/>
+                                            </div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.invoice_data.x_company_address"/>
+                                        </div>
+                                    </div>
+                                    <div t-if="state.invoice_data.x_company_vat" class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-id-card text-secondary mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('RFC')"/>
+                                            </div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.invoice_data.x_company_vat"/>
+                                        </div>
+                                    </div>
+                                    <div t-if="state.invoice_data.x_company_phone" class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-phone text-secondary mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('Phone')"/>
+                                            </div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.invoice_data.x_company_phone"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Column 3: Fechas / Referencia / Estado -->
+                            <div class="col-12 col-lg-4">
+                                <div class="d-flex flex-column gap-3">
+                                    <div t-if="state.invoice_data.invoice_date" class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-calendar text-primary mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('Invoice Date')"/>
+                                            </div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;" t-out="formatDate(state.invoice_data.invoice_date)"/>
+                                        </div>
+                                    </div>
+                                    <div t-if="state.invoice_data.invoice_date_due" class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-clock-o text-warning mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('Due Date')"/>
+                                            </div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;" t-out="formatDate(state.invoice_data.invoice_date_due)"/>
+                                        </div>
+                                    </div>
+                                    <div t-if="state.invoice_data.ref" class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-tag text-secondary mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('Reference')"/>
+                                            </div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.invoice_data.ref"/>
+                                        </div>
+                                    </div>
+                                    <div t-if="state.invoice_data.invoice_origin" class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-barcode text-secondary mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('Origin')"/>
+                                            </div>
+                                            <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.invoice_data.invoice_origin"/>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start gap-2">
+                                        <i class="fa fa-info-circle text-success mt-1" style="width:14px;"/>
+                                        <div>
+                                            <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;">
+                                                <t t-out="translate('Status')"/>
+                                            </div>
+                                            <span class="badge rounded-pill" t-att-class="invoiceStatus.cssClass" t-esc="invoiceStatus.label"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="text-center py-4">
+                    <i class="fa fa-spinner fa-spin"/>
+                    <t t-out="translate('Loading...')"/>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

@@ -7,6 +7,10 @@
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='partner_id']" position="before">
+                <field name="x_customer_id"
+                    required="state in ('draft', 'sent')"
+                    options="{'no_open': True, 'no_create': True}"
+                    context="{'list_view_ref': 'custom_master_catalog.res_partner_client_view_list'}"/>
                 <!-- ToDo: Requerido en todos los estados, se deja dinámico por las PO's que ya existen -->
                 <field name="x_invoice_company_id"
                     readonly="1"
@@ -35,6 +39,7 @@
                 <button name="x_syncronize_po_with_sap" type="object" string="Test SAP Sync" groups="base.group_system"
                     invisible="x_event_id == False or state not in ('done', 'purchase') or x_ref_sap != False"/>
                 <button name="x_action_consolidate" type="object" string="Consolidate" groups="base.group_system" invisible="not x_event_id or state != 'to_consolidate'"/>
+                <button name="x_action_reactivate_cost_review" type="object" string="Reactivate cost review" groups="base.group_system,custom_master_catalog.custom_group_ccc_boss" invisible="state != 'done'"/>
             </xpath>
             <xpath expr="//button[@name='action_create_invoice']" position="attributes">
                 <attribute name="groups">base.group_system</attribute>
@@ -61,12 +66,24 @@
                 <attribute name="groups">base.group_system</attribute>
                 <attribute name="invisible">state not in ('draft', 'to approve', 'sent', 'to_consolidate', 'to_consolidate', 'consolidated', 'purchase')</attribute>
             </xpath>
+            <xpath expr="//field[@name='partner_ref']" position="attributes">
+                <attribute name="readonly">state in ('purchase', 'done')</attribute>
+            </xpath>
+            <xpath expr="//field[@name='project_id']" position="attributes">
+                <attribute name="readonly">state in ('purchase', 'done')</attribute>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="attributes">
+                <attribute name="readonly">state in ('purchase', 'done')</attribute>
+            </xpath>
+            <xpath expr="//field[@name='origin']" position="attributes">
+                <attribute name="readonly">state in ('purchase', 'done')</attribute>
+            </xpath>
             <xpath expr="//field[@name='project_id']" position="after">
                 <field name="x_require_change_reason" invisible="1" readonly="1"/>
                 <field name="x_change_comments" invisible="not x_require_change_reason" required="x_require_change_reason"/>
             </xpath>
             <xpath expr="//field[@name='origin']" position="after">
-                <field name="x_origin_events" readonly="0"/>
+                <field name="x_origin_events" readonly="state in ('purchase', 'done')"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list" position="attributes">
                 <attribute name="decoration-danger">x_has_dispute_changes</attribute>
@@ -305,6 +322,18 @@
                         <field name="tax_calculation_rounding_method" invisible="1"/>
                     </group>
                     <group>
+                        <field name="x_event_type_id" readonly="1" string="Event type" options="{'no_open': True, 'no_create': True}"/>
+                        <field name="x_payment_event_type_id"
+                            string="Payment event type"
+                            options="{'no_open': True, 'no_create': True}"
+                            groups="!base.group_system,custom_master_catalog.custom_group_ccc_boss"
+                            readonly="1"/>
+                        <field name="x_payment_event_type_id"
+                            string="Payment event type"
+                            readonly="0"
+                            options="{'no_open': True, 'no_create': True}"
+                            groups="base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_support"/>
+
                         <field name="date_order" invisible="state in ('purchase', 'done')" readonly="state in ['cancel', 'done', 'purchase']"/>
                         <label for="date_approve" invisible="state not in ('purchase', 'done')"/>
                         <div name="date_approve" invisible="state not in ('purchase', 'done')" class="o_row">
@@ -319,31 +348,22 @@
                         <field name="x_covered_amount"/>
                         <field name="x_authorized_amount"/>
                         <field name="x_dispute_authorized_amount"/>
+                        <field name="x_excess_amount"/>
                         <field name="x_authorized_amount_request_count" invisible="1"/>
-                        <div class="row align-items-center g-2" colspan="2">
-                            <div class="col-4">
-                                <label for="x_excess_amount"/>
-                            </div>
-                            <div class="col-3">
-                                <field name="x_excess_amount" nolabel="1"/>
-                            </div>
-                            <div class="col-5 d-flex flex-wrap gap-2 justify-content-end">
-                                <button
-                                    name="action_request_authorized_amount_increase"
-                                    type="object"
-                                    string="Request Increase"
-                                    class="oe_highlight"
-                                    groups="custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_boss"/>
-                                <button
-                                    name="action_view_authorized_amount_requests"
-                                    type="object"
-                                    string="View Increase Requests"
-                                    groups="custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_boss"
-                                    invisible="x_authorized_amount_request_count == 0"/>
-                            </div>
-                        </div>
+                        <button
+                            name="action_request_authorized_amount_increase"
+                            type="object"
+                            string="Request Increase"
+                            class="oe_highlight"
+                            groups="custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_boss"/>
+                        <button
+                            name="action_view_authorized_amount_requests"
+                            type="object"
+                            string="View Increase Requests"
+                            groups="custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_boss"
+                            invisible="x_authorized_amount_request_count == 0"/>
                         <div class="col-12">
-                            <div class="alert d-flex flex-wrap gap-3 align-items-center w-100" role="status">
+                            <div class="alert d-flex flex-wrap gap-1" role="status">
                                 <div class="d-flex gap-1 align-items-center text-nowrap">
                                     <i class="fa fa-check-circle"></i>
                                     <span>Available services:</span>
@@ -534,6 +554,16 @@
             </sheet>
             <chatter/>
             </form>
+        </field>
+    </record>
+    <record id="purchase_order_view_tree_inherit_sap_custom" model="ir.ui.view">
+        <field name="name">purchase.order.tree.inherit.sap.custom</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase.purchase_order_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='state']" position="after">
+                <field name="x_ref_sap" optional="show"/>
+            </xpath>
         </field>
     </record>
 </odoo>

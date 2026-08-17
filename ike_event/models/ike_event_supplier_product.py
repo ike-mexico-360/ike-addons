@@ -94,14 +94,15 @@ class IkeEventProduct(models.Model):
                 ('x_product_id', '=', False),
             ]
 
-            if rec.event_id:
-                excluded = rec.event_id.service_product_ids.filtered(
-                    lambda x:
-                        x.id != rec.id
-                        and x.supplier_number == rec.supplier_number
-                ).mapped('product_id.id')
-                if excluded:
-                    domain.append(('id', 'not in', excluded))
+            # Siblings excludes it self now in JS
+            # if rec.event_id:
+            #     excluded = rec.event_id.service_product_ids.filtered(
+            #         lambda x:
+            #             x.id != rec.id
+            #             and x.supplier_number == rec.supplier_number
+            #     ).mapped('product_id.id')
+            #     if excluded:
+            #         domain.append(('id', 'not in', excluded))
 
             # No Nu VIP + Second supplier
             if not rec.event_id.user_id.vip_user and rec.supplier_number > 1:
@@ -185,7 +186,7 @@ class IkeEventSupplierProduct(models.Model):
     base_cost_price = fields.Float('Agreement Cost', compute='_compute_base_amount', store=True)
     base_vat = fields.Float('Agreement VAT', compute='_compute_base_amount', store=True)
     base_subtotal = fields.Float('Agreement Subtotal', compute='_compute_base_amount', store=True)
-    parent_product_id = fields.Many2one('product.product')
+    parent_product_id = fields.Many2one('product.product', string='Parent Concept', readonly=True)
 
     # === AUTHORIZATION FIELDS === #
     authorization_pending = fields.Boolean(default=True)
@@ -292,16 +293,17 @@ class IkeEventSupplierProduct(models.Model):
                 ('x_product_id', 'in', [rec.event_id.sub_service_id.id, False]),
             ]
 
-            if rec.event_id:
-                # print(rec.event_supplier_link_id.event_id)
-                excluded = rec.event_supplier_link_id.supplier_product_ids.filtered(
-                    lambda x:
-                        x.id != rec.id
-                        and x.supplier_number == rec.supplier_number
-                ).mapped('product_id.id')
+            # Siblings excludes it self: now in JS
+            # if rec.event_id:
+            #     # print(rec.event_supplier_link_id.event_id)
+            #     excluded = rec.event_supplier_link_id.supplier_product_ids.filtered(
+            #         lambda x:
+            #             x.id != rec.id
+            #             and x.supplier_number == rec.supplier_number
+            #     ).mapped('product_id.id')
 
-                if excluded:
-                    domain.append(('id', 'not in', excluded))
+            #     if excluded:
+            #         domain.append(('id', 'not in', excluded))
 
             # No Nu VIP + Second supplier
             if not rec.event_id.user_id.vip_user and rec.supplier_number > 1:
@@ -352,7 +354,7 @@ class IkeEventSupplierProduct(models.Model):
             )
             if not total_base_unit_price:
                 # BoM
-                bom_product_ids = rec.event_id._get_boom_product(rec.product_id)
+                bom_product_ids = rec.event_id._get_boom_product(rec.product_id, rec.supplier_id.id)
                 boom_matrix_cost_line_ids = rec.event_id.get_supplier_product_matrix_lines_by_supplier(
                     rec.supplier_id.id,
                     bom_product_ids.ids,

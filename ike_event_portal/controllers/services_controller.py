@@ -474,13 +474,13 @@ class PortalUserAccount(CustomerPortal):
                     on_route_vals = {
                         "on_route_to_user_start_date": now - timedelta(seconds=1),
                         "on_route_to_start_user_id": request.env.user.id,
-                        "on_route_to_start_comment": "Portal - On route",
+                        "on_route_to_start_comment": _("Portal - On route"),
                     }
                     if not supplier.first_on_route_to_user_start_date:
                         on_route_vals.update({
                             "first_on_route_to_user_start_date": now - timedelta(seconds=1),
                             "first_on_route_to_start_user_id": request.env.user.id,
-                            "first_on_route_to_start_comment": "Portal - On route",
+                            "first_on_route_to_start_comment": _("Portal - On route"),
                         })
                     supplier.write(on_route_vals)
                     supplier.action_on_route()
@@ -488,13 +488,13 @@ class PortalUserAccount(CustomerPortal):
                 arrived_vals = {
                     "on_route_to_user_end_date": now,
                     "on_route_to_end_user_id": request.env.user.id,
-                    "on_route_to_end_comment": "Portal - Arrived",
+                    "on_route_to_end_comment": _("Portal - Arrived"),
                 }
                 if not supplier.first_on_route_to_user_end_date:
                     arrived_vals.update({
                         "first_on_route_to_user_end_date": now,
                         "first_on_route_to_end_user_id": request.env.user.id,
-                        "first_on_route_to_end_comment": "Portal - Arrived",
+                        "first_on_route_to_end_comment": _("Portal - Arrived"),
                     })
                 supplier.write(arrived_vals)
                 supplier.action_arrive()
@@ -511,13 +511,13 @@ class PortalUserAccount(CustomerPortal):
                 contacted_vals = {
                     "contacted_date": now,
                     "contacted_user_id": request.env.user.id,
-                    "contacted_comment": "Portal - Contacted",
+                    "contacted_comment": _("Portal - Contacted"),
                 }
                 if not supplier.first_contacted_date:
                     contacted_vals.update({
                         "first_contacted_date": now,
                         "first_contacted_user_id": request.env.user.id,
-                        "first_contacted_comment": "Portal - Contacted",
+                        "first_contacted_comment": _("Portal - Contacted"),
                     })
                 supplier.write(contacted_vals)
                 supplier.action_contact()
@@ -536,13 +536,13 @@ class PortalUserAccount(CustomerPortal):
                     route2_vals = {
                         "on_route_to_destination_start_date": now - timedelta(seconds=2),
                         "on_route_to_destination_start_user_id": request.env.user.id,
-                        "on_route_to_destination_start_comment": "Portal - On route to destination",
+                        "on_route_to_destination_start_comment": _("Portal - On route to destination"),
                     }
                     if not supplier.first_on_route_to_destination_start_date:
                         route2_vals.update({
                             "first_on_route_to_destination_start_date": now - timedelta(seconds=2),
                             "first_on_route_to_destination_start_user_id": request.env.user.id,
-                            "first_on_route_to_destination_start_comment": "Portal - On route to destination",
+                            "first_on_route_to_destination_start_comment": _("Portal - On route to destination"),
                         })
                     supplier.write(route2_vals)
                     supplier.action_on_route_to_the_destination()
@@ -552,13 +552,13 @@ class PortalUserAccount(CustomerPortal):
                     arrived2_vals = {
                         "on_route_to_destination_end_date": now - timedelta(seconds=1),
                         "on_route_to_destination_end_user_id": request.env.user.id,
-                        "on_route_to_destination_end_comment": "Portal - Arrived to destination",
+                        "on_route_to_destination_end_comment": _("Portal - Arrived to destination"),
                     }
                     if not supplier.first_on_route_to_destination_end_date:
                         arrived2_vals.update({
                             "first_on_route_to_destination_end_date": now - timedelta(seconds=1),
                             "first_on_route_to_destination_end_user_id": request.env.user.id,
-                            "first_on_route_to_destination_end_comment": "Portal - Arrived to destination",
+                            "first_on_route_to_destination_end_comment": _("Portal - Arrived to destination"),
                         })
                     supplier.write(arrived2_vals)
                     supplier.action_arrive_to_the_destination()
@@ -567,13 +567,13 @@ class PortalUserAccount(CustomerPortal):
                 finalized_vals = {
                     "finalized_date": now,
                     "finalized_user_id": request.env.user.id,
-                    "finalized_comment": "Portal - Finalized",
+                    "finalized_comment": _("Portal - Finalized"),
                 }
                 if not supplier.first_finalized_date:
                     finalized_vals.update({
                         "first_finalized_date": now,
                         "first_finalized_user_id": request.env.user.id,
-                        "first_finalized_comment": "Portal - Finalized",
+                        "first_finalized_comment": _("Portal - Finalized"),
                     })
                 supplier.write(finalized_vals)
                 supplier.action_finalize()

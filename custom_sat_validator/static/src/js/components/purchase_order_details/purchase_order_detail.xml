@@ -5,7 +5,7 @@
     t-inherit="ike_event_purchase.PurchaseOrderDetails"
     t-inherit-mode="extension">
 
-        <xpath expr="//tr[.//t[@t-out=&quot;translate('Subtotal')&quot;]]" position="after">
+        <xpath expr="//tr[.//td[normalize-space()='Subtotal']]" position="after">
             <t t-if="state.order_data.cfdi_is_valid and state.order_data.tax_totals">
 
                 <t t-foreach="state.order_data.tax_totals.subtotals"

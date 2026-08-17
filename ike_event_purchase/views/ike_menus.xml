@@ -13,10 +13,13 @@
         <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
     </record>
     <record id="purchase.menu_purchase_root" model="ir.ui.menu">
-        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account'),ref('custom_master_catalog.custom_group_ccc_boss'),ref('custom_master_catalog.custom_group_supplier_support'),ref('custom_master_catalog.custom_group_bi_queries'),ref('custom_master_catalog.custom_group_supplier_contralory'),ref('custom_master_catalog.custom_group_supplier_admin_system')])]"/>
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account'),ref('custom_master_catalog.custom_group_ccc_boss'),ref('custom_master_catalog.custom_group_supplier_support'),ref('custom_master_catalog.custom_group_bi_queries'),ref('custom_master_catalog.custom_group_supplier_contralory'),ref('custom_master_catalog.custom_group_supplier_admin_system'),ref('custom_group_ike_finance')])]"/>
     </record>
     <record id="purchase.menu_purchase_products" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
+    </record>
+    <record id="purchase.purchase_report_main" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('purchase.group_purchase_manager'),ref('custom_group_ike_finance')])]"/>
     </record>
     <record id="purchase.menu_procurement_management_supplier_name" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
@@ -55,4 +58,12 @@
         sequence="3"
         action="action_sh_helpdesk_ticket_assignment_wizard"
         groups="base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss"/>
+
+    <menuitem id="custom_purchase_report_finance"
+        name="Report Purchase"
+        parent="purchase.purchase_report_main"
+        sequence="5"
+        groups="purchase.group_purchase_manager,custom_group_ike_finance"
+        action="action_custom_purchase_order_finance_report_all"/>
+
 </odoo>

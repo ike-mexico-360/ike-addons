@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ike_event_purchase.HelpdeskStageElapsed">
+        <div class="d-flex gap-1 justify-content-end">
+            <span t-if="state.valueFormatted">
+                <i
+                    t-att-style="state.maxWaitTimeWarning ? '' : 'color: transparent !important;'"
+                    t-att-class="{
+                        'fa': true,
+                        'fa-clock-o': true,
+                        'text-danger': state.maxWaitTimeWarning,
+                        'ike_blinking': state.maxWaitTimeWarning,
+                    }"
+                />
+                <span class="ms-1" t-out="state.valueFormatted"/>
+            </span>
+        </div>
+    </t>
+</templates>

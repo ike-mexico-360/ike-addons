@@ -2,11 +2,60 @@ from odoo import models, fields, api, _
 
 
 class ShHelpdeskTicket(models.Model):
-    _inherit = 'sh.helpdesk.ticket'
+    _name = 'sh.helpdesk.ticket'
+    _inherit = ['sh.helpdesk.ticket', 'mail.tracking.duration.mixin']
+    _track_duration_field = 'stage_id'
 
+    current_stage_date = fields.Datetime(compute='_compute_current_stage_tracking')
+    current_elapsed_time_seconds = fields.Integer(compute='_compute_current_stage_tracking')
+    x_stage_max_wait_time_minutes = fields.Integer(
+        related='stage_id.x_max_wait_time_minutes',
+    )
     x_event_id = fields.Many2one('ike.event', string='Event', ondelete='set null')
     in_progress_stage_boolean = fields.Boolean(compute='_compute_in_progress_stage_boolean')
     is_done_stage = fields.Boolean(compute='_compute_is_done_stage')
+
+    @api.depends('stage_id')
+    def _compute_current_stage_tracking(self):
+        tracking_field = self.env['ir.model.fields'].sudo().search_fetch([
+            ('model', '=', self._name),
+            ('name', '=', self._track_duration_field),
+        ], ['id'], limit=1)
+        persisted_records = self.filtered(lambda ticket: isinstance(ticket.id, int))
+        trackings = []
+        if tracking_field and persisted_records:
+            self.env.cr.execute("""
+                SELECT m.res_id,
+                       v.create_date,
+                       v.new_value_integer
+                  FROM mail_tracking_value v
+             LEFT JOIN mail_message m
+                    ON m.id = v.mail_message_id
+                   AND v.field_id = %(field_id)s
+                 WHERE m.model = %(model_name)s
+                   AND m.res_id IN %(record_ids)s
+              ORDER BY v.id DESC
+            """, {
+                'field_id': tracking_field.id,
+                'model_name': self._name,
+                'record_ids': tuple(persisted_records.ids),
+            })
+            trackings = self.env.cr.dictfetchall()
+
+        now = fields.Datetime.now()
+        for ticket in self:
+            current_stage_tracking = next((
+                tracking for tracking in trackings
+                if tracking['res_id'] == ticket.id
+                and tracking['new_value_integer'] == ticket.stage_id.id
+            ), None)
+            ticket.current_stage_date = (
+                current_stage_tracking['create_date']
+                if current_stage_tracking else ticket.create_date
+            )
+            ticket.current_elapsed_time_seconds = max(
+                int((now - ticket.current_stage_date).total_seconds()), 0
+            ) if ticket.current_stage_date else 0
 
     @api.depends('stage_id')
     def _compute_is_done_stage(self):

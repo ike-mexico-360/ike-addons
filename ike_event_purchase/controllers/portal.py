@@ -1,3 +1,8 @@
+import io
+import logging
+
+import xlsxwriter
+
 from odoo import http
 from odoo.http import request, content_disposition
 from odoo.addons.purchase.controllers.portal import CustomerPortal as PurchasePortal
@@ -5,7 +10,6 @@ from odoo.addons.purchase.controllers.portal import CustomerPortal as PurchasePo
 from odoo.exceptions import AccessError, MissingError
 from odoo.osv import expression
 from odoo.tools.translate import _
-import logging
 _logger = logging.getLogger(__name__)
 
 
@@ -306,7 +310,20 @@ class PurchaseOrderController(http.Controller):
                 }
             },
             'x_event_public_id': {'fields': {'id': {}, 'name': {}}},
-            'x_event_id': {'fields': {'id': {}, 'name': {}}},
+            'x_event_id': {
+                'fields': {
+                    'id': {},
+                    'name': {},
+                    'service_id': {'fields': {'id': {}, 'name': {}}},
+                }
+            },
+            'x_sub_service_id': {'fields': {'id': {}, 'name': {}}},
+            'x_payment_event_type_id': {
+                'fields': {
+                    'id': {},
+                    'name': {},
+                }
+            },
             'message_ids': {
                 'fields': {
                     'id': {},
@@ -594,7 +611,10 @@ class PurchaseOrderController(http.Controller):
     @http.route('/my/purchase/download_orders_pdf', type='http', auth='user', website=True)
     def download_orders_pdf(self, **kw):
         try:
-            domain = self._get_purchase_order_portal_domain(kw)
+            domain = expression.AND([
+                self._get_purchase_order_portal_domain(kw),
+                [('state', 'in', ['purchase', 'done'])],
+            ])
             orders = request.env['purchase.order'].sudo().search(domain, order='date_approve desc, id desc')
             if not orders:
                 return request.redirect('/my/purchase')
@@ -612,6 +632,168 @@ class PurchaseOrderController(http.Controller):
             return request.make_response(report, headers=headers)
         except Exception as e:
             _logger.error("[Portal PO Controller] Error generating purchase orders PDF: %s", str(e))
+            return request.redirect('/my/purchase')
+
+    @http.route('/my/purchase/download_orders_xlsx', type='http', auth='user', website=True)
+    def download_orders_xlsx(self, **kw):
+        """Export the portal statement with the same scope as the PDF."""
+        try:
+            domain = expression.AND([
+                self._get_purchase_order_portal_domain(kw),
+                [('state', 'in', ['purchase', 'done'])],
+            ])
+            orders = request.env['purchase.order'].sudo().search(
+                domain, order='date_approve desc, id desc'
+            )
+            if not orders:
+                return request.redirect('/my/purchase')
+
+            report_model = request.env[
+                'report.ike_event_purchase.report_portal_purchase_orders'
+            ].sudo()
+            values = report_model._get_report_values(
+                orders.ids, data={'filters': kw}
+            )
+
+            output = io.BytesIO()
+            workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+            worksheet = workbook.add_worksheet('Estado de cuenta')
+            worksheet.hide_gridlines(2)
+
+            title_format = workbook.add_format({
+                'bold': True, 'font_size': 18, 'font_color': '#15006A',
+            })
+            subtitle_format = workbook.add_format({
+                'font_size': 10, 'font_color': '#4B4F75',
+            })
+            label_format = workbook.add_format({
+                'bold': True, 'font_color': '#2437C7', 'bg_color': '#EEF1FF',
+                'border': 1, 'border_color': '#CFD5F5',
+            })
+            value_format = workbook.add_format({
+                'bold': True, 'bg_color': '#EEF1FF', 'border': 1,
+                'border_color': '#CFD5F5',
+            })
+            money_summary_format = workbook.add_format({
+                'bold': True, 'bg_color': '#EEF1FF', 'border': 1,
+                'border_color': '#CFD5F5', 'num_format': '#,##0.00',
+            })
+            header_format = workbook.add_format({
+                'bold': True, 'font_color': '#FFFFFF', 'bg_color': '#16006F',
+                'border': 1, 'border_color': '#16006F', 'align': 'center',
+                'valign': 'vcenter',
+            })
+            text_format = workbook.add_format({
+                'border': 1, 'border_color': '#DFE3F1', 'valign': 'top',
+            })
+            date_format = workbook.add_format({
+                'border': 1, 'border_color': '#DFE3F1',
+                'num_format': 'dd/mm/yyyy', 'valign': 'top',
+            })
+            money_format = workbook.add_format({
+                'border': 1, 'border_color': '#DFE3F1',
+                'num_format': '#,##0.00', 'valign': 'top',
+            })
+
+            worksheet.merge_range('A1:G1', 'Estado de cuenta', title_format)
+            worksheet.merge_range(
+                'A2:G2',
+                '%s órdenes incluidas' % len(orders),
+                subtitle_format,
+            )
+            worksheet.write('A3', 'Proveedor', label_format)
+            worksheet.merge_range(
+                'B3:G3', values['supplier_info']['name'], value_format
+            )
+
+            row = 3
+            if values['applied_filters']:
+                filters_text = ' | '.join(
+                    '%s: %s' % item for item in values['applied_filters']
+                )
+                worksheet.write(row, 0, 'Filtros aplicados', label_format)
+                worksheet.merge_range(row, 1, row, 6, filters_text, value_format)
+                row += 1
+
+            metrics = [
+                ('Órdenes', len(orders), False),
+                ('Pedidos sin facturar', values['uninvoiced_order_count'], False),
+                ('Monto pendiente de facturar', values['pending_invoice_amount'], True),
+                ('Facturas', values['invoice_count'], False),
+                ('Subtotal facturado', values['invoiced_amount'], True),
+                ('Subtotal pagado', values['paid_amount'], True),
+                ('Pendiente a pagar', values['pending_payment_amount'], True),
+                ('Facturas rechazadas', values['rejected_invoice_count'], False),
+                ('Saldo cuenta', values['paid_amount'], True),
+            ]
+            for index, (label, value, is_money) in enumerate(metrics):
+                metric_row = row + (index // 3)
+                metric_col = (index % 3) * 2
+                worksheet.write(metric_row, metric_col, label, label_format)
+                worksheet.write(
+                    metric_row,
+                    metric_col + 1,
+                    value,
+                    money_summary_format if is_money else value_format,
+                )
+
+            table_row = row + 4
+            headers = [
+                'Orden', 'Evento', 'Fecha', 'Subtotal', 'Impuestos', 'Total',
+                'Estado de facturación',
+            ]
+            for column, header in enumerate(headers):
+                worksheet.write(table_row, column, header, header_format)
+
+            for offset, order in enumerate(orders, start=1):
+                current_row = table_row + offset
+                order_label = order.name or ''
+                if order.x_ref_sap:
+                    order_label += '\nSAP %s' % order.x_ref_sap
+                worksheet.write(current_row, 0, order_label, text_format)
+                worksheet.write(
+                    current_row, 1, report_model._order_event(order), text_format
+                )
+                order_date = order.date_approve or order.date_order
+                if order_date:
+                    worksheet.write_datetime(current_row, 2, order_date, date_format)
+                else:
+                    worksheet.write(current_row, 2, '-', text_format)
+                worksheet.write_number(current_row, 3, order.amount_untaxed, money_format)
+                worksheet.write_number(current_row, 4, order.amount_tax, money_format)
+                worksheet.write_number(current_row, 5, order.amount_total, money_format)
+                worksheet.write(
+                    current_row,
+                    6,
+                    report_model._invoice_status(order),
+                    text_format,
+                )
+
+            worksheet.autofilter(table_row, 0, table_row + len(orders), 6)
+            worksheet.set_column('A:A', 22)
+            worksheet.set_column('B:B', 22)
+            worksheet.set_column('C:C', 14)
+            worksheet.set_column('D:F', 18)
+            worksheet.set_column('G:G', 24)
+            workbook.close()
+            xlsx_content = output.getvalue()
+            headers = [
+                (
+                    'Content-Type',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ),
+                ('Content-Length', len(xlsx_content)),
+                (
+                    'Content-Disposition',
+                    content_disposition('ordenes_de_compra.xlsx'),
+                ),
+            ]
+            return request.make_response(xlsx_content, headers=headers)
+        except Exception as e:
+            _logger.exception(
+                "[Portal PO Controller] Error generating purchase orders XLSX: %s",
+                str(e),
+            )
             return request.redirect('/my/purchase')
 
     @http.route('/provider/portal/purchase/save_dispute', type='json', auth='user', methods=['POST'])
@@ -636,3 +818,192 @@ class PurchaseOrderController(http.Controller):
         except Exception as e:
             _logger.error(f"Error saving purchase order dispute via RPC: {str(e)}")
             return {'success': False, 'error': str(e)}
+
+
+class PortalInvoicePage(CustomerPortal):
+
+    @http.route(
+        ['/my/provider/invoices'],
+        type='http',
+        auth='user',
+        website=True,
+    )
+    def portal_my_invoices_custom(self, **kw):
+
+        if not request.env.user.has_group(
+            'ike_event_portal.custom_group_portal_finance'
+        ):
+            return request.redirect('/my')
+
+        values = {
+            'page_name': 'my_invoices_custom',
+        }
+
+        return request.render(
+            'ike_event_purchase.portal_my_invoices_page',
+            values
+        )
+
+
+class InvoicePortalController(http.Controller):
+
+    def _get_invoice_domain(self, filters=None):
+
+        domain = [
+            ('move_type', '=', 'in_invoice'),
+            ('state', '!=', 'cancel')
+        ]
+
+        supplier_id = self._get_supplier_id()
+
+        if supplier_id:
+            domain.append(
+                ('partner_id', '=', supplier_id)
+            )
+        elif not request.env.user.has_group('base.group_system'):
+            domain.append(('id', '=', 0))
+
+        filters = filters or {}
+
+        reference = (filters.get('reference') or '').strip()
+        supplier = (filters.get('supplier') or '').strip()
+        date_from = filters.get('dateFrom')
+        date_to = filters.get('dateTo')
+        status = (filters.get('status') or '').strip()
+
+        if reference:
+            domain.append(
+                ('name', 'ilike', reference)
+            )
+
+        if supplier:
+            domain.append(
+                ('partner_id.name', 'ilike', supplier)
+            )
+
+        if date_from:
+            domain.append(
+                ('invoice_date', '>=', date_from)
+            )
+
+        if date_to:
+            domain.append(
+                ('invoice_date', '<=', date_to)
+            )
+
+        if status == 'cancel':
+            domain.append(('state', '=', 'cancel'))
+        elif status:
+            domain.extend([
+                ('state', '!=', 'cancel'),
+                ('payment_state', '=', status),
+            ])
+
+        return domain
+
+    def _get_supplier_id(self):
+        relation = request.env['res.partner.supplier_users.rel'].sudo().search(
+            [
+                ('user_id', '=', request.env.user.id)
+            ],
+            limit=1
+        )
+
+        return relation.supplier_id.id if relation else False
+
+    @http.route('/my/invoice/load_invoices', type='json', auth='user')
+    def load_invoices(self):
+
+        invoices = request.env['account.move'].sudo().search(
+            self._get_invoice_domain()
+        )
+
+        records = []
+        has_payment_receipt_field = (
+            'x_payment_receipt_file'
+            in request.env['account.move']._fields
+        )
+
+        for invoice in invoices:
+            has_payment_receipt = bool(
+                has_payment_receipt_field
+                and invoice.payment_state == 'paid'
+                and invoice.x_payment_receipt_file
+            )
+
+            records.append({
+                'id': invoice.id,
+                'name': invoice.name,
+                'access_token': invoice.access_token or invoice._portal_ensure_token(),
+                'invoice_date': (
+                    str(invoice.invoice_date)
+                    if invoice.invoice_date
+                    else False
+                ),
+                'invoice_date_due': (
+                    str(invoice.invoice_date_due)
+                    if invoice.invoice_date_due
+                    else False
+                ),
+                'amount_total': invoice.amount_total,
+                'state': invoice.state,
+                'payment_state': invoice.payment_state,
+                'has_payment_receipt': has_payment_receipt,
+                'payment_receipt_filename': (
+                    invoice.x_payment_receipt_filename
+                    if has_payment_receipt
+                    else False
+                ),
+                'partner_id': {
+                    'id': invoice.partner_id.id,
+                    'name': invoice.partner_id.name
+                },
+            })
+
+        return {
+            'records': records
+        }
+
+    @http.route('/my/invoice/download_invoices_pdf', type='http', auth='user', website=True)
+    def download_invoices_pdf(self, **kw):
+        try:
+            if not request.env.user.has_group(
+                'ike_event_portal.custom_group_portal_finance'
+            ):
+                return request.redirect('/my')
+
+            domain = self._get_invoice_domain(kw)
+
+            invoices = request.env['account.move'].sudo().search(
+                domain,
+                order='invoice_date desc, id desc'
+            )
+
+            if not invoices:
+                return request.make_response(
+                    "No invoices found",
+                    headers=[('Content-Type', 'text/plain')]
+                )
+
+            report = request.env['ir.actions.report'].sudo()._render_qweb_pdf(
+                'ike_event_purchase.action_report_portal_invoices',
+                invoices.ids,
+                data={
+                    'report_type': 'pdf',
+                    'filters': kw,
+                }
+            )[0]
+
+            headers = [
+                ('Content-Type', 'application/pdf'),
+                ('Content-Length', len(report)),
+                (
+                    'Content-Disposition',
+                    content_disposition('facturas.pdf')
+                ),
+            ]
+
+            return request.make_response(report, headers=headers)
+
+        except Exception:
+            raise

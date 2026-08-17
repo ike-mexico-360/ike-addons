@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="1">
+        <record id="ccmd_01" model="custom.consolidation.month.day">
+            <field name="day">1</field>
+        </record>
+
+        <record id="ccmd_02" model="custom.consolidation.month.day">
+            <field name="day">2</field>
+        </record>
+
+        <record id="ccmd_03" model="custom.consolidation.month.day">
+            <field name="day">3</field>
+        </record>
+
+        <record id="ccmd_04" model="custom.consolidation.month.day">
+            <field name="day">4</field>
+        </record>
+
+        <record id="ccmd_05" model="custom.consolidation.month.day">
+            <field name="day">5</field>
+        </record>
+
+        <record id="ccmd_06" model="custom.consolidation.month.day">
+            <field name="day">6</field>
+        </record>
+
+        <record id="ccmd_07" model="custom.consolidation.month.day">
+            <field name="day">7</field>
+        </record>
+
+        <record id="ccmd_08" model="custom.consolidation.month.day">
+            <field name="day">8</field>
+        </record>
+
+        <record id="ccmd_09" model="custom.consolidation.month.day">
+            <field name="day">9</field>
+        </record>
+
+        <record id="ccmd_10" model="custom.consolidation.month.day">
+            <field name="day">10</field>
+        </record>
+
+        <record id="ccmd_11" model="custom.consolidation.month.day">
+            <field name="day">11</field>
+        </record>
+
+        <record id="ccmd_12" model="custom.consolidation.month.day">
+            <field name="day">12</field>
+        </record>
+
+        <record id="ccmd_13" model="custom.consolidation.month.day">
+            <field name="day">13</field>
+        </record>
+
+        <record id="ccmd_14" model="custom.consolidation.month.day">
+            <field name="day">14</field>
+        </record>
+
+        <record id="ccmd_15" model="custom.consolidation.month.day">
+            <field name="day">15</field>
+        </record>
+
+        <record id="ccmd_16" model="custom.consolidation.month.day">
+            <field name="day">16</field>
+        </record>
+
+        <record id="ccmd_17" model="custom.consolidation.month.day">
+            <field name="day">17</field>
+        </record>
+
+        <record id="ccmd_18" model="custom.consolidation.month.day">
+            <field name="day">18</field>
+        </record>
+
+        <record id="ccmd_19" model="custom.consolidation.month.day">
+            <field name="day">19</field>
+        </record>
+
+        <record id="ccmd_20" model="custom.consolidation.month.day">
+            <field name="day">20</field>
+        </record>
+
+        <record id="ccmd_21" model="custom.consolidation.month.day">
+            <field name="day">21</field>
+        </record>
+
+        <record id="ccmd_22" model="custom.consolidation.month.day">
+            <field name="day">22</field>
+        </record>
+
+        <record id="ccmd_23" model="custom.consolidation.month.day">
+            <field name="day">23</field>
+        </record>
+
+        <record id="ccmd_24" model="custom.consolidation.month.day">
+            <field name="day">24</field>
+        </record>
+
+        <record id="ccmd_25" model="custom.consolidation.month.day">
+            <field name="day">25</field>
+        </record>
+
+        <record id="ccmd_26" model="custom.consolidation.month.day">
+            <field name="day">26</field>
+        </record>
+
+        <record id="ccmd_27" model="custom.consolidation.month.day">
+            <field name="day">27</field>
+        </record>
+
+        <record id="ccmd_28" model="custom.consolidation.month.day">
+            <field name="day">28</field>
+        </record>
+
+        <record id="ccmd_29" model="custom.consolidation.month.day">
+            <field name="day">29</field>
+        </record>
+
+        <record id="ccmd_30" model="custom.consolidation.month.day">
+            <field name="day">30</field>
+        </record>
+
+        <record id="ccmd_31" model="custom.consolidation.month.day">
+            <field name="day">31</field>
+        </record>
+    </data>
+
+</odoo>

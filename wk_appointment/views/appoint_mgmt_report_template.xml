@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (c) 2016-Present Webkul Software Pvt. Ltd. (<https://webkul.com/>) -->
+<!-- See LICENSE file for full copyright and licensing details. -->
+<!-- License URL : https://store.webkul.com/license.html/ -->
+<odoo>
+	<data>
+		<template id="wk_appointment.appoint_report">
+			<t t-call="web.html_container">
+				<t t-foreach="docs" t-as="o">
+					<t t-call="web.external_layout">
+						<div class="page">
+							<div class="oe_structure"/>
+							<div class="row" style="height:20px;"/>
+							<div class="row bg-light mt16 mb32 ml0 mr0">
+								<div class="col-6">
+									<span t-field="o.customer" t-options="{&quot;widget&quot;: &quot;contact&quot;, &quot;fields&quot;: [&quot;address&quot;, &quot;name&quot;, &quot;phone&quot;], &quot;no_marker&quot;: True, &quot;phone_icons&quot;: True}"/>
+								</div>
+								<div class="col-6">
+									<p>
+										<strong> Appointment Date : </strong>
+										<t t-set="day_of_date" t-esc="datetime.datetime.strptime(str(o.appoint_date) ,'%Y-%m-%d').date().strftime('%A')"/>,
+										<span t-field="o.appoint_date" t-field-options='{"format": "d MMM, y"}'/>
+									</p>
+									<p t-if="o.time_slot">
+										<strong> TimeSlot : </strong>
+										<!-- <span t-field="o.time_slot.timerange"/> -->
+										<span t-field="o.time_slot.start_time"  t-options='{"widget": "float_time"}'/> - <span t-field="o.time_slot.end_time"  t-options='{"widget": "float_time"}'/>
+									</p>
+									<p>
+										<strong> Appointment With : </strong>
+										<span t-field="o.appoint_person_id.name"/>
+										<span t-if="o.appoint_group_id" class="text-right">
+											(<span t-field="o.appoint_group_id.group_name"/>)
+										</span>
+									</p>
+								</div>
+							</div>
+							<h2>
+								<span> Appointment # </span> <span t-field="o.name"/>
+							</h2>
+							<div class="row mt32 mb32">
+								<div class="col-6">
+									<strong>Booking Date : </strong> <span t-field="o.create_date"/>
+								</div>
+								<div class="col-6" >
+									<strong>Appointment Address : </strong>
+									<span t-field="o.app_street1"/>
+									<span t-field="o.app_street2"/>
+									<span t-field="o.app_city"/>
+									<span t-field="o.app_state_id"/>
+									<span t-field="o.app_zip"/>
+									<span t-field="o.app_country_id"/>
+								</div>
+							</div>
+							<table class="table table-condensed">
+								<thead>
+									<tr>
+										<th>Description</th>
+										<th class="text-right">Unit Price</th>
+										<th class="text-right">Taxes</th>
+										<th class="text-right">Amount</th>
+									</tr>
+								</thead>
+								<tbody>
+									<t t-foreach="o.appoint_lines" t-as="l">
+										<tr>
+											<td><span t-field="l.name"/></td>
+											<td class="text-right">
+												<span t-field="l.price_unit"/>
+											</td>
+											<td class="text-right">
+												<span t-esc="', '.join(map(lambda x: x.description or x.name, l.tax_id))"/>
+											</td>
+											<td class="text-right">
+												<span t-field="l.price_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.currency_id}"/>
+											</td>
+										</tr>
+									</t>
+									<tr t-foreach="range(max(4-len(o.appoint_lines),0))" t-as="l">
+					                    <td>&amp;nbsp;</td>
+					                    <td/>
+					                    <td/>
+					                    <td/>
+					                </tr>
+									<div class="clearfix">
+										<!-- <div class="row text-right" name="total"> -->
+											<!-- <div> -->
+												<table class="table-condensed" style="min-width: 200px;max-width: 350px; float:right;">
+													<tr class=" border-black" style="border-bottom:1px solid #dddddd;">
+														<td><strong>Subtotal</strong></td>
+														<td class="text-right">
+															<span t-field="o.amount_untaxed" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.pricelist_id.currency_id}"/>
+														</td>
+													</tr>
+													<tr class=" border-black">
+														<td><strong>Total</strong></td>
+														<td class="text-right">
+															<span t-field="o.amount_total" t-options="{&quot;widget&quot;: &quot;monetary&quot;, &quot;display_currency&quot;: o.pricelist_id.currency_id}"/>
+														</td>
+													</tr>
+												</table>
+											<!-- </div> -->
+										<!-- </div> -->
+									</div>
+								</tbody>
+							</table>
+							<div class="row mt32 mb32">
+								<div t-if="o.description" class="col-6">
+									<p>
+										<span t-field="o.description"/>
+									</p>
+								</div>
+							</div>
+							<div t-if="o.invoice_status">
+								<p>
+									<strong>Invoice Status: </strong>
+									<span t-field="o.invoice_status"/>
+								</p>
+							</div>
+						</div>
+					</t>
+				</t>
+			</t>
+		</template>
+
+			<!-- attachment_use="True"
+			attachment="(object.appoint_state in ('done')) and ((object.customer.name or '')+ ' report' + '.pdf')" -->
+
+		<record id="appoint_mgmt_appoint_report" model="ir.actions.report">
+        <field name="name">Appointment Report</field>
+        <field name="model">appointment</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">wk_appointment.appoint_report</field>
+        <field name="report_file">wk_appointment.appoint_report</field>
+        <field name="print_report_name">'%s' % (object.customer.name)</field>
+        <field name="binding_model_id" ref="model_appointment"/>
+        <field name="binding_type">report</field>
+    </record>
+
+	</data>
+</odoo>

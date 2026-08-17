@@ -14,7 +14,7 @@
         </xpath> -->
         <xpath expr="//a[@id='print_invoice_report']" position="after">
 
-            <div t-if="order.state in ('purchase') and (request.env.user.has_group('ike_event_portal.custom_group_portal_finance'))"
+            <div t-if="order.state in ('purchase','done') and (request.env.user.has_group('ike_event_portal.custom_group_portal_finance'))"
                  class="d-grid gap-2 mt-3"
                  id="sat_validator_portal_root">
 

@@ -6,6 +6,10 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="custom_master_catalog.res_partner_supplier_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='x_has_portal']" position="after">
+                <field name="x_advanced_portal" />
+            </xpath>
+
             <xpath expr="//field[@name='priority']" position="after">
                 <field name="x_has_consolidation"/>
                 <field name="x_consolidation_frequency" invisible="not x_has_consolidation" required="x_has_consolidation"/>
@@ -13,7 +17,10 @@
                     invisible="not x_has_consolidation or x_consolidation_frequency not in ('weekly', 'biweekly', 'triweekly')"/>
                 <field name="x_consolidation_day_of_month"
                     invisible="not x_has_consolidation or x_consolidation_frequency != 'monthly'"/>
-                <field name="x_consolidation_next_date" readonly="1" invisible="not x_has_consolidation" force_save="1"/>
+                <field name="x_consolidation_day_of_month_ids" widget="many2many_tags"
+                    invisible="not x_has_consolidation or x_consolidation_frequency != 'custom_month_days'"
+                    options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"/>
+                <field name="x_consolidation_next_date" required="x_has_consolidation" readonly="1" invisible="not x_has_consolidation" force_save="1"/>
             </xpath>
         </field>
     </record>
