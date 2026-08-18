@@ -22,7 +22,7 @@
                     type="object" class="btn btn-primary bottom-0 end-0 m-3 rounded-circle"
                     icon="fa-commenting-o"
                     title="Comment"
-                    groups="!base.group_system,!custom_master_catalog.custom_group_event_coordinator"
+                    groups="base.group_system"
                 />
                  <button name="action_open_view_comment_wizard"
                     type="object" class="btn btn-primary bottom-0 end-0 m-3 rounded-circle"

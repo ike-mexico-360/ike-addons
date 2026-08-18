@@ -40,9 +40,9 @@ export class IkeTravelTrackingStatusbar extends Component {
         });
 
         onWillStart(() => {
-            const supplierId = this.props.record.evalContext.supplier_id || this.props.record.data.supplier_id[0];
-            if (supplierId) {
-                this.busChannel = `ike_channel_supplier_${supplierId}`;
+            const eventId = this.props.record.data.event_id[0];
+            if (eventId) {
+                this.busChannel = `ike_channel_event_${eventId}`;
                 this.busService.addChannel(this.busChannel);
             }
         });
@@ -58,13 +58,13 @@ export class IkeTravelTrackingStatusbar extends Component {
             }
         }
 
-        this.busService.subscribe("ike_supplier_lines_reload_2", this.broadcast_update_stage);
+        this.busService.subscribe("ike_event_supplier_reload", this.broadcast_update_stage);
 
         // Cleanup al desmontar
         onWillUnmount(() => {
             if (this.busChannel) {
                 this.busService.deleteChannel(this.busChannel);
-                this.busService.unsubscribe("ike_supplier_lines_reload_2", this.broadcast_update_stage);
+                this.busService.unsubscribe("ike_event_supplier_reload", this.broadcast_update_stage);
             }
         });
     }

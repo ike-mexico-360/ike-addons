@@ -22,7 +22,7 @@ class PurchaseOrder(models.Model):
         ('purchase',),  # Ancla de posición
     ])
     x_event_id = fields.Many2one('ike.event', string='Event', ondelete='set null', copy=False)
-    x_event_type_id = fields.Many2one(related="x_event_id.payment_event_type_id", string='Payment event type', store=True,)
+    x_event_type_id = fields.Many2one(related="x_event_id.event_type_id", string='Payment event type', store=True,)
     x_payment_event_type_id = fields.Many2one(related="x_event_id.payment_event_type_id", string='Payment event type', store=True,)
     x_services_available = fields.Integer(related='x_event_id.services_available')
     x_services_allowed = fields.Integer(related='x_event_id.services_allowed')

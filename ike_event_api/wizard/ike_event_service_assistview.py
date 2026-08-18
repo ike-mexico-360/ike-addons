@@ -17,10 +17,8 @@ class IkeEventServiceAssistView(models.TransientModel):
 
     # ike.service.input.vial fields
     vin = fields.Char(string='VIN')
-    brand = fields.Char(string='Brand')  # ToDo: Remove
-    brand_id = fields.Many2one('fleet.vehicle.model.brand', string='Brand')
-    model = fields.Char(string='Model')  # ToDo: Remove
-    model_id = fields.Many2one('fleet.vehicle.model', string='Model')
+    brand = fields.Char(string='Brand')
+    model = fields.Char(string='Model')
     plate = fields.Char(string='Plate')
     color = fields.Char(string='Color')
     year = fields.Char(string='Year')
@@ -66,7 +64,7 @@ class IkeEventServiceAssistView(models.TransientModel):
         service_id = self.env[self.service_res_model].browse(self.service_res_id)
         if self.service_res_model == 'ike.service.input.vial':
             service_id.write({
-                'vehicle_brand': (self.brand or self.brand_id.name or '').strip(),
+                'vehicle_brand': self.brand,
                 'vehicle_model': self.model,
                 'vehicle_plate': self.plate,
                 'vehicle_color': self.color,

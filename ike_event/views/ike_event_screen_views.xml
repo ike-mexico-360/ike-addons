@@ -24,7 +24,7 @@
                     <button name="action_open_duplicate_wizard" string="Duplicate Expedient"
                             confirm="Are you sure?"
                             type="object" class="btn-info"
-                            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator"
+                            groups="!base.group_system,custom_master_catalog.custom_group_event_coordinator"
                             invisible="stage_ref in ['draft', 'verifying']"/>
                     <button name="open_cancel_wizard" string="Cancel"
                             confirm="Are you sure?"
@@ -36,7 +36,7 @@
                             invisible="stage_ref in ['draft', 'capturing', 'cancel', 'cancel_subsequently']"/>
                     <button name="action_directory_center_attention" string="Directories center attention"
                             type="object" class="btn-primary"
-                            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator"
+                            groups="!base.group_system,custom_master_catalog.custom_group_event_coordinator"
                             invisible="stage_ref in ['draft', 'capturing', 'cancel', 'cancel_subsequently', 'verifying']"/>
                     <field name="stage_id" widget="ike_statusbar_duration" options="{'clickable': 0, 'fold_field': 'fold'}"/>
                 </header>

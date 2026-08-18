@@ -133,15 +133,6 @@ class IkePurchaseController(http.Controller):
 
             uom_id = self._get_uom_id(uom)
 
-            order_line_id = request.env['purchase.order.line'].search([
-                ('x_parent_expedient', '=', event_name),
-                ('order_id.project_id', '=', project_id.id),
-            ], limit=1)
-            if order_line_id:
-                raise BadRequest(
-                    "Expedient %s already exists for the project %s in the record [%s] %s" % (event_name, order_line_id.order_id.project_id.name, order_line_id.order_id.name, order_line_id.product_id.name)
-                )
-
             order_line.append(Command.create({
                 "product_id": product,
                 "product_qty": float(order_quantity),

@@ -689,8 +689,6 @@ class IkeEvent_Search(models.Model):
             elif not self.use_external_locations:
                 if not vehicle['latitude'] or not vehicle['longitude']:
                     continue
-                if not str(vehicle['latitude']).isdigit() or not str(vehicle['longitude']).isdigit():
-                    continue
                 osrm_distance = self.get_osrm_distance(
                     vehicle['latitude'], vehicle['longitude'],
                     origin_latitude, origin_longitude

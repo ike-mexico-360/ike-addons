@@ -531,13 +531,6 @@
             <field name="sequence">12</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_3_12"/>
         </record>
-        <record id="ike_binnacle_stage_3_13" model="ike.event.binnacle">
-            <field name="event_stage_id" ref="ike_event.ike_event_stage_capturing"/>
-            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
-            <field name="step_number">3</field>
-            <field name="sequence">13</field>
-            <field name="text_html">{{object.get_required_plates()}}</field>
-        </record>
         <record id="ike_binnacle_stage_mail_template_3_13" model="mail.template">
             <field name="name">Binnacle stage mail template 3 13</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
@@ -2406,7 +2399,6 @@
                 t-value="env['ike.event.supplier.product'].search([
                     ('event_id', '=', object.id),
                     ('display_type', '=', False),
-                    ('parent_product_id', '=', False),
                     ('event_supplier_link_id', 'in', valid_suppliers.mapped('supplier_link_id').ids)
                 ])"/>
 
@@ -2506,7 +2498,6 @@
                 t-value="env['ike.event.supplier.product'].search([
                     ('event_id', '=', object.id),
                     ('display_type', '=', False),
-                    ('parent_product_id', '=', False),
                     ('event_supplier_link_id', 'in', valid_suppliers.mapped('supplier_link_id').ids)
                 ])"/>
 

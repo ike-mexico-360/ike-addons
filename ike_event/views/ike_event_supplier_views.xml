@@ -447,7 +447,8 @@
                                 />
                             </div>
                             <div class="col-12 col-lg-7 col-xl-8">
-                                <field name="supplier_id" invisible="1"/>  <!-- Necesario para el bus de eventos -->
+                                <field name="event_id" invisible="1"/> <!-- Necesario para el bus de eventos -->
+                                <field name="supplier_id" invisible="1"/>
                                 <field name="stage_id" widget="ike_travel_tracking_statusbar"
                                     options="{'match_visible_field': 'ref'}" statusbar_visible="assigned,on_route,arrived,on_route_2,arrived_2,finalized"/>
                                 <!-- Widget  LineProgress Campos-->
@@ -543,6 +544,9 @@
                     optional="hide"/>
                 <field name="product_id" readonly="1"
                     options="{'no_open': 1}" />
+                <field name="parent_product_id"
+                    options="{'no_open': 1}"
+                    optional="show"/>
                 <field name="name" column_invisible="1" />
                 <field name="quantity" string="Quantity event" readonly="1" optional="show" />
                 <field name="unit_price" string="Cost unit event" readonly="1" optional="show" />

@@ -41,8 +41,8 @@ class EventAPIController(http.Controller):
             card = openai_data.get("circulation_card", {}).get("data", {})
             vehicle_data = openai_data.get("vehicle_photos", {}).get("data", {})
 
-            brand = (vehicle_data.get("brand") or "").strip()
-            model = (vehicle_data.get("model") or "").strip()
+            brand = vehicle_data.get("brand", "")
+            model = vehicle_data.get("model", "")
             year = card.get("model_year", "")
             plates = vehicle_data.get("license_plate", False)
             if not plates:
@@ -92,17 +92,10 @@ class EventAPIController(http.Controller):
             if not plate_image_encoded:
                 plate_image_encoded = first_image
 
-            # Obtener brand_id
-            # brand_id = request.env['fleet.vehicle.model.brand'].search([('name', '=ilike', brand)], limit=1)
-
-            # Obtener model_id
-            # model_id = request.env['fleet.vehicle.model'].search([('name', '=ilike', model)], limit=1)
-
             message = {
-                "id": event_id, "brand": brand, "brand_id": False, "model": model, "model_id": False,
-                "plate": plates, "color": color, "location": location, "plate_image": plate_image_encoded,
-                "vehicle_images": vehicle_images_encoded, "answers": answers, "year": year,
-                "carretero": location.get("carretero"),
+                "id": event_id, "brand": brand, "model": model, "plate": plates, "color": color, "location": location,
+                "plate_image": plate_image_encoded, "vehicle_images": vehicle_images_encoded, "answers": answers,
+                "year": year, "carretero": location.get("carretero"),
             }
             _logger.info(f"/ike/event/assistview/{event_id}")
 

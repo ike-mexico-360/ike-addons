@@ -689,8 +689,7 @@ class ProviderPortalServices(http.Controller):
         # 1. Define the domain identical to the one used in JS
         domain = [
             ('event_supplier_link_id', '=', supplier_link_id),
-            ('display_type', 'not in', ['line_section', 'line_note']),
-            ('parent_product_id', '=', False),
+            ('display_type', 'not in', ['line_section', 'line_note'])
         ]
 
         # 2. Execute the search query using SUDO

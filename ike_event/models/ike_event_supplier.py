@@ -191,7 +191,8 @@ class IkeEventSupplier(models.Model):
                 ('x_vehicle_service_state', '=', 'available'),
                 ('x_vehicle_type', 'in', service_vehicle_type_ids),
                 ('x_partner_id', '=', rec.supplier_id.id),
-                ('x_subservice_ids', '=', [rec.event_id.sub_service_id.id])
+                ('x_subservice_ids', '=', [rec.event_id.sub_service_id.id]),
+                ('driver_id', '!=', False),
             ]
 
             if rec.event_id.requires_federal_plates:
@@ -232,7 +233,18 @@ class IkeEventSupplier(models.Model):
         for rec in self:
             event_summary_supplier_data = ""
             # FixMe: wrong validation
-            states = ('searching', 'assigned', 'in_progress', 'completed', 'verifying', 'closed', 'cancel', 'cancel_subsequently')
+            states = (
+                'searching',
+                'assigned',
+                'in_progress',
+                'completed',
+                'verifying',
+                'closed',
+                'cancel',
+                'cancel_subsequently',
+                'cancel_verifying',
+                'cancel_closed',
+            )
             if rec.event_id.service_ref == 'vial' and rec.event_id.stage_ref in states:
                 # Modelo de detalles del vehículo al que se le dará el servicio
                 vial_res_model = rec.event_id.service_res_model
@@ -697,7 +709,6 @@ class IkeEventSupplier(models.Model):
             'domain': [
                 ('event_supplier_link_id', 'in', self.mapped('supplier_link_id.id')),
                 ('display_type', 'not in', ['line_section', 'line_note']),
-                ('parent_product_id', '=', False),
             ],
             'target': 'new',
             'context': {
@@ -1052,7 +1063,8 @@ class IkeEventSupplierLink(models.Model):
                 ('x_vehicle_service_state', '=', 'available'),
                 ('x_vehicle_type', 'in', service_vehicle_type_ids),
                 ('x_partner_id', '=', rec.supplier_id.id),
-                ('x_subservice_ids', '=', [rec.event_id.sub_service_id.id])
+                ('x_subservice_ids', '=', [rec.event_id.sub_service_id.id]),
+                ('driver_id', '!=', False),
             ]
 
             if rec.event_id.requires_federal_plates:

@@ -40,9 +40,7 @@ export class IkeEventServiceAssistviewController extends FormController {
             const vals = { received_assistview: true };
 
             if (message?.brand) vals.brand = message.brand;
-            if (message?.brand_id) vals.brand_id = message.brand_id;
             if (message?.model) vals.model = message.model;
-            if (message?.model_id) vals.model_id = message.model_id;
             if (message?.plate) vals.plate = message.plate;
             if (message?.color) vals.color = message.color;
             if (message?.year) vals.year = message.year;

@@ -326,13 +326,13 @@
                         <field name="x_payment_event_type_id"
                             string="Payment event type"
                             options="{'no_open': True, 'no_create': True}"
-                            groups="!base.group_system,custom_master_catalog.custom_group_ccc_boss"
+                            groups="!base.group_system,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_support"
                             readonly="1"/>
                         <field name="x_payment_event_type_id"
                             string="Payment event type"
                             readonly="0"
                             options="{'no_open': True, 'no_create': True}"
-                            groups="base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_supplier_support"/>
+                            groups="base.group_system,custom_master_catalog.custom_group_ccc_boss,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_analyst"/>
 
                         <field name="date_order" invisible="state in ('purchase', 'done')" readonly="state in ['cancel', 'done', 'purchase']"/>
                         <label for="date_approve" invisible="state not in ('purchase', 'done')"/>

@@ -37,7 +37,7 @@ class PurchaseOrderLine(models.Model):
         aggregator=None,
         store=True)
     # Event values
-    x_price_unit_event = fields.Float('CDS unit Price ', related='x_supplier_product_id.cost_price')
+    x_price_unit_event = fields.Float('CDS unit Price ', related='x_supplier_product_id.unit_price')
     x_product_qty_event = fields.Integer('CDS Quantity ', related='x_supplier_product_id.quantity')
     x_price_subtotal_event = fields.Monetary(compute='_x_compute_amount_event', string='CDS ubtotal ', aggregator=None, store=True)
 

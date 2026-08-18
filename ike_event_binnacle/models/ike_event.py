@@ -69,7 +69,7 @@ class IkeEvent(models.Model):
                 # Get the binnacle record using the XML ID
                 binnacle = self.env.ref(xmlid, raise_if_not_found=False)
                 if not binnacle.binnacle_template_id:  # type: ignore
-                    # _logger.warning(f'Binnacle record template with XML ID "{xmlid}" not found')
+                    _logger.warning(f'Binnacle record template with XML ID "{xmlid}" not found')
                     continue
                 template_results = binnacle.with_context(  # type: ignore
                     lang=self.env.user.lang
@@ -114,7 +114,7 @@ class IkeEvent(models.Model):
                             'parent_id': False,
                         })
                         created_messages |= message
-                    # _logger.info(f'Created binnacle message for event {self.name} from {xmlid}')
+                    _logger.info(f'Created binnacle message for event {self.name} from {xmlid}')
             except Exception as e:
                 _logger.error(f'Error creating binnacle message from {xmlid}: {e}')
                 continue
@@ -367,8 +367,6 @@ class IkeEvent(models.Model):
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_9"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_10"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_11"])
-            rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_12"])
-            rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_13"])
         return result
 
     def action_set_survey_data(self):
@@ -390,6 +388,7 @@ class IkeEvent(models.Model):
         result = super(IkeEvent, self).action_set_user_sub_service_data()
         for rec in self:
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_12"])
+            rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_13"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_4_2"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_7"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_4_3"])
