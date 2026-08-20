@@ -70,11 +70,12 @@ class IkeEventProduct(models.Model):
         for rec in self:
 
             domain = [
+                ('active', '=', True),
+                ('disabled', '=', False),
                 ('sale_ok', '=', False),
                 ('sh_product_subscribe', '=', False),
                 ('purchase_ok', '=', True),
                 ('x_concept_ok', '=', True),
-                # ('x_additional_ok', '=', True),
                 ('type', '=', 'service'),
                 ('disabled', '=', False),
                 ('list_price', '=', 0),
@@ -105,7 +106,9 @@ class IkeEventProduct(models.Model):
             #         domain.append(('id', 'not in', excluded))
 
             # No Nu VIP + Second supplier
-            if not rec.event_id.user_id.vip_user and rec.supplier_number > 1:
+            if rec.event_id.user_id.vip_user and rec.supplier_number > 1:
+                domain.append(('x_additional_ok', 'in', [True, False]))
+            else:
                 domain.append(('x_additional_ok', '=', True))
 
             rec.product_domain = domain
@@ -285,7 +288,7 @@ class IkeEventSupplierProduct(models.Model):
                 ('active', '=', True),
                 ('disabled', '=', False),
                 ('x_concept_ok', '=', True),
-                # ('x_additional_ok', '=', True),
+                ('x_additional_ok', '=', True),
                 '|',
                 ('x_apply_all_services_subservices', '=', True),
                 '&',
@@ -306,8 +309,8 @@ class IkeEventSupplierProduct(models.Model):
             #         domain.append(('id', 'not in', excluded))
 
             # No Nu VIP + Second supplier
-            if not rec.event_id.user_id.vip_user and rec.supplier_number > 1:
-                domain.append(('x_additional_ok', '=', True))
+            # if not rec.event_id.user_id.vip_user and rec.supplier_number > 1:
+            #     domain.append(('x_additional_ok', '=', True))
 
             rec.product_add_domain = domain
 

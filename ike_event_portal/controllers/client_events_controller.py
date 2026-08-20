@@ -1,4 +1,4 @@
-from datetime import datetime, time
+from datetime import datetime, time, timedelta
 
 from pytz import UTC, timezone
 
@@ -83,6 +83,72 @@ class ClientEventsPortal(CustomerPortal):
         hours, remaining_minutes = divmod(total_minutes, 60)
         return f'{hours:02d}:{remaining_minutes:02d}'
 
+    @staticmethod
+    def _prepare_eta_semaphore(supplier):
+        eta = {
+            'class': 'bg-light text-dark border',
+            'display': '-',
+            'label': _('No ETA'),
+            'style': '',
+        }
+        if not supplier:
+            return eta
+
+        now = fields.Datetime.now()
+        if supplier.finalized_date:
+            concluded_hours = max((now - supplier.finalized_date).total_seconds(), 0) / 3600
+            if concluded_hours <= 24:
+                eta.update({
+                    'class': 'bg-success text-white',
+                    'display': _('≤ 24 hours'),
+                    'label': _('Provider completed'),
+                })
+            elif concluded_hours <= 48:
+                eta.update({
+                    'class': 'bg-warning text-dark',
+                    'display': _('≤ 48 hours'),
+                    'label': _('Provider completed'),
+                })
+            else:
+                eta.update({
+                    'class': 'bg-danger text-white',
+                    'display': _('≤ 72 hours') if concluded_hours <= 72 else _('> 72 hours'),
+                    'label': _('Provider completed'),
+                })
+            return eta
+
+        if supplier.contacted_date:
+            eta.update({
+                'class': 'bg-primary text-white',
+                'display': _('Provider contacted'),
+                'label': _('Provider contacted'),
+            })
+            return eta
+
+        duration_minutes = max(supplier.estimated_duration or 0, 0)
+        start_date = supplier.assignation_date
+        if not duration_minutes or not start_date:
+            return eta
+
+        eta['display'] = ClientEventsPortal._format_eta(duration_minutes)
+        deadline = start_date + timedelta(minutes=duration_minutes)
+        elapsed_seconds = max((now - start_date).total_seconds(), 0)
+        progress = elapsed_seconds / (duration_minutes * 60)
+
+        if now > deadline:
+            eta.update({'class': 'bg-danger text-white', 'label': _('Expired')})
+        elif progress <= (1 / 3):
+            eta.update({'class': 'bg-success text-white', 'label': _('On time')})
+        elif progress <= (2 / 3):
+            eta.update({'class': 'bg-warning text-dark', 'label': _('On time')})
+        else:
+            eta.update({
+                'class': 'text-white',
+                'label': _('Due soon'),
+                'style': 'background-color: #fd7e14;',
+            })
+        return eta
+
     def _prepare_event_rows(self, events):
         rows = []
         encryption_utility = request.env['custom.encryption.utility'].sudo()
@@ -94,6 +160,7 @@ class ClientEventsPortal(CustomerPortal):
             assignation_dates = [date for date in suppliers.mapped('assignation_date') if date]
             contacted_dates = [date for date in suppliers.mapped('contacted_date') if date]
             vehicle_data = self._get_event_vehicle_data(event)
+            eta_semaphore = self._prepare_eta_semaphore(supplier)
             encrypted_client_name = event.user_id.name if event.user_id else ''
             encrypted_account_code = event.user_membership_id.key_identification or ''
             client_name = (
@@ -116,6 +183,10 @@ class ClientEventsPortal(CustomerPortal):
                 'assignation_date': max(assignation_dates, default=False),
                 'contacted_date': max(contacted_dates, default=False),
                 'eta': self._format_eta(supplier.estimated_duration if supplier else 0),
+                'eta_display': eta_semaphore['display'],
+                'eta_class': eta_semaphore['class'],
+                'eta_label': eta_semaphore['label'],
+                'eta_style': eta_semaphore['style'],
             })
         return rows
 

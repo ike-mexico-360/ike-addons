@@ -46,6 +46,7 @@ msgid "Actions"
 msgstr "Acciones"
 
 #. module: ike_event_portal
+#. odoo-python
 #: code:addons/ike_event_portal/controllers/client_events_controller.py:0
 msgid "Account identifier"
 msgstr "Identificador de cuenta"
@@ -2616,12 +2617,14 @@ msgid "No events match the selected filters."
 msgstr "No hay eventos que coincidan con los filtros seleccionados."
 
 #. module: ike_event_portal
+#. odoo-python
 #: code:addons/ike_event_portal/controllers/client_events_controller.py:0
 #: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
 msgid "Newest"
 msgstr "Más recientes"
 
 #. module: ike_event_portal
+#. odoo-python
 #: code:addons/ike_event_portal/controllers/client_events_controller.py:0
 #: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
 msgid "Oldest"
@@ -2751,3 +2754,69 @@ msgstr "Vehículo"
 #: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
 msgid "ETA"
 msgstr "ETA"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+msgid "No ETA"
+msgstr "Sin ETA"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+msgid "Completed"
+msgstr "Concluido"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+msgid "Expired"
+msgstr "Vencido"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+msgid "On time"
+msgstr "En tiempo"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+msgid "Due soon"
+msgstr "Por vencer"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+msgid "Provider completed"
+msgstr "Proveedor concluido"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+msgid "Provider contacted"
+msgstr "Proveedor contactado"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+msgid "≤ 24 hours"
+msgstr "≤ 24 horas"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+msgid "≤ 48 hours"
+msgstr "≤ 48 horas"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+msgid "≤ 72 hours"
+msgstr "≤ 72 horas"
+
+#. module: ike_event_portal
+#. odoo-python
+#: code:addons/ike_event_portal/controllers/client_events_controller.py:0
+msgid "> 72 hours"
+msgstr "> 72 horas"

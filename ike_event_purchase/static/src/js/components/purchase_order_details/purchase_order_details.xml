@@ -516,20 +516,35 @@
                         <t t-set="otherAtts" t-value="(state.order_data.order_attachment_ids || []).filter(a => !a.mimetype or !a.mimetype.startsWith('image/'))"/>
                         <div t-if="imageAtts.length" class="d-flex flex-wrap gap-2 mb-3">
                             <t t-foreach="imageAtts" t-as="att" t-key="att.id">
-                                <a t-att-href="'/web/image/' + att.id" target="_blank">
-                                    <img t-att-src="'/web/image/' + att.id"
-                                         class="rounded border"
-                                         style="width:120px; height:90px; object-fit:cover;"/>
-                                </a>
+                                <div class="position-relative">
+                                    <a t-att-href="'/web/image/' + att.id + '?access_token=' + att.access_token" target="_blank">
+                                        <img t-att-src="'/web/image/' + att.id + '?access_token=' + att.access_token"
+                                             class="rounded border"
+                                             style="width:120px; height:90px; object-fit:cover;"/>
+                                    </a>
+                                    <button type="button"
+                                            class="btn btn-sm btn-danger rounded-circle position-absolute top-0 end-0 p-0 d-flex align-items-center justify-content-center"
+                                            style="width:20px; height:20px; transform: translate(35%, -35%);"
+                                            title="Delete document"
+                                            t-on-click.stop.prevent="() => this.remove_document(att.id)">
+                                        <i class="fa fa-times" style="font-size:10px;"/>
+                                    </button>
+                                </div>
                             </t>
                         </div>
                         <div t-if="otherAtts.length" class="d-flex flex-wrap gap-2 mb-3">
                             <t t-foreach="otherAtts" t-as="att" t-key="att.id">
-                                <a t-att-href="'/web/content/' + att.id + '?download=true'" target="_blank"
-                                   class="badge bg-light text-dark border text-decoration-none py-2 px-3">
-                                    <i class="fa fa-file me-1"/>
-                                    <t t-out="att.name"/>
-                                </a>
+                                <span class="badge bg-light text-dark border d-inline-flex align-items-center py-2 px-3">
+                                    <a t-att-href="'/web/content/' + att.id + '?download=true&amp;access_token=' + att.access_token" target="_blank"
+                                       class="text-decoration-none text-dark">
+                                        <i class="fa fa-file me-1"/>
+                                        <t t-out="att.name"/>
+                                    </a>
+                                    <i class="fa fa-times ms-2 text-danger"
+                                       style="cursor:pointer;"
+                                       title="Delete document"
+                                       t-on-click.stop.prevent="() => this.remove_document(att.id)"/>
+                                </span>
                             </t>
                         </div>
                         <label class="text-primary" style="cursor:pointer;">
@@ -608,14 +623,14 @@
                                     <div class="d-flex flex-wrap gap-2 mt-2">
                                         <t t-foreach="msg.attachment_ids" t-as="att" t-key="att.id">
                                             <t t-if="att.mimetype and att.mimetype.startsWith('image/')">
-                                                <a t-att-href="'/web/image/' + att.id" target="_blank">
-                                                    <img t-att-src="'/web/image/' + att.id"
+                                                <a t-att-href="'/web/image/' + att.id + '?access_token=' + att.access_token" target="_blank">
+                                                    <img t-att-src="'/web/image/' + att.id + '?access_token=' + att.access_token"
                                                      class="img-thumbnail"
                                                      style="max-height:100px; max-width:150px; object-fit:cover;"/>
                                                 </a>
                                             </t>
                                             <t t-else="">
-                                                <a t-att-href="'/web/content/' + att.id + '?download=true'"
+                                                <a t-att-href="'/web/content/' + att.id + '?download=true&amp;access_token=' + att.access_token"
                                                target="_blank"
                                                class="badge bg-light text-dark border text-decoration-none py-2 px-3">
                                                     <i class="fa fa-paperclip me-1"/>

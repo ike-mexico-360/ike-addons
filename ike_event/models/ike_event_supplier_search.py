@@ -1088,6 +1088,8 @@ class IkeEvent_Search(models.Model):
                 'uom_id': product_id.uom_id.id,
                 'tax_ids': [Command.set(product_id.taxes_id.ids)],
                 'sequence': sequence,
+                'base': product_line_id.base,
+                'mandatory': product_line_id.base,
                 'covered': product_line_id.covered,
                 'cost_matrix_line_id': cost_line_id.id,
                 'parent_product_id': product['parent_product_id'],

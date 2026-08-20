@@ -607,6 +607,32 @@ export class PurchaseOrderDetails extends Component {
             return false;
         }
     }
+    remove_document = (attachmentId) => {
+        this.dialog.add(ConfirmationDialog, {
+            body: _t("Are you sure you want to delete this document?"),
+            confirmLabel: _t("Delete"),
+            cancelLabel: _t("Cancel"),
+            confirm: async () => {
+                try {
+                    const result = await rpc('/my/purchase/' + this.props.order_id + '/delete_file', {
+                        attachment_id: attachmentId,
+                    });
+                    if (result.success) {
+                        this.state.order_data.order_attachment_ids = result.attachments;
+                        this.notification.add(_t("Document deleted"), { type: "success" });
+                    } else {
+                        this.notification.add(_t("Error: ") + result.error, { type: "danger" });
+                    }
+                } catch (e) {
+                    this.notification.add(_t("Error deleting document: ") + (e?.data?.message || e.message), {
+                        type: "danger", sticky: true,
+                    });
+                }
+            },
+            cancel: () => {},
+        });
+    }
+
     download_cfdi_pdf2 = () => {
         const invoiceId = this.state.order_data?.invoice;
         if (!invoiceId) {

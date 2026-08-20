@@ -245,6 +245,40 @@ class CustomerPortal(PurchasePortal):
             _logger.error(f"Error uploading files to purchase order {order_id}: {str(e)}")
             return {"success": False, "error": str(e)}
 
+    @http.route(
+        ["/my/purchase/<int:order_id>/delete_file"],
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=False,
+    )
+    def delete_purchase_order_file(self, order_id, attachment_id=None, **kw):
+        try:
+            order_sudo = self._document_check_access('purchase.order', order_id)
+        except (AccessError, MissingError):
+            return {"success": False, "error": _("Purchase order not found")}
+
+        try:
+            attachment = request.env['ir.attachment'].sudo().search([
+                ('id', '=', attachment_id),
+                ('res_model', '=', 'purchase.order'),
+                ('res_id', '=', order_sudo.id),
+            ], limit=1)
+            if not attachment:
+                return {"success": False, "error": _("Document not found")}
+
+            attachment.unlink()
+
+            order_attachment_ids = request.env['ir.attachment'].sudo().search_read(
+                [('res_model', '=', 'purchase.order'), ('res_id', '=', order_sudo.id)],
+                ['id', 'name', 'mimetype', 'file_size'],
+                order='id asc',
+            )
+            return {"success": True, "attachments": order_attachment_ids}
+        except Exception as e:
+            _logger.error(f"Error deleting file from purchase order {order_id}: {str(e)}")
+            return {"success": False, "error": str(e)}
+
 
 class PurchaseOrderController(http.Controller):
 
@@ -443,11 +477,30 @@ class PurchaseOrderController(http.Controller):
             for msg in messages:
                 msg['o2mTrackings'] = []
 
-        order_data['order_attachment_ids'] = request.env['ir.attachment'].sudo().search_read(
+        order_attachment_ids = request.env['ir.attachment'].sudo().search_read(
             [('res_model', '=', 'purchase.order'), ('res_id', '=', order_id)],
             ['id', 'name', 'mimetype', 'file_size'],
             order='id asc',
         )
+
+        # ir.attachment.check() rejects portal users outright, so /web/image
+        # and /web/content links only work with a matching per-attachment
+        # access_token. Generate one for every attachment shown on this page.
+        all_attachment_ids = [a['id'] for a in order_attachment_ids]
+        for msg in messages:
+            all_attachment_ids += [a['id'] for a in (msg.get('attachment_ids') or [])]
+
+        if all_attachment_ids:
+            attachments = request.env['ir.attachment'].sudo().browse(all_attachment_ids)
+            token_by_id = dict(zip(attachments.ids, attachments.generate_access_token()))
+
+            for att in order_attachment_ids:
+                att['access_token'] = token_by_id.get(att['id'])
+            for msg in messages:
+                for att in (msg.get('attachment_ids') or []):
+                    att['access_token'] = token_by_id.get(att['id'])
+
+        order_data['order_attachment_ids'] = order_attachment_ids
 
         # Event info
         order = request.env['purchase.order'].sudo().browse(order_id)

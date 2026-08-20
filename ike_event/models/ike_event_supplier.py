@@ -677,8 +677,9 @@ class IkeEventSupplier(models.Model):
             'views': [(list_view, 'list')],
             'search_view_id': False,
             'domain': [
-                ('event_supplier_link_id', 'in', self.mapped('supplier_link_id.id')),
+                ('id', 'in', self.supplier_product_ids.ids),
                 ('display_type', 'not in', ['line_section', 'line_note']),
+
             ],
             'target': 'new',
             'context': {
@@ -696,6 +697,8 @@ class IkeEventSupplier(models.Model):
         is_admin_user = self.env.user.has_group('base.group_system')
         can_edit = is_assigned_user or is_admin_user
 
+        self.supplier_product_ids
+
         mapped = {}
         for rec in self:
             mapped[rec.supplier_link_id.id] = rec.id
@@ -707,7 +710,7 @@ class IkeEventSupplier(models.Model):
             'views': [(list_view, 'list')],
             'search_view_id': False,
             'domain': [
-                ('event_supplier_link_id', 'in', self.mapped('supplier_link_id.id')),
+                ('id', 'in', self.supplier_product_ids.ids),
                 ('display_type', 'not in', ['line_section', 'line_note']),
             ],
             'target': 'new',
@@ -820,6 +823,7 @@ class IkeEventSupplierLink(models.Model):
     # === LINE FIELDS === #
     supplier_product_ids = fields.One2many(
         'ike.event.supplier.product', 'event_supplier_link_id',
+        domain=['|', ('base', '!=', True), ('parent_product_id', '!=', False)],
         string='Concepts')
     amount_concept_subtotal = fields.Float(string='Subtotal', compute='_compute_amount_supplier_product', store=True)
     amount_concept_vat = fields.Float(string='VAT', compute='_compute_amount_supplier_product', store=True)

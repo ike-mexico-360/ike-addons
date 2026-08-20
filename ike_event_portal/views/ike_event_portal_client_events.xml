@@ -204,11 +204,15 @@
                                         <td class="py-3 px-3 border-0"><small class="text-muted"><i class="fa fa-map-marker text-danger me-1"/><t t-out="row['origin']"/></small></td>
                                         <td class="py-3 px-3 border-0"><small class="text-muted"><i class="fa fa-map-marker text-danger me-1"/><t t-out="row['destination']"/></small></td>
                                         <td class="text-nowrap py-3 px-3 border-0 text-center">
-                                            <span class="badge rounded-pill bg-info bg-opacity-10 px-3 py-2"><t t-out="row['eta']"/></span>
+                                            <span t-att-class="'badge rounded-pill px-3 py-2 ' + row['eta_class']"
+                                                t-att-style="row['eta_style']"
+                                                t-att-title="row['eta_label']">
+                                                <t t-out="row['eta_display']"/>
+                                            </span>
                                         </td>
                                     </tr>
                                     <tr t-if="not events">
-                                        <td colspan="9" class="text-center text-muted py-5">No events match the selected filters.</td>
+                                        <td colspan="10" class="text-center text-muted py-5">No events match the selected filters.</td>
                                     </tr>
                                 </tbody>
                             </table>
