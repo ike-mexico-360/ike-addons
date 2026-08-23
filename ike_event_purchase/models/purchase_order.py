@@ -1162,15 +1162,20 @@ class PurchaseOrder(models.Model):
         return self.x_event_id.action_show_history_wizard()
 
     def action_view_ike_event_agreement_cost_final(self):
-        supplier_links = self.x_event_id.selected_supplier_ids.mapped('supplier_link_id')
+        self.ensure_one()
 
-        suppliers = self.env['ike.event.supplier'].browse(supplier_links.ids)
+        suppliers = self.x_event_id.selected_supplier_ids.filtered(
+            lambda supplier: supplier.supplier_link_id.supplier_id == self.partner_id
+        )
+
         return suppliers.action_view_ike_event_agreement_cost_final()
 
     def x_action_view_ike_event_service_cost(self):
-        supplier_links = self.x_event_id.selected_supplier_ids.mapped('supplier_link_id')
+        self.ensure_one()
 
-        suppliers = self.env['ike.event.supplier'].browse(supplier_links.ids)
+        suppliers = self.x_event_id.selected_supplier_ids.filtered(
+            lambda supplier: supplier.supplier_link_id.supplier_id == self.partner_id
+        )
         return suppliers.action_view_ike_event_service_cost()
 
     def x_action_reactivate_cost_review(self):

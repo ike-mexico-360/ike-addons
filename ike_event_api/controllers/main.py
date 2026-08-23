@@ -699,21 +699,32 @@ class EventsAPIController(http.Controller):
 
     @http.route('/openai/assistant/call', type='http', auth='user', methods=['POST'], csrf=False)
     def call_assistant(self, **kwargs):
-        """Endpoint para llamar al OpenAI Assistant"""
+        """Endpoint para analizar un caso mediante OpenAI Responses API."""
+
         open_ai_base_url = 'https://api.openai.com/v1'
-        thread_id = None
-        headers = {}
+
         try:
-            # Obtener datos del request
+            # ============================================================
+            # 1. Obtener datos del request
+            # ============================================================
             survey = request.get_json_data() or {}
 
-            # Tu API Key (mejor guardarla en configuración de Odoo)
-            api_key = request.env['ir.config_parameter'].sudo().get_param('suggested_trucks.openai.api_key')
-            assistant_id = request.env['ir.config_parameter'].sudo().get_param('suggested_trucks.openai.assistant_id')
+            Params = request.env['ir.config_parameter'].sudo()
 
-            if not api_key or not assistant_id or not survey:
+            api_key = Params.get_param('suggested_trucks.openai.api_key')
+            vector_store_id = Params.get_param('suggested_trucks.openai.vector_store_id')
+            system_prompt = Params.get_param('suggested_trucks.openai.system_prompt')
+            model_version = Params.get_param('suggested_trucks.openai.model_version', 'gpt-4.1-mini')
+            temperature = float(Params.get_param('suggested_trucks.openai.temperature', '1.0'))
+            top_p = float(Params.get_param('suggested_trucks.openai.top_p', '0.01'))
+
+            # ============================================================
+            # 2. Validar configuración
+            # ============================================================
+            if (not api_key or not vector_store_id or not system_prompt or not model_version or not survey):
                 return request.make_json_response({'error': 'Configuración incompleta'}, status=400)
 
+            # Respuesta fallback
             survey_bad_response = {
                 "id": survey.get('id'),
                 "suggested_accessories": [],
@@ -721,101 +732,206 @@ class EventsAPIController(http.Controller):
                 "suggested_vehicle_types": [],
             }
 
-            # Headers para OpenAI
+            # ============================================================
+            # 3. Headers de OpenAI
+            # ============================================================
             headers = {
                 'Authorization': f'Bearer {api_key}',
-                'OpenAI-Beta': 'assistants=v2',
                 'Content-Type': 'application/json'
             }
 
-            # 1. Crear un Thread
-            thread_response = requests.post(
-                f'{open_ai_base_url}/threads',
-                headers=headers
-            )
-            thread_id = thread_response.json().get('id', False)
-            if not thread_id:
-                _logger.warning('No se pudo crear el thread en OpenAI')
-                return request.make_json_response({'error': 'No se pudo crear el thread en OpenAI'}, status=500)
-
-            # 2. Agregar mensaje al Thread
-            prompt = '''
-                Analiza este caso de asistencia vial. Devuelve solo el JSON final.
-
-                {{ JSON.stringify(%s) }}
-            ''' % json.dumps(survey)
-            requests.post(
-                f'{open_ai_base_url}/threads/{thread_id}/messages',
-                headers=headers,
-                json={'role': 'user', 'content': prompt}
+            # ============================================================
+            # 4. Construir prompt de usuario
+            # ============================================================
+            user_prompt = (
+                'Analiza este caso de asistencia vial. '
+                'Devuelve únicamente el JSON final.\n\n'
+                + json.dumps(
+                    survey,
+                    ensure_ascii=False
+                )
             )
 
-            # 3. Ejecutar el Assistant
-            run_response = requests.post(
-                f'{open_ai_base_url}/threads/{thread_id}/runs',
-                headers=headers,
-                json={'assistant_id': assistant_id}
-            )
-            run_id = run_response.json().get('id', False)
-            if not run_id:
-                _logger.warning('No se pudo crear el run en OpenAI')
-                return request.make_json_response({'error': 'No se pudo crear el run en OpenAI'}, status=500)
+            # ============================================================
+            # 5. Construir request para Responses API
+            # ============================================================
+            openai_payload = {
+                'model': model_version,
 
-            # 4. Esperar a que se complete (con timeout)
-            max_attempts = 30
-            attempts = 0
+                'instructions': system_prompt,
 
-            while attempts < max_attempts:
-                run_check = requests.get(
-                    f'{open_ai_base_url}/threads/{thread_id}/runs/{run_id}',
-                    headers=headers
-                ).json()
+                'input': user_prompt,
 
-                status = run_check.get('status', '')
-                if status == 'completed':
-                    break
-                elif status == 'failed':
-                    return request.make_json_response({'error': 'El assistant falló en la ejecución'}, status=409)
+                'tools': [
+                    {
+                        'type': 'file_search',
+                        'vector_store_ids': [
+                            vector_store_id
+                        ]
+                    }
+                ],
 
-                time.sleep(1)
-                attempts += 1
-            if attempts >= max_attempts:
-                return request.make_json_response({'error': 'Timeout esperando al assistant'}, status=504)
+                # JSON válido, pero SIN schema estricto.
+                # Los campos pueden cambiar desde el prompt.
+                'text': {
+                    'format': {
+                        'type': 'json_object'
+                    }
+                },
 
-            # 5. Obtener los mensajes
-            messages_response = requests.get(
-                f'{open_ai_base_url}/threads/{thread_id}/messages',
-                headers=headers
-            ).json()
+                'temperature': temperature,
+                'top_p': top_p,
 
-            # Obtener la última respuesta del assistant
+                # No necesitamos almacenar la response en OpenAI
+                'store': False
+            }
+
+            # ============================================================
+            # 6. Llamar a Responses API
+            # ============================================================
+            try:
+                openai_response = requests.post(
+                    f'{open_ai_base_url}/responses',
+                    headers=headers,
+                    json=openai_payload,
+                    timeout=120
+                )
+
+            except requests.Timeout:
+                _logger.warning(
+                    'Timeout esperando respuesta de OpenAI Responses API'
+                )
+
+                return request.make_json_response(
+                    {'error': 'Timeout esperando a OpenAI'},
+                    status=504
+                )
+
+            except requests.RequestException as e:
+                _logger.warning(
+                    f'Error de conexión con OpenAI: {str(e)}'
+                )
+
+                return request.make_json_response(
+                    {'error': 'Error de conexión con OpenAI'},
+                    status=502
+                )
+
+            # ============================================================
+            # 7. Validar respuesta HTTP de OpenAI
+            # ============================================================
+            if not openai_response.ok:
+                _logger.warning(
+                    'OpenAI Responses API devolvió HTTP %s: %s',
+                    openai_response.status_code,
+                    openai_response.text
+                )
+
+                return request.make_json_response(
+                    {
+                        'error': 'Error en OpenAI',
+                        'openai_status': openai_response.status_code
+                    },
+                    status=502
+                )
+
+            try:
+                response_data = openai_response.json()
+
+            except ValueError:
+                _logger.warning(
+                    'OpenAI devolvió una respuesta HTTP no parseable: %s',
+                    openai_response.text
+                )
+
+                return request.make_json_response(
+                    survey_bad_response,
+                    status=200
+                )
+
+            # ============================================================
+            # 8. Verificar estado de Responses API
+            # ============================================================
+            response_status = response_data.get('status')
+
+            if response_status != 'completed':
+                _logger.warning(
+                    'OpenAI no completó la respuesta. '
+                    'Status: %s - Response: %s',
+                    response_status,
+                    response_data
+                )
+
+                return request.make_json_response(
+                    survey_bad_response,
+                    status=200
+                )
+
+            # ============================================================
+            # 9. Extraer output_text
+            # ============================================================
             assistant_message = None
-            for msg in messages_response.get('data', []):
-                if msg['role'] == 'assistant':
-                    assistant_message = msg['content'][0]['text']['value']
+
+            for output_item in response_data.get('output', []):
+                if output_item.get('type') != 'message':
+                    continue
+
+                for content_item in output_item.get('content', []):
+                    if content_item.get('type') == 'output_text':
+                        assistant_message = content_item.get('text')
+                        break
+
+                if assistant_message:
                     break
 
             if not assistant_message:
-                return request.make_json_response(survey_bad_response, status=200)
+                _logger.warning(
+                    'OpenAI no devolvió output_text: %s',
+                    response_data
+                )
 
+                return request.make_json_response(
+                    survey_bad_response,
+                    status=200
+                )
+
+            # ============================================================
+            # 10. Parsear JSON generado
+            # ============================================================
             try:
-                json_response = json.loads(assistant_message)
-            except json.JSONDecodeError:
-                _logger.warning(f'Respuesta no parseable del assistant: {assistant_message}')
-                return request.make_json_response(survey_bad_response, status=200)
+                json_response = json.loads(
+                    assistant_message
+                )
 
-            return request.make_json_response(json_response, status=200)
+            except json.JSONDecodeError:
+                _logger.warning(
+                    'Respuesta no parseable de OpenAI: %s',
+                    assistant_message
+                )
+
+                return request.make_json_response(
+                    survey_bad_response,
+                    status=200
+                )
+
+            # ============================================================
+            # 11. Respuesta final
+            # ============================================================
+            return request.make_json_response(
+                json_response,
+                status=200
+            )
 
         except Exception as e:
-            _logger.warning(f'Error en llamar al assistant: {str(e)}')
-            return request.make_json_response({'error': 'Error en el servidor'}, status=500)
-        finally:
-            # Eliminar el thread
-            if thread_id:
-                try:
-                    requests.delete(f'{open_ai_base_url}/threads/{thread_id}', headers=headers)
-                except Exception:
-                    pass
+            _logger.exception(
+                'Error al llamar OpenAI Responses API: %s',
+                str(e)
+            )
+
+            return request.make_json_response(
+                {'error': 'Error en el servidor'},
+                status=500
+            )
 
     @http.route('/api/v1/client', type='json', auth='user', methods=['POST'], csrf=False)
     def ike_api_v1_client_create(self, **kwargs):

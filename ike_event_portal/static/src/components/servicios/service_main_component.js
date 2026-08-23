@@ -255,6 +255,7 @@ export class ServicesMainComponent extends Component {
                 sub_service_id: event.sub_service_id?.name,
                 stage_id: event.stage_id?.name,
                 stage_id_label: event.stage_id?.name,
+                stage_ref: event.stage_id?.ref,
                 event_id: event_supplier.event_id,
                 supplier_id: event_supplier.supplier_id,
                 event_supplier_id: event_supplier.event_supplier_id,
@@ -324,6 +325,7 @@ export class ServicesMainComponent extends Component {
                     driver_name: updated.driver_name,
                     stage: updated.stage,
                     stage_id_label: updated.stage_id_label,
+                    stage_ref: updated.stage_ref,
                     highlighted: false,
                 };
             }
@@ -435,6 +437,7 @@ export class ServicesMainComponent extends Component {
                 sub_service_id: supplier_event.sub_service_id_label,
                 stage_id: supplier_event.stage_id,
                 stage_id_label: supplier_event.stage_id_label,
+                stage_ref: supplier_event.stage_ref,
                 event_id: supplier_event.event_id,
                 supplier_id: supplier_event.supplier_id,
                 event_supplier_id: supplier_event.event_supplier_id,
@@ -488,6 +491,7 @@ export class ServicesMainComponent extends Component {
                             fields: {
                                 id: {},
                                 name: {},
+                                ref: {},
                             },
                         },
                     },

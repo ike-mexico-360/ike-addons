@@ -6,11 +6,9 @@
             <field name="model_id" ref="account.model_account_move"/>
             <field name="state">code</field>
             <field name="code">model._cron_sync_po_lines_invoice_data()</field>
-            <field name="user_id" ref="base.user_root"/>
             <field name="interval_number">1</field>
             <field name="interval_type">days</field>
-            <field name="numbercall">-1</field>
-            <field name="active" eval="False"/>
+            <field name="active">False</field>
         </record>
     </data>
 </odoo>

@@ -119,6 +119,7 @@ class PortalUserAccount(CustomerPortal):
                             ),
                             "sub_service_id_label": sub_service_name,
                             "stage_id_label": stage_name,
+                            "stage_ref": event.stage_id.ref if event.stage_id else "",
                             "stage": supplier_line.stage_id.name if supplier_line.stage_id else ""
                         }
                     )
@@ -192,6 +193,11 @@ class PortalUserAccount(CustomerPortal):
                 "travel_tracking_url": supplier_line.get_travel_tracking_url(),
                 "stage": supplier_line.stage_id.name if supplier_line.stage_id else "",
                 "stage_id_label": stage_name,
+                "stage_ref": (
+                    supplier_line.event_id.stage_id.ref
+                    if supplier_line.event_id.stage_id
+                    else ""
+                ),
                 "supplier_link_id": supplier_line.supplier_link_id.id,
             }
 

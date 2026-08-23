@@ -509,7 +509,7 @@
                                                             t-on-click="() => this.onRejectClick(service.event_supplier_id)">
                                                                 <i class="fa fa-times me-1"/><t t-out="translate('Reject')"/>
                                                             </button>
-                                                            <button t-if="service.event_supplier_state=='accepted' and service.stage_id_label != 'Asistencia concluida'"
+                                                            <button t-if="service.event_supplier_state=='accepted' and service.stage_id_label != 'Asistencia concluida' and service.stage_ref != 'closed'"
                                                             class="btn btn-sm btn-primary rounded-pill px-3 shadow-sm"
                                                             t-att-title="translate('Notify Service')"
                                                             t-on-click="() => this.onAcceptNotify(service.event_supplier_id)">
@@ -520,7 +520,7 @@
                                                             t-on-click="() => this.openServiceSummaryModal(service.event_supplier_id)">
                                                                 <i class="fa fa-eye me-1"/><t t-out="translate('Details')"/>
                                                             </button>
-                                                            <button t-if="(service.event_supplier_state=='accepted' or service.event_supplier_state=='assigned') and service.stage_id_label != 'Asistencia concluida'"
+                                                            <button t-if="(service.event_supplier_state=='accepted' or service.event_supplier_state=='assigned') and service.stage_id_label != 'Asistencia concluida' and service.stage_ref != 'closed'"
                                                             class="btn btn-sm btn-outline-dark rounded-pill px-3"
                                                             t-att-title="translate('Cancel Service')"
                                                             t-on-click="() => this.onCancelService(service.event_supplier_id)">

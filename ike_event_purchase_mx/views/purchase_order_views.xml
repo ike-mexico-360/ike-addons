@@ -16,7 +16,7 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='order_line']/tree/field[last()]" position="after">
+            <xpath expr="//field[@name='order_line']/list/field[@name='price_subtotal']" position="after">
                 <field name="x_status_invoice" optional="hide"/>
                 <field name="x_upload_invoice_date" optional="hide"/>
                 <field name="invoice_lines" optional="hide" widget="many2many_tags"/>

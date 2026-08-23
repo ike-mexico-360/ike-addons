@@ -16,9 +16,6 @@ class AccountMove(models.Model):
                         if hasattr(move, 'x_status_invoice') and move.x_status_invoice:
                             vals['x_status_invoice'] = move.x_status_invoice
 
-                        if move.create_date and not po_line.x_upload_invoice_date:
-                            vals['x_upload_invoice_date'] = move.create_date
-
                         if vals:
                             po_line.write(vals)
 
@@ -40,7 +37,7 @@ class AccountMove(models.Model):
                 if po_line:
                     vals = {}
 
-                    if move.create_date and not po_line.x_upload_invoice_date:
+                    if move.x_xml_uuid and move.create_date and not po_line.x_upload_invoice_date:
                         vals['x_upload_invoice_date'] = move.create_date
 
                     if hasattr(move, 'x_status_invoice') and move.x_status_invoice:

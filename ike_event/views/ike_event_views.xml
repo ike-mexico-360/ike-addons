@@ -350,7 +350,8 @@
                                         <field name="manual_notification" column_invisible="1"/>
                                         <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
                                         <button name="action_view_products" string="View Details" type="object" class="btn-link"
-                                            context="{'from_view_detail': True}"/>
+                                            context="{'from_view_detail': True}"
+                                            invisible="state == 'notified'"/>
                                         <!-- <button name="action_finalize" string="Finalize" type="object" class="btn-link"/> -->
                                         <!-- <button name="action_view_supplier_data" string="Edit" type="object" class="btn-link"
                                             column_invisible="parent.supplier_search_type not in ['manual', 'manual_manual']"/> -->
