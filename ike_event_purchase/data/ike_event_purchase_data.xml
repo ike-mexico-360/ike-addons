@@ -12,6 +12,16 @@
         <field name="state">code</field>
     </record>
 
+    <record id="ike_event_purchase_cron_supplier_purchase_sync_sap" model="ir.cron">
+        <field name="name">Sync Purchase Orders with SAP</field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="model_id" ref="purchase.model_purchase_order" />
+        <field name="code">model._x_cron_sync_sap_orders(max_records=20)</field>
+        <field name="state">code</field>
+        <field name="nextcall" eval="(datetime.now() + relativedelta(days=1)).strftime('%Y-%m-%d 00:00:00')"/>
+    </record>
+
     <data noupdate="1">
         <record id="ir_cron_process_po_tickets_done" model="ir.cron">
             <field name="name">Purchase: Auto-complete Tickets from Event POs</field>

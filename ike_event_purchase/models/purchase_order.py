@@ -575,9 +575,9 @@ class PurchaseOrder(models.Model):
         for ticket in self.sh_purchase_ticket_ids:
             ticket.sudo().action_closed()
 
-    # - - - - - - - - - - - - - #
-    #      Consolidation        #
-    # - - - - - - - - - - - - - #
+    # ================================================================================================= #
+    #                                           Consolidation                                           #
+    # ================================================================================================= #
     def x_action_consolidate(self):
         self._x_validate_orders_for_consolidation()
 
@@ -601,13 +601,13 @@ class PurchaseOrder(models.Model):
             original_pos.write({'state': 'consolidated'})
             new_po_ids.button_confirm()
 
-            try:
-                new_po_ids.x_syncronize_po_with_sap()
-            except Exception:
-                _logger.exception(
-                    "Error synchronizing consolidated purchase orders with SAP. PO ids: %s",
-                    new_po_ids.ids,
-                )
+            # try:
+            #     new_po_ids.x_syncronize_po_with_sap()
+            # except Exception:
+            #     _logger.exception(
+            #         "Error synchronizing consolidated purchase orders with SAP. PO ids: %s",
+            #         new_po_ids.ids,
+            #     )
 
         except Exception:
             _logger.exception(
@@ -837,6 +837,7 @@ class PurchaseOrder(models.Model):
                     'x_sub_service_id': first_order.x_sub_service_id.id,
                     'x_membership_plan_id': first_order.x_membership_plan_id.id,
                     'x_invoice_company_id': x_invoice_company_id.id or False,
+                    'x_customer_id': first_order.x_customer_id.id,
                     'project_id': first_order.project_id.id,
                 }
 
@@ -844,7 +845,6 @@ class PurchaseOrder(models.Model):
                     vals.update({
                         'company_id': first_order.company_id.id,
                         'x_client_code': first_order.x_client_code,
-                        'x_customer_id': first_order.x_customer_id.id,
                         'x_record_tenant': first_order.x_record_tenant,
                         'x_app_code': first_order.x_app_code,
                         'x_sap_company_code': first_order.x_sap_company_code,
@@ -876,9 +876,9 @@ class PurchaseOrder(models.Model):
         if not self.sudo().partner_id.x_has_consolidation:
             self.x_action_consolidate()
 
-    # - - - - - - - - - - - - - #
-    #           SAP             #
-    # - - - - - - - - - - - - - #
+    # ================================================================================================= #
+    #                                            SAP                                                    #
+    # ================================================================================================= #
     def x_syncronize_po_with_sap(self):
         """Enviar la orden a SAP."""
         # * Se realiza el proceso de autenticación SAP de forma lineal en el método principal,
@@ -1013,12 +1013,14 @@ class PurchaseOrder(models.Model):
         }
 
         purchase_reponses = []
+        tenant = self.env['ir.config_parameter'].sudo().get_param('ike_event_purchase.tenant')
+        if not tenant:
+            # raise UserError(_("No tenant found., ensure you have configured the tenant in ike_event_purchase.tenant parameter."))
+            _logger.warning("PO-SAP: No tenant found., ensure you have configured the tenant in ike_event_purchase.tenant parameter.")
+            return purchase_reponses
+
         for purchase in self:
             account_id = purchase.x_membership_plan_id.account_id
-            tenant = self.env['ir.config_parameter'].sudo().get_param('ike_event_purchase.tenant')
-
-            if not tenant:
-                raise UserError(_("No tenant found., ensure you have configured the tenant in ike_event_purchase.tenant parameter."))
 
             if not purchase.x_external_api_record:
                 # tenants = "adff7f6a-e97d-11eb-9a03-0242ac130003"  # MX Tenant
@@ -1056,7 +1058,9 @@ class PurchaseOrder(models.Model):
                 client_code = purchase.x_client_code or str(purchase.x_customer_id.x_ref_sap).zfill(10)
 
                 if not app_code:
-                    raise UserError(_("No reference app code found for this project."))
+                    _logger.warning("PO-SAP: No reference app code found for this project.")
+                    continue
+                    # raise UserError(_("No reference app code found for this project."))
 
                 lines = []
                 auxiliar_count = 0
@@ -1184,3 +1188,43 @@ class PurchaseOrder(models.Model):
         self.button_cancel()
         self.button_draft()
         self.action_rfq_send_one_step()
+
+    # Cron para sincronizar órdenes a SAP
+    @api.model
+    def _x_cron_sync_sap_orders(self, max_records=0):
+        tenant = self.env['ir.config_parameter'].sudo().get_param('ike_event_purchase.tenant')
+        if not tenant:
+            _logger.warning(
+                "PO-SAP: No tenant found, ensure you have configured the tenant in ike_event_purchase.tenant parameter."
+            )
+            return
+
+        PurchaseOrder = self.env['purchase.order']
+
+        domain = [
+            ('state', '=', 'purchase'),
+            ('x_sap_reference_received', '=', False),
+            ('x_ref_sap', '=', False),
+            ('amount_untaxed', '>', 0),
+        ]
+
+        if max_records > 0:
+            orders = PurchaseOrder.search(domain, limit=max_records, order='id')
+        else:
+            orders = PurchaseOrder.search(domain)
+
+        if not orders:
+            _logger.info("PO-SAP: No orders to sync with SAP")
+            return
+
+        for order in orders:
+            try:
+                order.x_syncronize_po_with_sap()
+                self.env.cr.commit()  # commit por orden
+            except Exception as e:
+                _logger.warning(
+                    "PO-SAP: Error al sincronizar la orden %s con SAP: %s",
+                    order.name,
+                    str(e),
+                    exc_info=True,
+                )
