@@ -7,6 +7,7 @@
         <field name="model">custom.type.event</field>
         <field name="arch" type="xml">
             <search>
+                <field name="ref"/>
                 <field name="name"/>
                 <field name="disabled"/>
                 <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
@@ -21,6 +22,7 @@
         <field name="model">custom.type.event</field>
         <field name="arch" type="xml">
             <list delete="0" edit="0">
+                <field name="ref"/>
                 <field name="name"/>
                 <field name="description"/>
                 <field name="minimum_distance_km" />
@@ -46,6 +48,7 @@
                     </div>
                     <group>
                         <group>
+                            <field name="ref" readonly="disabled"/>
                             <field name="description" readonly="disabled"/>
                             <field name="minimum_distance_km" />
                         </group>

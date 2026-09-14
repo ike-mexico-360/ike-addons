@@ -6,6 +6,7 @@
         <field name="model">custom.vehicle.weight.category</field>
         <field name="arch" type="xml">
             <search>
+                <field name="ref"/>
                 <field name="name"/>
                 <field name="disabled"/>
                 <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
@@ -31,6 +32,11 @@
                             <field name="name" placeholder="Name" readonly="disabled"/>
                         </h1>
                     </div>
+                    <group>
+                        <group>
+                            <field name="ref" readonly="disabled"/>
+                        </group>
+                    </group>
                 </sheet>
                 <chatter/>
             </form>

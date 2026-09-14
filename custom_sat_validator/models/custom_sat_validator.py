@@ -51,8 +51,19 @@ class CustomSatValidator(models.Model):
         for line in self.document_line_ids:
             line.action_process_line_workflow()
 
-        if any(l.line_state == 'validated' for l in self.document_line_ids):
-            self.write({'state': 'done'})
+        if self.purchase_id:
+            # Refresh Purchase Order lines to get updated qty_invoiced after vendor bill validation
+            self.purchase_id.order_line.invalidate_recordset(['qty_invoiced'])
+
+            # Filter standard product lines (excluding section/note headers)
+            po_lines = self.purchase_id.order_line.filtered(lambda ln: not ln.display_type)
+
+            # Check if all PO lines have been fully invoiced
+            all_po_lines_invoiced = po_lines and all(ln.qty_invoiced >= ln.product_qty for ln in po_lines)
+            if all_po_lines_invoiced:
+                self.write({'state': 'done'})
+            else:
+                self.write({'state': 'draft'})
 
     def action_force_validate_xml_from_sat(self):
         """ Force validation by injecting the bypass flag into context """

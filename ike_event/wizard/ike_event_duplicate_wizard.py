@@ -180,6 +180,7 @@ class IkeEventDuplicateWizard(models.TransientModel):
             })
 
         vals.update({
+            'scheduled': False,
             'event_date': fields.Datetime.now(),
             'assigned_user_id': self.env.user.id
         })

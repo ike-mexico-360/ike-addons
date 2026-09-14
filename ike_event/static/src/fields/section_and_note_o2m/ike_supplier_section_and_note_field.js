@@ -32,10 +32,10 @@ export class IkeSupplierSectionAndNoteListRender extends IkeSectionAndNoteListRe
             classes += " ike-row-electronic";
         } else if (assignationType == 'publication') {
             classes += " ike-row-publication";
-        } else if (isManual) {
-            classes += " ike-row-manual-manual";
         } else if (assignationType == 'manual') {
             classes += " ike-row-manual";
+        } else if (assignationType == 'manual_manual') {
+            classes += " ike-row-manual-manual";
         }
         return classes;
     }

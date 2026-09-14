@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+  <t t-name="ike_event_purchase.PurchaseOrderReviewList" owl="1">
+    <div class="o_purchase_order_list">
+      <t t-if="state.loading">
+        <div class="text-center">Loading...</div>
+      </t>
+      <t t-else="">
+        <!-- Filters Bar -->
+        <div class="card border-0 shadow-sm rounded-3 mb-4">
+          <div class="card-body py-3">
+            <div class="row g-3 align-items-end">
+              <div class="col-md-5">
+                <label class="form-label small text-muted fw-semibold mb-1">
+                  <i class="fa fa-search me-1"/>Order Review
+                </label>
+                <input type="text"
+                  class="form-control form-control-sm rounded-pill"
+                  placeholder="Search by Order Review..."
+                  t-att-value="state.filters.reference"
+                  t-on-input="(ev) => this.onFilterChange('reference', ev.target.value)"/>
+              </div>
+              <div class="col-md-5">
+                <label class="form-label small text-muted fw-semibold mb-1">
+                  <i class="fa fa-calendar me-1"/>Event
+                </label>
+                <input type="text"
+                  class="form-control form-control-sm rounded-pill"
+                  placeholder="Search by event..."
+                  t-att-value="state.filters.event"
+                  t-on-input="(ev) => this.onFilterChange('event', ev.target.value)"/>
+              </div>
+              <div class="col-md-2 d-flex align-items-end">
+                <button class="btn btn-sm btn-outline-secondary rounded-pill w-100"
+                  title="Clear filters"
+                  t-on-click="clearFilters">
+                  <i class="fa fa-times"/>Clear
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <PaginationComponent pagination="pagination">
+          <table class="table table-hover table-striped align-middle mb-0" style="border-collapse: separate; border-spacing: 0;">
+            <thead>
+              <tr class="active">
+                <th class="text-start">
+                  <span class="d-none d-md-inline">Order Review</span>
+                  <span class="d-block d-md-none">Ref.</span>
+                </th>
+                <th class="text-start">Event</th>
+                <th class="text-start">Deadline</th>
+                <th class="text-start">Status</th>
+                <th class="text-start">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <t t-foreach="pagination.paginatedItems" t-as="order" t-key="order.id">
+                <tr>
+                  <td class="text-start">
+                    <a t-att-href="'/my/order_review/' + order.id">
+                        <t t-esc="order.name"/>
+                    </a>
+                  </td>
+                  <td class="text-start"><t t-esc="order.x_event_id ? order.x_event_id.name : ''"/></td>
+                  <td class="text-start"><t t-esc="formatDate(order.date_order)"/></td>
+                  <td class="text-start">
+                      <t t-esc="getStateLabel(order.state)"/>
+                  </td>
+                  <td class="text-start"><t t-esc="order.amount_untaxed"/></td>
+                </tr>
+              </t>
+            </tbody>
+          </table>
+        </PaginationComponent>
+      </t>
+    </div>
+  </t>
+</templates>

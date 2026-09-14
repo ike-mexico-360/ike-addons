@@ -5,10 +5,31 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='ref']" position="after">
+            <!-- <xpath expr="//field[@name='ref']" position="after">
                 <field name="x_xml_uuid"
                        invisible="move_type not in ('in_invoice', 'in_refund')"
                        readonly="1"/>
+            </xpath> -->
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="x_importing_xml" invisible="1"/>
+                <field name="x_xml_file" invisible="1"/>
+                <field name="x_xml_filename" invisible="1"/>
+                <field name="x_vendor_bill_pdf_name" invisible="1"/>
+            </xpath>
+            <xpath expr="//notebook" position="before">
+                <group string="Imported Electronic Invoice Information" name="xml_info" invisible="not x_xml_file" colspan="2" col="2">
+                    <field name="x_xml_file"
+                        filename="x_xml_filename"
+                        widget="binary"
+                        readonly="1"/>
+                    <field name="x_xml_uuid"
+                        readonly="1"/>
+                    <field name="x_vendor_bill_pdf_file"
+                        filename="x_vendor_bill_pdf_name"
+                        widget="binary"
+                        readonly="1"
+                        invisible="not x_vendor_bill_pdf_file"/>
+                </group>
             </xpath>
             <xpath expr="//field[@name='invoice_line_ids']/list//field[@name='product_id']" position="after">
                 <field name="x_xml_line_description"

@@ -10,7 +10,8 @@ const LIST_CHANNEL_NAME = "IKE_CHANNEL_LIST";
 const SUBSCRIPTIONS = {
     "SupplierReload": "ike_event_supplier_reload",
     "EventReload": "IKE_EVENT_RELOAD",
-    "EventListReload": "IKE_CHANNEL_LIST_LISTEN",
+    "EventListReload": "IKE_CHANNEL_LIST_RELOAD",
+    "EventListPush": "IKE_CHANNEL_LIST_PUSH",
     "EventSuppliersDeleted": "IKE_EVENT_SUPPLIERS_DELETED",
 };
 
@@ -164,6 +165,9 @@ export class IkeEventSystray extends Component {
     async broadcastEventListReload(payload) {
         return this._triggerBusEvent("EVENT_LIST_RELOAD", payload);
     }
+    async broadcastEventListPush(payload) {
+        return this._triggerBusEvent("EVENT_LIST_PUSH", payload);
+    }
     async broadcastEventReload(payload) {
         return this._triggerBusEvent("EVENT_RELOAD", payload);
     }
@@ -223,13 +227,14 @@ export class IkeEventSystray extends Component {
                         this.notification.add(message, message_options);
                     }
                 }
-            } else if (type == "EVENT_LIST_RELOAD") {
+            } else {
                 // List
                 this.env.bus.trigger("IKE_EVENT_SYSTRAY:" + type, {
                     payload: payload,
                     sender: this,
                 });
             }
+
         }
     }
     async _executeTimeoutLine(line_id) {

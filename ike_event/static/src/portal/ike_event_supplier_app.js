@@ -79,7 +79,7 @@ export class IkeEventSupplierApp extends Component {
         // Subscriptions
         this.busService.subscribe("ike_event_supplier_reload", this.broadcastEventSupplierReload);
         this.busService.subscribe("ike_supplier_lines_reload_2", this.broadcastSupplier);
-        this.busService.subscribe("IKE_CHANNEL_LIST_LISTEN", this.broadcastSupplier);
+        this.busService.subscribe("IKE_CHANNEL_LIST_RELOAD", this.broadcastSupplier);
 
         onMounted(() => {
             this.busService.addChannel("IKE_CHANNEL_LIST");
@@ -87,7 +87,7 @@ export class IkeEventSupplierApp extends Component {
         onWillUnmount(() => {
             this._unsubscribe();
             this.busService.deleteChannel("IKE_CHANNEL_LIST");
-            this.busService.unsubscribe("IKE_CHANNEL_LIST_LISTEN", this.broadcastSupplier);
+            this.busService.unsubscribe("IKE_CHANNEL_LIST_RELOAD", this.broadcastSupplier);
         });
     }
     async subscribeEvent() {

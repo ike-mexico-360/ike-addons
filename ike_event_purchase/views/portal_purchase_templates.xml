@@ -10,20 +10,17 @@
             </strong>
         </xpath>
         <xpath expr="//h3[@id='details']" position="after">
-            <!-- <div class="d-flex align-items-center justify-content-between flex-wrap gap-3 mb-2">
-                <h3 id="details" class="mb-0">Pricing</h3>
 
-                <a class="btn btn-secondary o_print_btn"
-                t-att-href="'/my/purchase/' + str(order.id) + '?report_type=pdf&amp;download=true&amp;access_token=' + order.access_token"
-                target="_blank">
-                    <i class="fa fa-print me-1"/>
-                    Download / Print
-                </a>
-            </div>
-
-            <h2 class="mb-0 text-break" t-field="order.amount_untaxed"/> -->
             <owl-component
+                t-if="page_name != 'order_review_detail'"
                 name="ike_event_purchase.purchase_order_details"
+                t-att-props="json.dumps({'order_id': order.id})"
+            />
+
+            <!-- Order Review -->
+            <owl-component
+                t-if="page_name == 'order_review_detail'"
+                name="ike_event_purchase.purchase_order_reviews_details"
                 t-att-props="json.dumps({'order_id': order.id})"
             />
         </xpath>
@@ -74,6 +71,37 @@
             />
         </t>
     </template>
+    <template id="portal_my_home_menu_order_review" inherit_id="purchase.portal_my_home_menu_purchase" name="Order Review Breadcrumb">
+        <!-- Ocultar breadcrumb RFQ en Order Review -->
+        <xpath expr="//li[@t-if=&quot;page_name == 'rfq' or order and order.state == 'sent'&quot;]" position="attributes">
+            <attribute name="t-if">
+                page_name != 'order_review_detail'
+                and (page_name == 'rfq' or order and order.state == 'sent')
+            </attribute>
+        </xpath>
+
+        <!-- Ocultar breadcrumb Purchase en Order Review -->
+        <xpath expr="//li[@t-if=&quot;page_name == 'purchase' or order and order.state != 'sent'&quot;]" position="attributes">
+            <attribute name="t-if">
+                page_name != 'order_review_detail'
+                and (page_name == 'purchase' or order and order.state != 'sent')
+            </attribute>
+        </xpath>
+
+        <!-- Agregar solo Revisión de costos -->
+        <xpath expr="//li[@t-if='order']" position="before">
+            <li t-if="page_name == 'order_review'"
+                class="breadcrumb-item active">
+                Purchase Order Review
+            </li>
+
+            <li t-if="page_name == 'order_review_detail'" class="breadcrumb-item">
+                <a href="/my/order_review">
+                    Purchase Order Review
+                </a>
+            </li>
+        </xpath>
+    </template>
     <template id="ike_event_portal_my_purchase_orders" name="My Purchase Orders" inherit_id="purchase.portal_my_purchase_orders">
         <xpath expr="//t[1]" position="replace">
             <t t-call="portal.portal_layout">
@@ -90,6 +118,13 @@
                 </t>
             </t>
         </xpath>
+    </template>
+    <template id="portal_my_order_reviews" name="Order Reviews">
+        <t t-call="portal.portal_layout">
+            <div class="container py-4">
+                <owl-component name="ike_event_purchase.PurchaseOrderReviewList"/>
+            </div>
+        </t>
     </template>
     <template id="portal_my_invoices_page" name="Portal My Invoices">
         <t t-call="portal.portal_layout">

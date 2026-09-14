@@ -22,9 +22,6 @@ export class IkeEventScreenListRenderer extends ListRenderer {
         IkeEventListButtons,
     }
 
-    /**
-     * Aplica clases CSS personalizadas a las filas de la lista de Eventos
-     */
     getRowClass(record) {
         let rowClasses = super.getRowClass(record);
 
@@ -37,9 +34,6 @@ export class IkeEventScreenListRenderer extends ListRenderer {
         return rowClasses;
     }
 
-    /**
-     * Aplica clases CSS personalizadas a los badges stage_id de la lista de Eventos, necesario el widget badge
-     */
     getCellClass(column, record) {
         let cellClasses = super.getCellClass(column, record);
         const { name, widget } = column;

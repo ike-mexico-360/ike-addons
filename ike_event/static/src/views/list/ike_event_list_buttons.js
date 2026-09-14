@@ -1,8 +1,8 @@
 /** @odoo-module */
 
-import { Component, useState, onWillStart } from "@odoo/owl";
-import { useService } from "@web/core/utils/hooks";
-import { user } from "@web/core/user";
+import { useBus, useService } from "@web/core/utils/hooks";
+
+import { Component, onWillStart, useState } from "@odoo/owl";
 
 export class IkeEventListButtons extends Component {
     static template = "ike_event.IkeEventListButtons";
@@ -19,13 +19,28 @@ export class IkeEventListButtons extends Component {
         });
 
         onWillStart(async () => {
-            this.eventData = await this.orm.call("ike.event", "retrieve_event_data");
+            await this.loadEventData();
             this.loadUserGroups();
         });
+
+        useBus(this.env.bus, "IKE_EVENT_SYSTRAY:EVENT_LIST_RELOAD", async (event) => {
+            // console.log(event.detail.payload.data);
+            await this.loadEventData();
+            this.render();
+        });
+        useBus(this.env.bus, "IKE_EVENT_SYSTRAY:EVENT_LIST_PUSH", async (event) => {
+            // console.log(event.detail.payload.data);
+            await this.loadEventData();
+            this.render();
+        });
+    }
+    async loadEventData() {
+        // console.log("loadEventData");
+        this.eventData = await this.orm.call("ike.event", "retrieve_event_data");
     }
 
     async loadUserGroups() {
-        const splittedClassName = this.props.viewClassName !== null ? this.props.viewClassName.split(' '): [];
+        const splittedClassName = this.props.viewClassName !== null ? this.props.viewClassName.split(' ') : [];
         if (splittedClassName.includes('ike-show-table-buttons')) {
             this.state.showIkeListButtons = true;
         }

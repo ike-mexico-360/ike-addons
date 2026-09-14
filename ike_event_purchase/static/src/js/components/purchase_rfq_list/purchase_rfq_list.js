@@ -73,7 +73,7 @@ export class PurchaseRfqList extends Component {
     async _loadRfqs() {
         this.state.loading = true;
         try {
-            const res = await this.orm.webSearchRead('purchase.order', [['state', 'in', ['sent', 'to_consolidate', 'consolidated']], ['x_dispute_state', 'not in', ['open', 'submitted']]], {
+            const res = await this.orm.webSearchRead('purchase.order', [['state', 'in', ['sent']], ['x_dispute_state', 'not in', ['open', 'submitted']]], {
                 specification: {
                     id: {},
                     name: {},

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-14 03:09+0000\n"
-"PO-Revision-Date: 2026-07-14 03:09+0000\n"
+"POT-Creation-Date: 2026-09-10 20:00+0000\n"
+"PO-Revision-Date: 2026-09-10 20:00+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,89 +16,150 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "<i class=\"fa fa-check-circle me-1\"/> Validate &amp; Process Queue"
-msgstr "<i class=\"fa fa-check-circle me-1\"/> Validar y Procesar Cola"
-
-#. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
+#. odoo-python
+#: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid ""
-"<i class=\"fa fa-cloud-upload me-2\"/> Import New Digital Document Packages"
+"\n"
+"Note: Single XML line or mismatched subtotal detected. Global subtotals match ($%.2f). Creating invoice lines based on Purchase Order breakdown."
 msgstr ""
-"<i class=\"fa fa-cloud-upload me-2\"/> Importar Nuevos Paquetes de "
-"Documentos Digitales"
+"\n"
+"Nota: Se detectó una sola línea de XML o discrepancia en subtotales. Los subtotales globales coinciden ($%.2f). Creando líneas de factura según el desglose de la Orden de Compra."
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "<i class=\"fa fa-file-pdf-o me-1\"/> PDF"
-msgstr ""
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "<i class=\"fa fa-check-circle me-1\"/> Validate &amp; Create Invoice"
+msgstr "<i class=\"fa fa-check-circle me-1\"/> Validar y Crear Factura"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
 msgid ""
-"<i class=\"fa fa-folder-open-o fa-2x d-block mb-2 text-muted\"/>\n"
-"                                No package documents have been historically uploaded for this specific purchase order."
+"<i class=\"fa fa-cloud-upload me-2\" style=\"color: #2F6FB0 !important;\"/> "
+"Import &amp; Match SAT CFDI Document"
 msgstr ""
-"<i class=\"fa fa-folder-open-o fa-2x d-block mb-2 text-muted\"/>\n"
-"                                No se han subido históricamente paquetes de documentos para esta orden de compra específica."
+"<i class=\"fa fa-cloud-upload me-2\" style=\"color: #2F6FB0 !important;\"/> "
+"Importar y Conciliar Documento CFDI SAT"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "<i class=\"fa fa-cogs me-1\"/> Process XML"
+msgstr "<i class=\"fa fa-cogs me-1\"/> Procesar XML"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "<i class=\"fa fa-download me-1\"/> Vendor PDF"
+msgstr "<i class=\"fa fa-download me-1\"/> PDF del Proveedor"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "<i class=\"fa fa-file-pdf-o me-1\"/> System PDF"
+msgstr "<i class=\"fa fa-file-pdf-o me-1\"/> PDF del Sistema"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
 msgid ""
-"<i class=\"fa fa-history me-2\"/> Audit Log of Uploaded &amp; Validated "
-"Packages"
+"<i class=\"fa fa-folder-open-o fa-2x d-block mb-1 text-muted\"/>\n"
+"                                No package documents have been uploaded for this order."
 msgstr ""
-"<i class=\"fa fa-history me-2\"/> Historial de Auditoría de Paquetes Subidos"
-" y Validados"
+"<i class=\"fa fa-folder-open-o fa-2x d-block mb-1 text-muted\"/>\n"
+"                                No se han subido paquetes de documentos para esta orden."
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
 msgid ""
-"<i class=\"fa fa-info-circle me-1\"/> No packages added to the queue yet. "
-"Use the inputs above."
+"<i class=\"fa fa-history me-2\" style=\"color: #2F6FB0 !important;\"/> Audit"
+" Log of Validated Packages (SAT)"
 msgstr ""
-"<i class=\"fa fa-info-circle me-1\"/> Aún no hay paquetes agregados a la "
-"cola. Utilice los campos de arriba."
+"<i class=\"fa fa-history me-2\" style=\"color: #2F6FB0 !important;\"/> "
+"Registro de Auditoría de Paquetes Validados (SAT)"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "<i class=\"fa fa-info-circle text-warning me-1\"/> Logs"
-msgstr "<i class=\"fa fa-info-circle text-warning me-1\"/> Registros"
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "<i class=\"fa fa-info-circle me-1\"/> Process XML to view CFDI lines."
+msgstr ""
+"<i class=\"fa fa-info-circle me-1\"/> Procese el XML para ver las líneas del"
+" CFDI."
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "<i class=\"fa fa-list-alt me-2 text-primary\"/> View Uploaded Log"
-msgstr "<i class=\"fa fa-list-alt me-2 text-primary\"/> Ver Registro Subido"
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid ""
+"<i class=\"fa fa-info-circle me-1\"/> Upload and process a CFDI XML file to "
+"load purchase lines."
+msgstr ""
+"<i class=\"fa fa-info-circle me-1\"/> Suba y procese un archivo XML CFDI "
+"para cargar las líneas de compra."
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "<i class=\"fa fa-plus me-1\"/> Add Package"
-msgstr "<i class=\"fa fa-plus me-1\"/> Agregar Paquete"
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "<i class=\"fa fa-list-alt me-2\" style=\"color: #2F6FB0;\"/> View Uploaded Log"
+msgstr ""
+"<i class=\"fa fa-list-alt me-2\" style=\"color: #2F6FB0;\"/> Ver Registro "
+"Subido"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
 msgid "<i class=\"fa fa-shield me-1\"/> SAT CFDI Validator"
-msgstr "<i class=\"fa fa-shield me-1\"/> Validador CFDI SAT"
+msgstr "<i class=\"fa fa-shield me-1\"/> Validador de CFDI SAT"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "<i class=\"fa fa-table me-2\"/> Packages Queue to Process"
-msgstr "<i class=\"fa fa-table me-2\"/> Cola de Paquetes por Procesar"
-
-#. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
 msgid "<i class=\"fa fa-upload me-2\"/> Import New Packages"
 msgstr "<i class=\"fa fa-upload me-2\"/> Importar Nuevos Paquetes"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid ""
+"<span class=\"fw-bold text-uppercase small\" style=\"color: #2C3E66 !important; font-size: 0.75rem;\">\n"
+"                                                    <i class=\"fa fa-shopping-cart me-1\"/> Purchase Order Lines\n"
+"                                                </span>\n"
+"                                                <span class=\"badge bg-secondary\" style=\"font-size: 0.65rem;\">Matched Lines</span>"
+msgstr ""
+"<span class=\"fw-bold text-uppercase small\" style=\"color: #2C3E66 !important; font-size: 0.75rem;\">\n"
+"                                                    <i class=\"fa fa-shopping-cart me-1\"/> Líneas de Orden de Compra\n"
+"                                                </span>\n"
+"                                                <span class=\"badge bg-secondary\" style=\"font-size: 0.65rem;\">Líneas Conciliadas</span>"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid ""
+"<span class=\"fw-bold text-uppercase small\" style=\"color: #2C3E66 !important; font-size: 0.75rem;\">\n"
+"                                                <i class=\"fa fa-file-code-o me-1\"/> SAT CFDI Lines (Drag to align)\n"
+"                                            </span>\n"
+"                                            <span class=\"badge bg-secondary\" style=\"font-size: 0.65rem;\">Drag &amp; Drop</span>"
+msgstr ""
+"<span class=\"fw-bold text-uppercase small\" style=\"color: #2C3E66 !important; font-size: 0.75rem;\">\n"
+"                                                <i class=\"fa fa-file-code-o me-1\"/> Líneas CFDI SAT (Arrastre para alinear)\n"
+"                                            </span>\n"
+"                                            <span class=\"badge bg-secondary\" style=\"font-size: 0.65rem;\">Arrastrar y Soltar</span>"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid ""
+"<span class=\"small text-uppercase fw-bold me-2\" style=\"color: #2C3E66 !important;\">TOTAL PO SELECTED:</span>\n"
+"                                        <span id=\"po_total_subtotal\" class=\"fw-bold\" style=\"color: #2F6FB0 !important;\">$0.00</span>"
+msgstr ""
+"<span class=\"small text-uppercase fw-bold me-2\" style=\"color: #2C3E66 !important;\">TOTAL OC SELECCIONADO:</span>\n"
+"                                        <span id=\"po_total_subtotal\" class=\"fw-bold\" style=\"color: #2F6FB0 !important;\">$0.00</span>"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid ""
+"<span class=\"small text-uppercase fw-bold me-2\" style=\"color: #2C3E66 !important;\">TOTAL XML:</span>\n"
+"                                        <span id=\"xml_total_subtotal\" class=\"fw-bold\" style=\"color: #2F6FB0 !important;\">$0.00</span>"
+msgstr ""
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid ""
+"<span class=\"text-muted small\"><i class=\"fa fa-info-circle text-warning "
+"me-1\"/> Pending</span>"
+msgstr ""
+"<span class=\"text-muted small\"><i class=\"fa fa-info-circle text-warning "
+"me-1\"/> Pendiente</span>"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_needaction
 msgid "Action Needed"
 msgstr "Acción requerida"
-
-#. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "Actions"
-msgstr "Acciones"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields.selection,name:custom_sat_validator.selection__custom_sat_validator_line__sat_status__vigente
@@ -121,9 +182,25 @@ msgid "CFDI Live Check"
 msgstr "Validación de CFDI en Vivo"
 
 #. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "CFDI XML File *"
+msgstr "Archivo XML CFDI *"
+
+#. module: custom_sat_validator
 #: model:ir.model.fields.selection,name:custom_sat_validator.selection__custom_sat_validator_line__sat_status__cancelado
 msgid "Cancelled"
 msgstr "Cancelado"
+
+#. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid ""
+"Cannot move line. XML line amount ($${draggedXmlSubtotal.toFixed(2)}) does "
+"not match PO line amount ($${poSubtotal.toFixed(2)})."
+msgstr ""
+"No se puede mover la línea. El monto de la línea del XML "
+"($${draggedXmlSubtotal.toFixed(2)}) no coincide con el monto de la línea de "
+"la OC ($${poSubtotal.toFixed(2)})."
 
 #. module: custom_sat_validator
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
@@ -131,7 +208,7 @@ msgid "Carta Porte"
 msgstr ""
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
 msgid "Carta Porte (Optional)"
 msgstr "Carta Porte (Opcional)"
 
@@ -148,17 +225,16 @@ msgstr "Archivo de Carta Porte"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__carta_porte_filename
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
 msgid "Carta Porte Filename"
 msgstr "Nombre del Archivo de Carta Porte"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
 msgid "Close"
 msgstr "Cerrar"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
 msgid "Close Logs"
 msgstr "Cerrar Registros"
 
@@ -203,7 +279,6 @@ msgstr "Creado el"
 
 #. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid ""
 "Date Error: The XML date (%s) exceeds the allowed threshold of %s day(s) "
@@ -241,9 +316,25 @@ msgid "Document Packages"
 msgstr "Paquetes de Documentos"
 
 #. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Document successfully imported and verified."
+msgstr "Documento importado y verificado exitosamente."
+
+#. module: custom_sat_validator
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.view_custom_sat_validator_search
 msgid "Done"
 msgstr "Completamente Procesado / Auditado"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "Download Original Vendor PDF"
+msgstr "Descargar PDF Original del Proveedor"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "Download System Generated PDF"
+msgstr "Descargar PDF Generado por el Sistema"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields.selection,name:custom_sat_validator.selection__custom_sat_validator_line__line_state__draft
@@ -258,11 +349,21 @@ msgstr "Borrador"
 
 #. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
+#: code:addons/custom_sat_validator/controllers/portal.py:0
+msgid "Error processing SAT XML file: %s"
+msgstr "Error al procesar el archivo XML SAT: %s"
+
+#. module: custom_sat_validator
+#. odoo-python
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid ""
 "Error: The XML does not contain the mandatory 'TimbreFiscalDigital' node."
 msgstr "Error: El XML no contiene el nodo obligatorio 'TimbreFiscalDigital'."
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "Event"
+msgstr "Evento"
 
 #. module: custom_sat_validator
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
@@ -270,19 +371,15 @@ msgid "Execution Logs"
 msgstr "Bitácora de Ejecución"
 
 #. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_account_bank_statement_line__x_xml_file
+#: model:ir.model.fields,field_description:custom_sat_validator.field_account_move__x_xml_file
+msgid "File XML"
+msgstr "Archivo XML"
+
+#. module: custom_sat_validator
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
 msgid "Files Upload"
 msgstr "Carga de Archivos"
-
-#. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "Fiscal Folio (UUID)"
-msgstr "Folio Fiscal (UUID)"
-
-#. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "Folio / XML Name"
-msgstr "Folio / Nombre del XML"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_follower_ids
@@ -343,21 +440,57 @@ msgid "If checked, some messages have a delivery error."
 msgstr "Si está marcado, algunos mensajes presentan error de entrega."
 
 #. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.view_move_form_inherit_xml_uuid
+msgid "Imported Electronic Invoice Information"
+msgstr "Información de Factura Electrónica Importada"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_account_bank_statement_line__x_importing_xml
+#: model:ir.model.fields,field_description:custom_sat_validator.field_account_move__x_importing_xml
+msgid "Importing XML"
+msgstr "Importando XML"
+
+#. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
-msgid ""
-"Invoice Generation Error (The XML and Purchase Order matched successfully, "
-"but vendor bill draft creation or validation workflow failed): %s"
-msgstr ""
-"Error en generación de factura (El XML y la Orden de Compra coinciden con "
-"éxito, pero falló la creación del borrador de la factura de proveedor o su "
-"flujo de validación): %s"
+#: code:addons/custom_sat_validator/controllers/portal.py:0
+msgid "Incomplete information or no lines were selected."
+msgstr "Información incompleta o no se seleccionó ninguna línea."
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,help:custom_sat_validator.field_account_bank_statement_line__x_importing_xml
+#: model:ir.model.fields,help:custom_sat_validator.field_account_move__x_importing_xml
+msgid "Indicates whether an XML file is being imported"
+msgstr "Indica si se está importando un archivo XML."
+
+#. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Invalid Alignment"
+msgstr "Alineación Inválida"
+
+#. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Invalid Purchase Order ID reference."
+msgstr "Referencia de ID de Orden de Compra inválida."
 
 #. module: custom_sat_validator
 #. odoo-python
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid "Invoice Generation Error: %s"
 msgstr "Error de Generación de Factura: %s"
+
+#. module: custom_sat_validator
+#. odoo-python
+#: code:addons/custom_sat_validator/controllers/portal.py:0
+msgid "Invoice creation failed during SAT validation."
+msgstr "La creación de la factura falló durante la validación del SAT."
+
+#. module: custom_sat_validator
+#. odoo-python
+#: code:addons/custom_sat_validator/controllers/portal.py:0
+msgid "Invoice successfully created and confirmed. Reference: %s"
+msgstr "Factura creada y confirmada exitosamente. Referencia: %s"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_is_follower
@@ -399,6 +532,18 @@ msgid "Last Updated on"
 msgstr "Última actualización el"
 
 #. module: custom_sat_validator
+#. odoo-python
+#: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
+msgid "Line %s"
+msgstr "Línea %s"
+
+#. module: custom_sat_validator
+#. odoo-python
+#: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
+msgid "Line 1"
+msgstr "Línea 1"
+
+#. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__line_state
 msgid "Line Status"
 msgstr "Estado de Línea"
@@ -425,8 +570,25 @@ msgid "Messages"
 msgstr "Mensajes"
 
 #. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Missing Document"
+msgstr "Documento Faltante"
+
+#. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Missing Reference"
+msgstr "Referencia Faltante"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_account_bank_statement_line__x_xml_filename
+#: model:ir.model.fields,field_description:custom_sat_validator.field_account_move__x_xml_filename
+msgid "Name file"
+msgstr "Nombre del archivo"
+
+#. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid "No vendor bill linked to this validator record."
 msgstr "No hay una factura relacionada a este proveedor."
@@ -467,16 +629,6 @@ msgid "Number of messages with delivery error"
 msgstr "Número de mensajes con error de envío"
 
 #. module: custom_sat_validator
-#. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
-msgid ""
-"Odoo Error: The supplier '%s' on the PO does not have an RFC configured in "
-"their contact profile."
-msgstr ""
-"Error de Odoo: El proveedor '%s' en la Orden de Compra no tiene un RFC "
-"configurado en su perfil de contacto."
-
-#. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_account_bank_statement_line__sat_validator_id
 #: model:ir.model.fields,field_description:custom_sat_validator.field_account_move__sat_validator_id
 msgid "Origin Validator SAT"
@@ -506,21 +658,36 @@ msgid "PDF Attachment"
 msgstr "Adjunto PDF"
 
 #. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "PDF Downloads"
+msgstr "Descargas PDF"
+
+#. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__pdf_file
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
 msgid "PDF File"
 msgstr "Archivo PDF"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "PDF File (Optional)"
-msgstr "Archivo PDF (Opcional)"
-
-#. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__pdf_filename
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
 msgid "PDF Filename"
 msgstr "Nombre del Archivo PDF"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "PO Product"
+msgstr "Producto OC"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "PO Subtotal"
+msgstr "Subtotal OC"
+
+#. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Parsing XML lines failed."
+msgstr "Falló el análisis de las líneas del XML."
 
 #. module: custom_sat_validator
 #. odoo-python
@@ -529,11 +696,22 @@ msgid "Please add at least one document package to process."
 msgstr "Por favor, agregue al menos un paquete de documentos para procesar."
 
 #. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Please select at least one line to process."
+msgstr "Por favor, seleccione al menos una línea para procesar."
+
+#. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid "Please, upload an XML file."
 msgstr "Por favor, cargue un archivo XML."
+
+#. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Processing Error"
+msgstr "Error de Procesamiento"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_import_xml_invoice_line__product_name
@@ -548,28 +726,40 @@ msgstr "Orden de Compra"
 
 #. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
-msgid ""
-"Purchase Order Validation Error (Critical failure while cross-referencing "
-"RFCs, amounts, or UUID against the system): %s"
-msgstr ""
-"Error de validación en Orden de Compra (Fallo crítico al contrastar RFCs, "
-"montos o UUID contra el sistema): %s"
-
-#. module: custom_sat_validator
-#. odoo-python
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid "Purchase Order Validation Error: %s"
 msgstr "Error de Validación de la Orden de Compra: %s"
 
 #. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
+#: code:addons/custom_sat_validator/controllers/portal.py:0
+msgid "Purchase Order not found."
+msgstr "Orden de Compra no encontrada."
+
+#. module: custom_sat_validator
+#. odoo-python
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid "Purchase Order validation bypassed via context parameters."
 msgstr ""
 "Validación de la Orden de Compra omitida a través de los parámetros del "
 "contexto.\n"
+
+#. module: custom_sat_validator
+#. odoo-python
+#: code:addons/custom_sat_validator/controllers/portal.py:0
+msgid "Purchase order or XML file was not provided."
+msgstr "No se proporcionó la orden de compra o el archivo XML."
+
+#. module: custom_sat_validator
+#. odoo-python
+#: code:addons/custom_sat_validator/controllers/portal.py:0
+msgid "Purchase order validation failed."
+msgstr "Falló la validación de la orden de compra."
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "Qty"
+msgstr "Cant"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_import_xml_invoice_line__quantity
@@ -598,6 +788,11 @@ msgid "Reference"
 msgstr "Referencia"
 
 #. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "Reference / File"
+msgstr "Referencia / Archivo"
+
+#. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_import_xml_invoice_line__purchase_order_line_ids
 msgid "Related Purchase Order Lines"
 msgstr "Líneas de la orden de compra relacionadas"
@@ -618,20 +813,13 @@ msgid "SAT CFDI Validator"
 msgstr "Validador de CFDI SAT"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "SAT Cloud Status"
-msgstr "Estado en la Nube del SAT"
-
-#. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid "SAT Response Payload Parse Error: %s"
 msgstr "Error al Analizar la Respuesta (Payload) del SAT: %s"
 
 #. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid "SAT Server Connectivity Error: %s"
 msgstr "Error de Conectividad con el Servidor del SAT: %s"
@@ -643,14 +831,6 @@ msgid "SAT Server Response Error (HTTP %s)."
 msgstr "Error de Respuesta del Servidor SAT (HTTP %s)."
 
 #. module: custom_sat_validator
-#. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
-msgid "SAT Server Response Error (HTTP %s). Infrastructure might be down."
-msgstr ""
-"Error de Respuesta del Servidor SAT (HTTP %s). La infraestructura podría "
-"estar caída."
-
-#. module: custom_sat_validator
 #: model:ir.ui.menu,name:custom_sat_validator.menu_custom_sat_validator_root
 msgid "SAT Services"
 msgstr "Servicios SAT"
@@ -659,6 +839,12 @@ msgstr "Servicios SAT"
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__sat_status
 msgid "SAT Status"
 msgstr "Estatus SAT"
+
+#. module: custom_sat_validator
+#. odoo-python
+#: code:addons/custom_sat_validator/controllers/portal.py:0
+msgid "SAT Status Verification Failed."
+msgstr "Falló la verificación de estatus ante el SAT."
 
 #. module: custom_sat_validator
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.res_config_settings_view_form_sat
@@ -688,12 +874,36 @@ msgstr "Error de entrega de SMS"
 #. module: custom_sat_validator
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.view_custom_sat_validator_search
 msgid "Search SAT Validator"
-msgstr ""
+msgstr "Buscar Validador SAT"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,help:custom_sat_validator.field_account_bank_statement_line__x_xml_file
+#: model:ir.model.fields,help:custom_sat_validator.field_account_move__x_xml_file
+msgid "Select the XML file of the electronic invoice"
+msgstr "Seleccione el archivo XML de la factura electrónica"
+
+#. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Selection Required"
+msgstr "Selección Requerida"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__sequence
 msgid "Sequence"
 msgstr "Secuencia"
+
+#. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Server error during invoice creation."
+msgstr "Error de servidor durante la creación de la factura."
+
+#. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Server error processing XML."
+msgstr "Error de servidor al procesar el XML."
 
 #. module: custom_sat_validator
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.res_config_settings_view_form_sat
@@ -711,6 +921,7 @@ msgid "Settings"
 msgstr "Ajustes"
 
 #. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.view_custom_sat_validator_search
 msgid "Status"
 msgstr "Estado"
@@ -721,8 +932,13 @@ msgid "Subtotal"
 msgstr ""
 
 #. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Success"
+msgstr "Éxito"
+
+#. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid ""
 "Successful Parse.\n"
@@ -739,8 +955,13 @@ msgid "Successfully Validated"
 msgstr "Validado Exitosamente"
 
 #. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "The CFDI XML file is required."
+msgstr "El archivo XML CFDI es requerido."
+
+#. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid ""
 "The Purchase Order has no pending lines to invoice, but XML contains items."
@@ -749,24 +970,43 @@ msgstr ""
 "contiene elementos."
 
 #. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "The Vendor Bill PDF file is strictly required."
+msgstr "El archivo PDF de la factura del proveedor es strictly requerido."
+
+#. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid "The XML UUID already exists in the system on invoice: %s."
 msgstr "El UUID del XML ya existe en el sistema en la factura: %s."
 
 #. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid "The file must have an .xml extension."
 msgstr "El archivo debe tener una extensión .xml."
+
+#. module: custom_sat_validator
+#. odoo-python
+#: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
+msgid ""
+"The following XML lines do not match any available Purchase Order line:\n"
+"%s"
+msgstr ""
+"Las siguientes líneas del XML no coinciden con ninguna línea disponible en la Orden de Compra:\n"
+"%s"
 
 #. module: custom_sat_validator
 #. odoo-javascript
 #: code:addons/custom_sat_validator/static/src/js/components/purchase_order_details/purchase_order_detail.xml:0
 msgid "Total"
 msgstr ""
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "Total Amount"
+msgstr "Monto Total"
 
 #. module: custom_sat_validator
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
@@ -787,6 +1027,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__sat_uuid
 msgid "UUID (Fiscal Folio)"
 msgstr "UUID (Folio Fiscal)"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "UUID (Folio Fiscal)"
+msgstr ""
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,help:custom_sat_validator.field_account_bank_statement_line__x_xml_uuid
@@ -810,8 +1055,13 @@ msgid "Validate in SAT"
 msgstr "Validar en SAT"
 
 #. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Validation Error"
+msgstr "Error de Validación"
+
+#. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid ""
 "Validation Error: No lines in the XML file matched any pending lines on the "
@@ -822,7 +1072,6 @@ msgstr ""
 
 #. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid ""
 "Validation Error: Selecting a Purchase Order is strictly mandatory to audit "
@@ -851,7 +1100,6 @@ msgstr ""
 
 #. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid ""
 "Validation Error: The linked Purchase Order does not have a valid SAP "
@@ -871,7 +1119,6 @@ msgstr ""
 
 #. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid "Validation Error: XML parsing failed or the uploaded file is empty."
 msgstr ""
@@ -879,20 +1126,16 @@ msgstr ""
 "está vacío."
 
 #. module: custom_sat_validator
-#. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
-msgid ""
-"Validation Error: Your active company '%s' does not have an RFC (VAT) "
-"configured in Odoo."
-msgstr ""
-"Error de validación: Tu compañía activa '%s' no tiene el RFC (VAT) "
-"configurado en Odoo."
-
-#. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__line_validation_log
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
 msgid "Validation Log"
 msgstr "Bitácora de Validación"
+
+#. module: custom_sat_validator
+#. odoo-javascript
+#: code:addons/custom_sat_validator/static/src/js/sat_validator_portal.js:0
+msgid "Validation failed."
+msgstr "La validación falló."
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__validator_id
@@ -900,9 +1143,21 @@ msgid "Validator Reference"
 msgstr "Referencia del Validador"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "Vendor Bill"
-msgstr "Factura de proveedor"
+#: model:ir.model.fields,field_description:custom_sat_validator.field_account_bank_statement_line__x_vendor_bill_pdf_file
+#: model:ir.model.fields,field_description:custom_sat_validator.field_account_move__x_vendor_bill_pdf_file
+msgid "Vendor Bill PDF"
+msgstr "PDF de la Factura de Proveedor"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "Vendor Bill PDF *"
+msgstr "PDF de la Factura del Proveedor *"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_account_bank_statement_line__x_vendor_bill_pdf_name
+#: model:ir.model.fields,field_description:custom_sat_validator.field_account_move__x_vendor_bill_pdf_name
+msgid "Vendor Bill PDF Name"
+msgstr "Nombre del PDF de la factura del proveedor"
 
 #. module: custom_sat_validator
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
@@ -911,38 +1166,22 @@ msgstr "RFC del Proveedor"
 
 #. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
-msgid ""
-"Vendor bill automatically created and CONFIRMED (Posted) successfully. "
-"Reference ID: %s"
-msgstr ""
-"Factura de proveedor creada y CONFIRMADA (Asentada) automáticamente con "
-"éxito. ID de Referencia: %s"
-
-#. module: custom_sat_validator
-#. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
-msgid ""
-"Verification Failed: Mismatched Document Structure The XML line '%(desc)s' "
-"with amount $%(amount).2f could not be matched with any available line in "
-"the Purchase Order."
-msgstr ""
-"Error de verificación: Estructura del documento no coincide. La línea del "
-"XML '%(desc)s' con el monto $%(amount).2f no se pudo conciliar con ninguna "
-"línea disponible en la Orden de Compra."
+msgid "Vendor bill automatically created. Reference: %s"
+msgstr "Factura de proveedor creada automáticamente. Referencia: %s"
 
 #. module: custom_sat_validator
 #. odoo-python
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid ""
-"Verification Failed: Mismatched Document Structure. The XML line '%(desc)s' "
-"with amount $%(amount).2f could not be matched with any available line in "
-"the Purchase Order."
+"Verification Failed: Mismatched Document Structure. The XML lines could not "
+"be matched with the Purchase Order. XML Subtotal ($%(xml_sub).2f) does not "
+"match PO Pending Subtotal ($%(po_sub).2f)."
 msgstr ""
-"Error de verificación: Estructura del documento no coincide. La línea del "
-"XML '%(desc)s' con el monto $%(amount).2f no se pudo conciliar con ninguna "
-"línea disponible en la Orden de Compra."
+"Falló la verificación: Estructura del documento no coincide. Las líneas del "
+"XML no pudieron conciliarse con la Orden de Compra. El subtotal del XML "
+"($%(xml_sub).2f) no coincide con el subtotal pendiente de la OC "
+"($%(po_sub).2f)."
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__website_message_ids
@@ -955,7 +1194,7 @@ msgid "Website communication history"
 msgstr "Historial de comunicación del sitio web"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
 msgid "Workflow State"
 msgstr "Estado del Flujo de Trabajo"
 
@@ -968,6 +1207,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__xml_attachment_id
 msgid "XML Attachment"
 msgstr "Adjunto XML"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "XML Concept Description"
+msgstr "Descripción del Concepto XML"
 
 #. module: custom_sat_validator
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
@@ -991,33 +1235,13 @@ msgstr ""
 
 #. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
-msgid ""
-"XML Error: The Issuer RFC (%s) does not belong to the supplier assigned to "
-"the Purchase Order (%s - %s)."
-msgstr ""
-"Error en XML: El RFC Emisor (%s) no pertenece al proveedor asignado a la "
-"Orden de Compra (%s - %s)."
-
-#. module: custom_sat_validator
-#. odoo-python
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid ""
 "XML Error: The XML receiver RFC (%s) does not match the Purchase Order "
 "Client RFC (%s - %s)."
 msgstr ""
-"Error de XML: El RFC receptor del XML (%s) no coincide con el RFC del cliente "
-"de la orden de compra (%s - %s)."
-
-#. module: custom_sat_validator
-#. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
-msgid ""
-"XML Error: The XML receiver RFC (%s) does not match your company RFC (%s). "
-"The supplier invoiced a different entity."
-msgstr ""
-"Error en XML: El RFC receptor del XML (%s) no coincide con el RFC de tu "
-"compañía (%s). El proveedor facturó a una entidad diferente."
+"Error de XML: El RFC receptor del XML (%s) no coincide con el RFC del "
+"cliente de la orden de compra (%s - %s)."
 
 #. module: custom_sat_validator
 #. odoo-python
@@ -1030,31 +1254,20 @@ msgstr ""
 " en la Orden de Compra (%s)."
 
 #. module: custom_sat_validator
-#. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
-msgid ""
-"XML Error: The XML subtotal ($%s) does not match the expected subtotal in "
-"the Purchase Order (%s)."
-msgstr ""
-"Error en XML: El subtotal del XML ($%s) no coincide con el subtotal esperado"
-" en la Orden de Compra (%s)."
-
-#. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__xml_file
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form
 msgid "XML File"
 msgstr "Archivo XML"
 
 #. module: custom_sat_validator
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
-msgid "XML File *"
-msgstr "Archivo XML *"
-
-#. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__xml_filename
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
 msgid "XML Filename"
 msgstr "Nombre del Archivo XML"
+
+#. module: custom_sat_validator
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
+msgid "XML Folio"
+msgstr "Folio XML"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_account_move_line__x_xml_line_description
@@ -1073,22 +1286,13 @@ msgstr "Discrepancia / Error en XML"
 
 #. module: custom_sat_validator
 #. odoo-python
-#: code:addons/custom_sat_validator/models/custom_sat_validator_copy.py:0
-msgid ""
-"XML Structure Validation Error (Invalid layout, encoding issues, or missing "
-"required CFDI nodes): %s"
-msgstr ""
-"Error de validación en la estructura del XML (Estructura inválida, problemas"
-" de codificación o nodos CFDI requeridos faltantes): %s"
-
-#. module: custom_sat_validator
-#. odoo-python
 #: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
 msgid "XML Structure Validation Error: %s"
 msgstr "Error de Validación de la Estructura XML: %s"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__subtotal_amount
+#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order_sat
 msgid "XML Subtotal"
 msgstr "Subtotal XML"
 
@@ -1099,7 +1303,6 @@ msgstr "Impuestos del XML"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator_line__total_amount
-#: model_terms:ir.ui.view,arch_db:custom_sat_validator.ike_event_portal_my_purchase_order
 msgid "XML Total"
 msgstr "Total XML"
 
@@ -1113,6 +1316,29 @@ msgstr "UUID XML"
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.res_config_settings_view_form_sat
 msgid "XML Validation"
 msgstr "Validación de XML"
+
+#. module: custom_sat_validator
+#. odoo-python
+#: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
+msgid ""
+"XML line '%s' with amount ($%.2f) does not match any individual PO line nor "
+"the total amount ($%.2f)."
+msgstr ""
+"La línea del XML '%s' con el monto ($%.2f) no coincide con ninguna línea "
+"individual de la OC ni con el monto total ($%.2f)."
+
+#. module: custom_sat_validator
+#. odoo-python
+#: code:addons/custom_sat_validator/controllers/portal.py:0
+msgid "XML parsing failed."
+msgstr "Falló el análisis del XML."
+
+#. module: custom_sat_validator
+#. odoo-python
+#: code:addons/custom_sat_validator/models/custom_sat_validator_line.py:0
+msgid "XML subtotal ($%.2f) does not match the expected total ($%.2f)."
+msgstr ""
+"El subtotal del XML ($%.2f) no coincide con el total esperado ($%.2f)."
 
 #. module: custom_sat_validator
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.ccustom_sat_validator_view_form

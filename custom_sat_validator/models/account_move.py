@@ -8,11 +8,29 @@ class AccountMove(models.Model):
     sat_validator_id = fields.Many2one('custom.sat.validator', string="Origin Validator SAT", readonly=True)
 
     x_xml_uuid = fields.Char(
-            string="XML UUID",
-            copy=False,
-            index=True,
-            help="Unique identifier (Folio Fiscal) extracted from the provider's XML."
-        )
+        string="XML UUID",
+        copy=False,
+        index=True,
+        help="Unique identifier (Folio Fiscal) extracted from the provider's XML."
+    )
+    x_xml_file = fields.Binary(
+        string='File XML',
+        help='Select the XML file of the electronic invoice',
+        readonly=True
+    )
+    x_xml_filename = fields.Char(string='Name file', readonly=True)
+    x_importing_xml = fields.Boolean(
+        string='Importing XML',
+        default=False,
+        help='Indicates whether an XML file is being imported',
+        readonly=True
+    )
+    x_vendor_bill_pdf_file = fields.Binary(
+        string="Vendor Bill PDF",
+        attachment=True,
+        copy=False
+    )
+    x_vendor_bill_pdf_name = fields.Char(string="Vendor Bill PDF Name")
 
     def _generate_cfdi_pdf_bytes(self):
         """

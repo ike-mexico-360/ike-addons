@@ -67,7 +67,7 @@ class CustomerPortal(PurchasePortal):
         return self._render_portal(
             "purchase.portal_my_purchase_rfqs",
             page, date_begin, date_end, sortby, filterby,
-            [('state', 'in', ['sent', 'to_consolidate', 'consolidated'])],
+            [('state', 'in', ['sent'])],
             {},
             None,
             "/my/rfq",
@@ -75,6 +75,34 @@ class CustomerPortal(PurchasePortal):
             'rfq',
             'rfqs'
         )
+
+    @http.route(['/my/order_review', '/my/order_review/page/<int:page>'], type='http', auth="user", website=True)
+    def portal_my_order_reviews(self, page=1, date_begin=None, date_end=None, sortby=None, filterby=None, **kw):
+        self._items_per_page = 10
+        return self._render_portal(
+            "ike_event_purchase.portal_my_order_reviews",
+            page, date_begin, date_end, sortby, filterby,
+            [('state', 'in', ['to_consolidate', 'consolidated'])],
+            {},
+            None,
+            "/my/order_review",
+            'my_order_reviews_history',
+            'order_review',
+            'order_reviews'
+        )
+
+    @http.route(['/my/order_review/<int:order_id>'], type='http', auth='user', website=True)
+    def portal_my_order_review_detail(self, order_id=None, access_token=None, **kw):
+        response = super().portal_my_purchase_order(
+            order_id=order_id,
+            access_token=access_token,
+            **kw
+        )
+
+        if hasattr(response, 'qcontext'):
+            response.qcontext['page_name'] = 'order_review_detail'  # type: ignore
+
+        return response
 
     @http.route(['/my/purchase', '/my/purchase/page/<int:page>'], type='http', auth="user", website=True)
     def portal_my_purchase_orders(self, page=1, date_begin=None, date_end=None, sortby=None, filterby=None, **kw):
@@ -205,7 +233,7 @@ class CustomerPortal(PurchasePortal):
     def upload_purchase_order_files(self, order_id, attachments=None, **kw):
         ALLOWED_MIMETYPES = {'application/pdf', 'image/png', 'image/jpeg'}
         MAX_SIZE = 3 * 1024 * 1024
-        MAX_FILES = 2
+        MAX_FILES = 4
         try:
             purchase_order = request.env['purchase.order'].browse(order_id)
             if not purchase_order.exists():
@@ -240,6 +268,13 @@ class CustomerPortal(PurchasePortal):
                 ['id', 'name', 'mimetype', 'file_size'],
                 order='id asc',
             )
+            if order_attachment_ids:
+                attachments_rs = request.env['ir.attachment'].sudo().browse(
+                    [a['id'] for a in order_attachment_ids]
+                )
+                token_by_id = dict(zip(attachments_rs.ids, attachments_rs.generate_access_token()))
+                for att in order_attachment_ids:
+                    att['access_token'] = token_by_id.get(att['id'])
             return {"success": True, "attachments": order_attachment_ids}
         except Exception as e:
             _logger.error(f"Error uploading files to purchase order {order_id}: {str(e)}")
@@ -274,6 +309,13 @@ class CustomerPortal(PurchasePortal):
                 ['id', 'name', 'mimetype', 'file_size'],
                 order='id asc',
             )
+            if order_attachment_ids:
+                attachments_rs = request.env['ir.attachment'].sudo().browse(
+                    [a['id'] for a in order_attachment_ids]
+                )
+                token_by_id = dict(zip(attachments_rs.ids, attachments_rs.generate_access_token()))
+                for att in order_attachment_ids:
+                    att['access_token'] = token_by_id.get(att['id'])
             return {"success": True, "attachments": order_attachment_ids}
         except Exception as e:
             _logger.error(f"Error deleting file from purchase order {order_id}: {str(e)}")
@@ -284,8 +326,10 @@ class PurchaseOrderController(http.Controller):
 
     def _get_purchase_order_portal_domain(self, filters=None):
         is_admin_or_staff = request.env.user.has_group('base.group_system')
-        domain = [('state', 'in', ['purchase', 'done', 'cancel'])]
-
+        domain = expression.AND([
+            [('state', 'in', ['purchase', 'done'])],
+            ['&', ('x_ref_sap', '!=', False), ('x_ref_sap', '!=', '')]
+        ])
         if not is_admin_or_staff:
             supplier_rel = request.env['res.partner.supplier_users.rel'].sudo().search_read(
                 domain=[('user_id', '=', request.env.user.id)],
@@ -439,6 +483,36 @@ class PurchaseOrderController(http.Controller):
             return {}
 
         order_data = result['records'][0]
+        order = request.env['purchase.order'].sudo().browse(order_id)
+
+        # A purchase line is invoiced when it is linked to at least one
+        # vendor bill that has not been cancelled. Keep invoice information
+        # per line so the portal shows where each concept was billed.
+        portal_lines_by_id = {
+            line_data['id']: line_data
+            for line_data in order_data.get('order_line', [])
+        }
+        for order_line in order.order_line:
+            invoice_lines = order_line.invoice_lines.filtered(
+                lambda invoice_line: (
+                    invoice_line.move_id.move_type == 'in_invoice'
+                    and invoice_line.move_id.state != 'cancel'
+                )
+            )
+            invoices = invoice_lines.mapped('move_id')
+            line_data = portal_lines_by_id.get(order_line.id)
+            if line_data is not None:
+                line_data.update({
+                    'is_invoiced': bool(invoices),
+                    'invoices': [
+                        {
+                            'id': invoice.id,
+                            'name': invoice.name or invoice.display_name,
+                            'reference': invoice.ref or '',
+                        }
+                        for invoice in invoices
+                    ],
+                })
 
         # Supplier contact data (address/RFC/phone), read straight off partner_id
         supplier = order_data.get('partner_id')
@@ -503,7 +577,6 @@ class PurchaseOrderController(http.Controller):
         order_data['order_attachment_ids'] = order_attachment_ids
 
         # Event info
-        order = request.env['purchase.order'].sudo().browse(order_id)
         event = order.x_event_id
         if event:
             order_data['x_event_info'] = {
@@ -871,6 +944,34 @@ class PurchaseOrderController(http.Controller):
         except Exception as e:
             _logger.error(f"Error saving purchase order dispute via RPC: {str(e)}")
             return {'success': False, 'error': str(e)}
+
+    @http.route('/my/purchase/get_advanced_portal_permission', type='json', auth='user', website=True)
+    def get_advanced_portal_permission(self):
+        """
+        Check if the current user is a System Admin or linked to a Partner supplier
+        with x_advanced_portal active using sudo to bypass Portal ACLs.
+        """
+        try:
+            env = request.env
+            current_user = env.user
+
+            # 1. System Administrator check
+            if current_user.has_group('base.group_system'):
+                return {'has_advanced_portal': True}
+
+            # 2. Search linked supplier using sudo() to bypass security rules
+            rel_records = env['res.partner.supplier_users.rel'].sudo().search([
+                ('user_id', '=', current_user.id)
+            ], limit=1)
+
+            if rel_records and rel_records.supplier_id:
+                has_access = bool(rel_records.supplier_id.x_advanced_portal)
+                return {'has_advanced_portal': has_access}
+
+            return {'has_advanced_portal': False}
+
+        except Exception as e:
+            return {'error': str(e), 'has_advanced_portal': False}
 
 
 class PortalInvoicePage(CustomerPortal):

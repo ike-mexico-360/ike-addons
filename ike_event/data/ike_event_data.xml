@@ -238,7 +238,7 @@
         <record id="ike_supplier_assignment_electronic" model="ike.event.supplier.assignment.type">
             <field name="name">Electronic</field>
             <field name="sequence">1</field>
-            <field name="wait_time">400</field>
+            <field name="wait_time">40</field>
             <field name="geofence_radius_meters">3500</field>
             <field name="geofence_radius">3.5</field>
             <field name="arrival_duration">35</field>
@@ -249,7 +249,7 @@
         <record id="ike_supplier_assignment_publication" model="ike.event.supplier.assignment.type">
             <field name="name">Publication</field>
             <field name="sequence">2</field>
-            <field name="wait_time">800</field>
+            <field name="wait_time">80</field>
             <field name="geofence_radius_meters">5000</field>
             <field name="geofence_radius">5</field>
             <field name="arrival_duration">40</field>

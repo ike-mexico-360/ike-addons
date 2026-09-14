@@ -660,7 +660,7 @@ msgstr ""
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_invoice_company_id
 msgid "Client Company"
-msgstr "Cliente"
+msgstr "Empresa Facturadora"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -3014,3 +3014,27 @@ msgid ""
 "{{object.company_id.name}} Dispute opened (Ref {{object.name or 'n/a' }})"
 msgstr ""
 "{{object.company_id.name}} Disputa abierta (Ref {{object.name or 'n/a' }})"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Invoiced"
+msgstr "Facturado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Invoice Number"
+msgstr "Número de factura"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Invoice Reference"
+msgstr "Referencia de factura"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Not Invoiced"
+msgstr "No facturado"

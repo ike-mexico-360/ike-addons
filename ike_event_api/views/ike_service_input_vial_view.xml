@@ -1,6 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <record id="view_ike_service_input_vial_screen_form_inherit_event_api" model="ir.ui.view">
+        <field name="name">view_ike_service_input_vial_screen_form.inherit.event_api</field>
+        <field name="model">ike.service.input.vial</field>
+        <field name="inherit_id" ref="ike_event.view_ike_service_input_vial_screen_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_identification_whatsapp']" position="after">
+                <field name="x_events_allow_assistview" invisible="1"/>
+            </xpath>
+            <xpath expr="//button[@name='action_identification_whatsapp']" position="attributes">
+                <attribute name="invisible" add="not x_events_allow_assistview" separator="or"/>
+            </xpath>
+
+            <!-- Primer botón: dentro del div con invisible="identification_type in ['manual', 'manual_manual']" -->
+            <xpath expr="//div[@invisible=&quot;identification_type in ['manual', 'manual_manual']&quot;]/button[@name='action_identification_link']" position="attributes">
+                <attribute name="invisible">not x_events_allow_assistview</attribute>
+            </xpath>
+
+            <!-- Segundo botón: dentro del div con invisible="identification_type == 'link'" -->
+            <xpath expr="//div[@invisible=&quot;identification_type == 'link'&quot;]/button[@name='action_identification_link']" position="attributes">
+                <attribute name="invisible">not x_events_allow_assistview</attribute>
+            </xpath>
+        </field>
+    </record>
+
     <record id="view_ike_service_input_vial_form_inherit_ike_event_api" model="ir.ui.view">
         <field name="name">view_ike_service_input_vial_form.inherit.ike_event_api</field>
         <field name="model">ike.service.input.vial</field>

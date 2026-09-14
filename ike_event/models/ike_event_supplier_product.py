@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import json
+
 from collections import defaultdict
 
 from odoo import models, fields, api, Command, _
@@ -31,13 +33,20 @@ class IkeEventProduct(models.Model):
     is_manual = fields.Boolean(default=False)
     display_type = fields.Selection(
         selection=[
-            ('line_section', "Section"),
-            ('line_note', "Note"),
+            ('line_section', 'Section'),
+            ('line_note', 'Note'),
         ], default=False)
 
     event_supplier_number = fields.Integer(related='event_id.supplier_number', string='Event Supplier Number', readonly=True)
 
-    # === ONCHANGES === #
+    # === CONSTRAINS === #
+    @api.constrains('product_id', 'estimated_quantity')
+    def _check_quantity(self):
+        for record in self:
+            if record.product_id and record.estimated_quantity < 1:
+                raise ValidationError(_('Quantity must be greater than 0.'))
+
+    # === ONCHANGE === #
     @api.onchange('product_id')
     def _onchange_product_id(self):
         if self.product_id:
@@ -163,11 +172,11 @@ class IkeEventSupplierProduct(models.Model):
 
     event_supplier_link_id = fields.Many2one('ike.event.supplier.link', 'Event Supplier', required=True, ondelete='cascade')
     supplier_id = fields.Many2one(string='Supplier', related='event_supplier_link_id.supplier_id', store=True, readonly=True)
-    event_supplier_id = fields.Many2one('ike.event.supplier', 'Event Supplier', compute='_compute_event_supplier')
-    purchase_supplier_id = fields.Many2one(related='event_supplier_id.purchase_supplier_id')
-    truck_id = fields.Many2one(related='event_supplier_id.truck_id')
-    license_plate = fields.Char(related='event_supplier_id.truck_id.license_plate')
     event_id = fields.Many2one(related='event_supplier_link_id.event_id')
+    event_supplier_id = fields.Many2one('ike.event.supplier', 'Event Supplier', compute='_compute_event_supplier')
+    purchase_supplier_id = fields.Many2one('res.partner', compute='_compute_event_supplier')
+    truck_id = fields.Many2one('fleet.vehicle', compute='_compute_event_supplier')
+    license_plate = fields.Char(compute='_compute_event_supplier')
 
     # === AMOUNT FIELDS === #
     unit_price = fields.Float(string='Unit Cost', default=0.0)
@@ -207,10 +216,25 @@ class IkeEventSupplierProduct(models.Model):
 
     from_portal = fields.Boolean(default=False, readonly=True)
 
+    @api.depends_context('mapped')
     @api.depends('event_supplier_link_id')
     def _compute_event_supplier(self):
+        mapped = json.loads(self.env.context.get('mapped', '{}'))
         for rec in self:
-            rec.event_supplier_id = self.env.context.get('mapped', {}).get(str(rec.event_supplier_link_id.id), None)
+            aux_id = mapped.get(str(rec.event_supplier_link_id.id))
+            rec.event_supplier_id = (
+                self.env['ike.event.supplier'].browse(aux_id)
+                if aux_id
+                else False
+            )
+            if rec.event_supplier_id:
+                rec.purchase_supplier_id = rec.event_supplier_id.purchase_supplier_id.id
+                rec.truck_id = rec.event_supplier_id.truck_id.id
+                rec.license_plate = rec.truck_id.license_plate
+            else:
+                rec.purchase_supplier_id = None
+                rec.truck_id = None
+                rec.license_plate = None
 
     # === ONCHANGES === #
     @api.onchange('product_id')

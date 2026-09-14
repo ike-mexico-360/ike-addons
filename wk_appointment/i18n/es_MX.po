@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-07 19:46+0000\n"
-"PO-Revision-Date: 2026-08-07 19:46+0000\n"
+"POT-Creation-Date: 2026-09-11 18:15+0000\n"
+"PO-Revision-Date: 2026-09-11 18:15+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -658,6 +658,11 @@ msgid "Appointment TimeSlot"
 msgstr ""
 
 #. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_event__appointment_wait_time
+msgid "Appointment Wait Time"
+msgstr ""
+
+#. module: wk_appointment
 #: model:ir.model.fields,field_description:wk_appointment.field_appointment__appoint_group_id
 #: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
 msgid "Appointment With"
@@ -748,9 +753,30 @@ msgid "Approved Appointments"
 msgstr ""
 
 #. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_screen_inherit_auto_assign_form
+msgid "Are you sure you want to auto assign this event?"
+msgstr "¿Estás seguro de que deseas autoasignarte este evento?"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.ike_event_screen_form_change_appointment_views
+msgid ""
+"Are you sure you want to change this event to a normal event?\n"
+"\n"
+"If you accept, the vehicle will be confirmed."
+msgstr ""
+"¿Estás seguro de que quieres cambiar este evento a un evento normal?\n"
+"\n"
+"Si aceptas, el vehículo deberá ser confirmado."
+
+#. module: wk_appointment
 #: model:ir.model.fields,field_description:wk_appointment.field_appointment__message_attachment_count
 msgid "Attachment Count"
 msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_screen_inherit_auto_assign_form
+msgid "Auto Assign"
+msgstr "Auto asignar"
 
 #. module: wk_appointment
 #. odoo-javascript
@@ -778,8 +804,9 @@ msgstr ""
 
 #. module: wk_appointment
 #: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_reject_addreason_wizard_form_view
+#: model_terms:ir.ui.view,arch_db:wk_appointment.ike_event_screen_form_change_appointment_views
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelado"
 
 #. module: wk_appointment
 #. odoo-javascript
@@ -787,6 +814,16 @@ msgstr ""
 #: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
 msgid "Cancelled"
 msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_screen_form_inherit_appointment
+msgid "Change normal event"
+msgstr "Cambiar a evento normal"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_screen_form_inherit_appointment
+msgid "Change to appointment"
+msgstr "Cambiar a cita"
 
 #. module: wk_appointment
 #: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
@@ -882,6 +919,11 @@ msgstr "Ajustes de configuración"
 #: model:ir.ui.menu,name:wk_appointment.appoint_mgmt_config_sub_menu
 msgid "Configuration"
 msgstr "Configuración"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.ike_event_screen_form_change_appointment_views
+msgid "Confirm"
+msgstr "Confirmar"
 
 #. module: wk_appointment
 #: model:ir.model,name:wk_appointment.model_res_partner
@@ -1018,6 +1060,11 @@ msgid "Display Name"
 msgstr ""
 
 #. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_event__appointment_show_event_date
+msgid "Display event date"
+msgstr ""
+
+#. module: wk_appointment
 #. odoo-javascript
 #: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
 #: code:addons/wk_appointment/static/src/views/calendar/calendar_template.xml:0
@@ -1106,6 +1153,31 @@ msgstr ""
 #. module: wk_appointment
 #: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__end_time
 msgid "End Time"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_ike_event
+msgid "Event"
+msgstr "Evento"
+
+#. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_ike_event_summary
+msgid "Event Summary"
+msgstr "Resumen del evento"
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/others/ike_event_summary.py:0
+#: model_terms:ir.ui.view,arch_db:wk_appointment.ike_event_screen_form_change_appointment_views
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_screen_form_inherit_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_service_input_vial_generic_inherit_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_service_input_vial_inherit_appointment
+msgid "Event date"
+msgstr "Fecha del evento"
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_event__events_display_wait_time
+msgid "Events Display Wait Time"
 msgstr ""
 
 #. module: wk_appointment
@@ -1340,6 +1412,12 @@ msgid "Invalid Move !!"
 msgstr ""
 
 #. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/others/ike_event.py:0
+msgid "Invalid date"
+msgstr "Fecha invalida"
+
+#. module: wk_appointment
 #: model:ir.model.fields,field_description:wk_appointment.field_appointment__invoice_id
 #: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
 msgid "Invoice"
@@ -1490,6 +1568,12 @@ msgid "Messages"
 msgstr ""
 
 #. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_event__appointment_min_date
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_service_input_vial_truck__appointment_min_date
+msgid "Min event date"
+msgstr ""
+
+#. module: wk_appointment
 #: model:ir.model.fields,field_description:wk_appointment.field_appointment__app_phone
 #: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view
 msgid "Mobile Number"
@@ -1517,6 +1601,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:wk_appointment.field_appointment__my_activity_date_deadline
 msgid "My Activity Deadline"
 msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_search_inherit_wk_appointment
+msgid "My Upcoming Scheduled Events"
+msgstr "Mis eventos proximos programados"
 
 #. module: wk_appointment
 #: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_appoint_appoint_filter
@@ -1591,6 +1680,12 @@ msgid "Next Month"
 msgstr ""
 
 #. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/others/ike_event_summary.py:0
+msgid "No"
+msgstr "No"
+
+#. module: wk_appointment
 #. odoo-javascript
 #: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
 msgid "No Appointments To Display"
@@ -1651,6 +1746,19 @@ msgstr ""
 #. module: wk_appointment
 #: model:res.groups,name:wk_appointment.appointment_officer_group
 msgid "Officer"
+msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/others/ike_event.py:0
+msgid "Only assigned events can be changed to an appointment."
+msgstr "Solo eventos en estado asignado pueden cambiar a cita"
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_service_input_vial_base__event_date
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_service_input_vial_generic__event_date
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_service_input_vial_truck__event_date
+msgid "Open Date"
 msgstr ""
 
 #. module: wk_appointment
@@ -1856,9 +1964,35 @@ msgid "Save"
 msgstr ""
 
 #. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_screen_form_change_appointment_views
+msgid "Schedule"
+msgstr "Programado"
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/others/ike_event.py:0
+#: model_terms:ir.ui.view,arch_db:wk_appointment.ike_event_screen_form_change_appointment_views
+msgid "Schedule Event"
+msgstr "Evento programado"
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_service_input_vial_base__scheduled
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_service_input_vial_generic__scheduled
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_service_input_vial_truck__scheduled
+msgid "Scheduled"
+msgstr "Programado"
+
+#. module: wk_appointment
 #: model:ir.model.fields,field_description:wk_appointment.field_res_config_settings__events_display_wait_time
 msgid "Scheduled Events Display Wait Time"
 msgstr "Tiempo de espera para mostrar eventos programados"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_screen_form_inherit_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_service_input_vial_generic_inherit_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_service_input_vial_inherit_appointment
+msgid "Scheduled per Event"
+msgstr "Programacion de evento"
 
 #. module: wk_appointment
 #: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appoint_report_filter_view
@@ -1879,6 +2013,13 @@ msgstr ""
 #. module: wk_appointment
 #: model_terms:ir.ui.view,arch_db:wk_appointment.inherit_view_partner_form
 msgid "Select TimeSlots"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_service_input_vial_base__selected_ongoing_suppliers
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_service_input_vial_generic__selected_ongoing_suppliers
+#: model:ir.model.fields,field_description:wk_appointment.field_ike_service_input_vial_truck__selected_ongoing_suppliers
+msgid "Selected Ongoing Suppliers"
 msgstr ""
 
 #. module: wk_appointment
@@ -1917,6 +2058,16 @@ msgid "Send mail to customer on New Appointment"
 msgstr "Enviar correo al cliente al crear una nueva cita"
 
 #. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_ike_service_input_vial_base
+msgid "Service Input Vial Base"
+msgstr ""
+
+#. module: wk_appointment
+#: model:ir.model,name:wk_appointment.model_ike_service_input_vial_truck
+msgid "Service Input Vial Town Truck"
+msgstr "Servicio de arrastre de grúa"
+
+#. module: wk_appointment
 #: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_config_settings_form
 msgid "Service Product for Appointment"
 msgstr "Producto de servicio para citas"
@@ -1930,6 +2081,16 @@ msgstr ""
 #: model:ir.ui.menu,name:wk_appointment.appoint_config_settings_menu
 msgid "Settings"
 msgstr ""
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_list_inherit_wk_appointment
+msgid "Shedule date"
+msgstr "Fecha programada"
+
+#. module: wk_appointment
+#: model_terms:ir.ui.view,arch_db:wk_appointment.view_ike_event_search_inherit_wk_appointment
+msgid "Shedule events"
+msgstr "Eventos programados"
 
 #. module: wk_appointment
 #: model:ir.model.fields,field_description:wk_appointment.field_appointment_timeslot__name
@@ -2044,6 +2205,19 @@ msgstr ""
 #: model:product.template,name:wk_appointment.appoint_product_demo3_product_template
 msgid "Technicians Product"
 msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/others/ike_event.py:0
+msgid ""
+"The event date cannot be earlier than the minimum appointment date (%s)."
+msgstr "La fecha del evento no puede ser anterior a la fecha mínima de la cita (%s)."
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/others/ike_event.py:0
+msgid "The event date must be on or after %s."
+msgstr "El evento debe ser despues de las %s."
 
 #. module: wk_appointment
 #. odoo-python
@@ -2281,6 +2455,12 @@ msgstr ""
 #: code:addons/wk_appointment/static/src/dashboard/appointment_dashboard.xml:0
 msgid "Yearly"
 msgstr ""
+
+#. module: wk_appointment
+#. odoo-python
+#: code:addons/wk_appointment/models/others/ike_event_summary.py:0
+msgid "Yes"
+msgstr "Si"
 
 #. module: wk_appointment
 #: model_terms:ir.ui.view,arch_db:wk_appointment.appoint_mgmt_book_appointment_form_view

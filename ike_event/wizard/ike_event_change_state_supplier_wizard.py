@@ -148,17 +148,30 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             self.on_route_to_end_user_id = self.env.user.id
             self.on_route_to_end_comment = False
 
-        if (self.event_id.event_date and self.on_route_to_user_end_date <= self.event_id.event_date):
+        if (
+            (
+                self.event_id.event_date
+                and self.on_route_to_user_end_date <= self.event_id.event_date
+            )
+            or self.on_route_to_user_end_date > fields.Datetime.now()
+        ):
+            if self.on_route_to_user_end_date > fields.Datetime.now():
+                message = _(
+                    'The date and time of Arrived (%s) cannot be in the future.'
+                ) % self._format_datetime_tz(self.on_route_to_user_end_date)
+            else:
+                message = _(
+                    'The date and time of Arrived (%s) is less than or equal to '
+                    'the date and time of the event (%s)'
+                ) % (
+                    self._format_datetime_tz(self.on_route_to_user_end_date),
+                    self._format_datetime_tz(self.event_id.event_date)
+                )
+
             return {
                 'warning': {
                     'title': _('Arrived: Invalid datetime'),
-                    'message': _(
-                        'The date and time of Arrived (%s) is less than or equal to '
-                        'the date and time of the event (%s)'
-                    ) % (
-                        self._format_datetime_tz(self.on_route_to_user_end_date),
-                        self._format_datetime_tz(self.event_id.event_date)
-                    )
+                    'message': message,
                 }
             }
 
@@ -200,16 +213,30 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             self.contacted_user_id = self.env.user.id
             self.contacted_comment = False
 
-        if (self.event_id.event_date and self.contacted_date <= self.event_id.event_date):
+        if (
+            (
+                self.event_id.event_date
+                and self.contacted_date <= self.event_id.event_date
+            )
+            or self.contacted_date > fields.Datetime.now()
+        ):
+            if self.contacted_date > fields.Datetime.now():
+                message = _(
+                    'The date and time of Contacted (%s) cannot be in the future.'
+                ) % self._format_datetime_tz(self.contacted_date)
+            else:
+                message = _(
+                    'The date and time of Contacted (%s) is less than or equal to '
+                    'the date and time of the event (%s)'
+                ) % (
+                    self._format_datetime_tz(self.contacted_date),
+                    self._format_datetime_tz(self.event_id.event_date)
+                )
+
             return {
                 'warning': {
                     'title': _('Contacted: Invalid datetime'),
-                    'message': _(
-                        'The date and time of Contacted (%s) is less than or equal to '
-                        'the date and time of the event (%s)'
-                    ) % (
-                        self._format_datetime_tz(self.contacted_date), self._format_datetime_tz(self.event_id.event_date)
-                    )
+                    'message': message,
                 }
             }
 
@@ -256,17 +283,30 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             self.finalized_user_id = self.env.user.id
             self.finalized_comment = False
 
-        if (self.event_id.event_date and self.finalized_date <= self.event_id.event_date):
+        if (
+            (
+                self.event_id.event_date
+                and self.finalized_date <= self.event_id.event_date
+            )
+            or self.finalized_date > fields.Datetime.now()
+        ):
+            if self.finalized_date > fields.Datetime.now():
+                message = _(
+                    'The date and time of Finalized (%s) cannot be in the future.'
+                ) % self._format_datetime_tz(self.finalized_date)
+            else:
+                message = _(
+                    'The date and time of Finalized (%s) is less than or equal to '
+                    'the date and time of the event (%s)'
+                ) % (
+                    self._format_datetime_tz(self.finalized_date),
+                    self._format_datetime_tz(self.event_id.event_date)
+                )
+
             return {
                 'warning': {
                     'title': _('Finalized: Invalid datetime'),
-                    'message': _(
-                        'The date and time of Finalized (%s) is less than or equal to '
-                        'the date and time of the event (%s)'
-                    ) % (
-                        self._format_datetime_tz(self.finalized_date),
-                        self._format_datetime_tz(self.event_id.event_date)
-                    )
+                    'message': message,
                 }
             }
 
@@ -293,6 +333,8 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         vals = {}
 
         if self.stage_selected == 'arrived':
+            self._validate_not_future(self.on_route_to_user_end_date, _('Arrived'))
+
             if self.on_route_to_user_end_date <= self.event_id.event_date:
                 event_date = fields.Datetime.context_timestamp(self, self.event_id.event_date).strftime('%d-%m-%Y %H:%M:%S')
                 raise ValidationError(_('Arrived date cannot be earlier than or equal to event date (%s)', event_date))
@@ -349,6 +391,8 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                     )
 
         elif self.stage_selected == 'contacted':
+            self._validate_not_future(self.contacted_date, _('Contacted'))
+
             if self.contacted_date <= self.event_id.event_date:
                 event_date = fields.Datetime.context_timestamp(self, self.event_id.event_date).strftime('%d-%m-%Y %H:%M:%S')
                 raise ValidationError(_('Contacted date cannot be earlier than or equal to event date (%s)', event_date))
@@ -385,6 +429,8 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                     )
 
         elif self.stage_selected == 'finalized':
+            self._validate_not_future(self.finalized_date, _('Finalized'))
+
             if self.finalized_date <= self.event_id.event_date:
                 event_date = fields.Datetime.context_timestamp(self, self.event_id.event_date).strftime('%d-%m-%Y %H:%M:%S')
                 raise ValidationError(_('Finalized date cannot be earlier than or equal to event date (%s)', event_date))
@@ -740,3 +786,16 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             method = getattr(records, action_name, None)
             if callable(method):
                 method(*args)
+
+    def _validate_not_future(self, date_value, field_name):
+        if not date_value:
+            return
+
+        now = fields.Datetime.now()
+
+        if date_value > now:
+            raise ValidationError(_(
+                '%s date cannot be in the future'
+            ) % (
+                field_name
+            ))

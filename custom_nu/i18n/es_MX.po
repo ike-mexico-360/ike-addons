@@ -1105,6 +1105,7 @@ msgstr "Planes de cobertura"
 #. module: custom_nu
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__membership_plan_id
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__membership_plan_id
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_nus_search
 msgid "Membership plan"
 msgstr "Plan de cobertura"
 

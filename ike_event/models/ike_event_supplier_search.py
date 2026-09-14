@@ -32,11 +32,19 @@ class IkeEvent_Search(models.Model):
     base_supplier_number = fields.Integer(default=1, copy=False)
     use_external_locations = fields.Boolean(default=True)
 
+    center_distance_ids = fields.One2many('ike.event.center.distance', 'event_id', readonly=True, copy=False)
+
     # === SUPPLIER SEARCH ACTIONS === #
     def action_search_electronic_suppliers(self):
         """ Action View Button to search suppliers: Electronic. """
         self.ensure_one()
-        self._search_suppliers('electronic')
+        if self.scheduled:
+            if fields.Datetime.now() > self.event_date and self.supplier_number == 1:
+                raise ValidationError(_("The event has been expired"))
+            else:
+                self.action_search_publication_suppliers_3()
+        else:
+            self._search_suppliers('electronic')
 
     def action_search_publication_suppliers_3(self,):
         """ Action View Button to search suppliers: Publication Priority 3. """
@@ -52,11 +60,6 @@ class IkeEvent_Search(models.Model):
         """ Action View Button to search suppliers: Publication Priority 1. """
         self.ensure_one()
         self._search_suppliers('publication', '1')
-
-    def action_search_publication_suppliers_0(self):
-        """ Action View Button to search suppliers: Publication Priority 0. """
-        self.ensure_one()
-        self._search_suppliers('publication', '0')
 
     def action_search_manual_suppliers(self):
         """ Action View Button to search suppliers: Manual. """
@@ -122,17 +125,16 @@ class IkeEvent_Search(models.Model):
                         for x in current_user_payment_line_ids
                     ]
                     # Distance km
-                    total_distance_km = supplier_max_distances.get(supplier['supplier_id'], 0)
+                    distance_km = supplier_max_distances.get(supplier['supplier_id'], 0)
+                    destination_distance_km = self.destination_distance or 0.0
+                    total_distance_km = 0
                     if supplier['negotiation_type'] == 'base_base':
-                        total_distance_km = (total_distance_km + (self.destination_distance or 0)) * 2.0
+                        total_distance_km = (distance_km + destination_distance_km) * 2.0
                     elif supplier['negotiation_type'] in ['base_destination', 'vehicle_destination']:
-                        total_distance_km += (self.destination_distance or 0)
+                        total_distance_km = distance_km + destination_distance_km
                     elif supplier['negotiation_type'] == 'origin_destination':
-                        total_distance_km = (self.destination_distance or 0)
-                    elif supplier['negotiation_type'] == 'base_concept':
-                        total_distance_km = 0.0
-                    else:
-                        total_distance_km = 0.0
+                        total_distance_km = destination_distance_km
+
                     total_distance_km = int(-(-total_distance_km // 1))  # To integer
 
                     # Add link
@@ -194,7 +196,11 @@ class IkeEvent_Search(models.Model):
             # Filter and Sort Suppliers by
             service_suppliers = sorted(
                 [item for item in service_suppliers if not item.get('ignore')],
-                key=lambda x: (x['estimated_duration'], x['estimated_cost'], -int(x['priority'] or 0))
+                key=lambda x: (
+                    x['estimated_duration'],
+                    x['estimated_cost'],
+                    -int(x['priority'] or 0),
+                ),
             )
             # Filter manual: first of each supplier
             if assignation_type == 'manual':
@@ -208,19 +214,18 @@ class IkeEvent_Search(models.Model):
             # Set Google Route
             if assignation_type == 'electronic':
                 for supplier in service_suppliers:
-                    # if supplier['latitude'] and supplier['longitude']:
-                    destination_distance_m, destination_duration_s, destination_route = (
-                        self.get_destination_route(
+                    google_distance_m, google_duration_s, google_route = (
+                        self.get_google_route(
                             supplier['latitude'],
                             supplier['longitude'],
                             self.location_latitude,
                             self.location_longitude,
                         )
                     )
-                    if destination_route:
-                        distance_km = (destination_distance_m or supplier['estimated_distance']) / 1000.00
-                        duration_m = (destination_duration_s or supplier['estimated_duration']) / 60.00
-                        supplier['route'] = destination_route
+                    if google_route:
+                        distance_km = (google_distance_m or supplier['estimated_distance']) / 1000.00
+                        duration_m = (google_duration_s or supplier['estimated_duration']) / 60.00
+                        supplier['route'] = google_route
                         supplier['real_distance'] = distance_km
                         supplier['real_duration'] = duration_m
                         if not supplier['estimated_distance'] or not supplier.get('osrm'):
@@ -700,7 +705,8 @@ class IkeEvent_Search(models.Model):
 
         return service_vehicles_data
 
-    def _get_vehicles_data(self, vehicles_domain, max_radius_km):
+    def _get_vehicles_data(self, vehicles_domain, max_radius_km: float):
+        self.ensure_one()
         service_vehicle_ids = self.env['fleet.vehicle'].search(vehicles_domain, order='x_center_id')
 
         service_vehicles_data = [{
@@ -724,46 +730,46 @@ class IkeEvent_Search(models.Model):
             'bypass': False,  # At least one per supplier
         } for rec in service_vehicle_ids]
 
-        base_origin_distances = {}
-        vehicle_refs = []
-
         origin_latitude = float(self.location_latitude)
         origin_longitude = float(self.location_longitude)
+        center_distance_ids = self._get_center_distances(service_vehicle_ids.mapped('x_center_id'))
+        no_distance_centers = []
+        vehicle_refs = []
 
-        no_distance_suppliers = set()
-
+        # Center distance
         for vehicle in service_vehicles_data:
-            supplier_id = vehicle['supplier_id']
-            if supplier_id in no_distance_suppliers:
+            # Variables 1
+            supplier_center_id: int = vehicle['supplier_center_id']
+            if supplier_center_id in no_distance_centers:
                 vehicle['no_distance']
                 continue
-            negotiation_type = vehicle['negotiation_type']
+            # Variables 2
+            negotiation_type: str = vehicle['negotiation_type']
             vehicle_latitude = float(vehicle['latitude'])
             vehicle_longitude = float(vehicle['longitude'])
-            supplier_center_id = vehicle['supplier_center_id']
-            center_latitude = float(vehicle['center_latitude'])
-            center_longitude = float(vehicle['center_longitude'])
+            center_distance_id = center_distance_ids.filtered_domain([
+                ('supplier_center_id', '=', supplier_center_id),
+            ])
 
             if negotiation_type in ['base_base', 'base_destination', 'base_concept'] or not negotiation_type:
-                if center_latitude and center_longitude:
-                    if supplier_center_id not in base_origin_distances:
-                        base_origin_distances[supplier_center_id] = self.get_osrm_distance(
-                            center_latitude, center_longitude,
-                            origin_latitude, origin_longitude
-                        )
-                    vehicle.update(base_origin_distances[supplier_center_id])
-                if negotiation_type in ['base_base', 'base_concept']:
-                    if base_origin_distances.get(supplier_center_id, False):
-                        # Set Center lat/lng and distance/duration
-                        vehicle.update(base_origin_distances[supplier_center_id])
-                        vehicle['latitude'] = center_latitude
-                        vehicle['longitude'] = center_longitude
-                        if negotiation_type == 'base_concept':
-                            vehicle['cost_distance'] = 0.0
-                    else:
-                        vehicle['no_distance']
-                        no_distance_suppliers.add(supplier_id)
-                elif negotiation_type == 'base_destination':
+                if center_distance_id:
+                    vehicle['estimated_distance'] = center_distance_id.center_origin_distance_km
+                    vehicle['estimated_duration'] = vehicle['cost_distance'] = center_distance_id.center_origin_duration_m
+                    # Real Distance/Duration
+                    if center_distance_id.center_origin_route:
+                        vehicle['real_distance'] = vehicle['estimated_distance']
+                        vehicle['real_duration'] = vehicle['estimated_duration']
+                        vehicle['route'] = center_distance_id.center_origin_route
+                    # Set Lat/Lng
+                    if negotiation_type != 'base_destination' or self.scheduled:
+                        vehicle['latitude'] = center_distance_id.latitude
+                        vehicle['longitude'] = center_distance_id.longitude
+                else:
+                    if negotiation_type != 'base_destination' or self.scheduled:
+                        vehicle['no_distance'] = True
+                        no_distance_centers.append(supplier_center_id)
+
+                if negotiation_type == 'base_destination' and not self.scheduled:
                     if self.use_external_locations:
                         vehicle_refs.append(vehicle['ref'])
                         vehicle['negotiation_type'] = 'vehicle_destination'
@@ -775,11 +781,7 @@ class IkeEvent_Search(models.Model):
                                 origin_latitude, origin_longitude
                             )
                             vehicle.update(osrm_distance)
-                        elif base_origin_distances.get(supplier_center_id):
-                            vehicle.update(base_origin_distances[supplier_center_id])
-                            vehicle['latitude'] = center_latitude
-                            vehicle['longitude'] = center_longitude
-                        else:
+                        elif not center_distance_id:
                             vehicle['no_distance'] = True
                         vehicle['osrm'] = True
             elif negotiation_type == 'origin_destination':
@@ -803,12 +805,13 @@ class IkeEvent_Search(models.Model):
 
             for vehicle in service_vehicles_data:
                 if vehicle['negotiation_type'] == 'vehicle_destination':
-                    supplier_id = vehicle['supplier_id']
+                    supplier_center_id: int = vehicle['supplier_center_id']
+                    negotiation_type: str = vehicle['negotiation_type']
                     vehicle_latitude = float(vehicle['latitude'])
                     vehicle_longitude = float(vehicle['longitude'])
-                    supplier_center_id = vehicle['supplier_center_id']
-                    center_latitude = float(vehicle['center_latitude'])
-                    center_longitude = float(vehicle['center_longitude'])
+                    center_distance_id = center_distance_ids.filtered_domain([
+                        ('supplier_center_id', '=', supplier_center_id),
+                    ])
 
                     data = next(
                         (x for x in vehicles_osrm_data if x['vehicle_ref'] == vehicle['ref']),
@@ -821,14 +824,13 @@ class IkeEvent_Search(models.Model):
                         vehicle['estimated_duration'] = data.get('duration_s', 0) / 60
                         vehicle['cost_distance'] = data.get('duration_s', 0) / 60
                         vehicle['osrm'] = True
-                    elif base_origin_distances.get(supplier_center_id):
-                        # Set Center lat/lng and distance/duration
-                        vehicle.update(base_origin_distances[supplier_center_id])
-                        vehicle['negotiation_type'] = 'base_destination'
-                        vehicle['latitude'] = center_latitude
-                        vehicle['longitude'] = center_longitude
                     else:
-                        vehicle['no_distance'] = True
+                        if center_distance_id:
+                            vehicle['negotiation_type'] = 'base_destination'
+                            vehicle['latitude'] = center_distance_id.latitude
+                            vehicle['longitude'] = center_distance_id.longitude
+                        else:
+                            vehicle['no_distance'] = True
 
         # First one of each combination supplier/supplier_center
         seen = set()
@@ -843,9 +845,46 @@ class IkeEvent_Search(models.Model):
                 (x["supplier_id"], x["supplier_center_id"]) in seen
                 or seen.add((x["supplier_id"], x["supplier_center_id"]))
             )
+            # and not x.get('no_distance', False)
         ]
 
         return service_vehicles_data
+
+    def _get_center_distances(self, supplier_center_ids):
+        origin_latitude = float(self.location_latitude)
+        origin_longitude = float(self.location_longitude)
+
+        existing_center_distance_ids = self.env['ike.event.center.distance'].sudo().search([
+            ('event_id', '=', self.id),
+            ('supplier_center_id', 'in', supplier_center_ids.ids),
+        ])
+        new_center_distance_ids = self.env['ike.event.center.distance']
+        center_distances_to_create = []
+        filtered_center_ids = supplier_center_ids.filtered(
+            lambda x: x.id not in existing_center_distance_ids.mapped('supplier_center_id.id'))
+
+        for center_id in filtered_center_ids:
+            center_latitude = center_id.partner_latitude
+            center_longitude = center_id.partner_longitude
+            if center_latitude and center_longitude:
+                result = self.get_osrm_distance(
+                    center_latitude, center_longitude,
+                    origin_latitude, origin_longitude
+                )
+                center_distances_to_create.append({
+                    'event_id': self.id,
+                    'supplier_center_id': center_id.id,
+                    'latitude': center_latitude,
+                    'longitude': center_longitude,
+                    'center_origin_distance_km': result['estimated_distance'],
+                    'center_origin_duration_m': result['estimated_duration'],
+                })
+
+        if center_distances_to_create:
+            new_center_distance_ids = self.env['ike.event.center.distance'].sudo().create(center_distances_to_create)
+            self.env.cr.commit()
+
+        return existing_center_distance_ids + new_center_distance_ids
 
     # === PRODUCTS METHODS === #
     def get_supplier_products_matrix_line_ids(
@@ -1095,7 +1134,7 @@ class IkeEvent_Search(models.Model):
                 'parent_product_id': product['parent_product_id'],
             }))
 
-        return supplier_products_data
+        return list(sorted(supplier_products_data, key=lambda x: x[2]['sequence']))
 
     def get_supplier_products_data_test(self, supplier_center_id: int, supplier_id: int, distance_km: int = 1):
         self.ensure_one()
@@ -1182,18 +1221,7 @@ class IkeEvent_Search(models.Model):
 
         return product_id
 
-    def _get_boom_product_old(self, product_id):
-        product_line_id = self.sub_service_id.concept_line_ids.filtered(
-            lambda x:
-                x.base_concept_id.id == product_id.id
-                and x.event_type_id.id == self.event_type_id.id
-        )
-        if product_line_id:
-            return product_line_id[0].concepts_ids
-
-        return product_id
-
-    def get_products_data(self):
+    def get_products_data_old(self):
         self.ensure_one()
 
         products_data = []
@@ -1481,7 +1509,7 @@ class IkeEvent_Search(models.Model):
     # === ACTIONS EXTRA === #
     def action_open_add_manual_supplier_wizard(self):
         self.ensure_one()
-        products_data = self.get_products_data()
+
         current_selected = self.selected_supplier_ids.filtered(
             lambda x: x.supplier_number == self.supplier_number
         )
@@ -1491,7 +1519,35 @@ class IkeEvent_Search(models.Model):
 
         if self.supplier_search_type != 'manual_manual':
             self.supplier_search_type = 'manual_manual'
-            self.supplier_search_number += 1
+            # self.supplier_search_number += 1
+        return {
+            'name': _('Add Supplier'),
+            'type': 'ir.actions.act_window',
+            'view_mode': 'form',
+            'res_model': 'ike.event.add.supplier.wizard',
+            'view_id': self.env.ref('ike_event.ike_event_add_supplier_wizard_view_form').id,
+            'target': 'new',
+            'context': {
+                'add_supplier': True,
+                'from_internal': True,
+                'default_event_id': self.id,
+                'default_supplier_number': self.supplier_number,
+            },
+        }
+
+    def action_open_add_manual_supplier_wizard_obsolete(self):
+        self.ensure_one()
+
+        current_selected = self.selected_supplier_ids.filtered(
+            lambda x: x.supplier_number == self.supplier_number
+        )
+
+        if current_selected:
+            self.supplier_number += 1
+
+        if self.supplier_search_type != 'manual_manual':
+            self.supplier_search_type = 'manual_manual'
+            # self.supplier_search_number += 1
         return {
             'name': _('Add Supplier'),
             'type': 'ir.actions.act_window',
@@ -1504,11 +1560,10 @@ class IkeEvent_Search(models.Model):
                 'from_internal': True,
                 'default_event_id': self.id,
                 'default_supplier_number': self.supplier_number,
-                'default_supplier_product_ids': products_data,
             },
         }
 
-    def add_manual_supplier(self, supplier_id, vehicle_id):
+    def add_manual_supplier(self, supplier_id, vehicle_id, supplier_link_id):
         self.ensure_one()
 
         last_line = self.env['ike.event.supplier'].search_read(
@@ -1516,35 +1571,12 @@ class IkeEvent_Search(models.Model):
         )
 
         supplier_center_id: int = vehicle_id.x_center_id.id
-        origin_latitude = float(self.location_latitude)
-        origin_longitude = float(self.location_longitude)
         negotiation_type: str = supplier_id.x_negotiation_type
         center_latitude: float = vehicle_id.x_center_id.partner_latitude
         center_longitude: float = vehicle_id.x_center_id.partner_longitude
 
-        # Estimated Duration/Distance
-        estimated_distance_km: float = 0.0
-        estimated_duration_m: float = 0.0
-        total_distance_km: float = 0.0
-        osrm: bool = False
-
-        if negotiation_type in ['base_base', 'base_destination']:
-            osrm_distance = self.get_osrm_distance(
-                center_latitude, center_longitude,
-                origin_latitude, origin_longitude
-            )
-            estimated_distance_km = osrm_distance['estimated_distance']
-            estimated_duration_m = osrm_distance['estimated_duration']
-            total_distance_km = estimated_distance_km + (self.destination_distance or 0)
-            if negotiation_type == 'base_base':
-                total_distance_km *= 2
-        elif negotiation_type == 'origin_destination':
-            total_distance_km = (self.destination_distance or 0)
-        else:
-            pass
-
         # Covered Amount
-        self._set_covered_amount(total_distance_km)
+        self._set_covered_amount(supplier_link_id.aux_cost_distance_km)
 
         # Generals
         sequence = 1
@@ -1563,10 +1595,9 @@ class IkeEvent_Search(models.Model):
             'negotiation_type': negotiation_type,
             'state': 'available',
             'priority': supplier_id.priority,
-            'estimated_distance': estimated_distance_km,
-            'estimated_duration': estimated_duration_m,
-            'cost_distance': estimated_distance_km,
-            'osrm': osrm,
+            'estimated_distance': supplier_link_id.aux_estimated_distance_km,
+            'estimated_duration': supplier_link_id.aux_estimated_duration_m,
+            'cost_distance': supplier_link_id.aux_estimated_distance_km,
             'timer_duration': 600,
             'is_manual': True,
             'truck_id': vehicle_id.id,  # Use real DB ID
@@ -1576,6 +1607,7 @@ class IkeEvent_Search(models.Model):
             'bypass': True,
             'ranking': 0,
             'sequence': sequence,
+            'supplier_link_id': supplier_link_id.id,
         })
         return event_supplier_id
 
@@ -1593,6 +1625,7 @@ class IkeEvent_Search(models.Model):
         self.supplier_number = 1
         self.supplier_search_date = False
         self.authorized_amount = self.covered_amount
+        self.center_distance_ids.unlink()
 
     def action_view_vehicles_info(self):
         self.ensure_one()

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_users_view_form_simple_modif_inherit" model="ir.ui.view">
+        <field name="name">res.users.preferences.form.inherit</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='api_key_ids']//list//field[@name='scope']" position="before">
+                <field name="x_service_api"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

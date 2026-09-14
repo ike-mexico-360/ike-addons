@@ -3,6 +3,7 @@ from datetime import timedelta
 from odoo import http, fields, _
 from odoo.addons.portal.controllers.portal import CustomerPortal
 from odoo.http import request
+from odoo.tools import html2plaintext
 import logging
 
 # from odoo.addons.ike_event_portal.services.notification_service import (
@@ -15,6 +16,18 @@ _logger = logging.getLogger(__name__)
 class PortalUserAccount(CustomerPortal):
     def _get_ike_event_services_domain(self):
         return []
+
+    def _get_portal_supplier_event(self, event_supplier_id):
+        """Return the service only when it belongs to the logged-in supplier."""
+        supplier_ids = request.env["res.partner.supplier_users.rel"].sudo().search([
+            ("user_id", "=", request.env.user.id),
+        ]).mapped("supplier_id").ids
+        if not supplier_ids:
+            return request.env["ike.event.supplier"].browse()
+        return request.env["ike.event.supplier"].sudo().search([
+            ("id", "=", event_supplier_id),
+            ("supplier_id", "in", supplier_ids),
+        ], limit=1)
 
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
@@ -38,6 +51,63 @@ class PortalUserAccount(CustomerPortal):
 
         return request.render("ike_event_portal.portal_ike_event_services")
 
+    def _prepare_supplier_event_values(self, supplier_line, state_translations, user_lang):
+        """Helper method to format a single supplier event line dictionary.
+        Designed to be overridden by inheriting modules.
+        """
+        event = supplier_line.event_id
+
+        # Build sub_service display name
+        sub_service_name = event.sub_service_id.name or "" if event.sub_service_id else ""
+
+        # Build stage display name with user language
+        stage_name = ""
+        if event.stage_id:
+            stage = event.stage_id.with_context(lang=user_lang)
+            stage_name = stage.name or ""
+
+        return {
+            "supplier_id": supplier_line.supplier_id.id,
+            "supplier_name": supplier_line.supplier_id.name,
+            "event_supplier_id": supplier_line.id,
+            "event_id": event.id,
+            "truck_id": supplier_line.truck_id.id,
+            "driver_name": (
+                supplier_line.truck_id.driver_id.name
+                if supplier_line.truck_id.driver_id
+                else None
+            ),
+            "truck_name": supplier_line.truck_id.name,
+            "event_supplier_state": supplier_line.state,
+            "event_supplier_state_label": state_translations.get(supplier_line.state, supplier_line.state),
+            "supplier_link_id": supplier_line.supplier_link_id.id,
+            # Event details (avoids N+1 frontend queries)
+            "event_name": event.name or "",
+            "event_date": (
+                fields.Datetime.to_string(event.event_date)
+                if event.event_date
+                else ""
+            ),
+            "location_label": event.location_label or "",
+            "service_id_label": (
+                event.service_id.name if event.service_id else ""
+            ),
+            "sub_service_id_label": sub_service_name,
+            "stage_id": event.stage_id.with_context(lang=False).name if event.stage_id else "",
+            "stage_id_label": stage_name,
+            "stage_ref": event.stage_id.ref if event.stage_id else "",
+            "stage": supplier_line.stage_id.name if supplier_line.stage_id else "",
+            "scheduled": event.scheduled,
+            "is_upcoming": event.is_upcoming,
+            "confirmed": supplier_line.confirmed,
+            "assigned": supplier_line.assigned,
+            "opening_date": (
+                fields.Datetime.to_string(event.create_date)
+                if event.create_date
+                else ""
+            ),
+        }
+
     @http.route(
         ["/provider/portal/services/supplier_current_notified"],
         type="json",
@@ -46,11 +116,6 @@ class PortalUserAccount(CustomerPortal):
         csrf=False,
     )
     def get_supplier_current_notified(self, supplier_id, **kw):
-        """
-        Get the currently notified supplier for an event, including
-        all event details needed by the frontend in a single response
-        to avoid N+1 queries.
-        """
         try:
             supplier_lines = request.env["ike.event.supplier.public"].sudo().search(
                 [
@@ -62,67 +127,20 @@ class PortalUserAccount(CustomerPortal):
 
             if supplier_lines:
                 results = []
-
                 user_lang = request.env.user.lang or "es_MX"
                 Model = request.env["ike.event.supplier.public"].with_context(
                     lang=user_lang
                 )
                 state_field = Model._fields["state"]
-
-                # get translate
                 state_translations = dict(state_field._description_selection(Model.env))
 
-                # Prefetch all related events in one go via ORM prefetching
-                # by accessing the recordset fields within the same loop
                 for supplier_line in supplier_lines:
-                    event = supplier_line.event_id
-
-                    # Build sub_service display name
-                    sub_service_name = ""
-                    if event.sub_service_id:
-                        sub_service_name = event.sub_service_id.name or ""
-
-                    # Build stage display name with user language
-                    stage_name = ""
-                    if event.stage_id:
-                        stage = event.stage_id.with_context(lang=user_lang)
-                        stage_name = stage.name or ""
-
-                    results.append(
-                        {
-                            "supplier_id": supplier_line.supplier_id.id,
-                            "supplier_name": supplier_line.supplier_id.name,
-                            "event_supplier_id": supplier_line.id,
-                            "event_id": event.id,
-                            "truck_id": supplier_line.truck_id.id,
-                            "driver_name": (
-                                supplier_line.truck_id.driver_id.name
-                                if supplier_line.truck_id.driver_id
-                                else None
-                            ),
-                            "truck_name": supplier_line.truck_id.name,
-                            "event_supplier_state": supplier_line.state,
-                            "event_supplier_state_label": state_translations.get(
-                                supplier_line.state, supplier_line.state
-                            ),
-                            "supplier_link_id": supplier_line.supplier_link_id.id,
-                            # Event details (avoids N+1 frontend queries)
-                            "event_name": event.name or "",
-                            "event_date": (
-                                fields.Datetime.to_string(event.event_date)
-                                if event.event_date
-                                else ""
-                            ),
-                            "location_label": event.location_label or "",
-                            "service_id_label": (
-                                event.service_id.name if event.service_id else ""
-                            ),
-                            "sub_service_id_label": sub_service_name,
-                            "stage_id_label": stage_name,
-                            "stage_ref": event.stage_id.ref if event.stage_id else "",
-                            "stage": supplier_line.stage_id.name if supplier_line.stage_id else ""
-                        }
+                    # Llamada a la nueva función
+                    vals = self._prepare_supplier_event_values(
+                        supplier_line, state_translations, user_lang
                     )
+                    results.append(vals)
+
                 return {"success": True, "suppliers_events": results}
 
             return {"success": True, "suppliers_events": []}
@@ -159,47 +177,17 @@ class PortalUserAccount(CustomerPortal):
                     "supplier_event": None,
                 }
 
-            # Get translated state labelss
-            Model = request.env["ike.event.supplier.public"].with_context(
-                lang=request.env.user.lang
+            user_lang = request.env.user.lang or "es_MX"
+            state_field = supplier_line._fields["state"]
+            state_translations = dict(
+                state_field._description_selection(supplier_line.with_context(lang=user_lang).env)
             )
-            state_field = Model._fields["state"]
-            state_translations = dict(state_field._description_selection(Model.env))
 
-            # Build stage display name with user language
-            stage_name = ""
-            if supplier_line.stage_id:
-                stage = supplier_line.stage_id.with_context(lang=request.env.user.lang)
-                stage_name = stage.name or ""
-
-            result = {
-                "supplier_id": supplier_line.supplier_id.id,
-                "supplier_name": supplier_line.supplier_id.name,
-                "event_supplier_id": supplier_line.id,
-                "event_id": supplier_line.event_id.id,
-                "truck_id": supplier_line.truck_id.id,
-                # "user_id": supplier_line.user_id.id,
-                "driver_name": (
-                    supplier_line.truck_id.driver_id.name
-                    if supplier_line.truck_id.driver_id
-                    else None
-                ),
-                "truck_name": supplier_line.truck_id.name,
-                "event_supplier_state": supplier_line.state,
-                "event_supplier_state_label": state_translations.get(
-                    supplier_line.state, supplier_line.state
-                ),
+            result = self._prepare_supplier_event_values(supplier_line, state_translations, user_lang)
+            result.update({
                 "event_supplier_summary_data": supplier_line.get_event_supplier_summary_data(),
                 "travel_tracking_url": supplier_line.get_travel_tracking_url(),
-                "stage": supplier_line.stage_id.name if supplier_line.stage_id else "",
-                "stage_id_label": stage_name,
-                "stage_ref": (
-                    supplier_line.event_id.stage_id.ref
-                    if supplier_line.event_id.stage_id
-                    else ""
-                ),
-                "supplier_link_id": supplier_line.supplier_link_id.id,
-            }
+            })
 
             return {"success": True, "supplier_event": result}
 
@@ -398,6 +386,137 @@ class PortalUserAccount(CustomerPortal):
             return {"success": True}
         except Exception as e:
             return {"success": False, "error": str(e)}
+
+    @http.route(
+        ["/provider/portal/services/add_comment"],
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=False,
+    )
+    def add_comment(self, event_supplier_id, comment, **kw):
+        """
+        Register a supplier-authored comment on the event's current stage.
+        """
+        try:
+            comment = (comment or "").strip()
+            if not comment:
+                return {"success": False, "error": _("Comment cannot be empty")}
+
+            supplier = self._get_portal_supplier_event(event_supplier_id)
+            if not supplier:
+                return {"success": False, "error": _("Service not found")}
+
+            event = supplier.event_id
+            if not event.stage_id:
+                return {"success": False, "error": _("The event has no current stage")}
+
+            binnacle = request.env.ref(
+                "ike_event_binnacle.ike_binnacle_stage_stage_comment"
+            )
+            message = event.sudo().message_post(
+                body=comment,
+                message_type="notification",
+                subtype_xmlid="mail.mt_discuss",
+                author_id=request.env.user.partner_id.id,
+            )
+            message.sudo().write({
+                "supplier": supplier.supplier_id.display_name,
+                "event_binnacle_id": binnacle.id,
+                "parent_id": False,
+            })
+            return {"success": True}
+        except Exception as e:
+            _logger.exception("Error adding supplier portal comment")
+            return {"success": False, "error": str(e)}
+
+    @http.route(
+        ["/provider/portal/services/get_comments"],
+        type="json",
+        auth="user",
+        methods=["POST"],
+        csrf=False,
+    )
+    def get_comments(self, event_supplier_id, page=1, page_size=10, **kw):
+        """
+        List the comments the current supplier has registered on this event.
+        """
+        try:
+            supplier = self._get_portal_supplier_event(event_supplier_id)
+            if not supplier:
+                return {"success": False, "error": _("Service not found"), "comments": []}
+
+            page = max(int(page or 1), 1)
+            page_size = min(max(int(page_size or 10), 1), 50)
+            fetch_limit = page * page_size
+
+            monitoring_domain = [
+                ("event_id", "=", supplier.event_id.id),
+                ("comment_type", "=", "supplier"),
+                "|",
+                ("event_line_id.supplier_id", "=", supplier.supplier_id.id),
+                "&",
+                ("event_line_id", "=", False),
+                ("supplier_number", "=", supplier.supplier_number),
+            ]
+
+            comment_model = request.env["ike.event.stage.comment"].sudo()
+            monitoring_count = comment_model.search_count(monitoring_domain)
+            comment_lines = comment_model.search(
+                monitoring_domain,
+                order="create_date desc, id desc",
+                limit=fetch_limit,
+            )
+
+            comments = [{
+                "id": f"monitoring-{line.id}",
+                "comment": line.comment or "",
+                "create_date": fields.Datetime.to_string(line.create_date) if line.create_date else "",
+            } for line in comment_lines]
+
+            stage_comment_binnacle = request.env.ref(
+                "ike_event_binnacle.ike_binnacle_stage_stage_comment"
+            )
+            event_comment_domain = [
+                ("model", "=", "ike.event"),
+                ("res_id", "=", supplier.event_id.id),
+                ("supplier", "=", supplier.supplier_id.name),
+                "|",
+                "&",
+                ("message_type", "=", "comment"),
+                ("subtype_id", "=", request.env.ref("mail.mt_comment").id),
+                ("event_binnacle_id", "=", stage_comment_binnacle.id),
+            ]
+            message_model = request.env["mail.message"].sudo()
+            event_comment_count = message_model.search_count(event_comment_domain)
+            event_comments = message_model.search(
+                event_comment_domain,
+                order="create_date desc, id desc",
+                limit=fetch_limit,
+            )
+            comments.extend({
+                "id": f"event-{message.id}",
+                "comment": html2plaintext(message.body or "").strip(),
+                "create_date": fields.Datetime.to_string(message.create_date)
+                if message.create_date else "",
+            } for message in event_comments if html2plaintext(message.body or "").strip())
+            comments.sort(
+                key=lambda item: (item["create_date"], item["id"]),
+                reverse=True,
+            )
+            offset = (page - 1) * page_size
+            comments = comments[offset:offset + page_size]
+
+            return {
+                "success": True,
+                "comments": comments,
+                "page": page,
+                "page_size": page_size,
+                "total": monitoring_count + event_comment_count,
+            }
+        except Exception as e:
+            _logger.exception("Error loading supplier portal comments")
+            return {"success": False, "error": str(e), "comments": []}
 
     @http.route(
         ["/provider/portal/services/get_relojes"],

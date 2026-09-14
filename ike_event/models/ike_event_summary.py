@@ -54,10 +54,10 @@ class IkeEventSummary(models.Model):
                         'value': rec.event_id.name,
                     },
                     {
-                        'name': 'event_date',
-                        'string': rec.event_id.fields_get(['event_date'])['event_date']['string'],
-                        'type': rec.event_id.fields_get(['event_date'])['event_date']['type'],
-                        'value': rec.event_id.event_date.strftime('%Y-%m-%d %H:%M:%S') if rec.event_id.event_date else False,
+                        'name': 'create_date',
+                        'string': _('Open date'),
+                        'type': rec.event_id.fields_get(['create_date'])['create_date']['type'],
+                        'value': rec.event_id.create_date.strftime('%Y-%m-%d %H:%M:%S') if rec.event_id.event_date else False,
                     },
                     {
                         'name': 'service_id',

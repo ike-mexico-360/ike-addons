@@ -19,9 +19,6 @@
                     <div class="trucks-title">
                         <span>Grúas</span>
                     </div>
-                    <div  class="search-container">
-                         <a t-if="state.canAddDriver" t-on-click="showCreateForm" class="btn-nuevo">Nueva Grúa</a>
-                    </div>
                 </div>
                 <div class="trucks-filters">
                     <form class="o_portal_search_form w-100" role="search">

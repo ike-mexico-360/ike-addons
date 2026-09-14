@@ -164,7 +164,7 @@
                                                 <div class="fw-semibold" style="font-size:0.9rem;" t-out="state.order_data.x_event_info?.nu_name"/>
                                             </div>
                                         </div>
-                                        <t t-if="isInRfqList">
+                                        <t t-if="false">
                                             <div class="d-flex align-items-start gap-2">
                                                 <i class="fa fa-money text-success mt-1" style="width:14px;"/>
                                                 <div>
@@ -260,6 +260,9 @@
                 </div>
                 <div class="table-responsive" style="border-radius:14px;box-shadow:0 1px 0 #e7e6e2, 0 8px 24px rgba(30,30,25,0.06);">
                     <table class="mb-0" style="border-collapse:separate; border-spacing:0; width:100%; background:#fff; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif; font-size:13.5px; font-variant-numeric:tabular-nums;">
+                        <t t-set="show_review_state" t-value="state.order_data.state == 'sent'"/>
+                        <t t-set="show_agreement_column" t-value="show_review_state"/>
+                        <t t-set="show_invoiced_columns" t-value="false"/>
                         <t t-set="show_cds_columns" t-value="['sent', 'to_consolidate', 'consolidated'].includes(state.order_data.state)"/>
                         <t t-set="has_new_lines" t-value="state.order_data.order_line.some(l => l.new_line)"/>
                         <t t-set="show_dispute_columns" t-value="state.show_dispute_fields || state.order_data.x_dispute_state == 'submitted' || ['resolved', 'rejected'].includes(state.order_data.x_dispute_state)"/>
@@ -271,7 +274,7 @@
                                 <th rowspan="2" style="background:#f4f3f0; color:#1c1d1f; padding:10px 16px; text-align:left; white-space:nowrap;">
                                     Concept
                                 </th>
-                                <th rowspan="2" style="background:rgba(100,60,160,0.16); color:#4a2070; padding:10px 8px; white-space:nowrap; text-align:center;">
+                                <th t-if="show_agreement_column" rowspan="2" style="background:rgba(100,60,160,0.16); color:#4a2070; padding:10px 8px; white-space:nowrap; text-align:center;">
                                     Agreement Cost
                                 </th>
                                 <th t-if="show_cds_columns" colspan="3" style="background:rgba(140,138,128,0.16); color:#4a4940; padding:10px 8px; white-space:nowrap;">
@@ -285,6 +288,15 @@
                                 </th>
                                 <th t-if="show_approved_columns" colspan="3" style="background:rgba(58,95,143,0.16); color:#254670; padding:10px 8px; white-space:nowrap;">
                                     CCC Approved Cost
+                                </th>
+                                <th t-if="show_invoiced_columns" rowspan="2" style="background:#f4f3f0; color:#1c1d1f; padding:10px 12px; text-align:center; white-space:nowrap; min-width:90px;">
+                                    <t t-out="translate('Invoiced')"/>
+                                </th>
+                                <th t-if="show_invoiced_columns" rowspan="2" style="background:#f4f3f0; color:#1c1d1f; padding:10px 12px; text-align:left; white-space:nowrap; min-width:150px;">
+                                    <t t-out="translate('Invoice Number')"/>
+                                </th>
+                                <th t-if="show_invoiced_columns" rowspan="2" style="background:#f4f3f0; color:#1c1d1f; padding:10px 12px; text-align:left; white-space:nowrap; min-width:150px;">
+                                    <t t-out="translate('Invoice Reference')"/>
                                 </th>
                                 <th t-if="has_new_lines" rowspan="2" style="background:#f4f3f0; width:40px;"></th>
                             </tr>
@@ -356,7 +368,10 @@
                                     <tr style="transition:background 0.1s;">
                                         <!-- Concept -->
                                         <td style="padding:11px 16px; text-align:left; font-weight:600; color:#1c1d1f; white-space:nowrap; border-bottom:1px solid #e7e6e2;">
-                                            <span t-out="line.display_name" t-if="!is_new_line"/>
+                                            <!-- <span t-out="line.display_name" t-if="!is_new_line"/> -->
+                                            <span t-out="line.product_id.name"/>
+                                            <br/>
+                                            <small class="text-muted" t-out="line.display_name"/>
                                             <t t-if="is_new_line">
                                                 <select class="form-select form-select-sm" name="product_id"
                                                 t-att-style="state.invalid_lines.has(line.id + '_product_id') ? 'border:1px solid #dc3545;' : ''"
@@ -371,7 +386,7 @@
                                             </t>
                                         </td>
                                         <!-- Agreement Cost -->
-                                        <td style="padding:11px 8px; text-align:right; background:rgba(100,60,160,0.1); color:#4a2070; white-space:nowrap; border-bottom:1px solid #e7e6e2;">
+                                        <td t-if="show_agreement_column" style="padding:11px 8px; text-align:right; background:rgba(100,60,160,0.1); color:#4a2070; white-space:nowrap; border-bottom:1px solid #e7e6e2;">
                                             <t t-out="formatCurrency(line.x_base_unit_price)"/>
                                         </td>
                                         <!-- CDS Quotation -->
@@ -435,6 +450,44 @@
                                                 <t t-out="formatCurrency(line.x_price_subtotal_approved)" t-if="!is_new_line"/>
                                             </td>
                                         </t>
+                                        <td t-if="show_invoiced_columns" style="padding:11px 12px; text-align:center; border-bottom:1px solid #e7e6e2;">
+                                            <i t-if="line.is_invoiced"
+                                               class="fa fa-check-square text-success"
+                                               style="font-size:18px;"
+                                               t-att-title="translate('Invoiced')"/>
+                                            <i t-else=""
+                                               class="fa fa-square-o text-muted"
+                                               style="font-size:18px;"
+                                               t-att-title="translate('Not Invoiced')"/>
+                                        </td>
+                                        <td t-if="show_invoiced_columns" style="padding:11px 12px; text-align:left; border-bottom:1px solid #e7e6e2; min-width:150px;">
+                                            <t t-if="line.invoices and line.invoices.length">
+                                                <t t-foreach="line.invoices" t-as="invoice" t-key="invoice.id">
+                                                    <div>
+                                                        <a t-att-href="'/my/invoices/' + invoice.id"
+                                                           target="_blank"
+                                                           class="text-decoration-none"
+                                                           t-out="invoice.name"/>
+                                                    </div>
+                                                </t>
+                                            </t>
+                                            <span t-else="" class="text-muted">—</span>
+                                        </td>
+                                        <td t-if="show_invoiced_columns" style="padding:11px 12px; text-align:left; border-bottom:1px solid #e7e6e2; min-width:150px;">
+                                            <t t-if="line.invoices and line.invoices.length">
+                                                <t t-foreach="line.invoices" t-as="invoice" t-key="invoice.id">
+                                                    <div>
+                                                        <a t-if="invoice.reference"
+                                                           t-att-href="'/my/invoices/' + invoice.id"
+                                                           target="_blank"
+                                                           class="text-decoration-none"
+                                                           t-out="invoice.reference"/>
+                                                        <span t-else="" class="text-muted">—</span>
+                                                    </div>
+                                                </t>
+                                            </t>
+                                            <span t-else="" class="text-muted">—</span>
+                                        </td>
                                         <td t-if="is_new_line" style="padding:8px; text-align:center; border-bottom:1px solid #e7e6e2;">
                                             <button class="btn btn-sm btn-outline-danger rounded-circle p-0"
                                             style="width:28px; height:28px; line-height:1;"
@@ -477,6 +530,9 @@
                                         <span t-out="formatCurrency(state.order_data.amount_untaxed_approved)"/>
                                     </td>
                                 </t>
+                                <td style="padding:13px 8px; background:#f4f3f0;"></td>
+                                <td style="padding:13px 8px; background:#f4f3f0;"></td>
+                                <td style="padding:13px 8px; background:#f4f3f0;"></td>
                             </tr>
                         </tbody>
                     </table>
@@ -555,7 +611,7 @@
                                 t-on-change="onDirectFileSelect"/>
                         </label>
                         <div class="text-muted mt-1" style="font-size:0.75rem;">
-                            'PDF, PNG, JPG only · Max 2 files · Max 3 MB each'
+                            'PDF, PNG, JPG only · Max 4 files · Max 3 MB each'
                         </div>
                     </div>
                 </div>

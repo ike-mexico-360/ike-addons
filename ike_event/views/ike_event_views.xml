@@ -43,7 +43,7 @@
                 <group name="events_active">
                     <filter string="Active Events"
                         name="all_active"
-                        domain="[('stage_id.ref', 'in', ['capturing', 'searching', 'assigned', 'in_progress', 'completed', 'verifying', 'closed'])]"/>
+                        domain="[('stage_id.ref', 'in', ['capturing', 'searching', 'assigned', 'in_progress', 'completed', 'verifying'])]"/>
                 </group>
                 <group name="events_stage">
                     <filter string="Draft Events" name="all_draft" domain="[('stage_id.ref', '=', 'draft')]"/>
@@ -99,14 +99,16 @@
             <!-- js_class="ike_event_screen_list" is used to use the custom renderer -->
             <list js_class="ike_event_screen_list" class="ike-show-table-buttons" edit="0" duplicate="0" delete="0" import="false">
                 <header>
+                    <!-- <button name="action_test_notification_1" string="Test 1" type="object" class="btn-primary"/> -->
                 </header>
                 <field name="name"/>
-                <field name="event_date" optional="show"/>
+                <field name="create_date" string="Open date" optional="show"/>
                 <field name="account_id" optional="show"/>
                 <field name="user_id"/>
                 <field name="service_id"/>
                 <field name="sub_service_id" context="{'display_default_code': 0}"/>
                 <field name="stage_id" widget="badge"/>
+                <field name="scheduled" />
                 <field name="stage_ref" column_invisible="1"/>
                 <field name="selected_supplier_ids" widget="many2many_tags">
                     <list>
@@ -188,7 +190,8 @@
                             confirm="Are you sure?"
                             type="object" class="btn-danger"
                             context="{'ike_event_supplier_cancel': True}"
-                            invisible="not id or stage_ref in ['completed', 'cancel', 'cancel_subsequently']"/>
+                            invisible="not id or stage_ref in ['completed', 'cancel', 'cancel_subsequently']"
+                            groups="base.group_system,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_coordinator"/>
                     <field name="stage_id" widget="statusbar_duration" options="{'clickable': 1, 'fold_field': 'fold'}"/>
                 </header>
                 <sheet>
@@ -274,7 +277,10 @@
                                     </div>
                                     <field name="use_external_locations" widget="boolean_toggle"/>
                                     <div class="o_row" colspan="2">
-                                        <button string="Add Supplier" name="action_add_multi_supplier_product_data" type="object" class="btn-primary"/>
+                                        <button string="Add Supplier"
+                                            name="action_add_multi_supplier_product_data"
+                                            type="object" class="btn-primary"
+                                            groups="base.group_system,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_coordinator"/>
                                         <button string="View Vehicles Data" name="action_view_vehicles_info" type="object" class="btn-info"/>
                                     </div>
                                 </group>
@@ -305,10 +311,8 @@
                                     options="{'field_columns': ['supplier_id']}"
                                     context="{
                                         'default_search_number': supplier_search_number,
-                                        'form_view_ref': 'ike_event.ike_event_supplier_phones_form_view',
-                                        'ike_update_route': True,
                                     }"
-                                    readonly="supplier_search_type == 'electronic'">
+                                    readonly="1">
                                     <list create="0" delete="0">
                                         <field name="display_type" column_invisible="1" />
                                         <field name="sequence" column_invisible="1"/>
@@ -352,12 +356,13 @@
                                         <button name="action_view_products" string="View Details" type="object" class="btn-link"
                                             context="{'from_view_detail': True}"
                                             invisible="state == 'notified'"/>
+                                        <button name="action_open_change_vehicle" string="Change Vehicle" type="object" class="btn-link"
+                                            context="{'from_view_detail': True}"
+                                            invisible="(assignation_type == 'electronic' or display_type) or state != 'notified'"/>
                                         <!-- <button name="action_finalize" string="Finalize" type="object" class="btn-link"/> -->
-                                        <!-- <button name="action_view_supplier_data" string="Edit" type="object" class="btn-link"
-                                            column_invisible="parent.supplier_search_type not in ['manual', 'manual_manual']"/> -->
                                     </list>
                                 </field>
-                                <button string="Add Supplier" name="action_open_add_manual_supplier_wizard" type="object" class="btn-link"
+                                <button string="Add Manual Supplier" name="action_open_add_manual_supplier_wizard" type="object" class="btn-link"
                                     invisible="supplier_search_type not in ['manual', 'manual_manual']"/>
                             </group>
                         </page>
@@ -445,7 +450,8 @@
                                     <button name="action_view_products_base_costs" string="View Details Base Costs" type="object"/>
                                     <button name="open_cancel_wizard" string="Cancel"
                                         invisible="state not in ['accepted', 'assigned']"
-                                        type="object" class="btn-link text-danger"/>
+                                        type="object" class="btn-link text-danger"
+                                        groups="base.group_system,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_coordinator"/>
                                 </list>
                             </field>
                         </page>

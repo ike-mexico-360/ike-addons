@@ -3,9 +3,10 @@
 import json
 import logging
 import requests
-import re
+# import re
 
 from collections import defaultdict
+from datetime import timedelta
 
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError, ValidationError
@@ -165,6 +166,9 @@ class IkeEvent(models.Model):
         readonly=True,
         copy=False)
     selected_pending_suppliers = fields.Integer(compute='_compute_selected_pending_suppliers', store=True)
+    selected_ongoing_suppliers = fields.Integer(compute='_compute_selected_pending_suppliers', store=True)
+    selected_cancel_suppliers = fields.Boolean(compute='_compute_selected_pending_suppliers', store=True)
+    selected_confirm_vehicle_suppliers = fields.Boolean(compute='_compute_selected_pending_suppliers', store=True)
     child_ids = fields.One2many('ike.event', 'parent_id', 'Children', copy=False)
 
     ia_suggestion_done = fields.Boolean(default=False, copy=False)
@@ -176,7 +180,7 @@ class IkeEvent(models.Model):
     )
     assigned_user_id = fields.Many2one(
         'res.users',
-        string='Assign',
+        string='Assigned',
         copy=False,
         domain=lambda self: [
             ('active', '=', True),
@@ -218,7 +222,16 @@ class IkeEvent(models.Model):
                 seq_date = fields.Datetime.context_timestamp(self, event_date or fields.Datetime.now())
                 vals['name'] = self_comp.env['ir.sequence'].next_by_code('ike.event', sequence_date=seq_date) or '/'
 
-        return super().create(vals_list)
+        res = super().create(vals_list)
+        # Broadcast Push
+        event_batcher.add_event_notification(
+            self.env.cr.dbname,
+            'IKE_CHANNEL_LIST',
+            'IKE_CHANNEL_LIST_PUSH',
+            data={
+                'event_ids': res.ids,
+            }, batch_timeout=10)
+        return res
 
     def write(self, vals):
         return super(IkeEvent, self).write(vals)
@@ -459,14 +472,42 @@ class IkeEvent(models.Model):
             else:
                 rec.current_stage_comment_ids = None
 
-    @api.depends('selected_supplier_ids', 'selected_supplier_ids.stage_id')
+    @api.depends('selected_supplier_ids', 'selected_supplier_ids.stage_id', 'selected_supplier_ids.confirmed',)
     def _compute_selected_pending_suppliers(self):
         for rec in self:
-            rec.selected_pending_suppliers = len(rec.selected_supplier_ids.filtered(
-                lambda x: x.stage_ref not in ['finalized', 'cancel']
-            ))
+            if not rec.selected_supplier_ids:
+                rec.selected_pending_suppliers = 0
+                rec.selected_ongoing_suppliers = 0
+            else:
+                rec.selected_pending_suppliers = len(
+                    rec.selected_supplier_ids.filtered(
+                        lambda x: x.stage_ref not in ['finalized', 'cancel']
+                    )
+                )
+                rec.selected_ongoing_suppliers = len(rec.selected_supplier_ids.ids) - len(
+                    rec.selected_supplier_ids.filtered(
+                        lambda x: x.stage_ref in ['preparing', 'assigned', 'cancel', ]
+                    )
+                )
+                rec.selected_cancel_suppliers = all(
+                    supplier.stage_ref == 'cancel'
+                    for supplier in rec.selected_supplier_ids
+                )
+                rec.selected_confirm_vehicle_suppliers = any(
+                    supplier.confirmed and supplier.stage_ref != 'cancel'
+                    for supplier in rec.selected_supplier_ids
+                )
 
     # === FLOW ACTIONS === #
+    def action_test_notification_1(self):
+        event_batcher.add_event_notification(
+            self.env.cr.dbname,
+            'IKE_CHANNEL_LIST',
+            'IKE_CHANNEL_LIST_PUSH',
+            data={
+                'event_ids': self.ids,
+            }, batch_timeout=10)
+
     def action_forward(self):
         context_stage_id = self.env.context.get('current_stage_id')
         context_step_number = self.env.context.get('current_step_number')
@@ -507,7 +548,7 @@ class IkeEvent(models.Model):
                 event_batcher.add_event_notification(
                     self.env.cr.dbname,
                     'IKE_CHANNEL_LIST',
-                    'IKE_CHANNEL_LIST_LISTEN', {
+                    'IKE_CHANNEL_LIST_RELOAD', {
                         'id': rec.id,
                         'stage_ref': rec.stage_ref,
                     }, batch_timeout=10)
@@ -551,7 +592,7 @@ class IkeEvent(models.Model):
                 event_batcher.add_event_notification(
                     self.env.cr.dbname,
                     'IKE_CHANNEL_LIST',
-                    'IKE_CHANNEL_LIST_LISTEN', {
+                    'IKE_CHANNEL_LIST_RELOAD', {
                         'id': rec.id,
                         'stage_ref': rec.stage_ref,
                     }, batch_timeout=10)
@@ -967,7 +1008,6 @@ class IkeEvent(models.Model):
         pass
 
     def action_set_supplier_data(self):
-        # stage_assigned = self.env.ref('ike_event.ike_service_stage_assigned').id
         for rec in self:
             if not rec.selected_supplier_ids:
                 raise UserError(_('You must have a supplier selected.'))
@@ -979,7 +1019,6 @@ class IkeEvent(models.Model):
                 ('stage_id', '=', preparing_stage_id.id)
             ])
             if service_supplier_id:
-                # service_supplier_id.stage_id = stage_assigned
                 service_supplier_id.action_assign()
 
     def action_set_event_data(self):
@@ -1057,7 +1096,7 @@ class IkeEvent(models.Model):
                 continue
 
             destination_distance_m, destination_duration_s, destination_route = (
-                rec.get_destination_route(
+                rec.get_google_route(
                     rec.location_latitude, rec.location_longitude,
                     rec.destination_latitude, rec.destination_longitude,
                 )
@@ -1218,6 +1257,8 @@ class IkeEvent(models.Model):
             'all_cancel_subsequently_events': 0,
             'all_cancel_verifying_events': 0,
             'all_cancel_closed_events': 0,
+            'all_after_3_hours_events': 0,
+            'all_scheduled_events': 0,
 
             'my_active_events': 0,
             'my_draft_events': 0,
@@ -1230,6 +1271,7 @@ class IkeEvent(models.Model):
             'my_cancel_subsequently_events': 0,
             'my_cancel_verifying_events': 0,
             'my_cancel_closed_events': 0,
+            'my_scheduled_events': 0,
         }
         IKE_EVENT = self.env['ike.event']
         active_domain = [
@@ -1243,15 +1285,20 @@ class IkeEvent(models.Model):
                     'in_progress',
                     'completed',
                     'verifying',
-                    'closed',
                 ],
             )
         ]
         inactive_domain = [('stage_id.ref', 'in', ['draft'])]
-        my_events_domain = [('assigned_user_id', '=', self.env.uid)]
+        my_events_domain = [('stage_ref', 'not in', ['cancel', 'cancel_closed']), ('assigned_user_id', '=', self.env.uid)]
         capturing_event_domain = [('stage_id.ref', 'in', ['capturing'])]
         searching_event_domain = [('stage_id.ref', 'in', ['searching'])]
         assigned_event_domain = [('stage_id.ref', 'in', ['assigned'])]
+        scheduled_events_domain = [('scheduled', '=', True)]
+        # upcoming_scheduled_events = [
+        #     ('scheduled', '=', True),
+        #     ('assigned_user_id', '=', self.env.uid),
+        #     ('appointment_show_event_date', '>', fields.Datetime.now())
+        # ]
         in_progress_event_domain = [('stage_id.ref', 'in', ['in_progress'])]
         completed_events_domain = [('stage_id.ref', 'in', ['completed'])]
         verifying_events_domain = [('stage_id.ref', 'in', ['verifying'])]
@@ -1270,7 +1317,7 @@ class IkeEvent(models.Model):
             'all_cancel_subsequently_events': IKE_EVENT.search_count(cancel_subsequently_events_domain),
             'all_cancel_verifying_events': IKE_EVENT.search_count(cancel_verifying_events_domain),
             'all_cancel_closed_events': IKE_EVENT.search_count(cancel_closed_domain),
-
+            'all_scheduled_events': IKE_EVENT.search_count(scheduled_events_domain),
             'my_active_events': IKE_EVENT.search_count(active_domain + my_events_domain),
             'my_draft_events': IKE_EVENT.search_count(inactive_domain + my_events_domain),
             'my_capturing_events': IKE_EVENT.search_count(capturing_event_domain + my_events_domain),
@@ -1282,6 +1329,7 @@ class IkeEvent(models.Model):
             'my_cancel_subsequently_events': IKE_EVENT.search_count(cancel_subsequently_events_domain + my_events_domain),
             'my_cancel_verifying_events': IKE_EVENT.search_count(cancel_verifying_events_domain + my_events_domain),
             'my_cancel_closed_events': IKE_EVENT.search_count(cancel_closed_domain + my_events_domain),
+            'my_scheduled_events': IKE_EVENT.search_count(scheduled_events_domain + my_events_domain),
         })
         return result
 
@@ -1460,6 +1508,29 @@ class IkeEvent(models.Model):
                     f'/survey/{service_satisfaction_survey_id.access_token}/{user_input_id.access_token}'
                 )
 
+    def action_notify_changed_to_scheduled(self):
+        groups_data = {}
+        for rec in self:
+            self.event_summary_id.set_service_data()
+            if not rec.scheduled:
+                continue
+            rec.selected_supplier_ids.confirmed = False
+            for event_supplier_id in rec.selected_supplier_ids:
+                supplier_id: str = str(event_supplier_id.supplier_id.id)
+                if supplier_id not in groups_data:
+                    groups_data[supplier_id] = [event_supplier_id.id]
+                else:
+                    groups_data[supplier_id].append(event_supplier_id.id)
+        for supplier_id, ids in groups_data.items():
+            channel_name = f'ike_channel_supplier_{str(supplier_id)}'
+            event_batcher.add_event_notification(
+                self.env.cr.dbname,
+                channel_name,
+                'ike_supplier_lines_reload_scheduled', {
+                    'action_from': 'internal',
+                    'event_supplier_ids': ids,
+                }, batch_timeout=10)
+
     # === ACTION CANCEL === #
     def open_cancel_wizard(self):
         self.ensure_one()
@@ -1614,7 +1685,7 @@ class IkeEvent(models.Model):
         self.ensure_one()
         return self.env[self.sub_service_res_model].browse(self.sub_service_res_id)
 
-    def get_destination_route(
+    def get_google_route(
         self,
         location_latitude,
         location_longitude,
@@ -1704,3 +1775,44 @@ class IkeEvent(models.Model):
 
         if event_ids:
             event_ids.action_verify()
+
+    @api.model
+    def _notify_scheduled(self):
+        now = fields.Datetime.now()
+        event_ids = self.search_read([
+            ('scheduled', '=', True),
+            ('event_date', '>=', now - timedelta(minutes=12)),
+            ('event_date', '<=', now + timedelta(hours=3)),
+        ], ['id'])
+
+        if len(event_ids):
+            # Broadcast Push Internal View
+            event_batcher.add_event_notification(
+                self.env.cr.dbname,
+                'IKE_CHANNEL_LIST',
+                'IKE_CHANNEL_LIST_PUSH',
+                data={
+                    'event_ids': [rec['id'] for rec in event_ids],
+                }, batch_timeout=10)
+
+            # Broadcast Push Portal
+            groups_data = self.env['ike.event.supplier']._read_group(
+                domain=[
+                    ('event_id', 'in', [rec['id'] for rec in event_ids]),
+                    ('selected', '=', True),
+                    ('stage_ref', '=', 'assigned'),
+                    ('supplier_id', '!=', False),
+                ],
+                groupby=['supplier_id'],
+                aggregates=['id:array_agg'],
+            )
+
+            for supplier_id, ids in groups_data:
+                channel_name = f'ike_channel_supplier_{str(supplier_id.id)}'
+                event_batcher.add_event_notification(
+                    self.env.cr.dbname,
+                    channel_name,
+                    'ike_supplier_lines_reload_scheduled', {
+                        'action_from': 'internal',
+                        'event_supplier_ids': ids,
+                    }, batch_timeout=10)

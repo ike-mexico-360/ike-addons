@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="ir_cron_done_zero_cost_review_to_draft_cancel" model="ir.cron">
+        <field name="name">Move blocked cost reviews to cost review cancel</field>
+        <field name="model_id" ref="purchase.model_purchase_order"/>
+        <field name="state">code</field>
+        <field name="code">
+            model.search([
+                ('state', '=', 'done'),
+            ]).write({'state': 'draft_cancel'})
+        </field>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="False"/>
+    </record>
+</odoo>

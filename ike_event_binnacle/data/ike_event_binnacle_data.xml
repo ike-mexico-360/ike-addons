@@ -837,27 +837,6 @@
             <field name="sequence">1</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_1"/>
         </record>
-        <!-- <record id="ike_binnacle_stage_mail_template_5_2" model="mail.template">
-            <field name="name">Binnacle stage mail template 5 2</field>
-            <field name="model_id" ref="ike_event.model_ike_event"/>
-            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
-            <field name="body_html" type="html">
-                <t>
-                    <strong>Type assignation:</strong>
-                    <t t-set="supplier" t-value="object.service_supplier_ids[:1]"/>
-                    <t t-if="supplier and supplier.assignation_type">
-                        <t t-out="dict(supplier._fields['assignation_type']._description_selection(object.env)).get(supplier.assignation_type, '')"/>
-                    </t>
-                </t>
-            </field>
-        </record>
-        <record id="ike_binnacle_stage_5_2" model="ike.event.binnacle">
-            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
-            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
-            <field name="step_number">5</field>
-            <field name="sequence">2</field>
-            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_5_2"/>
-        </record> -->
         <record id="ike_binnacle_stage_mail_template_5_3" model="mail.template">
             <field name="name">Binnacle stage mail template 5 3</field>
             <field name="model_id" ref="ike_event.model_ike_event"/>
@@ -951,29 +930,59 @@
                         <table style="width:100%; border: 1px solid black; font-size:13px;">
                             <thead style="background-color:#4a90e2; color:white;">
                                 <tr>
-                                    <th style="border:1px solid #000; padding:6px;" align="left">Concept</th>
-                                    <th style="border:1px solid #000; padding:6px;" align="right">Price</th>
+                                    <th style="border:1px solid #000; padding:6px;">Concept</th>
+                                    <th style="border:1px solid #000; padding:6px;">Parent concept</th>
+                                    <th style="border:1px solid #000; padding:6px;">Quantity</th>
+                                    <th style="border:1px solid #000; padding:6px;">Unit Price</th>
+                                    <th style="border:1px solid #000; padding:6px;">Cost</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <t t-foreach="supplier_lines" t-as="sl">
-                                    <t t-set="price" t-value="sl.base_unit_price if sl.base_unit_price else sl.unit_price"/>
-                                    <t t-set="subtotal" t-value="subtotal + price"/>
+                                    <t t-set="quantity" t-value="sl.quantity or 0.0"/>
+                                    <t t-set="unit_price" t-value="sl.base_unit_price or sl.unit_price or 0.0"/>
+                                    <t t-set="amount" t-value="unit_price * quantity"/>
+                                    <t t-set="subtotal" t-value="subtotal + amount"/>
+
                                     <tr>
                                         <td style="border:1px solid #000; padding:6px;">
-                                            <t t-out="sl.product_id.name or sl.name"/>
+                                            <t t-out="
+                                                sl.product_id.display_name
+                                                if sl.product_id
+                                                else sl.name or ''
+                                            "/>
                                         </td>
-                                        <td style="border:1px solid #000; padding:6px;" align="right">
-                                            <t t-out="'${:,.2f}'.format(price)"/>
+
+                                        <td style="border:1px solid #000; padding:6px;">
+                                            <t t-out="
+                                                sl.parent_product_id.display_name
+                                                if sl.parent_product_id
+                                                else ''
+                                            "/>
+                                        </td>
+
+                                        <td style="border:1px solid #000; padding:6px;">
+                                            <t t-out="quantity"/>
+                                        </td>
+
+                                        <td style="border:1px solid #000; padding:6px;">
+                                            <t t-out="'${:,.2f}'.format(unit_price)"/>
+                                        </td>
+
+                                        <td style="border:1px solid #000; padding:6px;">
+                                            <t t-out="'${:,.2f}'.format(amount)"/>
                                         </td>
                                     </tr>
                                 </t>
+
                                 <tr style="font-weight:bold; background-color:#f5f5f5;">
-                                    <td style="border:1px solid #000; padding:6px;" align="right">
-                                        <strong>Subtotal</strong>
+                                    <td colspan="4"
+                                        style="border:1px solid #000; padding:6px; text-align:right;">
+                                        Subtotal
                                     </td>
-                                    <td style="border:1px solid #000; padding:6px;" align="right">
-                                        <strong><t t-out="'${:,.2f}'.format(subtotal)"/></strong>
+
+                                    <td style="border:1px solid #000; padding:6px;">
+                                        <t t-out="'${:,.2f}'.format(subtotal)"/>
                                     </td>
                                 </tr>
                             </tbody>
@@ -1179,26 +1188,57 @@
                         )"/>
 
                     <t t-if="pending_lines">
-                        <table border="1" cellpadding="5" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                        <table style="width:100%; border:1px solid black; border-collapse:collapse; font-size:13px;">
                             <thead style="background-color:#4a90e2; color:white;">
                                 <tr>
-                                    <th  style="border:1px solid #000; padding:6px;">Concept</th>
-                                    <th  style="border:1px solid #000; padding:6px;">Cost</th>
+                                    <th style="border:1px solid #000; padding:6px;">Concept</th>
+                                    <th style="border:1px solid #000; padding:6px;">Quantity</th>
+                                    <th style="border:1px solid #000; padding:6px;">Unit Price</th>
+                                    <th style="border:1px solid #000; padding:6px;">Cost</th>
                                 </tr>
                             </thead>
+
                             <tbody>
                                 <t t-foreach="pending_lines" t-as="line">
+                                    <t t-set="quantity" t-value="line.quantity or 0.0"/>
+                                    <t t-set="unit_price"
+                                    t-value="line.base_unit_price or line.unit_price or 0.0"/>
+                                    <t t-set="amount" t-value="unit_price * quantity"/>
+                                    <t t-set="subtotal" t-value="(subtotal or 0.0) + (amount or 0.0)"/>
+
                                     <tr>
                                         <td style="border:1px solid #000; padding:6px;">
-                                            <t t-out="line.product_id.display_name or line.name"/>
+                                            <t t-out="
+                                                line.product_id.display_name
+                                                if line.product_id
+                                                else line.name or ''
+                                            "/>
                                         </td>
+
                                         <td style="border:1px solid #000; padding:6px;" align="right">
-                                            <t t-set="price"
-                                            t-value="line.base_unit_price if line.base_unit_price else line.unit_price"/>
-                                            <t t-out="'${:,.2f}'.format(price)"/>
+                                            <t t-out="quantity"/>
+                                        </td>
+
+                                        <td style="border:1px solid #000; padding:6px;" align="right">
+                                            <t t-out="'${:,.2f}'.format(unit_price)"/>
+                                        </td>
+
+                                        <td style="border:1px solid #000; padding:6px;" align="right">
+                                            <t t-out="'${:,.2f}'.format(amount)"/>
                                         </td>
                                     </tr>
                                 </t>
+
+                                <tr style="font-weight:bold; background-color:#f5f5f5;">
+                                    <td colspan="3"
+                                        style="border:1px solid #000; padding:6px; text-align:right;">
+                                        Subtotal
+                                    </td>
+
+                                    <td style="border:1px solid #000; padding:6px; text-align:right;">
+                                        <t t-out="'${:,.2f}'.format(subtotal)"/>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </t>
@@ -2858,12 +2898,158 @@
                 </t>
             </field>
         </record>
-
         <record id="ike_binnacle_stage_stage_comment" model="ike.event.binnacle">
             <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
             <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
             <field name="sequence">95</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_stage_comment"/>
+        </record>
+
+        <record id="ike_binnacle_stage_mail_template_auto_assign_event" model="mail.template">
+            <field name="name">Binnacle stage mail template stage comment</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                     <p>
+                        The event has been auto-assigned to
+                        <strong>
+                            <t t-out="object.assigned_user_id.name"/>
+                        </strong>.
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_auto_assign_event" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="sequence">96</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_auto_assign_event"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_appointment_event" model="mail.template">
+            <field name="name">Binnacle stage mail template stage comment</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-if="object.scheduled">
+                        <p>
+                            <strong>Event type:</strong> Scheduled
+                        </p>
+                        <p>
+                            <strong>Event date:</strong>
+                            <t t-out="format_datetime(
+                                object.appointment_show_event_date,
+                                tz=object.env.user.tz,
+                                dt_format='dd/MM/yyyy HH:mm:ss'
+                            )"/>
+                        </p>
+                    </t>
+
+                    <t t-else="">
+                        <p>
+                            <strong>Event type:</strong> At the moment
+                        </p>
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_appointment_event" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="sequence">97</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_appointment_event"/>
+        </record>
+
+        <!-- MESSAGE APPOINTMENT -->
+        <record id="ike_binnacle_stage_mail_template_convert_appointment_event" model="mail.template">
+            <field name="name">Binnacle stage mail template stage comment</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t t-if="object.scheduled">
+                        <p>
+                            <strong>Appointment scheduling:</strong>
+                            The event was changed to an appointment for
+                            <t t-out="format_datetime(
+                                object.event_date,
+                                tz=object.env.user.tz,
+                                dt_format='dd/MM/yyyy HH:mm:ss'
+                            )"/>.
+                        </p>
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_convert_appointment_event" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="sequence">98</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_convert_appointment_event"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_confirm_vehicle" model="mail.template">
+            <field name="name">Binnacle stage mail template stage comment</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <t>
+                        <p>
+                            <strong>Confirmed vehicle:</strong>
+                            <t t-out="ctx.get('vehicle_name')"/>.
+                        </p>
+                    </t>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_confirm_vehicle" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="sequence">98</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_confirm_vehicle"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_change_and_confirm_vehicle" model="mail.template">
+            <field name="name">Binnacle stage mail template stage comment</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <p>
+                        <strong>Vehicle change:</strong>
+                        The vehicle
+                        <strong>
+                            <t t-out="ctx.get('old_vehicle_name')"/>
+                        </strong>
+                        was changed to
+                        <strong>
+                            <t t-out="ctx.get('new_vehicle_name')"/>
+                        </strong>.
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_change_and_confirm_vehicle" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="sequence">98</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_change_and_confirm_vehicle"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_change_event_normal" model="mail.template">
+            <field name="name">Binnacle stage mail template stage comment</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <p>The scheduled event was changed to a normal event.</p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_change_event_normal" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="sequence">99</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_change_event_normal"/>
         </record>
     </data>
 </odoo>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-07 16:39+0000\n"
-"PO-Revision-Date: 2026-08-07 16:39+0000\n"
+"POT-Creation-Date: 2026-08-21 17:47+0000\n"
+"PO-Revision-Date: 2026-08-21 17:47+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -44,6 +44,12 @@ msgstr ""
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
 msgid "Actions"
 msgstr "Acciones"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Services"
+msgstr "Servicios"
 
 #. module: ike_event_portal
 #. odoo-python
@@ -543,6 +549,18 @@ msgid "Route Status"
 msgstr "Estado ruta"
 
 #. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Supplier Status"
+msgstr "Estado Proveedor"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Scheduled"
+msgstr "Agendado"
+
+#. module: ike_event_portal
 #: model:ir.model,name:ike_event_portal.model_ike_event
 #: model:ir.model.fields,field_description:ike_event_portal.field_ike_event_supplier_public__event_id
 msgid "Event"
@@ -633,6 +651,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
 msgid "Follow orders you have to fulfill"
 msgstr "Monitoree las órdenes que debe cumplir"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Follow your Order Reviews"
+msgstr "Seguimiento de sus revisiones de órdenes"
 
 #. module: ike_event_portal
 #: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
@@ -998,6 +1021,36 @@ msgstr ""
 #: code:addons/ike_event_portal/static/src/components/users/user_main_component.xml:0
 msgid "Operador"
 msgstr ""
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Order"
+msgstr "Orden"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Order Reviews"
+msgstr "Revisión de ordenes"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Origin"
+msgstr "Origen"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Order"
+msgstr "Orden"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
+msgid "Order Reviews"
+msgstr "Revisión de ordenes"
+
+#. module: ike_event_portal
+#: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_client_events
+msgid "Origin"
+msgstr "Origen"
 
 #. module: ike_event_portal
 #: model_terms:ir.ui.view,arch_db:ike_event_portal.portal_my_home_ike_events
@@ -1665,6 +1718,12 @@ msgstr "Confirmar Notificación"
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "This service has not started yet."
+msgstr "Este servicio aún no ha comenzado."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
 msgid "Confirm Rejection"
 msgstr "Confirmar Rechazo"
 
@@ -1859,6 +1918,18 @@ msgstr "Este servicio ya no está disponible para aceptación."
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
 msgid "This service is no longer available for cancellation."
 msgstr "Este servicio ya no está disponible para cancelación."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Evented Date"
+msgstr "Fecha del Evento"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Programmed Date"
+msgstr "Fecha Programada"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -2113,6 +2184,24 @@ msgstr "Requiere Contactado"
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
 msgid "Error loading clocks"
 msgstr "Error al cargar relojes"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Upcoming Service"
+msgstr "Próximo Servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "You have a service scheduled to start soon."
+msgstr "Tiene un servicio programado para comenzar pronto."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/select_vehicle_dialog.js:0
+msgid "Select Service Vehicle"
+msgstr "Seleccionar vehículo de servicio"
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -2413,6 +2502,48 @@ msgstr "-- Sin tipo --"
 #: code:addons/ike_event_portal/static/src/components/trucks/truck_read_component.xml:0
 msgid "Cancel"
 msgstr "Cancelar"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/service_comment_dialog.js:0
+msgid "Add Comment"
+msgstr "Agregar Comentario"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Comments"
+msgstr "Comentarios"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Comment added"
+msgstr "Comentario agregado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.js:0
+msgid "Your comment has been saved."
+msgstr "Su comentario ha sido guardado."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/service_comment_dialog.xml:0
+msgid "Comment"
+msgstr "Comentario"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/service_comment_dialog.js:0
+msgid "Please write a comment before saving."
+msgstr "Escriba un comentario antes de guardar."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/service_comment_dialog.js:0
+msgid "An error occurred while saving the comment."
+msgstr "Ocurrió un error al guardar el comentario."
 
 #. module: ike_event_portal
 #. odoo-javascript
@@ -2820,3 +2951,27 @@ msgstr "≤ 72 horas"
 #: code:addons/ike_event_portal/controllers/client_events_controller.py:0
 msgid "> 72 hours"
 msgstr "> 72 horas"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/service_comment_dialog.xml:0
+msgid "Write your comment here..."
+msgstr "Escriba su comentario aquí..."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/service_comment_dialog.xml:0
+msgid "Loading comments..."
+msgstr "Cargando comentarios..."
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/service_comment_dialog.xml:0
+msgid "No comments registered"
+msgstr "No hay comentarios registrados"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/dialogs/service_comment_dialog.xml:0
+msgid "comments"
+msgstr "comentarios"

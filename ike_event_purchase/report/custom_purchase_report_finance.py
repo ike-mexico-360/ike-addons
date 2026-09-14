@@ -130,3 +130,17 @@ class CustomPurchaseReportFinance(models.Model):
             """,
             ALLOWED_PO_STATES,
         )
+
+
+class PurchaseReportFinance(models.Model):
+    _inherit = "purchase.report"
+
+    state = fields.Selection(selection_add=[
+        ('draft', 'Cost Review'),
+        ('sent', 'Cost Review Sent'),
+        ('to_consolidate', 'To Consolidate'),
+        ('consolidated', 'Consolidated'),
+        ('purchase',),  # Ancla de posición
+        ('cancel',),  # Ancla de posición
+        ('draft_cancel', 'Cost Review Cancel'),
+    ])

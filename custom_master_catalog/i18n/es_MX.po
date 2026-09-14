@@ -181,6 +181,11 @@ msgid "Accessory created"
 msgstr "Accesorio creado"
 
 #. module: custom_master_catalog
+#: model:custom.incident.type,name:custom_master_catalog.cit_accident
+msgid "Accident"
+msgstr "Siniestro"
+
+#. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.action_res_partner_account_readonly
 #: model:ir.actions.act_window,name:custom_master_catalog.res_partner_account_action_window
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__account_id
@@ -1781,6 +1786,11 @@ msgid "Extraordinary"
 msgstr "Extraordinaria"
 
 #. module: custom_master_catalog
+#: model:custom.incident.type,name:custom_master_catalog.cit_fault
+msgid "Fault"
+msgstr "Falla mecánica"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_date_reset
 msgid "Fecha de Reseteo"
 msgstr ""
@@ -3227,6 +3237,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__priority
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__priority
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__priority
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 msgid "Priority"
 msgstr "Prioridad"
 
@@ -3743,6 +3755,8 @@ msgstr "Submarca"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.product_template_form_view
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_template_filter
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_template_list
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 msgid "Subservice"
 msgstr "Subservicio"
 
@@ -3825,6 +3839,8 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_directory_center_view_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_drivers_rel_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_users_rel_view_search
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 msgid "Supplier"
 msgstr "Proveedor"
 
@@ -4710,3 +4726,191 @@ msgstr "desconocido"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_account_view_form
 msgid "validation and visualization"
 msgstr "validación y visualización"
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__supplier_center_id
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Care Center"
+msgstr "Centro de atención"
+
+#. module: custom_master_catalog
+#: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_manual_assignment_order_action
+msgid "Configure the manual assignment order"
+msgstr "Configure el orden para asignación manual"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__state_id
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_manual_assignment_order_view_search
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Geographical Zone"
+msgstr "Zona geográfica"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__sequence
+msgid "Manual Assignment Order"
+msgstr "Orden para asignación manual"
+
+#. module: custom_master_catalog
+#: model:ir.actions.act_window,name:custom_master_catalog.custom_manual_assignment_order_action
+#: model:ir.actions.client,name:custom_master_catalog.custom_manual_assignment_order_client_action
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_manual_assignment_order_view_list
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Manual Assignment Order Configuration"
+msgstr "Configuración de Orden para asignación manual"
+
+#. module: custom_master_catalog
+#: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_manual_assignment_order_action
+msgid "Only care centers belonging to suppliers configured for manual assignment are allowed."
+msgstr "Solo se permiten centros de atención de proveedores configurados para asignación manual."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "Only suppliers configured for manual assignment can be added."
+msgstr "Solo se pueden agregar proveedores configurados para asignación manual."
+
+#. module: custom_master_catalog
+#: model:ir.ui.menu,name:custom_master_catalog.custom_manual_assignment_order_menu
+msgid "Order Configuration"
+msgstr "Configuración de orden"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "The care center can only have one manual assignment order per geographical zone and subservice."
+msgstr "El centro de atención solo puede tener un orden de asignación manual por zona geográfica y subservicio."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "The care center must have active coverage for the selected geographical zone and subservice."
+msgstr "El centro de atención debe tener cobertura activa para la zona geográfica y el subservicio seleccionados."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "The manual assignment order must be greater than zero."
+msgstr "El orden para asignación manual debe ser mayor que cero."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "Geographical zone and subservice are required."
+msgstr "La zona geográfica y el subservicio son obligatorios."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.js:0
+msgid "Manual assignment order saved."
+msgstr "Orden para asignación manual guardado."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "No manual assignment suppliers found."
+msgstr "No se encontraron proveedores de asignación manual."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "One or more care centers do not belong to suppliers configured for manual assignment."
+msgstr "Uno o más centros de atención no pertenecen a proveedores configurados para asignación manual."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Select a geographical zone and subservice to display suppliers."
+msgstr "Seleccione una zona geográfica y un subservicio para mostrar los proveedores."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Select a geographical zone..."
+msgstr "Seleccione una zona geográfica..."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Select a subservice..."
+msgstr "Seleccione un subservicio..."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Apply"
+msgstr "Aplicar"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Clear"
+msgstr "Limpiar"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Discard"
+msgstr "Descartar"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__manual_assignment_order
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Order"
+msgstr "Orden"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Remove"
+msgstr "Quitar"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Save"
+msgstr "Guardar"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Search..."
+msgstr "Buscar..."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Care Center State"
+msgstr "Estado del centro de atención"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "All states"
+msgstr "Todos los estados"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Select a state..."
+msgstr "Seleccione un estado..."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "State, geographical zone and subservice are required."
+msgstr "El estado, la zona geográfica y el subservicio son obligatorios."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Change priority"
+msgstr "Cambiar prioridad"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "Priority must be between zero and three."
+msgstr "La prioridad debe estar entre cero y tres."

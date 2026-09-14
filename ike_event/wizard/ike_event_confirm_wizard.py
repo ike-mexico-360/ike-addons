@@ -7,7 +7,11 @@ class IkeEventConfirmWizard(models.TransientModel):
     _inherit = ['custom.model.confirm.wizard']
     _description = 'Event Confirm Wizard'
 
-    cancel_reason_id = fields.Many2one('ike.event.cancellation.reason', 'Cancel Reason')
+    cancel_reason_id = fields.Many2one(
+        'ike.event.cancellation.reason',
+        string='Cancel Reason',
+        domain=[('active', '=', True), ('disabled', '=', False)]
+    )
 
     def action_confirm(self):
         self.ensure_one()

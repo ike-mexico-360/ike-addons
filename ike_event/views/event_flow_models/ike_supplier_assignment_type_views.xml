@@ -6,7 +6,7 @@
         <field name="name">view.ike.event.supplier.assignment.type.list</field>
         <field name="model">ike.event.supplier.assignment.type</field>
         <field name="arch" type="xml">
-            <list duplicate="0" delete="0" edit="0">
+            <list create="0" duplicate="0" delete="0">
                 <field name="sequence" widget="handle" />
                 <field name="name" />
                 <field name="wait_time" widget="integer" options="{'postfix': 'seconds'}" />

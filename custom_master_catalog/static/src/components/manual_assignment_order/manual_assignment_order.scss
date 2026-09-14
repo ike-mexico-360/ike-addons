@@ -1,0 +1,66 @@
+.o_manual_assignment_order {
+    min-width: 0;
+    max-width: 100%;
+
+    .o_manual_assignment_order_header,
+    .card,
+    .card-body,
+    .table-responsive {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    // sh_all_in_one_helpdesk applies a global scale to every Bootstrap card.
+    // Keep this client action stable when the pointer enters its cards.
+    .card,
+    .card:hover {
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .o_manual_assignment_drag_column {
+        width: 2rem;
+    }
+
+    .o_manual_assignment_drag_handle {
+        cursor: grab;
+        width: 2rem;
+
+        &:active {
+            cursor: grabbing;
+        }
+    }
+
+    .o_manual_assignment_priority {
+        line-height: 1;
+        text-decoration: none;
+
+        &:focus {
+            box-shadow: none;
+        }
+    }
+
+    .o_manual_assignment_order_row,
+    .o_manual_assignment_order_row:hover {
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .o_manual_assignment_dragging {
+        opacity: 0.65;
+        background-color: rgba(113, 75, 103, 0.12) !important;
+        box-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.2);
+    }
+
+    .o_manual_assignment_drop_target {
+        background-color: rgba(113, 75, 103, 0.08) !important;
+        box-shadow: inset 0 0.2rem 0 #714b67;
+    }
+
+    .o_manual_assignment_drop_placeholder {
+        visibility: visible !important;
+        background-color: rgba(113, 75, 103, 0.05) !important;
+        outline: 0.125rem dashed #714b67;
+        outline-offset: -0.125rem;
+    }
+}

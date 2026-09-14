@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <data noupdate="1">
+
+        <record id="cit_fault" model="custom.incident.type">
+            <field name="ref">fault</field>
+            <field name="name">Fault</field>
+        </record>
+
+        <record id="cit_accident" model="custom.incident.type">
+            <field name="ref">accident</field>
+            <field name="name">Accident</field>
+        </record>
+
+    </data>
+
+</odoo>

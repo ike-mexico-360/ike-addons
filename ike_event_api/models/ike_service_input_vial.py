@@ -1,11 +1,29 @@
 import requests
-from odoo import models, _
+from odoo import api, models, fields, _
 import logging
 _logger = logging.getLogger(__name__)
 
 
 class IkeServiceInputVial(models.Model):
     _inherit = 'ike.service.input.vial'
+
+    x_events_allow_assistview = fields.Boolean(
+        string='Open Assistview',
+        help="Enable assistview",
+        compute='_compute_x_events_allow_assistview',
+    )
+
+    @api.depends('event_id', 'event_id.company_id.x_events_allow_assistview')
+    def _compute_x_events_allow_assistview(self):
+        for record in self:
+            event_id = record.event_id
+            allow_assistview = event_id.company_id.x_events_allow_assistview
+            record.x_events_allow_assistview = allow_assistview
+            if event_id.step_number == 2 and event_id.stage_ref == 'capturing':
+                if not allow_assistview:
+                    record.action_identification_manual()
+                else:
+                    record.action_identification_link()
 
     def x_send_request_to_create_session(
         self,

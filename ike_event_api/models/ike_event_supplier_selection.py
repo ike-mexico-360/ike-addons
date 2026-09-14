@@ -74,8 +74,7 @@ class IkeEventSupplierSelection(models.Model):
                 def send_notifications_with_new_cursor():
                     threading.Thread(
                         target=self._async_send_notification,
-                        args=(self.env.cr.dbname, self_filtered.ids, 'send_external_notification'),
-                        # args=(self.env.cr.dbname, self_filtered.ids, '_testing_async_method', 'send_external_notification'),  # ?TEST
+                        args=(dbname, record_ids, 'send_external_notification'),
                         daemon=True,
                     ).start()
         return result
@@ -100,21 +99,21 @@ class IkeEventSupplierSelection(models.Model):
         """OVERRIDE: send user notification"""
         result = super().action_accept()
         selected_suppliers = self.filtered(lambda x: x.selected)
+        # Frozen variables to prevent bug at post commit
+        dbname = self.env.cr.dbname
+        record_ids = selected_suppliers.ids
+
+        @self.env.cr.postcommit.add
+        def send_tracking_route_with_new_cursor():
+            threading.Thread(
+                target=self._async_send_notification,
+                args=(dbname, record_ids, 'send_tracking_route'),
+                daemon=True
+            ).start()
+
         # FixMe: check len == 1 ?
         if len(selected_suppliers) == 1 and not self._is_db_neutralized():
-
-            # Frozen variables to prevent bug at post commit
-            dbname = self.env.cr.dbname
-            record_ids = selected_suppliers.ids
-
-            @self.env.cr.postcommit.add
-            def send_tracking_route_with_new_cursor():
-                threading.Thread(
-                    target=self._async_send_notification,
-                    args=(dbname, record_ids, 'send_tracking_route'),
-                    daemon=True
-                ).start()
-
+            # Send only one time
             @self.env.cr.postcommit.add
             def send_notifications_with_new_cursor():
                 threading.Thread(
@@ -123,6 +122,23 @@ class IkeEventSupplierSelection(models.Model):
                     daemon=True
                 ).start()
         return result
+
+    # Enviar ruta planeada tras cambio de vehículo
+    def _set_new_service_vehicle_distance(self):
+        res = super()._set_new_service_vehicle_distance()
+        selected_suppliers = self.filtered(lambda x: x.selected)
+        # Frozen variables to prevent bug at post commit
+        dbname = self.env.cr.dbname
+        record_ids = selected_suppliers.ids
+
+        @self.env.cr.postcommit.add
+        def send_tracking_route_with_new_cursor():
+            threading.Thread(
+                target=self._async_send_notification,
+                args=(dbname, record_ids, 'send_tracking_route'),
+                daemon=True
+            ).start()
+        return res
 
     # def action_reject(self):
     # def action_timeout(self):
@@ -202,44 +218,72 @@ class IkeEventSupplierSelection(models.Model):
             except Exception as e:
                 _logger.error(f"Error sending global notification to app: {str(e)}")
 
-            if self_filtered_external and not self._is_db_neutralized():
-                try:
-                    @self.env.cr.postcommit.add
-                    def send_notifications_with_new_cursor_external():
-                        threading.Thread(
-                            target=self._async_send_notification,
-                            args=(
-                                dbname,
-                                external_record_ids,
-                                'send_cancel_notification_to_external',
-                                cancel_reason_id,
-                                reason_text,
-                                'external'
-                            ),
-                            daemon=True,
-                        ).start()
-                except Exception as e:
-                    _logger.error(f"Error sending cancel notification to external: {str(e)}")
+        if self_filtered_external and not self._is_db_neutralized():
+            try:
+                @self.env.cr.postcommit.add
+                def send_notifications_with_new_cursor_external():
+                    threading.Thread(
+                        target=self._async_send_notification,
+                        args=(
+                            dbname,
+                            external_record_ids,
+                            'send_cancel_notification_to_external',
+                            cancel_reason_id,
+                            reason_text,
+                            'external'
+                        ),
+                        daemon=True,
+                    ).start()
+            except Exception as e:
+                _logger.error(f"Error sending cancel notification to external: {str(e)}")
 
         return result
 
     def action_supplier_cancel(self, cancel_reason_id: int, reason_text=None):
         """OVERRIDE: send user notification"""
+        # Filtrar los operadores a notificar cancelación
         self_filtered = self.filtered(lambda x: x.state in ['accepted', 'assigned'] and not x.stage_ref == 'finalized')
+        self_filtered_app = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is False)
+        self_filtered_external = self_filtered.filtered(lambda x: x.supplier_id.x_has_external_notification is True)
+
         result = super().action_supplier_cancel(cancel_reason_id, reason_text)
 
-        if not self._is_db_neutralized():
-            # Frozen variables to prevent bug at post commit
-            dbname = self.env.cr.dbname
-            record_ids = self_filtered.ids
+        # Frozen variables to prevent bug at post commit
+        dbname = self.env.cr.dbname
+        app_record_ids = self_filtered_app.ids
+        external_record_ids = self_filtered_external.ids
 
-            @self.env.cr.postcommit.add
-            def send_notifications_with_new_cursor():
-                threading.Thread(
-                    target=self._async_send_notification,
-                    args=(dbname, record_ids, 'send_cancel_notification', 'portal'),
-                    daemon=True,
-                ).start()
+        if self_filtered_app and not self._is_db_neutralized():
+            try:
+                @self.env.cr.postcommit.add
+                def send_notifications_with_new_cursor():
+                    threading.Thread(
+                        target=self._async_send_notification,
+                        args=(dbname, app_record_ids, 'send_cancel_notification', 'portal'),
+                        daemon=True,
+                    ).start()
+            except Exception as e:
+                _logger.error(f"Error sending supplier_cancel notification to app: {str(e)}")
+
+        notify_external_service = not self.env.context.get('x_bypass_external_notification', False)
+        if self_filtered_external and notify_external_service and not self._is_db_neutralized():
+            try:
+                @self.env.cr.postcommit.add
+                def send_notifications_with_new_cursor_external():
+                    threading.Thread(
+                        target=self._async_send_notification,
+                        args=(
+                            dbname,
+                            external_record_ids,
+                            'send_cancel_notification_to_external',
+                            cancel_reason_id,
+                            reason_text,
+                            'external'
+                        ),
+                        daemon=True,
+                    ).start()
+            except Exception as e:
+                _logger.error(f"Error sending supplier_cancel notification to external: {str(e)}")
 
         return result
 
@@ -331,6 +375,11 @@ class IkeEventSupplierSelection(models.Model):
                                     "min_required_photos": rec.event_id.sub_service_id.x_min_required_photos or 0,
                                     "signature_required": rec.event_id.sub_service_id.x_signature_required or False,
                                 },
+                                "uuid_grua": rec.truck_id.x_vehicle_ref,
+                                "appointment": {
+                                    "type": int(rec.event_id.scheduled),  # 1=cita 0=otro
+                                    "appointment_date": rec.event_id.event_date.replace(tzinfo=None).strftime('%Y-%m-%d %H:%M:%S'),
+                                },
                                 "DB": self.env.cr.dbname,  # Base de datos para distinguir de donde provienen las notificaciones
                             },
                         )
@@ -369,6 +418,12 @@ class IkeEventSupplierSelection(models.Model):
         tracking_responses = []
         IrConfig = self.env['ir.config_parameter'].sudo()
         route_tracking_url = IrConfig.get_param('ike_event_api.url.send_route')
+
+        neutralized_db = IrConfig.get_param('database.is_neutralized')
+        if neutralized_db:
+            _logger.warning("Neutralized DB: Route Notification not sent")
+            return
+
         if route_tracking_url:
             headers = {
                 "Content-Type": "application/json",
@@ -593,10 +648,12 @@ class IkeEventSupplierSelection(models.Model):
 
         survey_input_data = self.event_id.get_survey_input_data()
         decrypt_utility = self.env['custom.encryption.utility'].sudo()
+        nu_name = decrypt_utility.decrypt_aes256(self.event_id.user_id.name or '')
+        account_id = self.event_id.account_id
 
         body = {
             "id": str(self.event_id.id),
-            "user": decrypt_utility.decrypt_aes256(self.event_id.user_id.name or ''),
+            "user": nu_name,
             "placeEvent": self.event_id.event_type_id.name or '',
             "car": {
                 "yearCar": service_model_id.vehicle_year or '',
@@ -646,6 +703,17 @@ class IkeEventSupplierSelection(models.Model):
                 "id": str(self.truck_id.x_vehicle_ref) if self.truck_id.x_vehicle_ref else '',
             },
             "serviceDetails": survey_input_data,
+            "uuid_grua": self.truck_id.x_vehicle_ref,
+            "appointment": {
+                "type": int(self.event_id.scheduled),  # 1=cita 0=otro
+                "appointment_date": self.event_id.event_date.replace(tzinfo=None).strftime('%Y-%m-%d %H:%M:%S'),
+            },
+            "agreement": {
+                "user": "null",
+                "firstName": nu_name,
+                "account": account_id.name,
+                "holdingCompany": account_id.x_invoice_company_id[0].name if account_id.x_invoice_company_id else ""
+            },
         }
 
         # handle status

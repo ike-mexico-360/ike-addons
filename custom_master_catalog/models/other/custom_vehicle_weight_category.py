@@ -14,6 +14,7 @@ class CustomVehicleWeightCategory(models.Model):
     disabled = fields.Boolean('Disabled', default=False, tracking=True)
 
     name = fields.Char(string='Name', required=True, tracking=True)
+    ref = fields.Char(string='Reference', required=True, tracking=True)
 
     # === CONSTRAINT METHODS === #
     @api.constrains('name')

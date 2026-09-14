@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- <record id="view_ike_event_service_input_vial_generic_inherit_appointment" model="ir.ui.view">
+        <field name="name"> view.ike.service.input.vial.generic.truck.inherit.appointment</field>
+        <field name="model">ike.service.input.vial.generic</field>
+        <field name="inherit_id" ref="ike_event.view_ike_service_input_vial_generic_screen_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[.//field[@name='event_type_id']][1]" position="before">
+                <field name="selected_ongoing_suppliers" invisible="1"/>
+                <field name="appointment_min_date" invisible="1"/>
+                <group invisible="selected_ongoing_suppliers > 0 or stage_ref != 'assigned'">
+                    <separator
+                        string="Scheduled per Event"
+                        name="separator_appointment"/>
+                    <group>
+                        <group>
+                            <field name="scheduled"
+                                widget="ike_checkbox_radio"
+                                nolabel="1"/>
+                        </group>
+
+                        <group invisible="not scheduled">
+                            <field name="event_date"
+                                string="Event date"
+                                required="scheduled"
+                                widget="datetime_widget"/>
+                        </group>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record> -->
+
+</odoo>

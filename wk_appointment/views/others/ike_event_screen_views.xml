@@ -8,18 +8,92 @@
             <xpath expr="//field[@name='service_type_id']/parent::div" position="after">
                 <separator class="col-12 my-1" string="Scheduled per Event" name="separator_appointment"/>
                 <group class="col-12 mt-3">
-                    <group >
-                        <field name="appointment_type"
+                    <group>
+                        <field name="scheduled"
                             widget="ike_checkbox_radio"
                             nolabel="1"
                             required="stage_ref != 'draft'"/>
                     </group>
-                    <group invisible="not appointment_type">
-                        <field name="event_date" String="Event date" required="appointment_type" widget="datetime_widget"/>
+                    <group invisible="not scheduled">
+                        <field name="event_date" String="Event date" required="scheduled" widget="datetime_widget"/>
                         <field name="appointment_min_date" invisible="1"/>
                     </group>
                 </group>
             </xpath>
+            <xpath expr="//button[@name='action_view_ike_event_service_cost']" position="before">
+                <div class="mb-2">
+                    <button
+                        name="action_open_change_to_appointment_view"
+                        string="Change to appointment"
+                        type="object"
+                        class="btn btn-primary rounded-4 py-1"
+                        invisible="selected_ongoing_suppliers > 0 or stage_ref != 'assigned' or selected_confirm_vehicle_suppliers"/>
+                </div>
+            </xpath>
+            <xpath expr="//group[@name='supplier_data_control']//button[@name='action_search_electronic_suppliers']/parent::div" position="before">
+                <field
+                    name="scheduled"
+                    readonly="1"
+                    widget="boolean_toggle"/>
+
+                <field
+                    name="event_date"
+                    string="Event date"
+                    readonly="1"
+                    invisible="not scheduled"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ike_event_screen_form_change_appointment_views" model="ir.ui.view">
+        <field name="name">ike.event.screen.form.change.appointment.views</field>
+        <field name="model">ike.event</field>
+        <field name="arch" type="xml">
+            <form string="Schedule Event">
+
+                <group>
+                    <group>
+                        <field name="scheduled"
+                            widget="ike_checkbox_radio"
+                            readonly="scheduled"
+                            nolabel="1"/>
+                    </group>
+
+                    <group>
+                        <field name="event_date"
+                            string="Event date"
+                            required="1"
+                            invisible="not scheduled"
+                            widget="datetime_widget"/>
+                    </group>
+
+                    <field name="appointment_min_date" invisible="1"/>
+                </group>
+
+                <footer>
+                    <button
+                        name="action_change_to_appointment"
+                        string="Confirm"
+                        type="object"
+                        class="btn-primary"
+                    />
+
+                    <button
+                        string="Cancel"
+                        special="cancel"
+                        class="btn-secondary"
+                    />
+
+                    <!-- <button
+                        name="action_change_normal_event"
+                        string="Change normal event"
+                        confirm="Are you sure you want to change this event to a normal event?&#10;&#10;If you accept, the vehicle will be confirmed."
+                        type="object"
+                        class="btn-danger ms-auto"
+                        invisible="not scheduled"
+                    /> -->
+                </footer>
+            </form>
         </field>
     </record>
 </odoo>

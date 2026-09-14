@@ -1,5 +1,5 @@
 from odoo import api, models, fields, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class PurchaseOrderLine(models.Model):
@@ -56,17 +56,37 @@ class PurchaseOrderLine(models.Model):
     x_product_domain = fields.Binary(compute='_x_compute_product_domain')
 
     x_base_unit_price = fields.Float('Agreement cost', copy=False, readonly=True, sub_tracking=True)
+    x_sap_item_number = fields.Integer(
+        string='SAP Item Number',
+        # compute='_compute_x_sap_item_number', store=True,
+        help="Technical: SAP Ordered Item Number, (10, 20, 30, etc.)")
 
     # External flow
     x_external_api_record = fields.Boolean(
         string='External API Record', default=False,
         help="Technical: Record created by external API.")
-    # x_supplier_material_number = fields.Char(
-    #     string='Supplier Material Number', help="Technical: SAP income code")
-    # x_material = fields.Char(
-    #     string='Material', help="Technical: SAP outgoing code")
 
-    # === ONCHANGES === #
+    # Override native field
+    discount = fields.Float(
+        string="Discount (%)",
+        compute='_compute_price_unit_and_date_planned_and_name',
+        digits=False,
+        store=True, readonly=False)
+    x_discount_price = fields.Float(string="Discount Price", default=0.0)
+
+    # Additional fields (reports)
+    x_event_type_id = fields.Many2one(
+        'custom.type.event', 'Event Type', tracking=True, ondelete='restrict')
+    x_incident_type_id = fields.Many2one(
+        'custom.incident.type', 'Incident Type', tracking=True, ondelete='restrict')
+    x_vehicle_weight_category_id = fields.Many2one(
+        'custom.vehicle.weight.category', 'Weight Category', tracking=True, ondelete='restrict')
+    x_id_event = fields.Char(
+        string='ID Event', help="Technical: ID Event received from External source needed to send at SAP. Only external")
+    x_validator = fields.Char(
+        string='Validador', help="Technical: Validador received from External source needed to send at SAP. Only external")
+
+    # ===================================== ONCHANGES ===================================== #
     @api.onchange('product_id')
     def _onchange_product_id(self):
         if self.product_id:
@@ -74,20 +94,34 @@ class PurchaseOrderLine(models.Model):
         else:
             self.x_covered = False
 
-    def _x_set_fields_onchange_product_id(self):
-        # Covered
-        self._x_set_is_covered()
+    # ===== Discount logic
+    @api.onchange("x_discount_price")
+    def _onchange_x_discount_price(self):
+        for rec in self:
+            if rec.x_discount_price <= (rec.product_qty * rec.price_unit):
+                if rec.x_discount_price == 0.00:
+                    rec.update({
+                        'discount': 0.00
+                    })
+                else:
+                    rec.update({
+                        'discount': (rec.x_discount_price * 100) / (rec.product_qty * rec.price_unit)
+                    })
+            elif (rec.x_discount_price > (rec.product_qty * rec.price_unit)):
+                raise ValidationError(_(
+                    "Discounted amount for product '%(product)s' must be less than '%(amount)s'.",
+                    product=rec.product_id.name,
+                    amount=rec.product_qty * rec.price_unit
+                ))
 
-        # Sequence
-        current_siblings = self.order_id.order_line.filtered(
-            lambda x:
-                x.id != self.id and x._origin
-                and not x.display_type
-        )
-        sequences = current_siblings.filtered(lambda x: x.x_covered == self.x_covered).mapped('sequence')
-        self.sequence = max(sequences, default=1 if self.x_covered else 1001) + 1
+    @api.onchange('discount')
+    def _onchange_discount_percent(self):
+        for rec in self.filtered(lambda line: line.discount):
+            rec.update({
+                'x_discount_price': (rec.product_qty * rec.price_unit * rec.discount) / 100
+            })
 
-    # === COMPUTES === #
+    # ===================================== COMPUTES ===================================== #
     @api.depends('x_product_qty_dispute', 'x_price_unit_dispute',)
     def _x_compute_amount_dispute(self):
         for line in self:
@@ -130,13 +164,7 @@ class PurchaseOrderLine(models.Model):
 
             rec.x_product_domain = domain
 
-    def unlink(self):
-        generated_lines_from_event = self.filtered(lambda line: line.x_generated_from_event)
-        if generated_lines_from_event:
-            raise UserError(_('You cannot delete generated lines from event'))
-        return super().unlink()
-
-    # === SET METHODS === #
+    # ===================================== AUXILIARS ===================================== #
     def _x_set_is_covered(self, no_update=False):
         for rec in self:
             if not rec.product_id or no_update and rec.x_covered:
@@ -178,6 +206,26 @@ class PurchaseOrderLine(models.Model):
 
             rec.price_unit = cost_line[0].cost if cost_line else 0
 
+    def _prepare_account_move_line(self, move=False):
+        # Overrride original method to add discount_price field
+        values = super(PurchaseOrderLine, self)._prepare_account_move_line(move)
+        values['discount_price'] = self.discount_price
+        return values
+
+    def _x_set_fields_onchange_product_id(self):
+        # Covered
+        self._x_set_is_covered()
+
+        # Sequence
+        current_siblings = self.order_id.order_line.filtered(
+            lambda x:
+                x.id != self.id and x._origin
+                and not x.display_type
+        )
+        sequences = current_siblings.filtered(lambda x: x.x_covered == self.x_covered).mapped('sequence')
+        self.sequence = max(sequences, default=1 if self.x_covered else 1001) + 1
+
+    # ===================================== ORM ===================================== #
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -220,3 +268,9 @@ class PurchaseOrderLine(models.Model):
             self._x_set_is_covered()
 
         return res
+
+    def unlink(self):
+        generated_lines_from_event = self.filtered(lambda line: line.x_generated_from_event)
+        if generated_lines_from_event:
+            raise UserError(_('You cannot delete generated lines from event'))
+        return super().unlink()

@@ -1,4 +1,4 @@
-from odoo.tools import SQL
+# from odoo.tools import SQL
 from odoo import http, fields, _, Command
 from odoo.http import request
 # from odoo.tools import html2plaintext
@@ -41,8 +41,16 @@ class IkePurchaseController(http.Controller):
                 if customer_id.partner_id.x_ref_sap != customer_sap_code:
                     continue
 
-                if customer_product_id.x_sap_code_outgoing != outgoing_sap_code:
+                # Integración de homologación al proceos
+                matching_homologation_id = customer_product_id.x_product_homologation_model_id.filtered(
+                    lambda x: x.x_ref_sap_api == outgoing_sap_code
+                )
+                if not matching_homologation_id:
                     continue
+
+                # ToDo: Igual integrar que si no está en la homologación, pero el subservicio tiene el código, usarlo
+                # if customer_product_id.x_sap_code_outgoing != outgoing_sap_code:
+                #     continue
 
                 product_id = customer_product_id
                 break
@@ -65,6 +73,10 @@ class IkePurchaseController(http.Controller):
         supplier_code = sap_object.get('supplier', '').strip()
         currency = sap_object.get('documentCurrency', '').strip()
         customer_code = sap_object.get('incotermsLocation1', '').strip()
+        copago = sap_object.get('copago', '').strip()
+        event_type = sap_object.get('event_type', '').strip()
+        incident_type = sap_object.get('incident_type', '').strip()
+        vehicle_weight = sap_object.get('vehicle_weight', '').strip()
         line_results = sap_object.get('toPurchaseOrderItem', {}).get('results', [])
 
         # Buscar projecto por codigo de APP
@@ -74,6 +86,33 @@ class IkePurchaseController(http.Controller):
         ], limit=1)
         if not project_id:
             raise NotFound(_("Project '%s' not found or sequence not set") % app_code)
+
+        # Event type
+        event_type_id = request.env['custom.type.event']
+        if event_type:
+            if not isinstance(event_type, str):
+                raise BadRequest(_("Invalid event type: %s") % event_type)
+            event_type_id = event_type_id.search([('ref', '=ilike', event_type)], limit=1)
+            if not event_type_id:
+                raise NotFound(_("Event type"))
+
+        # Incident type
+        incident_type_id = request.env['custom.incident.type']
+        if incident_type:
+            if not isinstance(incident_type, str):
+                raise BadRequest(_("Invalid incident type: %s") % incident_type)
+            incident_type_id = incident_type_id.search([('ref', '=ilike', incident_type)], limit=1)
+            if not incident_type_id:
+                raise NotFound(_("Incident type"))
+
+        # Vehicle weight
+        vehicle_weight_id = request.env['custom.vehicle.weight.category']
+        if vehicle_weight:
+            if not isinstance(vehicle_weight, str):
+                raise BadRequest(_("Invalid vehicle weight: %s") % vehicle_weight)
+            vehicle_weight_id = vehicle_weight_id.search([('ref', '=ilike', vehicle_weight)], limit=1)
+            if not vehicle_weight_id:
+                raise NotFound(_("Vehicle weight"))
 
         # Buscar proveedor por código SAP
         supplier_id = self._find_supplier_or_raise(supplier_code)
@@ -89,8 +128,20 @@ class IkePurchaseController(http.Controller):
         if not x_invoice_company_id:
             raise NotFound(_("Company '%s' not found") % company_code)
 
+        # Convertir copago a float
+        if copago:
+            copago = self._parse_decimal_string(
+                copago,
+                "params.sap.copago",
+                allow_zero=True,
+                max_decimals=4,
+            )
+
         # Buscar sub servicio por código SAP
         po_sub_service_id = request.env['product.product']
+        outgoing_sap_code_for_homologation = ""
+        po_id_event = ""
+        po_validador = ""
         temporal_products = {}
         order_line = []
         event_names = []
@@ -98,9 +149,12 @@ class IkePurchaseController(http.Controller):
             incoming_sap_code = line.get('supplierMaterialNumber', '').strip()
             outgoing_sap_code = line.get('material', '').strip()
             order_quantity_raw = line.get('orderQuantity', '').strip()
+            real_outgoing_sap_code = outgoing_sap_code  # Almacenara el valor real del registro en odoo
             net_price_raw = line.get('netPriceAmount', '').strip()
             uom = line.get('purchaseOrderQuantityUnit', '').strip()
             event_name = line.get('expediente', '').strip()
+            id_event = line.get('id_evento', '').strip()
+            validador = line.get('validador', '').strip()
 
             order_quantity = self._parse_decimal_string(
                 order_quantity_raw,
@@ -120,18 +174,38 @@ class IkePurchaseController(http.Controller):
             if product_key not in temporal_products:
                 product_id = _get_subservice_id(customer_code, incoming_sap_code, outgoing_sap_code)
                 temporal_products[product_key] = product_id.id
+                real_outgoing_sap_code = product_id.x_sap_code_outgoing
             product = temporal_products[product_key]
 
             if not po_sub_service_id:
-                po_sub_service_id = product
+                po_sub_service_id = po_sub_service_id.browse([product])
+            if not outgoing_sap_code_for_homologation:
+                outgoing_sap_code_for_homologation = outgoing_sap_code
+            if not po_id_event:
+                po_id_event = id_event
+            if not po_validador:
+                po_validador = validador
 
             if not product:
                 raise NotFound(
                     f"No product found for customer {customer_code} and SAP code incoming "
                     f"{incoming_sap_code} and SAP code outgoing {outgoing_sap_code}"
                 )
+            if not real_outgoing_sap_code:
+                raise BadRequest(
+                    f"Not product found for outgoing_sap_code {outgoing_sap_code}"
+                )
 
             uom_id = self._get_uom_id(uom)
+
+            order_line_id = request.env['purchase.order.line'].search([
+                ('x_parent_expedient', '=', event_name),
+                ('order_id.project_id', '=', project_id.id),
+            ], limit=1)
+            if order_line_id:
+                raise BadRequest(
+                    "Expedient %s already exists for the project %s in the record [%s] %s" % (event_name, order_line_id.order_id.project_id.name, order_line_id.order_id.name, order_line_id.product_id.name)
+                )
 
             order_line.append(Command.create({
                 "product_id": product,
@@ -140,9 +214,12 @@ class IkePurchaseController(http.Controller):
                 "currency_id": request.env.company.currency_id.id,
                 "product_uom": uom_id,
                 "x_sap_code_income": incoming_sap_code,
-                "x_sap_code_outgoing": outgoing_sap_code,
+                "x_sap_code_outgoing": real_outgoing_sap_code,
                 "x_parent_expedient": event_name,
                 "x_external_api_record": True,  # Flag para diferenciar las órdenes de compra externas
+                "x_discount_price": copago,  # Se guarda el copago en la linea
+                "x_id_event": id_event,
+                "x_validator": validador,
             }))
 
             if event_name not in event_names:
@@ -150,6 +227,27 @@ class IkePurchaseController(http.Controller):
 
         if not order_line:
             raise NotFound("No lines found at matching supplier product.")
+
+        # Proceso de homologación en caso de que no se envien los valores de tipo de evento, incidente y categoría de peso
+        if not event_type_id or not incident_type_id or not vehicle_weight_id:
+            # Obtener linea de homologación
+            homologation_id = po_sub_service_id.x_product_homologation_model_id.filtered(
+                lambda x: x.x_ref_sap_api == outgoing_sap_code_for_homologation
+            )
+            if not event_type_id and homologation_id.event_type_id:
+                event_type_id = homologation_id.event_type_id
+            if not incident_type_id and homologation_id.incident_type_id:
+                incident_type_id = homologation_id.incident_type_id
+            if not vehicle_weight_id and homologation_id.weight_category_id:
+                vehicle_weight_id = homologation_id.weight_category_id
+
+        # Double check
+        if event_type and not event_type_id:
+            raise UserError(_("No event type found for this product."))
+        if incident_type and not incident_type_id:
+            raise UserError(_("No incident type found for this product."))
+        if vehicle_weight and not vehicle_weight_id:
+            raise UserError(_("No vehicle weight found for this product."))
 
         max_hours_to_confirm = request.env.company.x_time_for_automatic_purchase_generation
         po_vals = {
@@ -161,7 +259,7 @@ class IkePurchaseController(http.Controller):
             "state": "to_consolidate",
             # "x_client_code": customer_code,
             "x_customer_id": x_customer_id.id,
-            "x_sub_service_id": po_sub_service_id,
+            "x_sub_service_id": po_sub_service_id.id,
             "x_record_tenant": tenant,
             "x_app_code": app_code,
             "x_sap_company_code": company_code,
@@ -170,11 +268,26 @@ class IkePurchaseController(http.Controller):
             "x_external_api_record": True,  # Flag para diferenciar las órdenes de compra externas
             "x_external_body": kw,
             "x_origin_events": ", ".join(event_names),
+            "x_discount_price": copago,  # Se guarda el copago en el header
+            "x_event_type_id": event_type_id.id,
+            "x_incident_type_id": incident_type_id.id,
+            "x_vehicle_weight_category_id": vehicle_weight_id.id,
+            "x_id_event": po_id_event,
+            "x_validator": po_validador,
         }
 
         _logger.info(po_vals)
         PurchaseOrder = request.env['purchase.order'].sudo()
+        # return {
+        #     "Hola": "Adios"
+        # }
         order_id = PurchaseOrder.create([po_vals])
+        for line in order_id.order_line:
+            try:
+                line._onchange_x_discount_price()
+                line.onchange_x_discount_price()
+            except Exception as e:
+                _logger.error(f"Error al calcular el copago: {str(e)}")
 
         return {
             'order_id': order_id.id,
@@ -221,6 +334,9 @@ class IkePurchaseController(http.Controller):
             'supplier',
             'documentCurrency',
             'copago',
+            'event_type',
+            'incident_type',
+            'vehicle_weight',
             'incotermsLocation1',
             'incotermsLocation2',
             'toPurchaseOrderItem',
@@ -238,16 +354,22 @@ class IkePurchaseController(http.Controller):
         self._validate_required_keys(sap, required, 'params.sap')
         self._validate_no_extra_keys(sap, allowed, 'params.sap')
 
-        for field in [
+        string_fields = [
             'companyCode',
             'supplier',
             'documentCurrency',
             'copago',
+            'event_type',
+            'incident_type',
+            'vehicle_weight',
             'incotermsLocation1',
             'incotermsLocation2',
-        ]:
-            if not isinstance(sap.get(field), str):
-                raise BadRequest(f"params.sap.{field} debe ser string.")
+        ]
+
+        for field in string_fields:
+            if field in sap and sap[field] is not None:
+                if not isinstance(sap[field], str):
+                    raise BadRequest(f"params.sap.{field} debe ser string.")
 
         to_purchase = sap.get('toPurchaseOrderItem')
         if not isinstance(to_purchase, dict):
@@ -285,6 +407,8 @@ class IkePurchaseController(http.Controller):
             'material',
             'purchaseOrderQuantityUnit',
             'expediente',
+            'id_evento',
+            'validador',
         }
         required = {
             'supplierMaterialNumber',
@@ -293,6 +417,16 @@ class IkePurchaseController(http.Controller):
             'material',
             'expediente',
         }
+        string_fields = [
+            'supplierMaterialNumber',
+            'orderQuantity',
+            'netPriceAmount',
+            'purchaseOrderQuantityUnit',
+            'material',
+            'expediente',
+            'id_evento',
+            'validador',
+        ]
 
         self._validate_required_keys(
             item, required, f'params.sap.toPurchaseOrderItem.results[{index}]'
@@ -301,28 +435,12 @@ class IkePurchaseController(http.Controller):
             item, allowed, f'params.sap.toPurchaseOrderItem.results[{index}]'
         )
 
-        string_fields = [
-            'supplierMaterialNumber',
-            'orderQuantity',
-            'netPriceAmount',
-            'material',
-            'expediente',
-        ]
         for field in string_fields:
-            value = item.get(field)
-            if not isinstance(value, str) or not value.strip():
-                raise BadRequest(
-                    f"params.sap.toPurchaseOrderItem.results[{index}].{field} debe ser string y obligatorio."
-                )
-
-        # ToDo: Considerar manejar una lista de campos opcionales
-        # Campo opcional: si llega, debe ser string
-        if 'purchaseOrderQuantityUnit' in item and item.get('purchaseOrderQuantityUnit') is not None:
-            value = item.get('purchaseOrderQuantityUnit')
-            if not isinstance(value, str):
-                raise BadRequest(
-                    f"params.sap.toPurchaseOrderItem.results[{index}].purchaseOrderQuantityUnit debe ser string."
-                )
+            if field in item and item[field] is not None:
+                if not isinstance(item[field], str):
+                    raise BadRequest(
+                        f"params.sap.toPurchaseOrderItem.results[{index}].{field} debe ser string."
+                    )
 
         self._parse_decimal_string(
             item.get('orderQuantity'),

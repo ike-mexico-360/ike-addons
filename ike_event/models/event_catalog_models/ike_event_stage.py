@@ -101,7 +101,7 @@ class IkeEventStageComment(models.Model):
         event_batcher.add_event_notification(
             self.env.cr.dbname,
             'IKE_CHANNEL_LIST',
-            'IKE_CHANNEL_LIST_LISTEN', {
+            'IKE_CHANNEL_LIST_RELOAD', {
                 'id': self.event_id.id,
                 'stage_ref': self.event_id.stage_ref,
                 'ike_uuid': self.env.context.get('ike_uuid'),

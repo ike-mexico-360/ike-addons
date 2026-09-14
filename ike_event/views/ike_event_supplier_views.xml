@@ -55,13 +55,13 @@
                         force_save="1"/>
                 <field name="product_domain" column_invisible="1"/>
                 <field name="name" column_invisible="1"/>
-                <field name="supplier_number" string="Supplier" readonly="0"
+                <field name="supplier_number" string="Supplier" readonly="1"
                     force_save="1"/>
-                <field name="covered" column_invisible="0"/>
+                <field name="covered" column_invisible="1"/>
                 <field name="base" column_invisible="1" />
                 <field name="mandatory" column_invisible="1"/>
                 <field name="uom_id" options="{'no_create': 1, 'no_open': 1}"/>
-                <field name="estimated_quantity" />
+                <field name="estimated_quantity"/>
             </list>
         </field>
     </record>
@@ -96,7 +96,7 @@
                     readonly="covered or display_type"
                     force_save="1"/>
                 <field name="product_add_domain" column_invisible="1" />
-                <field name="parent_product_id"/>
+                <field name="parent_product_id" force_save="1"/>
                 <field name="name" column_invisible="1" />
                 <field name="estimated_quantity" optional="hide"/>
                 <field name="quantity" />
@@ -258,17 +258,15 @@
                 <group>
                     <group>
                         <field name="event_id" readonly="1"/>
-                        <field name="supplier_id" readonly="0"
+                        <field name="supplier_id" readonly="1"
                             options="{'no_create': 1, 'no_open': 1}"
                             required="1"/>
                         <field name="supplier_number"/>
                     </group>
                     <group>
                         <field name="aux_truck_id"
-                            domain="truck_domain"
                             options="{'no_create': 1, 'no_open': 1}"
-                            required="1"/>
-                        <field name="truck_domain" invisible="1"/>
+                            required="1" readonly="1" />
                     </group>
                 </group>
                 <field name="supplier_product_ids"
@@ -283,7 +281,7 @@
                         'default_supplier_number': supplier_number,
                         'from_internal': True,
                         'default_event_id': event_id,
-                    }"/>
+                    }" force_save="1"/>
                 <group class="oe_subtotal_footer oe_right">
                     <field name="amount_concept_subtotal"/>
                     <field name="amount_concept_vat"/>
@@ -304,7 +302,7 @@
     </record>
 
     <!-- EVENT SUPPLIER PHONES POPUP -->
-    <record id="ike_event_supplier_phones_form_view" model="ir.ui.view">
+    <record id="ike_event_supplier_vehicle_form_view" model="ir.ui.view">
         <field name="name">ike.event.supplier.phones.form.view</field>
         <field name="model">ike.event.supplier</field>
         <field name="priority">99</field>
@@ -324,6 +322,8 @@
                         <field name="truck_domain" invisible="1"/>
                         <field name="assignation_type" invisible="1"/>
                         <field name="display_type" invisible="1"/>
+                        <field name="stage_ref" invisible="1"/>
+                        <field name="confirmed" invisible="1"/>
                     </group>
                     <group>
                         <label for="supplier_phone" string="Phones"/>
@@ -343,8 +343,13 @@
                     </group>
                 </group>
                 <footer>
-                    <button string="Save" class="btn-primary" special="save" invisible="assignation_type == 'electronic' or display_type"/>
-                    <button string="Close" class="btn-secondary" special="cancel"/>
+                    <button string="Confirm" class="btn-primary"
+                        name="action_confirm_vehicle" type="object"
+                        invisible="(assignation_type == 'electronic' or display_type) or stage_ref != 'assigned'"/>
+                    <button string="Accept" class="btn-primary"
+                        name="action_change_vehicle_and_accept" type="object"
+                        invisible="(assignation_type == 'electronic' or display_type) or stage_ref == 'assigned'"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>
@@ -416,13 +421,15 @@
                         </group>
                         <group class="text-end" colspan="8">
                             <div class="d-flex justify-content-between w-100">
-                                <button string="Watches" class="btn btn-primary fa-clock" type="object" name="open_change_state_supplier_wizard"
+                                <!-- <button string="Watches" class="btn btn-primary fa-clock" type="object" name="open_change_state_supplier_wizard"
                                     invisible="stage_ref in ['cancel', 'preparing'] or
                                         event_stage_ref in ['verifying', 'closed', 'cancel_verifying', 'cancel', 'cancel_subsequently', 'cancel_closed'] or
-                                        state in ['cancel', 'cancel_event', 'cancel_supplier']"/>
+                                        state in ['cancel', 'cancel_event', 'cancel_supplier']"
+                                        groups="base.group_system,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_coordinator"/> -->
                                 <button string="Cancel supplier" class="btn btn-danger ms-auto" type="object" name="open_cancel_wizard"
                                     invisible="event_stage_ref in ['completed', 'verifying', 'closed', 'cancel', 'cancel_subsequently', 'cancel_verifying', 'cancel_closed'] or
-                                        state in ['cancel', 'cancel_event', 'cancel_supplier']"/>
+                                        state in ['cancel', 'cancel_event', 'cancel_supplier']"
+                                    groups="base.group_system,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_coordinator"/>
                             </div>
                         </group>
                     </group>

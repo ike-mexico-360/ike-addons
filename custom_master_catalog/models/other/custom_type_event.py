@@ -10,6 +10,7 @@ class CustomTypeEvent(models.Model):
     _inherit = ['mail.thread']
 
     name = fields.Char(required=True, tracking=True)
+    ref = fields.Char(tracking=True)
     description = fields.Char(tracking=True)
     requires_federal_plates = fields.Boolean(default=False, tracking=True)
     minimum_distance_km = fields.Float(string='', digits=(10, 2))

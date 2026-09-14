@@ -3,6 +3,7 @@
 import { rpc } from "@web/core/network/rpc";
 import { registry } from "@web/core/registry";
 import { useBus, useService } from "@web/core/utils/hooks";
+import { DynamicRecordList } from "@web/model/relational_model/dynamic_record_list";
 import { ListController } from '@web/views/list/list_controller';
 import { listView } from "@web/views/list/list_view";
 
@@ -19,7 +20,10 @@ export class IkeEventListController extends ListController {
         }
 
         useBus(this.env.bus, "IKE_EVENT_SYSTRAY:EVENT_LIST_RELOAD", (event) => {
-            this.broadcastEventListReload(event.detail.payload)
+            this.broadcastEventListReload(event.detail.payload);
+        });
+        useBus(this.env.bus, "IKE_EVENT_SYSTRAY:EVENT_LIST_PUSH", async (event) => {
+            await this.broadcastEventListPush(event.detail.payload);
         });
     }
     broadcastEventListReload(payload) {
@@ -32,11 +36,34 @@ export class IkeEventListController extends ListController {
                 continue;
             }
             const record = this.model.root.records.find(rec => rec.resId == item.id);
-            if (record && record.data.stage_ref != item.stage_red) {
+            if (record && record.data.stage_ref != item.stage_ref) {
                 record.load();
             }
         }
     }
+    async broadcastEventListPush(payload) {
+        // console.log("broadcastEventListPush", payload);
+        const list = this.model.root;
+        if (!(list instanceof DynamicRecordList)) {
+            return;
+        }
+        const currentIds = this.model.root.records.map(rec => rec.resId);
+        for (let batch of payload.data) {
+            const validEvents = await this.model.orm.searchRead(
+                list.resModel,
+                [
+                    ['id', 'in', batch.event_ids.filter(resId => !currentIds.includes(resId))],
+                    ...list.domain,
+                ],
+                ["id"],
+            );
+
+            for (let event of validEvents) {
+                await list.addExistingRecord(event.id, true);
+            }
+        }
+    }
+
     async _executeAction(record, method, params = null) {
         const resModel = record.resModel;
         const context = {};

@@ -2,7 +2,7 @@
 <odoo>
 
     <record id="ike_event_phone_wizard_view_form" model="ir.ui.view">
-        <field name="name">ike.event.phone.wiezard.view.form</field>
+        <field name="name">ike.event.phone.wizard.view.form</field>
         <field name="model">ike.event.phone.wizard</field>
         <field name="arch" type="xml">
             <form string="Other phones">

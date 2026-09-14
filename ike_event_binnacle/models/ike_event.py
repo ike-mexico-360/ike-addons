@@ -450,14 +450,29 @@ class IkeEvent(models.Model):
                 "ike_event_binnacle.ike_binnacle_stage_10_2"])
         return result
 
-    # def action_completed(self):
-    #     result = super().action_completed()
-    #     for rec in self:
-    #         if rec.stage_ref == 'completed':
-    #             rec._create_message_binnacle([
-    #                 "ike_event_binnacle.ike_binnacle_stage_10_1"
-    #             ])
-    #     return result
+    def action_auto_assign_event(self):
+        result = super().action_auto_assign_event()
+        for rec in self:
+            rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_auto_assign_event"])
+        return result
+
+    def action_set_service_data(self):
+        result = super().action_set_service_data()
+        for rec in self:
+            rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_appointment_event"])
+        return result
+
+    def action_change_to_appointment(self):
+        result = super().action_change_to_appointment()
+        for rec in self:
+            rec._create_message_binnacle(['ike_event_binnacle.ike_binnacle_convert_appointment_event'])
+        return result
+
+    def action_change_normal_event(self):
+        result = super().action_change_normal_event()
+        for rec in self:
+            rec._create_message_binnacle(['ike_event_binnacle.ike_binnacle_change_event_normal'])
+        return result
 
 
 class IkeEventSupplier(models.Model):
@@ -556,6 +571,23 @@ class IkeEventSupplier(models.Model):
                 rec.event_id._create_message_binnacle([
                     "ike_event_binnacle.ike_binnacle_stage_10_1"
                 ])
+        return result
+
+    def action_confirm_vehicle(self):
+        result = super().action_confirm_vehicle()
+
+        for rec in self:
+            rec.event_id.with_context(
+                vehicle_name=(
+                    rec.truck_id.display_name
+                    if rec.truck_id
+                    else _('Not specified')
+                ),
+                event_supplier_id=rec.id,
+            )._create_message_binnacle([
+                'ike_event_binnacle.ike_binnacle_confirm_vehicle'
+            ])
+
         return result
 
     # === ACTIONS UPDATE RELOJES === #
@@ -804,34 +836,36 @@ class IkeEventConfirmWizard(models.TransientModel):
                 ])
         return res
 
-    class IkeEventDuplicateWizard(models.TransientModel):
-        _inherit = "ike.event.duplicate.wizard"
 
-        def action_duplicate_event(self):
-            result = super().action_duplicate_event()
+class IkeEventDuplicateWizard(models.TransientModel):
+    _inherit = "ike.event.duplicate.wizard"
 
-            for rec in self:
-                for reason in rec.event_id.duplicate_reason_id:
-                    rec.event_id.with_context(
-                        reason_name=reason.duplicate_reason_id.name  # type: ignore
-                    )._create_message_binnacle(
-                        ["ike_event_binnacle.ike_binnacle_stage_9_1"]
-                    )
+    def action_duplicate_event(self):
+        result = super().action_duplicate_event()
 
-            return result
-
-    class IkeEventStage(models.Model):
-        _inherit = 'ike.event.stage.comment'
-
-        def action_dummy_save(self):
-            result = super().action_dummy_save()
-
-            for rec in self:
+        for rec in self:
+            for reason in rec.event_id.duplicate_reason_id:
                 rec.event_id.with_context(
-                    stage_name=rec.stage_id.name,
-                    comment=rec.comment,
-                    comment_type=rec.comment_type,
-                    duration_text=rec.duration_text,
-                )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_stage_comment"])
+                    reason_name=reason.duplicate_reason_id.name  # type: ignore
+                )._create_message_binnacle(
+                    ["ike_event_binnacle.ike_binnacle_stage_9_1"]
+                )
 
-            return result
+        return result
+
+
+class IkeEventStage(models.Model):
+    _inherit = 'ike.event.stage.comment'
+
+    def action_dummy_save(self):
+        result = super().action_dummy_save()
+
+        for rec in self:
+            rec.event_id.with_context(
+                stage_name=rec.stage_id.name,
+                comment=rec.comment,
+                comment_type=rec.comment_type,
+                duration_text=rec.duration_text,
+            )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_stage_comment"])
+
+        return result

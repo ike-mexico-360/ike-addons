@@ -206,11 +206,13 @@
         <field name="model">custom.membership.nus</field>
         <field name="arch" type="xml">
             <search>
+                <field name="display_name" string="NUs"/>
+                <field name="membership_plan_id" string="Membership plan"/>
                 <field name="disabled"/>
                 <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 <group expand="1" string="Group By">
-                    <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/>
+                    <filter string="Membership plan" name="membership_plan" domain="[]" context="{'group_by':'membership_plan_id'}"/>
                 </group>
             </search>
         </field>

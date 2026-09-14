@@ -28,6 +28,9 @@
                 <menuitem id="ike_menu_event_event_assignment" name="Events assignment" sequence="5"
                     action="action_assignment_wizard"
                     groups="base.group_system,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss" />
+                <menuitem id="ike_menu_event_assignment_cds" name="Events assignment CDS" sequence="6"
+                    action="action_custom_event_assignment_cds_wizard"
+                    groups="custom_master_catalog.custom_group_supervisor_cds" />
                 </menuitem>
             <!--
             <menuitem id="ike_menu_subscription" name="Subscriptions" sequence="2"
@@ -94,14 +97,14 @@
     </data>
 
     <record id="survey.menu_survey_type_form1" model="ir.ui.menu">
-        <field name="groups_id" eval="[(4, ref('custom_master_catalog.custom_group_cx'))]"/>
+        <field name="groups_id" eval="[(4, ref('base.group_system')), (4, ref('custom_master_catalog.custom_group_cx'))]"/>
     </record>
     <record id="survey.menu_survey_form" model="ir.ui.menu">
-        <field name="groups_id" eval="[(4, ref('custom_master_catalog.custom_group_cx'))]"/>
+        <field name="groups_id" eval="[(4, ref('base.group_system')), (4, ref('custom_master_catalog.custom_group_cx')), (4, ref('custom_master_catalog.custom_group_bi_queries'))]"/>
     </record>
     <record id="survey.menu_surveys" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>
-        <field name="groups_id" eval="[(4, ref('custom_master_catalog.custom_group_cx'))]"/>
+        <field name="groups_id" eval="[(4, ref('custom_master_catalog.custom_group_cx')), (4, ref('custom_master_catalog.custom_group_bi_queries'))]"/>
     </record>
     <record id="hr.menu_hr_root" model="ir.ui.menu">
         <field name="groups_id" eval="[(6, 0, [ref('base.group_system'),ref('custom_master_catalog.custom_erp_odoo'),ref('custom_master_catalog.custom_group_contact_admin_client'),ref('custom_master_catalog.custom_group_contact_admin_supplier'),ref('custom_master_catalog.custom_group_contact_admin_account')])]"/>

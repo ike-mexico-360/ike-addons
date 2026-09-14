@@ -230,6 +230,7 @@ class EventAPIController(http.Controller):
         assigned_stage = request.env.ref('ike_event.ike_service_stage_assigned')
         # Limitar a esas lineas
         reassignment_domain = [
+            ('selected', '=', True),
             ('event_id', '=', event_id),
             ('supplier_id', '=', partner_id),
             ('stage_id', 'in', (preparing_stage.id, assigned_stage.id)),
@@ -537,7 +538,7 @@ class EventAPIController(http.Controller):
             raise NotFound(_('No se encontró el registro de supplier para cancelar'))
 
         # Ejecutar cancelación
-        supplier.action_supplier_cancel(cancel_reason_id=cancel_reason.id, reason_text=reason_text)
+        supplier.with_context(x_bypass_external_notification=True).action_supplier_cancel(cancel_reason_id=cancel_reason.id, reason_text=reason_text)
 
         # Puedes devolver algo más específico según tu app móvil
         return {

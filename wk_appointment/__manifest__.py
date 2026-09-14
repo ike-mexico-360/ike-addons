@@ -48,6 +48,8 @@
         'views/others/res_config_settings.xml',
         'views/others/ike_event_screen_views.xml',
         'views/others/ike_event_views.xml',
+        'views/others/ike_service_input_vial_truck_views.xml',
+        'views/others/ike_service_input_vial_generic_views.xml',
         'wizard/reject_reason_wizard_view.xml',
         'report/appoint_report_view.xml',
         'views/appoint_mgmt_menu_view.xml',

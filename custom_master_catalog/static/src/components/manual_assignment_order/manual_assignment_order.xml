@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="custom_master_catalog.ManualAssignmentOrder">
+        <div class="o_manual_assignment_order h-100 w-100 overflow-y-auto overflow-x-hidden p-3 bg-view">
+            <div class="o_manual_assignment_order_header mb-3">
+                <h4 class="m-0">
+                    <span>Manual Assignment Order Configuration</span>
+                    <i class="fa fa-cog ms-2"/>
+                </h4>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row align-items-end g-3 m-0">
+                        <div class="col-12 col-lg-3 px-0 pe-lg-3">
+                            <label class="form-label fw-semibold">State <span class="text-danger">*</span></label>
+                            <select class="form-select" t-on-change="onStateChange" t-att-value="state.stateId">
+                                <option value="0">Select a state...</option>
+                                <t t-foreach="state.states" t-as="stateOption" t-key="stateOption.id">
+                                    <option t-att-value="stateOption.id" t-att-selected="stateOption.id === state.stateId">
+                                        <t t-esc="stateOption.name"/> (MX)
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-12 col-lg-3 px-0 pe-lg-3">
+                            <label class="form-label fw-semibold">Geographical Zone <span class="text-danger">*</span></label>
+                            <select class="form-select" t-on-change="onMunicipalityChange"
+                                t-att-value="state.municipalityId" t-att-disabled="!state.stateId">
+                                <option value="0">Select a geographical zone...</option>
+                                <t t-foreach="state.zones" t-as="zone" t-key="zone.id">
+                                    <option t-att-value="zone.id" t-att-selected="zone.id === state.municipalityId">
+                                        <t t-esc="zone.name"/>
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-12 col-lg-3 px-0 pe-lg-3">
+                            <label class="form-label fw-semibold">Subservice <span class="text-danger">*</span></label>
+                            <select class="form-select" t-on-change="onProductChange" t-att-value="state.productId">
+                                <option value="0">Select a subservice...</option>
+                                <t t-foreach="state.products" t-as="product" t-key="product.id">
+                                    <option t-att-value="product.id" t-att-selected="product.id === state.productId">
+                                        <t t-esc="product.name"/>
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-12 col-lg-auto d-flex flex-wrap gap-2 px-0">
+                            <button class="btn btn-primary" t-on-click="applyFilters" t-att-disabled="!canApply">Apply</button>
+                            <button class="btn btn-outline-primary" t-on-click="clearFilters">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead>
+                            <tr>
+                                <th class="o_manual_assignment_drag_column"/>
+                                <th>Order</th>
+                                <th>Supplier</th>
+                                <th>Care Center</th>
+                                <th>Priority</th>
+                                <th class="text-end"><i class="fa fa-sliders"/></th>
+                            </tr>
+                        </thead>
+                        <tbody t-ref="rows">
+                            <t t-foreach="state.rows" t-as="row" t-key="row.supplier_center_id">
+                                <tr class="o_manual_assignment_order_row" t-att-data-center-id="row.supplier_center_id">
+                                    <td class="o_manual_assignment_drag_handle text-muted"><i class="fa fa-ellipsis-v"/></td>
+                                    <td><t t-esc="row.sequence"/></td>
+                                    <td><t t-esc="row.supplier"/></td>
+                                    <td><t t-esc="row.supplier_center"/></td>
+                                    <td>
+                                        <t t-foreach="[1, 2, 3]" t-as="star" t-key="star">
+                                            <button type="button"
+                                                class="btn btn-link p-0 border-0 o_manual_assignment_priority"
+                                                title="Change priority"
+                                                t-on-click.stop="() => this.setPriority(row.supplier_center_id, star)">
+                                                <i t-att-class="star &lt;= row.priority ? 'fa fa-star text-warning' : 'fa fa-star text-muted opacity-25'"/>
+                                            </button>
+                                        </t>
+                                    </td>
+                                    <td class="text-end">
+                                        <button class="btn btn-link text-danger p-1" title="Remove"
+                                            t-on-click="() => this.removeRow(row.supplier_center_id)">
+                                            <i class="fa fa-trash-o"/>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr t-if="state.loaded and !state.rows.length">
+                                <td colspan="6" class="text-center text-muted py-4">No manual assignment suppliers found.</td>
+                            </tr>
+                            <tr t-if="!state.loaded">
+                                <td colspan="6" class="text-center text-muted py-4">Select a geographical zone and subservice to display suppliers.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer d-flex gap-2" t-if="state.loaded">
+                    <button class="btn btn-primary" t-on-click="save" t-att-disabled="state.loading or !state.dirty">Save</button>
+                    <button class="btn btn-secondary" t-on-click="discard" t-att-disabled="state.loading or !state.dirty">Discard</button>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

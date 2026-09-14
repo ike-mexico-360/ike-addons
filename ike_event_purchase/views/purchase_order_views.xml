@@ -9,6 +9,7 @@
             <xpath expr="//field[@name='partner_id']" position="before">
                 <field name="x_customer_id"
                     required="state in ('draft', 'sent')"
+                    readonly="state in ('purchase', 'done', 'draft_cancel')"
                     options="{'no_open': True, 'no_create': True}"
                     context="{'list_view_ref': 'custom_master_catalog.res_partner_client_view_list'}"/>
                 <!-- ToDo: Requerido en todos los estados, se deja dinámico por las PO's que ya existen -->
@@ -36,10 +37,16 @@
                 <span class="o_form_label" invisible="state not in ('draft', 'sent')">Cost review</span>
             </xpath>
             <xpath expr="//header" position="inside">
+                <button name="action_draft_cancel"
+                        string="Cancel Cost Review "
+                        type="object"
+                        class="btn-secondary"
+                        groups="base.group_system,custom_master_catalog.custom_group_ccc_boss"
+                        invisible="state != 'draft'"/>
                 <button name="x_syncronize_po_with_sap" type="object" string="Test SAP Sync" groups="base.group_system"
                     invisible="x_event_id == False or state not in ('done', 'purchase') or x_ref_sap != False"/>
                 <button name="x_action_consolidate" type="object" string="Consolidate" groups="base.group_system" invisible="not x_event_id or state != 'to_consolidate'"/>
-                <button name="x_action_reactivate_cost_review" type="object" string="Reactivate cost review" groups="base.group_system,custom_master_catalog.custom_group_ccc_boss" invisible="state != 'done'"/>
+                <button name="x_action_reactivate_cost_review" type="object" string="Reactivate cost review" groups="base.group_system,custom_master_catalog.custom_group_ccc_boss" invisible="state != 'draft_cancel'"/>
             </xpath>
             <xpath expr="//button[@name='action_create_invoice']" position="attributes">
                 <attribute name="groups">base.group_system</attribute>
@@ -67,26 +74,40 @@
                 <attribute name="invisible">state not in ('draft', 'to approve', 'sent', 'to_consolidate', 'to_consolidate', 'consolidated', 'purchase')</attribute>
             </xpath>
             <xpath expr="//field[@name='partner_ref']" position="attributes">
-                <attribute name="readonly">state in ('purchase', 'done')</attribute>
+                <attribute name="readonly">state in ('purchase', 'done', 'draft_cancel')</attribute>
             </xpath>
             <xpath expr="//field[@name='project_id']" position="attributes">
-                <attribute name="readonly">state in ('purchase', 'done')</attribute>
+                <attribute name="readonly">state in ('purchase', 'done', 'draft_cancel')</attribute>
             </xpath>
             <xpath expr="//field[@name='user_id']" position="attributes">
-                <attribute name="readonly">state in ('purchase', 'done')</attribute>
+                <attribute name="readonly">state in ('purchase', 'done', 'draft_cancel')</attribute>
             </xpath>
             <xpath expr="//field[@name='origin']" position="attributes">
-                <attribute name="readonly">state in ('purchase', 'done')</attribute>
+                <attribute name="readonly">state in ('purchase', 'done', 'draft_cancel')</attribute>
+            </xpath>
+            <xpath expr="//field[@name='date_order']" position="attributes">
+                <attribute name="readonly">state in ('cancel', 'done', 'purchase', 'draft_cancel')</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="readonly">state in ('cancel', 'done', 'purchase', 'draft_cancel')</attribute>
+            </xpath>
+            <xpath expr="//field[@name='currency_id']" position="attributes">
+                <attribute name="readonly">state in ('cancel', 'done', 'purchase', 'draft_cancel')</attribute>
             </xpath>
             <xpath expr="//field[@name='project_id']" position="after">
                 <field name="x_require_change_reason" invisible="1" readonly="1"/>
                 <field name="x_change_comments" invisible="not x_require_change_reason" required="x_require_change_reason"/>
             </xpath>
             <xpath expr="//field[@name='origin']" position="after">
-                <field name="x_origin_events" readonly="state in ('purchase', 'done')"/>
+                <field name="x_origin_events" readonly="state in ('purchase', 'done', 'draft_cancel')"/>
+            </xpath>
+            <!-- Solo lectura si ya se envió la compra a SAP -->
+            <xpath expr="//field[@name='order_line']" position="attributes">
+                <attribute name="readonly" separator="or" add="(x_sap_reference_received and x_ref_sap or state == 'draft_cancel')"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list" position="attributes">
                 <attribute name="decoration-danger">x_has_dispute_changes</attribute>
+                <attribute name="class" add="ike_purchase_order_line_list" separator=" "/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='product_qty']" position="attributes">
                 <attribute name="readonly">parent.x_event_id</attribute>
@@ -150,7 +171,7 @@
             <xpath expr="//field[@name='order_line']/list/field[@name='product_id']" position="after">
                 <field name="x_parent_expedient"
                     readonly="0"
-                    column_invisible="parent.state not in ['done', 'purchase', 'cancel', 'consolidated']"/>
+                    column_invisible="parent.state not in ['done', 'purchase', 'cancel', 'consolidated', 'draft_cancel']"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='price_unit']" position="after">
                 <field name="x_product_qty_dispute" optional="show" readonly="1" column_invisible="not parent.x_event_id or parent.state in ('purchase', 'done')"
@@ -181,6 +202,9 @@
             </xpath>
             <xpath expr="//field[@name='order_line']/list/field[@name='discount']" position="attributes">
                 <attribute name="invisible">display_type</attribute>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/list//field[@name='discount']" position="before">
+                <field name="x_discount_price" string="Disc. Price" optional="hide"/>
             </xpath>
             <xpath expr="//field[@name='fiscal_position_id']" position="after">
                 <label for="x_ref_sap" invisible="state not in ('done', 'purchase')"/>
@@ -243,6 +267,26 @@
             <xpath expr="//field[@name='order_line']/list/control/create[@name='add_section_control']" position="replace"/>
             <xpath expr="//field[@name='order_line']/list/control/create[@name='add_note_control']" position="replace"/>
             <xpath expr="//field[@name='order_line']/list/control/button[@name='action_add_from_catalog']" position="replace"/>
+
+            <xpath expr="//group[@name='invoice_info']" position="after">
+                <group name="additional_info_01" string="">
+                    <field name="x_event_type_id" readonly="1"
+                        options="{'no_create': True, 'no_open': True}"
+                        invisible="state in ('purchase', 'done')"/>
+                    <field name="x_incident_type_id" readonly="1"
+                        options="{'no_create': True, 'no_open': True}"
+                        invisible="state in ('purchase', 'done')"/>
+                    <field name="x_vehicle_weight_category_id" readonly="1"
+                        options="{'no_create': True, 'no_open': True}"
+                        invisible="state in ('purchase', 'done')"/>
+                </group>
+                <group name="additional_info_02" string="">
+                    <field name="x_id_event" readonly="1"
+                        invisible="state in ('purchase', 'done') or not x_external_api_record"/>
+                    <field name="x_validator" readonly="1"
+                        invisible="state in ('purchase', 'done') or not x_external_api_record"/>
+                </group>
+            </xpath>
         </field>
     </record>
 
@@ -315,10 +359,10 @@
                             invisible="x_event_id == False"
                             options="{'no_create': True, 'no_create_edit': True}"
                             context="{'form_view_ref': 'ike_event.view_ike_event_screen_form'}"/>
-                        <field name="currency_id" groups="base.group_multi_currency" force_save="1" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="currency_id" groups="base.group_multi_currency" force_save="1" readonly="state in ['cancel', 'done', 'purchase', 'draft_cancel']"/>
                         <field name="id" invisible="1"/>
-                        <field name="company_id" invisible="1" readonly="state in ['cancel', 'done', 'purchase']"/>
-                        <field name="currency_id" invisible="1" readonly="state in ['cancel', 'done', 'purchase']" groups="!base.group_multi_currency"/>
+                        <field name="company_id" invisible="1" readonly="state in ['cancel', 'done', 'purchase', 'draft_cancel']"/>
+                        <field name="currency_id" invisible="1" readonly="state in ['cancel', 'done', 'purchase', 'draft_cancel']" groups="!base.group_multi_currency"/>
                         <field name="tax_calculation_rounding_method" invisible="1"/>
                     </group>
                     <group>
@@ -330,18 +374,18 @@
                             readonly="1"/>
                         <field name="x_payment_event_type_id"
                             string="Payment event type"
-                            readonly="0"
+                            readonly="x_dispute_state in ['resolved']"
                             options="{'no_open': True, 'no_create': True}"
                             groups="base.group_system,custom_master_catalog.custom_group_ccc_boss,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_analyst"/>
 
-                        <field name="date_order" invisible="state in ('purchase', 'done')" readonly="state in ['cancel', 'done', 'purchase']"/>
+                        <field name="date_order" invisible="state in ('purchase', 'done')" readonly="state in ['cancel', 'done', 'purchase', 'draft_cancel']"/>
                         <label for="date_approve" invisible="state not in ('purchase', 'done')"/>
                         <div name="date_approve" invisible="state not in ('purchase', 'done')" class="o_row">
                             <field name="date_approve"/>
                         </div>
                         <label for="date_planned"/>
                         <div name="date_planned_div" class="o_row">
-                            <field name="date_planned" readonly="state not in ('draft', 'sent', 'to approve', 'purchase')"/>
+                            <field name="date_planned" readonly="state not in ('draft', 'sent', 'to approve', 'purchase', 'draft_cancel')"/>
                             <field name="mail_reminder_confirmed" invisible="1"/>
                             <span class="text-muted" invisible="not mail_reminder_confirmed">(confirmed by vendor)</span>
                         </div>
@@ -399,9 +443,10 @@
                             widget="section_and_note_field_o2m"
                             mode="list"
                             context="{'default_state': 'draft'}"
-                            readonly="state in ('done', 'cancel') or x_ticket_stage_readonly"
+                            readonly="state in ('done', 'cancel', 'draft_cancel') or x_ticket_stage_readonly"
                             options="{'field_columns': ['product_id'], 'delete_condition_field': 'x_mandatory'}">
-                            <list string="Purchase Order Lines" editable="bottom" decoration-danger="x_has_dispute_changes">
+                            <list string="Purchase Order Lines" editable="bottom" decoration-danger="x_has_dispute_changes"
+                                class="ike_purchase_order_line_list">
                                 <control>
                                     <create name="add_product_control" string="Add a product"/>
                                     <!-- <create name="add_section_control" string="Add a section" context="{'default_display_type': 'line_section'}"/>
@@ -536,11 +581,11 @@
                         <group>
                             <group name="other_info">
                                 <field name="user_id" domain="[('share', '=', False)]" widget="many2one_avatar_user"/>
-                                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" readonly="state in ['cancel', 'done', 'purchase']"/>
+                                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}" readonly="state in ['cancel', 'done', 'purchase', 'draft_cancel']"/>
                                 <field name="origin"/>
                             </group>
                             <group name="invoice_info">
-                                <field name="invoice_status" invisible="state in ('draft', 'sent', 'to approve', 'cancel')"/>
+                                <field name="invoice_status" invisible="state in ('draft', 'sent', 'to approve', 'cancel', 'draft_cancel')"/>
                                 <field name="payment_term_id" readonly="invoice_status == 'invoiced' or state == 'done'" options="{'no_create': True}"/>
                                 <field name="fiscal_position_id" options="{'no_create': True}" readonly="invoice_status == 'invoiced' or state == 'done'"/>
                                 <field name="x_ref_sap" readonly="1" invisible="not x_event_id or state not in ('done', 'purchase')"/>

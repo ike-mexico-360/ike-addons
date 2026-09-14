@@ -2,6 +2,7 @@
 from datetime import timedelta
 from odoo import models, fields, Command, api, _
 from odoo.exceptions import ValidationError, UserError
+
 import logging
 _logger = logging.getLogger(__name__)
 
@@ -165,7 +166,6 @@ class IkeEvent(models.Model):
             if not rec.x_purchase_ids:
                 purchase_ids = rec._x_create_grouped_purchase_orders()
                 for purchase in purchase_ids:
-                    purchase.action_rfq_send_one_step()
                     supplier_ids = rec.selected_supplier_ids.filtered(lambda x: x.supplier_id.id == purchase.partner_id.id)
                     supplier_cancelled = all(
                         supplier.state in ['cancel', 'cancel_event', 'cancel_supplier']
@@ -177,7 +177,9 @@ class IkeEvent(models.Model):
                     )
 
                     if supplier_cancelled and supplier_reason_from_supplier and purchase.amount_untaxed == 0:
-                        purchase.button_confirm()
+                        purchase.action_draft_cancel()
+
+                    purchase.action_rfq_send_one_step()
 
     def x_get_values_for_purchase_line(self, supplier_product_id):
         return {
@@ -210,15 +212,41 @@ class IkeEvent(models.Model):
         if not company_id.x_default_purchase_project_id:
             raise UserError(_("No default purchase project has been configured for this company."))
 
+        sub_service_id = selected_supplier_id.event_id.sub_service_id
+
+        event_type_id = self.event_type_id
+        # Aplicamos try para dejarlo preparado para cuando se añada el campo
+        try:
+            incident_type_id = self.incident_type_id.id
+        except AttributeError:
+            incident_type_id = False
+        vehicle_weight_category_id = selected_supplier_id.truck_id.model_id.x_vehicle_weight_category_id
+
+        # Proceso de homologación en caso de que no se envien los valores de tipo de evento, incidente y categoría de peso
+        if not event_type_id or not incident_type_id or not vehicle_weight_category_id:
+            # Obtener linea de homologación
+            homologation_id = sub_service_id.x_product_homologation_model_id.filtered(
+                lambda x: x.x_ref_sap_api == sub_service_id.x_sap_code_outgoing
+            )
+            if not event_type_id and homologation_id.event_type_id:
+                event_type_id = homologation_id.event_type_id
+            if not incident_type_id and homologation_id.incident_type_id:
+                incident_type_id = homologation_id.incident_type_id.id
+            if not vehicle_weight_category_id and homologation_id.weight_category_id:
+                vehicle_weight_category_id = homologation_id.weight_category_id
+
         return {
             "partner_id": supplier_id.id,
             "company_id": company_id.id,
             "x_event_id": self.id,  # Link to event_id
-            "x_sub_service_id": selected_supplier_id.event_id.sub_service_id.id,
+            "x_sub_service_id": sub_service_id.id,
             "x_nu_user_id": selected_supplier_id.event_id.user_id.id,
             "x_customer_id": account_id.parent_id.id,
             "x_membership_plan_id": membership_plan_id.id,
             "x_invoice_company_id": x_invoice_company_id,
             "date_order": fields.Datetime.now() + timedelta(hours=max_hours_to_confirm),
             "project_id": company_id.x_default_purchase_project_id.id,
+            "x_event_type_id": event_type_id.id,
+            "x_incident_type_id": incident_type_id,
+            "x_vehicle_weight_category_id": vehicle_weight_category_id.id,
         }

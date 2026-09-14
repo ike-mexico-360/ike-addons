@@ -1,17 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_ike_event_screen_inherit_auto_assign_form" model="ir.ui.view">
+        <field name="name">view.ike.event.screen.inherit.binnacle.form</field>
+        <field name="model">ike.event</field>
+        <field name="inherit_id" ref="ike_event.view_ike_event_screen_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header//button[@name='open_cancel_wizard']" position="after">
+                <button
+                    string="Auto Assign"
+                    confirm="Are you sure you want to auto assign this event?"
+                    name="action_auto_assign_event"
+                    type="object"
+                    class="oe_highlight"
+                    invisible="stage_ref not in ['draft', 'capturing', 'searching', 'assigned', 'in_progress']"/>
+            </xpath>
+        </field>
+    </record>
+
     <record id="view_ike_event_search_inherit_wk_appointment" model="ir.ui.view">
         <field name="name">ike.event.search.inherit.wk.appointment</field>
         <field name="model">ike.event</field>
         <field name="inherit_id" ref="ike_event.view_ike_event_search"/>
         <field name="arch" type="xml">
-            <xpath expr="//filter[@name='my_events']" position="after">
+            <!-- <xpath expr="//filter[@name='my_events']" position="replace">
                 <filter
-                    string="Visible Appointments"
-                    name="visible_appointments"
+                    string="My Events"
+                    name="my_events"
                     domain="[
-                        ('appointment_type', '=', True),
-                        ('event_date', '&lt;=', (datetime.datetime.now() + relativedelta(hours=3)).to_utc().strftime('%Y-%m-%d %H:%M:%S'))
+                        ('scheduled', '=', True),
+                        ('assigned_user_id', '=', uid),
+                        ('appointment_show_event_date', '&lt;', (datetime.datetime.now() + relativedelta()).to_utc().strftime('%Y-%m-%d %H:%M:%S'))
+                    ]"
+                />
+            </xpath> -->
+            <xpath expr="//filter[@name='all_active']" position="after">
+                <filter
+                    name="all_scheduled_events"
+                    string="Scheduled events"
+                    domain="[
+                        ('scheduled', '=', True),
+                    ]"
+                />
+            </xpath>
+            <xpath expr="//filter[@name='my_events_last_20_minutes']" position="after">
+                <filter
+                    name="my_scheduled_events"
+                    string="My Upcoming Scheduled Events"
+                    domain="[
+                        ('scheduled', '=', True),
+                        ('assigned_user_id', '=', uid)
                     ]"
                 />
             </xpath>
@@ -23,8 +60,9 @@
         <field name="model">ike.event</field>
         <field name="inherit_id" ref="ike_event.view_ike_event_list"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='stage_id']" position="after">
-                <field name="appointment_type" string="Schedule" optional="show"/>
+            <xpath expr="//field[@name='scheduled']" position="after">
+                <field name="event_date" string="Shedule date" invisible="event_date if not scheduled else False "/>
+                <!-- <field name="appointment_show_event_date" /> -->
             </xpath>
         </field>
     </record>

@@ -29,6 +29,28 @@ class ProductProduct(models.Model):
         ('7', '7'),
     ], string="level armor", tracking=True)
 
+    x_product_homologation_model_id = fields.One2many(
+        'custom.product.homologation',
+        'product_id',
+        string="Product homologation"
+    )
+
+    def write(self, vals):
+        commands = vals.get('customer_ids')
+        if commands:
+            vals = dict(vals)
+            normalized_commands = []
+            technical_fields = {'product_tmpl_id', 'product_id', 'company_id'}
+            for command in commands:
+                if command[0] == 0:
+                    normalized_commands.append([0, 0, command[2]])
+                elif command[0] == 1 and set(command[2]) <= technical_fields:
+                    continue
+                else:
+                    normalized_commands.append(command)
+            vals['customer_ids'] = normalized_commands
+        return super().write(vals)
+
     @api.depends('name', 'default_code')
     def _compute_display_name(self):
         """Override display name to hide default_code for service products"""

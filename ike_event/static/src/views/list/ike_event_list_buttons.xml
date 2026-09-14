@@ -133,6 +133,18 @@
                             </a>
                         </div>
                     </div>
+                    <div class="g-col-1">
+                        <div class="p-0" t-on-click="setSearchContext" title="All scheduled events" filter_name="all_scheduled_events">
+                            <a href="#" class="btn btn-dark w-100 h-100 border-0 rounded-0 text-capitalize text-break fw-normal">
+                                <div class="fs-2" t-out="eventData['all_scheduled_events']"/>Scheduled
+                            </a>
+                        </div>
+                        <div class="p-0 mt-2" t-on-click="setSearchContext" title="My schedule events" filter_name="all_scheduled_events,my_events">
+                            <a href="#" class="btn btn-light w-100 border-0 fw-normal">
+                                <div t-out="eventData['my_scheduled_events']"/>
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

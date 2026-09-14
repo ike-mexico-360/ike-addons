@@ -420,9 +420,9 @@ class AccountMove(models.Model):
         """
         self.ensure_one()
 
-        if not self.xml_file:
+        if not self.x_xml_file:
             return ""
-        return self.xml_file.decode("ascii") if isinstance(self.xml_file, bytes) else self.xml_file
+        return self.x_xml_file.decode("ascii") if isinstance(self.x_xml_file, bytes) else self.x_xml_file
 
     def _x_get_carta_porte_base64(self):
         """

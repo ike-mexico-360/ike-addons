@@ -41,7 +41,7 @@
                                        domain="subservice_specification_domain"
                                        options="{'no_open': True, 'no_create': True}"/>
                                 <field name="priority" widget="priority"/>
-                                <field name="color" widget="color_picker"/>
+                                <field name="manual_assignment_order" readonly="1"/>
                                 <field name="disabled" widget="disable_field"
                                        options="{'disabled_reason_action': false, 'disabled_reason_field': 'disabled_reason'}"/>
                                 <field name="disabled_reason" optional="hide" force_save="1"/>

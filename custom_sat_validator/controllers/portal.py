@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import http
+import base64
+from lxml import etree
+from odoo import http, _
 from odoo.http import request
 from odoo.addons.ike_event_purchase.controllers.portal import PurchaseOrderController
 
@@ -39,10 +41,6 @@ class PortalXmlValidator(http.Controller):
 
     @http.route('/my/purchase/download_cfdi_pdf2/<int:invoice_id>', type='http', auth='user', methods=['GET'])
     def download_cfdi_pdf2(self, invoice_id, **kwargs):
-        import logging
-        _logger = logging.getLogger(__name__)
-        _logger.warning("=== CFDI PDF DEBUG ===")
-        _logger.warning("invoice_id recibido: %s", invoice_id)
 
         invoice_id = request.env['account.move'].browse(invoice_id)
 
@@ -130,6 +128,129 @@ class PortalXmlValidator(http.Controller):
             'success': True,
             'message': f"Successfully processed {processed_count} document packages for this order."
         }
+
+    @http.route('/my/purchase/preview_sat_xml_lines', type='json', auth='user', website=True)
+    def portal_preview_sat_xml_lines(self, purchase_order_id, xml_file, filename, **kw):
+        """ Parse SAT CFDI XML file, execute validations/SAT WS, and return matched lines """
+        if not purchase_order_id or not xml_file:
+            return {'success': False, 'error': _('Purchase order or XML file was not provided.')}
+
+        po = request.env['purchase.order'].sudo().browse(int(purchase_order_id))
+        if not po.exists():
+            return {'success': False, 'error': _('Purchase Order not found.')}
+
+        try:
+            # 1. Search for existing recent validator record or create a new one
+            ValidatorModel = request.env['custom.sat.validator'].sudo()
+            LineModel = request.env['custom.sat.validator.line'].sudo()
+
+            validator_record = ValidatorModel.search([('purchase_id', '=', po.id)], order='id desc', limit=1)
+            if not validator_record:
+                validator_record = ValidatorModel.create({'purchase_id': po.id})
+
+            val_line = LineModel.create({
+                'validator_id': validator_record.id,
+                'xml_file': xml_file,
+                'xml_filename': filename,
+            })
+
+            # 2. Step 1: XML Parsing & Extraction
+            xml_data = val_line._parse_and_extract_xml_data()
+            if not xml_data:
+                error_msg = val_line.line_validation_log or _("XML parsing failed.")
+                return {'success': False, 'error': error_msg}
+
+            # 3. Step 2: Run all Purchase Order validation rules
+            po_valid = val_line._validate_purchase_order_data(
+                val_line.emisor_rfc,
+                val_line.receptor_rfc,
+                val_line.subtotal_amount,
+                val_line.sat_uuid,
+                xml_date=xml_data.get('xml_date')
+            )
+
+            if not po_valid or val_line.line_state == 'xml_error':
+                error_msg = val_line.line_validation_log or _("Purchase order validation failed.")
+                return {'success': False, 'error': error_msg}
+
+            # 4. Step 3: Web Service SAT Status Check
+            sat_success = val_line._request_sat_web_service(
+                xml_data['xml_emisor_rfc'],
+                xml_data['xml_receptor_rfc'],
+                xml_data['xml_total'],
+                xml_data['xml_uuid']
+            )
+
+            if not sat_success or not val_line.cfdi_is_valid:
+                error_msg = val_line.line_validation_log or _("SAT Status Verification Failed.")
+                return {'success': False, 'error': error_msg}
+
+            # 5. Map Purchase Order lines for client preview
+            po_lines = po.order_line.filtered(lambda ln: not ln.display_type)
+            result_lines = []
+
+            for idx, po_line in enumerate(po_lines):
+                xml_line_rec = val_line.xml_line_ids[idx] if idx < len(val_line.xml_line_ids) else False
+
+                result_lines.append({
+                    'po_line_id': po_line.id,
+                    'po_product_name': po_line.product_id.display_name or po_line.name,
+                    'po_qty': po_line.product_qty,
+                    'po_subtotal': round(po_line.price_subtotal, 2),
+                    'x_parent_expedient': po_line.x_parent_expedient or '',
+                    'xml_folio': xml_data.get('xml_folio') or '',
+                    'xml_product_name': xml_line_rec.product_name if xml_line_rec else '',
+                    'xml_subtotal': round(xml_line_rec.subtotal, 2) if xml_line_rec else 0.0,
+                })
+
+            # Retain validator record and line history for auditing
+            return {
+                'success': True,
+                'lines': result_lines
+            }
+
+        except Exception as e:
+            return {'success': False, 'error': _('Error processing SAT XML file: %s') % str(e)}
+
+    @http.route('/my/purchase/process_selected_sat_lines', type='json', auth='user', website=True)
+    def process_selected_sat_lines(self, purchase_order_id, selected_po_line_ids, xml_file, xml_filename, pdf_file=False, pdf_filename=False, carta_porte_file=False, **kw):
+        """ Creates the final validator line, executes SAT validation, and creates the vendor bill """
+        if not purchase_order_id or not selected_po_line_ids or not xml_file:
+            return {'success': False, 'error': _('Incomplete information or no lines were selected.')}
+
+        po = request.env['purchase.order'].sudo().browse(int(purchase_order_id))
+        if not po.exists():
+            return {'success': False, 'error': _('Purchase Order not found.')}
+
+        ValidatorModel = request.env['custom.sat.validator'].sudo()
+        validator_record = ValidatorModel.search([('purchase_id', '=', po.id)], order='id desc', limit=1)
+
+        if not validator_record:
+            validator_record = ValidatorModel.create({'purchase_id': po.id})
+
+        line_record = request.env['custom.sat.validator.line'].sudo().create({
+            'validator_id': validator_record.id,
+            'xml_file': xml_file,
+            'xml_filename': xml_filename,
+            'pdf_file': pdf_file or False,
+            'pdf_filename': pdf_filename or '',
+            'carta_porte_file': carta_porte_file or False,
+        })
+
+        # Execute complete line validation workflow (extraction, PO audit, SAT web service lookup, and invoicing)
+        line_record.with_context(selected_po_line_ids=selected_po_line_ids).action_process_line_workflow()
+
+        if line_record.invoice_id:
+            return {
+                'success': True,
+                'message': _('Invoice successfully created and confirmed. Reference: %s') % line_record.invoice_id.name,
+                'invoice_id': line_record.invoice_id.id,
+            }
+        else:
+            return {
+                'success': False,
+                'error': line_record.line_validation_log or _('Invoice creation failed during SAT validation.')
+            }
 
 
 class PurchaseOrderControllerInherit(PurchaseOrderController):

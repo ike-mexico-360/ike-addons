@@ -4,19 +4,26 @@
       <div class="text-center">Loading...</div>
     </t>
     <t t-else="">
-      <!-- Header KPI -->
-      <div t-if="state.showKpi" class="mb-4">
+      <!-- Header KPI restricted by company settings AND supplier advanced portal permission -->
+      <div t-if="state.showKpi and state.hasAdvancedPortal" class="mb-4">
 
           <div class="d-flex flex-column flex-lg-row justify-content-between align-items-start gap-3 mb-4">
               <div>
                   <h1 class="fw-bold display-5 mb-3">
                       Purchase Order
                   </h1>
-                  <button class="btn btn-sm btn-primary rounded-pill"
-                    title="Download purchase orders PDF"
-                    t-on-click="downloadOrdersPdf">
-                    <i class="fa fa-file-pdf-o me-1"/>Download PDF
-                  </button>
+                  <div class="d-flex flex-wrap gap-2">
+                    <button class="btn btn-sm btn-primary rounded-pill"
+                      title="Download purchase orders PDF"
+                      t-on-click="downloadOrdersPdf">
+                      <i class="fa fa-file-pdf-o me-1"/>Download PDF
+                    </button>
+                    <button class="btn btn-sm btn-success rounded-pill"
+                      title="Download purchase orders Excel"
+                      t-on-click="downloadOrdersXlsx">
+                      <i class="fa fa-file-excel-o me-1"/>Download Excel
+                    </button>
+                  </div>
               </div>
           </div>
 
@@ -207,9 +214,12 @@
               <th>SubTotal</th>
               <th>Invoiced subtotal</th>
               <th>Billing Status</th>
+              <!-- Conditional table headers restricted by supplier permission -->
+              <t t-if="state.hasAdvancedPortal">
               <th>Invoice Status</th>
               <th>Invoices</th>
               <th/>
+              </t>
             </tr>
           </thead>
           <tbody>
@@ -231,6 +241,8 @@
                 <td>
                   <span class="badge rounded-pill px-2 py-1" t-att-class="orderStatus.cssClass" t-esc="orderStatus.label"/>
                 </td>
+                <!-- Conditional table cells restricted by supplier permission -->
+                <t t-if="state.hasAdvancedPortal">
                 <td>
                   <span class="badge-invoice-status" t-att-class="invoiceStatus.cssClass" t-esc="invoiceStatus.label"/>
                 </td>
@@ -255,6 +267,7 @@
                     <i class="fa fa-shield me-1"/>SAT
                   </button>
                 </td>
+                </t>
               </tr>
             </t>
           </tbody>

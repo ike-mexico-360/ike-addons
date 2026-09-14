@@ -62,6 +62,7 @@ class CustomMembershipNus(models.Model):
     display_name = fields.Char(
         string='Display Name',
         compute='_compute_decrypted_fields',
+        search='_search_display_name',
         store=False
     )
     date_start = fields.Date(string='Start date', store=True)
@@ -80,6 +81,19 @@ class CustomMembershipNus(models.Model):
                 record.display_name = encryption_util.decrypt_aes256(record.name)
             else:
                 record.display_name = ''
+
+    @api.model
+    def _search_display_name(self, operator, value):
+        """Delegate NUs searches to the model's existing encrypted-name search."""
+        matching_ids = [
+            record_id
+            for record_id, _display_name in self.name_search(
+                name=value,
+                operator=operator,
+                limit=None,
+            )
+        ]
+        return [('id', 'in', matching_ids)]
 
     # === ONCHANGE === #
     @api.onchange('membership_plan_id')
@@ -216,7 +230,7 @@ class CustomMembershipNus(models.Model):
                     _logger.warning(f"Error decrypting name for search: {str(e)}")
                     continue
 
-            if len(matching_ids) >= limit:
+            if limit and len(matching_ids) >= limit:
                 break
 
         return self.browse(matching_ids).name_get()

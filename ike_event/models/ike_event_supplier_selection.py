@@ -2,6 +2,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError, ValidationError
+from odoo.osv import expression
 
 from .other_models.ike_event_batcher import event_batcher
 
@@ -121,7 +122,7 @@ class IkeEventSupplierSelection(models.Model):
         self.notification_date = False
         self.acceptance_date = False
         self.rejection_date = False
-        self.broadcastReload()
+        self.broadcastReload(reload_type='reset')
 
     def action_notify(self) -> list[int]:
         available_ids = self._lock_records_by_state('available')
@@ -130,7 +131,7 @@ class IkeEventSupplierSelection(models.Model):
             return []
         self_filtered.state = 'notified'
         self_filtered.notification_date = fields.Datetime.now()
-        self_filtered.broadcastReload()
+        self_filtered.broadcastReload(reload_type='notify')
 
         return available_ids
 
@@ -139,9 +140,9 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered = self.filtered(lambda x: x.id in available_ids)
         if not self_filtered:
             return []
+        # State 'assigned' only for operator in app mobile
         self_filtered.state = 'assigned'
-        self_filtered.assignation_date = fields.Datetime.now()
-        self_filtered.broadcastReload()
+        self_filtered.action_assign()
 
         return available_ids
 
@@ -166,27 +167,42 @@ class IkeEventSupplierSelection(models.Model):
             # Acceptance Duration
             difference = rec.acceptance_date - (rec.event_id.supplier_search_date or rec.acceptance_date)
             rec.acceptance_duration = int(difference.total_seconds())
-            # Vehicle state
-            rec.truck_id.x_vehicle_service_state = 'in_service'
             # Set Google Route
-            if not rec.route:
-                destination_distance_m, destination_duration_s, destination_route = (
-                    rec.event_id.get_destination_route(
+            if not rec.route and rec.negotiation_type != 'origin_destination':
+                google_distance_m, google_duration_s, google_route = (
+                    rec.event_id.get_google_route(
                         rec.latitude,
                         rec.longitude,
                         rec.event_id.location_latitude,
                         rec.event_id.location_longitude,
                     )
                 )
-                if destination_route:
-                    rec.route = destination_route
-                    distance_km = (destination_distance_m or rec.estimated_distance) / 1000
-                    duration_m = (destination_duration_s or rec.estimated_duration) / 60
+                if google_route:
+                    rec.route = google_route
+                    distance_km = (google_distance_m or rec.estimated_distance) / 1000
+                    duration_m = (google_duration_s or rec.estimated_duration) / 60
                     rec.real_distance = distance_km
                     rec.real_duration = duration_m
                     if not rec.estimated_distance:
                         rec.estimated_distance = distance_km
                         rec.estimated_duration = duration_m
+
+                    # Event Center Distance
+                    if rec.negotiation_type == 'base_destination':
+                        center_distance_id = self.env['ike.event.center.distance'].search([
+                            ('event_id', '=', rec.event_id.id),
+                            ('supplier_center_id', '=', rec.supplier_center_id.id),
+                        ])
+                        if not center_distance_id:
+                            center_distance_id = self.env['ike.event.center.distance'].create({
+                                'event_id': rec.event_id.id,
+                                'supplier_center_id': rec.supplier_center_id.id,
+                            })
+                        center_distance_id.write({
+                            'center_origin_distance_km': distance_km,
+                            'center_origin_duration_m': duration_m,
+                            'center_origin_route': google_route,
+                        })
 
         self_filtered._notify_expiration()
         # self_filtered.broadcastReload()
@@ -213,18 +229,9 @@ class IkeEventSupplierSelection(models.Model):
                         current_step_number=rec.event_id.step_number,
                     )).action_forward()
             # Broadcast
-            rec.broadcastReload(event_reload=use_action_forward)
+            rec.broadcastReload(event_reload=use_action_forward, reload_type='forward')
 
         return self_filtered.ids
-
-    def get_selectable_vehicles(self):
-        self.ensure_one()
-        domain = list(self.truck_domain or []) + [('driver_id', '!=', False), ('x_vehicle_ref', '!=', False)]
-        vehicles = self.env['fleet.vehicle'].sudo().search(domain)
-        return [
-            {'id': vehicle.id, 'name': vehicle.name, 'license_plate': vehicle.license_plate}
-            for vehicle in vehicles
-        ]
 
     def action_reject(self) -> list[int]:
         available_ids = self._lock_records_by_state('notified')
@@ -233,7 +240,7 @@ class IkeEventSupplierSelection(models.Model):
             return []
         self_filtered.state = 'rejected'
         self_filtered.rejection_date = fields.Datetime.now()
-        self_filtered.broadcastReload()
+        self_filtered.broadcastReload(reload_type='reject')
 
         @self.env.cr.postcommit.add
         def send_broadcast_reject():
@@ -252,7 +259,7 @@ class IkeEventSupplierSelection(models.Model):
             return []
         self_filtered.state = 'timeout'
         self_filtered.rejection_date = fields.Datetime.now()
-        self_filtered.broadcastReload()
+        self_filtered.broadcastReload(reload_type='timeout')
 
         @self.env.cr.postcommit.add
         def send_broadcast_timeout():
@@ -271,57 +278,122 @@ class IkeEventSupplierSelection(models.Model):
             return []
         self_filtered.state = 'expired'
         self_filtered.rejection_date = fields.Datetime.now()
-        self_filtered.broadcastReload()
+        self_filtered.broadcastReload(reload_type='expire')
 
         return available_ids
 
+    def action_change_vehicle_and_accept(self) -> list[int]:
+        notified_ids = self._lock_records_by_state('notified')
+        assigned_ids = self._lock_records_by_state('assigned')
+        self_filtered = self.filtered(
+            lambda x: x.id in (notified_ids + assigned_ids)
+        )
+        if not self_filtered:
+            return []
+        # ToDo: check if this is necessary
+        for rec in self_filtered:
+            rec._set_new_service_vehicle_distance()
+
+        self_filtered.action_accept()
+
+        return self_filtered.ids
+
+    def action_confirm_vehicle(self):
+        """You can only confirm the vehicle if the service is assigned and event is scheduled."""
+        # ToDo: notify operator?
+        accepted_ids = self._lock_records_by_state('accepted')
+        assigned_ids = self._lock_records_by_state('assigned')
+        self_filtered = self.filtered(
+            lambda x: x.id in (accepted_ids + assigned_ids)
+        )
+        if self_filtered.truck_id.x_vehicle_service_state == 'in_service':
+            raise UserError(_("This vehicle is currently in service. Please select another vehicle."))
+        self_filtered.truck_id.x_vehicle_service_state = 'in_service'
+        for rec in self_filtered:
+            rec.confirmed = True
+            if rec.negotiation_type == 'vehicle_destination':
+                rec.negotiation_type = 'base_destination'
+            rec._set_new_service_vehicle_distance()
+            if not rec.route and rec.negotiation_type != 'origin_destination':
+                # ToDo: Create function
+                google_distance_m, google_duration_s, google_route = (
+                    rec.event_id.get_google_route(
+                        rec.latitude,
+                        rec.longitude,
+                        rec.event_id.location_latitude,
+                        rec.event_id.location_longitude,
+                    )
+                )
+                if google_route:
+                    rec.route = google_route
+                    distance_km = (google_distance_m or rec.estimated_distance) / 1000
+                    duration_m = (google_duration_s or rec.estimated_duration) / 60
+                    rec.real_distance = distance_km
+                    rec.real_duration = duration_m
+                    if not rec.estimated_distance:
+                        rec.estimated_distance = distance_km
+                        rec.estimated_duration = duration_m
+
+                    # Event Center Distance
+                    if rec.negotiation_type == 'base_destination':
+                        center_distance_id = self.env['ike.event.center.distance'].search([
+                            ('event_id', '=', rec.event_id.id),
+                            ('supplier_center_id', '=', rec.supplier_center_id.id),
+                        ])
+                        if not center_distance_id:
+                            center_distance_id = self.env['ike.event.center.distance'].create({
+                                'event_id': rec.event_id.id,
+                                'supplier_center_id': rec.supplier_center_id.id,
+                            })
+                        center_distance_id.write({
+                            'center_origin_distance_km': distance_km,
+                            'center_origin_duration_m': duration_m,
+                            'center_origin_route': google_route,
+                        })
+
+        self_filtered.broadcastReload(reload_type='vehicle_confirmed')
+
+    # === PUBLIC METHODS === #
+    # ToDo: Change Name?
     def action_change_service_vehicle(self, service_vehicle_id: int):
-        self.truck_id = service_vehicle_id
-        self._set_new_service_vehicle_distance()
+        """For Portal Users: Change the service vehicle and accept the service."""
+        self.ensure_one()
+        self._change_service_vehicle_state(service_vehicle_id)
+        if self.truck_id.id != service_vehicle_id:
+            self.truck_id = service_vehicle_id
+            self._set_new_service_vehicle_distance()
+        self.action_confirm_vehicle()
+        self.broadcastReload(reload_type='vehicle_changed')
+
+    def _change_service_vehicle_state(self, service_vehicle_id: int):
+        self.ensure_one()
+        if self.truck_id.id != service_vehicle_id:
+            # Previous Vehicle State
+            self.truck_id.x_vehicle_service_state = 'available'
 
     def _set_new_service_vehicle_distance(self):
         self.ensure_one()
         self.name = f"{_('License Plate')}: {self.truck_id.license_plate}"
+
+        # ToDo: Vehicle Destination
+
         # Set Distance
-        origin_latitude = float(self.event_id.location_latitude)
-        origin_longitude = float(self.event_id.location_longitude)
-        if self.negotiation_type in ['base_base']:
-            # Supplier Center lat/lng
-            self.latitude = self.supplier_center_id.partner_latitude
-            self.longitude = self.supplier_center_id.partner_longitude
-            # Osrm Distance
-            data = self.event_id.get_osrm_distance(self.latitude, self.longitude, origin_latitude, origin_longitude)
-            self.estimated_distance = data.get('estimated_distance', 0)
-            self.estimated_duration = data.get('estimated_duration', 0)
-        elif self.negotiation_type in ['base_destination', 'vehicle_destination']:
-            vehicle_locations = self.event_id._get_external_vehicles_location(
-                origin_latitude,
-                origin_longitude,
-                vehicle_refs=[self.truck_id.x_vehicle_ref],
-            )
-            if len(vehicle_locations):
-                data = vehicle_locations[0]
-                self.latitude = data.get('lat', None)
-                self.longitude = data.get('lng', None)
-                self.estimated_distance = data.get('distance_m', 0) / 1000
-                self.estimated_duration = data.get('duration_s', 0) / 60
-                self.osrm = True
-            else:
-                # Supplier Center lat/lng
-                self.latitude = self.supplier_center_id.partner_latitude
-                self.longitude = self.supplier_center_id.partner_longitude
-                data = self.event_id.get_osrm_distance(self.latitude, self.longitude, origin_latitude, origin_longitude)
-                self.estimated_distance = data.get('estimated_distance', 0)
-                self.estimated_duration = data.get('estimated_duration', 0)
-        elif self.negotiation_type in ['origin_destination']:
-            self.latitude = origin_latitude
-            self.longitude = origin_longitude
-            self.estimated_distance = 0
-            self.estimated_duration = 0
-            self.cost_distance = self.cost_distance or self.estimated_duration
-            self.bypass = True
+        supplier_center_id = self.truck_id.x_center_id
+        center_distance_id = self.event_id._get_center_distances(supplier_center_id)
+
+        if self.negotiation_type == 'vehicle_destination':
+            self.negotiation_type = 'base_destination'
+
+        if self.negotiation_type in ['base_base', 'base_destination']:
+            self.latitude = supplier_center_id.partner_latitude
+            self.longitude = supplier_center_id.partner_longitude
+            self.estimated_distance = center_distance_id.center_origin_distance_km
+            self.estimated_duration = center_distance_id.center_origin_duration_m
+            self.cost_distance = center_distance_id.center_origin_distance_km
+            self.route = center_distance_id.center_origin_route
         else:
-            pass
+            self.estimated_distance = self.estimated_duration = self.cost_distance = 0.0
+            self.bypass = True
 
     # === PRIVATE METHODS === #
     def _notify_expiration(self):
@@ -441,7 +513,7 @@ class IkeEventSupplierSelection(models.Model):
         return [row[0] for row in self.env.cr.fetchall()]
 
     # === BROADCASTS === #
-    def broadcastReload(self, event_reload=False):
+    def broadcastReload(self, event_reload: bool = False, reload_type: str = ''):
         """ Broadcast notifications for internal users."""
         action_from = self.env.context.get('ike_event_action_from', 'internal')
         for rec in self:
@@ -454,13 +526,14 @@ class IkeEventSupplierSelection(models.Model):
                 'event_id': [rec.event_id.id, rec.event_id.name],
                 'supplier_id': [rec.supplier_id.id, rec.supplier_id.name],
                 'action_from': action_from,
+                'reload_type': reload_type,
                 'event_reload': event_reload,
             }
             event_batcher.add_event_notification(
                 self.env.cr.dbname,
                 channel_name,
                 'ike_event_supplier_reload', data, batch_timeout=2)
-        self.broadcastReloadForSupplier(action_from)
+        self.broadcastReloadForSupplier(action_from, reload_type)
 
     def broadcastCancel(self, event_reload=False):
         """ Broadcast cancel notifications for internal users."""
@@ -484,7 +557,7 @@ class IkeEventSupplierSelection(models.Model):
                 }, batch_timeout=2)
         self.broadcastCancelForSupplier(action_from)
 
-    def broadcastReloadForSupplier(self, action_from='internal'):
+    def broadcastReloadForSupplier(self, action_from: str = 'internal', reload_type: str = ''):
         """ Broadcast notification for portal users. """
         for rec in self:
             channel_name = f'ike_channel_supplier_{str(rec.supplier_id.id)}'
@@ -493,6 +566,7 @@ class IkeEventSupplierSelection(models.Model):
                 channel_name,
                 'ike_supplier_lines_reload_2', {
                     'action_from': action_from,
+                    'reload_type': reload_type,
                     'id': rec.id,
                     'state': rec.state,
                     'stage_ref': rec.stage_ref,
@@ -659,6 +733,9 @@ class IkeEventSupplierSelection(models.Model):
 
     # === ACTIONS CHANGE STATE WIZARD === #
     def open_change_state_supplier_wizard(self):
+        if self.scheduled and not self.confirmed:
+            raise UserError(_("Clocks cannot be modified until the vehicle is confirmed."))
+
         return self._open_change_state_supplier_wizard()
 
     def _open_change_state_supplier_wizard(self):

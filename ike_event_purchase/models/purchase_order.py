@@ -17,9 +17,13 @@ class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
     state = fields.Selection(selection_add=[
+        ('draft', 'Cost Review'),
+        ('sent', 'Cost Review Sent'),
         ('to_consolidate', 'To Consolidate'),
         ('consolidated', 'Consolidated'),
         ('purchase',),  # Ancla de posición
+        ('cancel',),  # Ancla de posición
+        ('draft_cancel', 'Cost Review Cancel'),
     ])
     x_event_id = fields.Many2one('ike.event', string='Event', ondelete='set null', copy=False)
     x_event_type_id = fields.Many2one(related="x_event_id.event_type_id", string='Payment event type', store=True,)
@@ -136,6 +140,30 @@ class PurchaseOrder(models.Model):
         compute='_x_amount_all_event',
         tracking=True)
 
+    x_discount_price = fields.Monetary(
+        string="Discount Price", default=0.0,
+        help="Technical: Discount Price of the purchase order (copago)")
+
+    x_event_type_id = fields.Many2one(
+        'custom.type.event',
+        string='Event Type',
+        ondelete='restrict',
+    )
+    x_incident_type_id = fields.Many2one(
+        'custom.incident.type',
+        string='Incident Type',
+        ondelete='restrict',
+    )
+    x_vehicle_weight_category_id = fields.Many2one(
+        'custom.vehicle.weight.category',
+        'Weight Category',
+        ondelete='restrict',
+    )
+    x_id_event = fields.Char(
+        string='ID Event', help="Technical: ID Event received from External source needed to send at SAP. Only external")
+    x_validator = fields.Char(
+        string='Validador', help="Technical: Validador received from External source needed to send at SAP. Only external")
+
     @api.depends('x_event_id')
     def _compute_x_event_public_id(self):
         for record in self:
@@ -226,6 +254,13 @@ class PurchaseOrder(models.Model):
             ]
             action['res_id'] = self.x_authorized_amount_request_ids.id
         return action
+
+    def action_draft_cancel(self):
+        """ Cambia el estado de la Orden de Compra de Draft a Cost Review Cancel """
+        for order in self:
+            if order.state == 'draft':
+                order.write({'state': 'draft_cancel'})
+        return True
 
     @api.onchange('order_line')
     def _onchange_order_line_check_reason(self):
@@ -413,7 +448,7 @@ class PurchaseOrder(models.Model):
                 message_type="comment",
                 subtype_xmlid="mail.mt_note",
             )
-            return self.write({"state": "done"})
+            return self.write({"state": "draft_cancel"})
 
         # Ejecutar asignación solo cuando la iteración sea la primera
         if self.x_dispute_iteration_count == 0:
@@ -598,6 +633,16 @@ class PurchaseOrder(models.Model):
                 )
 
             new_po_ids = self.env['purchase.order'].create(new_po_vals)
+
+            # ====== update discount prices
+            for po_id in new_po_ids:
+                for line_id in po_id.order_line:
+                    try:
+                        line_id._onchange_x_discount_price()
+                        line_id.onchange_x_discount_price()
+                    except Exception as e:
+                        _logger.error(f"Error al calcular el copago: {str(e)}")
+
             original_pos.write({'state': 'consolidated'})
             new_po_ids.button_confirm()
 
@@ -726,15 +771,24 @@ class PurchaseOrder(models.Model):
 
             sap_key = (sap_id_outgoing, product_description_po)  # ToDo: Es la forma correcta?
 
-            grouped_concept_lines[sap_key].append({
+            concept_data = {
                 'rfq': rfq,
                 'subtotal': sum(rfq.order_line.mapped('price_subtotal')),
+                'copago': sum(rfq.order_line.mapped('x_discount_price')),
                 'sap_product_id': sap_product_id,
                 'sap_product_description': product_description_po,
                 'sap_code_outgoing': sap_id_outgoing,
                 'sap_code_income': sap_id_income,
                 'event_name': event_name,
-            })
+                'id_event': "",
+                'validador': "",
+            }
+            if rfq.x_external_api_record:
+                concept_data.update({
+                    'id_event': rfq.order_line.mapped('x_id_event')[0],
+                    'validador': rfq.order_line.mapped('x_validator')[0],
+                })
+            grouped_concept_lines[sap_key].append(concept_data)
 
         return grouped_concept_lines
 
@@ -762,29 +816,35 @@ class PurchaseOrder(models.Model):
             if not first_order.x_external_api_record:
                 x_invoice_company_id = first_order.x_invoice_company_id
             else:
-                if first_order.x_sap_company_code not in temporal_invoice_company:
+                sap_company_code = first_order.x_invoice_company_id.name or first_order.x_sap_company_code
+                if sap_company_code not in temporal_invoice_company:
                     invoice_company_id = self.env['res.partner'].search([
                         ('x_is_ike', '=', True),
-                        ('name', '=', first_order.x_sap_company_code),
+                        ('name', '=', sap_company_code),
                     ], limit=1)
                     if not invoice_company_id:
-                        raise UserError(_("No company found for SAP company code %s") % first_order.x_sap_company_code)
-                    temporal_invoice_company[first_order.x_sap_company_code] = invoice_company_id
-                x_invoice_company_id = temporal_invoice_company[first_order.x_sap_company_code]
+                        raise UserError(_("No company found for SAP company code %s") % sap_company_code)
+                    temporal_invoice_company[sap_company_code] = invoice_company_id
+                x_invoice_company_id = temporal_invoice_company[sap_company_code]
 
             for chunk in chunks:
                 origin_names = []
                 origin_events = []
                 order_lines = []
+                auxiliar_count = 0  # * Se usa para generar el número de línea en SAP, se reinicia en cada nueva compra
+                copago_sum = 0.0
 
                 for item in chunk:
                     rfq = item['rfq']
                     subtotal = item['subtotal']
+                    copago = item['copago']
                     product_id = item['sap_product_id']
                     sap_product_description = item['sap_product_description']
                     sap_code_income = item['sap_code_income']
                     sap_code_outgoing = item['sap_code_outgoing']
                     event_name = item['event_name']
+                    id_event = item['id_event']
+                    validador = item['validador']
 
                     if not product_id:
                         _logger.warning(
@@ -813,6 +873,24 @@ class PurchaseOrder(models.Model):
                             event_name,
                         )
 
+                    # Lógica de nuevos campos para reportes al consolidar, pasan a ser valor de linea
+                    sub_service_id = rfq.x_sub_service_id
+                    event_type_id = rfq.x_event_type_id
+                    incident_type_id = rfq.x_incident_type_id
+                    vehicle_weight_category_id = rfq.x_vehicle_weight_category_id
+
+                    # Buscar los datos en la homologación
+                    homologation_id = sub_service_id.x_product_homologation_model_id.filtered(
+                        lambda x: x.x_ref_sap_api == sub_service_id.x_sap_code_outgoing
+                    )[:1]
+                    if homologation_id.event_type_id and not event_type_id:
+                        sub_service_id = homologation_id.event_type_id
+                    if homologation_id.incident_type_id and not incident_type_id:
+                        incident_type_id = homologation_id.incident_type_id
+                    if homologation_id.weight_category_id and not vehicle_weight_category_id:
+                        vehicle_weight_category_id = homologation_id.weight_category_id
+
+                    auxiliar_count += 10
                     order_lines.append(Command.create({
                         'name': line_name,
                         'product_id': product_id,
@@ -822,12 +900,24 @@ class PurchaseOrder(models.Model):
                         'x_sap_code_income': sap_code_income,
                         'x_sap_code_outgoing': sap_code_outgoing,
                         'x_parent_expedient': event_name,
+                        'x_sap_item_number': auxiliar_count,
+                        'x_discount_price': copago or 0.0,
+                        'x_event_type_id': event_type_id.id,
+                        'x_incident_type_id': incident_type_id.id,
+                        'x_vehicle_weight_category_id': vehicle_weight_category_id.id,
+                        'x_id_event': id_event,
+                        'x_validator': validador,
                     }))
+                    copago_sum += copago
 
                     original_pos |= rfq
 
                 if not order_lines:
                     continue
+
+                sap_company_code = first_order.x_invoice_company_id.name or first_order.x_sap_company_code
+                if not x_invoice_company_id:
+                    raise UserError(_("No company found for SAP company code %s") % sap_company_code)
 
                 vals = {
                     'partner_id': first_order.partner_id.id,
@@ -839,6 +929,7 @@ class PurchaseOrder(models.Model):
                     'x_invoice_company_id': x_invoice_company_id.id or False,
                     'x_customer_id': first_order.x_customer_id.id,
                     'project_id': first_order.project_id.id,
+                    'x_discount_price': copago_sum or 0.0,
                 }
 
                 if first_order.x_external_api_record:
@@ -847,7 +938,7 @@ class PurchaseOrder(models.Model):
                         'x_client_code': first_order.x_client_code,
                         'x_record_tenant': first_order.x_record_tenant,
                         'x_app_code': first_order.x_app_code,
-                        'x_sap_company_code': first_order.x_sap_company_code,
+                        'x_sap_company_code': sap_company_code,
                         'x_sap_document_currency': first_order.x_sap_document_currency,
                         'x_external_api_record': True,
                         'x_external_body': first_order.x_external_body,
@@ -1022,12 +1113,24 @@ class PurchaseOrder(models.Model):
         for purchase in self:
             account_id = purchase.x_membership_plan_id.account_id
 
+            # invoice = purchase.invoice_ids.filtered(lambda inv: inv.state != 'cancel')[:1]
+            # gross_sale_value = str(invoice.x_gross_sale) if invoice else "0.0"
+
+            app_code = purchase.project_id.x_ref_app
+            if not app_code:
+                _logger.warning("PO-SAP: No reference app code found for this project.")
+                continue
+
             if not purchase.x_external_api_record:
-                # tenants = "adff7f6a-e97d-11eb-9a03-0242ac130003"  # MX Tenant
-                app_code = "IKE360"  # Identificador de la aplicación
                 company_code = account_id.x_invoice_company_id[0].name if account_id.x_invoice_company_id else "ARSA"
                 document_currency = "MXN"
-                client_code = str(account_id.parent_id.x_ref_sap).zfill(10) or str(purchase.x_customer_id.x_ref_sap).zfill(10)
+
+                # Si es cliente y empresa IKÉ, omitir los ceros a la izquierda
+                client_id = account_id.parent_id or purchase.x_customer_id
+                client_code = client_id.x_ref_sap
+                if not (client_id.x_is_ike and client_id.x_is_client):
+                    client_code = str(client_id.x_ref_sap).zfill(10)
+
                 lines = []
                 for line in purchase.order_line:
                     # ToDo: Remover la lógica en unos 2 meses aprox, debe leerse solo el primer campo, se deja para los
@@ -1051,16 +1154,18 @@ class PurchaseOrder(models.Model):
                         "expediente": expedient_name,
                     })
             else:
-                # tenants = purchase.x_record_tenant
-                app_code = purchase.project_id.x_ref_app
-                company_code = purchase.x_sap_company_code
+                company_code = purchase.x_invoice_company_id.name or purchase.x_sap_company_code
                 document_currency = purchase.x_sap_document_currency
-                client_code = purchase.x_client_code or str(purchase.x_customer_id.x_ref_sap).zfill(10)
 
-                if not app_code:
-                    _logger.warning("PO-SAP: No reference app code found for this project.")
-                    continue
-                    # raise UserError(_("No reference app code found for this project."))
+                # Si es cliente y empresa IKÉ, omitir los ceros a la izquierda
+                client_id = purchase.x_customer_id
+                client_code = purchase.x_client_code or str(client_id.x_ref_sap or "").strip()
+                if client_id:
+                    if not (client_id.x_is_ike and client_id.x_is_client):
+                        client_code = client_code.zfill(10)
+                else:
+                    if client_code != company_code:
+                        client_code = client_code.zfill(10)
 
                 lines = []
                 auxiliar_count = 0
@@ -1074,6 +1179,8 @@ class PurchaseOrder(models.Model):
                         "purchaseOrderQuantityUnit": "SER",
                         "expediente": line.x_parent_expedient,
                         "x_SAP_po_line": auxiliar_count,
+                        "id_evento": line.x_id_event if line.x_id_event else None,
+                        "validador": line.x_validator if line.x_validator else None,
                     })
 
             body = {
@@ -1085,9 +1192,10 @@ class PurchaseOrder(models.Model):
                     "companyCode": company_code,
                     "supplier": str(purchase.partner_id.x_ref_sap).zfill(10),
                     "documentCurrency": document_currency,
-                    "copago": "",  # * Se envía vacío
+                    "copago": "",  # ToDo: Integrar x_discount_price, si tiene valor mayor a cero, mandar como string a 2 dígitos, sino, vacío
                     "incotermsLocation1": client_code,
                     "incotermsLocation2": "",  # * Se envía vacío
+                    # "grossSale": gross_sale_value,
                     "toPurchaseOrderItem": {
                         "results": lines
                     }
@@ -1184,7 +1292,6 @@ class PurchaseOrder(models.Model):
 
     def x_action_reactivate_cost_review(self):
         self.ensure_one()
-        self.button_unlock()
         self.button_cancel()
         self.button_draft()
         self.action_rfq_send_one_step()
@@ -1212,10 +1319,6 @@ class PurchaseOrder(models.Model):
             orders = PurchaseOrder.search(domain, limit=max_records, order='id')
         else:
             orders = PurchaseOrder.search(domain)
-
-        if not orders:
-            _logger.info("PO-SAP: No orders to sync with SAP")
-            return
 
         for order in orders:
             try:

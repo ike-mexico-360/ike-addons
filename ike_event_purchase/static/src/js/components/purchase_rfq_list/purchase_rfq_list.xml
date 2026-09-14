@@ -49,7 +49,7 @@
               <th class="text-start">Event</th>
               <th class="text-start"></th>
               <th class="text-start">Deadline</th>
-              <th class="text-start">IKE Price</th>
+              <th class="text-start">Subtotal</th>
               <th class="text-start">Untaxed Amount Dispute</th>
               <th class="text-start">Untaxed Amount Approved</th>
             </tr>

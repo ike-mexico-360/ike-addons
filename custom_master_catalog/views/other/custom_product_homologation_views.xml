@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_x_subservice_product_template_form_homolog" model="ir.ui.view">
+        <field name="name">x_subservice.homologation.inherit</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="custom_master_catalog.view_x_subservice_product_template_form"/>
+        <field name="arch" type="xml">
+           <xpath expr="//page[@name='customer_material_codes']" position="after">
+              <page name="x_homologation" string="Homologation">
+                    <field name="x_product_homologation_model_id"
+                        nolabel="1"
+                        readonly="disabled == True"
+                    >
+                    <list editable="bottom">
+                        <field name="x_ref_sap_api"/>
+                        <field name="description"/>
+                        <field name="event_type_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="incident_type_id" options="{'no_create': True, 'no_open': True}"/>
+                        <field name="weight_category_id" options="{'no_create': True, 'no_open': True}"/>
+                    </list>
+                </field>
+              </page>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

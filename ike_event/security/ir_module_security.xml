@@ -42,6 +42,9 @@
         <field name="implied_ids" eval="[(4, ref('group_ike_event_user'))]"/>
     </record>
 
+    <record id="custom_master_catalog.custom_group_supplier_admin_system" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('ike_event.group_ike_event_user')), (4, ref('custom_nu.group_custom_nus_user'))]"/>
+    </record>
     <record id="custom_master_catalog.custom_group_account_event_admin" model="res.groups">
         <field name="implied_ids" eval="[
             (4, ref('group_ike_event_user')),
@@ -129,6 +132,17 @@
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="survey_bi_queries_exclude_admin_rule" model="ir.rule">
+        <field name="name">BI Queries: Surveys, excluding Admin</field>
+        <field name="model_id" ref="survey.model_survey_survey"/>
+        <field name="domain_force">[('user_id', 'not in', [user.env.ref('base.user_admin').id, user.env.ref('base.user_root').id])]</field>
+        <field name="groups" eval="[(4, ref('custom_master_catalog.custom_group_bi_queries'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
         <field name="perm_unlink" eval="False"/>
     </record>
 </odoo>

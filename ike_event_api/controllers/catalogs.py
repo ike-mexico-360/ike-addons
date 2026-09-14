@@ -252,11 +252,15 @@ class CatalogsAPIController(http.Controller):
                 INNER JOIN product_template subservice ON subservice.id = pp.product_tmpl_id
                 INNER JOIN ike_event_stage ies ON ies.id = ievent.stage_id
                 LEFT JOIN ike_event_supplier supplier ON ievent.id = supplier.event_id
+                INNER JOIN  ike_service_stage iss ON iss.id = supplier.stage_id
                 LEFT JOIN fleet_vehicle vehicle ON vehicle.id = supplier.truck_id
                 {inner_progress_state}
                 WHERE
                     supplier.selected = true
-                    AND ies.ref = 'completed'
+                    -- Por indicación de Mario, se cambia la lógica del filtro 2026.09.03. Indicando que no importa la
+                    -- etapa del evento siempre y cuando el operador finalizó su servicio, se debe considerar en este endpoint.
+                    -- AND ies.ref = 'completed' -> AND iss.ref = 'finalized'
+                    AND iss.ref = 'finalized'
                     AND supplier.state = 'assigned'
                     AND supplier.notification_sent_to_app = true
                     AND vehicle.x_vehicle_ref = %(vehicle_id)s
@@ -339,6 +343,130 @@ class CatalogsAPIController(http.Controller):
 
         return events
 
+    @http.route('/ike/catalog/events/get_wa_info', type='json', auth='user', methods=['GET'])
+    def ike_catalog_events_get_wa_info(self, **kw):
+        """
+        Parámetros esperados:
+        - event_name: ike.event.name
+        - supplier_ref: res.partner.ref
+
+        Reglas:
+        - Se consideran únicamente líneas cuyo stage actual pertenezca
+            a PROGRESS_STATES_MAP_STAGE.
+        - Se excluyen líneas en stage cancelado, finalizado u otro stage
+            que no sea parte del flujo de progreso.
+        - available_statuses contiene únicamente estados posteriores
+            al estado actual.
+        - El stage 6 (Finalizado) se ofrece como disponible siempre que
+            la línea aún no esté finalizada.
+        """
+        event_name = kw.get('event_name')
+        supplier_ref = kw.get('supplier_ref')
+
+        if not event_name or not supplier_ref:
+            raise BadRequest(
+                _('Missing parameters: event_name and supplier_ref are required')
+            )
+
+        try:
+            lines = request.env['ike.event.supplier'].sudo().search([
+                ('supplier_id.ref', '=', supplier_ref),
+                ('event_id.name', '=', event_name),
+            ])
+
+            result = []
+
+            for line in lines:
+                # La línea debe tener una etapa actual.
+                current_stage = line.stage_id
+                if not current_stage:
+                    continue
+
+                # Se obtiene el XML ID del stage actual.
+                imd = request.env['ir.model.data'].sudo().search([
+                    ('model', '=', 'ike.service.stage'),
+                    ('res_id', '=', current_stage.id),
+                ], limit=1)
+
+                # Sin XML ID no es posible identificar si el stage pertenece al flujo.
+                if not imd:
+                    continue
+
+                current_xmlid = f'{imd.module}.{imd.name}'
+
+                # Ejemplo: Cancelado no está en el mapa.
+                # Por lo tanto la línea completa debe ser excluida.
+                if current_xmlid not in PROGRESS_STATES_MAP_REVERSE:
+                    continue
+
+                current_state = int(PROGRESS_STATES_MAP_REVERSE[current_xmlid])
+
+                # Una línea ya finalizada no debe devolverse.
+                if current_state == 6:
+                    continue
+
+                vehicle = line.truck_id
+                vehicle_info = {
+                    'license_plate': vehicle.license_plate or '',
+                    'uuid': getattr(vehicle, 'x_vehicle_ref', '') or '',
+                } if vehicle else {}
+
+                available_statuses = []
+
+                # sorted asegura que la respuesta sea siempre 0, 1, 2... 6.
+                for value, xmlid in sorted(
+                    PROGRESS_STATES_MAP_STAGE.items(),
+                    key=lambda item: int(item[0])
+                ):
+                    state_value = int(value)
+
+                    # Excluir estados anteriores y el estado actual.
+                    # El estado 6 se conserva como opción válida si aún no se finaliza.
+                    if state_value <= current_state:
+                        continue
+
+                    try:
+                        stage_rec = request.env.ref(xmlid)
+                        stage_rec_sudo = stage_rec.sudo()
+                    except ValueError:
+                        _logger.warning(
+                            'Progress stage XML ID not found: %s',
+                            xmlid,
+                        )
+                        continue
+
+                    if stage_rec_sudo._name != 'ike.service.stage':
+                        _logger.warning(
+                            'XML ID %s does not point to ike.service.stage',
+                            xmlid,
+                        )
+                        continue
+
+                    available_statuses.append({
+                        'value': value,
+                        'name': stage_rec_sudo.name or '',
+                    })
+
+                result.append({
+                    'event_id': line.event_id.id,
+                    'vehicle_info': vehicle_info,
+                    'available_statuses': available_statuses,
+                })
+
+            return result
+
+        except BadRequest as e:
+            _logger.warning(str(e))
+            raise
+        except Exception as e:
+            _logger.exception(
+                'Error obtaining available progress states. '
+                'event_name=%s, supplier_ref=%s',
+                event_name,
+                supplier_ref,
+            )
+            raise InternalServerError(e)
+
     @http.route('/ike/catalog/events/set/progress_state', type='json', auth='user', methods=['POST'])
     def ike_catalog_events_set_progress_state(self, **kw):
         vehicle_id = kw.get('vehicle_id', False)
@@ -371,7 +499,10 @@ class CatalogsAPIController(http.Controller):
             # Obtener el supplier line id primero
             ike_event_supplier_id = self._ike_event_supplier_line_id(event_id, vehicle_id)
             if not ike_event_supplier_id:
-                return {'status': 'error', 'message': 'Supplier line not found or cancelled'}
+                return {
+                    'status': 'error',
+                    'message': f"Supplier line 'assigned' not found for event_id {event_id} and vehicle {vehicle_id}"
+                }
 
             # Obtener el xmlid del stage actual del supplier
             request.env.cr.execute("""
@@ -474,7 +605,7 @@ class CatalogsAPIController(http.Controller):
 
         supplier_line = self._ike_event_supplier_line_id(event_id, vehicle_id)
         if not supplier_line:
-            raise NotFound(_('Supplier line not found'))
+            raise NotFound(_(f"Supplier line 'assinged' not found for event_id {event_id} and vehicle {vehicle_id}"))
 
         supplier_xmlid = self._get_xmlid_from_stage_id(supplier_line['stage_id'])
         supplier_progress_state = PROGRESS_STATES_MAP_REVERSE.get(supplier_xmlid['xmlid'], "-1")
@@ -497,6 +628,11 @@ class CatalogsAPIController(http.Controller):
             'vehicle': {},
             'questions': [],
             'elapsed_times': [],
+            'uuid_grua': vehicle_id,
+            'appointment': {
+                'type': int(event_sudo.scheduled),  # 1=cita 0=otro
+                'appointment_date': event_sudo.event_date.replace(tzinfo=None).strftime('%Y-%m-%d %H:%M:%S'),
+            },
         }
 
         # Origin

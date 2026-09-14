@@ -51,13 +51,17 @@ export class IkeEventFormController extends FormController {
             return;
         }
 
-        const reload_item = data.find(x => x.event_reload);
-        if (reload_item) {
+        const reload_form = data.find(x => x.event_reload);
+        if (reload_form) {
             await this.model.root.load();
             return;
         }
         for (const item of data) {
             if (item.event_id[0] != this.model.root.resId) {
+                continue;
+            }
+            // Ignore vehicle confirmation and change notifications
+            if (['vehicle_confirmed', 'vehicle_changed'].includes(item.reload_type)) {
                 continue;
             }
             const line_id = this.model.root.data.service_supplier_ids.records.find(record => record.resId == item.id);
@@ -100,8 +104,10 @@ export class IkeEventFormController extends FormController {
                 this.notification.add(message, message_options);
             }
 
-            if (line_id && !item.event_reload) {
+            if (line_id) {
                 await line_id.load();
+            } else {
+                await this.model.root.load();
             }
         }
     }
@@ -118,6 +124,7 @@ export class IkeEventFormController extends FormController {
         }
     }
     async broadcastEventSuppliersDeleted(payload) {
+        console.log("Event Suppliers Deleted payload", payload);
         if (!payload.id) {
             return;
         }

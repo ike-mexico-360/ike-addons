@@ -15,6 +15,7 @@
     ],
     'data': [
         "security/ir.model.access.csv",
+        "views/res_config_settings_views.xml",
         "views/ike_event_screen_views.xml",
         "views/ike_event_views.xml",
         "views/custom_membership_plan_views.xml",

@@ -23,6 +23,7 @@ export class PurchaseOrderList extends Component {
             loading: true,
             orders: [],
             showKpi: false,
+            hasAdvancedPortal: false,
             filters: {
                 reference: '',
                 refSap: '',
@@ -42,8 +43,27 @@ export class PurchaseOrderList extends Component {
         });
 
         onWillStart(async () => {
-            await Promise.all([this._loadOrders(), this._loadCompanySettings()]);
+            await Promise.all([this._loadOrders(), this._loadCompanySettings(), this._checkAdvancedPortalPermission()]);
         });
+    }
+
+    /**
+     * Checks if the logged-in user is a System Administrator or has the x_advanced_portal
+     * flag set to True on their associated supplier contact record.
+     */
+    async _checkAdvancedPortalPermission() {
+        try {
+            const res = await rpc('/my/purchase/get_advanced_portal_permission', {});
+
+            if (res && res.error) {
+                console.warn("[Portal Permission Check] Warning:", res.error);
+            }
+
+            this.state.hasAdvancedPortal = res?.has_advanced_portal ?? false;
+        } catch (e) {
+            console.error("[Portal Permission Check] RPC Error:", e);
+            this.state.hasAdvancedPortal = false;
+        }
     }
 
     get filteredOrders() {
@@ -159,6 +179,22 @@ export class PurchaseOrderList extends Component {
         }
         const queryString = params.toString();
         window.open(`/my/purchase/download_orders_pdf${queryString ? `?${queryString}` : ''}`, '_blank');
+    }
+
+    downloadOrdersXlsx() {
+        if (!this.filteredOrders.length) {
+            this.notification.add(_t("No purchase orders to download."), { type: "warning" });
+            return;
+        }
+
+        const params = new URLSearchParams();
+        for (const [key, value] of Object.entries(this.state.filters)) {
+            if (value) {
+                params.append(key, value);
+            }
+        }
+        const queryString = params.toString();
+        window.open(`/my/purchase/download_orders_xlsx${queryString ? `?${queryString}` : ''}`, '_blank');
     }
 
     // Suma facturada de un pedido (facturas publicadas, sin cancelar)

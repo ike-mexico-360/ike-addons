@@ -49,7 +49,7 @@
     <record id="custom_group_supplier_admin_system" model="res.groups">
         <field name="name">Suppliers (Admin System)</field>
         <field name="category_id" ref="custom_master_catalog.module_category_custom_master_catalog" />
-        <field name="implied_ids" eval="[(4, ref('base.group_partner_manager')), (4, ref('survey.group_survey_manager')), (4, ref('ike_event.group_ike_event_user')), (4, ref('custom_nu.group_custom_nus_user'))]" />
+        <field name="implied_ids" eval="[(4, ref('base.group_partner_manager')), (4, ref('survey.group_survey_manager'))]" />
     </record>
     <record id="custom_group_supplier_procurement" model="res.groups">
         <field name="name">Suppliers (Procurement)</field>
@@ -219,5 +219,28 @@
             <field name="perm_unlink" eval="0"/>
         </record>
 
+        <!-- Access rule for Surveys (survey.survey) -->
+        <record id="survey_survey_rule_cx_restricted" model="ir.rule">
+            <field name="name">Surveys: User restricted access for CX group</field>
+            <field name="model_id" ref="survey.model_survey_survey"/>
+            <field name="groups" eval="[(4, ref('custom_master_catalog.custom_group_cx'))]"/>
+            <field name="domain_force">[('restrict_user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <!-- Access rule for Survey Questions (survey.question) -->
+        <record id="survey_question_rule_cx_restricted" model="ir.rule">
+            <field name="name">Survey Questions: User restricted access for CX group</field>
+            <field name="model_id" ref="survey.model_survey_question"/>
+            <field name="groups" eval="[(4, ref('custom_master_catalog.custom_group_cx'))]"/>
+            <field name="domain_force">[('survey_id.restrict_user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
     </data>
 </odoo>

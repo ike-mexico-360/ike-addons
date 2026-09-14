@@ -136,6 +136,10 @@ class CustomGeographicalAreaProduct(models.Model):
         'subservice_specification_id',
         string='Subservice Specifications')
     product_id = fields.Many2one('product.product', string='Sub-Service', required=True)
+    manual_assignment_order = fields.Integer(
+        string='Order',
+        compute='_compute_manual_assignment_order',
+    )
     priority = fields.Selection([
         ('0', 'None'),
         ('1', 'Low'),
@@ -149,6 +153,23 @@ class CustomGeographicalAreaProduct(models.Model):
     disabled_reason = fields.Text(readonly=True)
     disabled = fields.Boolean(default=False)
     active = fields.Boolean(default=True)
+
+    @api.depends(
+        'geographical_area_id.state_id',
+        'geographical_area_id.municipality_id',
+        'geographical_area_id.partner_id',
+        'product_id',
+    )
+    def _compute_manual_assignment_order(self):
+        for record in self:
+            area = record.geographical_area_id
+            order = self.env['custom.manual.assignment.order'].search([
+                ('state_id', '=', area.state_id.id),
+                ('municipality_id', '=', area.municipality_id.id),
+                ('product_id', '=', record.product_id.id),
+                ('supplier_center_id', '=', area.partner_id.id),
+            ], limit=1)
+            record.manual_assignment_order = order.sequence or 0
 
     @api.depends('color', 'product_category_color', 'disabled', 'geographical_area_id.disabled')
     def _compute_color_computed(self):

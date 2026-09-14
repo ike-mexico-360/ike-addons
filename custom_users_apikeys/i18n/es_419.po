@@ -1,0 +1,27 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* custom_users_apikeys
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-07 22:38+0000\n"
+"PO-Revision-Date: 2026-09-07 22:38+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: custom_users_apikeys
+#: model:ir.model.fields,field_description:custom_users_apikeys.field_auth_totp_device__x_service_api
+#: model:ir.model.fields,field_description:custom_users_apikeys.field_res_users_apikeys__x_service_api
+msgid "Servicio API"
+msgstr ""
+
+#. module: custom_users_apikeys
+#: model:ir.model,name:custom_users_apikeys.model_res_users_apikeys
+msgid "Users API Keys"
+msgstr "Claves API de los usuarios"

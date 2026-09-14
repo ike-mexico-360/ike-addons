@@ -41,6 +41,7 @@ class IkeEventSupplierBase(models.AbstractModel):
     ], default='available', readonly=True, copy=False)
     stage_id = fields.Many2one('ike.service.stage', ondelete='set null', copy=False)
     stage_ref = fields.Char(related='stage_id.ref', string='Stage Ref')
+    confirmed = fields.Boolean(default=False)
 
     # Assignation supplier fields
     truck_id = fields.Many2one('fleet.vehicle', string='Service Vehicle')

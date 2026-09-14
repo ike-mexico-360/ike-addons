@@ -28,6 +28,17 @@ class ShHelpdeskTicketAssignmentWizard(models.TransientModel):
         string="Tickets assigned",
         compute="_compute_ticket_assign_ids",
     )
+    reassigned_user_id = fields.Many2one(
+        "res.users",
+        string="Reassign to user",
+    )
+    ticket_reassignment_ids = fields.Many2many(
+        "sh.helpdesk.ticket",
+        "sh_helpdesk_ticket_assignment_wizard_reassign_rel",
+        "wizard_id",
+        "ticket_id",
+        string="Tickets to reassign",
+    )
 
     @api.depends("assigned_user_ids", "assigned_user_id")
     def _compute_assigned_user_domain(self):
@@ -58,6 +69,9 @@ class ShHelpdeskTicketAssignmentWizard(models.TransientModel):
                 rec.ticket_assign_ids = False
 
     def action_assignment_ticket(self):
+        if self.reassigned_user_id and self.ticket_reassignment_ids:
+            return self.action_reassignment_ticket()
+
         if not self.assigned_user_id:
             return
         if not self.stage_id:
@@ -78,4 +92,31 @@ class ShHelpdeskTicketAssignmentWizard(models.TransientModel):
             "stage_id": self.stage_id.id,
         }
         for ticket in self.ticket_not_assign_ids:
+            ticket.with_context(ike_assignment_wizard=True).sudo().write(values)
+
+    def action_reassignment_ticket(self):
+        if not self.reassigned_user_id:
+            return
+
+        team = self.env["sh.helpdesk.team"].search([
+            "|",
+            ("team_members", "in", self.reassigned_user_id.id),
+            ("team_head", "=", self.reassigned_user_id.id),
+        ], order="id desc", limit=1)
+        if not team:
+            raise UserError(_("The assigned user must belong to a helpdesk team."))
+
+        eligible_tickets = self.ticket_reassignment_ids.filtered(
+            lambda ticket: (
+                ticket.user_id
+                and ticket.user_id != self.env.user
+                and not ticket.open_boolean
+            )
+        )
+        values = {
+            "user_id": self.reassigned_user_id.id,
+            "team_id": team.id,
+            "team_head": team.team_head.id,
+        }
+        for ticket in eligible_tickets:
             ticket.with_context(ike_assignment_wizard=True).sudo().write(values)

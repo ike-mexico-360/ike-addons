@@ -116,7 +116,7 @@
         <menuitem id="custom_vehicle_import_wizard_menu"
             action="action_custom_vehicle_import_wizard"
             name="Import Vehicles"
-            groups="base.group_no_one"
+            groups="base.group_no_one,custom_master_catalog.custom_group_supplier_admin_system"
             sequence="15"/>
         <menuitem id="custom_supplier_coverage_configuration_menu"
             action="custom_supplier_coverage_configuration_action"
@@ -136,6 +136,11 @@
         parent="menu_suppliers"
         groups="base.group_system,custom_group_contact_admin_supplier,custom_group_supplier_admin_system,custom_group_supplier_procurement,custom_group_supplier_contralory,custom_group_supplier_support,custom_group_bi_queries"
         sequence="10">
+        <menuitem id="custom_manual_assignment_order_menu"
+            action="custom_manual_assignment_order_client_action"
+            name="Order Configuration"
+            groups="base.group_system,custom_group_supplier_admin_system"
+            sequence="1"/>
         <menuitem id="res_partner_menu_supplier_type"
             action="custom_master_catalog.custom_supplier_type_action"
             name="Supplier Types"

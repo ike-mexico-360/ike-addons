@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from odoo import models, fields, api, tools, _
 from odoo.exceptions import AccessError
 
@@ -28,7 +30,7 @@ class IkeEventBase(models.AbstractModel):
     step_number = fields.Integer(default=1, copy=False)
 
     # Event fields
-    event_date = fields.Datetime(string='Open Date', default=fields.Datetime.now, required=True)
+    event_date = fields.Datetime(string='Open Date', default=fields.Datetime.now, required=True, copy=False)
     event_type_id = fields.Many2one('custom.type.event', string='Event Type')
 
     # nu fields
@@ -47,3 +49,16 @@ class IkeEventBase(models.AbstractModel):
     destination_latitude = fields.Char()
     destination_longitude = fields.Char()
     destination_zip_code = fields.Char(size=10)
+
+    scheduled = fields.Boolean('Scheduled', default=False)
+    is_upcoming = fields.Boolean(compute='_compute_is_upcoming')
+
+    @api.depends('scheduled', 'event_date')
+    def _compute_is_upcoming(self):
+        now = fields.Datetime.now()
+        for rec in self:
+            rec.is_upcoming = (
+                rec.scheduled
+                and rec.event_date >= now - timedelta(minutes=12)
+                and rec.event_date <= now + timedelta(hours=3)
+            )

@@ -14,12 +14,12 @@
             <xpath expr="//page[@name='x_concepts']" position="after">
                 <page name="customer_material_codes" string="Customer Material Codes">
                     <field
-                        name="variant_customer_ids"
+                        name="customer_ids"
                         nolabel="1"
                         readonly="disabled == True"
                         context="{
                             'default_product_tmpl_id': product_tmpl_id,
-                            'default_product_id': id,
+                            'product_template_invisible_variant': True,
                             'form_view_ref': 'product_customerinfo.product_customerinfo_form_view'
                         }"
                     >
@@ -32,6 +32,7 @@
                                 context="{'res_partner_search_mode': 'customer'}"
                                 required="1"
                             />
+                            <field name="product_name" string="Nombre Producto Cliente"/>
                             <field name="product_code" string="SAP Income Code"/>
                             <field name="product_tmpl_id" column_invisible="1"/>
                             <field name="product_id" column_invisible="1"/>

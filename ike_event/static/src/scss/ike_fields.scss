@@ -1,3 +1,13 @@
 .ike-test {
     color: $o-danger;
 }
+
+//Campo o2m2m selected_suppliers (ike.event)
+.selected_supplier_table {
+    .o_list_table thead th {
+        background-color: #EAF1F9 !important;
+        color: #2C3E66 !important;
+        border-bottom: 1px solid #D7E1EC !important;
+        font-weight: 700 !important;
+    }
+}

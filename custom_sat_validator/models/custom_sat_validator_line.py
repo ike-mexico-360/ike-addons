@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 import base64
-import logging
 import requests
 from lxml import etree
 from xml.etree import ElementTree as ET
 from datetime import datetime, timedelta
 from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
-
-_logger = logging.getLogger(__name__)
 
 
 class CustomSatValidatorLine(models.Model):
@@ -224,7 +221,6 @@ class CustomSatValidatorLine(models.Model):
         self.ensure_one()
         client_partner = self.validator_id.purchase_id.x_invoice_company_id
 
-        # 1. Check if the Client field is defined on the Purchase Order
         if not client_partner:
             self.write({
                 'line_state': 'xml_error',
@@ -235,7 +231,6 @@ class CustomSatValidatorLine(models.Model):
 
         company_rfc = client_partner.vat
 
-        # 2. Check if the assigned Client has a configured RFC (VAT)
         if not company_rfc:
             self.write({
                 'line_state': 'xml_error',
@@ -244,7 +239,6 @@ class CustomSatValidatorLine(models.Model):
             })
             return False
 
-        # 3. Compare XML Receiver RFC vs Purchase Order Client RFC
         if xml_receptor_rfc.strip().upper() != company_rfc.strip().upper():
             self.write({
                 'line_state': 'xml_error',
@@ -286,6 +280,83 @@ class CustomSatValidatorLine(models.Model):
                 'line_validation_log': _("XML Error: The XML subtotal ($%s) does not match the expected subtotal in the PO (%s).") % (round(xml_subtotal, 2), round(po_subtotal, 2))
             })
             return False
+        return True
+
+    def _validate_selected_po_lines_subtotal(self, xml_subtotal):
+        """
+        Validation of line-by-line matching between XML lines and selected/available PO lines.
+        """
+        self.ensure_one()
+        po = self.validator_id.purchase_id
+        if not po:
+            return False
+
+        # 1. Fetch PO lines (filtering if selected line IDs exist in context)
+        selected_ids = self.env.context.get('selected_po_line_ids')
+        po_lines = po.order_line.filtered(lambda ln: not ln.display_type and ln.qty_to_invoice > 0)
+
+        if selected_ids:
+            po_lines = po_lines.filtered(lambda ln: ln.id in selected_ids)
+
+        po_subtotals = [round(ln.price_subtotal, 2) for ln in po_lines]
+        po_total_subtotal = round(sum(po_subtotals), 2)
+
+        xml_lines = self.xml_line_ids
+        if not xml_lines:
+            # Fallback to general subtotal comparison if no XML lines are parsed
+            if round(xml_subtotal, 2) != po_total_subtotal:
+                self.write({
+                    'line_state': 'xml_error',  # <-- Se cambió 'state' por 'line_state'
+                    'cfdi_is_valid': False,
+                    'line_validation_log': _("XML subtotal ($%.2f) does not match the expected total ($%.2f).") % (xml_subtotal, po_total_subtotal)
+                })
+                return False
+            return True
+
+        # CASE 1: XML with a single line (1 to N matching)
+        if len(xml_lines) == 1:
+            xml_amt = round(xml_lines[0].subtotal if hasattr(xml_lines[0], 'subtotal') else xml_lines[0].price_subtotal, 2)
+            matched_single = any(abs(xml_amt - po_amt) < 0.001 for po_amt in po_subtotals)
+            matched_total = abs(xml_amt - po_total_subtotal) < 0.001
+
+            if not matched_single and not matched_total:
+                desc = xml_lines[0].product_name or _("Line 1")
+                self.write({
+                    'line_state': 'xml_error',
+                    'cfdi_is_valid': False,
+                    'line_validation_log': _("XML line '%s' with amount ($%.2f) does not match any individual PO line nor the total amount ($%.2f).") % (desc, xml_amt, po_total_subtotal)
+                })
+                return False
+            return True
+
+        # CASE 2: XML with multiple lines (N to N matching) - Item by item evaluation
+        unmatched_details = []
+        available_po_subtotals = list(po_subtotals)
+
+        for idx, xml_ln in enumerate(xml_lines, start=1):
+            xml_amt = round(xml_ln.subtotal if hasattr(xml_ln, 'subtotal') else xml_ln.price_subtotal, 2)
+            match_index = -1
+
+            for p_idx, po_amt in enumerate(available_po_subtotals):
+                if abs(xml_amt - po_amt) < 0.001:
+                    match_index = p_idx
+                    break
+
+            if match_index != -1:
+                available_po_subtotals.pop(match_index)
+            else:
+                desc = xml_ln.product_name or _("Line %s") % idx
+                unmatched_details.append(f"• Item: '{desc}' | XML Amount: ${xml_amt:.2f}")
+
+        if unmatched_details:
+            details_text = "\n".join(unmatched_details)
+            self.write({
+                'line_state': 'xml_error',
+                'cfdi_is_valid': False,
+                'line_validation_log': _("The following XML lines do not match any available Purchase Order line:\n%s") % details_text
+            })
+            return False
+
         return True
 
     def _validate_date_alignment(self, xml_date):
@@ -332,6 +403,8 @@ class CustomSatValidatorLine(models.Model):
             return False
         if not self._validate_total_amount(xml_subtotal):
             return False
+        if not self._validate_selected_po_lines_subtotal(xml_subtotal):
+            return False
         if xml_date and not self._validate_date_alignment(xml_date):
             return False
         return True
@@ -340,37 +413,46 @@ class CustomSatValidatorLine(models.Model):
         """ Extracts SAT CFDI XML lines (Conceptos) and registers them in custom.import.xml.invoice.line """
         self.ensure_one()
 
-        # Unlink previous lines to avoid duplicated records on re-validation
-        self.xml_line_ids.unlink()
+        # CRITICAL FIX: If xml_line_ids already exists in database, do NOT wipe or re-process.
+        # Preserve existing user-selected / manual modifications made in the UI.
+        if self.xml_line_ids:
+            return
 
         concept_nodes = xml_doc.xpath("//cfdi:Concepto", namespaces=namespaces)
+
         if not concept_nodes:
             return
 
         parent = self.validator_id
-        po_lines = parent.purchase_id.order_line.filtered(lambda l: l.qty_to_invoice > 0) if parent.purchase_id else False
+        po_lines = parent.purchase_id.order_line.filtered(lambda ln: ln.qty_to_invoice > 0) if parent.purchase_id else False
         matched_po_line_ids = []
 
+        xml_total_subtotal = sum(float(line.get("Importe") or 0.0) for line in concept_nodes)
+        po_total_subtotal = sum(ln.price_unit * ln.qty_to_invoice for ln in po_lines) if po_lines else 0.0
+        global_sum_matches = abs(xml_total_subtotal - po_total_subtotal) <= 0.05
+
         line_vals = []
-        for line in concept_nodes:
+        for idx, line in enumerate(concept_nodes, start=1):
             quantity = float(line.get("Cantidad") or 1.0)
             description = line.get("Descripcion") or "Imported Line"
             unit_price = float(line.get("ValorUnitario") or 0.0)
             xml_subtotal = float(line.get("Importe") or 0.0)
 
-            # Extract line specific taxes
             line_taxes = self._get_xml_line_taxes(line, namespaces)
 
-            # Match with Purchase Order Line if PO is linked
+            # Auto-suggest initial matching on creation
             matched_po_line = self._find_matching_purchase_line(
                 po_lines=po_lines,
                 xml_subtotal=xml_subtotal,
                 matched_po_ids=matched_po_line_ids
             )
+
             matched_po_ids = []
             if matched_po_line:
                 matched_po_line_ids.append(matched_po_line.id)
                 matched_po_ids.append(matched_po_line.id)
+            elif global_sum_matches and po_lines:
+                matched_po_ids = po_lines.ids
 
             line_vals.append((0, 0, {
                 'product_name': description,
@@ -423,7 +505,6 @@ class CustomSatValidatorLine(models.Model):
         xml_total_float = float(xml_doc.get("Total") or 0.0)
         extracted_uuid = timbre_node[0].get("UUID")
 
-        # --- EXTRACT AND RECORD LINE DETAILS FROM XML ---
         self._process_xml_lines(xml_doc, namespaces)
 
         self.write({
@@ -529,6 +610,11 @@ class CustomSatValidatorLine(models.Model):
             'invoice_date': fields.Date.context_today(self),
             'ref': self.name,
             'x_xml_uuid': self.sat_uuid.upper() if self.sat_uuid else False,
+            'x_xml_file': self.xml_file,
+            'x_xml_filename': self.xml_filename,
+            'x_importing_xml': True,
+            'x_vendor_bill_pdf_file': self.pdf_file,
+            'x_vendor_bill_pdf_name': self.pdf_filename,
         }
 
     def _get_xml_global_taxes(self, xml_doc, namespaces):
@@ -608,13 +694,26 @@ class CustomSatValidatorLine(models.Model):
                 return po_line
         return False
 
-    def _prepare_invoice_lines(self, xml_doc, namespaces, global_tax_ids=False):
+    def _prepare_invoice_lines(self, xml_doc, namespaces, global_tax_ids=False, selected_xml_line_ids=None):
+        """ Prepares invoice line values matching SAT CFDI concepts against Purchase Order lines """
         self.ensure_one()
         invoice_lines = []
         concept_nodes = xml_doc.xpath("//cfdi:Concepto", namespaces=namespaces)
         parent = self.validator_id
-        po_lines = parent.purchase_id.order_line.filtered(lambda l: l.qty_to_invoice > 0) if parent.purchase_id else False
-        matched_po_line_ids = []
+
+        # Retrieve explicit PO line IDs passed via context from the UI/Controller
+        selected_po_ids = self.env.context.get('selected_po_line_ids')
+
+        if selected_po_ids and parent.purchase_id:
+            # Filter available PO lines strictly based on user selection in portal
+            po_lines = parent.purchase_id.order_line.filtered(
+                lambda ln: ln.id in selected_po_ids and ln.qty_to_invoice > 0
+            )
+        else:
+            # Fallback to all pending PO lines if no explicit selection was provided
+            po_lines = parent.purchase_id.order_line.filtered(
+                lambda ln: ln.qty_to_invoice > 0
+            ) if parent.purchase_id else False
 
         if not po_lines and concept_nodes:
             self.write({
@@ -625,79 +724,198 @@ class CustomSatValidatorLine(models.Model):
             })
             return []
 
-        for line in concept_nodes:
-            xml_subtotal = float(line.get("Importe") or 0.0)
-            description = line.get("Descripcion") or "Unknown item"
-            matched_line = self._find_matching_purchase_line(
-                po_lines=po_lines,
-                xml_subtotal=xml_subtotal,
-                matched_po_ids=matched_po_line_ids
-            )
-            if not matched_line:
-                error_msg = _(
-                    "Verification Failed: Mismatched Document Structure. The XML line '%(desc)s' with amount $%(amount).2f "
-                    "could not be matched with any available line in the Purchase Order."
-                ) % {'desc': description, 'amount': xml_subtotal}
-                self.write({
-                    'sat_status': 'Error',
-                    'cfdi_is_valid': False,
-                    'line_state': 'xml_error',
-                    'line_validation_log': error_msg
-                })
-                return []
-            matched_po_line_ids.append(matched_line.id)
+        saved_xml_records = list(self.xml_line_ids)
 
+        # --- CALCULATE GLOBAL SUBTOTAL SUMS ---
+        xml_total_subtotal = sum(float(line.get("Importe") or 0.0) for line in concept_nodes)
+        po_total_subtotal = sum(ln.price_unit * ln.qty_to_invoice for ln in po_lines) if po_lines else 0.0
+        global_sum_matches = abs(xml_total_subtotal - po_total_subtotal) <= 0.05
+
+        xml_has_single_line = len(concept_nodes) == 1
         matched_po_line_ids = []
-        for line in concept_nodes:
-            quantity = float(line.get("Cantidad") or 1.0)
-            description = line.get("Descripcion") or "Imported Line"
-            unit_price = float(line.get("ValorUnitario") or 0.0)
-            identification_no = line.get("NoIdentificacion") or False
-            xml_subtotal = float(line.get("Importe") or 0.0)
+        strict_matching_failed = False
 
-            purchase_line = self._find_matching_purchase_line(
-                po_lines=po_lines,
-                xml_subtotal=xml_subtotal,
-                matched_po_ids=matched_po_line_ids
-            )
-            product = purchase_line.product_id if purchase_line else self.env['product.product'].browse()
-            if not product and identification_no:
-                product = self.env['product.product'].search([('default_code', '=', identification_no)], limit=1)
-            if not product:
-                product = self.env['product.product'].search([('name', 'ilike', description)], limit=1)
+        # --- 1. ATTEMPT STRICT LINE-BY-LINE MATCHING (Only if XML has multiple lines) ---
+        if not xml_has_single_line:
+            for idx, line in enumerate(concept_nodes):
+                xml_subtotal = float(line.get("Importe") or 0.0)
 
-            if purchase_line:
-                matched_po_line_ids.append(purchase_line.id)
-            elif po_lines and product:
-                purchase_line = po_lines.filtered(lambda l: l.product_id.id == product.id and l.id not in matched_po_line_ids)
-                purchase_line = purchase_line[0] if purchase_line else False
+                # Fetch corresponding UI line record positionally
+                xml_rec = saved_xml_records[idx] if idx < len(saved_xml_records) else False
+                user_selected_po_line = False
+
+                if xml_rec and xml_rec.purchase_order_line_ids:
+                    # Check lines explicitly linked by user in UI that exist within target po_lines
+                    available_po_lines = xml_rec.purchase_order_line_ids.filtered(
+                        lambda p: p.id in po_lines.ids and p.id not in matched_po_line_ids
+                    )
+                    if available_po_lines:
+                        user_selected_po_line = available_po_lines[0]
+
+                matched_line = user_selected_po_line or self._find_matching_purchase_line(
+                    po_lines=po_lines,
+                    xml_subtotal=xml_subtotal,
+                    matched_po_ids=matched_po_line_ids
+                )
+
+                if not matched_line:
+                    strict_matching_failed = True
+                    break
+                matched_po_line_ids.append(matched_line.id)
+
+        is_fallback_mode_b = False
+
+        # --- 2. PROCESS LINES BASED ON VALIDATION RESULT ---
+        # Case A: XML has multiple lines and strict line-by-line matching succeeded
+        if not xml_has_single_line and not strict_matching_failed:
+            matched_po_line_ids = []
+            for idx, line in enumerate(concept_nodes):
+                quantity = float(line.get("Cantidad") or 1.0)
+                description = line.get("Descripcion") or "Imported Line"
+                unit_price = float(line.get("ValorUnitario") or 0.0)
+                identification_no = line.get("NoIdentificacion") or False
+                xml_subtotal = float(line.get("Importe") or 0.0)
+
+                xml_rec = saved_xml_records[idx] if idx < len(saved_xml_records) else False
+                user_selected_po_line = False
+
+                if xml_rec and xml_rec.purchase_order_line_ids:
+                    available_po_lines = xml_rec.purchase_order_line_ids.filtered(
+                        lambda p: p.id in po_lines.ids and p.id not in matched_po_line_ids
+                    )
+                    if available_po_lines:
+                        user_selected_po_line = available_po_lines[0]
+
+                purchase_line = user_selected_po_line or self._find_matching_purchase_line(
+                    po_lines=po_lines,
+                    xml_subtotal=xml_subtotal,
+                    matched_po_ids=matched_po_line_ids
+                )
+
+                product = purchase_line.product_id if purchase_line else self.env['product.product'].browse()
+                if not product and identification_no:
+                    product = self.env['product.product'].search([('default_code', '=', identification_no)], limit=1)
+                if not product:
+                    product = self.env['product.product'].search([('name', 'ilike', description)], limit=1)
+
                 if purchase_line:
                     matched_po_line_ids.append(purchase_line.id)
+                    # --- LINK ONLY MATCHED/INVOICED PO LINE TO XML IMPORT LINE ---
+                    if xml_rec:
+                        xml_rec.write({
+                            'purchase_order_line_ids': [(6, 0, [purchase_line.id])]
+                        })
 
-            line_tax_ids = global_tax_ids if global_tax_ids else self._get_xml_line_taxes(line, namespaces)
+                line_tax_ids = global_tax_ids if global_tax_ids else self._get_xml_line_taxes(line, namespaces)
 
-            line_vals = {
-                'name': purchase_line.name if purchase_line else description,
-                'quantity': quantity,
-                'price_unit': unit_price,
-                'product_id': product.id if product else False,
-                'purchase_line_id': purchase_line.id if purchase_line else False,
-                'tax_ids': [(6, 0, line_tax_ids)] if line_tax_ids else False,
-                'x_xml_line_description': description,
-                '_is_matched': True if purchase_line else False,
-            }
+                line_vals = {
+                    'name': purchase_line.name if purchase_line else description,
+                    'quantity': quantity,
+                    'price_unit': unit_price,
+                    'product_id': product.id if product else False,
+                    'purchase_line_id': purchase_line.id if purchase_line else False,
+                    'tax_ids': [(6, 0, line_tax_ids)] if line_tax_ids else False,
+                    'x_xml_line_description': description,
+                    '_is_matched': True,
+                }
 
-            if product:
-                account = product.product_tmpl_id._get_product_accounts()['expense']
-                if account:
-                    line_vals['account_id'] = account.id
+                if product:
+                    account = product.product_tmpl_id._get_product_accounts()['expense']
+                    if account:
+                        line_vals['account_id'] = account.id
 
-            invoice_lines.append((0, 0, line_vals))
+                invoice_lines.append((0, 0, line_vals))
+
+        # Case B: XML has 1 single line representing grand total (or multi-line 1-to-1 matching failed) AND global sum matches
+        elif (xml_has_single_line or strict_matching_failed) and global_sum_matches:
+            is_fallback_mode_b = True
+            self.line_validation_log = (self.line_validation_log or "") + _(
+                "\nNote: Single XML line or mismatched subtotal detected. "
+                "Global subtotals match ($%.2f). Creating invoice lines based on Purchase Order breakdown."
+            ) % xml_total_subtotal
+
+            first_concept = concept_nodes[0] if concept_nodes else False
+            xml_tax_ids = global_tax_ids if global_tax_ids else (
+                self._get_xml_line_taxes(first_concept, namespaces) if first_concept else []
+            )
+
+            primary_xml_rec = saved_xml_records[0] if saved_xml_records else False
+            invoiced_po_line_ids = []
+
+            # Populate invoice lines using all pending lines from Purchase Order
+            for idx, po_l in enumerate(po_lines):
+                product = po_l.product_id
+                invoiced_po_line_ids.append(po_l.id)
+
+                line_vals = {
+                    'name': po_l.name,
+                    'quantity': po_l.qty_to_invoice,
+                    'price_unit': po_l.price_unit,
+                    'product_id': product.id if product else False,
+                    'purchase_line_id': po_l.id,
+                    'tax_ids': [(6, 0, xml_tax_ids)] if xml_tax_ids else [(6, 0, po_l.taxes_id.ids)],
+                    'x_xml_line_description': po_l.name,
+                    '_is_matched': True,
+                }
+
+                if product:
+                    account = product.product_tmpl_id._get_product_accounts()['expense']
+                    if account:
+                        line_vals['account_id'] = account.id
+
+                invoice_lines.append((0, 0, line_vals))
+
+            # --- UPDATE XML LINE RELATIONS ONLY WITH INVOICED PO LINES ---
+            if primary_xml_rec:
+                primary_xml_rec.write({
+                    'purchase_order_line_ids': [(6, 0, invoiced_po_line_ids)]
+                })
+
+        else:
+            error_msg = _(
+                "Verification Failed: Mismatched Document Structure. "
+                "The XML lines could not be matched with the Purchase Order. "
+                "XML Subtotal ($%(xml_sub).2f) does not match PO Pending Subtotal ($%(po_sub).2f)."
+            ) % {'xml_sub': xml_total_subtotal, 'po_sub': po_total_subtotal}
+
+            self.write({
+                'sat_status': 'Error',
+                'cfdi_is_valid': False,
+                'line_state': 'xml_error',
+                'line_validation_log': error_msg
+            })
+            return []
+
+        # --- PRESERVE USER-SELECTED LINES FILTER ---
+        if not is_fallback_mode_b and selected_xml_line_ids and len(selected_xml_line_ids) < len(concept_nodes):
+            selected_descriptions = set(selected_xml_line_ids.mapped('product_name'))
+
+            filtered_lines = []
+            invoiced_po_ids = []
+
+            for line in invoice_lines:
+                desc = line[2].get('x_xml_line_description') or line[2].get('name')
+                if desc in selected_descriptions:
+                    filtered_lines.append(line)
+                    if line[2].get('purchase_line_id'):
+                        invoiced_po_ids.append(line[2]['purchase_line_id'])
+
+            invoice_lines = filtered_lines
+
+            # --- RE-SYNC RELATIONS IN CASE LINES WERE REMOVED BY FILTER ---
+            if saved_xml_records:
+                for xml_rec in saved_xml_records:
+                    # Keep only PO lines that survived the filter
+                    valid_ids = [pid for pid in xml_rec.purchase_order_line_ids.ids if pid in invoiced_po_ids]
+                    xml_rec.write({
+                        'purchase_order_line_ids': [(6, 0, valid_ids)]
+                    })
 
         return invoice_lines
 
-    def _create_invoice_from_xml(self):
+    def _create_invoice_from_xml(self, selected_lines=None):
         self.ensure_one()
+
         if self.invoice_id:
             return self.invoice_id
 
@@ -707,7 +925,13 @@ class CustomSatValidatorLine(models.Model):
 
         global_tax_ids = self._get_xml_global_taxes(xml_doc, namespaces)
         invoice_vals = self._prepare_invoice_header()
-        raw_lines = self._prepare_invoice_lines(xml_doc, namespaces, global_tax_ids=global_tax_ids)
+
+        raw_lines = self._prepare_invoice_lines(
+            xml_doc,
+            namespaces,
+            global_tax_ids=global_tax_ids,
+            selected_xml_line_ids=selected_lines or self.xml_line_ids
+        )
 
         if not raw_lines:
             return False
@@ -729,8 +953,8 @@ class CustomSatValidatorLine(models.Model):
                 del line[2]['_is_matched']
 
         invoice_vals['invoice_line_ids'] = matched_lines
-        parent = self.validator_id
 
+        parent = self.validator_id
         ctx = dict(self.env.context, default_purchase_id=parent.purchase_id.id)
         invoice = self.env['account.move'].with_context(ctx).create(invoice_vals)
 
@@ -745,7 +969,7 @@ class CustomSatValidatorLine(models.Model):
         if parent.purchase_id:
             parent.purchase_id.invoice_ids = [(4, invoice.id)]
 
-        msg = _("Vendor bill automatically created and CONFIRMED (Posted) successfully. Reference ID: %s") % invoice.name
+        msg = _("Vendor bill automatically created. Reference: %s") % invoice.ref
         self.line_validation_log = (self.line_validation_log or "") + f"\n{msg}"
 
         return invoice

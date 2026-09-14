@@ -6,3 +6,4 @@ from . import ike_event_duplicate_wizard
 from . import ike_event_change_state_supplier_wizard
 from . import ike_event_assignment_wizard
 from . import ike_event_phone_view_wizard
+from . import ike_event_add_supplier_wizard

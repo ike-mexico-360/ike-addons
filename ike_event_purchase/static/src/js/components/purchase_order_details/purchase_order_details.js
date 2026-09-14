@@ -225,7 +225,7 @@ export class PurchaseOrderDetails extends Component {
 
     onDirectFileSelect(ev) {
         const MAX_SIZE = 3 * 1024 * 1024;
-        const MAX_FILES = 3;
+        const MAX_FILES = 4;
         const ALLOWED_TYPES = ['application/pdf', 'image/png', 'image/jpeg'];
         const ALLOWED_EXT = ['.pdf', '.png', '.jpg', '.jpeg'];
 
@@ -619,7 +619,7 @@ export class PurchaseOrderDetails extends Component {
                     });
                     if (result.success) {
                         this.state.order_data.order_attachment_ids = result.attachments;
-                        this.notification.add(_t("Document deleted"), { type: "success" });
+                        this.notification.add(_t("Document deleted."), { type: "success" });
                     } else {
                         this.notification.add(_t("Error: ") + result.error, { type: "danger" });
                     }
