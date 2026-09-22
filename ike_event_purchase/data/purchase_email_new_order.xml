@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<odoo>
+    <data>
+        <record id="purchase_email_new_order_template" model="mail.template">
+            <field name="name">Purchase: New purchase order</field>
+            <field name="model_id" ref="purchase.model_purchase_order"/>
+            <field name="subject">IKÉ Grupo Empresarial, S. de R.L. de C.V. has sent a new purchase order {{ object.name }}</field>
+            <field name="partner_to">{{ object.partner_id.id }}</field>
+            <field name="description">New order email template</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0; padding: 0;">
+                    <t t-call="custom_master_catalog.mail_template_header"/>
+                    <p style="margin: 0 0 15px 0; font-size: 20px; font-weight: bold;">
+                        A new purchase order from IKÉ Grupo Empresarial, S. de R.L. de C.V.
+                        is awaiting your response.
+                    </p>
+
+                    <p style="margin: 0 0 15px 0; font-size: 15px;">
+                        Hello, <t t-out="object.partner_id.name"/>:
+                    </p>
+
+                    <p>
+                        The purchase order <strong><t t-out="object.name"/></strong> is awaiting your response.
+                        To access it, click Review Purchase Order.
+                    </p>
+
+                    <div style="margin: 0 0 15px 0;">
+                        <a t-att-href="'/my/order_review/%s' % object.id"
+                            style="padding: 10px 15px; background-color: #005A9C; color: #ffffff; font-weight: bold;">
+                            Review Purchase Order
+                        </a>
+                    </div>
+
+                    <table width="100%" style="border-collapse: collapse;">
+
+                        <tr>
+                            <th colspan="2" style="font-size: 16px;">
+                                Purchase Order Details
+                            </th>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                &#160;
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="50%">
+                                <strong>SAP Reference:</strong> <t t-out="object.x_ref_sap"/>
+                            </td>
+
+                            <td width="50%">
+                                <strong>Amount:</strong> $ <t t-out="object.amount_untaxed"/>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td colspan="2">
+                                &#160;
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td width="50%" style="vertical-align: top;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">
+                                    From:
+                                </div>
+
+                                <div style="padding-bottom: 5px;">
+                                    <t t-out="object.x_invoice_company_id.name"/>
+                                </div>
+
+                                <div style="padding-bottom: 5px;">
+                                    <t t-out="object.x_invoice_company_id.x_business_name"/>
+                                </div>
+
+                                <div style="padding-bottom: 5px;">
+                                    <t t-out="object.x_invoice_company_id.street"/>
+                                    <t t-if="object.x_invoice_company_id.street2">
+                                        , <t t-out="object.x_invoice_company_id.street2"/>
+                                    </t>
+                                </div>
+
+                                <div style="padding-bottom: 5px;">
+                                    <t t-out="object.x_invoice_company_id.zip"/>
+                                    <t t-out="object.x_invoice_company_id.city"/>
+                                </div>
+
+                                <t t-if="object.x_invoice_company_id.state_id">
+                                    <div style="padding-bottom: 5px;">
+                                        <t t-out="object.x_invoice_company_id.state_id.name"/>
+                                    </div>
+                                </t>
+
+                                <t t-if="object.x_invoice_company_id.country_id">
+                                    <div style="padding-bottom: 5px;">
+                                        <t t-out="object.x_invoice_company_id.country_id.name"/>
+                                    </div>
+                                </t>
+
+                                <div style="padding-bottom: 5px;">
+                                    <t t-out="object.x_invoice_company_id.vat"/>
+                                </div>
+
+                                <div>
+                                    <t t-out="object.x_invoice_company_id.phone"/>
+                                </div>
+                            </td>
+
+                            <td width="50%" style="vertical-align: top;">
+                                <div style="font-weight: bold; margin-bottom: 10px;">
+                                    To:
+                                </div>
+
+                                <div style="padding-bottom: 5px;">
+                                    <t t-out="object.partner_id.name"/>
+                                </div>
+
+                                <div style="padding-bottom: 5px;">
+                                    <t t-out="object.partner_id.x_invoice_company_id.x_business_name"/>
+                                </div>
+
+                                <div style="padding-bottom: 5px;">
+                                    <t t-out="object.partner_id.street"/>
+                                    <t t-if="object.partner_id.street2">
+                                        , <t t-out="object.partner_id.street2"/>
+                                    </t>
+                                </div>
+
+                                <div style="padding-bottom: 5px;">
+                                    <t t-out="object.partner_id.zip"/>
+                                    <t t-out="object.partner_id.city"/>
+                                </div>
+
+                                <t t-if="object.partner_id.state_id">
+                                    <div style="padding-bottom: 5px;">
+                                        <t t-out="object.partner_id.state_id.name"/>
+                                    </div>
+                                </t>
+
+                                <t t-if="object.partner_id.country_id">
+                                    <div style="padding-bottom: 5px;">
+                                        <t t-out="object.partner_id.country_id.name"/>
+                                    </div>
+                                </t>
+
+                                <div style="padding-bottom: 5px;">
+                                    <t t-out="object.partner_id.vat"/>
+                                </div>
+
+                                <div>
+                                    <t t-out="object.partner_id.phone"/>
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+                    <t t-call="custom_master_catalog.mail_template_footer"/>
+                </div>
+            </field>
+            <field name="report_template_ids"
+                eval="[(4, ref('ike_event_purchase.action_report_custom_purchase_new_order'))]"/>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+</odoo>

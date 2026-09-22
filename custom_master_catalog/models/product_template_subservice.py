@@ -82,11 +82,21 @@ class ProductProduct(models.Model):
     active = fields.Boolean(readonly=True)
     x_sap_code_income = fields.Char(string="SAP Income Code", tracking=True, help="Technical: SAP income code")
     x_sap_code_outgoing = fields.Char(string="SAP Outgoing Code", tracking=True, help="Technical: SAP outgoing code")
+    x_has_incidents = fields.Boolean(string="Has incidents", tracking=True)
+    x_incident_type_ids = fields.Many2many(
+        comodel_name='custom.incident.type',
+        relation='ike_subservice_incident_type_rel',
+        column1='subservice_id',
+        column2='incident_type_id',
+        string='Incident Types',
+    )
 
     @api.constrains('name', 'sale_ok', 'sh_product_subscribe', 'purchase_ok', 'x_accessory_ok', 'categ_id', 'uom_id')
     def _check_unique_subservice(self):
         for rec in self:
-            domain = rec.get_subservices_domain()
+            # Un nombre solo debe ser único dentro del mismo servicio. El
+            # mismo subservicio puede existir en categorías diferentes.
+            domain = rec.get_subservices_domain(categ_id=rec.categ_id)
             if self.search_count(domain + [('id', '<>', rec.id), ('name', '=', rec.name), ('disabled', '=', False)]) > 0:
                 raise ValidationError(_('A record with the same name already exists.'))
             elif self.search_count(domain + [('id', '<>', rec.id), ('name', '=', rec.name), ('disabled', '=', True)]) > 0:

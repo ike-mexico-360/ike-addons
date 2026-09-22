@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0-20260504\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-29 18:39+0000\n"
-"PO-Revision-Date: 2026-07-29 18:39+0000\n"
+"POT-Creation-Date: 2026-08-24 18:29+0000\n"
+"PO-Revision-Date: 2026-08-24 18:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -24,6 +24,30 @@ msgstr ""
 #: model:ir.actions.report,print_report_name:ike_event_purchase.action_report_portal_invoices
 msgid "'Facturas'"
 msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "'Fiscal Folio (UUID)'"
+msgstr "'Folio Fiscal (UUID)'"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "'Folio / XML Name'"
+msgstr "'Folio / Nombre XML'"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "'PDF"
+msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "'PDF, PNG, JPG only · Max 2 files · Max 3 MB each'"
+msgstr "Solo PDF, PNG, JPG · Máx. 2 archivos · Máx. 3 MB cada uno"
 
 #. module: ike_event_purchase
 #: model:mail.template,body_html:ike_event_purchase.email_template_edi_purchase
@@ -201,6 +225,127 @@ msgid ""
 "                </div>\n"
 "            "
 msgstr ""
+"<div style=\"margin: 0px; padding: 0px;\">\n"
+"                <table border=\"0\" width=\"100%\" cellpadding=\"0\" bgcolor=\"#ededed\" style=\"padding: 20px; background-color: #ededed; border-collapse:separate;\">\n"
+"                    <tbody>\n"
+"                    <!-- HEADER -->\n"
+"                    <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                        <table width=\"590\" border=\"0\" cellpadding=\"0\" bgcolor=\"#875A7B\" style=\"min-width: 590px; background-color: rgb(135,90,123); padding: 20px; border-collapse:separate;\">\n"
+"                            <tr>\n"
+"                            <td valign=\"middle\">\n"
+"                                <span style=\"font-size:20px; color:white; font-weight: bold;\">\n"
+"                                <!-- {{object.name}} -->\n"
+"                                <t t-out=\"object.name\"/>\n"
+"                                </span>\n"
+"                            </td>\n"
+"\n"
+"                            <td valign=\"middle\" align=\"right\">\n"
+"                                <img t-attf-src=\"/logo.png?company={{ object.company_id.id }}\" style=\"padding: 0px; margin: 0px; height: auto; width: 80px;\" t-att-alt=\"object.company_id.name\"/>\n"
+"                            </td>\n"
+"                            </tr>\n"
+"                        </table>\n"
+"                        </td>\n"
+"                    </tr>\n"
+"\n"
+"                    <!-- CONTENT -->\n"
+"                    <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                        <table width=\"590\" border=\"0\" cellpadding=\"0\" bgcolor=\"#ffffff\" style=\"min-width: 590px; background-color: rgb(255, 255, 255); padding: 20px; border-collapse:separate;\">\n"
+"                            <tbody>\n"
+"                            <td valign=\"top\" style=\"font-family:Arial,Helvetica,sans-serif; color: #555; font-size: 14px;\">\n"
+"                                <p style=\"margin: 0px; padding: 0px; font-size: 13px;\">\n"
+"                                    El proveedor\n"
+"                                    <t t-out=\"object.partner_id.name\"/>\n"
+"                                    ha abierto una disputa.\n"
+"                                    <br/>\n"
+"                                    <br/>\n"
+"                                    Por favor revise los cambios.\n"
+"                                    <br/>\n"
+"                                    <br/>\n"
+"                                </p>\n"
+"                                <br/>\n"
+"                                <br/>\n"
+"                                <t t-set=\"orders\" t-value=\"object.sh_purchase_order_ids\"/>\n"
+"                                <t t-if=\"env.context.get('actual_order', False)\">\n"
+"                                    <t t-set=\"actual_order\" t-value=\"env.context.get('actual_order')\"/>\n"
+"                                    <t t-set=\"orders\" t-value=\"orders.filtered(lambda x: x.id == actual_order)\"/>\n"
+"                                </t>\n"
+"                                <t t-foreach=\"orders\" t-as=\"order\">\n"
+"                                    <table>\n"
+"                                        <tbody>\n"
+"                                            <tr><td colspan=\"5\" style=\"font-weight:bolder;text-align:center;\">Orden <t t-out=\"order.name\"/></td></tr>\n"
+"                                            <tr>\n"
+"                                                <td style=\"font-weight:bolder;min-width:200px;text-align:left;\">Concepto</td>\n"
+"                                                <td style=\"font-weight:bolder;text-align:right;\">Precio (Original)</td>\n"
+"                                                <td style=\"font-weight:bolder;text-align:right;\">Cantidad (Original)</td>\n"
+"                                                <td style=\"font-weight:bolder;text-align:right;\">Precio (Disputado)</td>\n"
+"                                                <td style=\"font-weight:bolder;text-align:right;\">Cantidad (Disputado)</td>\n"
+"                                            </tr>\n"
+"                                            <t t-foreach=\"order.order_line\" t-as=\"line\">\n"
+"                                                <tr>\n"
+"                                                    <td style=\"text-align:left;\"><t t-out=\"line.product_id.name\"/></td>\n"
+"                                                    <td style=\"text-align:right;\"><t t-out=\"line.price_unit\"/></td>\n"
+"                                                    <td style=\"text-align:right;\"><t t-out=\"line.product_uom_qty\"/></td>\n"
+"                                                    <td style=\"text-align:right;\"><t t-out=\"line.x_price_unit_dispute\"/></td>\n"
+"                                                    <td style=\"text-align:right;\"><t t-out=\"line.x_product_qty_dispute\"/></td>\n"
+"                                                </tr>\n"
+"                                            </t>\n"
+"                                            <!-- <tr>\n"
+"                                                <td colspan=\"5\">\n"
+"                                                    <div style=\"display:flex;flex-direction:row;justify-content:center;gap:7px;\">\n"
+"                                                        <a t-att-href=\"order.x_get_dispute_url(confirm_type='accept')\" target=\"_blank\"\n"
+"                                                                style=\"background-color:#B3B2B1; padding:5px 10px; text-decoration:none; color:#ffffff; border-radius:5px; font-size:16px; margin-right:7px;\">\n"
+"                                                            Aprobar disputa\n"
+"                                                        </a>\n"
+"                                                        <a t-att-href=\"order.x_get_dispute_url(confirm_type='decline')\" target=\"_blank\"\n"
+"                                                                style=\"background-color:#ebebef; padding:5px 10px; text-decoration:none; color:#4a5573; border-radius:5px; font-size:16px\">\n"
+"                                                            Rechazar disputa\n"
+"                                                        </a>\n"
+"                                                    </div>\n"
+"                                                </td>\n"
+"                                            </tr> -->\n"
+"                                        </tbody>\n"
+"                                    </table>\n"
+"                                    <br/>\n"
+"                                </t>\n"
+"                            </td>\n"
+"                            </tbody>\n"
+"                        </table>\n"
+"                        </td>\n"
+"                    </tr>\n"
+"\n"
+"                    <!-- FOOTER -->\n"
+"                    <tr>\n"
+"                        <td align=\"center\" style=\"min-width: 590px;\">\n"
+"                        <table width=\"590\" border=\"0\" cellpadding=\"0\" bgcolor=\"#875A7B\" style=\"min-width: 590px; background-color: rgb(135,90,123); padding: 20px; border-collapse:separate;\">\n"
+"                            <tr>\n"
+"                            <td valign=\"middle\" align=\"left\" style=\"color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;\">\n"
+"                                <t t-out=\"object.company_id.name\"/>\n"
+"                                <br/>\n"
+"                                <t t-out=\"object.company_id.phone or ''\"/>\n"
+"                            </td>\n"
+"                            <td valign=\"middle\" align=\"right\" style=\"color: #fff; padding-top: 10px; padding-bottom: 10px; font-size: 12px;\">\n"
+"                                <t t-if=\"object.company_id.email\">\n"
+"                                <a t-attf-href=\"mailto:{{ object.company_id.email }}\" style=\"text-decoration:none; color: white;\">\n"
+"                                    <t t-out=\"object.company_id.email\"/>\n"
+"                                </a>\n"
+"                                </t>\n"
+"                                <br/>\n"
+"                                <t t-if=\"object.company_id.website\">\n"
+"                                <a t-attf-href=\"{{ object.company_id.website }}\" style=\"text-decoration:none; color: white;\">\n"
+"                                    <t t-out=\"object.company_id.website\"/>\n"
+"                                </a>\n"
+"                                </t>\n"
+"                            </td>\n"
+"                            </tr>\n"
+"                        </table>\n"
+"                        </td>\n"
+"                    </tr>\n"
+"                    </tbody>\n"
+"                </table>\n"
+"                </div>\n"
+"            "
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
@@ -335,15 +480,24 @@ msgstr "Una disputa solo puede abrirse en las órdenes en estado Enviado."
 
 #. module: ike_event_purchase
 #. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.js:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_ike_event_confirm_costs_wizard_form
+msgid "Accept"
+msgstr "Aceptar"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__account_move__x_status_invoice__accepted
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__x_status_invoice__accepted
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_status_invoice__accepted
 msgid "Accepted"
 msgstr "Aceptada"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__message_needaction
 msgid "Action Needed"
-msgstr ""
+msgstr "Acción requerida"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_custom_consolidation_month_day__active
@@ -353,27 +507,51 @@ msgstr "Activo"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__activity_ids
 msgid "Activities"
-msgstr ""
+msgstr "Actividades"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__activity_exception_decoration
 msgid "Activity Exception Decoration"
-msgstr ""
+msgstr "Decoración de excepción de actividad"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__activity_state
 msgid "Activity State"
-msgstr ""
+msgstr "Estado de la actividad"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__activity_type_icon
 msgid "Activity Type Icon"
-msgstr ""
+msgstr "Icono del tipo de actividad"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "Add a product"
 msgstr "Agregar producto"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Add concept"
+msgstr "Añadir concepto"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Address"
+msgstr "Dirección"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_partner__x_advanced_portal
+#: model:ir.model.fields,field_description:ike_event_purchase.field_res_users__x_advanced_portal
+msgid "Advanced portal"
+msgstr "Portal avanzado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Agreement Cost"
+msgstr "Costo Convenio"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_base_unit_price
@@ -390,13 +568,14 @@ msgstr "Costos convenio"
 #. odoo-python
 #: code:addons/ike_event_purchase/controllers/portal.py:0
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
 msgid "All"
-msgstr ""
+msgstr "Todos"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_custom_consolidation_month_day__day
 msgid "Allowed day of month for consolidation."
-msgstr "Días del mes permitido para la consolidación."
+msgstr "Día del mes permitido para la consolidación."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_ir_sequence__x_available_for_project_purchase_orders
@@ -408,7 +587,7 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
 msgid "Amount Due"
-msgstr "Cantidad por pagar"
+msgstr "Monto adeudado"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -420,12 +599,12 @@ msgstr "Monto pendiente de facturar"
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "An increase can only be requested for a submitted dispute."
-msgstr ""
+msgstr "Solo se puede solicitar un aumento para una disputa enviada."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_app_code
 msgid "App Code"
-msgstr ""
+msgstr "Código de app"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__state__approved
@@ -435,7 +614,7 @@ msgstr "Aprobada"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_tier_review__increase_approved_amount
 msgid "Approved Amount"
-msgstr ""
+msgstr "Monto aprobado"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_purchase_purchase_order_portal_content
@@ -454,6 +633,11 @@ msgid "Are you sure you want to accept the final subtotal of %s?"
 msgstr "¿Está seguro de que desea aceptar el subtotal final de %s?"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_ike_event_confirm_costs_wizard_form
+msgid "Are you sure you want to pay more than the event fee?"
+msgstr "¿Estás seguro de pagar un costo mayor al monto del evento?"
+
+#. module: ike_event_purchase
 #: model:ir.actions.act_window,name:ike_event_purchase.action_sh_helpdesk_ticket_assignment_wizard
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_assignment_wizard_view_form
 msgid "Asignación"
@@ -467,22 +651,34 @@ msgstr ""
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__assigned_user_domain
 msgid "Assigned User Domain"
-msgstr ""
+msgstr "Dominio de usuario asignado"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__assigned_user_id
 msgid "Assigned to user"
-msgstr ""
+msgstr "Asignado a usuario"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__assigned_user_ids
 msgid "Assigned to users"
-msgstr ""
+msgstr "Asignado a usuarios"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Attach files"
+msgstr "Adjuntar archivos"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__message_attachment_count
 msgid "Attachment Count"
 msgstr "Cantidad de Archivos Adjuntos"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Audit Log of Uploaded & Validated Packages"
+msgstr "Registro de auditoría de paquetes cargados y validados"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__approved_date
@@ -493,15 +689,17 @@ msgstr "Fecha de Autorización"
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Authorization restarted"
-msgstr ""
+msgstr "Autorización reiniciada"
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Authorize event amount increase"
-msgstr ""
+msgstr "Autorizar aumento del monto del evento"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_authorized_amount
 msgid "Authorized Amount"
 msgstr "Monto autorizado"
@@ -509,13 +707,13 @@ msgstr "Monto autorizado"
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_authorized_amount_request_form
 msgid "Authorized Amount Increase Request"
-msgstr ""
+msgstr "Solicitud de aumento del monto autorizado"
 
 #. module: ike_event_purchase
 #: model:ir.actions.act_window,name:ike_event_purchase.action_authorized_amount_request
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_authorized_amount_request_ids
 msgid "Authorized Amount Increase Requests"
-msgstr ""
+msgstr "Solicitudes de aumento del monto autorizado"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -523,6 +721,7 @@ msgstr ""
 msgid ""
 "Authorized amount increase %(request)s approved: %(previous)s → %(new)s."
 msgstr ""
+"Aumento de monto autorizado %(request)s aprobado: %(previous)s → %(new)s."
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -531,16 +730,18 @@ msgid ""
 "Authorized amount increase %(request)s requested: %(current)s → "
 "%(requested)s."
 msgstr ""
+"Aumento de monto autorizado %(request)s solicitado: %(current)s → "
+"%(requested)s."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__approved_by
 msgid "Authorized by"
-msgstr ""
+msgstr "Autorizado por"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__authorizer_id
 msgid "Authorizer"
-msgstr ""
+msgstr "Autorizador"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
@@ -563,9 +764,27 @@ msgid "Billed"
 msgstr "Facturado"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__invoice_status
+msgid "Billing Status"
+msgstr "Estado de facturación"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__biweekly
 msgid "Biweekly"
 msgstr "Cada 14 días"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__user_id
+msgid "Buyer"
+msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "CCC Approved Cost"
+msgstr "Costo Aprobado CCC"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_product_qty_approved
@@ -583,6 +802,12 @@ msgid "CDS Quantity "
 msgstr "Cantidad CDS"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "CDS Quotation"
+msgstr "Cotización CDS"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_price_subtotal_event
 msgid "CDS ubtotal "
 msgstr "Subtotal CDS"
@@ -595,14 +820,20 @@ msgstr "Costo unitario CDS"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__can_review
 msgid "Can Review"
-msgstr ""
+msgstr "Puede revisar"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
+msgid "Cancel Cost Review"
+msgstr "Cancelar revisión de costos"
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_authorized_amount_request_form
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_ike_event_confirm_costs_wizard_form
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_invoices
@@ -618,9 +849,12 @@ msgstr ""
 #. odoo-javascript
 #. odoo-python
 #: code:addons/ike_event_purchase/controllers/portal.py:0
-#: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.js:0
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.js:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__account_move__x_status_invoice__cancelled
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_state__cancel
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__state__cancel
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__x_status_invoice__cancelled
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__state__cancelled
 msgid "Cancelled"
 msgstr "Cancelada"
@@ -649,13 +883,22 @@ msgstr "Historial de cambios"
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
 msgid "Clear"
 msgstr "Limpiar"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
+msgid "Clear filters"
+msgstr "Limpiar filtros"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_client_code
 msgid "Client Code"
-msgstr ""
+msgstr "Código de cliente"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_invoice_company_id
@@ -665,12 +908,29 @@ msgstr "Empresa Facturadora"
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
-msgid "Close"
+msgid "Cliente"
 msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Close Logs"
+msgstr "Cerrar registros"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_project_project__x_ref_app
 msgid "Code of the application that created this project"
+msgstr "Código de la aplicación que creó este proyecto"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__commercial_partner_id
+msgid "Commercial Entity"
 msgstr ""
 
 #. module: ike_event_purchase
@@ -679,15 +939,17 @@ msgid "Companies"
 msgstr "Empresas"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__company_id
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__company_id
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
 msgid "Company"
-msgstr ""
+msgstr "Empresa"
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/controllers/main.py:0
 msgid "Company '%s' not found"
-msgstr ""
+msgstr "Compañía '%s' no encontrada"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_res_company__x_display_po_summary_portal
@@ -706,6 +968,12 @@ msgstr ""
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
 msgid "Comprobante de pago"
 msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Concept"
+msgstr "Concepto"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_concept_line_id
@@ -735,9 +1003,28 @@ msgid "Confirm Costs"
 msgstr "Confirmar costos"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Confirmación"
+msgstr ""
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_assignment_wizard_view_form
 msgid "Confirmar"
 msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__date_approve
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "Confirmation Date"
+msgstr "Fecha de confirmación"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "Confirmation Date Last Year"
+msgstr "Fecha de confirmación del año pasado"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
@@ -769,6 +1056,11 @@ msgid "Cost"
 msgstr "Costo"
 
 #. module: ike_event_purchase
+#: model:ir.model,name:ike_event_purchase.model_ike_event_confirm_costs_wizard
+msgid "Cost Confirmation Wizard"
+msgstr "Confirmación De Costos Wizard"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "Cost Matrix"
 msgstr "Matriz de costos"
@@ -785,8 +1077,28 @@ msgstr "Matriz de costos - proveedor"
 #: code:addons/ike_event_purchase/models/sh_helpdesk_ticket.py:0
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.js:0
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__purchase_order_id
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__state__draft
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_report__state__draft
 msgid "Cost Review"
 msgstr "Revisión de costos"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__state__draft_cancel
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_report__state__draft_cancel
+msgid "Cost Review Cancel"
+msgstr "Revisión de costos cancelada"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__state__sent
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_report__state__sent
+msgid "Cost Review Sent"
+msgstr "Revisión de costos enviada"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/ike_event.py:0
+msgid "Cost confirmation"
+msgstr "Confirmación de costos"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_ike_event_screen_inherit_purchase_order_form
@@ -806,36 +1118,49 @@ msgstr "Monto cubierto"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_custom_consolidation_month_day__create_uid
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__create_uid
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_confirm_costs_wizard__create_uid
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__create_uid
 msgid "Created by"
-msgstr ""
+msgstr "Creado por"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_custom_consolidation_month_day__create_date
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__create_date
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_confirm_costs_wizard__create_date
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__create_date
 msgid "Created on"
-msgstr ""
+msgstr "Creado el"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__currency_id
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__currency_id
 msgid "Currency"
-msgstr ""
+msgstr "Moneda"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__current_authorized_amount
 msgid "Current Authorized Amount"
+msgstr "Monto autorizado actual"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__current_elapsed_time_seconds
+msgid "Current Elapsed Time Seconds"
+msgstr ""
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__current_stage_date
+msgid "Current Stage Date"
 msgstr ""
 
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_custom_consolidation_month_day
 msgid "Custom Consolidation Month Day"
-msgstr "Consolidación personalizada"
+msgstr "Día de mes de consolidación personalizado"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__custom_month_days
 msgid "Custom Month Days"
-msgstr "Días del mes personalizados"
+msgstr "Días personalizados del mes"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_customer_id
@@ -846,6 +1171,18 @@ msgstr "Cliente"
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_frequency__daily
 msgid "Daily"
 msgstr "Diario"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Date From"
+msgstr "Fecha desde"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Date To"
+msgstr "Fecha hasta"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_custom_consolidation_month_day__day
@@ -877,11 +1214,17 @@ msgid "Days of Month"
 msgstr "Días del mes"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
+msgid "Deadline"
+msgstr "Fecha Límite"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_res_company__x_default_purchase_project_id
 #: model:ir.model.fields,field_description:ike_event_purchase.field_res_config_settings__x_default_purchase_project_id
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.res_config_settings_view_form_purchase_inherit_ike_event_purchase
 msgid "Default Purchase Project"
-msgstr "Proyecto por default para compras"
+msgstr "Proyecto de compras predeterminado"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
@@ -895,16 +1238,24 @@ msgid "Descargar comprobante"
 msgstr ""
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Destination"
+msgstr "Destino"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "Disc.%"
 msgstr "Descuento.%"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_custom_consolidation_month_day__display_name
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__display_name
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__display_name
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_confirm_costs_wizard__display_name
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__display_name
 msgid "Display Name"
-msgstr ""
+msgstr "Nombre mostrado"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_res_company__x_display_po_summary_portal
@@ -926,6 +1277,8 @@ msgid "Dispute Approved"
 msgstr "Disputa Aprobada"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_dispute_authorized_amount
 msgid "Dispute Authorized Amount"
 msgstr "Monto autorizado disputado"
@@ -993,16 +1346,67 @@ msgstr "Monto disputa"
 
 #. module: ike_event_purchase
 #. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Disputed Cost"
+msgstr "Costo Disputado"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__origin
+msgid "Document Origin"
+msgstr "Documento origen"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__state__done
+msgid "Done"
+msgstr "Bloqueado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Download PDF"
+msgstr "Descargar PDF"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Download purchase orders PDF"
+msgstr "Descargar PDF de órdenes de compra"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Download Excel"
+msgstr "Descargar Excel"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Download purchase orders Excel"
+msgstr "Descargar Excel de órdenes de compra"
+
+#. module: ike_event_purchase
+#. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_details/invoices_details.js:0
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.js:0
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_state__draft
 msgid "Draft"
-msgstr ""
+msgstr "Borrador"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__state__draft
+msgid "Draft RFQ"
+msgstr "Revisión de costos"
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
 msgid "Due Date"
-msgstr "Vencimiento"
+msgstr "Fecha de vencimiento"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_form_view_inherit_ike_event_purchase_list
+msgid "Elapsed"
+msgstr "Transcurrido"
 
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_mail_compose_message
@@ -1013,6 +1417,12 @@ msgstr "Asistente de redacción de correo electrónico"
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_invoices
 msgid "En proceso de pago"
 msgstr ""
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,help:ike_event_purchase.field_res_partner__x_advanced_portal
+#: model:ir.model.fields,help:ike_event_purchase.field_res_users__x_advanced_portal
+msgid "Enable invoice and purchase advanced portal items."
+msgstr "Habilita items avanzados del portal, factura y compras"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -1054,13 +1464,13 @@ msgstr "Error al crear la orden de SAP: %s"
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.js:0
 msgid "Error loading RFQs: "
-msgstr ""
+msgstr "Error al cargar RFQs: "
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.js:0
 msgid "Error loading SAT validator history: "
-msgstr ""
+msgstr "Error al cargar el historial del validador SAT: "
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -1076,6 +1486,12 @@ msgstr "Error al cargar datos de la factura: "
 
 #. module: ike_event_purchase
 #. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.js:0
+msgid "Error loading invoices data: "
+msgstr "Error al cargar datos de facturas: "
+
+#. module: ike_event_purchase
+#. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.js:0
 msgid "Error loading order data: "
@@ -1083,10 +1499,9 @@ msgstr "Error al cargar datos de la orden: "
 
 #. module: ike_event_purchase
 #. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.js:0
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.js:0
 msgid "Error loading purchase orders data: "
-msgstr ""
+msgstr "Error al cargar datos de órdenes de compra: "
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -1131,6 +1546,11 @@ msgstr ""
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_purchase_orders
+msgid "Estado de facturación"
+msgstr ""
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_purchase_orders
 msgid ""
 "Este estado de cuenta resume las ordenes de compra incluidas en la consulta "
 "actual del portal."
@@ -1142,28 +1562,45 @@ msgid "Etapa"
 msgstr ""
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
 #: model:ir.model,name:ike_event_purchase.model_ike_event
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__event_id
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_confirm_costs_wizard__event_id
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_event_id
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_parent_event_id
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__x_event_id
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_po_inherited_view_search
 msgid "Event"
 msgstr "Evento"
 
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_ike_event_authorized_amount_request
 msgid "Event Authorized Amount Increase Request"
-msgstr ""
+msgstr "Solicitud de aumento del monto autorizado del evento"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Event Date"
+msgstr "Fecha del evento"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_event_public_id
 msgid "Event Public"
-msgstr ""
+msgstr "Evento público"
 
 #. module: ike_event_purchase
 #: model:tier.definition,name:ike_event_purchase.tier_definition_authorized_amount_request
 msgid "Event amount increase authorization"
-msgstr ""
+msgstr "Autorización de aumento de monto del evento"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Event type"
+msgstr "Tipo de evento"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_purchase_orders
@@ -1188,18 +1625,23 @@ msgstr "Expendiete"
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_authorized_amount_request_form
 msgid "Explain why the authorized amount must be increased..."
-msgstr ""
+msgstr "Explique por qué se debe aumentar el monto autorizado..."
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "Extended Filters"
+msgstr "Filtros extendidos"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_external_api_record
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_external_api_record
 msgid "External API Record"
-msgstr ""
+msgstr "Registro de API externa"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_external_body
 msgid "External Body"
-msgstr ""
+msgstr "Cuerpo externo"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_invoices
@@ -1209,12 +1651,18 @@ msgstr ""
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.js:0
-msgid "Facturas en espera"
+msgid "Factura en espera"
 msgstr ""
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_purchase_orders
 msgid "Fecha"
+msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Fecha de confirmación"
 msgstr ""
 
 #. module: ike_event_purchase
@@ -1232,25 +1680,37 @@ msgstr "El archivo '%s' supera el límite de 10 MB"
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 msgid "File '%s' exceeds the 3 MB limit."
-msgstr ""
+msgstr "El archivo '%s' supera el límite de 3 MB."
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 msgid "File '%s' is not allowed. Only PDF, PNG and JPG are accepted."
-msgstr ""
+msgstr "El archivo '%s' no está permitido. Solo se aceptan PDF, PNG y JPG."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/controllers/portal.py:0
 msgid "File exceeds the 3 MB limit."
-msgstr ""
+msgstr "El archivo supera el límite de 3 MB."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/controllers/portal.py:0
 msgid "File type not allowed."
-msgstr ""
+msgstr "Tipo de archivo no permitido."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Files"
+msgstr "Archivos"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Final Cost"
+msgstr "Costo Final"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
@@ -1273,22 +1733,44 @@ msgstr "Subtotal Final"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__message_follower_ids
 msgid "Followers"
-msgstr ""
+msgstr "Seguidores"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__message_partner_ids
 msgid "Followers (Partners)"
-msgstr ""
+msgstr "Seguidores (contactos)"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_ike_event_authorized_amount_request__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
-msgstr ""
+msgstr "Icono de Font Awesome, por ejemplo, fa-tasks"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__5
 msgid "Friday"
 msgstr "Viernes"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_status__invoiced
+msgid "Fully Billed"
+msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Fully Invoiced"
+msgstr "Totalmente facturado"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_account_bank_statement_line__x_gross_sale
+#: model:ir.model.fields,field_description:ike_event_purchase.field_account_move__x_gross_sale
+msgid "Gross Sale"
+msgstr "Venta bruta"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "Group By"
+msgstr "Agrupar por"
 
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_ir_http
@@ -1298,7 +1780,7 @@ msgstr "Enrutamiento HTTP"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__has_comment
 msgid "Has Comment"
-msgstr ""
+msgstr "Tiene comentario"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_res_partner__x_has_consolidation
@@ -1309,7 +1791,12 @@ msgstr "Tiene consolidación"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__has_message
 msgid "Has Message"
-msgstr ""
+msgstr "Tiene mensajes"
+
+#. module: ike_event_purchase
+#: model:ir.model,name:ike_event_purchase.model_helpdesk_stages
+msgid "Helpdesk Stages"
+msgstr "Etapas de servicio de ayuda"
 
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_sh_helpdesk_ticket
@@ -1319,35 +1806,48 @@ msgstr "Ticket de Ayuda"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__hide_reviews
 msgid "Hide Reviews"
-msgstr ""
+msgstr "Ocultar revisiones"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_custom_consolidation_month_day__id
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__id
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__id
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_confirm_costs_wizard__id
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__id
 msgid "ID"
 msgstr ""
 
 #. module: ike_event_purchase
+#: model:res.groups,name:ike_event_purchase.custom_group_ike_finance
+msgid "IKE Finance"
+msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
+msgid "IKE Price"
+msgstr "Precio IKE"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__activity_exception_icon
 msgid "Icon"
-msgstr ""
+msgstr "Icono"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_ike_event_authorized_amount_request__activity_exception_icon
 msgid "Icon to indicate an exception activity."
-msgstr ""
+msgstr "Icono para indicar una actividad con excepción."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_ike_event_authorized_amount_request__message_needaction
 msgid "If checked, new messages require your attention."
-msgstr ""
+msgstr "Si está marcado, hay mensajes nuevos que requieren su atención."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_ike_event_authorized_amount_request__message_has_error
 #: model:ir.model.fields,help:ike_event_purchase.field_ike_event_authorized_amount_request__message_has_sms_error
 msgid "If checked, some messages have a delivery error."
-msgstr ""
+msgstr "Si está marcado, algunos mensajes tienen un error de entrega."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_res_config_settings__x_display_po_summary_portal
@@ -1362,6 +1862,7 @@ msgstr ""
 #: model:ir.model.fields,help:ike_event_purchase.field_ike_event_authorized_amount_request__has_comment
 msgid "If set, Allow the reviewer to leave a comment on the review."
 msgstr ""
+"Si está establecido, permite al revisor dejar un comentario en la revisión."
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_purchase_orders
@@ -1369,37 +1870,42 @@ msgid "Impuestos"
 msgstr ""
 
 #. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_payment_state__in_payment
+msgid "In Payment"
+msgstr ""
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__in_progress_stage_boolean
 msgid "In Progress Stage Boolean"
-msgstr ""
+msgstr "Booleano de etapa en progreso"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_tier_review__increase_currency_id
 msgid "Increase Currency"
-msgstr ""
+msgstr "Moneda del incremento"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_authorized_amount_request_count
 msgid "Increase Requests"
-msgstr ""
+msgstr "Solicitudes de incremento"
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Increase request approved"
-msgstr ""
+msgstr "Solicitud de aumento aprobada"
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Increase request cancelled"
-msgstr ""
+msgstr "Solicitud de aumento cancelada"
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Increase request rejected"
-msgstr ""
+msgstr "Solicitud de aumento rechazada"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -1410,21 +1916,48 @@ msgstr "Acción de disputa inválida: "
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__invoice_id
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
 msgid "Invoice"
 msgstr "Factura"
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__invoice_date
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
 msgid "Invoice Date"
-msgstr "Fecha de la factura"
+msgstr "Fecha de factura"
 
 #. module: ike_event_purchase
 #. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__invoice_name
+msgid "Invoice Number"
+msgstr "Número de factura"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__x_invoice_ref_sap
+msgid "Invoice SAP"
+msgstr "Factura SAP"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__invoice_state
+msgid "Invoice State"
+msgstr "Estado de factura"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
 #: model:ir.model.fields,field_description:ike_event_purchase.field_account_bank_statement_line__x_status_invoice
 #: model:ir.model.fields,field_description:ike_event_purchase.field_account_move__x_status_invoice
 msgid "Invoice Status"
+msgstr "Estado de la factura"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__x_status_invoice
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "Invoice Statuses"
 msgstr "Estado de la factura"
 
 #. module: ike_event_purchase
@@ -1441,19 +1974,60 @@ msgstr "Fecha de factura hasta"
 
 #. module: ike_event_purchase
 #. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "Invoiced"
+msgstr "Facturado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Invoice Reference"
+msgstr "Referencia de factura"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Not Invoiced"
+msgstr "No facturado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Invoiced subtotal"
+msgstr "Subtotal facturado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
 msgid "Invoices"
 msgstr "Facturas"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_payment_state__invoicing_legacy
+msgid "Invoicing App Legacy"
+msgstr "Sistema de facturación anterior"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Invoicing Company"
+msgstr "Empresa Facturadora"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__is_done_stage
 msgid "Is Done Stage"
-msgstr ""
+msgstr "Es etapa finalizada"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__message_is_follower
 msgid "Is Follower"
+msgstr "Es seguidor"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,help:ike_event_purchase.field_sh_helpdesk_ticket__duration_tracking
+msgid "JSON that maps ids from a many2one field to seconds spent"
 msgstr ""
 
 #. module: ike_event_purchase
@@ -1476,24 +2050,40 @@ msgstr ""
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_custom_consolidation_month_day__write_uid
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__write_uid
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_confirm_costs_wizard__write_uid
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__write_uid
 msgid "Last Updated by"
-msgstr ""
+msgstr "Última actualización por"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_custom_consolidation_month_day__write_date
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__write_date
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_confirm_costs_wizard__write_date
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__write_date
 msgid "Last Updated on"
-msgstr ""
+msgstr "Última actualización el"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
+msgid "Loading..."
+msgstr "Cargando..."
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #. odoo-python
 #: code:addons/ike_event_purchase/controllers/portal.py:0
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.js:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
 msgid "Locked"
 msgstr "Bloqueado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Logs"
+msgstr "Registros"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_mandatory
@@ -1501,11 +2091,17 @@ msgid "Mandatory"
 msgstr "Obligatorio"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_helpdesk_stages__x_max_wait_time_minutes
+#: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__x_stage_max_wait_time_minutes
+msgid "Max Wait Time (minutes)"
+msgstr "Máximo tiempo de espera (minutos)"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_res_company__x_max_lines_per_po_at_consolidation
 #: model:ir.model.fields,field_description:ike_event_purchase.field_res_config_settings__x_max_lines_per_po_at_consolidation
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.res_config_settings_view_form_purchase_inherit_ike_event_purchase
 msgid "Max lines per purchase order at consolidation"
-msgstr "Líneas máximas por órden al consolidar"
+msgstr "Máximo de líneas por orden de compra en la consolidación"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -1513,7 +2109,7 @@ msgstr "Líneas máximas por órden al consolidar"
 #: code:addons/ike_event_purchase/controllers/portal.py:0
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 msgid "Maximum %s files allowed per dispute."
-msgstr ""
+msgstr "Se permiten máximo %s archivos por disputa."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_membership_plan_id
@@ -1523,7 +2119,7 @@ msgstr "Membresía"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__message_has_error
 msgid "Message Delivery error"
-msgstr ""
+msgstr "Error de entrega de mensajes"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -1534,7 +2130,7 @@ msgstr "Mensaje enviado"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__message_ids
 msgid "Messages"
-msgstr ""
+msgstr "Mensajes"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -1567,12 +2163,18 @@ msgstr ""
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__my_activity_date_deadline
 msgid "My Activity Deadline"
-msgstr ""
+msgstr "Fecha límite de mi actividad"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "NU Name"
+msgstr "Nombre NU"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_nu_user_id
 msgid "NU User"
-msgstr ""
+msgstr "Usuario NU"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_custom_consolidation_month_day__name
@@ -1587,34 +2189,34 @@ msgstr "Nombre, RFC, correo electrónico o referencia"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__need_validation
 msgid "Need Validation"
-msgstr ""
+msgstr "Requiere validación"
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "New"
-msgstr ""
+msgstr "Nuevo"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__activity_calendar_event_id
 msgid "Next Activity Calendar Event"
-msgstr ""
+msgstr "Próximo evento de calendario"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__activity_date_deadline
 msgid "Next Activity Deadline"
-msgstr ""
+msgstr "Fecha límite de la próxima actividad"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__activity_summary
 msgid "Next Activity Summary"
-msgstr ""
+msgstr "Resumen de la próxima actividad"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__activity_type_id
 msgid "Next Activity Type"
-msgstr ""
+msgstr "Tipo de la próxima actividad"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_res_partner__x_consolidation_next_date
@@ -1625,7 +2227,7 @@ msgstr "Próxima fecha de consolidación"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__next_review
 msgid "Next Review"
-msgstr ""
+msgstr "Siguiente revisión"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__none
@@ -1633,10 +2235,15 @@ msgid "No Dispute"
 msgstr "Sin disputa"
 
 #. module: ike_event_purchase
+#: model_terms:ir.actions.act_window,help:ike_event_purchase.action_custom_purchase_order_finance_report_all
+msgid "No Purchase Analysis"
+msgstr "Sin análisis de compras"
+
+#. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "No authorization level was configured for this request."
-msgstr ""
+msgstr "No se configuró un nivel de autorización para esta solicitud."
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -1648,25 +2255,37 @@ msgstr "No hay cambios para guardar"
 #. odoo-python
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "No company found for SAP company code %s"
-msgstr ""
+msgstr "No se encontró compañía para el código de compañía SAP %s"
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "No consolidated purchase orders could be generated."
-msgstr ""
+msgstr "No se pudieron generar órdenes de compra consolidadas."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/ike_event.py:0
 msgid "No default purchase project has been configured for this company."
 msgstr ""
+"No se ha configurado un proyecto de compras predeterminado para esta "
+"compañía."
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.js:0
 msgid "No invoices to download."
 msgstr "No hay facturas para descargar."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid ""
+"No package documents have been historically uploaded for this specific "
+"purchase order."
+msgstr ""
+"No se han cargado históricamente documentos de paquete para esta orden de "
+"compra específica."
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -1677,19 +2296,19 @@ msgstr "No hay ordenes de compra para descargar."
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_portal_my_purchase_orders
 msgid "No purchase orders yet."
-msgstr ""
+msgstr "Aún no hay órdenes de compra."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "No reference app code found for this project."
-msgstr ""
+msgstr "No se encontró código de aplicación de referencia para este proyecto."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "No related event found."
-msgstr ""
+msgstr "No se encontró un evento relacionado."
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -1698,7 +2317,7 @@ msgid ""
 "No tenant found., ensure you have configured the tenant in "
 "ike_event_purchase.tenant parameter."
 msgstr ""
-"No se encontró un tenant, asegúrese de haber configurado el tenant en el "
+"No se encontró el tenant. Asegúrese de haber configurado el tenant en el "
 "parámetro ike_event_purchase.tenant."
 
 #. module: ike_event_purchase
@@ -1708,24 +2327,34 @@ msgid "No validated CFDI found for this order."
 msgstr "No se encontró un CFDI validado para esta orden."
 
 #. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_payment_state__not_paid
+msgid "Not Paid"
+msgstr "Sin pagar"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_status__no
+msgid "Nothing to Bill"
+msgstr "Nada por facturar"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__message_needaction_counter
 msgid "Number of Actions"
-msgstr ""
+msgstr "Número de acciones"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__message_has_error_counter
 msgid "Number of errors"
-msgstr ""
+msgstr "Número de errores"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_ike_event_authorized_amount_request__message_needaction_counter
 msgid "Number of messages requiring action"
-msgstr ""
+msgstr "Número de mensajes que requieren una acción"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_ike_event_authorized_amount_request__message_has_error_counter
 msgid "Number of messages with delivery error"
-msgstr ""
+msgstr "Número de mensajes con error de entrega"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -1733,54 +2362,62 @@ msgstr ""
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "Only CCC users can request an authorized amount increase."
 msgstr ""
+"Solo los usuarios CCC pueden solicitar un aumento del monto autorizado."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Only a pending request can be cancelled."
-msgstr ""
+msgstr "Solo se puede cancelar una solicitud pendiente."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Only a validated request can be approved."
-msgstr ""
+msgstr "Solo se puede aprobar una solicitud validada."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Only one pending increase request is allowed per cost review."
 msgstr ""
+"Solo se permite una solicitud de aumento pendiente por revisión de costos."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Only requests without an authorization process can be deleted."
-msgstr ""
+msgstr "Solo se pueden eliminar solicitudes sin un proceso de autorización."
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/ike_event.py:0
+msgid "Only the assigned user or the administrator can validate prices"
+msgstr "Solo el usaurio asignado puede confirmar los precios."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Only the requester or authorizer can cancel this request."
-msgstr ""
+msgstr "Solo el solicitante o el autorizador pueden cancelar esta solicitud."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Only the selected CCC Leader can authorize this request."
-msgstr ""
+msgstr "Solo el Líder CCC seleccionado puede autorizar esta solicitud."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Only the selected CCC Leader can edit the requested amount."
-msgstr ""
+msgstr "Solo el Líder CCC seleccionado puede editar el monto solicitado."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Only the selected CCC Leader can reject this request."
-msgstr ""
+msgstr "Solo el Líder CCC seleccionado puede rechazar esta solicitud."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__open
@@ -1795,9 +2432,14 @@ msgstr ""
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
 msgid "Orden de compra"
 msgstr ""
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__date_order
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "Order Date"
+msgstr "Fecha límite de la orden"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__order_line
@@ -1805,9 +2447,27 @@ msgid "Order Lines"
 msgstr "Líneas de la orden"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_review_list/purchase_order_review.xml:0
+msgid "Order Review"
+msgstr "Revisión de orden"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_purchase_orders
 msgid "Origen:"
 msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Origin"
+msgstr "Origen"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__x_origin_events
+msgid "Origin Events"
+msgstr "Eventos origen"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_origin_events
@@ -1815,9 +2475,25 @@ msgid "Origin events"
 msgstr "Eventos origen"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Origins"
+msgstr "Orígenes"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "Other Information"
 msgstr "Otra Información"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "PO Invoice Status"
+msgstr "Estado de facturación"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__x_po_ref_sap
+msgid "PO SAP"
+msgstr ""
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_invoices
@@ -1835,6 +2511,8 @@ msgstr ""
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.js:0
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__account_move__x_status_invoice__paid
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_payment_state__paid
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__x_status_invoice__paid
 msgid "Paid"
 msgstr "Pagada"
 
@@ -1851,20 +2529,62 @@ msgid "Paid Invoices"
 msgstr "Facturas pagadas"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.js:0
+msgid "Parcialmente facturado"
+msgstr ""
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_parent_expedient
 msgid "Parent Expedient"
 msgstr "Evento origen"
 
 #. module: ike_event_purchase
 #. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Partially Invoiced"
+msgstr "Parcialmente facturado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_details/invoices_details.js:0
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_payment_state__partial
 msgid "Partially Paid"
+msgstr "Pagado parcialmente"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__country_id
+msgid "Partner Country"
 msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Payment Event Type"
+msgstr "Tipo de evento de pago"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__invoice_payment_state
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "Payment Status"
+msgstr "Estado"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_event_type_id
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_payment_event_type_id
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+msgid "Payment event type"
+msgstr "Tipo de evento de pago"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_invoices
 msgid "Pendiente de pago"
 msgstr ""
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__validation_status__pending
+msgid "Pending"
+msgstr "Pendiente"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__state__draft
@@ -1875,40 +2595,68 @@ msgstr "Autorización pendiente"
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
 msgid "Pending Payment"
-msgstr "Pendiente a pagar"
+msgstr "Por pagar"
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_details/invoices_details.js:0
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.js:0
 msgid "Pending to Pay"
-msgstr "Pendiente a pagar"
+msgstr "Pendiente por pagar"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Phone"
+msgstr "Teléfono"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Plate"
+msgstr "Placa"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/xml/tier_review_amounts.xml:0
+msgid "Por hacer"
+msgstr ""
 
 #. module: ike_event_purchase
 #: model:ir.actions.report,name:ike_event_purchase.action_report_portal_invoices
 msgid "Portal Invoices Statement"
-msgstr ""
+msgstr "Estado de cuenta de facturas del portal"
 
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_report_ike_event_purchase_report_portal_invoices
 msgid "Portal Invoices Statement Report"
-msgstr ""
+msgstr "Reporte de estado de cuenta de facturas del portal"
 
 #. module: ike_event_purchase
 #: model:ir.actions.report,name:ike_event_purchase.action_report_portal_purchase_orders
 msgid "Portal Purchase Orders Statement"
-msgstr ""
+msgstr "Estado de cuenta de órdenes de compra del portal"
 
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_report_ike_event_purchase_report_portal_purchase_orders
 msgid "Portal Purchase Orders Statement Report"
-msgstr ""
+msgstr "Reporte de estado de cuenta de órdenes de compra del portal"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_res_config_settings__x_display_po_summary_portal
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.res_config_settings_view_form_purchase_inherit_ike_event_purchase
 msgid "Portal Summary Cards"
 msgstr "Tarjetas de resumen del portal"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_state__posted
+msgid "Posted"
+msgstr "Registrado"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "Posted Invoice"
+msgstr ""
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
@@ -1920,6 +2668,17 @@ msgstr "Previsualiza el correo de recordatorio enviándolo a ti mismo."
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "Price"
 msgstr "Precio"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:purchase.purchase_order_form
+msgid "Print RFQ"
+msgstr "Imprimir revisión de costos"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "Prices accepted successfully"
+msgstr "Precios exitosamente aceptados"
 
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_product_product
@@ -1940,7 +2699,7 @@ msgstr "Proyectos"
 #. odoo-python
 #: code:addons/ike_event_purchase/controllers/main.py:0
 msgid "Project '%s' not found or sequence not set"
-msgstr ""
+msgstr "Proyecto '%s' no encontrado o secuencia no establecida"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.ir_sequence_view_search_inherit_ike_event_purchase
@@ -1961,15 +2720,18 @@ msgstr ""
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.res_config_settings_view_form_purchase_inherit_ike_event_purchase
 msgid "Purchase Consolidation"
-msgstr "Consolidación"
+msgstr "Consolidación de compras"
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #. odoo-python
 #: code:addons/ike_event_purchase/controllers/portal.py:0
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.js:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
 #: model:ir.model,name:ike_event_purchase.model_purchase_order
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__state__purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
 msgid "Purchase Order"
 msgstr "Orden de compra"
 
@@ -1984,15 +2746,37 @@ msgid "Purchase Order Lines"
 msgstr "Líneas de orden de compra"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.portal_my_home_menu_order_review
+msgid "Purchase Order Review"
+msgstr "Revisión ordenes de compra"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Purchase Order'"
+msgstr "Orden de compra'"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.res_config_settings_view_form_purchase_inherit_ike_event_purchase
 msgid "Purchase Portal"
 msgstr "Portal de compras"
 
 #. module: ike_event_purchase
+#: model:ir.actions.act_window,name:ike_event_purchase.action_custom_purchase_order_finance_report_all
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.custom_purchase_order_finance_report_view_list
+msgid "Purchase and Invoice Analysis"
+msgstr "Análisis de compras y facturas"
+
+#. module: ike_event_purchase
+#: model:ir.model,name:ike_event_purchase.model_custom_purchase_report_finance
+msgid "Purchase and Invoice Header Report"
+msgstr "Informe de compras y facturas"
+
+#. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/controllers/portal.py:0
 msgid "Purchase order not found"
-msgstr ""
+msgstr "Orden de compra no encontrada"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2003,7 +2787,7 @@ msgstr "Ordenes de compra consolidadas"
 #. module: ike_event_purchase
 #: model:ir.actions.server,name:ike_event_purchase.ir_cron_process_po_tickets_done_ir_actions_server
 msgid "Purchase: Auto-complete Tickets from Event POs"
-msgstr ""
+msgstr "Compras: autocompletar tickets desde órdenes de compra de eventos"
 
 #. module: ike_event_purchase
 #: model:mail.template,name:ike_event_purchase.email_template_edi_purchase
@@ -2021,25 +2805,60 @@ msgid "Purchases Count"
 msgstr "Cantidad de Compras"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "Purchases and Invoices"
+msgstr "Compras y facturas"
+
+#. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "Qty"
 msgstr "Cantidad"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__product_qty
 msgid "Quantity"
 msgstr "Cantidad"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
+msgid "Quotation"
+msgstr "Cotización"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "RFC"
+msgstr ""
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__state__sent
+msgid "RFQ Sent"
+msgstr "Revisión de costos enviada"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__rating_ids
 msgid "Ratings"
-msgstr ""
+msgstr "Valoraciones"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
+msgid "Reactivate cost review"
+msgstr "Reactivar revisión de costos"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__reason
 msgid "Reason"
-msgstr ""
+msgstr "Motivo"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Receipt Date"
+msgstr "Fecha de recepción"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_purchase_purchase_order_portal_content
@@ -2055,24 +2874,38 @@ msgstr "Recibido"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_record_tenant
 msgid "Record Tenant"
-msgstr ""
+msgstr "Tenant del registro"
 
 #. module: ike_event_purchase
-#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__name
-msgid "Reference"
-msgstr ""
-
-#. module: ike_event_purchase
-#: model:ir.model.fields,field_description:ike_event_purchase.field_project_project__x_ref_app
-msgid "Reference app"
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
+msgid "Ref."
 msgstr ""
 
 #. module: ike_event_purchase
 #. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.js:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Ref. SAP"
+msgstr ""
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__order_id
+#: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__name
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_project_project__x_ref_app
+msgid "Reference app"
+msgstr "Aplicación de referencia"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__rejected
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__account_move__x_status_invoice__rejected
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__x_status_invoice__rejected
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__state__rejected
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__validation_status__rejected
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__rejected
 msgid "Rejected"
 msgstr "Rechazada"
@@ -2080,13 +2913,18 @@ msgstr "Rechazada"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__rejected_message
 msgid "Rejected Message"
-msgstr ""
+msgstr "Mensaje de rechazo"
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
 msgid "Rejected invoices"
 msgstr "Facturas rechazadas"
+
+#. module: ike_event_purchase
+#: model:ir.ui.menu,name:ike_event_purchase.custom_purchase_report_finance
+msgid "Report Purchase"
+msgstr ""
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_invoices
@@ -2104,19 +2942,55 @@ msgid "Request Increase"
 msgstr "Solicitud de incremento"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
+msgid "Request for Quotation"
+msgstr "Solicitud de Cotización"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.tier_validation_buttons_sentence_case
+msgid "Request validation"
+msgstr "Solicitar validación"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
+#: code:addons/purchase/models/purchase_order.py:0
+#: model:ir.actions.report,name:purchase.report_purchase_quotation
+#: model_terms:ir.ui.view,arch_db:purchase.purchase_order_portal_content
+#: model_terms:ir.ui.view,arch_db:purchase.report_purchasequotation_document
+msgid "Request for Quotation"
+msgstr "Revisión de costos"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:purchase.portal_my_purchase_rfqs
+msgid "Requests For Quotation"
+msgstr "Revisión de costos"
+
+#. module: ike_event_purchase
+#: model:ir.actions.act_window,name:purchase.action_rfq_form
+#: model:ir.actions.act_window,name:purchase.purchase_rfq
+#: model:ir.ui.menu,name:purchase.menu_purchase_rfq
+#: model_terms:ir.ui.view,arch_db:purchase.portal_my_home_menu_purchase
+#: model_terms:ir.ui.view,arch_db:purchase.portal_my_home_purchase
+#: model_terms:ir.ui.view,arch_db:purchase.view_purchase_order_search
+msgid "Requests for Quotation"
+msgstr "Revisión de costos"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_tier_review__increase_requested_amount
 msgid "Requested Amount"
-msgstr ""
+msgstr "Monto solicitado"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__requested_amount
 msgid "Requested Authorized Amount"
-msgstr ""
+msgstr "Monto autorizado solicitado"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__requester_id
 msgid "Requested by"
-msgstr ""
+msgstr "Solicitado por"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_require_change_reason
@@ -2131,20 +3005,37 @@ msgstr "Resuelto"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__activity_user_id
 msgid "Responsible User"
+msgstr "Usuario responsable"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.tier_validation_buttons_sentence_case
+msgid "Restart validation"
+msgstr "Reiniciar la validación"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_payment_state__reversed
+msgid "Reversed"
 msgstr ""
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "Review request %(request)s for event %(event)s."
-msgstr ""
+msgstr "Revisar la solicitud %(request)s para el evento %(event)s."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__reviewer_ids
 msgid "Reviewers"
-msgstr ""
+msgstr "Revisores"
 
 #. module: ike_event_purchase
+#: model:mail.message.subtype,name:purchase.mt_rfq_sent
+msgid "RFQ Sent"
+msgstr "Revisión de costos enviada"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_purchase_orders
 msgid "SAP"
 msgstr ""
@@ -2152,34 +3043,38 @@ msgstr ""
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_sap_code_income
 msgid "SAP Code Income"
-msgstr ""
+msgstr "Código SAP de ingreso"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_sap_code_outgoing
 msgid "SAP Code Outgoing"
-msgstr ""
+msgstr "Código SAP de egreso"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_sap_company_code
 msgid "SAP Company Code"
-msgstr ""
+msgstr "Código de compañía SAP"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_sap_connection_error_message
 msgid "SAP Connection Error Message"
-msgstr ""
+msgstr "Mensaje de error de conexión SAP"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_sap_document_currency
 msgid "SAP Document Currency"
-msgstr ""
+msgstr "Moneda de documento SAP"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_sap_product_description
 msgid "SAP Product Description"
-msgstr ""
+msgstr "Descripción de producto SAP"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_account_bank_statement_line__x_ref_sap
+#: model:ir.model.fields,field_description:ike_event_purchase.field_account_move__x_ref_sap
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_ref_sap
 msgid "SAP Reference"
 msgstr "Referencia SAP"
@@ -2187,7 +3082,7 @@ msgstr "Referencia SAP"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_sap_reference_received
 msgid "SAP Reference Received"
-msgstr ""
+msgstr "Referencia SAP recibida"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2196,14 +3091,57 @@ msgid "SAP Reference: %s"
 msgstr "Referencia SAP %s"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "SAT"
+msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "SAT Cloud Status"
+msgstr "Estado de nube SAT"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__message_has_sms_error
 msgid "SMS Delivery error"
-msgstr ""
+msgstr "Error de entrega de SMS"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__6
 msgid "Saturday"
 msgstr "Sábado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_review_list/purchase_order_review.xml:0
+msgid "Search by Order Review..."
+msgstr "Buscar por revisión de orden..."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
+msgid "Search by Quotation..."
+msgstr "Buscar por Cotización..."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Search by SAP reference..."
+msgstr "Buscar por referencia SAP..."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
+msgid "Search by event..."
+msgstr "Buscar por evento..."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Search by purchase order..."
+msgstr "Buscar por orden de compra..."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_project_project__x_purchase_order_sequence_id
@@ -2216,6 +3154,30 @@ msgid ""
 "Secuencia nativa de Odoo que se usará para numerar las órdenes de compra de "
 "este proyecto."
 msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Select concept"
+msgstr "Seleccionar concepto"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Send Dispute"
+msgstr "Enviar disputa"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Send a Message"
+msgstr "Enviar mensaje"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_review_list/purchase_order_review_list.js:0
+msgid "Sent"
+msgstr "Enviado"
 
 #. module: ike_event_purchase
 #: model:mail.template,description:ike_event_purchase.email_template_edi_purchase
@@ -2244,19 +3206,33 @@ msgid "Solicitud de Cotización"
 msgstr ""
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Specify the reason for the change"
+msgstr "Especifica el motivo del cambio"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__stage_id
 msgid "Stage"
-msgstr ""
+msgstr "Etapa"
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
 msgid "Start Date"
-msgstr "Fecha inicio"
+msgstr "Fecha de inicio"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Start Dispute"
+msgstr "Iniciar disputa"
 
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__state
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__state
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__state
 msgid "Status"
@@ -2270,6 +3246,21 @@ msgid ""
 "Today: Activity date is today\n"
 "Planned: Future activities."
 msgstr ""
+"Estado basado en las actividades\n"
+"Vencida: La fecha límite ya pasó\n"
+"Hoy: La fecha de la actividad es hoy\n"
+"Planificada: Actividad futura."
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__duration_tracking
+msgid "Status time"
+msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "SubTotal"
+msgstr "Subtotal"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -2294,6 +3285,8 @@ msgid "Subservice"
 msgstr "Subservicio"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_purchase_orders
 msgid "Subtotal"
 msgstr ""
@@ -2318,7 +3311,18 @@ msgstr "Subtotal Disputa"
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
 msgid "Subtotal invoices"
-msgstr "Subtotal de facturas"
+msgstr "Subtotal facturas"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.custom_purchase_order_finance_report_view_list
+msgid "Sum of Total"
+msgstr ""
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,help:ike_event_purchase.field_account_bank_statement_line__x_gross_sale
+#: model:ir.model.fields,help:ike_event_purchase.field_account_move__x_gross_sale
+msgid "Sum of untaxed amount plus positive taxes (excludes withholdings)."
+msgstr "Suma del importe no gravado más los impuestos positivos (excluye las retenciones)."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__0
@@ -2326,9 +3330,23 @@ msgid "Sunday"
 msgstr "Domingo"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_form_view_inherit_ike_event_purchase
 msgid "Supplier"
 msgstr "Proveedor"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Supplier Address"
+msgstr "Dirección Proveedor"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Supplier Phone"
+msgstr "Teléfono Proveedor"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_supplier_product_id
@@ -2341,9 +3359,15 @@ msgid "Supplier Purchase Consolidate"
 msgstr "Consolidación de compras de proveedores"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Supplier RFC"
+msgstr "RFC Proveedor"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
 msgid "Synchronize"
-msgstr ""
+msgstr "Sincronizar"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order_line__x_parent_event_id
@@ -2352,7 +3376,7 @@ msgstr ""
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order_line__x_sap_code_outgoing
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order_line__x_sap_product_description
 msgid "Techinical: Refer to the event of the purchase order"
-msgstr ""
+msgstr "Técnico: Referencia al evento de la orden de compra"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order__x_app_code
@@ -2360,6 +3384,8 @@ msgid ""
 "Technical: App code of record, to syncronize with SAP at consolidation. "
 "External record"
 msgstr ""
+"Técnico: Código de aplicación del registro, para sincronizar con SAP en la "
+"consolidación. Registro externo"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order__x_external_body
@@ -2367,6 +3393,8 @@ msgid ""
 "Technical: Body of the external record, to syncronize with SAP at "
 "consolidation. External record"
 msgstr ""
+"Técnico: Cuerpo del registro externo, para sincronizar con SAP en la "
+"consolidación. Registro externo"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order__x_client_code
@@ -2374,6 +3402,8 @@ msgid ""
 "Technical: Client code, to syncronize with SAP at consolidation. External "
 "record"
 msgstr ""
+"Técnico: Código de cliente, para sincronizar con SAP en la consolidación. "
+"Registro externo"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_res_partner__x_consolidation_day_of_month_ids
@@ -2389,8 +3419,8 @@ msgid ""
 "Technical: Default purchase project linked to the company at consolidate and"
 " send SAP data."
 msgstr ""
-"Técnico: Proyecto de compra predeterminado vinculado a la compañía en "
-"consolidar y enviar datos SAP."
+"Técnico: Proyecto de compras predeterminado vinculado a la compañía al "
+"consolidar y enviar datos a SAP."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_generated_from_event
@@ -2420,24 +3450,24 @@ msgid ""
 "Technical: Max lines per purchase order at consolidation. If the number of "
 "lines is greater than this value, the purchase order will be splitted."
 msgstr ""
-"Técnico: Máximo de líneas por pedido de compra en consolidación. Si el "
-"número de líneas es mayor que este valor, el pedido de compra se dividirá."
+"Técnico: Máximo de líneas por orden de compra en la consolidación. Si el "
+"número de líneas es mayor que este valor, la orden de compra será dividida."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order__x_membership_plan_id
 msgid "Technical: Membership Plan linked to the event of the purchase order"
-msgstr ""
+msgstr "Técnico: Plan de membresía vinculado al evento de la orden de compra"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order__x_nu_user_id
 msgid "Technical: NU linked to the event of the purchase order"
-msgstr ""
+msgstr "Técnico: NU vinculado al evento de la orden de compra"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order__x_external_api_record
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order_line__x_external_api_record
 msgid "Technical: Record created by external API."
-msgstr ""
+msgstr "Técnico: Registro creado por API externa."
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order__x_sap_company_code
@@ -2445,6 +3475,8 @@ msgid ""
 "Technical: SAP company code, to syncronize with SAP at consolidation. "
 "External record"
 msgstr ""
+"Técnico: Código de compañía SAP, para sincronizar con SAP en la "
+"consolidación. Registro externo"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order__x_sap_document_currency
@@ -2452,6 +3484,8 @@ msgid ""
 "Technical: SAP document currency, to syncronize with SAP at consolidation. "
 "External record"
 msgstr ""
+"Técnico: Moneda de documento SAP, para sincronizar con SAP en la "
+"consolidación. Registro externo"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order__x_record_tenant
@@ -2459,6 +3493,8 @@ msgid ""
 "Technical: Tenant of record, to syncronize with SAP at consolidation. "
 "External record"
 msgstr ""
+"Técnico: Tenant del registro, para sincronizar con SAP en la consolidación. "
+"Registro externo"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_purchase_order__x_dispute_iteration_count
@@ -2469,32 +3505,39 @@ msgstr "Técnico: El número de veces que se ha enviado la disputa."
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "Test SAP Sync"
-msgstr ""
+msgstr "Probar sincronización SAP"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/purchase_order.py:0
+msgid "The CCC subtotal must not exceed the authorized amount dispute."
+msgstr "El subtotal CCC no debe exceder el monto disputado autorizado."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/wizard/sh_helpdesk_ticket_assignment_wizard.py:0
 msgid "The assigned user must belong to a helpdesk team."
-msgstr ""
+msgstr "El usuario asignado debe pertenecer a un equipo de mesa de ayuda."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "The authorized amount increase request %(request)s was rejected."
 msgstr ""
+"La solicitud de aumento de monto autorizado %(request)s fue rechazada."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "The authorizer must have the CCC Leader role."
-msgstr ""
+msgstr "El autorizador debe tener el rol Líder CCC."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "The cost review must be linked to an event."
-msgstr ""
+msgstr "La revisión de costos debe estar vinculada a un evento."
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2509,13 +3552,26 @@ msgid ""
 "The dispute authorized amount can only be changed through an approved "
 "increase request."
 msgstr ""
+"El monto autorizado disputado solo puede modificarse mediante una solicitud "
+"de aumento aprobada."
 
 #. module: ike_event_purchase
-#. odoo-python
-#: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
-#: code:addons/ike_event_purchase/models/purchase_order.py:0
-msgid "The disputed amount does not exceed the authorized amount."
-msgstr ""
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "The dispute has been approved."
+msgstr "La disputa ha sido aprobada."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "The dispute has been rejected."
+msgstr "La disputa ha sido rechazada."
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "The dispute has been submitted."
+msgstr "La disputa ha sido enviada."
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2534,7 +3590,7 @@ msgid ""
 "The following orders have no customer and cannot be consolidated:\n"
 "%s"
 msgstr ""
-"Las siguientes órdenes no tienen un cliente y no pueden ser consolidadas:\n"
+"Las siguientes órdenes no tienen cliente y no pueden ser consolidadas:\n"
 "%s"
 
 #. module: ike_event_purchase
@@ -2544,6 +3600,8 @@ msgid ""
 "The following orders have no partner and cannot be consolidated:\n"
 "%s"
 msgstr ""
+"Las siguientes órdenes no tienen contacto y no pueden ser consolidadas:\n"
+"%s"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2552,6 +3610,8 @@ msgid ""
 "The following orders have no project and cannot be consolidated:\n"
 "%s"
 msgstr ""
+"Las siguientes órdenes no tienen proyecto y no pueden ser consolidadas:\n"
+"%s"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2560,6 +3620,8 @@ msgid ""
 "The following orders have no sub service and cannot be consolidated:\n"
 "%s"
 msgstr ""
+"Las siguientes órdenes no tienen subservicio y no pueden ser consolidadas:\n"
+"%s"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2574,19 +3636,20 @@ msgstr ""
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "The requested amount must cover the amount disputed by the supplier."
-msgstr ""
+msgstr "El monto solicitado debe cubrir el monto disputado por el proveedor."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "The requested amount must cover the current supplier dispute."
-msgstr ""
+msgstr "El monto solicitado debe cubrir la disputa actual del proveedor."
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "The source values of an increase request cannot be changed."
 msgstr ""
+"Los valores de origen de una solicitud de aumento no se pueden modificar."
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2595,6 +3658,8 @@ msgid ""
 "The supplier dispute exceeds the authorized amount. Request and obtain an "
 "authorized amount increase before approving it."
 msgstr ""
+"La disputa del proveedor excede el monto autorizado. Solicite y obtenga un "
+"aumento del monto autorizado antes de aprobarla."
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2612,7 +3677,7 @@ msgstr "Hay campos con valores inválidos"
 #. odoo-python
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "There are no purchase orders to consolidate."
-msgstr ""
+msgstr "No hay órdenes de compra para consolidar."
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2624,7 +3689,7 @@ msgstr "Hay una disputa en esta orden."
 #. odoo-python
 #: code:addons/ike_event_purchase/models/authorized_amount_request.py:0
 msgid "There is already a pending increase request: %s"
-msgstr ""
+msgstr "Ya existe una solicitud de aumento pendiente: %s"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2637,6 +3702,13 @@ msgstr "No hay ninguna disputa abierta en esta orden."
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "There is no submitted dispute on this order."
 msgstr "No hay ninguna disputa enviada en esta orden."
+
+#. module: ike_event_purchase
+#: model_terms:ir.actions.act_window,help:ike_event_purchase.action_custom_purchase_order_finance_report_all
+msgid ""
+"This analysis allows you to easily check and analyze your purchase orders "
+"linked with vendor invoices."
+msgstr ""
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2673,17 +3745,17 @@ msgstr ""
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_ticket_dashboard
 msgid "Ticket Dashboard"
-msgstr "Tablero de boletos"
+msgstr "Tablero de tickets"
 
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_sh_helpdesk_ticket_assignment_wizard
 msgid "Ticket assignment wizard"
-msgstr ""
+msgstr "Asistente de asignación de tickets"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event__x_ticket_ids_count
 msgid "Tickets Count"
-msgstr ""
+msgstr "Cantidad de tickets"
 
 #. module: ike_event_purchase
 #: model:ir.ui.menu,name:ike_event_purchase.sh_helpdesk_ticket_assignment_menu
@@ -2698,7 +3770,7 @@ msgstr ""
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__ticket_assign_ids
 msgid "Tickets assigned"
-msgstr ""
+msgstr "Tickets asignados"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_assignment_wizard_view_form
@@ -2708,7 +3780,22 @@ msgstr ""
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__ticket_not_assign_ids
 msgid "Tickets not assigned"
-msgstr ""
+msgstr "Tickets no asignados"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_assignment_wizard_view_form
+msgid "Reassign"
+msgstr "Reasignar"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__reassigned_user_id
+msgid "Reassign to user"
+msgstr "Reasignar al usuario"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket_assignment_wizard__ticket_reassignment_ids
+msgid "Tickets to reassign"
+msgstr "Tickets para reasignar"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_ike_event_screen_inherit_purchase_order_form
@@ -2723,7 +3810,7 @@ msgstr "Definición de Nivel"
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_tier_review
 msgid "Tier Review"
-msgstr "Revisión de Nivel"
+msgstr "Revisión de niveles"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_res_company__x_time_for_automatic_purchase_generation
@@ -2733,6 +3820,11 @@ msgid "Time for automatic purchase generation"
 msgstr "Tiempo espera para generación automatica"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__state__to_approve
+msgid "To Approve"
+msgstr "Por aprobar"
+
+#. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.js:0
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__state__to_consolidate
@@ -2740,9 +3832,14 @@ msgid "To Consolidate"
 msgstr "Para consolidar"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "To Invoice"
+msgstr "Facturas en espera"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__to_validate_message
 msgid "To Validate Message"
-msgstr ""
+msgstr "Mensaje por validar"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -2751,9 +3848,16 @@ msgid "Todos Los Tickets"
 msgstr ""
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__amount_total
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_purchase_orders
 msgid "Total"
 msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_review_list/purchase_order_review.xml:0
+msgid "Total Order Reviews"
+msgstr "Total de revisiones de ordenes"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -2786,7 +3890,7 @@ msgstr "Martes"
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_ike_event_authorized_amount_request__activity_exception_decoration
 msgid "Type of the exception activity on record."
-msgstr ""
+msgstr "Tipo de actividad con excepción en el registro."
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
@@ -2794,11 +3898,10 @@ msgid "UdM"
 msgstr ""
 
 #. module: ike_event_purchase
-#. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.js:0
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__account_move__x_status_invoice__under_review
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__x_status_invoice__under_review
 msgid "Under Review"
-msgstr "En revisión"
+msgstr ""
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -2813,9 +3916,21 @@ msgstr "Cost unitario Final"
 
 #. module: ike_event_purchase
 #. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Unit Price CTO"
+msgstr "CTO Unitario"
+
+#. module: ike_event_purchase
+#. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.js:0
 msgid "Unknown error"
 msgstr "Error desconocido"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
+msgid "Untaxed Amount Approved"
+msgstr "Importe no sujeto a impuestos"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__amount_untaxed_approved
@@ -2828,15 +3943,24 @@ msgid "Untaxed Amount CDS"
 msgstr "Subtotal CDS"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__amount_untaxed_dispute
 msgid "Untaxed Amount Dispute"
-msgstr "Subtotal Disputa"
+msgstr "Subtotal Disputado"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__amount_untaxed
+msgid "Untaxed Total"
+msgstr ""
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.project_project_view_form_inherit_ike_event_purchase
 msgid ""
 "Use a specific reference for purchase orders send to SAP from this project"
 msgstr ""
+"Usar una referencia específica para las órdenes de compra enviadas a SAP "
+"desde este proyecto"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.project_project_view_form_inherit_ike_event_purchase
@@ -2859,23 +3983,30 @@ msgstr ""
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__validated
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__validation_status__validated
 msgid "Validated"
-msgstr ""
+msgstr "Validado"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__validated_message
 msgid "Validated Message"
-msgstr ""
+msgstr "Mensaje de validación"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Validation Log"
+msgstr "Registro de validación"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__validation_status
 msgid "Validation Status"
-msgstr ""
+msgstr "Estado de validación"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__review_ids
 msgid "Validations"
-msgstr ""
+msgstr "Validaciones"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_product_product__standard_price
@@ -2889,6 +4020,12 @@ msgstr ""
 "        Se utiliza para calcular los márgenes de las órdenes de venta."
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Vehicle"
+msgstr "Vehículo"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_invoices
 msgid "Vencimiento"
 msgstr ""
@@ -2896,14 +4033,27 @@ msgstr ""
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__partner_id
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
 msgid "Vendor"
 msgstr "Proveedor"
 
 #. module: ike_event_purchase
 #. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Vendor Bill"
+msgstr "Factura de proveedor"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_custom_purchase_order_finance_search
+msgid "Vendor Country"
+msgstr ""
+
+#. module: ike_event_purchase
+#. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
 msgid "Vendor Invoice"
-msgstr "Factura proveedor"
+msgstr "Factura de proveedor"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_tickets_po_inherited_view_form_inherit_ike_event_purchase
@@ -2913,7 +4063,7 @@ msgstr "Ver revisión de costos"
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
 msgid "View Increase Requests"
-msgstr ""
+msgstr "Ver solicitudes de incremento"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
@@ -2926,6 +4076,22 @@ msgid "View service cost details"
 msgstr "Ver detalle de costo del servicio"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__validation_status__waiting
+msgid "Waiting"
+msgstr "En espera"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_status__to_invoice
+msgid "Waiting Bills"
+msgstr "Facturas en espera"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Waiting for Invoice"
+msgstr "En espera de factura"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_res_company__x_time_for_automatic_purchase_generation
 #: model:ir.model.fields,help:ike_event_purchase.field_res_config_settings__x_time_for_automatic_purchase_generation
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.res_config_settings_view_form_purchase_inherit_ike_event_purchase
@@ -2935,12 +4101,12 @@ msgstr "Tiempo de espera para aprobar de forma automatica la Cotización"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__website_message_ids
 msgid "Website Messages"
-msgstr ""
+msgstr "Mensajes del sitio web"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,help:ike_event_purchase.field_ike_event_authorized_amount_request__website_message_ids
 msgid "Website communication history"
-msgstr ""
+msgstr "Historial de comunicación del sitio web"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__res_partner__x_consolidation_day_of_week__3
@@ -2953,9 +4119,32 @@ msgid "Weekly"
 msgstr "Semanal"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__validation_status__no
+msgid "Without validation"
+msgstr "Sin validación"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Workflow State"
+msgstr "Estado del flujo de trabajo"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Write a message..."
+msgstr "Escribe un mensaje..."
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_product_domain
 msgid "X Product Domain"
-msgstr ""
+msgstr "Dominio X del producto"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "XML Total"
+msgstr "Total XML"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -2973,7 +4162,7 @@ msgstr "Debe proponer al menos una nueva cantidad o precio antes de enviar."
 #. odoo-python
 #: code:addons/ike_event_purchase/wizard/sh_helpdesk_ticket_assignment_wizard.py:0
 msgid "You must select a destination stage."
-msgstr ""
+msgstr "Debe seleccionar una etapa de destino."
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -2987,6 +4176,12 @@ msgstr "Debe especificar el motivo del cambio"
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
 msgid "close"
 msgstr "cerrar"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/fields/helpdesk_stage_elapsed/helpdesk_stage_elapsed.js:0
+msgid "day"
+msgstr "día"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
@@ -3004,9 +4199,26 @@ msgid "ordenes incluidas"
 msgstr ""
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "Are you sure you want to delete this document?"
+msgstr "¿Estas seguro que deseas eliminar este documento?"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
+msgid "Document deleted."
+msgstr "Documento eliminado."
+
+#. module: ike_event_purchase
 #: model:mail.template,subject:ike_event_purchase.email_template_edi_purchase
 msgid "{{ object.company_id.name }} Order (Ref {{ object.name or 'n/a' }})"
-msgstr ""
+msgstr "{{ object.company_id.name }} Orden (Ref {{ object.name or 'n/a' }})"
+
+#. module: ike_event_purchase
+#: model:ir.cron,name:ike_event_purchase.ir_cron_done_zero_cost_review_to_draft_cancel
+msgid "Move blocked cost reviews to cost review cancel"
+msgstr "Mover revisiones de costos bloqueadas a revisión de costos cancelada"
 
 #. module: ike_event_purchase
 #: model:mail.template,subject:ike_event_purchase.ike_event_purchase_proposal_dispute_ticket
@@ -3014,27 +4226,3 @@ msgid ""
 "{{object.company_id.name}} Dispute opened (Ref {{object.name or 'n/a' }})"
 msgstr ""
 "{{object.company_id.name}} Disputa abierta (Ref {{object.name or 'n/a' }})"
-
-#. module: ike_event_purchase
-#. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
-msgid "Invoiced"
-msgstr "Facturado"
-
-#. module: ike_event_purchase
-#. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
-msgid "Invoice Number"
-msgstr "Número de factura"
-
-#. module: ike_event_purchase
-#. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
-msgid "Invoice Reference"
-msgstr "Referencia de factura"
-
-#. module: ike_event_purchase
-#. odoo-javascript
-#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
-msgid "Not Invoiced"
-msgstr "No facturado"

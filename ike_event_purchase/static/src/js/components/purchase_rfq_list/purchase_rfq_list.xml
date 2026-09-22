@@ -4,6 +4,34 @@
       <div class="text-center">Loading...</div>
     </t>
     <t t-else="">
+      <!-- Header KPI restricted by company settings AND supplier advanced portal permission -->
+      <div t-if="state.showKpi and state.hasAdvancedPortal" class="mb-4">
+          <h1 class="fw-bold display-5 mb-3">
+              Cost Review
+          </h1>
+          <div class="row g-3">
+
+              <div class="col">
+                  <div class="card kpi-card h-100">
+                      <div class="card-body text-center">
+                          <div class="kpi-title">Total orders</div>
+                          <span class="kpi-value"><t t-out="totalOrdersCount"/></span>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="col">
+                  <div class="card kpi-card h-100">
+                      <div class="card-body text-center">
+                          <div class="kpi-title">Subtotal OC</div>
+                          <span class="kpi-value"><t t-out="formatCurrency(subtotalOrdersAmount)"/></span>
+                      </div>
+                  </div>
+              </div>
+
+          </div>
+
+      </div>
       <!-- Filters Bar -->
       <div class="card border-0 shadow-sm rounded-3 mb-4">
         <div class="card-body py-3">

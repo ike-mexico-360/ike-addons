@@ -5,6 +5,10 @@ import { IkeSectionAndNoteListRender } from "./ike_section_and_note_field";
 
 export class IkeSupplierSectionAndNoteListRender extends IkeSectionAndNoteListRender {
     static template = "ike_event.IkeSectionAndNoteListRenderer";
+    setup() {
+        // console.log("IkeSectionAndNoteListRender", this);
+        super.setup();
+    }
     getActiveColumns(list) {
         let activeColumns = super.getActiveColumns(list);
         let timerWidgetColumn = activeColumns.find(col => col.name == "ike_timer_widget");
@@ -36,6 +40,9 @@ export class IkeSupplierSectionAndNoteListRender extends IkeSectionAndNoteListRe
             classes += " ike-row-manual";
         } else if (assignationType == 'manual_manual') {
             classes += " ike-row-manual-manual";
+        }
+        if (assignationType.startsWith("manual") && (record.data.evaluation_locked || record.data.evaluated && !record.data.evaluation_reevaluation)) {
+            classes += " ike-row-manual-locked";
         }
         return classes;
     }

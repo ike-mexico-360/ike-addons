@@ -237,6 +237,13 @@
         groups="base.group_system,custom_group_supplier_admin_system,custom_group_supplier_contralory,custom_group_supplier_support,custom_group_bi_queries"
         sequence="5"/>
 
+    <menuitem
+        id="custom_incident_type_menu"
+        name="Incident types"
+        action="custom_incident_type_action"
+        parent="configuration_menu_root"
+        sequence="7"/>
+
     <!-- Sub-menu Config -->
     <menuitem id="res_partner_menu_geographical_zones"
         name="Geographical Zones"

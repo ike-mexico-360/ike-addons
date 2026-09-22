@@ -43,8 +43,13 @@
     </record>
 
     <record id="custom_master_catalog.custom_group_supplier_admin_system" model="res.groups">
-        <field name="implied_ids" eval="[(4, ref('ike_event.group_ike_event_user')), (4, ref('custom_nu.group_custom_nus_user'))]"/>
+        <field name="implied_ids" eval="[(4, ref('group_ike_event_user')), (4, ref('custom_nu.group_custom_nus_user'))]"/>
     </record>
+
+    <record id="custom_master_catalog.custom_group_cx" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('group_ike_event_user')), (4, ref('custom_nu.group_custom_nus_user'))]"/>
+    </record>
+
     <record id="custom_master_catalog.custom_group_account_event_admin" model="res.groups">
         <field name="implied_ids" eval="[
             (4, ref('group_ike_event_user')),

@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <data>
+        <record id="account_email_status_payment_template" model="mail.template">
+            <field name="name">Invoice: Payment Status</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="subject">Payment: Invoice {{ object.ref }} to {{ object.partner_id.display_name }}</field>
+            <field name="partner_to">{{ object.partner_id.id }}</field>
+            <field name="description">Payment status email template</field>
+            <field name="body_html" type="html">
+                <div style="margin: 0px; padding: 0px; font-family: Arial, sans-serif;">
+                    <t t-call="custom_master_catalog.mail_template_header"/>
+                    <p>Your customer <t t-out="object.partner_id.display_name"/> has updated their invoice</p>
+
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                        <tbody>
+                            <tr>
+                                <td style="background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;">
+                                    Country
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">
+                                    <t t-out="object.partner_id.country_id.name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;">
+                                    Client
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">
+                                    <t t-out="object.partner_id.display_name"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;">
+                                    Invoice Number
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">
+                                    <t t-out="object.ref"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;">
+                                    Invoice Status
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">
+                                    Payment
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;">
+                                    Description
+                                </td>
+                                <td style="padding: 8px; border: 1px solid #ddd;">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <t t-call="custom_master_catalog.mail_template_footer"/>
+                </div>
+            </field>
+        </record>
+    </data>
+</odoo>

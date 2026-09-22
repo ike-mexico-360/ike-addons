@@ -31,7 +31,7 @@ export class IkeTimerWidget extends Component {
         this.isErpManager = null;
 
         useRecordObserver(async (record) => {
-            // console.log("useRecordObserver", record.data.state);
+            // console.log("useRecordObserver", record);
             let changed = false;
             if (this.resId != record.resId || this.state.current_state != record.data.state) {
                 changed = true
@@ -43,6 +43,10 @@ export class IkeTimerWidget extends Component {
             this.timer_duration = record.data.timer_duration;
             this.elapsed_time = record.data.elapsed_time;
             this.manual_notification = record.data.manual_notification;
+            this.state.evaluation_id = record.data.evaluation_id;
+            this.state.evaluation_reevaluation = record.data.evaluation_reevaluation;
+            this.state.evaluation_locked = record.data.evaluation_locked;
+            this.state.cost_invalid = record.data.cost_invalid;
             this.authorization_required = (
                 this.env.model.root.data.authorization_required
                 || this.env.model.root.data.uncovered_authorization_required
@@ -136,7 +140,7 @@ export class IkeTimerWidget extends Component {
         await this._executeAction(this.props.record, "action_reset");
     }
     async onNotify() {
-        if (this.state.blocked) {
+        if (this.state.blocked || this.state.evaluation_locked) {
             return;
         }
         this.state.blocked = true;
@@ -244,9 +248,10 @@ export class IkeTimerWidget extends Component {
     get showNotification() {
         return (
             this.state.current_state == 'available'
+            && !this.state.cost_invalid
             && !this.authorization_required
             && (
-                (this.state.is_manual && this.manual_notification)
+                (this.state.is_manual && this.manual_notification && this.state.evaluation_id && this.state.evaluation_reevaluation)
                 || ["electronic", "publication"].includes(this.state.assignation_type)
                 || (typeof odoo.debug == 'string' && odoo.debug.length > 0 && this.isErpManager)
             )

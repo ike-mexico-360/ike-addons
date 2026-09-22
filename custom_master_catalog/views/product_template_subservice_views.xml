@@ -55,7 +55,13 @@
                                     'search_view_ref': 'custom_master_catalog.custom_ike_concept_product_template_filter',
                                     'hide_disabled_enabled_filters': 1,
                                 }"
-                                />
+                            />
+                            <!-- <field name="x_has_incidents"/>
+                            <field name="x_incident_type_ids"
+                                widget="many2many_tags"
+                                invisible="not x_has_incidents"
+                                required="x_has_incidents"
+                                options="{'no_create': True}"/> -->
                         </group>
                     </group>
                     <notebook>

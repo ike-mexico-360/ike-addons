@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-16 22:05+0000\n"
-"PO-Revision-Date: 2026-04-16 22:05+0000\n"
+"POT-Creation-Date: 2026-09-14 22:50+0000\n"
+"PO-Revision-Date: 2026-09-14 22:50+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -964,6 +964,11 @@ msgid "Image 128"
 msgstr "Imagen 128"
 
 #. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__incident_type_id
+msgid "Incident type"
+msgstr "Tipo de incidencia"
+
+#. module: custom_nu
 #: model:ir.model.fields,field_description:custom_nu.field_custom_address_type__message_is_follower
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__message_is_follower
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan__message_is_follower
@@ -1105,7 +1110,6 @@ msgstr "Planes de cobertura"
 #. module: custom_nu
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__membership_plan_id
 #: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__membership_plan_id
-#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_nus_search
 msgid "Membership plan"
 msgstr "Plan de cobertura"
 
@@ -1911,3 +1915,9 @@ msgstr "Segundo inciso"
 #: code:addons/custom_nu/models/custom_nus.py:0
 msgid "unknown"
 msgstr "desconocido"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_nus__x_affiliation_name_search
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_custom_membership_nus_search
+msgid "Affiliation Name"
+msgstr "Nombre (Afiliación)"

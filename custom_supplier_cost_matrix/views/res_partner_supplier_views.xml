@@ -6,6 +6,9 @@
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="custom_master_catalog.res_partner_supplier_view_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_configuration_service_and_subservice_view']" position="attributes">
+                <attribute name="groups">!custom_master_catalog.custom_group_ccc_analyst,!custom_master_catalog.custom_group_ccc_coordinator,!custom_master_catalog.custom_group_ccc_boss</attribute>
+            </xpath>
             <div class="oe_button_box" name="button_box" position="inside">
                 <button name="action_cost_matrix_supplier_from_supplier_center_view"
                         type="object"

@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0\n"
+"Project-Id-Version: Odoo Server 18.0-20260504\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 19:46+0000\n"
-"PO-Revision-Date: 2026-07-30 19:46+0000\n"
+"POT-Creation-Date: 2026-09-21 17:28+0000\n"
+"PO-Revision-Date: 2026-09-21 17:28+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -153,6 +153,11 @@ msgstr ""
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__validation_type__api
 msgid "API"
+msgstr ""
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__x_ref_sap_api
+msgid "API SAP ref"
 msgstr ""
 
 #. module: custom_master_catalog
@@ -1164,11 +1169,13 @@ msgstr "¡Crea tu primera clasificación de teléfono!"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__create_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_pre_work_entry_type__create_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_mapping__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__create_uid
@@ -1202,11 +1209,13 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__create_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_pre_work_entry_type__create_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_mapping__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__create_date
@@ -1254,6 +1263,11 @@ msgstr "Actualización SEPOMEX: Linea"
 #: model:ir.model,name:custom_master_catalog.model_custom_import_postal_codes_log
 msgid "Custom Import Postal Codes Log"
 msgstr "Logs de actualización SEPOMEX"
+
+#. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_custom_incident_type
+msgid "Custom Incident Type"
+msgstr "Tipos de incidentes"
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_metropolitan_zone_view_form
@@ -1385,6 +1399,7 @@ msgstr "Eliminados"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__description
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_type__description
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__description
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__description
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_type__description
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__description
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__description
@@ -1541,11 +1556,13 @@ msgstr "Razón de desactivación"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__display_name
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_pre_work_entry_type__display_name
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_mapping__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__display_name
@@ -1725,6 +1742,11 @@ msgstr "Habilitado"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographic_subservice_wizard__state_id
 msgid "Entity"
 msgstr "Entidad"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__event_type_id
+msgid "Event Type"
+msgstr "Tipo de evento"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographic_subservice_wizard__event_type_id
@@ -2069,6 +2091,11 @@ msgid "Has external notification"
 msgstr "Notificación externa"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_has_incidents
+msgid "Has incidents"
+msgstr "Tiene incidentes"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_has_portal
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_has_portal
 msgid "Has portal"
@@ -2097,6 +2124,11 @@ msgid "Holidays..."
 msgstr "Días festivos..."
 
 #. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_template_form_homolog
+msgid "Homologation"
+msgstr "Homologación"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_type__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__id
@@ -2109,11 +2141,13 @@ msgstr "Días festivos..."
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_pre_work_entry_type__id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_mapping__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__id
@@ -2277,7 +2311,7 @@ msgstr "Importar vehículos"
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.action_custom_vehicle_import_wizard
 msgid "Importar usuarios de proveedor"
-msgstr "Importar usuarios de proveedor"
+msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__imported_records
@@ -2298,6 +2332,22 @@ msgstr "Códigos postales inactivos"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__inactive_zip_codes_count
 msgid "Inactive ZIP Codes Count"
 msgstr "Contador de códigos postales inactivos"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__incident_type_id
+msgid "Incident Type"
+msgstr "Tipo de incidente"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_incident_type_ids
+msgid "Incident Types"
+msgstr "Tipo de incidentes"
+
+#. module: custom_master_catalog
+#: model:ir.actions.act_window,name:custom_master_catalog.custom_incident_type_action
+#: model:ir.ui.menu,name:custom_master_catalog.custom_incident_type_menu
+msgid "Incident types"
+msgstr "Tipos de incidentes"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_data_source_field__field_type__int
@@ -2426,11 +2476,13 @@ msgstr "Última actualización"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__write_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_pre_work_entry_type__write_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_mapping__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__write_uid
@@ -2464,11 +2516,13 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__write_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_pre_work_entry_type__write_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_mapping__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_service_operational_area__write_date
@@ -2759,6 +2813,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__name
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__name
@@ -3244,6 +3299,7 @@ msgstr "Prioridad"
 
 #. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_product_template
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__product_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_mapping__product_id
 msgid "Product"
 msgstr "Producto"
@@ -3274,6 +3330,11 @@ msgstr "Variante del producto"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__product_domain
 msgid "Product domain"
 msgstr "Dominio del producto"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_product_homologation_model_id
+msgid "Product homologation"
+msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model.constraint,message:custom_master_catalog.constraint_custom_product_mapping_product_uniq
@@ -3355,14 +3416,29 @@ msgstr "Zona roja"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_types_statuses__ref
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_type_event__ref
 msgid "Ref"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__ref
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_weight_category__ref
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__ref
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__ref
 msgid "Reference"
 msgstr "Referencia"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_incident_type.py:0
+msgid "Reference must be alphanumeric."
+msgstr "La referencia debe ser alfanumérica."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_incident_type.py:0
+msgid "Reference must be unique."
+msgstr "La referencia debe ser única."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__res_ids
@@ -4532,6 +4608,7 @@ msgid "Website communication history"
 msgstr "Historial de comunicaciones del sitio web"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__weight_category_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle_model__x_vehicle_weight_category_id
 msgid "Weight Category"
 msgstr "Categoría de peso"

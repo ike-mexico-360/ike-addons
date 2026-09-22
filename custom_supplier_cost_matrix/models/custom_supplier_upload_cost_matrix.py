@@ -149,6 +149,9 @@ class CustomSupplierUploadCostMatrix(models.Model):
             'Categoría': {
                 'name': 'subservice_specification_id', 'required': False, 'domain': [('disabled', '=', False)]
             },
+            'Tipo de incidente': {
+                'name': 'incident_type_id', 'required': False, 'domain': False,
+            },
             'Costo': {
                 'name': 'cost', 'required': True, 'domain': False
             },
@@ -546,7 +549,7 @@ class CustomSupplierUploadCostMatrix(models.Model):
         required_fields = REQUIRED_LINE_FIELDS
         consider_duplicate_fields = required_fields + [
             'account_id', 'geographical_area_id', 'holiday_date_applies', 'active_agreement', 'date_end',
-            'vacation_schedule_ids', 'subservice_specification_id'
+            'vacation_schedule_ids', 'subservice_specification_id', 'incident_type_id'
         ]
         lines_to_import = defaultdict(list)
 
@@ -655,6 +658,7 @@ class CustomSupplierUploadCostMatrix(models.Model):
             "concept_id": line.concept_id.id,
             "subservice_specification_id": line.subservice_specification_id.id if line.subservice_specification_id else False,
             # "vehicle_category_id": line.vehicle_category_id.id if line.vehicle_category_id else False,
+            "incident_type_id": line.incident_type_id.id if line.incident_type_id else False,
             "account_id": line.account_id.id if line.account_id else False,  # FIX
             "cost": line.cost,
             "holiday_date_applies": line.holiday_date_applies,
@@ -695,6 +699,7 @@ class CustomSupplierCostProduct(models.Model):
     # ToDo: Remove vehicle_category_id
     vehicle_category_id = fields.Many2one(
         'fleet.vehicle.model.category', string='Category', sub_tracking=True, ondelete='restrict')
+    incident_type_id = fields.Many2one('custom.incident.type', string='Incident Type', tracking=True)
     account_id = fields.Many2one(
         comodel_name='res.partner',
         string='Account',
@@ -782,6 +787,7 @@ class CustomSupplierCostMatrixLine(models.Model):
         'custom.subservice.specification', string='Subservice Specification', tracking=True, index=True)
     # ToDo: Remove vehicle_category_id
     vehicle_category_id = fields.Many2one('fleet.vehicle.model.category', string='Category', tracking=True, index=True)
+    incident_type_id = fields.Many2one('custom.incident.type', string='Incident Type', tracking=True)
     account_id = fields.Many2one(
         comodel_name='res.partner',
         string='Account',

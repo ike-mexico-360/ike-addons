@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Services -->
+    <data noupdate="0">
+        <record id="ike_event_supplier_evaluation_1" model="ike.event.supplier.evaluation">
+            <field name="name">Accepted</field>
+            <field name="sequence">1</field>
+            <field name="reevaluation">True</field>
+        </record>
+        <record id="ike_event_supplier_evaluation_2" model="ike.event.supplier.evaluation">
+            <field name="name">No answer</field>
+            <field name="sequence">1</field>
+            <field name="reevaluation">True</field>
+        </record>
+        <record id="ike_event_supplier_evaluation_3" model="ike.event.supplier.evaluation">
+            <field name="name">No units available</field>
+            <field name="sequence">2</field>
+            <field name="reevaluation">False</field>
+        </record>
+        <record id="ike_event_supplier_evaluation_4" model="ike.event.supplier.evaluation">
+            <field name="name">Not available in the area</field>
+            <field name="sequence">3</field>
+            <field name="reevaluation">False</field>
+        </record>
+        <record id="ike_event_supplier_evaluation_5" model="ike.event.supplier.evaluation">
+            <field name="name">Will check availability</field>
+            <field name="sequence">4</field>
+            <field name="reevaluation">True</field>
+        </record>
+        <record id="ike_event_supplier_evaluation_6" model="ike.event.supplier.evaluation">
+            <field name="name">Indicated they will not provide the service</field>
+            <field name="sequence">5</field>
+            <field name="reevaluation">False</field>
+        </record>
+    </data>
+</odoo>

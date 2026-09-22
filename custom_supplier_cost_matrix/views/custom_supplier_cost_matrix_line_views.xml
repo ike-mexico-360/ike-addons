@@ -14,6 +14,7 @@
                 <field name="type_event_id"/>
                 <field name="concept_id"/>
                 <field name="subservice_specification_id"/>
+                <field name="incident_type_id"/>
                 <field name="disabled"/>
                 <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
@@ -42,6 +43,7 @@
                 <field name="type_event_id" readonly="1"/>
                 <field name="concept_id" readonly="1"/>
                 <field name="subservice_specification_id" readonly="1"/>
+                <field name="incident_type_id" readonly="1"/>
                 <field name="cost" readonly="1"/>
                 <field name="account_id" readonly="1"/>
                 <field name="holiday_date_applies" readonly="1"/>
@@ -89,6 +91,7 @@
                                 domain="[('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'}"/>
                             <field name="subservice_specification_id" options='{"no_open": True, "no_create": True}' readonly="disabled"
                                 domain="[('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_subservice_specification_view_list'}"/>
+                            <field name="incident_type_id" readonly="disabled"/>
                         </group>
                         <group>
                             <field name="cost" readonly="disabled"/>

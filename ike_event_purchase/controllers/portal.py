@@ -581,9 +581,14 @@ class PurchaseOrderController(http.Controller):
         if event:
             order_data['x_event_info'] = {
                 'nu_name': event.nu_name or '',
+                'account_name': event.account_id.name or '',
                 'event_date': str(event.event_date) if event.event_date else '',
                 'location_label': event.location_label or '',
+                'location_latitude': event.location_latitude or '',
+                'location_longitude': event.location_longitude or '',
                 'destination_label': event.destination_label or '',
+                'destination_latitude': event.destination_latitude or '',
+                'destination_longitude': event.destination_longitude or '',
             }
             event_supplier = event.service_supplier_ids.filtered(
                 lambda s: s.supplier_id == order.partner_id
@@ -594,11 +599,13 @@ class PurchaseOrderController(http.Controller):
                     'vehicle_name': truck.name or '',
                     'vehicle_plate': truck.license_plate or '',
                     'driver_name': truck.driver_id.name if truck.driver_id else '',
+                    'maneuvers': truck.x_maneuvers,
                 })
             else:
                 order_data['x_event_info'].update({
                     'vehicle_name': '',
                     'vehicle_plate': '',
+                    'maneuvers': False,
                     'driver_name': '',
                 })
         else:

@@ -149,6 +149,9 @@ class CustomMembershipPlanProductLine(models.Model):
         'custom.vehicle.weight.category',
         'Weight Category',
         domain="[('disabled', '=', False)]")
+    incident_type_id = fields.Many2one(
+        'custom.incident.type',
+        string='Incident type',)
 
     @api.onchange('sub_service_ids')
     def _onchange_sub_service_ids(self):

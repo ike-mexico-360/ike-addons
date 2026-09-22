@@ -6,8 +6,8 @@
                 t-value="request.env['res.partner.supplier_users.rel'].sudo().search([('user_id', '=', request.env.user.id)], limit=1)"/>
             <t t-call="portal.portal_docs_entry"
                 t-if="supplier_rel and supplier_rel.supplier_id.x_advanced_portal and request.env.user.has_group('ike_event_portal.custom_group_portal_finance')">
-                <t t-set="title">SAT Invoices</t>
-                <t t-set="url" t-value="'/provider/portal/invoice/dian'"/>
+                <t t-set="title">Invoices</t>
+                <t t-set="url" t-value="'/provider/portal/invoice/supplier'"/>
                 <t t-set="text">Electronic invoicing documents</t>
                 <t t-set="icon" t-value="'/purchase/static/src/img/calculator.svg'"/>
             </t>

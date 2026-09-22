@@ -86,6 +86,25 @@ class PurchaseOrderLine(models.Model):
     x_validator = fields.Char(
         string='Validador', help="Technical: Validador received from External source needed to send at SAP. Only external")
 
+    # Additional fields (invoice)
+    x_status_invoice = fields.Selection(
+        selection=[
+            ('under_review', 'Under Review'),
+            ('accepted', 'Accepted'),
+            ('paid', 'Paid'),
+            ('rejected', 'Rejected'),
+            ('cancelled', 'Cancelled'),
+        ],
+        string='Invoice Status',
+        copy=False,
+    )
+    x_upload_invoice_date = fields.Datetime(
+        string='Invoice Upload Date',
+        readonly=True,
+        copy=False,
+        help='Stores the date and time when the vendor bill or XML invoice was uploaded.'
+    )
+
     # ===================================== ONCHANGES ===================================== #
     @api.onchange('product_id')
     def _onchange_product_id(self):

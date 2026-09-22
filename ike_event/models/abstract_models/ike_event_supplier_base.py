@@ -52,7 +52,7 @@ class IkeEventSupplierBase(models.AbstractModel):
         ('publication', 'Publication'),
         ('manual', 'Manual'),
         ('manual_manual', 'Manual Added'),
-    ], default='manual', copy=False)
+    ], default='manual', index=True, copy=False)
 
     # Manage state app notification
     notification_sent_to_app = fields.Boolean(string="Notification sent to app", default=False)

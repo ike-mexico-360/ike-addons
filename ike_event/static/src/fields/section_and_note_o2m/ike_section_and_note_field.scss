@@ -68,6 +68,12 @@
                     border-left: solid 2px #d1e18c;
                 }
             }
+
+            &.ike-row-manual-locked {
+                td {
+                    background-color: #d4d3d3;
+                }
+            }
         }
     }
 }

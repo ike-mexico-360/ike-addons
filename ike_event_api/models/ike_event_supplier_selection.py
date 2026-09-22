@@ -103,13 +103,13 @@ class IkeEventSupplierSelection(models.Model):
         dbname = self.env.cr.dbname
         record_ids = selected_suppliers.ids
 
-        @self.env.cr.postcommit.add
-        def send_tracking_route_with_new_cursor():
-            threading.Thread(
-                target=self._async_send_notification,
-                args=(dbname, record_ids, 'send_tracking_route'),
-                daemon=True
-            ).start()
+        # @self.env.cr.postcommit.add
+        # def send_tracking_route_with_new_cursor():
+        #     threading.Thread(
+        #         target=self._async_send_notification,
+        #         args=(dbname, record_ids, 'send_tracking_route'),
+        #         daemon=True
+        #     ).start()
 
         # FixMe: check len == 1 ?
         if len(selected_suppliers) == 1 and not self._is_db_neutralized():
@@ -123,10 +123,10 @@ class IkeEventSupplierSelection(models.Model):
                 ).start()
         return result
 
-    # Enviar ruta planeada tras cambio de vehículo
-    def _set_new_service_vehicle_distance(self):
-        res = super()._set_new_service_vehicle_distance()
-        selected_suppliers = self.filtered(lambda x: x.selected)
+    def action_assign(self) -> list[int]:
+        """OVERRIDE: send user notification"""
+        result = super().action_assign()
+        selected_suppliers = self.filtered(lambda x: x.selected and x.state == 'assigned')
         # Frozen variables to prevent bug at post commit
         dbname = self.env.cr.dbname
         record_ids = selected_suppliers.ids
@@ -138,7 +138,24 @@ class IkeEventSupplierSelection(models.Model):
                 args=(dbname, record_ids, 'send_tracking_route'),
                 daemon=True
             ).start()
-        return res
+        return result
+
+    # Enviar ruta planeada tras cambio de vehículo
+    # def _set_new_service_vehicle_distance(self):
+    #     res = super()._set_new_service_vehicle_distance()
+    #     selected_suppliers = self.filtered(lambda x: x.selected)
+    #     # Frozen variables to prevent bug at post commit
+    #     dbname = self.env.cr.dbname
+    #     record_ids = selected_suppliers.ids
+
+    #     @self.env.cr.postcommit.add
+    #     def send_tracking_route_with_new_cursor():
+    #         threading.Thread(
+    #             target=self._async_send_notification,
+    #             args=(dbname, record_ids, 'send_tracking_route'),
+    #             daemon=True
+    #         ).start()
+    #     return res
 
     # def action_reject(self):
     # def action_timeout(self):
@@ -606,8 +623,7 @@ class IkeEventSupplierSelection(models.Model):
 
     # === PRIVATE METHODS === #
     def _is_db_neutralized(self):
-        # return self.env['ir.config_parameter'].sudo().get_param('database.is_neutralized')
-        return False
+        return self.env['ir.config_parameter'].sudo().get_param('database.is_neutralized')
 
     def _prepare_body_for_external_notification(self):
         self.ensure_one()

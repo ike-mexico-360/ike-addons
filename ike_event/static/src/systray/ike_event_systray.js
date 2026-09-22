@@ -13,6 +13,7 @@ const SUBSCRIPTIONS = {
     "EventListReload": "IKE_CHANNEL_LIST_RELOAD",
     "EventListPush": "IKE_CHANNEL_LIST_PUSH",
     "EventSuppliersDeleted": "IKE_EVENT_SUPPLIERS_DELETED",
+    "TEST": "IKE_TEST"
 };
 
 
@@ -26,6 +27,7 @@ export class IkeEventSystray extends Component {
         this.busService = useService("bus_service");
         this.notification = useService("notification");
         this.actionService = useService("action");
+        this.orm = useService("orm");
 
         this.state = useState({
             resModel: null,
@@ -33,6 +35,7 @@ export class IkeEventSystray extends Component {
             resId: null,
             eventChannel: null,
             listChannel: null,
+            busState: null,
         });
 
         this._updateFromAction = this._updateFromAction.bind(this);
@@ -118,11 +121,13 @@ export class IkeEventSystray extends Component {
         const resModel = event?.detail?.componentProps?.resModel || null;
         const type = event?.detail?.componentProps?.type || null;
         const resId = event?.detail?.componentProps?.resId || null;
+        // console.log("_updateFromAction", event, resModel, type, resId);
 
         if (resModel == "ike.event") {
             if (type == "form") {
                 // Remove list channel
                 if (this.state.listChannel) {
+                    this.state.listChannel = null;
                     this.busService.deleteChannel(this.state.listChannel);
                 }
                 // Remove previous
@@ -135,6 +140,7 @@ export class IkeEventSystray extends Component {
             } else if (type == "list") {
                 // Remove previous
                 if (this.state.eventChannel) {
+                    this.state.eventChannel = null;
                     this.busService.deleteChannel(this.state.eventChannel);
                 }
                 // Add list channel
@@ -145,9 +151,11 @@ export class IkeEventSystray extends Component {
             }
         } else {
             if (this.state.eventChannel) {
+                this.state.eventChannel = null;
                 this.busService.deleteChannel(this.state.eventChannel);
             }
             if (this.state.listChannel) {
+                this.state.listChannel = null;
                 this.busService.deleteChannel(this.state.listChannel);
             }
         }
@@ -228,13 +236,11 @@ export class IkeEventSystray extends Component {
                     }
                 }
             } else {
-                // List
                 this.env.bus.trigger("IKE_EVENT_SYSTRAY:" + type, {
                     payload: payload,
                     sender: this,
                 });
             }
-
         }
     }
     async _executeTimeoutLine(line_id) {
@@ -253,6 +259,25 @@ export class IkeEventSystray extends Component {
         } catch (err) {
             console.error("IkeGlobalTimer - onTimeoutLine", err);
         }
+    }
+
+    get iconClass() {
+        var result = this.state.resModel == 'ike.event' && this.state.resId ? "text-success" : "text-info";
+        return this.state.busState ? this.state.busState : result;
+    }
+
+    async testBusBus() {
+        this.orm.call("ike.event", "action_test_notification_1", []);
+        this.state.busState = "text-warning";
+        setTimeout(() => {
+            if (this.state.busState == "text-warning") {
+                this.state.busState = "text-danger";
+            }
+        }, 10000);
+    }
+    broadcastTEST(payload) {
+        this.state.busState = null;
+        this.notification.add("Bus Notification is Working!", { title: "Success", type: "success" });
     }
 }
 

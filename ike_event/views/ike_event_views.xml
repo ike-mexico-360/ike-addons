@@ -320,9 +320,8 @@
                                         <field name="event_search_number" column_invisible="1"/>
 
                                         <field name="search_number" column_invisible="1"/>
-                                        <field name="ranking" string="#" width="25px"
-                                            column_invisible="parent.supplier_search_type in ['manual', 'manual_manual']"
-                                            readonly="1"/>
+                                        <field name="ranking" string="#" width="25px" readonly="1"
+                                            column_invisible="parent.supplier_search_type in ['manual', 'manual_manual']"/>
                                         <field name="supplier_id"
                                             widget="ike_label_section_and_note_field"
                                             options="{'no_create': 1, 'no_open': 1}"
@@ -340,7 +339,8 @@
                                             readonly="1"/>
                                         <field name="name" optional="show" readonly="1"/>
                                         <field name="state" width="100px" readonly="1"/>
-                                        <field name="priority" widget="priority" readonly="1" width="75px"/>
+                                        <field name="priority" widget="priority" readonly="1" width="75px"
+                                            column_invisible="parent.supplier_search_type in ['manual', 'manual_manual']"/>
                                         <field name="estimated_duration" widget="float_time" optional="show" readonly="1" />
                                         <field name="estimated_cost" optional="show" readonly="1"/>
 
@@ -353,17 +353,32 @@
                                         <field name="elapsed_time" column_invisible="1"/>
                                         <field name="manual_notification" column_invisible="1"/>
                                         <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
-                                        <button name="action_view_products" string="View Details" type="object" class="btn-link"
+
+                                        <field name="evaluation_locked" column_invisible="1"/>
+                                        <field name="evaluation_id" column_invisible="1"/>
+                                        <field name="evaluation_reevaluation" column_invisible="1"/>
+                                        <field name="evaluated" column_invisible="1"/>
+                                        <field name="cost_invalid" column_invisible="1"/>
+
+                                        <button name="action_view_products" string="Concepts" type="object" class="btn-link"
                                             context="{'from_view_detail': True}"
-                                            invisible="state == 'notified'"/>
+                                            invisible="state == 'notified' or evaluation_locked"/>
+                                        <button name="action_view_evaluation" string="Evaluation" type="object" class="btn-link"
+                                            context="{'from_view_detail': True}"
+                                            invisible="not evaluation_id or state == 'notified' or evaluation_locked or evaluated and not evaluation_reevaluation"/>
+                                        <button name="action_view_evaluation" string="Evaluation" type="object" class="btn-link text-warning"
+                                            context="{'from_view_detail': True}"
+                                            invisible="evaluation_id or state == 'notified' or evaluation_locked or evaluated and not evaluation_reevaluation"/>
+
                                         <button name="action_open_change_vehicle" string="Change Vehicle" type="object" class="btn-link"
                                             context="{'from_view_detail': True}"
-                                            invisible="(assignation_type == 'electronic' or display_type) or state != 'notified'"/>
+                                            invisible="assignation_type == 'electronic' or state == 'assigned'"/>
                                         <!-- <button name="action_finalize" string="Finalize" type="object" class="btn-link"/> -->
                                     </list>
                                 </field>
+                                <field name="evaluated_pending_suppliers" invisible="1"/>
                                 <button string="Add Manual Supplier" name="action_open_add_manual_supplier_wizard" type="object" class="btn-link"
-                                    invisible="supplier_search_type not in ['manual', 'manual_manual']"/>
+                                    invisible="supplier_search_type not in ['manual', 'manual_manual'] or evaluated_pending_suppliers > 0"/>
                             </group>
                         </page>
                         <page name="product_data" string="Concepts">

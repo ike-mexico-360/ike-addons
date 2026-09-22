@@ -6,20 +6,6 @@ from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError
 
 
-class IkeEventSupplierLink(models.Model):
-    _inherit = 'ike.event.supplier.link'
-
-    uncovered_authorization_required = fields.Boolean(compute='_compute_uncovered_authorization_required', store=True, copy=False)
-
-    # === COMPUTES === #
-    @api.depends('supplier_product_ids', 'supplier_product_ids.covered', 'supplier_product_ids.authorization_id')
-    def _compute_uncovered_authorization_required(self):
-        for rec in self:
-            rec.uncovered_authorization_required = bool(
-                self.supplier_product_ids.filtered(lambda x: not x.covered and not x.authorization_id)
-            )
-
-
 class IkeEvent(models.Model):
     _inherit = 'ike.event'
 
@@ -167,6 +153,67 @@ class IkeEvent(models.Model):
 
     def action_view_ike_event_agreement_cost_final(self):
         return self.selected_supplier_ids.action_view_ike_event_agreement_cost_final()
+
+
+class IkeEventSupplier(models.Model):
+    _inherit = 'ike.event.supplier'
+
+    # === FIELDS === #
+    type_authorization_id = fields.Many2one(related='supplier_link_id.type_authorization_id', readonly=False)
+    reason_authorizer_id = fields.Many2one(related='supplier_link_id.reason_authorizer_id', readonly=False)
+    authorization_by_nu = fields.Boolean(related='supplier_link_id.authorization_by_nu', string='Is Authorized By Nu', readonly=False)
+    authorizer_id = fields.Many2one(related='supplier_link_id.authorizer_id', readonly=False)
+    authorizer_domain = fields.Binary(compute="_compute_authorizer_domain")
+    nu_user_id = fields.Many2one(related='event_id.user_id')
+
+    # === ONCHANGE === #
+    @api.onchange('type_authorization_id')
+    def onchange_type_authorization_id(self):
+        if self.type_authorization_id.id != self._origin.type_authorization_id.id:
+            self.authorizer_id = False
+        self.authorization_by_nu = False if not self.type_authorization_id.is_nu else True
+
+    # === COMPUTE === #
+    @api.depends('type_authorization_id', 'authorizer_id')
+    def _compute_authorizer_domain(self):
+        for rec in self:
+            domain = []
+            if rec.type_authorization_id.is_client:
+                client_ids = self.env['res.partner'].search([
+                    ('is_company', '=', True),
+                    ('x_is_client', '=', True)
+                ])
+                domain = [('disabled', '=', False), ('id', 'in', client_ids.ids)]
+            if rec.type_authorization_id.is_user_internal:
+                user_internal_ids = self.env['res.users'].search([
+                    ('share', '=', False),
+                ]).mapped("partner_id")
+                domain = [('disabled', '=', False), ('id', 'in', user_internal_ids.ids)]
+            rec.authorizer_domain = domain
+
+    # === ACTIONS === #
+    def action_request_authorization(self):
+        self.supplier_link_id.sudo().action_request_authorization()
+
+    def action_accept_authorization(self):
+        self.supplier_link_id.sudo().action_accept_authorization()
+
+    def action_reject_authorization(self):
+        self.supplier_link_id.sudo().action_reject_authorization()
+
+
+class IkeEventSupplierLink(models.Model):
+    _inherit = 'ike.event.supplier.link'
+
+    uncovered_authorization_required = fields.Boolean(compute='_compute_uncovered_authorization_required', store=True, copy=False)
+
+    # === COMPUTES === #
+    @api.depends('supplier_product_ids', 'supplier_product_ids.covered', 'supplier_product_ids.authorization_id')
+    def _compute_uncovered_authorization_required(self):
+        for rec in self:
+            rec.uncovered_authorization_required = bool(
+                self.supplier_product_ids.filtered(lambda x: not x.covered and not x.authorization_id)
+            )
 
 
 class IkeEventAuthorization(models.Model):

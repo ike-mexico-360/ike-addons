@@ -1,6 +1,25 @@
 from odoo import models, fields, api, _
 
 
+class ShHelpdeskTicketStageInfo(models.Model):
+    _inherit = 'sh.helpdesk.ticket.stage.info'
+
+    x_stage_name_translated = fields.Char(
+        string='Translated Stage Name',
+        compute='_compute_x_stage_name_translated',
+    )
+
+    @api.depends('stage_name')
+    def _compute_x_stage_name_translated(self):
+        is_spanish = (self.env.lang or '').startswith('es')
+        for record in self:
+            record.x_stage_name_translated = (
+                self.env._('Completed')
+                if is_spanish and record.stage_name == 'Done'
+                else record.stage_name
+            )
+
+
 class ShHelpdeskTicket(models.Model):
     _name = 'sh.helpdesk.ticket'
     _inherit = ['sh.helpdesk.ticket', 'mail.tracking.duration.mixin']
@@ -8,6 +27,12 @@ class ShHelpdeskTicket(models.Model):
 
     current_stage_date = fields.Datetime(compute='_compute_current_stage_tracking')
     current_elapsed_time_seconds = fields.Integer(compute='_compute_current_stage_tracking')
+    x_accumulated_stage_time_seconds = fields.Integer(
+        compute='_compute_accumulated_stage_time',
+    )
+    x_accumulated_stage_max_wait_time_seconds = fields.Integer(
+        compute='_compute_accumulated_stage_time',
+    )
     x_stage_max_wait_time_minutes = fields.Integer(
         related='stage_id.x_max_wait_time_minutes',
     )
@@ -56,6 +81,30 @@ class ShHelpdeskTicket(models.Model):
             ticket.current_elapsed_time_seconds = max(
                 int((now - ticket.current_stage_date).total_seconds()), 0
             ) if ticket.current_stage_date else 0
+
+    @api.depends('duration_tracking', 'stage_id')
+    def _compute_accumulated_stage_time(self):
+        groups = self.env['custom.helpdesk.stage.time.group'].sudo().search([])
+        group_by_stage = {
+            stage.id: group
+            for group in groups
+            for stage in group.stage_ids
+        }
+        for ticket in self:
+            group = group_by_stage.get(ticket.stage_id.id)
+            ticket.x_accumulated_stage_time_seconds = 0
+            ticket.x_accumulated_stage_max_wait_time_seconds = 0
+            if not group:
+                continue
+
+            durations = ticket.duration_tracking or {}
+            ticket.x_accumulated_stage_time_seconds = sum(
+                durations.get(str(stage_id), durations.get(stage_id, 0))
+                for stage_id in group.stage_ids.ids
+            )
+            ticket.x_accumulated_stage_max_wait_time_seconds = (
+                group._max_wait_time_seconds()
+            )
 
     @api.depends('stage_id')
     def _compute_is_done_stage(self):

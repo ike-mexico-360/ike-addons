@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="mail_template_header">
+        <table width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="border-collapse: collapse;">
+            <tr>
+                <td width="100%" style="padding: 15px 10px; vertical-align: middle; text-align: left;">
+                    <img t-if="object.company_id.logo"
+                        t-attf-src="{{ object.company_id.get_base_url() }}/web/image/res.company/{{ object.company_id.id }}/logo"
+                        style="max-width: 220px; max-height: 75px;"/>
+                </td>
+            </tr>
+        </table>
+    </template>
+
+    <template id="mail_template_footer">
+        <table width="100%"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+            style="border-collapse: collapse;
+                    width: 100%;">
+            <tr>
+                <td>
+                    &#160;
+                </td>
+            </tr>
+            <tr>
+                <td style=" height: 2px; line-height: 2px; background-color: #005A9C; font-size: 0; padding: 0; margin:0;">
+                    &#160;
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    &#160;
+                </td>
+            </tr>
+        </table>
+    </template>
+</odoo>

@@ -391,7 +391,7 @@ class IkeEventAffiliationUser(models.TransientModel):
         return False
 
     def _create_affiliation(self, user_id):
-        return self.env['custom.membership.nus'].create({
+        vals = {
             'nus_id': user_id.id,
             'membership_plan_id': self.account_id.id,
             'key_identification': self.key_primary,
@@ -401,7 +401,14 @@ class IkeEventAffiliationUser(models.TransientModel):
             'date': fields.Date.today(),
             'display_key_primary_clause': self.display_key_primary_clause,
             'display_key_second_clause_second': self.display_key_second_clause_second
-        })
+        }
+        if not self.account_id.account_id.authorizer:
+            today = fields.Date.context_today(self)
+            vals['subscription_validity'] = True
+            vals['date_start'] = fields.Date.context_today(self)
+            vals['date_end'] = today.replace(month=12, day=31)
+
+        return self.env['custom.membership.nus'].create(vals)
 
     def _create_new_user(self):
         return self.env['custom.nus'].create({

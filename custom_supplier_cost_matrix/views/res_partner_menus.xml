@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Allow CCC roles to enter the Suppliers application only to consult
+         confirmed cost matrices. Child menus keep their own group restrictions. -->
+    <record id="custom_master_catalog.menu_suppliers" model="ir.ui.menu">
+        <field name="groups_id" eval="[
+            (4, ref('custom_master_catalog.custom_group_ccc_analyst')),
+            (4, ref('custom_master_catalog.custom_group_ccc_coordinator')),
+            (4, ref('custom_master_catalog.custom_group_ccc_boss'))
+        ]"/>
+    </record>
+
+    <record id="custom_master_catalog.res_partner_menu_suppliers" model="ir.ui.menu">
+        <field name="groups_id" eval="[
+            (4, ref('custom_master_catalog.custom_group_ccc_analyst')),
+            (4, ref('custom_master_catalog.custom_group_ccc_coordinator')),
+            (4, ref('custom_master_catalog.custom_group_ccc_boss'))
+        ]"/>
+    </record>
+
+    <menuitem id="custom_supplier_cost_matrix_ccc_menu"
+        name="Cost Matrix"
+        parent="custom_master_catalog.res_partner_menu_suppliers"
+        action="custom_supplier_cost_matrix_line_action"
+        groups="custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_ccc_boss"
+        sequence="30"/>
+
     <menuitem id="custom_supplier_cost_matrix_configuration_menu"
         parent="custom_master_catalog.res_partner_menu_suppliers"
         action="custom_supplier_upload_cost_matrix_configuration_action"

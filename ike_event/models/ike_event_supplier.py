@@ -52,15 +52,8 @@ class IkeEventSupplier(models.Model):
     latitude = fields.Char(copy=False)
     longitude = fields.Char(copy=False)
     route = fields.Json(copy=False)
+    route_reverse = fields.Json(copy=False)
     osrm = fields.Boolean(default=False, copy=False)
-
-    # === AUTHORIZATION FIELDS === #
-    type_authorization_id = fields.Many2one(related='supplier_link_id.type_authorization_id', readonly=False)
-    reason_authorizer_id = fields.Many2one(related='supplier_link_id.reason_authorizer_id', readonly=False)
-    authorization_by_nu = fields.Boolean(related='supplier_link_id.authorization_by_nu', string='Is Authorized By Nu', readonly=False)
-    authorizer_id = fields.Many2one(related='supplier_link_id.authorizer_id', readonly=False)
-    authorizer_domain = fields.Binary(compute="_compute_authorizer_domain")
-    nu_user_id = fields.Many2one(related='event_id.user_id')
 
     # === EVIDENCE FIELDS === #
     service_evidence_ids = fields.One2many('ike.event.evidence', 'event_supplier_id', string='Evidence')
@@ -70,102 +63,14 @@ class IkeEventSupplier(models.Model):
     event_supplier_summary_data = fields.Html(compute='_compute_event_supplier_summary_data')
     travel_tracking_url = fields.Char(compute='_compute_travel_tracking_url')
 
-    # === STAGED LINE PROGRESS FIELDS === #
-    on_route_to_user_start_date_widget = fields.Datetime()
-    on_route_to_user_end_date_widget = fields.Datetime()
-    on_route_to_destination_start_date_widget = fields.Datetime()
-    on_route_to_destination_end_date_widget = fields.Datetime()
-
-    # === STAGE FIELDS ON ROUTE === #
-    first_on_route_to_user_start_date = fields.Datetime(string='On route (first datetime)', tracking=True, copy=False)
-    first_on_route_to_start_user_id = fields.Many2one(
-        'res.users',
-        'On route (first user)',
-        readonly=True,
-        tracking=True)
-    first_on_route_to_start_comment = fields.Text(string='On route (first comment)', tracking=True, copy=False)
-
-    on_route_to_user_start_date = fields.Datetime(string='On route (datetime)', tracking=True, copy=False)
-    on_route_to_start_user_id = fields.Many2one(
-        'res.users', 'On route (user)',
-        readonly=True,
-        tracking=True)
-    on_route_to_start_comment = fields.Text(string='On route (comment)', tracking=True, copy=False)
-
-    # === STAGE FIELDS ARRIVED === #
-    first_on_route_to_user_end_date = fields.Datetime(string='Arrived (first datetime)', tracking=True, copy=False)
-    first_on_route_to_end_user_id = fields.Many2one(
-        'res.users',
-        'Arrived (first user)',
-        readonly=True,
-        tracking=True)
-    first_on_route_to_end_comment = fields.Text(string='Arrived (first comment)', tracking=True, copy=False)
-
-    on_route_to_user_end_date = fields.Datetime(string='Arrived (datetime)', tracking=True, copy=False)
-    on_route_to_end_user_id = fields.Many2one(
-        'res.users', 'Arrived (user)',
-        readonly=True,
-        tracking=True)
-    on_route_to_end_comment = fields.Text(string='Arrived (comment)', tracking=True, copy=False)
-
-    # === STAGE FIELDS ROUTE TO DESTINATION === #
-    first_on_route_to_destination_start_date = fields.Datetime(
-        string='Route to destination (first datetime)',
-        tracking=True,
-        copy=False)
-    first_on_route_to_destination_start_user_id = fields.Many2one(
-        'res.users',
-        'Route to destination (first user)',
-        readonly=True,
-        tracking=True)
-    first_on_route_to_destination_start_comment = fields.Text(
-        string='Route to destination (first comment)',
-        tracking=True,
-        copy=False)
-
-    on_route_to_destination_start_date = fields.Datetime(
-        string='Route to destination (datetime)',
-        tracking=True,
-        copy=False)
-    on_route_to_destination_start_user_id = fields.Many2one(
-        'res.users', 'Route to destination (user)',
-        readonly=True,
-        tracking=True)
-    on_route_to_destination_start_comment = fields.Text(
-        string='Route to destination (comment)',
-        tracking=True,
-        copy=False)
-
-    # === STAGE FIELD ARRIVED DESTINATION === #
-    first_on_route_to_destination_end_date = fields.Datetime(
-        string='He arrived at his destination (first datetime)',
-        tracking=True,
-        copy=False)
-    first_on_route_to_destination_end_user_id = fields.Many2one(
-        'res.users',
-        'He arrived at his destination (first user)',
-        readonly=True,
-        tracking=True)
-    first_on_route_to_destination_end_comment = fields.Text(
-        string='He arrived at his destination (first comment)',
-        tracking=True,
-        copy=False)
-
-    on_route_to_destination_end_date = fields.Datetime(
-        string='He arrived at his destination (datetime)',
-        tracking=True,
-        copy=False)
-    on_route_to_destination_end_user_id = fields.Many2one(
-        'res.users',
-        'He arrived at his destination (user)',
-        readonly=True,
-        tracking=True)
-    on_route_to_destination_end_comment = fields.Text(
-        string='He arrived at his destination (comment)',
-        tracking=True,
-        copy=False)
-
-    travel_progress_percent = fields.Float(string="Travel Progress (%)")
+    # === EVALUATION FIELDS === #
+    evaluation_id = fields.Many2one('ike.event.supplier.evaluation', 'Evaluation', tracking=True, copy=False)
+    evaluation_reevaluation = fields.Boolean(related='evaluation_id.reevaluation')
+    evaluation_2_id = fields.Many2one('ike.event.supplier.evaluation', 'Second Evaluation', tracking=True, copy=False)
+    evaluation_observations = fields.Text('Observations', copy=False)
+    evaluation_informer = fields.Char('Informer', copy=False)
+    evaluated = fields.Boolean(default=False)
+    evaluation_locked = fields.Boolean(compute='_compute_evaluation_locked')
 
     # === DETAILS FIELDS === #
     supplier_link_id = fields.Many2one('ike.event.supplier.link')
@@ -173,10 +78,18 @@ class IkeEventSupplier(models.Model):
     amount_concept_subtotal = fields.Float(related='supplier_link_id.amount_concept_subtotal', string='Subtotal')
     amount_concept_vat = fields.Float(related='supplier_link_id.amount_concept_vat', string='VAT')
     amount_concept_total = fields.Float(related='supplier_link_id.amount_concept_total', string='Total')
+    cost_invalid = fields.Boolean(related='supplier_link_id.cost_invalid')
 
     base_amount_concept_subtotal = fields.Float(related='supplier_link_id.base_amount_concept_subtotal', string='Subtotal agreement')
     base_amount_concept_vat = fields.Float(related='supplier_link_id.base_amount_concept_vat', string='VAT agreement')
     base_amount_concept_total = fields.Float(related='supplier_link_id.base_amount_concept_total', string='Total agreement')
+
+    # === ONCHANGE === #
+    @api.onchange('truck_id')
+    def _onchange_truck_id(self):
+        if self.truck_id:
+            self.assigned = self.truck_id.driver_id.name
+            self.name = f"{_('License Plate')}: {self.truck_id.license_plate}"
 
     # === COMPUTES === #
     def _compute_display_name(self):
@@ -205,23 +118,6 @@ class IkeEventSupplier(models.Model):
                 )
 
             rec.truck_domain = domain
-
-    @api.depends('type_authorization_id', 'authorizer_id')
-    def _compute_authorizer_domain(self):
-        for rec in self:
-            domain = []
-            if rec.type_authorization_id.is_client:
-                client_ids = self.env['res.partner'].search([
-                    ('is_company', '=', True),
-                    ('x_is_client', '=', True)
-                ])
-                domain = [('disabled', '=', False), ('id', 'in', client_ids.ids)]
-            if rec.type_authorization_id.is_user_internal:
-                user_internal_ids = self.env['res.users'].search([
-                    ('share', '=', False),
-                ]).mapped("partner_id")
-                domain = [('disabled', '=', False), ('id', 'in', user_internal_ids.ids)]
-            rec.authorizer_domain = domain
 
     @api.depends('supplier_id', 'truck_id', 'event_id')
     def _compute_travel_tracking_url(self):
@@ -364,6 +260,20 @@ class IkeEventSupplier(models.Model):
 
             rec.event_supplier_summary_data = event_summary_supplier_data
 
+    def _compute_evaluation_locked(self):
+        for rec in self:
+            if rec.assignation_type not in ['manual', 'manual_manual']:
+                rec.evaluation_locked = True
+            else:
+                previous = self.search([
+                    ('event_id', '=', rec.event_id.id),
+                    ('assignation_type', '=', 'manual'),
+                    ('search_number', '=', rec.search_number),
+                    ('sequence', '<', rec.sequence),
+                ], order='sequence desc', limit=1)
+
+                rec.evaluation_locked = not (not previous or previous.evaluation_id)
+
     # === DEFAULT === #
     @api.model
     def default_get(self, fields_list):
@@ -372,277 +282,66 @@ class IkeEventSupplier(models.Model):
         res["stage_id"] = preparing_stage.id
         return res
 
-    # === ONCHANGE === #
-    @api.onchange('type_authorization_id')
-    def onchange_type_authorization_id(self):
-        if self.type_authorization_id.id != self._origin.type_authorization_id.id:
-            self.authorizer_id = False
-        self.authorization_by_nu = False if not self.type_authorization_id.is_nu else True
+    # === CRUD === #
+    def write(self, vals):
+        # truck_id changed
+        previous_trucks = {}
+        if 'truck_id' in vals:
+            for rec in self:
+                if rec.truck_id.id != vals['truck_id']:
+                    vals['confirmed'] = False
+                    previous_trucks[rec.id] = rec.truck_id
 
-    # === ACTIONS === #
-    def action_request_authorization(self):
-        self.supplier_link_id.sudo().action_request_authorization()
+        # Evaluated
+        if vals.get('evaluation_id'):
+            vals['evaluated'] = True
 
-    def action_accept_authorization(self):
-        self.supplier_link_id.sudo().action_accept_authorization()
+        res = super().write(vals)
 
-    def action_reject_authorization(self):
-        self.supplier_link_id.sudo().action_reject_authorization()
+        # Binnacle
+        if vals.get('evaluation_id') or vals.get('evaluation_2_id'):
+            self._evaluation_binnacle(vals)
 
-    # == STAGE ACTIONS == #
-    def action_assign(self):
-        assign_stage = self.env.ref('ike_event.ike_service_stage_assigned')
-        for rec in self:
-            rec.stage_id = assign_stage.id
-            rec.assignation_date = fields.Datetime.now()
-            # Vehicle state
-            if not rec.event_id.scheduled:
-                rec.truck_id.x_vehicle_service_state = 'in_service'
-            rec.broadcastReload(reload_type='assign')
+        # Release previous and set new distances.
+        if 'truck_id' in vals:
+            for rec in self:
+                old_truck = previous_trucks.get(rec.id)
+                new_truck = rec.truck_id
+                if old_truck and old_truck != new_truck:
+                    # Previous Vehicle State
+                    rec._change_previous_vehicle_state(old_truck)
+                    rec.assigned = new_truck.driver_id.name
+                    rec.name = f"{_('License Plate')}: {new_truck.license_plate}"
+                    # Set New Distance
+                    rec._set_new_service_vehicle_distance()
 
-    def action_on_route(self):
-        supplier_on_route_stage = self.env.ref('ike_event.ike_service_stage_on_route')
-        event_stage_assigned = self.env.ref('ike_event.ike_event_stage_assigned')
-        for rec in self:
-            rec.stage_id = supplier_on_route_stage.id
-            rec.on_route_to_user_start_date_widget = fields.Datetime.now()
-            # Si el evento aún está en etapa asignado, se puede pasar a la etapa en ruta
-            if rec.event_id.stage_ref == event_stage_assigned.ref and rec.event_id.step_number == 1:
-                rec.event_id.with_context(dict(
-                    current_stage_id=rec.event_id.stage_id.id,
-                    current_step_number=rec.event_id.step_number,
-                )).action_forward()
-                rec.broadcastReload(event_reload=True, reload_type='on_route')
+        return res
 
-    def action_arrive(self):
-        arrived_stage = self.env.ref('ike_event.ike_service_stage_arrived')
-        for rec in self:
-            rec.stage_id = arrived_stage.id
-            rec.on_route_to_user_end_date_widget = fields.Datetime.now()
-            rec.broadcastReload(event_reload=True, reload_type='arrive')
-
-    def action_contact(self):
-        contacted_stage = self.env.ref('ike_event.ike_service_stage_contacted')
-        for rec in self:
-            rec.stage_id = contacted_stage.id
-            rec.broadcastReload(reload_type='contact')
-
-    def action_on_route_to_the_destination(self):
-        on_route_stage = self.env.ref('ike_event.ike_service_stage_on_route_2')
-        for rec in self:
-            rec.stage_id = on_route_stage.id
-            rec.on_route_to_destination_start_date_widget = fields.Datetime.now()
-            rec.broadcastReload(reload_type='on_route_to_the_destination')
-
-    def action_arrive_to_the_destination(self):
-        arrived_stage = self.env.ref('ike_event.ike_service_stage_arrived_2')
-        for rec in self:
-            rec.stage_id = arrived_stage.id
-            rec.on_route_to_destination_end_date_widget = fields.Datetime.now()
-            rec.broadcastReload(reload_type='arrive_to_the_destination')
-
-    def action_finalize(self):
-        self.ensure_one()
-        supplier_stage_finalized = self.env.ref('ike_event.ike_service_stage_finalized').id
-
-        self.stage_id = supplier_stage_finalized
-        # Vehicle State
-        self.truck_id.x_vehicle_service_state = 'available'
-
-        # Event Completed: validation inside
-        self.event_id.action_completed()
-        if self.event_id.stage_id.ref == 'completed' and not self.is_generic_supplier and not self.purchase_supplier_id:
-            self.event_id.action_verify()
-
-        # Get Distance km
-        negotiation_type = self.negotiation_type
-        total_distance_km = self.cost_distance
-        if negotiation_type == 'base_base':
-            total_distance_km = (self.cost_distance + (self.event_id.destination_distance or 0)) * 2.0
-        elif negotiation_type in ['base_destination', 'vehicle_destination']:
-            total_distance_km += (self.event_id.destination_distance or 0)
-        elif negotiation_type == 'origin_destination':
-            total_distance_km = (self.event_id.destination_distance or 0)
-        elif negotiation_type == 'base_concept':
-            total_distance_km = 0.0
-        else:
-            total_distance_km = 0.0
-        total_distance_km = int(-(-total_distance_km // 1))  # To integer
-
-        # Event reload
-        self.broadcastReload(event_reload=True, reload_type='finalize')
-
-    def action_from_progress_state(self, progress_state):
-        self.ensure_one()
-        actions = {
-            '0': self.action_assign,
-            '1': self.action_on_route,
-            '2': self.action_arrive,
-            '3': self.action_contact,
-            '4': self.action_on_route_to_the_destination,
-            '5': self.action_arrive_to_the_destination,
-            '6': self.action_finalize,
-        }
-
-        if progress_state == '1':
-            # On Route
-            on_route_to_user_start_date = fields.Datetime.now()
-            on_route_to_user_id = self.env.user
-            on_route_to_start_comment = f'{self.supplier_id.display_name} - {on_route_to_user_start_date}'
-
-            if not self.first_on_route_to_user_start_date:
-                self.write({
-                    'first_on_route_to_user_start_date': on_route_to_user_start_date,
-                    'first_on_route_to_start_user_id': on_route_to_user_id.id,
-                    'first_on_route_to_start_comment': _(
-                        f'On Route - Datetime: {on_route_to_user_start_date}'
-                    ),
-                })
-
-            self.write({
-                'on_route_to_user_start_date': on_route_to_user_start_date,
-                'on_route_to_start_user_id': on_route_to_user_id.id,
-                'on_route_to_start_comment': on_route_to_start_comment,
-            })
-
-        elif progress_state == '2':
-            # Arrived
-            arrive_date = fields.Datetime.now()
-            arrive_user_id = self.env.user
-            arrive_comment = f'{self.supplier_id.display_name} - {arrive_date}'
-
-            if not self.first_on_route_to_user_end_date:
-                self.write({
-                    'first_on_route_to_user_end_date': arrive_date,
-                    'first_on_route_to_end_user_id': arrive_user_id.id,
-                    'first_on_route_to_end_comment': arrive_comment,
-                })
-
-            self.write({
-                'on_route_to_user_end_date': arrive_date,
-                'on_route_to_end_user_id': arrive_user_id.id,
-                'on_route_to_end_comment': arrive_comment,
-            })
-
-        elif progress_state == '3':
-            # Contacted
-            contacted_date = fields.Datetime.now()
-            contacted_user_id = self.env.user
-            contacted_comment = f'{self.supplier_id.display_name} - {contacted_date}'
-
-            if not self.first_contacted_date:
-                self.write({
-                    'first_contacted_date': contacted_date,
-                    'first_contacted_user_id': contacted_user_id.id,
-                    'first_contacted_comment': contacted_comment,
-                })
-
-            self.write({
-                'contacted_date': contacted_date,
-                'contacted_user_id': contacted_user_id.id,
-                'contacted_comment': contacted_comment,
-            })
-
-        elif progress_state == '4':
-            # On Route to Destiny
-            on_route_to_destination_start_date = fields.Datetime.now()
-            on_route_to_destination_start_user_id = self.env.user
-            on_route_to_destination_start_comment = f'{self.supplier_id.display_name} - {on_route_to_destination_start_date}'
-
-            if not self.first_on_route_to_destination_start_date:
-                self.write({
-                    'first_on_route_to_destination_start_date': on_route_to_destination_start_date,
-                    'first_on_route_to_destination_start_user_id': on_route_to_destination_start_user_id.id,
-                    'first_on_route_to_destination_start_comment': on_route_to_destination_start_comment,
-                })
-
-            self.write({
-                'on_route_to_destination_start_date': on_route_to_destination_start_date,
-                'on_route_to_destination_start_user_id': on_route_to_destination_start_user_id.id,
-                'on_route_to_destination_start_comment': on_route_to_destination_start_comment,
-            })
-
-        elif progress_state == '5':
-            # Arrived to destination
-            on_route_to_destination_end_date = fields.Datetime.now()
-            on_route_to_destination_end_user_id = self.env.user
-            on_route_to_destination_end_comment = f'{self.supplier_id.display_name} - {on_route_to_destination_end_date}'
-
-            if not self.first_on_route_to_destination_end_date:
-                self.write({
-                    'first_on_route_to_destination_end_date': on_route_to_destination_end_date,
-                    'first_on_route_to_destination_end_user_id': on_route_to_destination_end_user_id.id,
-                    'first_on_route_to_destination_end_comment': on_route_to_destination_end_comment,
-                })
-
-            self.write({
-                'on_route_to_destination_end_date': on_route_to_destination_end_date,
-                'on_route_to_destination_end_user_id': on_route_to_destination_end_user_id.id,
-                'on_route_to_destination_end_comment': on_route_to_destination_end_comment,
-            })
-
-        elif progress_state == '6':
-            # Finalized
-            finalized_date = fields.Datetime.now()
-            finalized_user_id = self.env.user
-            finalized_comment = f'{self.supplier_id.display_name} - {finalized_date}'
-
-            if not self.first_finalized_date:
-                self.write({
-                    'first_finalized_date': finalized_date,
-                    'first_finalized_user_id': finalized_user_id.id,
-                    'first_finalized_comment': finalized_comment,
-                })
-
-            self.write({
-                'finalized_date': finalized_date,
-                'finalized_user_id': finalized_user_id.id,
-                'finalized_comment': finalized_comment,
-            })
-
-        action = actions.get(str(progress_state))
-        if action:
-            action()
-
-    def action_open_manual_finalize_wizard(self):
-        # action_from = self.env.context.get('action_from', 'internal')  # internal/portal/app
-        action_name = 'action_manual_finalize'
-        view_id = self.env.ref('ike_event.ike_event_confirm_wizard_view_form').id
-        return {
-            'name': self.supplier_id.display_name + " " + _('Finalize'),
-            'type': 'ir.actions.act_window',
-            'view_mode': 'form',
-            'res_model': 'ike.event.confirm.wizard',
-            'view_id': view_id,
-            'views': [(view_id, 'form')],
-            'target': 'new',
-            'context': {
-                'default_res_model': 'ike.event.supplier',
-                'default_res_ids': str(self.mapped('id')),
-                'default_action_name': action_name,
-                'ike_event_supplier_finalize': True,
-                'is_confirm': True,
-            }
-        }
-
-    def action_manual_finalize(self, other_reason: str):
-        # ToDo: add required params and save it. Adapt ike.event.confirm.wizard
-        self.action_finalize()
-
-    def action_create_purchase_order(self):
+    def _evaluation_binnacle(self, vals):
+        # ToDo: Binnacle, Evaluation
         pass
 
-    def get_selectable_vehicles(self):
-        self.ensure_one()
-        domain = expression.AND([list(self.truck_domain or []), [('x_vehicle_ref', '!=', False)]])
-        domain = expression.OR([domain, [('id', '=', self.truck_id.id)]])
-        vehicles = self.env['fleet.vehicle'].sudo().search(domain)
-        return [
-            {'id': vehicle.id, 'name': vehicle.name, 'license_plate': vehicle.license_plate}
-            for vehicle in vehicles
-        ]
-
     # === ACTION VIEW === #
+    def action_view_evaluation(self):
+        self.ensure_one()
+        view_id = self.env.ref('ike_event.ike_event_supplier_evaluation_form_view').id
+        return {
+            'name': self.supplier_id.display_name + " " + _('Evaluation'),
+            'view_mode': 'form',
+            'type': 'ir.actions.act_window',
+            'res_model': 'ike.event.supplier',
+            'res_id': self.id,
+            'views': [(view_id, 'form')],
+            'context': {
+                **self.env.context,
+                'create': False,
+                'edit': True,
+                'from_add_concept': True,
+                'from_internal': True,
+            },
+            'target': 'new',
+        }
+
     def action_view_products(self):
         self.ensure_one()
         view_id = self.env.ref('ike_event.ike_event_supplier_link_form_view').id
@@ -760,6 +459,7 @@ class IkeEventSupplier(models.Model):
     def action_open_change_vehicle(self):
         view_id = self.env.ref('ike_event.ike_event_supplier_vehicle_form_view').id
         return {
+            'name': _('Change Vehicle'),
             'type': 'ir.actions.act_window',
             'res_model': 'ike.event.supplier',
             'res_id': self.id,
@@ -791,15 +491,16 @@ class IkeEventSupplier(models.Model):
             },
         }
 
-    # === CRUD === #
-    def write(self, vals):
-        # Set previous vehicle available
-        if self.truck_id and 'truck_id' in vals and vals['truck_id'] != self.truck_id.id:
-            vals['confirmed'] = False
-            if self.truck_id.x_vehicle_service_state == 'in_service':
-                self.truck_id.x_vehicle_service_state = 'available'
-        res = super().write(vals)
-        return res
+    # === PUBLIC METHODS ===
+    def get_selectable_vehicles(self):
+        self.ensure_one()
+        domain = expression.AND([list(self.truck_domain or []), [('x_vehicle_ref', '!=', False)]])
+        domain = expression.OR([domain, [('id', '=', self.truck_id.id)]])
+        vehicles = self.env['fleet.vehicle'].sudo().search(domain)
+        return [
+            {'id': vehicle.id, 'name': vehicle.name, 'license_plate': vehicle.license_plate}
+            for vehicle in vehicles
+        ]
 
     # === Auxiliary === #
     @staticmethod
@@ -869,13 +570,13 @@ class IkeEventSupplierLink(models.Model):
             amount_vat = 0.0
             cost_invalid = False
 
+            # Filter negative nu payments.
             for line in rec.supplier_product_ids.filtered(lambda x: not x.display_type and x.cost_price >= 0):
-                if not line.display_type:
-                    amount_subtotal += line.cost_price
-                    amount_vat += line.vat
-                    amount_total = amount_subtotal + amount_vat
-                    if not cost_invalid:
-                        cost_invalid = line.cost_price == 0
+                amount_subtotal += line.cost_price
+                amount_vat += line.vat
+                amount_total = amount_subtotal + amount_vat
+                if not cost_invalid:
+                    cost_invalid = line.cost_price == 0
 
             rec.amount_concept_subtotal = amount_subtotal
             rec.amount_concept_vat = amount_vat
@@ -1032,23 +733,6 @@ class IkeEventSupplierLink(models.Model):
         # ToDo: Reject?
         print("action_reject_authorization")
 
-    # === PUBLIC METHODS === #
-    def get_product_cost(self, supplier_id: int, product_id: int):
-        product_ids = [product_id]
-
-        # Matrix Lines
-        matrix_cost_line_ids = self.event_id.get_supplier_product_matrix_lines_by_supplier(supplier_id, product_ids)
-        cost_line_id = matrix_cost_line_ids.filtered(
-            lambda x:
-                x.concept_id.id == product_id
-                and x.supplier_status_id.ref == 'concluded')
-        cancel_cost_line_id = matrix_cost_line_ids.filtered(
-            lambda x:
-                x.concept_id.id == product_id
-                and x.supplier_status_id.ref == 'cancelled')
-
-        return cost_line_id[0].cost if cost_line_id else 0, cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
-
     # == SUPPLIER ADD ACTIONS === #
     def action_set_products(self):
         self.ensure_one()
@@ -1101,16 +785,6 @@ class IkeEventSupplierLink(models.Model):
                         'supplier_number': rec.supplier_number,
                     }))
             rec.with_context(not_add_horizontally=True, from_internal=False).supplier_product_ids = new_products_data
-
-    # === CRUD === #
-    @api.model_create_multi
-    def create(self, vals_list):
-        res = super().create(vals_list)
-        return res
-
-    def write(self, vals):
-        res = super().write(vals)
-        return res
 
 
 class IkeEventSupplierLinkPaymentLine(models.Model):

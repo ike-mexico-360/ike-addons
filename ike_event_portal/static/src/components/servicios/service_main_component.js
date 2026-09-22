@@ -90,7 +90,6 @@ export class ServicesMainComponent extends Component {
                 await this.subscribeToEventSupplierNotification();
                 await this.subscribeToScheduledReloadNotification();
                 await this.subscribeToScheduledChangedNotification();
-                //await this.subscribeToDebugNotifications();
             }
         });
         onMounted(() => {
@@ -242,13 +241,14 @@ export class ServicesMainComponent extends Component {
         }
     }
 
+    _isSameVisibleService(service, event_supplier) {
+        return service.supplier_id === event_supplier.supplier_id
+            && service.event_id === event_supplier.event_id
+            && service.truck_id === event_supplier.truck_id;
+    }
+
     async _handleActiveService(event_supplier) {
-        const isDuplicate = this.state.services.some(
-            (service) =>
-                service.supplier_id === event_supplier.supplier_id
-                && service.event_id === event_supplier.event_id
-                && service.truck_id === event_supplier.truck_id
-        );
+        const isDuplicate = this.state.services.some(service => this._isSameVisibleService(service, event_supplier));
         if (isDuplicate) return;
 
         await this.fetchAndAppendService(event_supplier.event_supplier_id);
@@ -288,8 +288,12 @@ export class ServicesMainComponent extends Component {
 
     async fetchAndAppendService(eventSupplierId) {
         try {
+            const existingService = this.state.services.find(service => service.event_supplier_id === eventSupplierId);
+            if (existingService) return;
+
             const event_supplier = await this.getEventSupplierById(eventSupplierId);
             if (!event_supplier) return;
+            if (this.state.services.some(service => this._isSameVisibleService(service, event_supplier))) return;
             this.state.services.unshift({
                 name: event_supplier.event_name,
                 event_date: event_supplier.event_date
@@ -374,9 +378,8 @@ export class ServicesMainComponent extends Component {
                     },
                 }
             );
-            if (result?.notification_sent_to_app) {
-                this.showNotification({ title: _t("Notification Sent"), message: _t('Notification sent successfully'), type: 'success' });
-            }
+
+            this.showNotification({ title: _t("Notification Sent"), message: _t('Notification sent successfully'), type: 'success' });
             await this.refreshSingleService(event_supplier_id);
         } catch (err) {
             this.showNotification({ title: _t("Error notifying service"), message: _t(err?.data?.message || err.message || "An error occurred while notifying the service."), type: 'danger' });
@@ -588,7 +591,7 @@ export class ServicesMainComponent extends Component {
                 this.showNotification({ title: _t("Error loading notified events"), message: _t(result.error || "An error occurred while loading the notified events."), type: 'danger' });
                 return [];
             }
-            return result.suppliers_events.map(supplier_event => ({
+            const services = result.suppliers_events.map(supplier_event => ({
                 name: supplier_event.event_name,
                 event_date: supplier_event.event_date
                     ? formatDateTime(deserializeDateTime(supplier_event.event_date), { format: "dd/MM/yyyy HH:mm:ss" })
@@ -621,6 +624,9 @@ export class ServicesMainComponent extends Component {
                 confirmed: supplier_event.confirmed,
                 assigned: supplier_event.assigned,
             }));
+            return services.filter((service, index) => services.findIndex(
+                candidate => this._isSameVisibleService(candidate, service)
+            ) === index);
         } catch (err) {
             this.showNotification({ title: _t("Error processing notified events"), message: _t(err?.data?.message || err.message || "An error occurred while processing the notified events."), type: 'danger' });
             return [];

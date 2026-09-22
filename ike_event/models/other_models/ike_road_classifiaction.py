@@ -21,8 +21,12 @@ class IkeRoadClassification(models.Model):
         domain="[('country_id', '=', country_id)]",
         index=True,
     )
-    # origin_ids = fields.One2many('ike.road.classification_rel', compute="")
-    destination_ids = fields.One2many('ike.road.classification_rel', compute="_compute_destination_ids")
+    destination_ids = fields.One2many(
+        comodel_name='ike.road.classification_rel',
+        inverse_name='origin_id',
+        string='Destinations',
+        context={'active_test': False}
+    )
 
     active = fields.Boolean(default=True)
     disabled = fields.Boolean(default=False, tracking=True)
@@ -43,31 +47,70 @@ class IkeRoadClassification(models.Model):
                     _("The name '%s' already exists. It must be unique.") % rec.name
                 )
 
-    @api.depends('destination_ids')
-    def _compute_destination_ids(self):
-        for rec in self:
-            rec.destination_ids = self.env['ike.road.classification_rel'].search([
-                '|',
-                ('column_1_id', '=', rec.id),
-                ('column_2_id', '=', rec.id),
-            ])
-
-    # @api.depends('origin_ids')
-    # def _compute_destination_ids(self):
-    #     for rec in self:
-    #         rec.origin_ids = rec.origin_ids.search([
-    #             '|',
-    #             ('column_1_id', '=', rec.id),
-    #             ('column_2_id', '=', rec.id),
-    #         ])
-
 
 class IkeRoadClassificationRel(models.Model):
     _name = "ike.road.classification_rel"
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = "Help to road classification relation"
 
-    column_1_id = fields.Many2one('ike.road.classification')
-    column_2_id = fields.Many2one('ike.road.classification')
+    origin_id = fields.Many2one('ike.road.classification', required=True, index=True, ondelete='cascade')
+    destination_id = fields.Many2one('ike.road.classification', required=True, index=True, ondelete='cascade')
 
     active = fields.Boolean(default=True)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        inverse_list = []
+        for vals in vals_list:
+            inverse_list.append({
+                'origin_id': vals['destination_id'],
+                'destination_id': vals['origin_id'],
+            })
+
+        res = super().create(vals_list + inverse_list)
+
+        return res
+
+    def unlink(self):
+        if self.env.context.get('skip_mirror_unlink'):
+            return super().unlink()
+
+        inverse_ids = self
+        for rec in self:
+            inverse_ids += self.search([
+                ('origin_id', '=', rec.destination_id.id),
+                ('destination_id', '=', rec.origin_id.id),
+            ])
+
+        res = super().unlink()
+
+        if inverse_ids:
+            inverse_ids.with_context(skip_mirror_unlink=True).unlink()
+
+        return res
+
+    def write(self, vals):
+        if self.env.context.get('skip_mirror'):
+            return super().write(vals)
+
+        inverse_ids = self
+
+        if 'active' in vals:
+            Relation = self.with_context(active_test=False)
+
+            for rec in self:
+                inverse_ids |= Relation.search([
+                    ('origin_id', '=', rec.destination_id.id),
+                    ('destination_id', '=', rec.origin_id.id),
+                ])
+
+            inverse_ids -= self
+
+        result = super().write(vals)
+
+        if inverse_ids:
+            inverse_ids.with_context(skip_mirror=True).write({
+                'active': vals['active'],
+            })
+
+        return result

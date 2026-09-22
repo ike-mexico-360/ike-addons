@@ -18,4 +18,5 @@ from . import authorized_amount_request
 from . import tier_review
 from . import ir_http
 from . import account_move
+from . import custom_helpdesk_stage_time_group
 from . import other

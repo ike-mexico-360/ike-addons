@@ -73,7 +73,7 @@
                         <field name="authorization_reasons_id"
                             invisible="(not check_commercial_authorization and not check_membership_authorizer)"
                             options="{'no_create': True, 'no_open': True, 'no_edit': True}"
-                            groups="custom_master_catalog.custom_group_commercial_supervisor"
+                            groups="!base.group_system,custom_master_catalog.custom_group_commercial_supervisor"
                             required="1"/>
                         <field name="comment_authorizer"
                             groups="!base.group_system,custom_master_catalog.custom_group_commercial_supervisor"

@@ -12,6 +12,7 @@ from Crypto.Util.Padding import pad, unpad
 from Crypto.Hash import SHA256
 
 from odoo import models, fields, api, Command, _
+from odoo.exceptions import AccessError
 from odoo.tools import config, ormcache
 
 
@@ -158,6 +159,18 @@ class CustomModelEncryption(models.AbstractModel):
                         ))
 
         return super().search_fetch(domain, field_names, offset, limit, order)
+
+    @api.model
+    @api.readonly
+    def read_group(self, domain, fields, groupby, offset=0, limit=None, orderby=False, lazy=True):
+        result = super().read_group(domain, fields, groupby, offset, limit, orderby, lazy)
+        fnames = self._x_get_encrypt_fields()
+        field_names = [x['name'] for x in fnames]
+        for row in result:
+            for key in field_names:
+                if key in row:
+                    row[key] = self.x_decrypt_aes256(row[key])
+        return result
 
     # === PUBLIC METHODS === #
     def action_reprocess_search_helpers(self):

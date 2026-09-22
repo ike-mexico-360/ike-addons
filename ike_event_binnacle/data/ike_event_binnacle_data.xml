@@ -1074,12 +1074,30 @@
                 )"/>
 
                 <!-- Si hay proveedores -->
-                <t t-if="suppliers">
+               <t t-if="suppliers">
                     <ol>
                         <t t-foreach="suppliers" t-as="line">
                             <li>
-                                <strong><t t-out="line.supplier_id.name"/></strong><br/>
+                                <strong>
+                                    <t t-out="line.supplier_id.name"/>
+                                </strong>
+                                <br/>
+
                                 <t t-out="line.name"/>
+                                <br/>
+
+                                <t t-if="object.supplier_search_type == 'publication'">
+                                    <span>Estimated duration: </span>
+                                    <t t-out="'%.2f' % (line.estimated_duration or 0.0)"/><span> min</span>
+                                    <br/>
+
+                                    <t t-if="line.negotiation_type == 'vehicle_destination'">
+                                        <span>Geolocation: Yes</span>
+                                    </t>
+                                    <t t-else="">
+                                        <span>Geolocation: No</span>
+                                    </t>
+                                </t>
                             </li>
                         </t>
                     </ol>
@@ -1451,7 +1469,21 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                    <strong>Authorization approved</strong>
+                    <p>
+                        <strong>Authorization approved</strong>
+                    </p>
+                    <p>
+                        <strong>Authorization type:</strong>
+                        <t t-out="ctx.get('authorization_type')"/>
+                    </p>
+                    <p>
+                        <strong>Responsible:</strong>
+                        <t t-out="ctx.get('authorization_responsible')"/>
+                    </p>
+                    <p>
+                        <strong>Reason:</strong>
+                        <t t-out="ctx.get('authorization_reason')"/>
+                    </p>
                 </t>
             </field>
         </record>
@@ -2749,12 +2781,31 @@
             <field name="body_html" type="html">
                 <t>
                     <t t-set="supplier" t-value="ctx.get('supplier')"/>
-                    <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
+                    <t t-set="truck"
+                    t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
 
                     <p>
-                        <strong>Notification accepted: </strong><br/>
-                        <strong>Supplier: </strong><t t-out="supplier"></t><br/>
-                        <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
+                        <strong>Notification accepted: </strong>
+                        <br/>
+
+                        <strong>Supplier: </strong>
+                        <t t-out="supplier"/>
+                        <br/>
+
+                        <strong>Plate: </strong>
+                        <t t-out="truck.license_plate or truck.name"/>
+                        <br/>
+
+                        <strong>Estimated duration: </strong>
+                        <t t-out="'%.2f' % (ctx.get('estimated_duration') or 0.0)"/><span>min</span>
+                        <br/>
+
+                        <t t-if="ctx.get('negotiation_type') == 'vehicle_destination'">
+                            <strong>Geolocation: </strong><span>Yes</span>
+                        </t>
+                        <t t-else="">
+                             <strong>Geolocation: </strong><span>No</span>
+                        </t>
 
                     </p>
                 </t>
@@ -3050,6 +3101,45 @@
             <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
             <field name="sequence">99</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_change_event_normal"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_supplier_evaluation" model="mail.template">
+            <field name="name">Binnacle stage mail template stage comment</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <p>
+                        <strong>Supplier evaluation:</strong>
+                        <t t-out="ctx.get('supplier_name')"/>
+                    </p>
+
+                    <p t-if="ctx.get('show_evaluation')">
+                        <strong>Evaluation:</strong>
+                        <t t-out="ctx.get('evaluation')"/>
+                    </p>
+
+                    <p t-if="ctx.get('show_reevaluation')">
+                        <strong>Reevaluation:</strong>
+                        <t t-out="ctx.get('reevaluation')"/>
+                    </p>
+
+                    <p t-if="ctx.get('show_evaluation_informer')">
+                        <strong>Informer:</strong>
+                        <t t-out="ctx.get('evaluation_informer')"/>
+                    </p>
+
+                    <p t-if="ctx.get('show_evaluation_observations')">
+                        <strong>Observations:</strong>
+                        <t t-out="ctx.get('evaluation_observations')"/>
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_supplier_evaluation" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="sequence">100</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_supplier_evaluation"/>
         </record>
     </data>
 </odoo>

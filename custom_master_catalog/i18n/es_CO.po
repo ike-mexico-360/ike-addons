@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0-20260504\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-27 13:35+0000\n"
-"PO-Revision-Date: 2026-08-27 13:35+0000\n"
+"POT-Creation-Date: 2026-09-09 18:10+0000\n"
+"PO-Revision-Date: 2026-09-09 18:10+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -577,6 +577,10 @@ msgid ""
 "Origin - Destination: Origin point to destination point.\n"
 "Base - Concepts: Suppliers with agreed cost based on basic concepts, without calculation of distances."
 msgstr ""
+"Base - Base: Ubicación base a punto destino a base.\n"
+"Base - Destination: Ubicación grúa a punto destino o base a punto destino.\n"
+"Origin - Destination: Origin point to destination point.\n"
+"Base - Concepts: Proveedores con costo convenio por conceptos base, sin calcular distancias calculation."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__base_concepts
@@ -586,7 +590,7 @@ msgstr ""
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__base_destination
 msgid "Base - Destination"
-msgstr ""
+msgstr "Base - Destino"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__base_concept_id
@@ -1719,7 +1723,7 @@ msgstr "Entidad"
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__event_type_id
 msgid "Event Type"
-msgstr ""
+msgstr "Tipo de evento"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographic_subservice_wizard__event_type_id
@@ -2073,6 +2077,11 @@ msgid "Has external notification"
 msgstr "Notificación externa"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_has_incidents
+msgid "Has incidents"
+msgstr "Tiene incidencias"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_has_portal
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_has_portal
 msgid "Has portal"
@@ -2312,7 +2321,18 @@ msgstr "Contador de códigos postales inactivos"
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_product_homologation__incident_type_id
 msgid "Incident Type"
-msgstr ""
+msgstr "Tipo de incidente"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_incident_type_ids
+msgid "Incident Types"
+msgstr "Tipo de incidencias"
+
+#. module: custom_master_catalog
+#: model:ir.actions.act_window,name:custom_master_catalog.custom_incident_type_action
+#: model:ir.ui.menu,name:custom_master_catalog.custom_incident_type_menu
+msgid "Incident types"
+msgstr "Tipos de incidentes"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_data_source_field__field_type__int
@@ -3080,7 +3100,7 @@ msgstr "Operador"
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__origin_destination
 msgid "Origin - Destination"
-msgstr ""
+msgstr "Origen - Destino"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__origin_type
@@ -3951,6 +3971,12 @@ msgstr "Tipo de proveedor"
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_menu_supplier_type
 msgid "Supplier Types"
 msgstr "Tipos de proveedor"
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_form
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_list
+msgid "Supplier VAT"
+msgstr "RFC del proveedor"
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form

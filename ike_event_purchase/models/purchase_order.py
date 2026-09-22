@@ -164,6 +164,22 @@ class PurchaseOrder(models.Model):
     x_validator = fields.Char(
         string='Validador', help="Technical: Validador received from External source needed to send at SAP. Only external")
 
+    # ================= #
+    #     DEPENDS       #
+    # ================= #
+    @api.depends('state', 'order_line.qty_to_invoice')
+    def _get_invoiced(self):
+        """Lock purchase orders as soon as Odoo marks them fully billed."""
+        super()._get_invoiced()
+        orders_to_lock = self.filtered(
+            lambda order: (
+                order.state == 'purchase'
+                and order.invoice_status == 'invoiced'
+            )
+        )
+        if orders_to_lock:
+            orders_to_lock.button_done()
+
     @api.depends('x_event_id')
     def _compute_x_event_public_id(self):
         for record in self:
@@ -189,79 +205,38 @@ class PurchaseOrder(models.Model):
                 record.x_authorized_amount_request_ids
             )
 
-    def _check_can_request_authorized_amount_increase(self):
-        self.ensure_one()
-        allowed_groups = (
-            'custom_master_catalog.custom_group_ccc_analyst',
-            'custom_master_catalog.custom_group_ccc_coordinator',
-            'custom_master_catalog.custom_group_ccc_boss',
-        )
-        if not any(self.env.user.has_group(group) for group in allowed_groups):
-            raise UserError(_('Only CCC users can request an authorized amount increase.'))
-        if not self.x_event_id:
-            raise UserError(_('The cost review must be linked to an event.'))
-        if self.x_dispute_state != 'submitted':
-            raise UserError(_('The supplier dispute must be submitted first.'))
-
-    def action_request_authorized_amount_increase(self):
-        self.ensure_one()
-        self._check_can_request_authorized_amount_increase()
-        request = self.x_authorized_amount_request_ids.filtered(
-            lambda item: item.state == 'draft'
-        )[:1]
-        action = self.env['ir.actions.actions']._for_xml_id(
-            'ike_event_purchase.action_authorized_amount_request'
-        )
-        action['views'] = [
-            (
-                self.env.ref(
-                    'ike_event_purchase.view_authorized_amount_request_form'
-                ).id,
-                'form',
-            )
-        ]
-        if request:
-            action['res_id'] = request.id
-        else:
-            action['context'] = {
-                'default_purchase_order_id': self.id,
-                'default_current_authorized_amount': self.x_dispute_authorized_amount,
-                'default_disputed_amount': (
-                    self.x_dispute_authorized_amount or False
-                ),
-                'default_requested_amount': (
-                    self.x_dispute_authorized_amount or False
-                ),
-                'default_requester_id': self.env.user.id,
-            }
-        return action
-
-    def action_view_authorized_amount_requests(self):
-        self.ensure_one()
-        action = self.env['ir.actions.actions']._for_xml_id(
-            'ike_event_purchase.action_authorized_amount_request'
-        )
-        action['domain'] = [('purchase_order_id', '=', self.id)]
-        action['context'] = {'default_purchase_order_id': self.id}
-        if self.x_authorized_amount_request_count == 1:
-            action['views'] = [
-                (
-                    self.env.ref(
-                        'ike_event_purchase.view_authorized_amount_request_form'
-                    ).id,
-                    'form',
-                )
-            ]
-            action['res_id'] = self.x_authorized_amount_request_ids.id
-        return action
-
-    def action_draft_cancel(self):
-        """ Cambia el estado de la Orden de Compra de Draft a Cost Review Cancel """
+    @api.depends('order_line.x_price_subtotal_dispute')
+    def _x_amount_all_dispute(self):
         for order in self:
-            if order.state == 'draft':
-                order.write({'state': 'draft_cancel'})
-        return True
+            order_lines = order.order_line.filtered(lambda x: not x.display_type)
+            order.amount_untaxed_dispute = sum(order_lines.mapped('x_price_subtotal_dispute'))
 
+    @api.depends('order_line.x_price_subtotal_approved')
+    def _x_amount_all_approved(self):
+        for order in self:
+            skip_check = self.env.context.get('x_skip_dispute_amount_check', False)
+
+            order_lines = order.order_line.filtered(lambda x: not x.display_type)
+            # order.amount_untaxed_approved = sum(order_lines.mapped('x_price_subtotal_approved'))
+            new_amount = sum(order_lines.mapped('x_price_subtotal_approved'))
+            if not order.x_dispute_authorized_amount:
+                super(PurchaseOrder, order).write({
+                    'x_dispute_authorized_amount': order.x_authorized_amount,
+                })
+            if not skip_check and new_amount > order.x_dispute_authorized_amount:
+                raise ValidationError(_("The CCC subtotal must not exceed the authorized amount dispute."))
+            else:
+                order.amount_untaxed_approved = new_amount
+
+    @api.depends('order_line.x_price_subtotal_event')
+    def _x_amount_all_event(self):
+        for order in self:
+            order_lines = order.order_line.filtered(lambda x: not x.display_type)
+            order.amount_untaxed_event = sum(order_lines.mapped('x_price_subtotal_event'))
+
+    # ================== #
+    #      ONCHANGE      #
+    # ================== #
     @api.onchange('order_line')
     def _onchange_order_line_check_reason(self):
         self.ensure_one()
@@ -294,6 +269,9 @@ class PurchaseOrder(models.Model):
 
         self.x_require_change_reason = False
 
+    # =============== #
+    #       ORM       #
+    # =============== #
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -309,21 +287,6 @@ class PurchaseOrder(models.Model):
                     'x_dispute_authorized_amount': order.x_authorized_amount,
                 })
         return orders
-
-    def _x_should_assign_project_sequence(self, vals):
-        current_name = vals.get('name')
-        return not current_name or current_name in ('/', 'New', _('New'))
-
-    def _x_get_project_purchase_sequence(self, vals):
-        project = self.env['project.project']
-        project_id = vals.get('project_id')
-        if project_id:
-            project = project.browse(project_id).exists()
-
-        if not project:
-            return self.env['ir.sequence']
-
-        return project.sudo().x_purchase_order_sequence_id
 
     def write(self, vals):
         if (
@@ -356,39 +319,101 @@ class PurchaseOrder(models.Model):
                 )
         return result
 
-    # - - - - - - - - - - - - #
-    #    Dispute workflow     #
-    # - - - - - - - - - - - - #
+    # =============== #
+    #     ACTIONS     #
+    # =============== #
+    def action_request_authorized_amount_increase(self):
+        self.ensure_one()
+        self._check_can_request_authorized_amount_increase()
+        request = self.x_authorized_amount_request_ids.filtered(
+            lambda item: item.state == 'draft'
+        )[:1]
+        action = self.env['ir.actions.actions']._for_xml_id(
+            'ike_event_purchase.action_authorized_amount_request'
+        )
+        action['views'] = [
+            (
+                self.env.ref(
+                    'ike_event_purchase.view_authorized_amount_request_form'
+                ).id,
+                'form',
+            )
+        ]
+        if request:
+            action['res_id'] = request.id
+        else:
+            action['context'] = {
+                'default_purchase_order_id': self.id,
+                'default_current_authorized_amount': self.x_dispute_authorized_amount,
+                'default_disputed_amount': self.amount_untaxed_dispute,
+                'default_requested_amount': self.amount_untaxed_dispute,
+                'default_requester_id': self.env.user.id,
+            }
+        return action
 
-    # Depends methods
-    @api.depends('order_line.x_price_subtotal_dispute')
-    def _x_amount_all_dispute(self):
+    def action_view_authorized_amount_requests(self):
+        self.ensure_one()
+        action = self.env['ir.actions.actions']._for_xml_id(
+            'ike_event_purchase.action_authorized_amount_request'
+        )
+        action['domain'] = [('purchase_order_id', '=', self.id)]
+        action['context'] = {'default_purchase_order_id': self.id}
+        if self.x_authorized_amount_request_count == 1:
+            action['views'] = [
+                (
+                    self.env.ref(
+                        'ike_event_purchase.view_authorized_amount_request_form'
+                    ).id,
+                    'form',
+                )
+            ]
+            action['res_id'] = self.x_authorized_amount_request_ids.id
+        return action
+
+    def action_draft_cancel(self):
+        """ Cambia el estado de la Orden de Compra de Draft a Cost Review Cancel """
         for order in self:
-            order_lines = order.order_line.filtered(lambda x: not x.display_type)
-            order.amount_untaxed_dispute = sum(order_lines.mapped('x_price_subtotal_dispute'))
+            if order.state == 'draft':
+                order.write({'state': 'draft_cancel'})
+        return True
 
-    @api.depends('order_line.x_price_subtotal_approved')
-    def _x_amount_all_approved(self):
-        for order in self:
-            skip_check = self.env.context.get('x_skip_dispute_amount_check', False)
+    # =============== #
+    #    AUXILIARS    #
+    # =============== #
+    def _check_can_request_authorized_amount_increase(self):
+        self.ensure_one()
+        allowed_groups = (
+            'custom_master_catalog.custom_group_ccc_analyst',
+            'custom_master_catalog.custom_group_ccc_coordinator',
+            'custom_master_catalog.custom_group_ccc_boss',
+        )
+        if not any(self.env.user.has_group(group) for group in allowed_groups):
+            raise UserError(_('Only CCC users can request an authorized amount increase.'))
+        if not self.x_event_id:
+            raise UserError(_('The cost review must be linked to an event.'))
+        if self.x_dispute_state != 'submitted':
+            raise UserError(_('The supplier dispute must be submitted first.'))
+        if float_compare(
+            self.amount_untaxed_dispute,
+            self.x_dispute_authorized_amount,
+            precision_rounding=self.currency_id.rounding,
+        ) <= 0:
+            raise UserError(_('The disputed amount does not exceed the authorized amount.'))
 
-            order_lines = order.order_line.filtered(lambda x: not x.display_type)
-            # order.amount_untaxed_approved = sum(order_lines.mapped('x_price_subtotal_approved'))
-            new_amount = sum(order_lines.mapped('x_price_subtotal_approved'))
-            if not order.x_dispute_authorized_amount:
-                super(PurchaseOrder, order).write({
-                    'x_dispute_authorized_amount': order.x_authorized_amount,
-                })
-            if not skip_check and new_amount > order.x_dispute_authorized_amount:
-                raise ValidationError(_("The CCC subtotal must not exceed the authorized amount dispute."))
-            else:
-                order.amount_untaxed_approved = new_amount
+    def _x_should_assign_project_sequence(self, vals):
+        current_name = vals.get('name')
+        return not current_name or current_name in ('/', 'New', _('New'))
 
-    @api.depends('order_line.x_price_subtotal_event')
-    def _x_amount_all_event(self):
-        for order in self:
-            order_lines = order.order_line.filtered(lambda x: not x.display_type)
-            order.amount_untaxed_event = sum(order_lines.mapped('x_price_subtotal_event'))
+    def _x_get_project_purchase_sequence(self, vals):
+        project = self.env['project.project']
+        project_id = vals.get('project_id')
+        if project_id:
+            project = project.browse(project_id).exists()
+
+        if not project:
+            return self.env['ir.sequence']
+
+        return project.sudo().x_purchase_order_sequence_id
 
     # Auxiliar methods
     def _x_action_start_dispute(self):
@@ -534,22 +559,12 @@ class PurchaseOrder(models.Model):
                 message_type='notification',
                 subtype_xmlid='mail.mt_note',
             )
-        # if self.partner_id.x_has_consolidation:
-        #     self.x_action_consolidate()
-        # self.x_action_start_consolidation()
 
     def x_action_send_new_values_rfq(self):
         """ Send new values to RFQ. Show again in portal """
         self.ensure_one()
         if self.x_dispute_state != 'submitted':
             raise UserError(_('There is no submitted dispute on this order.'))
-        # Validar que no hay campos aprobados en 0
-        # empty_vals = []
-        # for line in self.order_line:
-        #     if line.x_price_unit_approved == 0 or line.x_product_qty_approved == 0:
-        #         empty_vals.append(line.id)
-        # if empty_vals:
-        #     raise UserError(_('There are zero approved values on lines.'))
         self.write({'x_dispute_state': 'resolved'})
 
     def x_action_reject_dispute(self):
@@ -603,6 +618,13 @@ class PurchaseOrder(models.Model):
                 'template_id': template_id,
             })
             compose_wizard.action_send_mail()
+
+    def action_send_email_new_order(self):
+        self.ensure_one()
+        template = self.env.ref('ike_event_purchase.purchase_email_new_order_template', raise_if_not_found=False)
+        if not template:
+            return
+        template.send_mail(self.id, force_send=True)
 
     def x_action_close_ticket(self):
         """Close ticket"""
@@ -722,7 +744,15 @@ class PurchaseOrder(models.Model):
         grouped_ids = defaultdict(list)
 
         for rfq in rfqs:
-            grouped_ids[(rfq.partner_id.id, rfq.x_sub_service_id.id, rfq.project_id.id)].append(rfq.id)
+            grouped_ids[
+                (
+                    rfq.partner_id.id,
+                    rfq.x_sub_service_id.id,
+                    rfq.project_id.id,
+                    rfq.x_customer_id.id,
+                    rfq.x_invoice_company_id.id,
+                )
+            ].append(rfq.id)
 
         return {
             key: self.env['purchase.order'].browse(rfq_ids)
@@ -1167,10 +1197,11 @@ class PurchaseOrder(models.Model):
                     if client_code != company_code:
                         client_code = client_code.zfill(10)
 
+                if not app_code:
+                    raise UserError(_("No reference app code found for this project."))
+
                 lines = []
-                auxiliar_count = 0
-                for line in purchase.order_line.sorted('id'):
-                    auxiliar_count += 10
+                for line in purchase.order_line.sorted('x_sap_item_number'):
                     lines.append({
                         "supplierMaterialNumber": line.x_sap_code_income,  # Valor SAP ingeso de Plan de cobertura
                         "orderQuantity": str(line.product_qty),
@@ -1178,7 +1209,7 @@ class PurchaseOrder(models.Model):
                         "material": line.x_sap_code_outgoing,  # Valor SAP egreso de Plan de cobertura
                         "purchaseOrderQuantityUnit": "SER",
                         "expediente": line.x_parent_expedient,
-                        "x_SAP_po_line": auxiliar_count,
+                        "x_SAP_po_line": line.x_sap_item_number,
                         "id_evento": line.x_id_event if line.x_id_event else None,
                         "validador": line.x_validator if line.x_validator else None,
                     })

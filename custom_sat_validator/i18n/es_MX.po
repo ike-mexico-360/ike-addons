@@ -481,6 +481,11 @@ msgid "Invoice Generation Error: %s"
 msgstr "Error de Generación de Factura: %s"
 
 #. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_purchase_order__x_status_invoices
+msgid "Invoice Status (Summary)"
+msgstr "Estados de la facturas"
+
+#. module: custom_sat_validator
 #. odoo-python
 #: code:addons/custom_sat_validator/controllers/portal.py:0
 msgid "Invoice creation failed during SAT validation."
@@ -491,6 +496,11 @@ msgstr "La creación de la factura falló durante la validación del SAT."
 #: code:addons/custom_sat_validator/controllers/portal.py:0
 msgid "Invoice successfully created and confirmed. Reference: %s"
 msgstr "Factura creada y confirmada exitosamente. Referencia: %s"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,field_description:custom_sat_validator.field_purchase_order__x_upload_invoices_date
+msgid "Invoices Upload Date (Summary)"
+msgstr "Fechas de carga de facturas"
 
 #. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__message_is_follower
@@ -719,10 +729,18 @@ msgid "Product Name / Description"
 msgstr "Producto"
 
 #. module: custom_sat_validator
+#: model:ir.model,name:custom_sat_validator.model_purchase_order
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_sat_validator__purchase_id
 #: model_terms:ir.ui.view,arch_db:custom_sat_validator.view_custom_sat_validator_search
 msgid "Purchase Order"
-msgstr "Orden de Compra"
+msgstr "Orden de compra"
+
+#. module: custom_sat_validator
+#: model:ir.actions.server,name:custom_sat_validator.ir_cron_sync_po_line_invoice_data_mx_ir_actions_server
+msgid ""
+"Purchase Order Line: Sync invoice upload date and status from existing "
+"vendor bills (MX)"
+msgstr ""
 
 #. module: custom_sat_validator
 #. odoo-python
@@ -927,6 +945,14 @@ msgid "Status"
 msgstr "Estado"
 
 #. module: custom_sat_validator
+#: model:ir.model.fields,help:custom_sat_validator.field_purchase_order__x_upload_invoices_date
+msgid ""
+"Stores the date and time when the vendor bills or XML invoices was uploaded."
+msgstr ""
+"Almacena la fecha y hora en que se cargaron las facturas de proveedor o "
+"facturas XML."
+
+#. module: custom_sat_validator
 #: model:ir.model.fields,field_description:custom_sat_validator.field_custom_import_xml_invoice_line__subtotal
 msgid "Subtotal"
 msgstr ""
@@ -953,6 +979,13 @@ msgstr ""
 #: model:ir.model.fields.selection,name:custom_sat_validator.selection__custom_sat_validator_line__line_state__validated
 msgid "Successfully Validated"
 msgstr "Validado Exitosamente"
+
+#. module: custom_sat_validator
+#: model:ir.model.fields,help:custom_sat_validator.field_purchase_order__x_status_invoices
+msgid "Summary of vendor bills references and their respective statuses."
+msgstr ""
+"Resumen de las referencias de las facturas de proveedor y sus respectivos "
+"estados."
 
 #. module: custom_sat_validator
 #. odoo-javascript

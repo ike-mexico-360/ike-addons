@@ -118,6 +118,78 @@
         </field>
     </record>
 
+    <!-- EVENT SUPPLIER POPUP NEW -->
+    <record id="ike_event_supplier_evaluation_form_view" model="ir.ui.view">
+        <field name="name">ike.event.supplier.evaluation.form.view</field>
+        <field name="model">ike.event.supplier</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="event_id" invisible="1"/>
+                        <field name="supplier_id" readonly="1" options="{'no_create': 1, 'no_open': 1}"/>
+                        <field name="supplier_center_id" readonly="1" options="{'no_create': 1, 'no_open': 1}"/>
+
+                        <field name="truck_id"
+                            domain="truck_domain"
+                            options="{'no_create': 1, 'no_open': 1}"
+                            readonly="assignation_type == 'electronic' or display_type"
+                            required="1"/>
+                        <field name="truck_domain" invisible="1"/>
+                        <field name="name" invisible="1"/>
+                        <field name="assignation_type" invisible="1"/>
+                        <field name="display_type" invisible="1"/>
+
+                        <field name="assigned" readonly="1"/>
+                        <field name="supplier_phone"/>
+                        <label for="evaluation_id"/>
+                        <div class="o_row">
+                            <field name="evaluation_id" options="{'no_create': 1, 'no_open': 1}" required="1" readonly="evaluated"/>
+                            <field name="evaluation_reevaluation"/>
+                        </div>
+                        <field name="evaluated" invisible="1"/>
+                        <field name="evaluation_2_id" options="{'no_create': 1, 'no_open': 1}" invisible="not evaluated"/>
+                        <field name="evaluation_observations"/>
+                        <field name="evaluation_informer"/>
+                    </group>
+                    <notebook>
+                        <page string="Supplier Data" name="supplier_data">
+                            <group>
+                                <field name="supplier_phone_1"/>
+                                <field name="supplier_phone_2"/>
+                                <field name="supplier_phone_3"/>
+                                <field name="supplier_phone_4"/>
+                                <field name="supplier_phone_5"/>
+                            </group>
+                        </page>
+                        <page string="Concepts" name="products">
+                            <field name="supplier_link_id" readonly="1"/>
+                            <field name="supplier_product_ids"
+                                nolabel="1"
+                                colspan="2"
+                                widget="ike_section_and_note_field_o2m"
+                                options="{'field_columns': ['product_id'], 'delete_condition_field': 'mandatory'}"
+                                readonly="1"
+                                context="{
+                                    'list_view_ref': 'ike_event.ike_event_supplier_product_detail_list_view',
+                                    'default_event_supplier_link_id': supplier_link_id,
+                                    'default_authorization_pending': True,
+                                    'default_is_manual': True,
+                                    'default_supplier_number': supplier_number,
+                                    'from_internal': True,
+                                }"/>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="amount_concept_subtotal"/>
+                                <field name="amount_concept_vat"/>
+                                <field name="amount_concept_total" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <!-- EVENT SUPPLIER LINK POPUP -->
     <record id="ike_event_supplier_link_form_view" model="ir.ui.view">
         <field name="name">ike.event.supplier.link.form.view</field>
@@ -301,9 +373,9 @@
         </field>
     </record>
 
-    <!-- EVENT SUPPLIER PHONES POPUP -->
+    <!-- EVENT SUPPLIER CHANGE VEHICLE POPUP -->
     <record id="ike_event_supplier_vehicle_form_view" model="ir.ui.view">
-        <field name="name">ike.event.supplier.phones.form.view</field>
+        <field name="name">ike.event.supplier.vehicle.form.view</field>
         <field name="model">ike.event.supplier</field>
         <field name="priority">99</field>
         <field name="arch" type="xml">
@@ -314,12 +386,14 @@
                             options="{'no_create': 1, 'no_open': 1}"
                             readonly="1"
                             required="1"/>
+
                         <field name="truck_id"
                             domain="truck_domain"
                             options="{'no_create': 1, 'no_open': 1}"
                             readonly="assignation_type == 'electronic' or display_type"
                             required="1"/>
                         <field name="truck_domain" invisible="1"/>
+                        <field name="name" invisible="1"/>
                         <field name="assignation_type" invisible="1"/>
                         <field name="display_type" invisible="1"/>
                         <field name="stage_ref" invisible="1"/>
@@ -343,12 +417,18 @@
                     </group>
                 </group>
                 <footer>
+                    <button string="Assign" class="btn-primary"
+                        name="action_assign" type="object"
+                        invisible="(assignation_type == 'electronic' or display_type) or stage_ref != 'accepted'"
+                        groups="base.group_no_one"/>
                     <button string="Confirm" class="btn-primary"
                         name="action_confirm_vehicle" type="object"
-                        invisible="(assignation_type == 'electronic' or display_type) or stage_ref != 'assigned'"/>
+                        invisible="(assignation_type == 'electronic' or display_type) or stage_ref != 'accepted'"/>
                     <button string="Accept" class="btn-primary"
-                        name="action_change_vehicle_and_accept" type="object"
-                        invisible="(assignation_type == 'electronic' or display_type) or stage_ref == 'assigned'"/>
+                        name="action_accept" type="object"
+                        invisible="(assignation_type == 'electronic' or display_type) or stage_ref != 'notified'"/>
+                    <button string="Save" class="btn-primary"
+                        special="save"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>

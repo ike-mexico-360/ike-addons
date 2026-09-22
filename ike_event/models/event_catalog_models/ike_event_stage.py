@@ -33,7 +33,7 @@ class IkeEventStageComment(models.Model):
     _sql_constraints = [
         (
             'unique_event_stage_sequence',
-            'unique(event_id, stage_id, comment_type, supplier_id, sequence)',
+            'unique(event_id, stage_id, comment_type, supplier_number, sequence)',
             'Someone else has already registered the same comment. Please reopen the window to verify it.'
         ),
     ]

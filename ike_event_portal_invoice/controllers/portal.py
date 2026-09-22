@@ -144,7 +144,7 @@ class PortalInvoice(PortalAccount):
             }
 
     @http.route(
-        ['/provider/portal/invoice/dian'],
+        ['/provider/portal/invoice/supplier'],
         type='http',
         auth='user',
         website=True,

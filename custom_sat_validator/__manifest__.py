@@ -15,9 +15,11 @@
     'data': [
         'security/ir.model.access.csv',
         'data/ir_sequence_data.xml',
+        "data/ir_cron_data.xml",
         'views/account_move_views.xml',
         'views/custom_sat_validator_views.xml',
         'views/portal_purchase_template.xml',
+        'views/purchase_order_views.xml',
         'views/res_config_settings_views.xml',
         'views/ike_menus.xml',
     ],

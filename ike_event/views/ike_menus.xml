@@ -10,12 +10,12 @@
         </record> -->
         <!-- Menus -->
         <menuitem id="ike_menu_root" name="Events" web_icon="ike_event,static/description/icon.png"
-            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_account_event_admin,custom_master_catalog.custom_group_account_event_supervisor">
+            groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_account_event_admin,custom_master_catalog.custom_group_account_event_supervisor,custom_master_catalog.custom_group_cx">
             <menuitem id="ike_menu_event" name="Events" sequence="1"
-                groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_account_event_admin,custom_master_catalog.custom_group_account_event_supervisor">
+                groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_account_event_admin,custom_master_catalog.custom_group_account_event_supervisor,custom_master_catalog.custom_group_cx">
                 <menuitem id="ike_menu_event_screen" name="Event Screens" sequence="1"
                     action="action_ike_event_screen"
-                    groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_account_event_admin,custom_master_catalog.custom_group_account_event_supervisor" />
+                    groups="base.group_system,custom_master_catalog.custom_group_event_coordinator,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account,custom_master_catalog.custom_group_supplier_operational,custom_master_catalog.custom_group_ccc_analyst,custom_master_catalog.custom_group_ccc_boss,custom_master_catalog.custom_group_ccc_coordinator,custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_support,custom_master_catalog.custom_group_bi_queries,custom_master_catalog.custom_group_supplier_admin_system,custom_master_catalog.custom_group_account_event_admin,custom_master_catalog.custom_group_account_event_supervisor,custom_master_catalog.custom_group_cx" />
                 <menuitem id="ike_menu_event_event" name="Events" sequence="2"
                     action="action_ike_event"
                     groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
@@ -80,18 +80,21 @@
                 <menuitem id="ike_menu_event_service_type_action" name="Services type" sequence="25"
                         action="ike_event_service_type_action"
                         groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
-                <menuitem id="ike_menu_cancellation_reasons_action" name="Cancellation reasons" sequence="30"
+                <menuitem id="ike_menu_supplier_ratings" name="Event Supplier Evaluations" sequence="30"
+                        action="action_ike_event_supplier_evaluation"
+                        groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
+                <menuitem id="ike_menu_cancellation_reasons_action" name="Cancellation reasons" sequence="40"
                         action="ike_event_cancellation_reason_action"
                         groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
-                <menuitem id="ike_service_duplicate_reason_action" name="Duplication reasons" sequence="35"
+                <menuitem id="ike_service_duplicate_reason_action" name="Duplication reasons" sequence="45"
                         action="ike_event_duplicate_reason_action"
                         groups="base.group_system,custom_master_catalog.custom_group_contact_admin_client,custom_master_catalog.custom_group_contact_admin_supplier,custom_master_catalog.custom_group_contact_admin_account" />
-                <menuitem id="ike_service_stage_menu" name="Event Stages" sequence="40"
+                <menuitem id="ike_service_stage_menu" name="Event Stages" sequence="50"
                         action="action_ike_event_stage"
                         groups="base.group_erp_manager"/>
-                <menuitem id="ike_menu_road_classification" name="Event road classification" sequence="45"
-                        action="ike_event_road_classification_view_action"
-                        groups="base.group_erp_manager"/>
+                <menuitem id="ike_menu_ike_road_classification" name="Event road classification" sequence="60"
+                        action="action_ike_road_classification"
+                        groups="base.group_erp_manager,base.group_system"/>
             </menuitem>
         </menuitem>
     </data>

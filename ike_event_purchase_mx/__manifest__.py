@@ -14,7 +14,7 @@
         'custom_sat_validator',
     ],
     "data": [
-        "data/ike_event_purchase_mx_data.xml",
-        "views/purchase_order_views.xml",
+        # "data/ike_event_purchase_mx_data.xml",
+        # "views/purchase_order_views.xml",
     ],
 }

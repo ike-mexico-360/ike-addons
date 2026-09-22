@@ -2,11 +2,12 @@
 <templates id="template" xml:space="preserve">
 
     <t t-name="ike_event.IkeTimerWidget">
-        <div class="d-flex flex-wrap justify-content-center align-items-center gap-1" t-att-class="getTimerClass()">
+        <div class="d-flex justify-content-center align-items-center gap-1">
             <!-- Power -->
             <t t-if="state.current_state == 'notified'">
-                <i class="fa fa-power-off cursor-pointer text-light" t-on-click="onPlay" title="Pause" t-if="state.paused"/>
-                <i class="fa fa-power-off cursor-pointer" t-on-click="onPause" title="Pause" t-else=""/>
+                <i class="fa fa-power-off cursor-pointer text-light" t-on-click="onPlay" title="Pause"
+                    t-if="state.paused" />
+                <i class="fa fa-power-off cursor-pointer" t-on-click="onPause" title="Pause" t-else="" />
             </t>
             <!-- Reset -->
             <t t-if="showReset">
@@ -14,21 +15,24 @@
             </t>
             <!-- Notification -->
             <t t-if="!showManualAccept">
-                <t t-if="showNotification and !state.blocked">
-                    <i class="fa fa-clock-o fw-bold cursor-pointer"
-                        t-att-class="{'text-muted': state.blocked}" t-on-click="onNotify"
-                        title="Notify" />
+                <t t-if="showNotification and !state.blocked and !state.evaluation_locked">
+                    <i class="fa fa-clock-o fa-lg cursor-pointer" t-att-class="{'text-muted': state.blocked}"
+                        t-on-click="onNotify" title="Notify" />
                 </t>
                 <t t-else="">
-                    <i class="fa fa-clock-o" />
+                    <i class="fa fa-calendar-o" />
                 </t>
                 <!-- Timer -->
                 <span t-out="formatTime(state.seconds)" />
+            </t>
+        </div>
+        <div class="d-flex justify-content-center align-items-center gap-1">
+            <t t-if="!showManualAccept">
                 <!-- Accept/Reject -->
                 <t t-if="state.current_state == 'notified' and !state.blocked">
-                    <i class="fa fa-check cursor-pointer"
+                    <i class="fa fa-check cursor-pointer fa-lg"
                         t-on-click="onAccept" title="Accept" />
-                    <i class="fa fa-times cursor-pointer"
+                    <i class="fa fa-times cursor-pointer fa-lg"
                         t-on-click="onReject" title="Reject" />
                 </t>
             </t>

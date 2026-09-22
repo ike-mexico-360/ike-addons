@@ -611,4 +611,8 @@
             </xpath>
         </field>
     </record>
+
+    <record id="purchase.action_confirm_rfqs" model="ir.actions.server">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_system')])]"/>
+    </record>
 </odoo>

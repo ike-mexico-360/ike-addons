@@ -7,6 +7,10 @@
         <field name="model">custom.membership.nus</field>
         <field name="arch" type="xml">
             <list delete="false" edit="false" duplicate="false" create="false">
+                <header>
+                    <button name="action_reprocess_search_helpers" string="Reprocess Search Helper"
+                        type="object" class="btn-warning" groups="base.group_erp_manager"/>
+                </header>
                 <field name="name"/>
                 <field name="nus_id"/>
             </list>
@@ -206,7 +210,8 @@
         <field name="model">custom.membership.nus</field>
         <field name="arch" type="xml">
             <search>
-                <field name="display_name" string="NUs"/>
+                <field name="x_nus_name_search" string="NUs"/>
+                <field name="x_affiliation_name_search" string="Affiliation Name"/>
                 <field name="membership_plan_id" string="Membership plan"/>
                 <field name="disabled"/>
                 <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>

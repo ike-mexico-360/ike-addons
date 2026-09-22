@@ -10,28 +10,40 @@ _logger = logging.getLogger(__name__)
 class CustomMembershipNus(models.Model):
     _name = 'custom.membership.nus'
     _description = 'Custom Membership NUs'
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'custom.model.encryption']
     _order = 'id desc'
 
     # Use name for rec_name (it will be automatically decrypted in name_get)
     _rec_name = 'name'
 
-    name = fields.Char(string='Name', default=lambda self: _("New"), required=True, tracking=True)
+    name = fields.Char(string='Name', default=lambda self: _("New"), required=True, tracking=True, encrypt=True)
     key_identification = fields.Char(
         string="Key identification",
+        encrypt=True,
         tracking=True)
     second_key_identification = fields.Char(
         string="Second key identification",
+        encrypt=True,
         tracking=True)
     clause = fields.Char()
     second_clause = fields.Char(string="second clause")
     date = fields.Date(string='Date', tracking=True, default=fields.Date.context_today)
-    x_validation_pattern = fields.Char(string='Validation pattern', related="membership_plan_id.x_validation_pattern")
-    x_display_mask = fields.Char(string='Display mask', related="membership_plan_id.x_display_mask")
+    x_validation_pattern = fields.Char(
+        string='Validation pattern',
+        encrypt=True,
+        related="membership_plan_id.x_validation_pattern")
+    x_display_mask = fields.Char(
+        string='Display mask',
+        encrypt=True,
+        related="membership_plan_id.x_display_mask")
     x_validation_pattern_second = fields.Char(
         string='Validation second pattern',
+        encrypt=True,
         related="membership_plan_id.x_validation_pattern_second")
-    x_display_mask_second = fields.Char(string='Second display mask', related="membership_plan_id.x_display_mask_second")
+    x_display_mask_second = fields.Char(
+        string='Second display mask',
+        encrypt=True,
+        related="membership_plan_id.x_display_mask_second")
     check_second_key = fields.Boolean(related="membership_plan_id.account_id.x_check_second_key")
     check_clause = fields.Boolean(related="membership_plan_id.account_identification_id.clause", string="Check clause")
     second_check_clause = fields.Boolean(
@@ -65,8 +77,23 @@ class CustomMembershipNus(models.Model):
         search='_search_display_name',
         store=False
     )
+    x_affiliation_name_search = fields.Char(
+        string='Affiliation Name',
+        compute='_compute_affiliation_name_search',
+        search='_search_display_name',
+    )
+    x_nus_name_search = fields.Char(
+        string='NUs',
+        compute='_compute_nus_name_search',
+        search='_search_nus_name_search',
+    )
     date_start = fields.Date(string='Start date', store=True)
     date_end = fields.Date(string='Date End', store=True)
+
+    # # === ENCRYPT SEARCH HELPER FIELDS === #
+    x_name_search_ids = fields.One2many(
+        'custom.membership.nus.search.helper.rel', 'encrypt_model_id',
+        domain=[('field_name', '=', 'name')])
 
     # === COMPUTE === #
     @api.depends('name', 'key_identification', 'x_validation_pattern', 'x_display_mask')
@@ -74,17 +101,16 @@ class CustomMembershipNus(models.Model):
         """
         Compute decrypted values to display in the interface
         """
-        encryption_util = self.env['custom.encryption.utility']
         for record in self:
             # Decrypt name
             if record.name:
-                record.display_name = encryption_util.decrypt_aes256(record.name)
+                record.display_name = self.x_decrypt_aes256(record.name)
             else:
                 record.display_name = ''
 
     @api.model
     def _search_display_name(self, operator, value):
-        """Delegate NUs searches to the model's existing encrypted-name search."""
+        """Delegate affiliation searches to the model's existing name search."""
         matching_ids = [
             record_id
             for record_id, _display_name in self.name_search(
@@ -94,6 +120,25 @@ class CustomMembershipNus(models.Model):
             )
         ]
         return [('id', 'in', matching_ids)]
+
+    @api.depends('name')
+    def _compute_affiliation_name_search(self):
+        for record in self:
+            record.x_affiliation_name_search = record.display_name
+
+    @api.depends('nus_id')
+    def _compute_nus_name_search(self):
+        for record in self:
+            record.x_nus_name_search = record.nus_id.display_name
+
+    @api.model
+    def _search_nus_name_search(self, operator, value):
+        nus_ids = [record_id for record_id, _name in self.env['custom.nus'].name_search(
+            name=value,
+            operator=operator,
+            limit=None,
+        )]
+        return [('nus_id', 'in', nus_ids)]
 
     # === ONCHANGE === #
     @api.onchange('membership_plan_id')
@@ -113,79 +158,11 @@ class CustomMembershipNus(models.Model):
     # === CRUD METHODS === #
     @api.model_create_multi
     def create(self, vals_list):
-        encryption_util = self.env['custom.encryption.utility']
-
         for vals in vals_list:
             # Asignar secuencia si name es "New" o no viene definido
             if vals.get("name", "New") == "New":
                 vals["name"] = self.env["ir.sequence"].next_by_code("custom.membership.nus") or _("New")
-
-            # Encriptar campos
-            if 'name' in vals and vals['name']:
-                vals['name'] = encryption_util.encrypt_aes256(vals['name'])
-            if 'key_identification' in vals and vals['key_identification']:
-                vals['key_identification'] = encryption_util.encrypt_aes256(vals['key_identification'])
-            if 'x_validation_pattern' in vals and vals['x_validation_pattern']:
-                vals['x_validation_pattern'] = encryption_util.encrypt_aes256(vals['x_validation_pattern'])
-            if 'x_display_mask' in vals and vals['x_display_mask']:
-                vals['x_display_mask'] = encryption_util.encrypt_aes256(vals['x_display_mask'])
-
         return super(CustomMembershipNus, self).create(vals_list)
-
-    def write(self, vals):
-        if not vals:
-            return True
-
-        encryption_util = self.env['custom.encryption.utility']
-
-        # Encrypt fields
-        if 'name' in vals and vals['name']:
-            vals['name'] = encryption_util.encrypt_aes256(vals['name'])
-        if 'key_identification' in vals and vals['key_identification']:
-            vals['key_identification'] = encryption_util.encrypt_aes256(vals['key_identification'])
-        if 'x_validation_pattern' in vals and vals['x_validation_pattern']:
-            vals['x_validation_pattern'] = encryption_util.encrypt_aes256(vals['x_validation_pattern'])
-        if 'x_display_mask' in vals and vals['x_display_mask']:
-            vals['x_display_mask'] = encryption_util.encrypt_aes256(vals['x_display_mask'])
-
-        return super(CustomMembershipNus, self).write(vals)
-
-    def read(self, fields=None, load='_classic_read'):
-        """
-        Override read to return decrypted values when necessary
-        """
-        result = super(CustomMembershipNus, self).read(fields=fields, load=load)
-
-        # Only decrypt if encrypted fields are specifically requested
-        if not fields or any(f in fields for f in ['name', 'key_identification', 'x_validation_pattern', 'x_display_mask']):
-            encryption_util = self.env['custom.encryption.utility']
-
-            for record in result:
-                if 'name' in record and record['name']:
-                    try:
-                        record['name'] = encryption_util.decrypt_aes256(record['name'])
-                    except Exception as e:
-                        _logger.warning(f"Error decrypting name: {str(e)}")
-
-                if 'key_identification' in record and record['key_identification']:
-                    try:
-                        record['key_identification'] = encryption_util.decrypt_aes256(record['key_identification'])
-                    except Exception as e:
-                        _logger.warning(f"Error decrypting Key identification: {str(e)}")
-
-                if 'x_validation_pattern' in record and record['x_validation_pattern']:
-                    try:
-                        record['x_validation_pattern'] = encryption_util.decrypt_aes256(record['x_validation_pattern'])
-                    except Exception as e:
-                        _logger.warning(f"Error decrypting Validation pattern: {str(e)}")
-
-                if 'x_display_mask' in record and record['x_display_mask']:
-                    try:
-                        record['x_display_mask'] = encryption_util.decrypt_aes256(record['x_display_mask'])
-                    except Exception as e:
-                        _logger.warning(f"Error decrypting Display mask: {str(e)}")
-
-        return result
 
     def name_get(self):
         """
@@ -193,10 +170,9 @@ class CustomMembershipNus(models.Model):
         This is what makes the _rec_name appear decrypted throughout the application
         """
         result = []
-        encryption_util = self.env['custom.encryption.utility']
         for record in self:
             if record.name:
-                decrypted_name = encryption_util.decrypt_aes256(record.name)
+                decrypted_name = self.x_decrypt_aes256(record.name)
                 result.append((record.id, decrypted_name))
             else:
                 result.append((record.id, 'No name'))
@@ -213,13 +189,12 @@ class CustomMembershipNus(models.Model):
 
         # Search in all records and filter by decrypted name
         records = self.search(args or [])
-        encryption_util = self.env['custom.encryption.utility']
         matching_ids = []
 
         for record in records:
             if record.name:
                 try:
-                    decrypted_name = encryption_util.decrypt_aes256(record.name)
+                    decrypted_name = self.x_decrypt_aes256(record.name)
                     if operator == 'ilike' and name.lower() in decrypted_name.lower():
                         matching_ids.append(record.id)
                     elif operator == '=' and name == decrypted_name:
@@ -254,3 +229,20 @@ class CustomMembershipNus(models.Model):
                     message_type='notification',
                     body_is_html=True)
         return super().action_disable(reason)
+
+
+class CustomMembershipNusSearchHelperRel(models.Model):
+    _name = 'custom.membership.nus.search.helper.rel'
+    _inherit = ['custom.model.encryption.search.helper.rel']
+    _description = 'Custom membership nus search helper rel'
+
+    encrypt_model_id = fields.Many2one('custom.membership.nus', ondelete='cascade', index=True, required=True)
+    encrypt_helper_id = fields.Many2one('custom.membership.nus.search.helper', ondelete='cascade', index=True, required=True)
+
+
+class CustomMembershipNusSearchHelper(models.Model):
+    _name = 'custom.membership.nus.search.helper'
+    _inherit = ['custom.model.encryption.search.helper']
+    _description = 'Custom membership nus search helper'
+
+    encrypt_rel_ids = fields.One2many('custom.membership.nus.search.helper.rel', 'encrypt_helper_id')

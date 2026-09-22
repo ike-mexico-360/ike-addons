@@ -14,7 +14,7 @@
             <list create="false" edit="false" duplicate="false" delete="false">
                 <field name="name"/>
                 <field name="user_id"/>
-                <field name="partner_id" string="Proveedor"/>
+                <field name="partner_id" string="Partner"/>
                 <field name="ticket_type"/>
                 <field name="team_id"/>
                 <field name="team_head"/>
@@ -96,6 +96,28 @@
         </field>
     </record>
 
+    <record id="helpdesk_stage_history_translation_inherit_ike_event_purchase" model="ir.ui.view">
+        <field name="name">sh.helpdesk.ticket.stage.history.translation.ike.event.purchase</field>
+        <field name="model">sh.helpdesk.ticket</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.view_sh_helpdesk_ticket_inherit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='helpdesk_stage_history_line']/list/field[@name='stage_name']" position="replace">
+                <field name="x_stage_name_translated" string="Stage Name"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="helpdesk_stage_analysis_translation_inherit_ike_event_purchase" model="ir.ui.view">
+        <field name="name">sh.helpdesk.stage.analysis.translation.ike.event.purchase</field>
+        <field name="model">sh.helpdesk.ticket.stage.info</field>
+        <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_stage_change_analysis_tree"/>
+        <field name="arch" type="xml">
+            <field name="stage_name" position="replace">
+                <field name="x_stage_name_translated" string="Stage Name"/>
+            </field>
+        </field>
+    </record>
+
     <record id="sh_helpdesk_ticket_form_view_inherit_ike_event_purchase_list" model="ir.ui.view">
         <field name="name">sh_helpdesk_ticket_form_view.inherit.ike_event_purchase_list</field>
         <field name="model">sh.helpdesk.ticket</field>
@@ -105,6 +127,8 @@
                 <field name="x_stage_max_wait_time_minutes" column_invisible="1"/>
                 <field name="current_stage_date" column_invisible="1"/>
                 <field name="current_elapsed_time_seconds" string="Elapsed" widget="helpdesk_stage_elapsed" width="90px"/>
+                <field name="x_accumulated_stage_max_wait_time_seconds" column_invisible="1"/>
+                <field name="x_accumulated_stage_time_seconds" string="Accumulated time" widget="helpdesk_stage_accumulated" width="110px"/>
             </xpath>
         </field>
     </record>

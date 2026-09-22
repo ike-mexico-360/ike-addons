@@ -183,6 +183,21 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!-- <separator class="col-12 my-1" string="Incident type" name="separator_incident_type" invisible="not has_incidents"/>
+                                <div class="col-12 mt-3">
+                                    <field name="has_incidents" invisible="1"/>
+                                    <field name="available_incident_type_ids" invisible="1"/>
+                                    <field
+                                        name="incident_type_id"
+                                        class="ike-select"
+                                        nolabel="1"
+                                        required="stage_ref != 'draft'"
+                                        placeholder="Select option"
+                                        domain="[('id', 'in', available_incident_type_ids)]"
+                                        options="{'no_create': True, 'no_open': True}"
+                                        invisible="not has_incidents"
+                                    />
+                                </div> -->
                                 <separator class="col-12 my-1" string="Service type" name="separator_service_type"/>
                                 <div class="col-12 mt-3">
                                     <field name="service_type_id"
@@ -246,8 +261,8 @@
                             options="{'field_columns': ['supplier_id']}"
                             context="{
                                 'default_search_number': supplier_search_number,
-                            }"
-                            readonly="1">
+                                }"
+                                readonly="1">
                             <list create="0" delete="0">
                                 <field name="display_type" column_invisible="1" />
                                 <field name="sequence" column_invisible="1"/>
@@ -255,9 +270,8 @@
                                 <field name="event_search_number" column_invisible="1"/>
 
                                 <field name="search_number" column_invisible="1"/>
-                                <field name="ranking" string="#" width="25px"
-                                    column_invisible="parent.supplier_search_type in ['manual', 'manual_manual']"
-                                    readonly="1"/>
+                                <field name="ranking" string="#" width="25px" readonly="1"
+                                    column_invisible="parent.supplier_search_type in ['manual', 'manual_manual']"/>
                                 <field name="supplier_id"
                                     widget="ike_label_section_and_note_field"
                                     options="{'no_create': 1, 'no_open': 1}"
@@ -275,7 +289,8 @@
                                     readonly="1"/>
                                 <field name="name" optional="show" readonly="1"/>
                                 <field name="state" width="100px" readonly="1"/>
-                                <field name="priority" widget="priority" readonly="1" width="75px"/>
+                                <field name="priority" widget="priority" readonly="1" width="75px"
+                                    column_invisible="parent.supplier_search_type in ['manual', 'manual_manual']"/>
                                 <field name="estimated_duration" widget="float_time" optional="show" readonly="1" />
                                 <field name="estimated_cost" optional="show" readonly="1"/>
 
@@ -288,16 +303,31 @@
                                 <field name="elapsed_time" column_invisible="1"/>
                                 <field name="manual_notification" column_invisible="1"/>
                                 <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
-                                <button name="action_view_products" string="View Details" type="object" class="btn-link"
+
+                                <field name="evaluation_locked" column_invisible="1"/>
+                                <field name="evaluation_id" column_invisible="1"/>
+                                <field name="evaluation_reevaluation" column_invisible="1"/>
+                                <field name="evaluated" column_invisible="1"/>
+                                <field name="cost_invalid" column_invisible="1"/>
+
+                                <button name="action_view_products" string="Concepts" type="object" class="btn-link"
                                     context="{'from_view_detail': True}"
-                                    invisible="state == 'notified'"/>
+                                    invisible="state == 'notified' or evaluation_locked"/>
+                                <button name="action_view_evaluation" string="Evaluation" type="object" class="btn-link"
+                                    context="{'from_view_detail': True}"
+                                    invisible="not evaluation_id or state == 'notified' or evaluation_locked or evaluated and not evaluation_reevaluation"/>
+                                <button name="action_view_evaluation" string="Evaluation" type="object" class="btn-link text-warning"
+                                    context="{'from_view_detail': True}"
+                                    invisible="evaluation_id or state == 'notified' or evaluation_locked or evaluated and not evaluation_reevaluation"/>
+
                                 <button name="action_open_change_vehicle" string="Change Vehicle" type="object" class="btn-link"
-                                        context="{'from_view_detail': True}"
-                                        invisible="(assignation_type == 'electronic' or display_type) or state != 'notified'"/>
+                                    context="{'from_view_detail': True}"
+                                    invisible="assignation_type == 'electronic' or state == 'assigned'"/>
                             </list>
                         </field>
+                        <field name="evaluated_pending_suppliers" invisible="1"/>
                         <button string="Add Manual Supplier" name="action_open_add_manual_supplier_wizard" type="object" class="btn-link"
-                            invisible="supplier_search_type not in ['manual', 'manual_manual']"/>
+                            invisible="supplier_search_type not in ['manual', 'manual_manual'] or evaluated_pending_suppliers > 0"/>
                     </group>
                     <group name="supplier_data_authorization" invisible="not sections.get('supplier_data')">
                         <group colspan="2">
@@ -410,7 +440,6 @@
                                     delete="0"
                                     options="{'no_open': 1}">
                                     <field name="supplier_id"/>
-                                    <field name="assigned"/>
                                     <field name="assignation_type" optional="hide"/>
                                     <field name="truck_id"/>
                                     <field name="truck_plate" optional="hide"/>

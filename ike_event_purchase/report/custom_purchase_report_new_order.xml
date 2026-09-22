@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="action_report_custom_purchase_new_order" model="ir.actions.report">
+            <field name="name">Report new purchase order</field>
+            <field name="model">purchase.order</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">ike_event_purchase.report_custom_purchase_new_order</field>
+            <field name="report_file">ike_event_purchase.report_custom_purchase_new_order</field>
+            <field name="print_report_name">'Purchase Order - %s - %s' % (object.name, object.partner_id.name)</field>
+            <field name="binding_model_id" eval="False"/>
+        </record>
+
+
+        <template id="report_custom_purchase_new_order">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="doc">
+                    <t t-call="web.external_layout">
+                        <div class="page">
+                            <div class="row pt-5">
+                                <h2>
+                                    Purchase order: <span t-field="doc.name"/>
+                                </h2>
+                            </div>
+
+                            <hr/>
+
+                            <div class="row">
+                                <div class="col-4">
+                                    <strong>From:</strong>
+                                    <p class="mb-0" t-if="doc.x_invoice_company_id.name" t-field="doc.x_invoice_company_id.name"/>
+                                    <p class="mb-0" t-if="doc.x_invoice_company_id.x_business_name" t-field="doc.x_invoice_company_id.x_business_name"/>
+                                    <p class="mb-0" t-if="doc.x_invoice_company_id.street or doc.x_invoice_company_id.street2">
+                                        <span t-if="doc.x_invoice_company_id.street" t-field="doc.x_invoice_company_id.street"/><t t-if="doc.x_invoice_company_id.street and doc.x_invoice_company_id.street2">, </t><span t-if="doc.x_invoice_company_id.street2" t-field="doc.x_invoice_company_id.street2"/>
+                                    </p>
+                                    <p class="mb-0" t-if="doc.x_invoice_company_id.zip or doc.x_invoice_company_id.city">
+                                        <span t-if="doc.x_invoice_company_id.zip" t-field="doc.x_invoice_company_id.zip"/>
+                                        <span t-if="doc.x_invoice_company_id.city" t-field="doc.x_invoice_company_id.city"/>
+                                    </p>
+                                    <p class="mb-0" t-if="doc.x_invoice_company_id.state_id.name" t-field="doc.x_invoice_company_id.state_id.name"/>
+                                    <p class="mb-0" t-if="doc.x_invoice_company_id.country_id.name" t-field="doc.x_invoice_company_id.country_id.name"/>
+                                    <p class="mb-0" t-if="doc.x_invoice_company_id.phone">
+                                        <strong>Phone:</strong>
+                                        <span t-field="doc.x_invoice_company_id.phone"/>
+                                    </p>
+                                    <p class="mb-0" t-if="doc.x_invoice_company_id.email">
+                                        <strong>Email:</strong>
+                                        <span t-field="doc.x_invoice_company_id.email"/>
+                                    </p>
+                                </div>
+
+                                <div class="col-4">
+                                    <strong>For:</strong>
+                                    <p class="mb-0" t-if="doc.partner_id.name" t-field="doc.partner_id.name"/>
+                                    <p class="mb-0" t-if="doc.partner_id.x_invoice_company_id.x_business_name" t-field="doc.partner_id.x_invoice_company_id.x_business_name"/>
+                                    <p class="mb-0" t-if="doc.partner_id.street or doc.partner_id.street2">
+                                        <span t-if="doc.partner_id.street" t-field="doc.partner_id.street"/><t t-if="doc.partner_id.street and doc.partner_id.street2">, </t><span t-if="doc.partner_id.street2" t-field="doc.partner_id.street2"/>
+                                    </p>
+                                    <p class="mb-0" t-if="doc.partner_id.zip or doc.partner_id.city">
+                                        <span t-if="doc.partner_id.zip" t-field="doc.partner_id.zip"/>
+                                        <span t-if="doc.partner_id.city" t-field="doc.partner_id.city"/>
+                                    </p>
+                                    <p class="mb-0" t-if="doc.partner_id.state_id.name" t-field="doc.partner_id.state_id.name"/>
+                                    <p class="mb-0" t-if="doc.partner_id.country_id.name" t-field="doc.partner_id.country_id.name"/>
+                                    <p class="mb-0" t-if="doc.partner_id.phone">
+                                        <strong>Phone:</strong>
+                                        <span t-field="doc.partner_id.phone"/>
+                                    </p>
+                                    <p class="mb-0" t-if="doc.partner_id.email">
+                                        <strong>Email:</strong>
+                                        <span t-field="doc.partner_id.email"/>
+                                    </p>
+                                </div>
+
+                                <div class="col-4 text-end">
+                                    <strong>Purchase period</strong>
+                                    <p class="mb-0" style="color: #00a651; font-weight: bold;">(New)</p>
+                                    <p t-field="doc.name"/>
+                                    <p class="mb-0">
+                                        Amount: <span t-field="doc.amount_untaxed"
+                                                    t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                    </p>
+                                </div>
+                            </div>
+
+                            <hr/>
+
+                            <div class="row">
+                                <table class="table" style="border: 1px solid #dee2e6;">
+                                    <thead style="background-color: #f0f0f0; color: #000;">
+                                        <tr>
+                                            <th style="padding: 10px; text-align: left;">Product</th>
+                                            <th style="padding: 10px; text-align: left;">Source event</th>
+                                            <th style="padding: 10px; text-align: left;">Final amount</th>
+                                            <th style="padding: 10px; text-align: left;">Final unit cost</th>
+                                            <th style="padding: 10px; text-align: left;">Final subtotal</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="doc.order_line" t-as="line">
+                                            <!-- Excluye líneas de sección/nota, que no tienen producto -->
+                                            <t t-if="not line.display_type">
+                                                <td style="padding: 8px; vertical-align: middle;">
+                                                    <span class="fw-bold" t-field="line.product_id.name"/>
+                                                </td>
+                                                <td style="padding: 8px; vertical-align: middle;">
+                                                    <span t-field="line.x_parent_expedient"/>
+                                                </td>
+                                                <td style="padding: 8px; vertical-align: middle;">
+                                                    <span t-field="line.product_qty"/>
+                                                </td>
+                                                <td style="padding: 8px; vertical-align: middle; text-align: right;">
+                                                    <span t-field="line.price_unit"
+                                                        t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                                </td>
+                                                <td style="padding: 8px; vertical-align: middle; text-align: right;">
+                                                    <span t-field="line.price_subtotal"
+                                                        t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                                </td>
+                                            </t>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="row">
+                                <div class="text-end">
+                                    <strong>Subtotal:</strong>
+                                    <span t-field="doc.amount_untaxed"
+                                        t-options="{'widget': 'monetary', 'display_currency': doc.currency_id}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+    </data>
+</odoo>

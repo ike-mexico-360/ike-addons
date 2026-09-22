@@ -665,7 +665,9 @@ class IkeEventSupplier(models.Model):
         for rec in self_filtered:
             rec.event_id.with_context(
                 supplier=rec.supplier_id.name,
-                truck_id=rec.truck_id.id
+                truck_id=rec.truck_id.id,
+                estimated_duration=rec.estimated_duration,
+                negotiation_type=rec.negotiation_type,
             )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_11_4"])
         for rec in self_filtered:
             rec.event_id.with_context(
@@ -717,11 +719,24 @@ class IkeEventSupplierLink(models.Model):
     _inherit = 'ike.event.supplier.link'
 
     def action_accept_authorization(self):
-        for rec in self:
-            rec.event_id.with_context(
-                supplier_link_id=rec.id
-            )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_13_1"])
         result = super().action_accept_authorization()
+
+        for rec in self:
+            responsible = (
+                rec.nu_user_id
+                if rec.authorization_by_nu
+                else rec.authorizer_id
+            )
+
+            rec.event_id.with_context(
+                supplier_link_id=rec.id,
+                authorization_type=rec.type_authorization_id.display_name or '',
+                authorization_responsible=responsible.display_name or '',
+                authorization_reason=rec.reason_authorizer_id.display_name or '',
+            )._create_message_binnacle([
+                "ike_event_binnacle.ike_binnacle_stage_7_13_1"
+            ])
+
         return result
 
     def action_request_authorization(self):

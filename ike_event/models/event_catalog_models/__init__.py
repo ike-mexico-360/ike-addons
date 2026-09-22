@@ -7,3 +7,4 @@ from . import ike_event_service_type
 from . import ike_event_duplicate_reason
 from . import ike_event_stage
 from . import ike_event_center_distance
+from . import ike_event_supplier_evaluation

@@ -27,7 +27,7 @@ class IkeEvent_Search(models.Model):
         ('manual', 'Manual'),
         ('manual_manual', 'Manual Added'),
     ], default='electronic', string="Search Type (Supplier)", copy=False)
-    supplier_search_priority = fields.Integer()
+    supplier_search_priority = fields.Integer()  # Debug
     supplier_search_number = fields.Integer(string='Search Number (Supplier)', default=0, copy=False)
     base_supplier_number = fields.Integer(default=1, copy=False)
     use_external_locations = fields.Boolean(default=True)
@@ -38,13 +38,26 @@ class IkeEvent_Search(models.Model):
     def action_search_electronic_suppliers(self):
         """ Action View Button to search suppliers: Electronic. """
         self.ensure_one()
+
+        # Allowed assignation types: 1. Electronic, 2. Publication, 3 Manual
+        assignment_types = [1, 2, 3]
+        if self.service_ref == 'vial':
+            assignment_types = self._get_vial_search_types()
+
         if self.scheduled:
             if fields.Datetime.now() > self.event_date and self.supplier_number == 1:
                 raise ValidationError(_("The event has been expired"))
-            else:
+            if 2 in assignment_types:
                 self.action_search_publication_suppliers_3()
+            else:
+                self.action_search_manual_suppliers()
         else:
-            self._search_suppliers('electronic')
+            if 1 in assignment_types:
+                self._search_suppliers('electronic')
+            elif 2 in assignment_types:
+                self.action_search_publication_suppliers_3()
+            else:
+                self.action_search_manual_suppliers()
 
     def action_search_publication_suppliers_3(self,):
         """ Action View Button to search suppliers: Publication Priority 3. """
@@ -182,7 +195,7 @@ class IkeEvent_Search(models.Model):
                     x.product_id and x.base_unit_price == 0
                     for x in supplier_link_id.supplier_product_ids
                 )
-                if has_zero:
+                if has_zero and assignation_type not in ['manual', 'manual_manual']:
                     supplier['ignore'] = True
 
                 # Set link totals
@@ -204,11 +217,10 @@ class IkeEvent_Search(models.Model):
             )
             # Filter manual: first of each supplier
             if assignation_type == 'manual':
-                seen = set()
-                service_suppliers = [
-                    x for x in service_suppliers
-                    if not (x["supplier_id"] in seen or seen.add(x["supplier_id"]))
-                ]
+                service_suppliers = sorted(
+                    service_suppliers,
+                    key=lambda x: x['ranking'],
+                )
             service_suppliers = service_suppliers[:max_suppliers]
 
             # Set Google Route
@@ -361,7 +373,7 @@ class IkeEvent_Search(models.Model):
         service_suppliers = []
 
         # * LOGGER 0: Start
-        _logger.info(f"IKE EVENT - DEBUG - 0: {assignation_type} {str(priority)}")
+        # _logger.info(f"IKE EVENT - DEBUG - 0: {assignation_type} {str(priority)}")
 
         # Global Variables
         maneuver_id = self.env.ref('ike_event.ike_product_tag_maneuvers').id
@@ -397,9 +409,9 @@ class IkeEvent_Search(models.Model):
         service_vehicle_type_ids, service_accessory_ids = self._get_event_sub_service_variables()
 
         # * LOGGER 1: Event Variables
-        _logger.info(
-            f"IKE EVENT - DEBUG - 1: {account_id}, {zip_code}, {latitude}, {longitude}, {str(service_vehicle_type_ids)}"
-        )
+        # _logger.info(
+        #     f"IKE EVENT - DEBUG - 1: {account_id}, {zip_code}, {latitude}, {longitude}, {str(service_vehicle_type_ids)}"
+        # )
 
         # Get Municipalities
         municipalities_data = self._get_municipalities(zip_code)
@@ -409,8 +421,8 @@ class IkeEvent_Search(models.Model):
             return [], max_suppliers, max_radius_km
 
         # * LOGGER 2: Municipalities
-        municipalities_text = ','.join([f'{x['id']}.{x['name']}' for x in municipalities_data])
-        _logger.info(f"IKE EVENT - DEBUG - 2: {municipalities_text}")
+        # municipalities_text = ','.join([f'{x['id']}.{x['name']}' for x in municipalities_data])
+        # _logger.info(f"IKE EVENT - DEBUG - 2: {municipalities_text}")
 
         # Get Supplier Centers
         supplier_centers_data = self._get_supplier_centers(assignation_type_conf, municipalities_data, priority)
@@ -449,9 +461,9 @@ class IkeEvent_Search(models.Model):
         supplier_centers = list(set(supplier_centers))
 
         # * LOGGER 3: Suppliers and Supplier Centers
-        suppliers_text = ','.join(map(str, suppliers))
-        supplier_centers_text = ','.join(map(str, supplier_centers))
-        _logger.info(f"IKE EVENT - DEBUG - 3: {suppliers_text} - {supplier_centers_text}")
+        # suppliers_text = ','.join(map(str, suppliers))
+        # supplier_centers_text = ','.join(map(str, supplier_centers))
+        # _logger.info(f"IKE EVENT - DEBUG - 3: {suppliers_text} - {supplier_centers_text}")
 
         # Supplier Lines Result
         service_suppliers = []
@@ -492,7 +504,7 @@ class IkeEvent_Search(models.Model):
                 vehicles_domain.append(('x_maneuvers', '=', True))
 
             # * LOGGER 4: Vehicles Domain
-            _logger.info("IKE EVENT - DEBUG - 4: %s", vehicles_domain)
+            # _logger.info("IKE EVENT - DEBUG - 4: %s", vehicles_domain)
 
             # Search Vehicles
             if assignation_type == 'electronic':
@@ -501,11 +513,11 @@ class IkeEvent_Search(models.Model):
                 service_vehicles_data = self._get_vehicles_data(vehicles_domain, max_radius_km)
 
             # * LOGGER 5: Service Vehicles
-            vehicles_text = ", ".join([
-                f"{x['id']}.{x['license_plate']} ({str(x['estimated_distance'])}, {str(x['estimated_duration'])})"
-                for x in service_vehicles_data
-            ])
-            _logger.info(f"IKE EVENT - DEBUG - 5: ({str(max_radius_km)}, {str(max_arrived_time_m)}), {vehicles_text}")
+            # vehicles_text = ", ".join([
+            #     f"{x['id']}.{x['license_plate']} ({str(x['estimated_distance'])}, {str(x['estimated_duration'])})"
+            #     for x in service_vehicles_data
+            # ])
+            # _logger.info(f"IKE EVENT - DEBUG - 5: ({str(max_radius_km)}, {str(max_arrived_time_m)}), {vehicles_text}")
 
             # Filter vehicles by negotiation type rules
             service_vehicles_data = [
@@ -519,7 +531,7 @@ class IkeEvent_Search(models.Model):
                 or x.get('bypass', False)
             ]
 
-            # Set Priority
+            # Set Priority and order
             supplier_center_data = {'supplier_center_id': 0}
             for vehicle in service_vehicles_data:
                 if supplier_center_data['supplier_center_id'] != vehicle['supplier_center_id']:
@@ -528,6 +540,8 @@ class IkeEvent_Search(models.Model):
                         {}
                     )
                 vehicle['priority'] = supplier_center_data['priority']
+                if assignation_type == 'manual':
+                    vehicle['ranking'] = supplier_center_data['ranking']
 
             # SERVICE VEHICLES RESULT
             service_vehicles_len = len(service_vehicles_data)
@@ -541,6 +555,7 @@ class IkeEvent_Search(models.Model):
                     'supplier_center_id': vehicle['supplier_center_id'],
                     'state': 'available',
                     'priority': vehicle['priority'],
+                    'ranking': vehicle.get('ranking', 0),
                     'negotiation_type': vehicle['negotiation_type'],
                     'estimated_distance': vehicle['estimated_distance'],
                     'estimated_duration': vehicle['estimated_duration'],
@@ -556,7 +571,7 @@ class IkeEvent_Search(models.Model):
                 })
 
         # * LOGGER 6: Service suppliers
-        _logger.info(f"IKE EVENT - DEBUG - 6: {service_suppliers}")
+        # _logger.info(f"IKE EVENT - DEBUG - 6: {service_suppliers}")
         return service_suppliers, max_suppliers, max_radius_km
 
     def _get_search_configuration(self, sequence_conf):
@@ -587,9 +602,23 @@ class IkeEvent_Search(models.Model):
 
     def _get_event_service_variables(self):
         res_id = self.env[self.service_res_model].browse(self.service_res_id)
-        vehicle_category_id = res_id.vehicle_category_id.id  # type: ignore
         municipality = res_id.municipality_id  # type: ignore
-        return municipality, vehicle_category_id
+        category_id = 0
+        if self.service_ref == 'vial':
+            category_id = res_id.vehicle_category_id.id  # type: ignore
+        return municipality, category_id
+
+    def _get_vial_search_types(self):
+        res_id = self.env[self.service_res_model].browse(self.service_res_id)
+        vehicle_category_id: int = res_id.vehicle_category_id.id  # type: ignore
+        specification_id = self.env['custom.subservice.specification'].search([
+            ('service_id', '=', self.service_id.id),
+            ('vehicle_category_ids', 'in', [vehicle_category_id]),
+            '|',
+            ('all_subservice', '=', True),
+            ('subservice_ids', 'in', [self.sub_service_id.id]),
+        ], limit=1, order='id desc')
+        return specification_id.assignment_type_ids.mapped('sequence')
 
     def _get_municipalities(self, zip_code):
         self._cr.execute("""
@@ -614,12 +643,18 @@ class IkeEvent_Search(models.Model):
                 ,ga.parent_id as supplier_id
                 ,su.x_negotiation_type
                 ,gap.priority
+                ,COALESCE(mao.sequence, 99999) as ranking
                 ,su.x_is_special_accounts
                 ,su.x_is_exclusive_accounts
                 ,gap.product_id
             FROM custom_geographical_area ga
             INNER JOIN res_partner su on su.id = ga.parent_id
             INNER JOIN custom_geographical_area_product_rel gap on gap.geographical_area_id = ga.id
+            LEFT JOIN custom_manual_assignment_order mao on
+                mao.supplier_center_id = ga.partner_id
+                AND mao.state_id = ga.state_id
+                AND mao.municipality_id = ga.municipality_id
+                AND mao.product_id = gap.product_id
             WHERE
                 ga.municipality_id IN %(municipality_ids)s
                 AND NOT ga.disabled AND ga.active
@@ -630,7 +665,7 @@ class IkeEvent_Search(models.Model):
         query += assignation_type_conf
 
         params = {
-            "municipality_ids": tuple(x["id"] for x in municipalities_data),
+            "municipality_ids": tuple(set(x["id"] for x in municipalities_data)),
             "subservice_id": self.sub_service_id.id,
         }
 
@@ -640,7 +675,8 @@ class IkeEvent_Search(models.Model):
         query += " ORDER BY ga.partner_id desc"
 
         self._cr.execute(query, params)
-        return self._cr.dictfetchall()
+        result = self._cr.dictfetchall()
+        return result
 
     def _get_electronic_vehicles_data(self, vehicles_domain, max_radius_km):
         service_vehicle_ids = self.env['fleet.vehicle'].search(vehicles_domain, order='x_center_id')
@@ -912,7 +948,6 @@ class IkeEvent_Search(models.Model):
 
         sub_service_id: int = self.sub_service_id.id
         event_type_id: int = self.event_type_id.id
-        vehicle_category_id: int = vehicle_category_id
         state_id: int = municipality.state_id.id
         municipality_id: int = municipality.id
         account_id: int = self.user_membership_id.membership_plan_id.account_id.id
@@ -920,6 +955,7 @@ class IkeEvent_Search(models.Model):
         event_time = event_date.hour + event_date.minute / 60 + event_date.second / 3600
         event_date = event_date.date()
         is_holiday = self.env['custom.holidays'].search_count([('date', '=', event_date)], limit=1)
+        incident_type_id = self.incident_type_id.id or None
 
         params = {
             "event_time": event_time,
@@ -934,6 +970,7 @@ class IkeEvent_Search(models.Model):
             "account_id": account_id,
             "event_date": event_date,
             "product_ids": product_ids,
+            "incident_type_id": incident_type_id,
         }
 
         query = """
@@ -953,6 +990,7 @@ class IkeEvent_Search(models.Model):
                     ,m.holiday_date_applies
                     ,st.ref AS supplier_status_ref
                     ,svc.vehicle_category_id
+                    ,m.incident_type_id
                 FROM custom_supplier_cost_matrix_line m
                 INNER JOIN custom_supplier_types_statuses st ON st.id = m.supplier_status_id
                 INNER JOIN custom_subservice_specification_vehicle_category_rel svc ON
@@ -960,11 +998,13 @@ class IkeEvent_Search(models.Model):
                 LEFT JOIN vacation_schedule_cost_product_rel_id scr ON scr.custom_supplier_cost_product_id = m.id
                 LEFT JOIN custom_supplier_cost_product_schedule sc ON scr.custom_supplier_cost_product_schedule_id = sc.id
                 WHERE m.active AND NOT m.disabled
+                    AND m.concept_id = ANY(%(product_ids)s)
                     AND m.supplier_center_id = %(supplier_center_id)s
                     AND m.subservice_id = %(sub_service_id)s
                     AND m.type_event_id = %(event_type_id)s
                     AND svc.vehicle_category_id = %(vehicle_category_id)s
                     AND st.ref = %(status_ref)s
+                    AND (%(incident_type_id)s IS NULL OR m.incident_type_id = %(incident_type_id)s)
             )
             SELECT
                 p.id AS product_id,
@@ -987,10 +1027,10 @@ class IkeEvent_Search(models.Model):
                     ,date_end
                     ,mm.in_time DESC
                     ,mm.holiday_applies DESC
+                    ,mm.incident_type_id IS NOT NULL
                     ,mm.id DESC
                 LIMIT 1
             ) AS m ON TRUE
-            WHERE p.id = ANY(%(product_ids)s)
         """
         return query, params
 
@@ -1600,6 +1640,7 @@ class IkeEvent_Search(models.Model):
             'cost_distance': supplier_link_id.aux_estimated_distance_km,
             'timer_duration': 600,
             'is_manual': True,
+            'manual_notification': False,
             'truck_id': vehicle_id.id,  # Use real DB ID
             'assigned': vehicle_id.driver_id.display_name,
             'latitude': center_latitude,

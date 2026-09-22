@@ -187,6 +187,9 @@
                     <span class="d-block d-md-none">Due Date</span>
                 </th>
                 <th>
+                    Document Origin
+                </th>
+                <th>
                     Amount Due
                 </th>
                 <th>
@@ -218,6 +221,10 @@
                 <!-- date vue -->
                 <td>
                     <t t-esc="invoice.invoice_date_due"/>
+                </td>
+                <!-- Document Origin -->
+                <td>
+                    <t t-esc="invoice.invoice_origin"/>
                 </td>
                 <!-- Total -->
                 <td>

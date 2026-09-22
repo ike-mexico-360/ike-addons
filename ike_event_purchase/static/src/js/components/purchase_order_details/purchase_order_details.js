@@ -101,6 +101,18 @@ export class PurchaseOrderDetails extends Component {
         return value.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
     }
 
+    mapsUrl(lat, lng) {
+        if (!lat || !lng) return null;
+        return `https://www.google.com/maps?q=${lat},${lng}`;
+    }
+
+    roundCoord(value) {
+        if (value === null || value === undefined || value === '') return '';
+        const num = parseFloat(value);
+        if (isNaN(num)) return value;
+        return num.toFixed(5);
+    }
+
     formatNumber(value) {
         if (value === null || value === undefined || value === '') return '';
         const num = parseFloat(value);

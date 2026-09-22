@@ -964,6 +964,20 @@ class CustomSatValidatorLine(models.Model):
                     'taxes_id': [(6, 0, line.tax_ids.ids)]
                 })
 
+            if line.purchase_line_id:
+                po_line_vals = {}
+
+                if invoice.create_date:
+                    po_line_vals['x_upload_invoice_date'] = invoice.create_date
+
+                if hasattr(invoice, 'x_status_invoice') and invoice.x_status_invoice:
+                    po_line_vals['x_status_invoice'] = invoice.x_status_invoice
+                else:
+                    po_line_vals['x_status_invoice'] = 'under_review'
+
+                if po_line_vals:
+                    line.purchase_line_id.write(po_line_vals)
+
         self.write({'invoice_id': invoice.id})
 
         if parent.purchase_id:

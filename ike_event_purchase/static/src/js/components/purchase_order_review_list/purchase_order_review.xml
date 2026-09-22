@@ -6,6 +6,54 @@
         <div class="text-center">Loading...</div>
       </t>
       <t t-else="">
+        <!-- Header KPI restricted by company settings AND supplier advanced portal permission -->
+        <div t-if="state.showKpi and state.hasAdvancedPortal" class="mb-4">
+          <h1 class="fw-bold display-5 mb-3">
+              Order Review
+          </h1>
+
+          <div class="row g-3">
+
+              <div class="col">
+                  <div class="card kpi-card h-100">
+                      <div class="card-body text-center">
+                          <div class="kpi-title">Total Order Reviews</div>
+                          <span class="kpi-value"><t t-out="totalOrderReviewsCount"/></span>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="col">
+                  <div class="card kpi-card h-100">
+                      <div class="card-body text-center">
+                          <div class="kpi-title">Subtotal</div>
+                          <span class="kpi-value"><t t-out="formatCurrency(subtotalOrderReviewsAmount)"/></span>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="col">
+                  <div class="card kpi-card h-100">
+                      <div class="card-body text-center">
+                          <div class="kpi-title">To Consolidate</div>
+                          <span class="kpi-value"><t t-out="toConsolidateCount"/></span>
+                      </div>
+                  </div>
+              </div>
+
+              <div class="col">
+                  <div class="card kpi-card h-100">
+                      <div class="card-body text-center">
+                          <div class="kpi-title">Consolidated</div>
+                          <span class="kpi-value"><t t-out="consolidatedCount"/></span>
+                      </div>
+                  </div>
+              </div>
+
+          </div>
+
+        </div>
+
         <!-- Filters Bar -->
         <div class="card border-0 shadow-sm rounded-3 mb-4">
           <div class="card-body py-3">
@@ -68,7 +116,7 @@
                   <td class="text-start">
                       <t t-esc="getStateLabel(order.state)"/>
                   </td>
-                  <td class="text-start"><t t-esc="order.amount_untaxed"/></td>
+                  <td class="text-start"><t t-esc="formatCurrency(order.amount_untaxed)"/></td>
                 </tr>
               </t>
             </tbody>

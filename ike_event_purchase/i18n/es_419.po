@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-24 18:29+0000\n"
-"PO-Revision-Date: 2026-08-24 18:29+0000\n"
+"POT-Creation-Date: 2026-09-17 15:14+0000\n"
+"PO-Revision-Date: 2026-09-17 15:14+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -48,6 +48,529 @@ msgstr ""
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 msgid "'PDF, PNG, JPG only · Max 2 files · Max 3 MB each'"
 msgstr "Solo PDF, PNG, JPG · Máx. 2 archivos · Máx. 3 MB cada uno"
+
+#. module: ike_event_purchase
+#: model:ir.actions.report,print_report_name:ike_event_purchase.action_report_custom_purchase_new_order
+msgid "'Purchase Order - %s - %s' % (object.name, object.partner_id.name)"
+msgstr "'Orden de compra - %s - %s' % (object.name, object.partner_id.name)"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "(New)"
+msgstr "(Nuevo)"
+
+#. module: ike_event_purchase
+#: model:mail.template,body_html:ike_event_purchase.purchase_email_new_order_template
+msgid ""
+"<div style=\"margin: 0; padding: 0;\">\n"
+"                    <t t-call=\"custom_master_catalog.mail_template_header\"/>\n"
+"                    <p style=\"margin: 0 0 15px 0; font-size: 20px; font-weight: bold;\">\n"
+"                        A new purchase order from IKÉ Grupo Empresarial, S. de R.L. de C.V.\n"
+"                        is awaiting your response.\n"
+"                    </p>\n"
+"\n"
+"                    <p style=\"margin: 0 0 15px 0; font-size: 15px;\">\n"
+"                        Hello, <t t-out=\"object.partner_id.name\"/>:\n"
+"                    </p>\n"
+"\n"
+"                    <p>\n"
+"                        The purchase order <strong><t t-out=\"object.name\"/></strong> is awaiting your response.\n"
+"                        To access it, click Review Purchase Order.\n"
+"                    </p>\n"
+"\n"
+"                    <div style=\"margin: 0 0 15px 0;\">\n"
+"                        <a t-att-href=\"'/my/order_review/%s' % object.id\" style=\"padding: 10px 15px; background-color: #005A9C; color: #ffffff; font-weight: bold;\">\n"
+"                            Review Purchase Order\n"
+"                        </a>\n"
+"                    </div>\n"
+"\n"
+"                    <table width=\"100%\" style=\"border-collapse: collapse;\">\n"
+"\n"
+"                        <tr>\n"
+"                            <th colspan=\"2\" style=\"font-size: 16px;\">\n"
+"                                Purchase Order Details\n"
+"                            </th>\n"
+"                        </tr>\n"
+"                        <tr>\n"
+"                            <td colspan=\"2\">\n"
+"                                &nbsp;\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                        <tr>\n"
+"                            <td width=\"50%\">\n"
+"                                <strong>SAP Reference:</strong> <t t-out=\"object.x_ref_sap\"/>\n"
+"                            </td>\n"
+"\n"
+"                            <td width=\"50%\">\n"
+"                                <strong>Amount:</strong> $ <t t-out=\"object.amount_untaxed\"/>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"\n"
+"                        <tr>\n"
+"                            <td colspan=\"2\">\n"
+"                                &nbsp;\n"
+"                            </td>\n"
+"                        </tr>\n"
+"\n"
+"                        <tr>\n"
+"                            <td width=\"50%\" style=\"vertical-align: top;\">\n"
+"                                <div style=\"font-weight: bold; margin-bottom: 10px;\">\n"
+"                                    From:\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.x_invoice_company_id.name\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.x_invoice_company_id.x_business_name\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.x_invoice_company_id.street\"/>\n"
+"                                    <t t-if=\"object.x_invoice_company_id.street2\">\n"
+"                                        , <t t-out=\"object.x_invoice_company_id.street2\"/>\n"
+"                                    </t>\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.x_invoice_company_id.zip\"/>\n"
+"                                    <t t-out=\"object.x_invoice_company_id.city\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <t t-if=\"object.x_invoice_company_id.state_id\">\n"
+"                                    <div style=\"padding-bottom: 5px;\">\n"
+"                                        <t t-out=\"object.x_invoice_company_id.state_id.name\"/>\n"
+"                                    </div>\n"
+"                                </t>\n"
+"\n"
+"                                <t t-if=\"object.x_invoice_company_id.country_id\">\n"
+"                                    <div style=\"padding-bottom: 5px;\">\n"
+"                                        <t t-out=\"object.x_invoice_company_id.country_id.name\"/>\n"
+"                                    </div>\n"
+"                                </t>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.x_invoice_company_id.vat\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <div>\n"
+"                                    <t t-out=\"object.x_invoice_company_id.phone\"/>\n"
+"                                </div>\n"
+"                            </td>\n"
+"\n"
+"                            <td width=\"50%\" style=\"vertical-align: top;\">\n"
+"                                <div style=\"font-weight: bold; margin-bottom: 10px;\">\n"
+"                                    To:\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.partner_id.name\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.partner_id.x_invoice_company_id.x_business_name\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.partner_id.street\"/>\n"
+"                                    <t t-if=\"object.partner_id.street2\">\n"
+"                                        , <t t-out=\"object.partner_id.street2\"/>\n"
+"                                    </t>\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.partner_id.zip\"/>\n"
+"                                    <t t-out=\"object.partner_id.city\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <t t-if=\"object.partner_id.state_id\">\n"
+"                                    <div style=\"padding-bottom: 5px;\">\n"
+"                                        <t t-out=\"object.partner_id.state_id.name\"/>\n"
+"                                    </div>\n"
+"                                </t>\n"
+"\n"
+"                                <t t-if=\"object.partner_id.country_id\">\n"
+"                                    <div style=\"padding-bottom: 5px;\">\n"
+"                                        <t t-out=\"object.partner_id.country_id.name\"/>\n"
+"                                    </div>\n"
+"                                </t>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.partner_id.vat\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <div>\n"
+"                                    <t t-out=\"object.partner_id.phone\"/>\n"
+"                                </div>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                    </table>\n"
+"                    <t t-call=\"custom_master_catalog.mail_template_footer\"/>\n"
+"                </div>\n"
+"            "
+msgstr ""
+"<div style=\"margin: 0; padding: 0;\">\n"
+"                    <t t-call=\"custom_master_catalog.mail_template_header\"/>\n"
+"                    <p style=\"margin: 0 0 15px 0; font-size: 20px; font-weight: bold;\">\n"
+"                        Hay una nueva orden de compra de IKÉ Grupo Empresarial, S. de R.L. de C.V\n"
+"                        esperando su respuesta.\n"
+"                    </p>\n"
+"\n"
+"                    <p style=\"margin: 0 0 15px 0; font-size: 15px;\">\n"
+"                        Hola, <t t-out=\"object.partner_id.name\"/>:\n"
+"                    </p>\n"
+"\n"
+"                    <p>\n"
+"                        La orden de compra <strong><t t-out=\"object.name\"/></strong> esta esperando\n"
+"                        su respuesta. Para acceder, haga clic en Revisar orden de compra.\n"
+"                    </p>\n"
+"\n"
+"                    <div style=\"margin: 0 0 15px 0;\">\n"
+"                        <a t-att-href=\"'/my/order_review/%s' % object.id\" style=\"padding: 10px 15px; background-color: #005A9C; color: #ffffff; font-weight: bold;\">\n"
+"                            Revisar orden de compra\n"
+"                        </a>\n"
+"                    </div>\n"
+"\n"
+"                    <table width=\"100%\" style=\"border-collapse: collapse;\">\n"
+"\n"
+"                        <tr>\n"
+"                            <th colspan=\"2\" style=\"font-size: 16px;\">\n"
+"                                Detalle del orden de compra\n"
+"                            </th>\n"
+"                        </tr>\n"
+"                        <tr>\n"
+"                            <td colspan=\"2\">\n"
+"                                &nbsp;\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                        <tr>\n"
+"                            <td width=\"50%\">\n"
+"                                <strong>Referencia SAP:</strong> <t t-out=\"object.x_ref_sap\"/>\n"
+"                            </td>\n"
+"\n"
+"                            <td width=\"50%\">\n"
+"                                <strong>Importe:</strong> $ <t t-out=\"object.amount_untaxed\"/>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"\n"
+"                        <tr>\n"
+"                            <td colspan=\"2\">\n"
+"                                &nbsp;\n"
+"                            </td>\n"
+"                        </tr>\n"
+"\n"
+"                        <tr>\n"
+"                            <td width=\"50%\" style=\"vertical-align: top;\">\n"
+"                                <div style=\"font-weight: bold; margin-bottom: 10px;\">\n"
+"                                    Desde:\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.x_invoice_company_id.name\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.x_invoice_company_id.x_business_name\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.x_invoice_company_id.street\"/>\n"
+"                                    <t t-if=\"object.x_invoice_company_id.street2\">\n"
+"                                        , <t t-out=\"object.x_invoice_company_id.street2\"/>\n"
+"                                    </t>\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.x_invoice_company_id.zip\"/>\n"
+"                                    <t t-out=\"object.x_invoice_company_id.city\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <t t-if=\"object.x_invoice_company_id.state_id\">\n"
+"                                    <div style=\"padding-bottom: 5px;\">\n"
+"                                        <t t-out=\"object.x_invoice_company_id.state_id.name\"/>\n"
+"                                    </div>\n"
+"                                </t>\n"
+"\n"
+"                                <t t-if=\"object.x_invoice_company_id.country_id\">\n"
+"                                    <div style=\"padding-bottom: 5px;\">\n"
+"                                        <t t-out=\"object.x_invoice_company_id.country_id.name\"/>\n"
+"                                    </div>\n"
+"                                </t>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.x_invoice_company_id.vat\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <div>\n"
+"                                    <t t-out=\"object.x_invoice_company_id.phone\"/>\n"
+"                                </div>\n"
+"                            </td>\n"
+"\n"
+"                            <td width=\"50%\" style=\"vertical-align: top;\">\n"
+"                                <div style=\"font-weight: bold; margin-bottom: 10px;\">\n"
+"                                    Para:\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.partner_id.name\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.partner_id.x_invoice_company_id.x_business_name\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.partner_id.street\"/>\n"
+"                                    <t t-if=\"object.partner_id.street2\">\n"
+"                                        , <t t-out=\"object.partner_id.street2\"/>\n"
+"                                    </t>\n"
+"                                </div>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.partner_id.zip\"/>\n"
+"                                    <t t-out=\"object.partner_id.city\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <t t-if=\"object.partner_id.state_id\">\n"
+"                                    <div style=\"padding-bottom: 5px;\">\n"
+"                                        <t t-out=\"object.partner_id.state_id.name\"/>\n"
+"                                    </div>\n"
+"                                </t>\n"
+"\n"
+"                                <t t-if=\"object.partner_id.country_id\">\n"
+"                                    <div style=\"padding-bottom: 5px;\">\n"
+"                                        <t t-out=\"object.partner_id.country_id.name\"/>\n"
+"                                    </div>\n"
+"                                </t>\n"
+"\n"
+"                                <div style=\"padding-bottom: 5px;\">\n"
+"                                    <t t-out=\"object.partner_id.vat\"/>\n"
+"                                </div>\n"
+"\n"
+"                                <div>\n"
+"                                    <t t-out=\"object.partner_id.phone\"/>\n"
+"                                </div>\n"
+"                            </td>\n"
+"                        </tr>\n"
+"                    </table>\n"
+"                    <t t-call=\"custom_master_catalog.mail_template_footer\"/>\n"
+"                </div>\n"
+"            "
+
+#. module: ike_event_purchase
+#: model:mail.template,body_html:ike_event_purchase.account_email_status_invoice_template
+msgid ""
+"<div style=\"margin: 0px; padding: 0px; font-family: Arial, sans-serif;\">\n"
+"                    <t t-call=\"custom_master_catalog.mail_template_header\"/>\n"
+"                    <p>Your customer <t t-out=\"object.partner_id.display_name\"/> has updated their invoice</p>\n"
+"\n"
+"                    <table style=\"width: 100%; border-collapse: collapse; margin-top: 10px;\">\n"
+"                        <tbody>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Country\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-out=\"object.partner_id.country_id.name\"/>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Client\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-out=\"object.partner_id.display_name\"/>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Invoice Number\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-out=\"object.ref\"/>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Invoice Status\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-if=\"object.state == 'posted'\">Approved</t>\n"
+"                                    <t t-elif=\"object.state == 'cancel'\">Rejected</t>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    <t t-if=\"object.state == 'cancel'\">Reason for rejection</t>\n"
+"                                    <t t-elif=\"object.state == 'posted'\">Description</t>\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                    <t t-call=\"custom_master_catalog.mail_template_footer\"/>\n"
+"                </div>\n"
+"            "
+msgstr ""
+"<div style=\"margin: 0px; padding: 0px; font-family: Arial, sans-serif;\">\n"
+"                    <t t-call=\"custom_master_catalog.mail_template_header\"/>\n"
+"                    <p>Su cliente <t t-out=\"object.partner_id.display_name\"/> ha actualizado su factura</p>\n"
+"\n"
+"                    <table style=\"width: 100%; border-collapse: collapse; margin-top: 10px;\">\n"
+"                        <tbody>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    País\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-out=\"object.partner_id.country_id.name\"/>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Cliente\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-out=\"object.partner_id.display_name\"/>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Número de factura\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-out=\"object.ref\"/>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Estatus de la factura\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-if=\"object.state == 'posted'\">Aprobado</t>\n"
+"                                    <t t-elif=\"object.state == 'cancel'\">Rechazado</t>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    <t t-if=\"object.state == 'cancel'\">Razón para rechazar</t>\n"
+"                                    <t t-elif=\"object.state == 'posted'\">Descripción</t>\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                    <t t-call=\"custom_master_catalog.mail_template_footer\"/>\n"
+"                </div>\n"
+"            "
+
+#. module: ike_event_purchase
+#: model:mail.template,body_html:ike_event_purchase.account_email_status_payment_template
+msgid ""
+"<div style=\"margin: 0px; padding: 0px; font-family: Arial, sans-serif;\">\n"
+"                    <t t-call=\"custom_master_catalog.mail_template_header\"/>\n"
+"                    <p>Your customer <t t-out=\"object.partner_id.display_name\"/> has updated their invoice</p>\n"
+"\n"
+"                    <table style=\"width: 100%; border-collapse: collapse; margin-top: 10px;\">\n"
+"                        <tbody>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Country\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-out=\"object.partner_id.country_id.name\"/>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Client\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-out=\"object.partner_id.display_name\"/>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Invoice Number\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-out=\"object.ref\"/>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Invoice Status\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    Payment\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Description\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                    <t t-call=\"custom_master_catalog.mail_template_footer\"/>\n"
+"                </div>\n"
+"            "
+msgstr ""
+"<div style=\"margin: 0px; padding: 0px; font-family: Arial, sans-serif;\">\n"
+"                    <t t-call=\"custom_master_catalog.mail_template_header\"/>\n"
+"                    <p>Su cliente <t t-out=\"object.partner_id.display_name\"/> ha actualizado su factura</p>\n"
+"\n"
+"                    <table style=\"width: 100%; border-collapse: collapse; margin-top: 10px;\">\n"
+"                        <tbody>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    País\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-out=\"object.partner_id.country_id.name\"/>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Cliente\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-out=\"object.partner_id.display_name\"/>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Número de factura\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    <t t-out=\"object.ref\"/>\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Estatus de la factura\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                    Pagado\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                            <tr>\n"
+"                                <td style=\"background-color: #f5f5f5; padding: 8px; border: 1px solid #ddd; font-weight: bold;\">\n"
+"                                    Descripción\n"
+"                                </td>\n"
+"                                <td style=\"padding: 8px; border: 1px solid #ddd;\">\n"
+"                                </td>\n"
+"                            </tr>\n"
+"                        </tbody>\n"
+"                    </table>\n"
+"                    <t t-call=\"custom_master_catalog.mail_template_footer\"/>\n"
+"                </div>\n"
+"            "
 
 #. module: ike_event_purchase
 #: model:mail.template,body_html:ike_event_purchase.email_template_edi_purchase
@@ -473,6 +996,36 @@ msgid "<span>of</span>"
 msgstr "<span>de</span>"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "<strong>Email:</strong>"
+msgstr "<strong>Correo electrónico:</strong>"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "<strong>For:</strong>"
+msgstr "<strong>Para:</strong>"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "<strong>From:</strong>"
+msgstr "<strong>Desde:</strong>"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "<strong>Phone:</strong>"
+msgstr "<strong>Teléfono:</strong>"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "<strong>Purchase period</strong>"
+msgstr "<strong>Periodo de compra</strong>"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "<strong>Subtotal:</strong>"
+msgstr "<strong>Subtotal:</strong>"
+
+#. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "A dispute can only be opened on orders in Sent state."
@@ -593,6 +1146,11 @@ msgstr "Monto adeudado"
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
 msgid "Amount to Invoice"
 msgstr "Monto pendiente de facturar"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "Amount:"
+msgstr "Importe:"
 
 #. module: ike_event_purchase
 #. odoo-python
@@ -1689,8 +2247,14 @@ msgstr "Archivos"
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_reviews_detail/purchase_order_reviews_details.xml:0
 msgid "Final Cost"
 msgstr "Costo Final"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "Final amount"
+msgstr "Cantidad final"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
@@ -1707,8 +2271,14 @@ msgstr "Cantidad Final"
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_form_inherit_ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.purchase_order_helpdesk_dispute_form
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
 msgid "Final subtotal"
 msgstr "Subtotal Final"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "Final unit cost"
+msgstr "Costo unitario final"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__message_follower_ids
@@ -1807,6 +2377,15 @@ msgstr ""
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_rfq_list/purchase_rfq_list.xml:0
 msgid "IKE Price"
 msgstr "Precio IKE"
+
+#. module: ike_event_purchase
+#: model:mail.template,subject:ike_event_purchase.purchase_email_new_order_template
+msgid ""
+"IKÉ Grupo Empresarial, S. de R.L. de C.V. has sent a new purchase order {{ "
+"object.name }}"
+msgstr ""
+"IKÉ Grupo Empresarial, S. de R.L. de C.V. ha enviado una nueva orden de "
+"compra {{ object.name }}"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__activity_exception_icon
@@ -1960,10 +2539,25 @@ msgid "Invoiced"
 msgstr "Facturado"
 
 #. module: ike_event_purchase
+#: model:mail.template,description:ike_event_purchase.account_email_status_invoice_template
+msgid "Invoice status email template"
+msgstr "Plantilla de correo electrónico sobre el estado de la factura"
+
+#. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
 msgid "Invoice Reference"
 msgstr "Referencia de factura"
+
+#. module: ike_event_purchase
+#: model:mail.template,name:ike_event_purchase.account_email_status_invoice_template
+msgid "Invoice: Invoice Status"
+msgstr "Factura: Estado de la factura"
+
+#. module: ike_event_purchase
+#: model:mail.template,name:ike_event_purchase.account_email_status_payment_template
+msgid "Invoice: Payment Status"
+msgstr "Factura: Estado del pago"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -2152,6 +2746,24 @@ msgid "NU Name"
 msgstr "Nombre NU"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Account"
+msgstr "Cuenta"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Coordinates"
+msgstr "Coordenadas"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.xml:0
+msgid "Maneuvers"
+msgstr "Maniobras"
+
+#. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_nu_user_id
 msgid "NU User"
 msgstr "Usuario NU"
@@ -2177,6 +2789,11 @@ msgstr "Requiere validación"
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "New"
 msgstr "Nuevo"
+
+#. module: ike_event_purchase
+#: model:mail.template,description:ike_event_purchase.purchase_email_new_order_template
+msgid "New order email template"
+msgstr "Plantilla de correo electrónico para nueva orden de compra"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__activity_calendar_event_id
@@ -2557,6 +3174,17 @@ msgid "Payment event type"
 msgstr "Tipo de evento de pago"
 
 #. module: ike_event_purchase
+#: model:mail.template,description:ike_event_purchase.account_email_status_payment_template
+msgid "Payment status email template"
+msgstr "Plantilla de correo electrónico sobre el estado del pago"
+
+#. module: ike_event_purchase
+#: model:mail.template,subject:ike_event_purchase.account_email_status_payment_template
+msgid ""
+"Payment: Invoice {{ object.ref }} to {{ object.partner_id.display_name }}"
+msgstr "Pago: Factura {{ object.ref }} a {{ object.partner_id.display_name }}"
+
+#. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_invoices
 msgid "Pendiente de pago"
 msgstr ""
@@ -2654,6 +3282,11 @@ msgstr "Precio"
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_details.js:0
 msgid "Prices accepted successfully"
 msgstr "Precios exitosamente aceptados"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "Product"
+msgstr "Producto"
 
 #. module: ike_event_purchase
 #: model:ir.model,name:ike_event_purchase.model_product_product
@@ -2754,6 +3387,11 @@ msgid "Purchase order not found"
 msgstr "Orden de compra no encontrada"
 
 #. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "Purchase order:"
+msgstr "Orden de compra:"
+
+#. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "Purchase orders consolidated"
@@ -2763,6 +3401,11 @@ msgstr "Ordenes de compra consolidadas"
 #: model:ir.actions.server,name:ike_event_purchase.ir_cron_process_po_tickets_done_ir_actions_server
 msgid "Purchase: Auto-complete Tickets from Event POs"
 msgstr "Compras: autocompletar tickets desde órdenes de compra de eventos"
+
+#. module: ike_event_purchase
+#: model:mail.template,name:ike_event_purchase.purchase_email_new_order_template
+msgid "Purchase: New purchase order"
+msgstr "Compra: Nueva orden de compra"
 
 #. module: ike_event_purchase
 #: model:mail.template,name:ike_event_purchase.email_template_edi_purchase
@@ -2900,6 +3543,11 @@ msgstr "Facturas rechazadas"
 #: model:ir.ui.menu,name:ike_event_purchase.custom_purchase_report_finance
 msgid "Report Purchase"
 msgstr ""
+
+#. module: ike_event_purchase
+#: model:ir.actions.report,name:ike_event_purchase.action_report_custom_purchase_new_order
+msgid "Report new purchase order"
+msgstr "Reporte para nueva orden de compra"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_portal_invoices
@@ -3149,6 +3797,11 @@ msgstr "Servicios disponibles"
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_dispute/purchase_dispute.xml:0
 msgid "Solicitud de Cotización"
 msgstr ""
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.report_custom_purchase_new_order
+msgid "Source event"
+msgstr "Evento origen"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -3801,6 +4454,12 @@ msgstr ""
 
 #. module: ike_event_purchase
 #. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_review_list/purchase_order_review.xml:0
+msgid "Total Order Reviews"
+msgstr "Total de revisiones de ordenes"
+
+#. module: ike_event_purchase
+#. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
 msgid "Total invoices"
 msgstr "Total de facturas"
@@ -4151,6 +4810,15 @@ msgid "Document deleted."
 msgstr "Documento eliminado."
 
 #. module: ike_event_purchase
+#: model:mail.template,subject:ike_event_purchase.account_email_status_invoice_template
+msgid ""
+"{{ 'Approved' if object.state == 'posted' else 'Rejected' }}: Invoice {{ "
+"object.ref }} to {{ object.partner_id.display_name }}"
+msgstr ""
+"{{ 'Aprobado' if object.state == 'posted' else 'Rechazado' }}: Factura {{ "
+"object.ref }} a {{ object.partner_id.display_name }}"
+
+#. module: ike_event_purchase
 #: model:mail.template,subject:ike_event_purchase.email_template_edi_purchase
 msgid "{{ object.company_id.name }} Order (Ref {{ object.name or 'n/a' }})"
 msgstr "{{ object.company_id.name }} Orden (Ref {{ object.name or 'n/a' }})"
@@ -4161,3 +4829,97 @@ msgid ""
 "{{object.company_id.name}} Dispute opened (Ref {{object.name or 'n/a' }})"
 msgstr ""
 "{{object.company_id.name}} Disputa abierta (Ref {{object.name or 'n/a' }})"
+
+#. module: ike_event_purchase
+#: model:ir.model,name:ike_event_purchase.model_custom_helpdesk_stage_time_group
+#: model:ir.actions.act_window,name:ike_event_purchase.custom_helpdesk_stage_time_group_action
+#: model:ir.ui.menu,name:ike_event_purchase.custom_helpdesk_stage_time_group_menu
+msgid "Accumulated time by stages"
+msgstr "Tiempos acumulados por etapas"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__x_accumulated_stage_time_seconds
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_form_view_inherit_ike_event_purchase_list
+msgid "Accumulated time"
+msgstr "Tiempo acumulado"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_helpdesk_stage_time_group__stage_ids
+msgid "Stages"
+msgstr "Etapas"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_helpdesk_stage_time_group__max_wait_time
+msgid "Maximum wait time"
+msgstr "Tiempo máximo de espera"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_custom_helpdesk_stage_time_group__max_wait_time_unit
+msgid "Time unit"
+msgstr "Unidad de tiempo"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_helpdesk_stage_time_group__max_wait_time_unit__minutes
+msgid "Minutes"
+msgstr "Minutos"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_helpdesk_stage_time_group__max_wait_time_unit__hours
+msgid "Hours"
+msgstr "Horas"
+
+#. module: ike_event_purchase
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_helpdesk_stage_time_group__max_wait_time_unit__days
+msgid "Days"
+msgstr "Días"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/custom_helpdesk_stage_time_group.py:0
+msgid "Maximum wait time must be greater than zero."
+msgstr "El tiempo máximo de espera debe ser mayor que cero."
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/custom_helpdesk_stage_time_group.py:0
+msgid "A stage can belong to only one accumulated time configuration."
+msgstr "Una etapa solo puede pertenecer a una configuración de tiempo acumulado."
+
+#. module: ike_event_purchase
+#: model:ir.model.fields,field_description:sh_all_in_one_helpdesk.field_sh_helpdesk_ticket__partner_id
+#: model:ir.model.fields,field_description:sh_all_in_one_helpdesk.field_sh_helpdesk_ticket_merge_ticket_wizard__sh_partner_id
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_sh_helpdesk_ticket_assignment_list
+msgid "Partner"
+msgstr "Proveedor"
+
+#. module: ike_event_purchase
+#: code:addons/sh_all_in_one_helpdesk/static/src/js/ticket_list_view_widget/ticket_popover_widget.xml:0
+#: model_terms:ir.ui.view,arch_db:sh_all_in_one_helpdesk.portal_my_tickets
+msgid "Partner:"
+msgstr "Proveedor:"
+
+#. module: ike_event_purchase
+msgid "Partner :"
+msgstr "Proveedor :"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/sh_all_in_one_helpdesk/models/helpdesk_portal_buttons_and_config_methods.py:0
+msgid "Partners must be the same."
+msgstr "Los proveedores deben ser los mismos."
+
+#. module: ike_event_purchase
+msgid "Partner Must be same !!"
+msgstr "¡El proveedor debe ser el mismo!"
+
+#. module: ike_event_purchase
+#. odoo-python
+#: code:addons/ike_event_purchase/models/sh_helpdesk_ticket.py:0
+msgid "Completed"
+msgstr "Hecho"
+
+#. module: ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.helpdesk_stage_analysis_translation_inherit_ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.helpdesk_stage_history_translation_inherit_ike_event_purchase
+msgid "Stage Name"
+msgstr "Nombre de etapa"

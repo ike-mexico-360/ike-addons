@@ -7,7 +7,15 @@ class IkeEventSupplier(models.Model):
     def write(self, vals):
         vehicle_changes = {}
 
-        # Antes del super(), rec.truck_id es el vehículo anterior
+        evaluation_fields = {
+            'evaluation_id',
+            'evaluation_2_id',
+            'evaluation_observations',
+            'evaluation_informer',
+        }
+        evaluation_changes = evaluation_fields.intersection(vals)
+
+        # Guardar el vehículo anterior
         if 'truck_id' in vals:
             new_vehicle_id = vals.get('truck_id') or False
 
@@ -21,30 +29,68 @@ class IkeEventSupplier(models.Model):
                         'old_vehicle_name': rec.truck_id.display_name,
                     }
 
-        # Ejecuta el write() original de ike.event.supplier
         res = super().write(vals)
 
-        # Después del super(), rec.truck_id es el vehículo nuevo
         for rec in self:
-            change = vehicle_changes.get(rec.id)
+            # ==== Bitácora cambio de vehiculo ==== #
+            vehicle_change = vehicle_changes.get(rec.id)
 
-            if not change:
-                continue
+            if vehicle_change:
+                rec.event_id.with_context(
+                    old_vehicle_id=vehicle_change['old_vehicle_id'],
+                    old_vehicle_name=vehicle_change['old_vehicle_name'],
+                    new_vehicle_id=(
+                        rec.truck_id.id
+                        if rec.truck_id
+                        else False
+                    ),
+                    new_vehicle_name=(
+                        rec.truck_id.display_name
+                        if rec.truck_id
+                        else _('Not specified')
+                    ),
+                    event_supplier_id=rec.id,
+                )._create_message_binnacle([
+                    'ike_event_binnacle.'
+                    'ike_binnacle_change_and_confirm_vehicle'
+                ])
 
-            rec.event_id.with_context(
-                old_vehicle_id=change['old_vehicle_id'],
-                old_vehicle_name=change['old_vehicle_name'],
-                new_vehicle_id=rec.truck_id.id if rec.truck_id else False,
-                new_vehicle_name=(
-                    rec.truck_id.display_name
-                    if rec.truck_id
-                    else _('Not specified')
-                ),
-                event_supplier_id=rec.id,
-            )._create_message_binnacle([
-                'ike_event_binnacle.'
-                'ike_binnacle_change_and_confirm_vehicle'
-            ])
+            # ==== Bitácora de evaluación ==== #
+            if evaluation_changes:
+                rec.event_id.with_context(
+                    event_supplier_id=rec.id,
+                    supplier_name=rec.supplier_id.display_name,
+
+                    show_evaluation='evaluation_id' in vals,
+                    evaluation=(
+                        rec.evaluation_id.display_name
+                        if rec.evaluation_id
+                        else _('Not specified')
+                    ),
+
+                    show_reevaluation='evaluation_2_id' in vals,
+                    reevaluation=(
+                        rec.evaluation_2_id.display_name
+                        if rec.evaluation_2_id
+                        else _('Not specified')
+                    ),
+
+                    show_evaluation_observations=(
+                        'evaluation_observations' in vals
+                    ),
+                    evaluation_observations=(
+                        rec.evaluation_observations
+                        or _('Not specified')
+                    ),
+
+                    show_evaluation_informer=(
+                        'evaluation_informer' in vals
+                    ),
+                    evaluation_informer=(
+                        rec.evaluation_informer
+                        or _('Not specified')
+                    ),
+                )._create_message_binnacle(['ike_event_binnacle.ike_binnacle_supplier_evaluation'])
 
         return res
 

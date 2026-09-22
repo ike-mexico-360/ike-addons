@@ -170,7 +170,7 @@ class IkeEventSupplierProduct(models.Model):
     _description = 'Event Supplier Product'
     _order = 'sequence, id'
 
-    event_supplier_link_id = fields.Many2one('ike.event.supplier.link', 'Event Supplier', required=True, ondelete='cascade')
+    event_supplier_link_id = fields.Many2one('ike.event.supplier.link', 'Event Supplier Link', required=True, ondelete='cascade')
     supplier_id = fields.Many2one(string='Supplier', related='event_supplier_link_id.supplier_id', store=True, readonly=True)
     event_id = fields.Many2one(related='event_supplier_link_id.event_id')
     event_supplier_id = fields.Many2one('ike.event.supplier', 'Event Supplier', compute='_compute_event_supplier')
@@ -376,9 +376,20 @@ class IkeEventSupplierProduct(models.Model):
         for rec in self:
             if not rec.product_id:
                 continue
-            total_base_unit_price, total_base_cancel_price = rec.event_supplier_link_id.get_product_cost(
-                rec.supplier_id.id, rec.product_id.id
-            )
+
+            matrix_cost_line_ids = self.event_id.get_supplier_product_matrix_lines_by_supplier(rec.supplier_id.id, [rec.product_id.id])
+            cost_line_id = matrix_cost_line_ids.filtered(
+                lambda x:
+                    x.concept_id.id == rec.product_id.id
+                    and x.supplier_status_id.ref == 'concluded')
+            cancel_cost_line_id = matrix_cost_line_ids.filtered(
+                lambda x:
+                    x.concept_id.id == rec.product_id.id
+                    and x.supplier_status_id.ref == 'cancelled')
+
+            total_base_unit_price = cost_line_id[0].cost if cost_line_id else 0
+            total_base_cancel_price = cancel_cost_line_id[0].cost if cancel_cost_line_id else 0
+
             if not total_base_unit_price:
                 # BoM
                 bom_product_ids = rec.event_id._get_boom_product(rec.product_id, rec.supplier_id.id)
@@ -447,14 +458,16 @@ class IkeEventSupplierProduct(models.Model):
         return res
 
     def write(self, vals):
-        if (
-            ('authorization_pending' not in vals or not vals['authorization_pending'])
-            and (
-                'subtotal' in vals and vals['subtotal'] < self.subtotal
-                or vals.get('quantity', self.quantity) * vals.get('unit_price', self.unit_price) > vals.get('subtotal', self.subtotal)
-            )
-        ):
-            vals['authorization_pending'] = True
+        if 'authorization_pending' not in vals or not vals['authorization_pending']:
+            if 'subtotal' in vals or 'quantity' in vals or 'unit_price' in vals:
+                for rec in self:
+                    vals['authorization_pending'] = vals.get(
+                        'subtotal', rec.subtotal
+                    ) < rec.subtotal or vals.get('quantity', rec.quantity) * vals.get(
+                        'unit_price', rec.unit_price
+                    ) > vals.get(
+                        'subtotal', rec.subtotal
+                    )
 
         return super().write(vals)
 

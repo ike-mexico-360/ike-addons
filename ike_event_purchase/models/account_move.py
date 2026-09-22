@@ -48,11 +48,32 @@ class AccountMove(models.Model):
             else:
                 move.x_gross_sale = 0.0
 
+    def _sync_data_to_po_lines(self):
+        """Propagates invoice status and creation date directly to linked Purchase Order Lines."""
+        for move in self:
+            if move.move_type == 'in_invoice':
+                for line in move.line_ids:
+                    po_line = line.purchase_line_id
+                    if po_line:
+                        vals = {}
+                        if hasattr(move, 'x_status_invoice') and move.x_status_invoice:
+                            vals['x_status_invoice'] = move.x_status_invoice
+
+                        if vals:
+                            po_line.write(vals)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        moves = super(AccountMove, self).create(vals_list)
+        moves._sync_data_to_po_lines()
+        return moves
+
     def action_post(self):
         res = super(AccountMove, self).action_post()
         for move in self:
             if move.is_invoice(include_receipts=True):
                 move.x_status_invoice = 'accepted'
+        self._sync_data_to_po_lines()
         return res
 
     def button_draft(self):
@@ -60,21 +81,40 @@ class AccountMove(models.Model):
         for move in self:
             if move.is_invoice(include_receipts=True):
                 move.x_status_invoice = 'under_review'
+        self._sync_data_to_po_lines()
         return res
 
     def action_paid(self):
         for move in self:
             if move.is_invoice(include_receipts=True):
                 move.x_status_invoice = 'paid'
+        self._sync_data_to_po_lines()
 
     def action_rejected(self):
         for move in self:
             if move.is_invoice(include_receipts=True):
                 move.x_status_invoice = 'rejected'
+        self._sync_data_to_po_lines()
 
     def button_cancel(self):
         res = super(AccountMove, self).button_cancel()
         for move in self:
             if move.is_invoice(include_receipts=True):
                 move.x_status_invoice = 'cancelled'
+        self._sync_data_to_po_lines()
         return res
+
+    def action_send_email_status_invoice(self):
+        self.ensure_one()
+
+        if self.state in ['draft']:
+            return
+
+        template = self.env.ref('ike_event_purchase.account_email_status_invoice_template', raise_if_not_found=False)
+        template.send_mail(self.id, force_send=True)
+
+    def action_send_email_status_payment(self):
+        self.ensure_one()
+
+        template = self.env.ref('ike_event_purchase.account_email_status_payment_template', raise_if_not_found=False)
+        template.send_mail(self.id, force_send=True)

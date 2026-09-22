@@ -61,6 +61,14 @@ class IkeEvent(models.Model):
     user_additional_last_name = fields.Char(string='User Additional Lastname')
     user_additional_phone = fields.Char(string='User Additional Phone')
 
+    # subservice extra fields
+    has_incidents = fields.Boolean(related='sub_service_id.x_has_incidents', readonly=True)
+    available_incident_type_ids = fields.Many2many(
+        related='sub_service_id.x_incident_type_ids',
+        string='Available Incident Types',
+    )
+    incident_type_id = fields.Many2one('custom.incident.type', 'Incident Type', copy=False, tracking=True)
+
     # Service fields
     service_id = fields.Many2one('product.category', index=True, tracking=True)
     service_domain = fields.Binary('Service Domain', compute='_compute_service_domain')
@@ -169,6 +177,7 @@ class IkeEvent(models.Model):
     selected_ongoing_suppliers = fields.Integer(compute='_compute_selected_pending_suppliers', store=True)
     selected_cancel_suppliers = fields.Boolean(compute='_compute_selected_pending_suppliers', store=True)
     selected_confirm_vehicle_suppliers = fields.Boolean(compute='_compute_selected_pending_suppliers', store=True)
+    evaluated_pending_suppliers = fields.Integer(compute='_compute_evaluated_pending_suppliers')
     child_ids = fields.One2many('ike.event', 'parent_id', 'Children', copy=False)
 
     ia_suggestion_done = fields.Boolean(default=False, copy=False)
@@ -234,7 +243,7 @@ class IkeEvent(models.Model):
         return res
 
     def write(self, vals):
-        return super(IkeEvent, self).write(vals)
+        return super().write(vals)
 
     def read(self, fields=None, load='_classic_read'):
         """
@@ -498,8 +507,29 @@ class IkeEvent(models.Model):
                     for supplier in rec.selected_supplier_ids
                 )
 
+    @api.depends('service_supplier_ids', 'service_supplier_ids.evaluated')
+    def _compute_evaluated_pending_suppliers(self):
+        for rec in self:
+            rec.evaluated_pending_suppliers = len(
+                rec.service_supplier_ids.filtered(
+                    lambda line_id: line_id.search_number == rec.supplier_search_number
+                    and line_id.assignation_type == 'manual'
+                    and not line_id.evaluated
+                )
+            )
+
     # === FLOW ACTIONS === #
+    @api.model
     def action_test_notification_1(self):
+        event_batcher.add_event_notification(
+            self.env.cr.dbname,
+            'IKE_CHANNEL_LIST',
+            'IKE_TEST',
+            data={
+                'now': fields.Datetime.now(),
+            }, batch_timeout=5)
+
+    def action_test_notification_push(self):
         event_batcher.add_event_notification(
             self.env.cr.dbname,
             'IKE_CHANNEL_LIST',
@@ -904,6 +934,7 @@ class IkeEvent(models.Model):
 
     def action_set_destination_data(self):
         self._set_destination_route()
+        self._set_is_highway()
         self.event_summary_id.set_destination_data()
 
     def action_set_route_data(self):
@@ -914,6 +945,55 @@ class IkeEvent(models.Model):
             res_id = self.env[rec.sub_service_res_model].search([('event_id', '=', rec.id)], limit=1, order='id desc')
             res_id.set_event_summary_user_subservice_data()  # type: ignore
             rec.event_summary_id.set_user_sub_service_data()
+
+        self._register_highway_streets()
+
+    def _register_highway_streets(self):
+        self.ensure_one()
+
+        if not self.event_type_id or self.event_type_id.name != 'Carretero':
+            return
+
+        origin = self.get_service_model()
+        destination = self.get_sub_service_model()
+
+        if not origin or not destination:
+            return
+
+        origin_street = origin.street or ''  # type: ignore
+        destination_street = destination.street or ''  # type: ignore
+
+        if not origin_street or not destination_street:
+            return
+
+        Road = self.env['ike.road.classification']
+
+        origin_road_id = Road.search([
+            ('name', '=ilike', origin_street),
+        ], limit=1)
+
+        destination_road_id = Road.search([
+            ('name', '=ilike', destination_street),
+        ], limit=1)
+
+        if not origin_road_id:
+            origin_road_id = Road.create({
+                'name': origin_street,
+                'country_id': origin.country_id.id,  # type: ignore
+                'state_id': origin.state_id.id,  # type: ignore
+            })
+        if not destination_road_id:
+            destination_road_id = Road.create({
+                'name': destination_street,
+                'country_id': destination.country_id.id,  # type: ignore
+                'state_id': destination.state_id.id,  # type: ignore
+            })
+
+        if destination_road_id.id not in origin_road_id.destination_ids.destination_id.ids:
+            origin_road_id.destination_ids = [Command.create({
+                'origin_id': origin_road_id.id,
+                'destination_id': destination_road_id.id,
+            })]
 
     def action_set_products_covered(self):
         """Algorithm to create service_product_ids"""
@@ -1012,14 +1092,6 @@ class IkeEvent(models.Model):
             if not rec.selected_supplier_ids:
                 raise UserError(_('You must have a supplier selected.'))
             rec.event_summary_id.set_supplier_data()
-            preparing_stage_id = self.env.ref('ike_event.ike_service_stage_preparing')
-            service_supplier_id = rec.service_supplier_ids.filtered_domain([
-                ('state', '=', 'accepted'),
-                ('selected', '=', True),
-                ('stage_id', '=', preparing_stage_id.id)
-            ])
-            if service_supplier_id:
-                service_supplier_id.action_assign()
 
     def action_set_event_data(self):
         self.event_summary_id.set_event_data()
@@ -1106,53 +1178,32 @@ class IkeEvent(models.Model):
                 rec.destination_duration = (destination_duration_s or rec.destination_duration) / 60
                 rec.destination_route = destination_route
 
-                rec.assing_road_classification()
-
-    def assing_road_classification(self):
-        highway_event_type = self.env['custom.type.event'].search([
+    def _set_is_highway(self):
+        highway_event_type_id = self.env['custom.type.event'].search([
             ('name', '=', 'Carretero')
         ], limit=1, order='id desc')
 
-        not_highway_event_type = self.env['custom.type.event'].search([
+        not_highway_event_type_id = self.env['custom.type.event'].search([
             ('name', '=', 'No carretero')
         ], limit=1, order='id desc')
 
-        if not highway_event_type or not not_highway_event_type:
+        if not highway_event_type_id or not not_highway_event_type_id:
             return
 
-        # RN-1: Distance exceeds the minimum distance
-        is_highway_by_distance = bool(
-            self.destination_distance >= highway_event_type.minimum_distance_km
-        )
+        event_type_id = not_highway_event_type_id
 
-        # R2: match street catalog
-        origin = self.get_service_model()
-        destination = self.get_sub_service_model()
-
-        origin_text = ' '.join(filter(None, [origin.street]))  # type: ignore
-        destination_text = ' '.join(filter(None, [destination.street]))  # type: ignore
-
-        is_highway_match_street = self._is_highway_by_street(origin_text, destination_text)
-        is_highway_metropolitan = self._is_same_metropolitan_zone(origin, destination)
-
-        if is_highway_by_distance:
-            event_type = highway_event_type
-            print("POR DISTANCIAAAAA")
-
-        elif is_highway_metropolitan:
-            event_type = highway_event_type
-            print("POR METORPOLITAN O ENTIDAD")
-
-        elif is_highway_match_street:
-            event_type = highway_event_type
-            print("POR POR CALLEEEEE")
-
+        # R1: Distance exceeds the minimum distance
+        if self.destination_distance >= highway_event_type_id.minimum_distance_km:
+            event_type_id = highway_event_type_id
         else:
-            event_type = not_highway_event_type
-
-        self.event_type_id = event_type
-        self.requires_federal_plates = event_type.requires_federal_plates
-        self.payment_event_type_id = event_type
+            origin = self.get_service_model()
+            destination = self.get_sub_service_model()
+            # R(2,3): Match street or match metropolitan
+            if self._is_highway_by_street(origin, destination) or self._is_same_metropolitan_zone(origin, destination):
+                event_type_id = highway_event_type_id
+        self.event_type_id = event_type_id.id
+        self.requires_federal_plates = event_type_id.requires_federal_plates
+        self.payment_event_type_id = event_type_id.id
 
     def _is_same_metropolitan_zone(self, origin, destination):
         origin_in_zone = self.env['custom.metropolitan.zone'].search([
@@ -1171,28 +1222,26 @@ class IkeEvent(models.Model):
             return True
         return False
 
-    def _is_highway_by_street(self, origin_street, destination_street):
-        """RN-2: Match street by catalog pattern"""
+    def _is_highway_by_street(self, origin, destination):
+        self.ensure_one()
 
-        keywords = self.env['ike.event.road.classification'].search([
-            ('disabled', '=', False)
-        ]).mapped('name')
+        if not origin or not destination:
+            return False
 
-        keywords = {
-            name.strip().lower()
-            for name in keywords
-            if name
-        }
+        street_origin = (origin.street or '').strip()
+        street_destination = (destination.street or '').strip()
 
-        for street in filter(None, (origin_street, destination_street)):
-            street = street.strip().lower()
+        roads = self.env['ike.road.classification'].search([
+            ('name', 'ilike', street_origin),
+        ])
 
-            for keyword in keywords:
-                match = keyword in street
+        is_road = roads.mapped('destination_ids').filtered_domain([
+            ('active', '=', True),
+            ('destination_id.name', 'ilike', street_destination),
+            ('destination_id.active', '=', True),
+        ])
 
-                if match:
-                    return True
-        return False
+        return bool(is_road)
 
     def _build_sub_service_counter_json(self):
         self.ensure_one()
@@ -1515,6 +1564,7 @@ class IkeEvent(models.Model):
             if not rec.scheduled:
                 continue
             rec.selected_supplier_ids.confirmed = False
+            rec.selected_supplier_ids.truck_id.x_vehicle_service_state = 'available'
             for event_supplier_id in rec.selected_supplier_ids:
                 supplier_id: str = str(event_supplier_id.supplier_id.id)
                 if supplier_id not in groups_data:

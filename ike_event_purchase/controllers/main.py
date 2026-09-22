@@ -556,3 +556,323 @@ class IkePurchaseController(http.Controller):
 
     def _find_customer_or_raise(self, ref):
         return self._get_partner_id(ref, 'client')
+
+    # ---------------------------- #
+    #      Estados de fatura       #
+    # ---------------------------- #
+    # Códigos de estado enviados por SAP. Estos códigos no se almacenan en un
+    # campo adicional: más adelante se traducen a operaciones nativas de Odoo.
+    _ALLOWED_STATUS = frozenset({'0', '1', '2', '8', '9'})
+
+    # El contrato es estricto para detectar nombres incorrectos o información
+    # inesperada antes de consultar o modificar registros contables.
+    _REQUIRED_FIELDS = frozenset({
+        'society', 'idProvider', 'idDocument', 'idDocumentPO', 'status',
+    })
+
+    @staticmethod
+    def _ensure_api_user_authorized() -> None:
+        """Impide que una sesión sin permisos contables modifique facturas."""
+        allowed_groups = (
+            'account.group_account_invoice',
+            'account.group_account_manager',
+            'base.group_system',
+        )
+        if not any(request.env.user.has_group(group) for group in allowed_groups):
+            raise Forbidden(
+                description=(
+                    "El usuario autenticado no tiene permisos de facturación "
+                    "para consumir este endpoint."
+                )
+            )
+
+    @classmethod
+    def _ensure_jsonrpc_params_shape(cls, params: dict[str, Any]) -> None:
+        """Valida que ``params`` contenga exactamente el contrato de la API."""
+        if not isinstance(params, dict):
+            raise BadRequest(description="'params' debe ser un objeto JSON.")
+
+        received_fields = set(params)
+        missing_fields = cls._REQUIRED_FIELDS - received_fields
+        unknown_fields = received_fields - cls._REQUIRED_FIELDS
+
+        if missing_fields:
+            missing_list = ', '.join(sorted(missing_fields))
+            raise BadRequest(description=f"Faltan campos obligatorios: {missing_list}.")
+
+        if unknown_fields:
+            unknown_list = ', '.join(sorted(unknown_fields))
+            raise BadRequest(description=f"Se recibieron campos no permitidos: {unknown_list}.")
+
+    @staticmethod
+    def _ensure_non_empty_string(value: Any, field_name: str) -> str:
+        """Valida y normaliza un identificador de texto recibido por SAP."""
+        if not isinstance(value, str):
+            raise BadRequest(description=f"El campo '{field_name}' debe ser string.")
+
+        normalized = value.strip()
+        if not normalized:
+            raise BadRequest(description=f"El campo '{field_name}' no puede estar vacío.")
+
+        return normalized
+
+    @classmethod
+    def _validate_status(cls, value: Any) -> str:
+        """Comprueba que el código corresponda a un estado soportado."""
+        if not isinstance(value, str):
+            raise BadRequest(description="El campo 'status' debe ser string.")
+
+        if value not in cls._ALLOWED_STATUS:
+            allowed_values = ', '.join(sorted(cls._ALLOWED_STATUS))
+            raise UnprocessableEntity(
+                description=f"El campo 'status' debe ser uno de: {allowed_values}."
+            )
+
+        return value
+
+    @staticmethod
+    def _find_purchase_order_or_raise(
+        society: str, id_document_po: str, supplier,
+    ):
+        """Busca y valida la orden usando todos los identificadores recibidos.
+
+        La orden debe pertenecer al proveedor, coincidir con la sociedad SAP y
+        estar confirmada. De la misma orden se obtiene la sociedad pagadora que
+        se devuelve posteriormente en la respuesta.
+        """
+        purchase_orders = request.env['purchase.order'].sudo().search([
+            ('x_ref_sap', '=', id_document_po),
+            ('x_sap_company_code', '=', society),
+            ('partner_id', '=', supplier.id),
+        ], limit=2)
+
+        if not purchase_orders:
+            raise NotFound(
+                description=(
+                    "No se encontró una orden de compra que coincida con la "
+                    "sociedad, el proveedor y la referencia SAP recibidos."
+                )
+            )
+        if len(purchase_orders) > 1:
+            raise Conflict(
+                description=(
+                    "Existe más de una orden de compra con la misma sociedad, "
+                    "proveedor y referencia SAP."
+                )
+            )
+
+        purchase_order = purchase_orders
+        if purchase_order.state not in ('purchase', 'done'):
+            raise UnprocessableEntity(
+                description=(
+                    f"La orden de compra '{purchase_order.display_name}' debe estar "
+                    "en estado Purchase Order o Locked."
+                )
+            )
+
+        payer = purchase_order.x_invoice_company_id
+        if not payer or not payer.x_is_ike:
+            raise UnprocessableEntity(
+                description="La orden de compra no tiene una sociedad pagadora IKE válida."
+            )
+        if payer.x_society_sap and payer.x_society_sap != society:
+            raise UnprocessableEntity(
+                description=(
+                    "La sociedad SAP de la pagadora no coincide con la sociedad "
+                    "recibida."
+                )
+            )
+
+        return purchase_order, payer
+
+    @staticmethod
+    def _find_vendor_bill_or_raise(id_document: str, purchase_order, supplier):
+        """Localiza la factura del proveedor vinculada a la orden de compra.
+
+        Se filtra sobre ``invoice_ids`` para garantizar que la factura realmente
+        pertenezca a la orden encontrada. ``idDocument`` se compara con
+        ``account.move.x_ref_sap``.
+        """
+        bills = purchase_order.invoice_ids.filtered(
+            lambda move: (
+                move.move_type == 'in_invoice'
+                and (move.x_ref_sap or '').strip() == id_document
+                and move.partner_id.commercial_partner_id
+                == supplier.commercial_partner_id
+            )
+        )
+
+        if not bills:
+            raise NotFound(
+                description=(
+                    "No se encontró una factura de proveedor relacionada con la "
+                    "orden de compra y con "
+                    f"x_ref_sap='{id_document}'."
+                )
+            )
+        if len(bills) > 1:
+            raise Conflict(
+                description=(
+                    "Existe más de una factura relacionada con la orden de compra "
+                    f"y con x_ref_sap='{id_document}'."
+                )
+            )
+        return bills
+
+    @staticmethod
+    def _ensure_bill_posted(move):
+        """Deja una factura lista para operaciones contables de pago.
+
+        Odoo solo permite pagar facturas publicadas. Si estaba cancelada se
+        restaura primero a borrador y después se publica mediante sus métodos
+        estándar, permitiendo que Odoo ejecute todas sus validaciones.
+        """
+        if move.state == 'cancel':
+            move.button_draft()
+        if move.state == 'draft':
+            move.action_post()
+
+    @classmethod
+    def _apply_invoice_status(cls, move, status: str) -> None:
+        """Traduce un estado SAP a una transición nativa de factura en Odoo.
+
+        Correspondencia:
+            0: En revisión -> borrador.
+            1: Aceptada    -> publicada.
+            2: Pagada      -> pago completo mediante el asistente estándar.
+            8: Rechazada   -> cancelada.
+            9: Cancelada   -> cancelada.
+
+        Odoo no tiene un estado contable independiente para "rechazada"; por
+        eso los códigos 8 y 9 terminan en ``cancel``. ``x_status_invoice``
+        conserva la diferencia entre ambos estados de negocio.
+        """
+        try:
+            if status == '0':
+                if move.state != 'draft':
+                    move.button_draft()
+                    _logger.info(f"AM (status) Move {move.name} draft")
+            elif status == '1':
+                cls._ensure_bill_posted(move)
+                _logger.info(f"AM (status) Move {move.name} bill posted")
+            elif status == '2':
+                cls._ensure_bill_posted(move)
+                if move.payment_state != 'paid':
+                    # Se utiliza el mismo asistente que abre el botón
+                    # "Registrar pago". Así Odoo crea, publica y concilia el
+                    # pago en vez de forzar manualmente ``payment_state``.
+                    payment_register = request.env[
+                        'account.payment.register'
+                    ].sudo().with_context(
+                        active_model='account.move',
+                        active_ids=move.ids,
+                    ).create({})
+                    payment_register.action_create_payments()
+                move.action_paid()
+                _logger.info(f"AM (status) Move {move.name} bill paid")
+            elif status == '8':
+                if move.state != 'cancel':
+                    move.button_cancel()
+                move.action_rejected()
+                _logger.info(f"AM (status) Move {move.name} bill rejected")
+            elif status == '9':
+                if move.state != 'cancel':
+                    move.button_cancel()
+                    _logger.info(f"AM (status) Move {move.name} bill cancel")
+                else:
+                    move.x_status_invoice = 'cancelled'
+                    _logger.info(f"AM (status) Move {move.name} cancelled")
+        except (UserError, ValidationError) as error:
+            raise UnprocessableEntity(
+                description=(
+                    f"Odoo no pudo aplicar el estado solicitado a la factura "
+                    f"'{move.display_name}': {error}"
+                )
+            ) from error
+
+    @http.route(
+        '/api/sap/document/status',
+        type='json',
+        # El consumidor debe autenticarse primero en
+        # /web/session/authenticate y enviar después la cookie session_id.
+        auth='user',
+        methods=['POST'],
+        csrf=False,
+    )
+    def sap_document_status(self, **params):
+        """Recibe desde SAP el estado de una factura y actualiza Odoo.
+
+        Flujo de consumo:
+            1. POST /web/session/authenticate para obtener ``session_id``.
+            2. POST /api/sap/document/status enviando esa cookie.
+            3. Odoo valida proveedor, orden, pagadora y factura.
+            4. Se aplica la transición contable correspondiente.
+
+        Al ser una ruta ``type='json'``, Odoo extrae automáticamente el objeto
+        ``params`` del cuerpo JSON-RPC y lo entrega como argumentos nombrados.
+        """
+        # La cookie demuestra que existe una sesión, pero además exigimos que
+        # esa sesión pertenezca a un usuario autorizado para gestionar facturas.
+        self._ensure_api_user_authorized()
+
+        # Validar todo el contrato antes de realizar búsquedas o escrituras.
+        self._ensure_jsonrpc_params_shape(params)
+
+        _logger.info(f"AM (status) /api/sap/document/status: {params}")
+
+        society = self._ensure_non_empty_string(params.get('society'), 'society')
+        id_provider = self._ensure_non_empty_string(params.get('idProvider'), 'idProvider')
+        id_document = self._ensure_non_empty_string(params.get('idDocument'), 'idDocument')
+        id_document_po = self._ensure_non_empty_string(params.get('idDocumentPO'), 'idDocumentPO')
+        status = self._validate_status(params.get('status'))
+
+        # Resolver los documentos en orden evita aceptar una factura que no
+        # pertenezca al proveedor, a la sociedad o a la orden informados.
+        supplier = self._find_supplier_or_raise(id_provider)
+        purchase_order, payer = self._find_purchase_order_or_raise(
+            society, id_document_po, supplier,
+        )
+        move = self._find_vendor_bill_or_raise(id_document, purchase_order, supplier)
+
+        # Guardar el estado anterior permite informar si la petición realmente
+        # produjo un cambio y hace que las llamadas repetidas sean observables.
+        previous_state = move.state
+        previous_payment_status = move.status_in_payment
+        self._apply_invoice_status(move, status)
+        current_state = move.state
+        current_payment_status = move.status_in_payment
+        updated = (
+            previous_state != current_state
+            or previous_payment_status != current_payment_status
+        )
+
+        return {
+            'society': {
+                'id': payer.id,
+                'name': payer.name,
+                'code': society,
+            },
+            'provider': {
+                'id': supplier.id,
+                'name': supplier.name,
+                'x_ref_sap': supplier.x_ref_sap,
+            },
+            'accountMove': {
+                'id': move.id,
+                'name': move.display_name,
+                'ref': move.ref,
+                'x_ref_sap': move.x_ref_sap,
+            },
+            'purchaseOrder': {
+                'id': purchase_order.id,
+                'name': purchase_order.name,
+                'x_ref_sap': purchase_order.x_ref_sap,
+            },
+            'status': status,
+            'previousInvoiceState': previous_state,
+            'invoiceState': current_state,
+            'previousStatusInPayment': previous_payment_status,
+            'statusInPayment': current_payment_status,
+            'updated': updated,
+            'valid': True,
+        }

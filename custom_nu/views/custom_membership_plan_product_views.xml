@@ -27,6 +27,11 @@
                                     'display_default_code': 0,
                                     'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list'
                                 }"/>
+                            <!-- <field name="incident_type_id"
+                                required="1"
+                                options='{"no_open": True, "no_create": True}'
+                                context="{'edit': False}"
+                            /> -->
                             <field name="vehicle_weight_category_id"/>
                             <field name="sap_id_income"/>
 
