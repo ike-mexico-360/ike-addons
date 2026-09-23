@@ -35,17 +35,10 @@ class IkeServiceInputVial(models.Model):
         template: int,
         phone_number: str
     ):
-        Cfg = self.env['ir.config_parameter'].sudo()
-        url = Cfg.get_param('assistview.lambda.start_url')
+        url = self.env['ir.config_parameter'].sudo().get_param('assistview.lambda.session')
         if not url:
-            _logger.warning("No se ha configurado la URL de inicio de Assistview (assistview.lambda.start_url)")
+            _logger.warning("No se ha configurado la URL para crear la sessión del lambda deprocesamiento para el Assistview")
             return False
-
-        phone_number_id = Cfg.get_param('assistview.lambda.business_phone_number_id')
-        if not phone_number_id:
-            _logger.warning("No se ha configurado el número identificador de WA Business para el Assistviewv(assistview.lambda.business_phone_number_id)")
-            return False
-
         if url:
             headers = {
                 "Content-Type": "application/json",
@@ -53,64 +46,57 @@ class IkeServiceInputVial(models.Model):
             }
             encryption_util = self.env['custom.encryption.utility']
             body = {
-                "event_id": event_id,
-                "event_name": self.event_id.name,
-                "recipient_phone": phone_number,
-                "phone_number_id": phone_number_id,
+                "phone": phone_number,
+                "reference": event_id,
                 "assistview_id": str(assistview_id.id),
-                "recipient_name": encryption_util.decrypt_aes256(self.event_id.user_id.name),
-                "service_type": self.event_id.sub_service_id.name,
-                "max_photos": min_required_photos,
+                "template_id": template,
+                "type_id": 1,
+                "nombre": encryption_util.decrypt_aes256(self.event_id.user_id.name),
+                "min_required_photos": min_required_photos,
             }
 
-            # send_whatsapp_message = False
+            send_whatsapp_message = False
 
             # Si ya existe sesión de lambda, si se necesita enviar el mensaje, marcamos como True
-            # if request_whatsapp_message and not send_whatsapp_message:
-            #     send_whatsapp_message = True
+            if request_whatsapp_message and not send_whatsapp_message:
+                send_whatsapp_message = True
 
             if request_lambda_session:
                 try:
-                    _logger.info(f"Assistview: Sending request to start assistview flow: {body}")
+                    _logger.info(f"Assistview: Sending request to create session at lambda: {body}")
                     session_response = requests.post(url, headers=headers, json=body)
                     response_data = session_response.json()
-                    if session_response.status_code == 200 and response_data.get('status', False):
-                        # send_whatsapp_message = True
-                        assistview_id.write({
-                            'created_lambda_session': True,
-                            'sended_whatsapp_message': True,
-                        })
-                        _logger.info(f"Assistview: Correctly started assistview flow: {response_data}")
-                        return True
+                    if response_data.get('status') == 'ok':
+                        send_whatsapp_message = True
+                        assistview_id.write({'created_lambda_session': True})
+                        _logger.info(f"Session created successfully: {response_data}")
                     else:
-                        # send_whatsapp_message = False
-                        _logger.warning(f"Assistview: Error at start assistview flow: {response_data}")
-                        # if response_data.get('existing_session', False):
-                        #     send_whatsapp_message = True
-                        #     assistview_id.write({'created_lambda_session': True})
-                        #     _logger.info(f"Session created successfully: {response_data}")
-                        # else:
-                        #     send_whatsapp_message = False
-                        #     _logger.warning(f"Error al crear sesión {response_data}")
+                        if response_data.get('existing_session', False):
+                            send_whatsapp_message = True
+                            assistview_id.write({'created_lambda_session': True})
+                            _logger.info(f"Session created successfully: {response_data}")
+                        else:
+                            send_whatsapp_message = False
+                            _logger.warning(f"Error al crear sesión {response_data}")
                 except Exception as e:
-                    # send_whatsapp_message = False
-                    _logger.error(f"Assistview: Error at start assistview: {str(e)}")
+                    send_whatsapp_message = False
+                    _logger.error(f"Assistview: Error to send request at lambda: {str(e)}")
 
-            # if request_whatsapp_message and send_whatsapp_message:
-            #     wp_access_token = self.env['ike.event.supplier'].x_get_whatsapp_token()
-            #     successfully_sent = self.env['ike.event.supplier'].x_send_whatsapp_template(
-            #         access_token=wp_access_token,
-            #         event_id=event_id,
-            #         template=template,
-            #         phone_number=phone_number,
-            #     )
-            #     if successfully_sent:
-            #         assistview_id.write({'sended_whatsapp_message': True})
-            #     return successfully_sent
+            if request_whatsapp_message and send_whatsapp_message:
+                wp_access_token = self.env['ike.event.supplier'].x_get_whatsapp_token()
+                successfully_sent = self.env['ike.event.supplier'].x_send_whatsapp_template(
+                    access_token=wp_access_token,
+                    event_id=event_id,
+                    template=template,
+                    phone_number=phone_number,
+                )
+                if successfully_sent:
+                    assistview_id.write({'sended_whatsapp_message': True})
+                return successfully_sent
 
-            # # Si no se creará la sesión ni se enviará mensaje, devolvermos True, para abir el wizard
-            # if not request_lambda_session and not request_whatsapp_message:
-            #     return True
+            # Si no se creará la sesión ni se enviará mensaje, devolvermos True, para abir el wizard
+            if not request_lambda_session and not request_whatsapp_message:
+                return True
 
         return False
 

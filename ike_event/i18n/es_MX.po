@@ -1090,7 +1090,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "Change Vehicle"
-msgstr "Cambiar vehículo"
+msgstr "Confirmar vehículo"
 
 #. module: ike_event
 #. odoo-python
