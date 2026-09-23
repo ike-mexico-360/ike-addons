@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-17 21:58+0000\n"
-"PO-Revision-Date: 2026-09-17 21:58+0000\n"
+"POT-Creation-Date: 2026-09-22 21:56+0000\n"
+"PO-Revision-Date: 2026-09-22 21:56+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -554,11 +554,6 @@ msgstr "Llegó al destino"
 #: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
 msgid "Arrived: Invalid datetime"
 msgstr "Llegó: Fecha y hora no válida."
-
-#. module: ike_event
-#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_vehicle_form_view
-msgid "Assign"
-msgstr "Asignar"
 
 #. module: ike_event
 #. odoo-python
@@ -1413,6 +1408,7 @@ msgid "Cost Distance"
 msgstr "Distancia (costo)"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__cost_invalid
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__cost_invalid
 msgid "Cost Invalid"
 msgstr "Costo inválido"
@@ -1719,6 +1715,7 @@ msgid "Destination Zip Code"
 msgstr "Código Postal"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_road_classification__destination_ids
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_road_classification_view_form
 msgid "Destinations"
 msgstr "Destinos"
@@ -2838,11 +2835,6 @@ msgid "Group By"
 msgstr "Agrupar por"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event__has_incidents
-msgid "Has Incidents"
-msgstr ""
-
-#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__has_message
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_cancellation_reason__has_message
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_duplicate_reason__has_message
@@ -2857,6 +2849,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__has_message
 msgid "Has Message"
 msgstr "Tiene un mensaje"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event__has_incidents
+msgid "Has incidents"
+msgstr ""
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_end_comment
@@ -4232,7 +4229,6 @@ msgid ""
 msgstr ""
 
 #. module: ike_event
-#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "Order"
 msgstr "Orden"
@@ -4272,11 +4268,6 @@ msgstr "Latitude (origen)"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__origin_longitude
 msgid "Origin Longitude"
 msgstr "Longitud (origen)"
-
-#. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_road_classification__destination_ids
-msgid "Destinations"
-msgstr "Destinations"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__osrm
@@ -4740,11 +4731,6 @@ msgid "Route Data"
 msgstr "Datos de la ruta"
 
 #. module: ike_event
-#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__route_reverse
-msgid "Route Reverse"
-msgstr ""
-
-#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__on_route_to_destination_start_comment
 msgid "Route to destination (comment)"
 msgstr "En ruta al destino (comentario)"
@@ -4820,6 +4806,7 @@ msgstr "URL de encuesta de satisfacción"
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_link_add_form_view
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_link_form_view
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_vehicle_form_view
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_purchase_suppliers_form
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_stage_comment_form
 msgid "Save"
@@ -6062,6 +6049,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_link_form_view
 msgid "There are zero costs."
 msgstr "Hay costos en cero."
+
+#. module: ike_event
+#: model_terms:ir.actions.act_window,help:ike_event.action_ike_road_classification
+msgid "There is no examples click here to add new Ike Road Classification."
+msgstr ""
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_service_summary_search

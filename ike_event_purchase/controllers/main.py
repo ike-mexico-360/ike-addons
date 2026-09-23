@@ -290,8 +290,11 @@ class IkePurchaseController(http.Controller):
                 _logger.error(f"Error al calcular el copago: {str(e)}")
 
         return {
-            'order_id': order_id.id,
-            'order_name': order_id.name,
+            'code': '200',
+            'detail': {
+                'message': 'OK',
+                'purchaseOrder': order_id.name,
+            },
         }
 
     def _validate_purchase_params(self, params):

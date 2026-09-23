@@ -70,13 +70,16 @@ class IkeEventSupplierSelection(models.Model):
                 dbname = self.env.cr.dbname
                 record_ids = self_filtered.ids
 
-                @self.env.cr.postcommit.add
-                def send_notifications_with_new_cursor():
-                    threading.Thread(
-                        target=self._async_send_notification,
-                        args=(dbname, record_ids, 'send_external_notification'),
-                        daemon=True,
-                    ).start()
+                try:
+                    @self.env.cr.postcommit.add
+                    def send_notifications_with_new_cursor():
+                        threading.Thread(
+                            target=self._async_send_notification,
+                            args=(dbname, record_ids, 'send_external_notification'),
+                            daemon=True,
+                        ).start()
+                except Exception as e:
+                    _logger.error(f"Error sending external notification: {str(e)}")
         return result
 
     def action_notify_operator(self) -> list[int]:
@@ -88,11 +91,16 @@ class IkeEventSupplierSelection(models.Model):
         result = super().action_notify_operator()
         # Async Notification
         if not self._is_db_neutralized():
-            threading.Thread(
-                target=self._async_send_notification,
-                args=(self.env.cr.dbname, self_filtered.ids, 'send_operator_notification'),
-                daemon=True,
-            ).start()
+            try:
+                @self.env.cr.postcommit.add
+                def send_notifications_with_new_cursor():
+                    threading.Thread(
+                        target=self._async_send_notification,
+                        args=(self.env.cr.dbname, self_filtered.ids, 'send_operator_notification'),
+                        daemon=True,
+                    ).start()
+            except Exception as e:
+                _logger.error(f"Error sending operator notification: {str(e)}")
         return result
 
     def action_accept(self) -> list[int]:
@@ -114,13 +122,16 @@ class IkeEventSupplierSelection(models.Model):
         # FixMe: check len == 1 ?
         if len(selected_suppliers) == 1 and not self._is_db_neutralized():
             # Send only one time
-            @self.env.cr.postcommit.add
-            def send_notifications_with_new_cursor():
-                threading.Thread(
-                    target=self._async_send_notification,
-                    args=(dbname, record_ids, 'send_accept_notification'),
-                    daemon=True
-                ).start()
+            try:
+                @self.env.cr.postcommit.add
+                def send_notifications_with_new_cursor():
+                    threading.Thread(
+                        target=self._async_send_notification,
+                        args=(dbname, record_ids, 'send_accept_notification'),
+                        daemon=True
+                    ).start()
+            except Exception as e:
+                _logger.error(f"Error sending accept notification: {str(e)}")
         return result
 
     def action_assign(self) -> list[int]:
@@ -131,14 +142,18 @@ class IkeEventSupplierSelection(models.Model):
         dbname = self.env.cr.dbname
         record_ids = selected_suppliers.ids
 
-        @self.env.cr.postcommit.add
-        def send_tracking_route_with_new_cursor():
-            threading.Thread(
-                target=self._async_send_notification,
-                args=(dbname, record_ids, 'send_tracking_route'),
-                daemon=True
-            ).start()
-        return result
+        if not self._is_db_neutralized():
+            try:
+                @self.env.cr.postcommit.add
+                def send_tracking_route_with_new_cursor():
+                    threading.Thread(
+                        target=self._async_send_notification,
+                        args=(dbname, record_ids, 'send_tracking_route'),
+                        daemon=True
+                    ).start()
+            except Exception as e:
+                _logger.error(f"Error sending tracking route: {str(e)}")
+            return result
 
     # Enviar ruta planeada tras cambio de vehículo
     # def _set_new_service_vehicle_distance(self):

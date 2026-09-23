@@ -700,6 +700,27 @@ class IkeEventSupplier(models.Model):
             ])
         return updated_ids
 
+    def action_supplier_cancel(self, cancel_reason_id: int, reason_text=None):
+        result = super().action_supplier_cancel(cancel_reason_id, reason_text)
+
+        for rec in self.filtered(
+            lambda supplier: supplier.supplier_id.x_has_external_notification
+        ):
+            reason_model = rec._fields['cancel_reason_id'].comodel_name
+            reason = self.env[reason_model].browse(cancel_reason_id).exists()
+
+            rec.event_id.with_context(
+                supplier=rec.supplier_id.name,
+                plate=rec.truck_id.license_plate or '',
+                cancellation_reason=reason.display_name or '',
+                cancellation_comment=reason_text or '',
+                cancellation_user=self.env.user.name,
+            )._create_message_binnacle([
+                'ike_event_binnacle.ike_binnacle_stage_8_4',
+            ])
+
+        return result
+
 
 class IkeEventSupplierPublic(models.Model):
     _inherit = 'ike.event.supplier.public'

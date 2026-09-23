@@ -394,6 +394,9 @@ export class ServicesMainComponent extends Component {
                 await this.orm.call('ike.event.supplier.public', 'action_change_service_vehicle', [event_supplier_id, truck_id]);
             }
             await this.orm.call('ike.event.supplier.public', 'action_accept', [event_supplier_id]);
+            if (!event_supplier.scheduled) {
+                await this.orm.call('ike.event.supplier.public', 'action_notify_operator', [event_supplier_id]);
+            }
             await this.loadServices(false);
         } catch (err) {
             this.showNotification({ title: _t("Error accepting service"), message: _t(err?.data?.message || err.message || "An error occurred while accepting the service."), type: 'danger' });

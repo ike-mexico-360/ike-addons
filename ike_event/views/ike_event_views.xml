@@ -262,11 +262,13 @@
                                         <button string="Request Authorization" name="action_open_request_authorization"
                                             type="object" class="btn-primary"
                                             context="{'from_event_authorization': True}"
-                                            invisible="not authorization_required"/>
+                                            invisible="not authorization_required"
+                                            groups="base.group_system,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_manager_cds"/>
                                         <button string="" name="action_open_request_authorization"
                                             type="object" class="btn-primary" icon="fa-eye" title="Authorizer View"
                                             context="{'from_authorizer': True}"
-                                            invisible="not authorization_required"/>
+                                            invisible="not authorization_required"
+                                            groups="base.group_system,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_manager_cds"/>
                                     </div>
                                     <field name="previous_amount"/>
                                     <field name="current_amount"/>

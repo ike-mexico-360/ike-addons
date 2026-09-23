@@ -52,7 +52,6 @@ class IkeEventSupplier(models.Model):
     latitude = fields.Char(copy=False)
     longitude = fields.Char(copy=False)
     route = fields.Json(copy=False)
-    route_reverse = fields.Json(copy=False)
     osrm = fields.Boolean(default=False, copy=False)
 
     # === EVIDENCE FIELDS === #

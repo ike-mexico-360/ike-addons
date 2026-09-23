@@ -856,6 +856,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__state__cancel
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__x_status_invoice__cancelled
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__state__cancelled
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order_line__x_status_invoice__cancelled
 msgid "Cancelled"
 msgstr "Cancelada"
 
@@ -1351,6 +1352,8 @@ msgid "Disputed Cost"
 msgstr "Costo Disputado"
 
 #. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/invoices_order_list/invoices_order_list.xml:0
 #: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__origin
 msgid "Document Origin"
 msgstr "Documento origen"
@@ -1951,6 +1954,7 @@ msgstr "Estado de factura"
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
 #: model:ir.model.fields,field_description:ike_event_purchase.field_account_bank_statement_line__x_status_invoice
 #: model:ir.model.fields,field_description:ike_event_purchase.field_account_move__x_status_invoice
+#: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_status_invoice
 msgid "Invoice Status"
 msgstr "Estado de la factura"
 
@@ -2513,6 +2517,7 @@ msgstr ""
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__account_move__x_status_invoice__paid
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__invoice_payment_state__paid
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__x_status_invoice__paid
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order_line__x_status_invoice__paid
 msgid "Paid"
 msgstr "Pagada"
 
@@ -2907,6 +2912,7 @@ msgstr "Aplicación de referencia"
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__state__rejected
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__validation_status__rejected
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__x_dispute_state__rejected
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order_line__x_status_invoice__rejected
 msgid "Rejected"
 msgstr "Rechazada"
 
@@ -3900,8 +3906,9 @@ msgstr ""
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__account_move__x_status_invoice__under_review
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__custom_purchase_report_finance__x_status_invoice__under_review
+#: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order_line__x_status_invoice__under_review
 msgid "Under Review"
-msgstr ""
+msgstr "En revisión"
 
 #. module: ike_event_purchase
 #. odoo-javascript

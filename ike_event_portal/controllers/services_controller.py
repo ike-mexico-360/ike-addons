@@ -121,6 +121,12 @@ class PortalUserAccount(CustomerPortal):
                 [
                     ("supplier_id", "=", supplier_id),
                     ("state", "in", ["notified", "accepted", "assigned"]),
+                    ("event_id.stage_ref", "not in", [
+                        "cancel",
+                        "cancel_subsequently",
+                        "cancel_verifying",
+                        "cancel_closed",
+                    ]),
                 ],
                 order="id DESC",
             )
@@ -166,6 +172,13 @@ class PortalUserAccount(CustomerPortal):
             supplier_line = request.env["ike.event.supplier.public"].sudo().search(
                 [
                     ("id", "=", event_supplier_id),
+                    ("state", "in", ["notified", "accepted", "assigned"]),
+                    ("event_id.stage_ref", "not in", [
+                        "cancel",
+                        "cancel_subsequently",
+                        "cancel_verifying",
+                        "cancel_closed",
+                    ]),
                 ],
                 limit=1,
             )

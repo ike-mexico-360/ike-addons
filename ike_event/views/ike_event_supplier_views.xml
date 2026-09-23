@@ -417,16 +417,17 @@
                     </group>
                 </group>
                 <footer>
+                    <!--
                     <button string="Assign" class="btn-primary"
                         name="action_assign" type="object"
-                        invisible="(assignation_type == 'electronic' or display_type) or stage_ref != 'accepted'"
-                        groups="base.group_no_one"/>
+                        invisible="(assignation_type == 'electronic' or display_type) or state != 'accepted'"/>
+                    -->
                     <button string="Confirm" class="btn-primary"
                         name="action_confirm_vehicle" type="object"
-                        invisible="(assignation_type == 'electronic' or display_type) or stage_ref != 'accepted'"/>
+                        invisible="(assignation_type == 'electronic' or display_type) or state != 'accepted'"/>
                     <button string="Accept" class="btn-primary"
                         name="action_accept" type="object"
-                        invisible="(assignation_type == 'electronic' or display_type) or stage_ref != 'notified'"/>
+                        invisible="(assignation_type == 'electronic' or display_type) or state != 'notified'"/>
                     <button string="Save" class="btn-primary"
                         special="save"/>
                     <button string="Cancel" class="btn-secondary" special="cancel"/>

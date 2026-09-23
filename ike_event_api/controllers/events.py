@@ -149,7 +149,7 @@ class EventAPIController(http.Controller):
             )
 
             supplier.action_accept()
-            supplier.action_notify_operator()
+            supplier.action_assign()
             supplier.write({'acceptance_date': accepted_datetime})
 
             return {

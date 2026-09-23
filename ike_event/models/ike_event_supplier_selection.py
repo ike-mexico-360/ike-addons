@@ -81,8 +81,10 @@ class IkeEventSupplierSelection(models.Model):
         )
         if not self_filtered:
             return []
+        assigned_stage = self.env.ref('ike_event.ike_service_stage_assigned')
         self_filtered.write({
             'state': 'accepted',
+            'stage_id': assigned_stage.id,  # FixMe:
             'acceptance_date': fields.Datetime.now(),
             'selected': True,
         })
@@ -189,7 +191,7 @@ class IkeEventSupplierSelection(models.Model):
         )
         self_filtered.truck_id.x_vehicle_service_state = 'in_service'
         self_filtered.confirmed = True
-
+        self_filtered.action_assign()
         self_filtered.broadcastReload(reload_type='vehicle_confirmed')
 
     def action_notify_operator(self) -> list[int]:
