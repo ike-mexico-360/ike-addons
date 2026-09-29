@@ -131,10 +131,10 @@ class EventAPIController(http.Controller):
 
         event_id = kw.get('event_id')
         vehicle_id = kw.get('vehicle_id')
-        accepted_datetime = kw.get('accepted_datetime')
+        # accepted_datetime = kw.get('accepted_datetime')
         # accepted_user = kw.get('accepted_user', "")
 
-        if not event_id or not vehicle_id or not accepted_datetime:
+        if not event_id or not vehicle_id:  # or not accepted_datetime:  # Queda sin efecto accepted_datetime
             raise BadRequest(_('Missing parameters'))
 
         env = request.env
@@ -150,7 +150,7 @@ class EventAPIController(http.Controller):
 
             supplier.action_accept()
             supplier.action_assign()
-            supplier.write({'acceptance_date': accepted_datetime})
+            # supplier.write({'acceptance_date': accepted_datetime})  # Se guarda lo recibido, se asume UTC-0
 
             return {
                 'status': 'success',
@@ -231,6 +231,7 @@ class EventAPIController(http.Controller):
         # Limitar a esas lineas
         reassignment_domain = [
             ('selected', '=', True),
+            ('state', '=', 'notified'),
             ('event_id', '=', event_id),
             ('supplier_id', '=', partner_id),
             ('stage_id', 'in', (preparing_stage.id, assigned_stage.id)),
