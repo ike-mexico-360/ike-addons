@@ -1202,7 +1202,13 @@
 
                     <t t-set="pending_lines"
                         t-value="link.supplier_product_ids.filtered(
-                            lambda l: not l.display_type and l.authorization_pending
+                            lambda l: not l.display_type and (
+                                l.authorization_pending
+                                or (l.authorization_id and (
+                                    l.quantity != l.authorization_id.quantity
+                                    or l.unit_price != l.authorization_id.unit_price
+                                ))
+                            )
                         )"/>
 
                     <t t-if="pending_lines">
@@ -1219,8 +1225,7 @@
                             <tbody>
                                 <t t-foreach="pending_lines" t-as="line">
                                     <t t-set="quantity" t-value="line.quantity or 0.0"/>
-                                    <t t-set="unit_price"
-                                    t-value="line.base_unit_price or line.unit_price or 0.0"/>
+                                    <t t-set="unit_price" t-value="line.unit_price or 0.0"/>
                                     <t t-set="amount" t-value="unit_price * quantity"/>
                                     <t t-set="subtotal" t-value="(subtotal or 0.0) + (amount or 0.0)"/>
 
@@ -3189,6 +3194,25 @@
             <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
             <field name="sequence">100</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_supplier_evaluation"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_assign_event" model="mail.template">
+            <field name="name">Binnacle stage mail template stage comment</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html">
+                <t>
+                    <p>
+                        <strong>Event assigned to:</strong>
+                        <t t-out="object.assigned_user_id.name"/>
+                    </p>
+                </t>
+            </field>
+        </record>
+        <record id="ike_binnacle_assign_event" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
+            <field name="sequence">101</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_assign_event"/>
         </record>
     </data>
 </odoo>

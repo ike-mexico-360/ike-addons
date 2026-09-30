@@ -333,19 +333,25 @@ class IkeEvent(models.Model):
         return result
 
     def write(self, vals):
-        if 'user_additional_phone' in vals and not self.env.context.get('skip_phone_binnacle'):
-            old_phones = {rec.id: rec.user_additional_phone or '' for rec in self}
+        track_phone = 'user_additional_phone' in vals and not self.env.context.get('skip_phone_binnacle')
+        track_assigned = 'assigned_user_id' in vals and not self.env.context.get('skip_assigned_binnacle')
 
-            res = super().write(vals)
+        old_phones = {rec.id: rec.user_additional_phone or '' for rec in self} if track_phone else {}
+        old_assigned = {rec.id: rec.assigned_user_id.id for rec in self} if track_assigned else {}
 
-            new_phone = vals['user_additional_phone'] or ''
+        res = super().write(vals)
+
+        if track_phone:
+            new_phone = (vals['user_additional_phone'] or '').replace(" ", "")
             for rec in self:
-                old_phone = old_phones.get(rec.id, '')
-                if new_phone.replace(" ", "") != old_phone.replace(" ", ""):
+                if new_phone != old_phones.get(rec.id, '').replace(" ", ""):
                     rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_3"])
-            return res
-
-        return super().write(vals)
+        # Solo cambios manuales (formulario); los flujos programáticos usan skip_assigned_binnacle
+        if track_assigned:
+            for rec in self:
+                if rec.assigned_user_id and rec.assigned_user_id.id != old_assigned.get(rec.id):
+                    rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_assign_event"])
+        return res
 
     def _action_set_user_assigned(self):
         self.ensure_one()
@@ -451,7 +457,7 @@ class IkeEvent(models.Model):
         return result
 
     def action_auto_assign_event(self):
-        result = super().action_auto_assign_event()
+        result = super(IkeEvent, self.with_context(skip_assigned_binnacle=True)).action_auto_assign_event()
         for rec in self:
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_auto_assign_event"])
         return result

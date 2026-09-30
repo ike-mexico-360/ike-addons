@@ -123,6 +123,9 @@
         <field name="model">sh.helpdesk.ticket</field>
         <field name="inherit_id" ref="sh_all_in_one_helpdesk.sh_helpdesk_ticket_tree_view"/>
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="x_dispute_iteration_count"/>
+            </xpath>
             <xpath expr="//field[@name='stage_id']" position="after">
                 <field name="x_stage_max_wait_time_minutes" column_invisible="1"/>
                 <field name="current_stage_date" column_invisible="1"/>

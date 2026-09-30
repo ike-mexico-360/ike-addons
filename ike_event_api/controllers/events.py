@@ -148,14 +148,17 @@ class EventAPIController(http.Controller):
                 vehicle_ref=vehicle_id,
             )
 
-            supplier.action_accept()
-            supplier.action_assign()
-            # supplier.write({'acceptance_date': accepted_datetime})  # Se guarda lo recibido, se asume UTC-0
+            accepted_supplier_ids = supplier.action_accept()
+            if accepted_supplier_ids and supplier.id in accepted_supplier_ids:
+                # supplier.write({'acceptance_date': accepted_datetime})  # Se guarda lo recibido, se asume UTC-0
+                supplier.action_assign()
 
-            return {
-                'status': 'success',
-                'user_code': supplier.event_id.user_code,
-            }
+                return {
+                    'status': 'success',
+                    'user_code': supplier.event_id.user_code,
+                }
+
+            raise BadRequest('No se pudo aceptar el evento para el proveedor especificado')
 
         except (BadRequest, NotFound):
             raise

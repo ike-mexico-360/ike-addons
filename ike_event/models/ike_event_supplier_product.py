@@ -200,18 +200,6 @@ class IkeEventSupplierProduct(models.Model):
     base_subtotal = fields.Float('Agreement Subtotal', compute='_compute_base_amount', store=True)
     parent_product_id = fields.Many2one('product.product', string='Parent Concept', readonly=True)
 
-    # === AUTHORIZATION FIELDS === #
-    authorization_pending = fields.Boolean(default=True)
-    authorization_ids = fields.One2many(
-        'ike.event.supplier.product.authorization', 'event_supplier_product_id',
-        string='Authorizations')
-    authorization_id = fields.Many2one(
-        'ike.event.supplier.product.authorization',
-        compute='_compute_authorization_id', store=True,
-        string='Authorization')
-    type_authorization_id = fields.Many2one(related='authorization_id.event_authorization_id.type_authorization_id', store=True)
-    authorizer_name = fields.Char(related='authorization_id.event_authorization_id.authorizer', string='Authorized', store=True)
-
     product_add_domain = fields.Binary(compute='_compute_product_add_domain')
 
     from_portal = fields.Boolean(default=False, readonly=True)
@@ -296,14 +284,6 @@ class IkeEventSupplierProduct(models.Model):
                 rec.base_cost_price = base_cost
                 rec.base_vat = base_vat
                 rec.base_subtotal = base_subtotal
-
-    @api.depends('authorization_ids')
-    def _compute_authorization_id(self):
-        for rec in self:
-            if rec.authorization_ids:
-                rec.authorization_id = rec.authorization_ids[0].id
-            else:
-                rec.authorization_id = None
 
     @api.depends('product_id')
     def _compute_product_add_domain(self):

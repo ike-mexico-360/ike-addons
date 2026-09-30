@@ -48,11 +48,22 @@ class IkeEventSupplier(models.Model):
     supplier_phone_3 = fields.Char(related='supplier_id.x_phone_p3', string='Phone 3')
     supplier_phone_4 = fields.Char(related='supplier_id.x_phone_p4', string='Phone 4')
     supplier_phone_5 = fields.Char(related='supplier_id.x_phone_p5', string='Phone 5')
+    supplier_phone_p1_classification_id = fields.Many2one(related='supplier_id.x_phone_p1_classification_id')
+    supplier_phone_p2_classification_id = fields.Many2one(related='supplier_id.x_phone_p2_classification_id')
+    supplier_phone_p3_classification_id = fields.Many2one(related='supplier_id.x_phone_p3_classification_id')
+    supplier_phone_p4_classification_id = fields.Many2one(related='supplier_id.x_phone_p4_classification_id')
+    supplier_phone_p5_classification_id = fields.Many2one(related='supplier_id.x_phone_p5_classification_id')
+
     assigned = fields.Char(string='Operator')
     latitude = fields.Char(copy=False)
     longitude = fields.Char(copy=False)
     route = fields.Json(copy=False)
     osrm = fields.Boolean(default=False, copy=False)
+    # Destination To Base
+    supplier_center_distance_id = fields.Many2one('ike.event.center.distance', ondelete='set null')
+    to_base_distance = fields.Json(related='supplier_center_distance_id.destination_center_route')
+    to_base_duration = fields.Json(related='supplier_center_distance_id.destination_center_route')
+    to_base_route = fields.Json(related='supplier_center_distance_id.destination_center_route')
 
     # === EVIDENCE FIELDS === #
     service_evidence_ids = fields.One2many('ike.event.evidence', 'event_supplier_id', string='Evidence')
@@ -191,6 +202,49 @@ class IkeEventSupplier(models.Model):
                         <span>{location_record_data[field] or ''}</span></div>
                     """
 
+                # Account / NU Name / Coordinates: show the value when set, otherwise a
+                # quick-add link (visual only for now, no persistence wired up yet).
+                account_value = rec.event_id.user_membership_id.display_name if rec.event_id.user_membership_id else ''
+                nu_name_value = rec.event_id.nu_name or ''
+                has_coordinates = (
+                    rec.event_id.location_latitude and rec.event_id.location_longitude
+                    and rec.event_id.destination_latitude and rec.event_id.destination_longitude
+                )
+
+                def _format_coordinate(value):
+                    try:
+                        return f"{float(value):.6f}"
+                    except (TypeError, ValueError):
+                        return value
+
+                coordinates_value = (
+                    f"{_format_coordinate(rec.event_id.location_latitude)}, "
+                    f"{_format_coordinate(rec.event_id.location_longitude)} → "
+                    f"{_format_coordinate(rec.event_id.destination_latitude)}, "
+                    f"{_format_coordinate(rec.event_id.destination_longitude)}"
+                ) if has_coordinates else ''
+
+                add_account_link = '' if account_value else (
+                    f'<a href="#" class="ike-summary-add-account" style="color:#0d6efd;">{_("Add")}</a>'
+                )
+                add_nu_name_link = '' if nu_name_value else (
+                    f'<a href="#" class="ike-summary-add-nu-name" style="color:#0d6efd;">{_("Add")}</a>'
+                )
+                add_coordinates_link = '' if has_coordinates else (
+                    f'<a href="#" class="ike-summary-add-coordinates" style="color:#0d6efd;">{_("Add")}</a>'
+                )
+
+                event_summary_supplier_data += f"""
+                    <div class="mt-2">
+                        <div><span style='font-weight: bold;'>{_('Account')}: </span>
+                        <span>{account_value}</span> {add_account_link}</div>
+                        <div><span style='font-weight: bold;'>{_('NU Name')}: </span>
+                        <span>{nu_name_value}</span> {add_nu_name_link}</div>
+                        <div><span style='font-weight: bold;'>{_('Origin and Destination Coordinates')}: </span>
+                        <span>{coordinates_value}</span> {add_coordinates_link}</div>
+                    </div>
+                """
+
                 # Supplier section
                 event_summary_supplier_data += "<h3 class='mt-3'>%s</h3>" % _('Assigned Supplier')
 
@@ -256,6 +310,24 @@ class IkeEventSupplier(models.Model):
                         <div><span style='font-weight: bold;'>{supplier_record_fields[field]['string']}: </span>
                         <span>{supplier_record_data[field] or ''}</span></div>
                     """
+                    if field == 'supplier_id':
+                        # Maneuvers: concepts already added for this supplier that carry the
+                        # "Maneuvers" product tag. Falls back to a quick-add link (which reveals
+                        # the existing add-concept form in the modal) when there are none yet.
+                        maneuver_tag = self.env.ref('ike_event.ike_product_tag_maneuvers', raise_if_not_found=False)
+                        maneuver_lines = rec.supplier_product_ids.filtered(
+                            lambda line: line.product_id and maneuver_tag.id in line.product_id.product_tag_ids.ids
+                        ) if maneuver_tag else rec.supplier_product_ids.browse()
+                        maneuvers_value = ', '.join(maneuver_lines.mapped('product_id.display_name'))
+                        if maneuvers_value:
+                            add_maneuvers_link = ''
+                        else:
+                            truck_has_maneuvers = bool(rec.truck_id.x_maneuvers) if rec.truck_id else False
+                            add_maneuvers_link = f'<span>{_("Yes") if truck_has_maneuvers else _("No")}</span>'
+                        event_summary_supplier_data += f"""
+                            <div><span style='font-weight: bold;'>{_('Maneuvers')}: </span>
+                            <span>{maneuvers_value}</span> {add_maneuvers_link}</div>
+                        """
 
             rec.event_supplier_summary_data = event_summary_supplier_data
 
@@ -323,6 +395,8 @@ class IkeEventSupplier(models.Model):
     # === ACTION VIEW === #
     def action_view_evaluation(self):
         self.ensure_one()
+        if self.supplier_product_ids.filtered(lambda x: x.product_id and x.cost_price == 0):
+            raise UserError(_('Some products have a zero cost.'))
         view_id = self.env.ref('ike_event.ike_event_supplier_evaluation_form_view').id
         return {
             'name': self.supplier_id.display_name + " " + _('Evaluation'),
@@ -355,7 +429,7 @@ class IkeEventSupplier(models.Model):
                 **self.env.context,
                 'create': False,
                 'edit': True,
-                'from_add_concept': True,  # self.selected is True or self.is_manual and self.state == 'available',
+                'from_add_concept': self.selected is True or self.is_manual and self.state == 'available',
                 'from_internal': True,
             },
             'target': 'new',
@@ -456,6 +530,8 @@ class IkeEventSupplier(models.Model):
         }
 
     def action_open_change_vehicle(self):
+        if self.state == 'assigned' or self.confirmed:
+            return
         view_id = self.env.ref('ike_event.ike_event_supplier_vehicle_form_view').id
         return {
             'name': _('Change Vehicle'),
@@ -665,73 +741,6 @@ class IkeEventSupplierLink(models.Model):
             self.authorizer_id = False
         self.authorization_by_nu = False if not self.type_authorization_id.is_nu else True
 
-    # === ACTION === #
-    def action_save_and_request_authorization(self):
-        for rec in self:
-            supplier = self.env['ike.event.supplier'].search([
-                ('supplier_link_id', '=', rec.id)
-            ], limit=1)
-
-            if supplier:
-                supplier.action_request_authorization()
-
-        return True
-
-    def action_request_authorization(self):
-        self.ensure_one()
-
-        if self.authorization_by_nu and not self.user_payment_line_ids:
-            raise UserError(
-                _("The authorization type requires a payment line.")
-            )
-
-        # ToDo: Send notification?
-
-    def action_accept_authorization(self):
-        self.ensure_one()
-        event_id = self.event_id.sudo()
-
-        if not self.type_authorization_id and not self.reason_authorizer_id:
-            raise ValidationError(
-                _("Authorization is not possible because there are incomplete authorization fields.")
-            )
-
-        if self.authorization_by_nu and not self.user_payment_line_ids:
-            raise UserError(
-                _("The authorization type requires a payment line.")
-            )
-
-        authorized_amount = max(event_id.previous_amount + event_id.current_amount, event_id.covered_amount)
-        authorizer = (
-            self.nu_user_id.display_name
-            if self.authorization_by_nu
-            else self.authorizer_id.display_name
-        )
-        event_id.authorized_amount = authorized_amount
-        event_authorization_id = self.sudo().env['ike.event.authorization'].create({
-            'event_id': self.event_id.id,
-            'supplier_id': self.supplier_id.id,
-            'supplier_number': self.supplier_number,
-            'authorized_amount': authorized_amount,
-            'type_authorization_id': self.type_authorization_id.id,
-            'reason_authorizer_id': self.reason_authorizer_id.id,
-            'authorization_by_nu': self.authorization_by_nu,
-            'authorizer_id': self.authorizer_id and self.authorizer_id.id,
-            'authorizer': authorizer,
-        })
-        event_id.accept_authorization(event_authorization_id.id)
-
-        if event_id.supplier_search_type in ['manual_manual', 'manual']:
-            event_id.broadcastEventReload(1)
-
-        # Start automatic notifications
-        event_id.action_start_notifications()
-
-    def action_reject_authorization(self):
-        self.ensure_one()
-        # ToDo: Reject?
-        print("action_reject_authorization")
-
     # == SUPPLIER ADD ACTIONS === #
     def action_set_products(self):
         self.ensure_one()
@@ -744,10 +753,11 @@ class IkeEventSupplierLink(models.Model):
 
             distance_km: float = center_distance_id.center_origin_distance_km
             destination_distance = self.event_id.destination_distance or 0.0
+            to_base_distance = center_distance_id.destination_center_distance_km or 0.0
             total_distance_km = 0.0
 
             if negotiation_type == 'base_base':
-                total_distance_km = (total_distance_km + destination_distance) * 2.0
+                total_distance_km = (total_distance_km + destination_distance) + to_base_distance
             elif negotiation_type == 'base_destination':
                 total_distance_km = distance_km + destination_distance
             elif negotiation_type == 'origin_destination':
@@ -772,8 +782,8 @@ class IkeEventSupplierLink(models.Model):
     def add_products_horizontally(self, lines):
         for rec in self:
             current_product_ids = rec.supplier_product_ids.ids
+            new_products_data = []
             for line in lines:
-                new_products_data = []
                 if line['product_id'] not in current_product_ids:
                     new_products_data.append(Command.create({
                         'product_id': line['product_id'],
@@ -783,7 +793,8 @@ class IkeEventSupplierLink(models.Model):
                         'is_manual': True,
                         'supplier_number': rec.supplier_number,
                     }))
-            rec.with_context(not_add_horizontally=True, from_internal=False).supplier_product_ids = new_products_data
+            if new_products_data:
+                rec.with_context(not_add_horizontally=True, from_internal=False).supplier_product_ids = new_products_data
 
 
 class IkeEventSupplierLinkPaymentLine(models.Model):

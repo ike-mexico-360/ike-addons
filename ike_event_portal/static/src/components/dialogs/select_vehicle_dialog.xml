@@ -16,7 +16,7 @@
                         </h5>
                         <button type="button"
                                 class="btn-close btn-close-white"
-                                aria-label="Cerrar"
+                                aria-label="Close"
                                 t-on-click="onCancelClick"/>
                     </div>
 
@@ -26,9 +26,9 @@
                         <t t-if="state.isLoading">
                             <div class="text-center py-4">
                                 <div class="spinner-border text-primary" role="status">
-                                    <span class="visually-hidden">Cargando...</span>
+                                    <span class="visually-hidden"><t t-out="translate('Loading...')"/></span>
                                 </div>
-                                <p class="text-muted mt-2">Cargando vehículos disponibles...</p>
+                                <p class="text-muted mt-2"><t t-out="translate('Loading available vehicles...')"/></p>
                             </div>
                         </t>
 
@@ -36,16 +36,16 @@
                             <t t-if="!state.vehicles.length">
                                 <div class="alert alert-warning py-2 mb-0">
                                     <i class="fa fa-exclamation-triangle me-2"/>
-                                    No hay vehículos disponibles que cumplan los requisitos de este servicio.
+                                    <t t-out="translate('No vehicles are available that meet the requirements of this service.')"/>
                                 </div>
                             </t>
                             <t t-else="">
                                 <p class="text-muted mb-3">
-                                    Indique el vehículo que realmente realizará el servicio antes de aceptar:
+                                    <t t-out="translate('Indicate the vehicle that will actually perform the service before accepting:')"/>
                                 </p>
                                 <div class="mb-2">
                                     <label class="form-label small text-muted fw-semibold mb-1">
-                                        <i class="fa fa-truck me-1"/>Vehículo
+                                        <i class="fa fa-truck me-1"/><t t-out="translate('Vehicle')"/>
                                     </label>
                                     <select class="form-select rounded-pill"
                                             t-att-value="state.selectedTruckId"
@@ -69,7 +69,7 @@
                                 class="btn btn-outline-secondary rounded-pill px-4"
                                 t-on-click="onCancelClick"
                                 t-att-disabled="state.isSubmitting">
-                            <i class="fa fa-times me-1"/>Cancelar
+                            <i class="fa fa-times me-1"/><t t-out="translate('Cancel')"/>
                         </button>
                         <button type="button"
                                 class="btn btn-primary rounded-pill px-4"
@@ -77,10 +77,10 @@
                                 t-att-disabled="!isValid or state.isSubmitting or state.isLoading">
                             <t t-if="state.isSubmitting">
                                 <span class="spinner-border spinner-border-sm me-2" role="status"/>
-                                Aceptando...
+                                <t t-out="translate('Accepting...')"/>
                             </t>
                             <t t-else="">
-                                <i class="fa fa-check me-1"/>Confirmar y Aceptar
+                                <i class="fa fa-check me-1"/><t t-out="translate('Confirm and Accept')"/>
                             </t>
                         </button>
                     </div>

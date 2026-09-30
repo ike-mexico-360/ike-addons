@@ -54,6 +54,25 @@ class FleetVehicle(models.Model):
     x_economic_number = fields.Char(
         string='Economic Number', tracking=True, help="Unit identifier in the supplier's system (internal value)")
 
+    @api.onchange('x_partner_id')
+    def _onchange_x_partner_id(self):
+        for vehicle in self:
+            vehicle.x_center_id = False
+            vehicle.driver_id = False
+            vehicle.x_vehicle_service_state = 'not_available'
+
+    @api.onchange('x_center_id')
+    def _onchange_x_center_id(self):
+        for vehicle in self:
+            vehicle.driver_id = False
+            vehicle.x_vehicle_service_state = 'not_available'
+
+    @api.onchange('driver_id')
+    def _onchange_driver_id(self):
+        for vehicle in self:
+            if not vehicle.driver_id:
+                vehicle.x_vehicle_service_state = 'not_available'
+
     @api.depends('driver_id', 'x_partner_id', 'x_center_id')
     def _compute_x_driver_domain(self):
         for vehicle in self:

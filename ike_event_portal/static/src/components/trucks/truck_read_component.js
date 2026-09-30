@@ -11,7 +11,6 @@ export class TruckReadComponent extends Component {
     static template = "ike_event_portal.TruckReadComponent";
     static props = {
         truckId: { type: Number },
-        onBack: { type: Function },
         onCancel: { type: Function },
     };
 
@@ -41,6 +40,9 @@ export class TruckReadComponent extends Component {
             // License plate modal
             showEditPlateModal: false,
             editedPlate: '',
+            // Vehicle service state modal
+            showEditVehicleServiceStateModal: false,
+            selectedVehicleServiceState: '',
             // Axes modal
             showEditAxesModal: false,
             editedAxes: 0,
@@ -253,6 +255,57 @@ export class TruckReadComponent extends Component {
             this.showNotification({ title: _t("Updated"), message: _t("Matrícula updated."), type: 'success' });
             await this.loadTruckDetail();
             this.closeEditPlateModal();
+        } catch (err) {
+            this.showNotification({ title: _t("Error"), message: _t(err?.data?.message || err.message), type: 'danger' });
+        } finally {
+            this.state.isSaving = false;
+        }
+    }
+
+    // === VEHICLE SERVICE STATE ===
+    openEditVehicleServiceStateModal() {
+        const allowedStates = this.state.truck.allowed_vehicle_service_states || [];
+        this.state.selectedVehicleServiceState = allowedStates[0] || '';
+        this.state.showEditVehicleServiceStateModal = true;
+    }
+
+    closeEditVehicleServiceStateModal() {
+        this.state.showEditVehicleServiceStateModal = false;
+        this.state.selectedVehicleServiceState = '';
+    }
+
+    vehicleStateLabel(state) {
+        const labels = {
+            available: 'Available',
+            not_available: 'Not Available',
+            in_service: 'In Service',
+            disabled: 'Disabled',
+        };
+        return this.translate(labels[state] || state);
+    }
+
+    async saveVehicleServiceState() {
+        if (!this.state.selectedVehicleServiceState) {
+            this.showNotification({
+                title: _t("Error"),
+                message: _t("The unit status cannot be changed while the truck has an event in progress."),
+                type: 'danger',
+            });
+            return;
+        }
+        this.state.isSaving = true;
+        try {
+            const result = await rpc('/provider/portal/trucks/update_status', {
+                truck_id: this.props.truckId,
+                new_state: this.state.selectedVehicleServiceState,
+            });
+            if (!result.success) {
+                this.showNotification({ title: _t("Error"), message: _t(result.error), type: 'danger' });
+                return;
+            }
+            this.showNotification({ title: _t("Updated"), message: _t("Unit status updated."), type: 'success' });
+            this.closeEditVehicleServiceStateModal();
+            await this.loadTruckDetail();
         } catch (err) {
             this.showNotification({ title: _t("Error"), message: _t(err?.data?.message || err.message), type: 'danger' });
         } finally {

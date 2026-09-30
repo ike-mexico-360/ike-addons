@@ -58,4 +58,17 @@ class ResPartnerSupplierUsersRel(models.Model):
     @api.depends('center_of_attention_id')
     def _compute_supplier_id(self):
         for rec in self:
-            rec.supplier_id = rec.center_of_attention_id.parent_id.id
+            rec.supplier_id = (
+                rec.center_of_attention_id.parent_id
+                if rec.center_of_attention_id
+                else rec.supplier_id
+            )
+
+    @api.onchange('supplier_id')
+    def _onchange_supplier_id(self):
+        for rec in self:
+            if (
+                rec.center_of_attention_id
+                and rec.center_of_attention_id.parent_id != rec.supplier_id
+            ):
+                rec.center_of_attention_id = False

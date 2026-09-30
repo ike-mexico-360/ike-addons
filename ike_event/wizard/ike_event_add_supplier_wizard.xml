@@ -15,7 +15,8 @@
                         <field name="aux_truck_domain" invisible="1"/>
                     </group>
                     <footer>
-                        <button name="action_create_event_supplier_link" string="Add Supplier" type="object" class="btn-primary"/>
+                        <button name="action_create_event_supplier_link" string="Add Supplier" type="object" class="btn-primary"
+                            context="{'from_view_detail': True}"/>
                         <button string="Close" type="object" class="btn-secondary" special="cancel"/>
                     </footer>
                 </sheet>

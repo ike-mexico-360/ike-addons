@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_partner_supplier_directory_center_view_list_inherit_bp_direct_call" model="ir.ui.view">
+        <field name="name">res.partner.supplier.directory.center.view.list.inherit.bp.direct.call</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="custom_master_catalog.res_partner_supplier_directory_center_view_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='phone']" position="attributes">
+                <attribute name="widget">bp_phone_dial</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

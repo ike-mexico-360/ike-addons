@@ -67,7 +67,7 @@ class IkeServiceVial(models.Model):
         """Find existing vehicle brand or create new one if not found"""
         vehicle_brand_id = self.env['fleet.vehicle.model.brand'].search([
             ('name', '=ilike', self.vehicle_brand),
-        ])
+        ], limit=1)
         if not vehicle_brand_id:
             vehicle_brand_id = self.env['fleet.vehicle.model.brand'].create({
                 'name': self.vehicle_brand

@@ -39,6 +39,10 @@ class ShHelpdeskTicket(models.Model):
     x_event_id = fields.Many2one('ike.event', string='Event', ondelete='set null')
     in_progress_stage_boolean = fields.Boolean(compute='_compute_in_progress_stage_boolean')
     is_done_stage = fields.Boolean(compute='_compute_is_done_stage')
+    x_dispute_iteration_count = fields.Integer(
+        string='Dispute number',
+        compute='_compute_x_dispute_iteration_count',
+    )
 
     @api.depends('stage_id')
     def _compute_current_stage_tracking(self):
@@ -117,6 +121,13 @@ class ShHelpdeskTicket(models.Model):
         in_progress_ref = self.env.ref('sh_all_in_one_helpdesk.in_progress_stage').id
         for rec in self:
             rec.in_progress_stage_boolean = rec.stage_id.id == in_progress_ref
+
+    @api.depends('sh_purchase_order_ids.x_dispute_iteration_count')
+    def _compute_x_dispute_iteration_count(self):
+        for rec in self:
+            rec.x_dispute_iteration_count = sum(
+                rec.sh_purchase_order_ids.mapped('x_dispute_iteration_count')
+            )
 
     def action_reply(self):
         """ Override of `sh.helpdesk.ticket.action_reply` to send new values to RFQ. """

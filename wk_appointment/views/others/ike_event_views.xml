@@ -39,6 +39,7 @@
                     string="Scheduled events"
                     domain="[
                         ('scheduled', '=', True),
+                        ('stage_id.ref', 'in', ['in_progress', 'assigned', 'searching', 'capturing', 'verifying', 'completed'])
                     ]"
                 />
             </xpath>

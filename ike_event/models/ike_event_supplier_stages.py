@@ -236,21 +236,6 @@ class IkeEventSupplierSelection(models.Model):
         if self.event_id.stage_id.ref == 'completed' and not self.is_generic_supplier and not self.purchase_supplier_id:
             self.event_id.action_verify()
 
-        # Get Distance km
-        negotiation_type = self.negotiation_type
-        total_distance_km = self.cost_distance
-        if negotiation_type == 'base_base':
-            total_distance_km = (self.cost_distance + (self.event_id.destination_distance or 0)) * 2.0
-        elif negotiation_type in ['base_destination', 'vehicle_destination']:
-            total_distance_km += (self.event_id.destination_distance or 0)
-        elif negotiation_type == 'origin_destination':
-            total_distance_km = (self.event_id.destination_distance or 0)
-        elif negotiation_type == 'base_concept':
-            total_distance_km = 0.0
-        else:
-            total_distance_km = 0.0
-        total_distance_km = int(-(-total_distance_km // 1))  # To integer
-
         # Event reload
         self.broadcastReload(event_reload=True, reload_type='finalize')
 

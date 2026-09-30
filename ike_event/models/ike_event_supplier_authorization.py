@@ -3,7 +3,7 @@
 import random
 
 from odoo import models, fields, api, Command, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class IkeEvent(models.Model):
@@ -47,7 +47,9 @@ class IkeEvent(models.Model):
         'service_supplier_ids',
         'service_supplier_ids.selected',
         'service_supplier_ids.cancelled',
-        'service_supplier_ids.amount_concept_total')
+        'service_supplier_ids.amount_concept_total',
+        'service_supplier_ids.evaluation_id',
+    )
     def _compute_supplier_amount(self):
         for event_id in self:
             # Previous
@@ -79,6 +81,11 @@ class IkeEvent(models.Model):
                         supplier_id.search_number == event_id.supplier_search_number
                         and not supplier_id.selected
                         and not str(supplier_id.state).startswith('cancel_')
+                        and (
+                            not supplier_id.assignation_type.startswith('manual')
+                            or supplier_id.evaluation_id
+                            and supplier_id.evaluation_reevaluation
+                        )
                 ).mapped('amount_concept_total')
 
                 current_amount = max(current_amounts, default=0)
@@ -93,7 +100,7 @@ class IkeEvent(models.Model):
             lambda x: x.supplier_number <= self.supplier_number
         ):
             for product_id in link_id.supplier_product_ids:
-                if product_id.authorization_pending:
+                if product_id.authorization_pending or not product_id.covered and not product_id.authorization_id:
                     product_id.authorization_ids = [
                         Command.create(
                             {
@@ -105,8 +112,11 @@ class IkeEvent(models.Model):
                         )
                     ]
                     product_id.authorization_pending = False
+        if self.uncovered_authorization_required:
+            self.service_supplier_link_ids._compute_uncovered_authorization_required()
 
     def action_open_request_authorization(self):
+        self.ensure_one()
         supplier_with_max_amount = self.get_most_expensive_supplier()
         return supplier_with_max_amount.action_view_products()
 
@@ -139,7 +149,9 @@ class IkeEvent(models.Model):
 
     def get_most_expensive_supplier(self):
         suppliers = self.service_supplier_ids.filtered(
-            lambda x: x.search_number == self.supplier_search_number and not x.display_type
+            lambda x:
+                x.search_number == self.supplier_search_number and not x.display_type
+                and (not x.assignation_type.startswith('manual') or not x.evaluation_locked)
         )
 
         if not suppliers:
@@ -205,6 +217,7 @@ class IkeEventSupplier(models.Model):
 class IkeEventSupplierLink(models.Model):
     _inherit = 'ike.event.supplier.link'
 
+    # === FIELDS === #
     uncovered_authorization_required = fields.Boolean(compute='_compute_uncovered_authorization_required', store=True, copy=False)
 
     # === COMPUTES === #
@@ -214,6 +227,97 @@ class IkeEventSupplierLink(models.Model):
             rec.uncovered_authorization_required = bool(
                 self.supplier_product_ids.filtered(lambda x: not x.covered and not x.authorization_id)
             )
+
+    # === ACTION === #
+    def action_save_and_request_authorization(self):
+        for rec in self:
+            supplier = self.env['ike.event.supplier'].search([
+                ('supplier_link_id', '=', rec.id)
+            ], limit=1)
+
+            if supplier:
+                supplier.action_request_authorization()
+
+        return True
+
+    def action_request_authorization(self):
+        self.ensure_one()
+
+        if self.authorization_by_nu and not self.user_payment_line_ids:
+            raise UserError(
+                _("The authorization type requires a payment line.")
+            )
+        # ToDo: Send notification?
+
+    def action_accept_authorization(self):
+        self.ensure_one()
+        event_id = self.event_id.sudo()
+
+        if not self.type_authorization_id and not self.reason_authorizer_id:
+            raise ValidationError(
+                _("Authorization is not possible because there are incomplete authorization fields.")
+            )
+
+        if self.authorization_by_nu and not self.user_payment_line_ids:
+            raise UserError(
+                _("The authorization type requires a payment line.")
+            )
+
+        authorized_amount = max(event_id.previous_amount + event_id.current_amount, event_id.covered_amount)
+        authorizer = (
+            self.nu_user_id.display_name
+            if self.authorization_by_nu
+            else self.authorizer_id.display_name
+        )
+        event_id.authorized_amount = authorized_amount
+        event_authorization_id = self.sudo().env['ike.event.authorization'].create({
+            'event_id': self.event_id.id,
+            'supplier_id': self.supplier_id.id,
+            'supplier_number': self.supplier_number,
+            'authorized_amount': authorized_amount,
+            'type_authorization_id': self.type_authorization_id.id,
+            'reason_authorizer_id': self.reason_authorizer_id.id,
+            'authorization_by_nu': self.authorization_by_nu,
+            'authorizer_id': self.authorizer_id and self.authorizer_id.id,
+            'authorizer': authorizer,
+        })
+        event_id.accept_authorization(event_authorization_id.id)
+
+        if event_id.supplier_search_type in ['manual_manual', 'manual']:
+            event_id.broadcastEventReload(1)
+
+        # Start automatic notifications
+        event_id.action_start_notifications()
+
+    def action_reject_authorization(self):
+        self.ensure_one()
+        # ToDo: Reject?
+        print("action_reject_authorization")
+
+
+class IkeEventSupplierProduct(models.Model):
+    _inherit = 'ike.event.supplier.product'
+
+    # === FIELDS === #
+    authorization_pending = fields.Boolean(default=True)
+    authorization_ids = fields.One2many(
+        'ike.event.supplier.product.authorization', 'event_supplier_product_id',
+        string='Authorizations')
+    authorization_id = fields.Many2one(
+        'ike.event.supplier.product.authorization',
+        compute='_compute_authorization_id', store=True,
+        string='Authorization')
+    type_authorization_id = fields.Many2one(related='authorization_id.event_authorization_id.type_authorization_id', store=True)
+    authorizer_name = fields.Char(related='authorization_id.event_authorization_id.authorizer', string='Authorized', store=True)
+
+    # === COMPUTES === #
+    @api.depends('authorization_ids')
+    def _compute_authorization_id(self):
+        for rec in self:
+            if rec.authorization_ids:
+                rec.authorization_id = rec.authorization_ids[0].id
+            else:
+                rec.authorization_id = None
 
 
 class IkeEventAuthorization(models.Model):

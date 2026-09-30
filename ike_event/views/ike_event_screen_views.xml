@@ -272,8 +272,6 @@
                                 <field name="search_number" column_invisible="1"/>
                                 <field name="ranking" string="#" width="25px" readonly="1"
                                     column_invisible="parent.supplier_search_type in ['manual', 'manual_manual']"/>
-                                <field name="ranking" string="Order" width="25px" readonly="1"
-                                    column_invisible="parent.supplier_search_type not in ['manual', 'manual_manual']"/>
                                 <field name="supplier_id"
                                     widget="ike_label_section_and_note_field"
                                     options="{'no_create': 1, 'no_open': 1}"
@@ -340,7 +338,7 @@
                                     type="object" class="btn btn-primary rounded-4 py-1" title="Request Authorization"
                                     context="{'from_event_authorization': True}"
                                     invisible="not authorization_required or not service_supplier_ids"
-                                    groups="base.group_system,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_manager_cds"
+                                    groups="base.group_system,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_event_coordinator"
                                 />
                                 <button
                                     name="action_open_request_authorization"
@@ -458,15 +456,14 @@
                                         string="Change Vehicle"
                                         icon="fa-clock-o"
                                         class="btn-link"
-                                        invisible="event_stage_ref in ['completed', 'verifying', 'closed', 'cancel', 'cancel_subsequently', 'cancel_verifying', 'cancel_closed'] or
-                                        state in ['cancel', 'cancel_event', 'cancel_supplier'] or confirmed"/>
+                                        invisible="state == 'assigned' or confirmed"/>
                                     <button name="open_change_state_supplier_wizard"
                                         type="object"
                                         string="Watches"
                                         icon="fa-clock-o"
                                         class="btn-link"
                                         invisible="stage_ref in ['cancel', 'preparing'] or
-                                        event_stage_ref in ['verifying', 'closed', 'cancel_verifying', 'cancel', 'cancel_subsequently', 'cancel_closed'] or
+                                        event_stage_ref in ['draft', 'capturing', 'searching', 'verifying', 'closed', 'cancel_verifying', 'cancel', 'cancel_subsequently', 'cancel_closed'] or
                                         state in ['cancel', 'cancel_event', 'cancel_supplier'] or not confirmed"
                                         groups="base.group_system,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_coordinator"/>
                                     <button name="open_cancel_wizard"

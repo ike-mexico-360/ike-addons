@@ -189,6 +189,8 @@ class IkeEventSupplierSelection(models.Model):
         self_filtered = self.filtered(
             lambda x: x.id in (accepted_ids + assigned_ids)
         )
+        if self_filtered.truck_id.x_vehicle_service_state == 'in_service':
+            raise UserError(_("This vehicle is currently in service. Please select another vehicle."))
         self_filtered.truck_id.x_vehicle_service_state = 'in_service'
         self_filtered.confirmed = True
         self_filtered.action_assign()
@@ -231,7 +233,6 @@ class IkeEventSupplierSelection(models.Model):
             self._change_previous_vehicle_state(self.truck_id)
             self.truck_id = service_vehicle_id
             self._set_new_service_vehicle_distance()
-        self.action_confirm_vehicle()
         self.broadcastReload(reload_type='vehicle_changed')
 
     def _change_previous_vehicle_state(self, vehicle_id):
@@ -266,13 +267,18 @@ class IkeEventSupplierSelection(models.Model):
                 return
 
         # Set Distance
-        supplier_center_id = self.truck_id.x_center_id
-        center_distance_id = self.event_id._get_center_distances(supplier_center_id)
-
         if self.negotiation_type == 'vehicle_destination':
             self.negotiation_type = 'base_destination'
 
         if self.negotiation_type in ['base_base', 'base_destination']:
+            # Center Distance
+            supplier_center_id = self.truck_id.x_center_id
+            center_distance_id = self.supplier_center_distance_id
+            # This should never happen.
+            if not center_distance_id:
+                center_distance_id = self.event_id._get_center_distances(supplier_center_id)
+                self.supplier_center_distance_id = center_distance_id.id if center_distance_id else None
+            # Set Distance Data
             self.latitude = supplier_center_id.partner_latitude
             self.longitude = supplier_center_id.partner_longitude
             self.estimated_distance = center_distance_id.center_origin_distance_km
@@ -327,10 +333,11 @@ class IkeEventSupplierSelection(models.Model):
                 duration_m: float = 0.0
                 route = None
                 if rec.negotiation_type == 'base_destination':
-                    center_distance_id = self.env['ike.event.center.distance'].search([
-                        ('event_id', '=', rec.event_id.id),
-                        ('supplier_center_id', '=', rec.supplier_center_id.id),
-                    ])
+                    center_distance_id = rec.supplier_center_distance_id
+                    # This should never happen.
+                    if not center_distance_id:
+                        center_distance_id = self.event_id._get_center_distances(rec.supplier_center_id)
+                        self.supplier_center_distance_id = center_distance_id.id if center_distance_id else None
 
                     if not center_distance_id.center_origin_route:
                         distance_km, duration_m, route = rec._get_google_route(

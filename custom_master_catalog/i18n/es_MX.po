@@ -4213,6 +4213,18 @@ msgstr "El nombre '%s' ya existe. Debe ser unico."
 #. module: custom_master_catalog
 #. odoo-python
 #: code:addons/custom_master_catalog/models/res_partner.py:0
+msgid ""
+"The name cannot contain special characters. Only letters, numbers, spaces, "
+"commas, periods, hyphens, slashes, parentheses, and the '&' symbol are "
+"allowed."
+msgstr ""
+"El nombre no puede contener caracteres especiales. Solo se permiten letras, "
+"números, espacios, comas, puntos, guiones, barras diagonales, paréntesis y el "
+"símbolo '&'."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/res_partner.py:0
 msgid "The postal code \"%s\" does not exist in the geographic Zones catalog."
 msgstr "El código postal \"%s\" no existe en el catálogo de zonas geográficas."
 

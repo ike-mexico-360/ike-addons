@@ -273,4 +273,14 @@
             <field name="name">Maneuvers</field>
         </record>
     </data>
+    <data noupdate="1">
+        <record id="ike_event_url_osmr" model="ir.config_parameter">
+            <field name="key">ike.event.url.osrm</field>
+            <field name="value">https://o0c6l0kl3e.execute-api.us-east-2.amazonaws.com</field>
+        </record>
+        <record id="ike_event_url_osrm_distance" model="ir.config_parameter">
+            <field name="key">ike.event.url.osrm.distance</field>
+            <field name="value">https://zh90tdil2h.execute-api.us-east-2.amazonaws.com</field>
+        </record>
+    </data>
 </odoo>

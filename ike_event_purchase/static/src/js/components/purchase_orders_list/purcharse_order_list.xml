@@ -23,6 +23,11 @@
                       t-on-click="downloadOrdersXlsx">
                       <i class="fa fa-file-excel-o me-1"/>Download Excel
                     </button>
+                    <button class="btn btn-sm btn-success rounded-pill"
+                      title="Download detailed purchase orders report"
+                      t-on-click="downloadOrdersDetailedXlsx">
+                      <i class="fa fa-file-excel-o me-1"/>Detailed Report
+                    </button>
                   </div>
               </div>
           </div>

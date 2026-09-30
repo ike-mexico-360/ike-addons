@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-17 15:14+0000\n"
-"PO-Revision-Date: 2026-09-17 15:14+0000\n"
+"POT-Creation-Date: 2026-09-23 13:45+0000\n"
+"PO-Revision-Date: 2026-09-23 13:45+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1882,6 +1882,11 @@ msgid "Dispute declined"
 msgstr "Disputa rechazada"
 
 #. module: ike_event_purchase
+#: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__x_dispute_iteration_count
+msgid "Dispute number"
+msgstr "Número de disputa"
+
+#. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/models/purchase_order.py:0
 msgid "Dispute rejected. The values change has been reverted."
@@ -1944,6 +1949,18 @@ msgstr "Descargar Excel"
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
 msgid "Download purchase orders Excel"
 msgstr "Descargar Excel de órdenes de compra"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Detailed Report"
+msgstr "Reporte detallado"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_orders_list/purcharse_order_list.xml:0
+msgid "Download detailed purchase orders report"
+msgstr "Descargar reporte detallado de órdenes de compra"
 
 #. module: ike_event_purchase
 #. odoo-javascript

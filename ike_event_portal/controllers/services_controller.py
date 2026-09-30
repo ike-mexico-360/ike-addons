@@ -299,7 +299,27 @@ class PortalUserAccount(CustomerPortal):
             if existing_product_ids:
                 domain.append(('id', 'not in', existing_product_ids))
 
-            # _logger.info(f"Concepts domain for event {event_id}: {alternative_domain}")
+            # Exclude concepts already used by another provider in the same event.
+            # Scoped by event_supplier_link_id (one per provider assignment) rather than
+            # supplier_id, since the same company can hold more than one link/truck on
+            # the same event and each is treated as its own provider in the portal.
+            other_provider_domain = [('event_id', '=', event_id)]
+            if supplier_link_id:
+                other_provider_domain.append(('event_supplier_link_id', '!=', supplier_link_id))
+            else:
+                other_provider_domain.append(('supplier_id', '!=', supplier_id))
+
+            other_provider_products = request.env["ike.event.supplier.product"].sudo().search(other_provider_domain)
+            # A "boom" concept (e.g. Arrastre de grúa) is stored as parent_product_id on its
+            # expanded child lines, not as product_id itself, so both must be checked to
+            # detect that the parent concept was already used by another provider.
+            other_provider_product_ids = list(set(
+                other_provider_products.mapped('product_id').ids
+                + other_provider_products.mapped('parent_product_id').ids
+            ))
+
+            if other_provider_product_ids:
+                domain.append(('id', 'not in', other_provider_product_ids))
 
             # Search products with the domain
             products = ProductProduct.search_read(
@@ -809,6 +829,44 @@ class PortalUserAccount(CustomerPortal):
                 ]
             else:
                 result["x_subservice_ids"] = []
+
+            request.env.cr.execute("""
+                SELECT supplier_stage.ref
+                FROM ike_event_supplier AS supplier_line
+                JOIN ike_event AS event ON event.id = supplier_line.event_id
+                LEFT JOIN ike_service_stage AS supplier_stage
+                    ON supplier_stage.id = supplier_line.stage_id
+                WHERE supplier_line.truck_id = %s
+                ORDER BY event.event_date DESC NULLS LAST, supplier_line.id DESC
+                LIMIT 1
+            """, (vehicle.id,))
+            latest_supplier_stage = request.env.cr.fetchone()
+            active_event = bool(
+                latest_supplier_stage
+                and latest_supplier_stage[0] not in ('finalized', 'cancel')
+            )
+
+            transitions = {
+                'not_available': ['available', 'in_service', 'disabled'],
+                'available': ['not_available', 'in_service', 'disabled'],
+                'in_service': ['not_available', 'available', 'disabled'],
+                'disabled': ['not_available', 'available', 'in_service'],
+            }
+            conditional_transitions = {
+                ('not_available', 'available'),
+                ('in_service', 'not_available'),
+                ('in_service', 'available'),
+                ('in_service', 'disabled'),
+                ('disabled', 'available'),
+            }
+            current_state = vehicle.x_vehicle_service_state
+            result['allowed_vehicle_service_states'] = [
+                state
+                for state in transitions.get(current_state, [])
+                if not active_event
+                or (current_state, state) not in conditional_transitions
+            ]
+            result['has_event_in_progress'] = bool(active_event)
 
             return [result]
         except Exception as e:

@@ -155,11 +155,31 @@
                     <notebook>
                         <page string="Supplier Data" name="supplier_data">
                             <group>
-                                <field name="supplier_phone_1"/>
-                                <field name="supplier_phone_2"/>
-                                <field name="supplier_phone_3"/>
-                                <field name="supplier_phone_4"/>
-                                <field name="supplier_phone_5"/>
+                                <label for="supplier_phone_1"/>
+                                <div class="o_row">
+                                    <field name="supplier_phone_1"/>
+                                    <field name="supplier_phone_p1_classification_id" options="{'no_create': True, 'no_open': True}" />
+                                </div>
+                                <label for="supplier_phone_2"/>
+                                <div class="o_row">
+                                    <field name="supplier_phone_2"/>
+                                    <field name="supplier_phone_p2_classification_id" options="{'no_create': True, 'no_open': True}" />
+                                </div>
+                                <label for="supplier_phone_3"/>
+                                <div class="o_row">
+                                    <field name="supplier_phone_3"/>
+                                    <field name="supplier_phone_p3_classification_id" options="{'no_create': True, 'no_open': True}" />
+                                </div>
+                                <label for="supplier_phone_4"/>
+                                <div class="o_row">
+                                    <field name="supplier_phone_4"/>
+                                    <field name="supplier_phone_p4_classification_id" options="{'no_create': True, 'no_open': True}"/>
+                                </div>
+                                <label for="supplier_phone_5"/>
+                                <div class="o_row">
+                                    <field name="supplier_phone_5"/>
+                                    <field name="supplier_phone_p5_classification_id" options="{'no_create': True, 'no_open': True}"/>
+                                </div>
                             </group>
                         </page>
                         <page string="Concepts" name="products">
@@ -299,20 +319,20 @@
                     <button name="action_accept_authorization" string="Authorize"
                             type="object" class="btn-primary"
                             invisible="cost_invalid or not context.get('from_event_authorization', False)"
-                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
+                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
                     <button name="action_reject_authorization" string="Reject"
                             type="object" class="btn-primary"
                             invisible="cost_invalid or not context.get('from_event_authorization', False)"
-                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
+                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
 
                     <button name="action_accept_authorization" string="Authorize"
                             type="object" class="btn-primary"
                             invisible="cost_invalid or not context.get('from_authorizer', False)"
-                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
+                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
                     <button name="action_reject_authorization" string="Reject"
                             type="object" class="btn-primary"
                             invisible="cost_invalid or not context.get('from_authorizer', False)"
-                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
+                            groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_commercial_supervisor,custom_master_catalog.custom_group_supplier_support"/>
 
                     <button string="Close" class="btn-secondary" special="cancel"/>
                 </footer>
@@ -509,7 +529,7 @@
                                         groups="base.group_system,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_coordinator"/> -->
                                 <button string="Cancel supplier" class="btn btn-danger ms-auto" type="object" name="open_cancel_wizard"
                                     invisible="event_stage_ref in ['completed', 'verifying', 'closed', 'cancel', 'cancel_subsequently', 'cancel_verifying', 'cancel_closed'] or
-                                        state in ['cancel', 'cancel_event', 'cancel_supplier']"
+                                        state in ['cancel', 'cancel_event', 'cancel_supplier'] or stage_ref in ['finalized']"
                                     groups="base.group_system,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_coordinator"/>
                             </div>
                         </group>

@@ -140,9 +140,10 @@ class IkeEvent_Search(models.Model):
                     # Distance km
                     distance_km = supplier_max_distances.get(supplier['supplier_id'], 0)
                     destination_distance_km = self.destination_distance or 0.0
+                    to_base_distance_km = supplier['to_base_distance'] or 0.0  # Always the same because is the same center
                     total_distance_km = 0
                     if supplier['negotiation_type'] == 'base_base':
-                        total_distance_km = (distance_km + destination_distance_km) * 2.0
+                        total_distance_km = (distance_km + destination_distance_km) + to_base_distance_km
                     elif supplier['negotiation_type'] in ['base_destination', 'vehicle_destination']:
                         total_distance_km = distance_km + destination_distance_km
                     elif supplier['negotiation_type'] == 'origin_destination':
@@ -337,7 +338,7 @@ class IkeEvent_Search(models.Model):
                 # Distance km
                 total_distance_km = supplier_max_distances.get(supplier['supplier_id'], 0)
                 if supplier['negotiation_type'] == 'base_base':
-                    total_distance_km = (total_distance_km + (self.destination_distance or 0)) * 2.0
+                    total_distance_km = (total_distance_km + (self.destination_distance or 0)) + supplier['to_base_distance']
                 elif supplier['negotiation_type'] in ['base_destination', 'vehicle_destination']:
                     total_distance_km += (self.destination_distance or 0)
                 elif supplier['negotiation_type'] == 'origin_destination':
@@ -568,6 +569,8 @@ class IkeEvent_Search(models.Model):
                     'latitude': vehicle['latitude'],
                     'longitude': vehicle['longitude'],
                     'bypass': vehicle.get('bypass', False),
+                    'supplier_center_distance_id': vehicle['supplier_center_distance_id'],
+                    'to_base_distance': vehicle['to_base_distance'],
                 })
 
         # * LOGGER 6: Service suppliers
@@ -643,6 +646,7 @@ class IkeEvent_Search(models.Model):
                 ,ga.parent_id as supplier_id
                 ,su.x_negotiation_type
                 ,gap.priority
+                ,mao.id as order_id
                 ,COALESCE(mao.sequence, 99999) as ranking
                 ,su.x_is_special_accounts
                 ,su.x_is_exclusive_accounts
@@ -700,10 +704,13 @@ class IkeEvent_Search(models.Model):
             'cost_distance': 0,
             'bypass': False,
             'no_distance': False,  # ToPop
+            'supplier_center_distance_id': None,
+            'to_base_distance': 0,
         } for rec in service_vehicle_ids]
 
         origin_latitude = float(self.location_latitude)
         origin_longitude = float(self.location_longitude)
+        center_distance_ids = self._get_center_distances(service_vehicle_ids.mapped('x_center_id'))
 
         vehicles_osrm_data = []
         if self.use_external_locations:
@@ -715,6 +722,15 @@ class IkeEvent_Search(models.Model):
                 max_distance_m=float(max_radius_km * 1.4 * 1000),
             )
         for vehicle in service_vehicles_data:
+            # Center Distance
+            supplier_center_id: int = vehicle['supplier_center_id']
+            center_distance_id = center_distance_ids.filtered_domain([
+                ('supplier_center_id', '=', supplier_center_id),
+            ])
+            if center_distance_id:
+                vehicle['supplier_center_distance_id'] = center_distance_id.id
+                vehicle['to_base_distance'] = center_distance_id.destination_center_distance_km
+            # Geo-localization
             data = None
             if len(vehicles_osrm_data):
                 data = next(
@@ -764,6 +780,8 @@ class IkeEvent_Search(models.Model):
             'cost_distance': 0,
             'no_distance': False,  # It was not possible to obtain distance
             'bypass': False,  # At least one per supplier
+            'supplier_center_distance_id': None,
+            'to_base_distance': 0,
         } for rec in service_vehicle_ids]
 
         origin_latitude = float(self.location_latitude)
@@ -791,6 +809,9 @@ class IkeEvent_Search(models.Model):
                 if center_distance_id:
                     vehicle['estimated_distance'] = center_distance_id.center_origin_distance_km
                     vehicle['estimated_duration'] = vehicle['cost_distance'] = center_distance_id.center_origin_duration_m
+                    # Center Distance
+                    vehicle['supplier_center_distance_id'] = center_distance_id.id
+                    vehicle['to_base_distance'] = center_distance_id.destination_center_distance_km
                     # Real Distance/Duration
                     if center_distance_id.center_origin_route:
                         vehicle['real_distance'] = vehicle['estimated_distance']
@@ -889,6 +910,13 @@ class IkeEvent_Search(models.Model):
     def _get_center_distances(self, supplier_center_ids):
         origin_latitude = float(self.location_latitude)
         origin_longitude = float(self.location_longitude)
+        # Destination
+        if self.destination_latitude and self.destination_longitude:
+            destination_latitude = float(self.destination_latitude)
+            destination_longitude = float(self.destination_longitude)
+        else:
+            destination_latitude = origin_latitude
+            destination_longitude = origin_longitude
 
         existing_center_distance_ids = self.env['ike.event.center.distance'].sudo().search([
             ('event_id', '=', self.id),
@@ -903,17 +931,23 @@ class IkeEvent_Search(models.Model):
             center_latitude = center_id.partner_latitude
             center_longitude = center_id.partner_longitude
             if center_latitude and center_longitude:
-                result = self.get_osrm_distance(
+                to_origin_result = self.get_osrm_distance(
                     center_latitude, center_longitude,
                     origin_latitude, origin_longitude
+                )
+                to_center_result = self.get_osrm_distance(
+                    destination_latitude, destination_longitude,
+                    center_latitude, center_longitude,
                 )
                 center_distances_to_create.append({
                     'event_id': self.id,
                     'supplier_center_id': center_id.id,
                     'latitude': center_latitude,
                     'longitude': center_longitude,
-                    'center_origin_distance_km': result['estimated_distance'],
-                    'center_origin_duration_m': result['estimated_duration'],
+                    'center_origin_distance_km': to_origin_result['estimated_distance'],
+                    'center_origin_duration_m': to_origin_result['estimated_duration'],
+                    'destination_center_distance_km': to_center_result['estimated_distance'],
+                    'destination_center_duration_m': to_center_result['estimated_duration']
                 })
 
         if center_distances_to_create:
@@ -931,6 +965,8 @@ class IkeEvent_Search(models.Model):
     ):
         """ Get Matrix Lines ids by Query """
         query, params = self._get_supplier_products_matrix_query(supplier_center_id, product_ids, status_ref)
+        # sql_debug = self.env.cr.mogrify(query, params).decode("utf-8")
+        # _logger.info("QUERY:\n%s", sql_debug)
         self.env.cr.execute(query, params)
         return self.env.cr.dictfetchall()
 
@@ -1096,6 +1132,7 @@ class IkeEvent_Search(models.Model):
             'name': _('Concepts in coverage'),
             'sequence': 1,
             'covered': True,
+            'mandatory': True,
         }))
 
         supplier_products_data.append(Command.create({
@@ -1103,6 +1140,7 @@ class IkeEvent_Search(models.Model):
             'name': _('Concepts out of coverage'),
             'sequence': 1001,
             'covered': True,
+            'mandatory': True,
         }))
 
         # Product Ids
@@ -1272,6 +1310,7 @@ class IkeEvent_Search(models.Model):
             'name': _('Concepts in coverage'),
             'sequence': 1,
             'covered': True,
+            'mandatory': True,
         }))
 
         products_data.append(Command.create({
@@ -1279,6 +1318,7 @@ class IkeEvent_Search(models.Model):
             'name': _('Concepts out of coverage'),
             'sequence': 1001,
             'covered': True,
+            'mandatory': True,
         }))
 
         # Product Ids
@@ -1340,7 +1380,11 @@ class IkeEvent_Search(models.Model):
     ):
         vehicle_data = []
         try:
-            url = "https://o0c6l0kl3e.execute-api.us-east-2.amazonaws.com/nearest-vehicles"
+            # url = "https://o0c6l0kl3e.execute-api.us-east-2.amazonaws.com/nearest-vehicles"
+            url = self.env['ir.config_parameter'].sudo().get_param(
+                'ike.event.url.osrm'
+            )
+            url = str(url) + "/nearest-vehicles"
             headers = {
                 "Content-Type": "application/json",
             }
@@ -1378,7 +1422,11 @@ class IkeEvent_Search(models.Model):
             'estimated_duration': 0.0,  # in min
         }
         try:
-            url = "https://zh90tdil2h.execute-api.us-east-2.amazonaws.com/default/route-estimate"
+            # url = "https://zh90tdil2h.execute-api.us-east-2.amazonaws.com/default/route-estimate"
+            url = self.env['ir.config_parameter'].sudo().get_param(
+                'ike.event.url.osrm.distance'
+            )
+            url = str(url) + "/default/route-estimate"
             headers = {
                 "Content-Type": "application/json",
             }
@@ -1618,6 +1666,8 @@ class IkeEvent_Search(models.Model):
         # Covered Amount
         self._set_covered_amount(supplier_link_id.aux_cost_distance_km)
 
+        # Center Distance
+        center_distance_id = self._get_center_distances(vehicle_id.x_center_id)
         # Generals
         sequence = 1
         if last_line:
@@ -1649,6 +1699,7 @@ class IkeEvent_Search(models.Model):
             'ranking': 0,
             'sequence': sequence,
             'supplier_link_id': supplier_link_id.id,
+            'supplier_center_distance_id': center_distance_id.id if center_distance_id else None
         })
         return event_supplier_id
 

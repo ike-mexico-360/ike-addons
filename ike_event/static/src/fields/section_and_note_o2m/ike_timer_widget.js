@@ -262,6 +262,7 @@ export class IkeTimerWidget extends Component {
             this.state.current_state == 'available'
             && !this.authorization_required
             && (this.state.is_manual && !this.manual_notification)
+            && this.state.evaluation_id && this.state.evaluation_reevaluation
         );
     }
 };

@@ -929,6 +929,223 @@ class PurchaseOrderController(http.Controller):
             )
             return request.redirect('/my/purchase')
 
+    @http.route(
+        '/my/purchase/download_orders_detailed_xlsx',
+        type='http',
+        auth='user',
+        website=True,
+    )
+    def download_orders_detailed_xlsx(self, **kw):
+        """Export the current statement with one row per purchase order line."""
+        try:
+            domain = expression.AND([
+                self._get_purchase_order_portal_domain(kw),
+                [('state', 'in', ['purchase', 'done'])],
+            ])
+            orders = request.env['purchase.order'].sudo().search(
+                domain, order='date_approve desc, id desc'
+            )
+            if not orders:
+                return request.redirect('/my/purchase')
+
+            report_model = request.env[
+                'report.ike_event_purchase.report_portal_purchase_orders'
+            ].sudo()
+            values = report_model._get_report_values(
+                orders.ids, data={'filters': kw}
+            )
+
+            output = io.BytesIO()
+            workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+            worksheet = workbook.add_worksheet('Estado de cuenta detallado')
+            worksheet.hide_gridlines(2)
+
+            title_format = workbook.add_format({
+                'bold': True, 'font_size': 18, 'font_color': '#15006A',
+            })
+            subtitle_format = workbook.add_format({
+                'font_size': 10, 'font_color': '#4B4F75',
+            })
+            label_format = workbook.add_format({
+                'bold': True, 'font_color': '#2437C7', 'bg_color': '#EEF1FF',
+                'border': 1, 'border_color': '#CFD5F5',
+            })
+            value_format = workbook.add_format({
+                'bold': True, 'bg_color': '#EEF1FF', 'border': 1,
+                'border_color': '#CFD5F5',
+            })
+            money_summary_format = workbook.add_format({
+                'bold': True, 'bg_color': '#EEF1FF', 'border': 1,
+                'border_color': '#CFD5F5', 'num_format': '#,##0.00',
+            })
+            header_format = workbook.add_format({
+                'bold': True, 'font_color': '#FFFFFF', 'bg_color': '#16006F',
+                'border': 1, 'border_color': '#16006F', 'align': 'center',
+                'valign': 'vcenter',
+            })
+            text_format = workbook.add_format({
+                'border': 1, 'border_color': '#DFE3F1', 'valign': 'top',
+            })
+            concept_format = workbook.add_format({
+                'border': 1, 'border_color': '#DFE3F1',
+                'valign': 'top', 'text_wrap': True,
+            })
+            date_format = workbook.add_format({
+                'border': 1, 'border_color': '#DFE3F1',
+                'num_format': 'dd/mm/yyyy', 'valign': 'top',
+            })
+            number_format = workbook.add_format({
+                'border': 1, 'border_color': '#DFE3F1',
+                'num_format': '#,##0.00', 'valign': 'top',
+            })
+            money_format = workbook.add_format({
+                'border': 1, 'border_color': '#DFE3F1',
+                'num_format': '#,##0.00', 'valign': 'top',
+            })
+
+            detail_lines = orders.mapped('order_line').filtered(
+                lambda line: not line.display_type
+            )
+            worksheet.merge_range('A1:K1', 'Estado de cuenta', title_format)
+            worksheet.merge_range(
+                'A2:K2',
+                '%s órdenes incluidas | %s líneas' % (
+                    len(orders), len(detail_lines)
+                ),
+                subtitle_format,
+            )
+            worksheet.write('A3', 'Proveedor', label_format)
+            worksheet.merge_range(
+                'B3:K3', values['supplier_info']['name'], value_format
+            )
+
+            row = 3
+            if values['applied_filters']:
+                filters_text = ' | '.join(
+                    '%s: %s' % item for item in values['applied_filters']
+                )
+                worksheet.write(row, 0, 'Filtros aplicados', label_format)
+                worksheet.merge_range(row, 1, row, 10, filters_text, value_format)
+                row += 1
+
+            metrics = [
+                ('Órdenes', len(orders), False),
+                ('Pedidos sin facturar', values['uninvoiced_order_count'], False),
+                ('Monto pendiente de facturar', values['pending_invoice_amount'], True),
+                ('Facturas', values['invoice_count'], False),
+                ('Subtotal facturado', values['invoiced_amount'], True),
+                ('Subtotal pagado', values['paid_amount'], True),
+                ('Pendiente a pagar', values['pending_payment_amount'], True),
+                ('Facturas rechazadas', values['rejected_invoice_count'], False),
+                ('Saldo cuenta', values['paid_amount'], True),
+            ]
+            for index, (label, value, is_money) in enumerate(metrics):
+                metric_row = row + (index // 3)
+                metric_col = (index % 3) * 2
+                worksheet.write(metric_row, metric_col, label, label_format)
+                worksheet.write(
+                    metric_row,
+                    metric_col + 1,
+                    value,
+                    money_summary_format if is_money else value_format,
+                )
+
+            table_row = row + 4
+            headers = [
+                'Orden', 'Evento', 'Fecha', 'Subtotal', 'Impuestos', 'Total',
+                'Estado de facturación', 'Concepto', 'Cantidad',
+                'CTO unitario', 'Subtotal línea',
+            ]
+            for column, header in enumerate(headers):
+                worksheet.write(table_row, column, header, header_format)
+
+            current_row = table_row + 1
+            for order in orders:
+                order_lines = order.order_line.filtered(
+                    lambda line: not line.display_type
+                )
+                if not order_lines:
+                    continue
+
+                group_start_row = current_row
+                for line in order_lines:
+                    concept_name = line.product_id.name or line.name or ''
+                    concept_parts = [concept_name]
+                    if line.name and line.name != concept_name:
+                        concept_parts.append(line.name)
+                    worksheet.write(
+                        current_row,
+                        7,
+                        '\n'.join(concept_parts),
+                        concept_format,
+                    )
+                    worksheet.write_number(
+                        current_row, 8, line.product_qty or 0.0, number_format
+                    )
+                    worksheet.write_number(
+                        current_row, 9, line.price_unit or 0.0, money_format
+                    )
+                    worksheet.write_number(
+                        current_row, 10, line.price_subtotal or 0.0, money_format
+                    )
+                    worksheet.set_row(current_row, 32)
+                    current_row += 1
+
+                order_label = order.name or ''
+                if order.x_ref_sap:
+                    order_label += '\nSAP %s' % order.x_ref_sap
+                order_date = order.date_approve or order.date_order
+                grouped_values = [
+                    (order_label, text_format),
+                    (report_model._order_event(order), text_format),
+                    (order_date or '-', date_format if order_date else text_format),
+                    (order.amount_untaxed, money_format),
+                    (order.amount_tax, money_format),
+                    (order.amount_total, money_format),
+                    (report_model._invoice_status(order), text_format),
+                ]
+                for column, (value, cell_format) in enumerate(grouped_values):
+                    worksheet.write(
+                        group_start_row, column, value, cell_format
+                    )
+
+            worksheet.autofilter(
+                table_row, 0, max(table_row, current_row - 1), 10
+            )
+            worksheet.freeze_panes(table_row + 1, 0)
+            worksheet.set_column('A:A', 22)
+            worksheet.set_column('B:B', 22)
+            worksheet.set_column('C:C', 14)
+            worksheet.set_column('D:F', 18)
+            worksheet.set_column('G:G', 24)
+            worksheet.set_column('H:H', 36)
+            worksheet.set_column('I:I', 12)
+            worksheet.set_column('J:K', 18)
+            workbook.close()
+
+            xlsx_content = output.getvalue()
+            headers = [
+                (
+                    'Content-Type',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                ),
+                ('Content-Length', len(xlsx_content)),
+                (
+                    'Content-Disposition',
+                    content_disposition(
+                        'reporte_detallado_ordenes_de_compra.xlsx'
+                    ),
+                ),
+            ]
+            return request.make_response(xlsx_content, headers=headers)
+        except Exception as e:
+            _logger.exception(
+                '[Portal PO Controller] Error generating detailed purchase '
+                'orders XLSX: %s',
+                str(e),
+            )
+            return request.redirect('/my/purchase')
+
     @http.route('/provider/portal/purchase/save_dispute', type='json', auth='user', methods=['POST'])
     def save_dispute(self, order_id, dispute_count, change_comments, order_lines):
         """

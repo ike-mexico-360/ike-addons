@@ -197,6 +197,22 @@ export class PurchaseOrderList extends Component {
         window.open(`/my/purchase/download_orders_xlsx${queryString ? `?${queryString}` : ''}`, '_blank');
     }
 
+    downloadOrdersDetailedXlsx() {
+        if (!this.filteredOrders.length) {
+            this.notification.add(_t("No purchase orders to download."), { type: "warning" });
+            return;
+        }
+
+        const params = new URLSearchParams();
+        for (const [key, value] of Object.entries(this.state.filters)) {
+            if (value) {
+                params.append(key, value);
+            }
+        }
+        const queryString = params.toString();
+        window.open(`/my/purchase/download_orders_detailed_xlsx${queryString ? `?${queryString}` : ''}`, '_blank');
+    }
+
     // Suma facturada de un pedido (facturas publicadas, sin cancelar)
     getInvoicedTotal(order) {
         return (order.invoice_ids || [])

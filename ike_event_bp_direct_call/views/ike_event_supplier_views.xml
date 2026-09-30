@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ike_event_supplier_evaluation_form_view_inherit_bp_direct_call" model="ir.ui.view">
+        <field name="name">ike.event.supplier.evaluation.form.view.inherit.bp.direct.call</field>
+        <field name="model">ike.event.supplier</field>
+        <field name="inherit_id" ref="ike_event.ike_event_supplier_evaluation_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='supplier_phone_1']" position="attributes">
+                <attribute name="widget">bp_phone_dial</attribute>
+            </xpath>
+            <xpath expr="//field[@name='supplier_phone_2']" position="attributes">
+                <attribute name="widget">bp_phone_dial</attribute>
+            </xpath>
+            <xpath expr="//field[@name='supplier_phone_3']" position="attributes">
+                <attribute name="widget">bp_phone_dial</attribute>
+            </xpath>
+            <xpath expr="//field[@name='supplier_phone_4']" position="attributes">
+                <attribute name="widget">bp_phone_dial</attribute>
+            </xpath>
+            <xpath expr="//field[@name='supplier_phone_5']" position="attributes">
+                <attribute name="widget">bp_phone_dial</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>

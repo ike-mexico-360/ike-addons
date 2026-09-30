@@ -942,6 +942,8 @@ class IkeEvent(models.Model):
 
     def action_set_user_sub_service_data(self):
         for rec in self:
+            if not self.service_product_ids.filtered(lambda x: x.product_id and not x.display_type):
+                raise UserError(_('Please add products.'))
             res_id = self.env[rec.sub_service_res_model].search([('event_id', '=', rec.id)], limit=1, order='id desc')
             res_id.set_event_summary_user_subservice_data()  # type: ignore
             rec.event_summary_id.set_user_sub_service_data()
@@ -1342,7 +1344,10 @@ class IkeEvent(models.Model):
         capturing_event_domain = [('stage_id.ref', 'in', ['capturing'])]
         searching_event_domain = [('stage_id.ref', 'in', ['searching'])]
         assigned_event_domain = [('stage_id.ref', 'in', ['assigned'])]
-        scheduled_events_domain = [('scheduled', '=', True)]
+        scheduled_events_domain = [
+            ('scheduled', '=', True),
+            ('stage_id.ref', 'in', ['in_progress', 'assigned', 'searching', 'capturing', 'verifying', 'completed'])
+        ]
         # upcoming_scheduled_events = [
         #     ('scheduled', '=', True),
         #     ('assigned_user_id', '=', self.env.uid),
@@ -1686,7 +1691,13 @@ class IkeEvent(models.Model):
                 ('disabled', '=', False),
                 ('is_company', '=', True),
                 ('type', '=', 'center'),
-                ('x_geographical_area_ids.municipality_id', '=', municipality.id)
+                ('x_geographical_area_ids', 'any', [
+                    ('municipality_id', '=', municipality.id),
+                    ('area_product_ids', 'any', [
+                        ('product_id', '=', self.sub_service_id.id),
+                        ('disabled', '=', False),
+                    ]),
+                ]),
             ],
             'context': {
                 'group_by': 'parent_id',

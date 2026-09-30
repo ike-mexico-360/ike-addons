@@ -5,6 +5,7 @@ from odoo import models, fields, api, _
 class IkeEventSupplierEvaluation(models.Model):
     _name = 'ike.event.supplier.evaluation'
     _description = 'Event Supplier Evaluation'
+    _order = 'name, id'
 
     name = fields.Char(translate=True, required=True)
     sequence = fields.Char(default=5)

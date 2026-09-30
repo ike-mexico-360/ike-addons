@@ -27,6 +27,9 @@ class IkeEventSupplierPublic(models.Model):
     def action_accept(self):
         self.env['ike.event.supplier'].sudo().browse(self.id).action_accept()
 
+    def action_confirm_vehicle(self):
+        self.env['ike.event.supplier'].sudo().browse(self.id).action_confirm_vehicle()
+
     def action_notify_operator(self):
         self.env['ike.event.supplier'].sudo().browse(self.id).action_notify_operator()
 
