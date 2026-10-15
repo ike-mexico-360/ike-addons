@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-29 15:15+0000\n"
-"PO-Revision-Date: 2026-09-29 15:15+0000\n"
+"POT-Creation-Date: 2026-10-09 20:40+0000\n"
+"PO-Revision-Date: 2026-10-09 20:40+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -862,11 +862,13 @@ msgid "Base Supplier Number"
 msgstr "Número de proveedor base"
 
 #. module: ike_event
+#. odoo-python
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic__street2
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical__street2
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__street2
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__street2
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__street2
+#: code:addons/ike_event/models/ike_event_summary.py:0
 msgid "Between streets"
 msgstr "Entre calles"
 
@@ -3528,6 +3530,30 @@ msgid "Maneuvers"
 msgstr "Maniobras"
 
 #. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier.py:0
+msgid "Invoicing Company"
+msgstr "Empresa facturadora"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier.py:0
+msgid "Invoicing Address"
+msgstr "Dirección de facturación"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier.py:0
+msgid "RFC"
+msgstr "RFC"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier.py:0
+msgid "Invoicing Phone"
+msgstr "Teléfono de facturación"
+
+#. module: ike_event
 #: model:ike.event.supplier.assignment.type,name:ike_event.ike_supplier_assignment_manual
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event__supplier_search_type__manual
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__assignation_type__manual
@@ -3934,6 +3960,12 @@ msgstr "No se le ha asignado latitud/longitud a la ubicación."
 
 #. module: ike_event
 #. odoo-python
+#: code:addons/ike_event/models/ike_event.py:0
+msgid "No municipality was found for ZIP code %s."
+msgstr "No se encontró ningún municipio para el código postal %s."
+
+#. module: ike_event
+#. odoo-python
 #: code:addons/ike_event/models/ike_event_supplier_authorization.py:0
 msgid "No suppliers were found"
 msgstr "No se encontraron proveedores"
@@ -4212,8 +4244,8 @@ msgstr "Abrir"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__event_date
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_base__event_date
-msgid "Open Date"
-msgstr "Fecha de apertura"
+msgid "Event Date"
+msgstr "Fecha del evento"
 
 #. module: ike_event
 #. odoo-python
@@ -4416,6 +4448,12 @@ msgstr "Recogida"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__vehicle_plate
 msgid "Plate"
 msgstr "Placa"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event.py:0
+msgid "Please add at least one vehicle type."
+msgstr "Por favor agrega al menos un tipo de vehículo."
 
 #. module: ike_event
 #. odoo-python
@@ -4625,12 +4663,14 @@ msgid "Ref"
 msgstr "Referencia"
 
 #. module: ike_event
+#. odoo-python
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_confirm_wizard__res_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic__street_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical__street_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__street_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__street_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__street_ref
+#: code:addons/ike_event/models/ike_event_summary.py:0
 msgid "References"
 msgstr "Referencias"
 

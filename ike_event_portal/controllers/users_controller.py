@@ -117,7 +117,7 @@ class PortalUserAccount(CustomerPortal):
                 "groups_id": [(6, 0, [groups_id, request.env.ref("base.group_portal").id])],
                 "active": True,
                 "company_id": request.env.company.id,
-                "lang": "es_MX",
+                "lang": request.env.company.x_get_ike_company_language(),
             }
 
             # 3. Create the user

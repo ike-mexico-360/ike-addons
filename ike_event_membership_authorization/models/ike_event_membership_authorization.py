@@ -15,11 +15,7 @@ class IkeEventMembershipAuthorization(models.Model):
     # === KEY FIELDS === #
     event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
     event_name = fields.Char(related='event_id.name')
-    user_id = fields.Many2one(
-        'res.users',
-        string='User',
-        default=lambda self: self.env.user,
-    )
+    user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user,)
     nus_id = fields.Many2one('custom.nus', string="NUs", required=True)
     authorizer_id = fields.Many2one('res.partner', required=True, string="Supervisor authorizer")
     nus_membership_id = fields.Many2one('custom.membership.nus', required=True)
@@ -70,6 +66,8 @@ class IkeEventMembershipAuthorization(models.Model):
     check_clause_second = fields.Boolean(
         related="nus_membership_id.membership_plan_id.second_account_identification_id.clause",
         string="Second Clause")
+    x_clause_required = fields.Boolean(related="nus_membership_id.x_clause_required")
+    x_second_clause_required = fields.Boolean(related="nus_membership_id.x_second_clause_required")
 
     # === AUTHORIZER FIELDS=== #
     user_authorization_commercial_affiliation_id = fields.Many2one(
@@ -384,6 +382,8 @@ class IkeEventMembershipAuthorization(models.Model):
                 'check_is_fleet': rec.check_is_fleet,
                 'check_is_special': rec.check_is_special,
                 'key_identification': rec.key_identification,
+                'clause': rec.clause_primary,
+                'second_clause': rec.clause_second,
                 'second_key_identification': rec.second_key_identification
             })
             rec.action_ike_event_reload()

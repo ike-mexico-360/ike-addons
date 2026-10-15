@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Replace domain and context with l10n_mx Service UoM on subservices action -->
+    <record id="custom_master_catalog.action_x_subservice_product_template_view" model="ir.actions.act_window">
+        <field name="domain" eval="[
+            ('sale_ok', '=', True),
+            ('sh_product_subscribe', '=', True),
+            ('purchase_ok', '=', False),
+            ('x_accessory_ok', '=', False),
+            ('type', '=', 'service'),
+            ('list_price', '=', 1),
+            ('standard_price', '=', 0),
+            ('uom_id', '=', ref('l10n_mx.product_uom_service_unit'))
+        ]"/>
+        <field name="context" eval="{
+            'default_sale_ok': True,
+            'default_sh_product_subscribe': True,
+            'default_purchase_ok': False,
+            'default_x_accessory_ok': False,
+            'default_type': 'service',
+            'default_list_price': 1,
+            'default_standard_price': 0,
+            'default_categ_id': False,
+            'default_uom_id': ref('l10n_mx.product_uom_service_unit'),
+            'x_subservice_view': True,
+            'search_default_filter_enabled': 1
+        }"/>
+    </record>
+
+</odoo>

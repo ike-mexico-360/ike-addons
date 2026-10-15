@@ -1,4 +1,5 @@
 from odoo import http, _
+from odoo.tools import config
 from odoo.http import request, dispatch_rpc
 from odoo.exceptions import ValidationError, UserError
 from markupsafe import Markup
@@ -207,8 +208,16 @@ class EventsAPIController(http.Controller):
     @http.route('/event/historyService', type='http', auth='public', methods=['POST'], csrf=False)
     def ike_event_history_service(self, **kwargs):
         # === Autorización ===
-        # ToDo: Mover mx_tenant fuera, ya sea como parámetro o un ajuste en la configuración
-        mx_tenant = "adff7f6a-e97d-11eb-9a03-0242ac130003"
+        bp_system_tenant = request.env['ir.config_parameter'].sudo().get_param('BP.system.tenant')
+        if not bp_system_tenant:
+            _logger.warning('No tenant found, ensure you have configured the tenant in ike_event_purchase.tenant parameter.')
+            return request.make_json_response({'error': 'No tenant found, ensure you have configured the tenant in ike_event_purchase.tenant parameter.'}, status=400)
+
+        bp_system_app_code = request.env.company.x_default_purchase_project_id.x_ref_app
+        if not bp_system_app_code:
+            _logger.warning('No reference app code found for this project.')
+            return request.make_json_response({'error': 'No reference app code found for this project.'}, status=400)
+
         headers = request.httprequest.headers
         authorization = headers.get('Authorization')
         if not authorization:
@@ -225,9 +234,12 @@ class EventsAPIController(http.Controller):
         if not identifier or not petition:
             _logger.warning('Bad request')
             return request.make_json_response({'error': 'Bad request'}, status=400)
-        if identifier.get('tenants', '') != mx_tenant:
+        if identifier.get('tenants', '') != bp_system_tenant:
             _logger.warning('Bad request')
-            return request.make_json_response({'error': 'Bad request'}, status=400)
+            return request.make_json_response({'error': 'Bad request (tenants)'}, status=400)
+        if identifier.get('app', '') != bp_system_app_code:
+            _logger.warning('Bad request')
+            return request.make_json_response({'error': 'Bad request (app)'}, status=400)
 
         # === Validar petición ===
         phone = str(petition.get('phone', '') or '').strip().replace(' ', '')
@@ -413,8 +425,15 @@ class EventsAPIController(http.Controller):
     @http.route('/event/newEvent', type='http', auth='public', methods=['POST'], csrf=False)
     def ike_event_new_event(self, **kwargs):
         # === Autorización ===
-        # ToDo: Mover mx_tenant fuera, ya sea como parámetro o un ajuste en la configuración
-        mx_tenant = "adff7f6a-e97d-11eb-9a03-0242ac130003"
+        bp_system_tenant = request.env['ir.config_parameter'].sudo().get_param('BP.system.tenant')
+        if not bp_system_tenant:
+            _logger.warning('No tenant found, ensure you have configured the tenant in ike_event_purchase.tenant parameter.')
+            return request.make_json_response({'error': 'No tenant found, ensure you have configured the tenant in ike_event_purchase.tenant parameter.'}, status=400)
+
+        bp_system_app_code = request.env.company.x_default_purchase_project_id.x_ref_app
+        if not bp_system_app_code:
+            _logger.warning('No reference app code found for this project.')
+            return request.make_json_response({'error': 'No reference app code found for this project.'}, status=400)
         headers = request.httprequest.headers
         authorization = headers.get('Authorization')
         if not authorization:
@@ -431,9 +450,12 @@ class EventsAPIController(http.Controller):
         if not identifier or not petition:
             _logger.warning('Bad request')
             return request.make_json_response({'error': 'Bad request'}, status=400)
-        if identifier.get('tenants', '') != mx_tenant:
+        if identifier.get('tenants', '') != bp_system_tenant:
             _logger.warning('Bad request')
-            return request.make_json_response({'error': 'Bad request'}, status=400)
+            return request.make_json_response({'error': 'Bad request (tenants)'}, status=400)
+        if identifier.get('app', '') != bp_system_app_code:
+            _logger.warning('Bad request')
+            return request.make_json_response({'error': 'Bad request (app)'}, status=400)
 
         # === Validar petición ===
         phone = str(petition.get('phone', '') or '').strip().replace(' ', '')
@@ -711,7 +733,7 @@ class EventsAPIController(http.Controller):
 
             Params = request.env['ir.config_parameter'].sudo()
 
-            api_key = Params.get_param('suggested_trucks.openai.api_key')
+            api_key = config.get('x_suggested_trucks_api_key', False)
             vector_store_id = Params.get_param('suggested_trucks.openai.vector_store_id')
             system_prompt = Params.get_param('suggested_trucks.openai.system_prompt')
             model_version = Params.get_param('suggested_trucks.openai.model_version', 'gpt-4.1-mini')
@@ -1158,38 +1180,3 @@ class EventsAPIController(http.Controller):
             request.env.cr.rollback()
             _logger.error(f'Error al crear el registro: {str(e)}', exc_info=True)
             raise werkzeug.exceptions.InternalServerError('Error interno del servidor')
-
-    # @http.route('/api/v1/cliente/<int:partner_id>', type='json', auth='user', methods=['GET'], csrf=False)
-    # def get_cliente(self, partner_id, **kwargs):
-    #     """Endpoint para obtener un cliente por ID"""
-    #     try:
-    #         partner = request.env['res.partner'].sudo().browse(partner_id)
-
-    #         if not partner.exists():
-    #             raise werkzeug.exceptions.NotFound('Cliente no encontrado')
-
-    #         # Retornar dict directo
-    #         return {
-    #             'id': partner.id,
-    #             'name': partner.name,
-    #             'vat': partner.vat,
-    #             'company_type': partner.company_type,
-    #             'street': partner.street,
-    #             'street2': partner.street2,
-    #             'street_number': partner.street_number,
-    #             'city': partner.city,
-    #             'state_id': partner.state_id.name if partner.state_id else None,
-    #             'phone': partner.phone,
-    #             'mobile': partner.mobile,
-    #             'email': partner.email,
-    #             'l10n_mx_edi_fiscal_regime': partner.l10n_mx_edi_fiscal_regime,
-    #             'l10n_mx_edi_curp': partner.l10n_mx_edi_curp,
-    #             'ref': partner.ref,
-    #         }
-
-    #     except werkzeug.exceptions.HTTPException:
-    #         raise
-
-    #     except Exception as e:
-    #         _logger.error(f'Error al obtener cliente: {str(e)}', exc_info=True)
-    #         raise werkzeug.exceptions.InternalServerError('Error interno del servidor')

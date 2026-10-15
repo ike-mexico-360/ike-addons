@@ -20,14 +20,6 @@ class ResCompany(models.Model):
         help="Technical: Max lines per purchase order at consolidation. If the number of lines is greater than this value, the purchase order will be splitted."
     )
 
-    x_default_purchase_project_id = fields.Many2one(
-        comodel_name='project.project',
-        string='Default Purchase Project',
-        help="Technical: Default purchase project linked to the company at consolidate and send SAP data.",
-        ondelete='restrict',
-        tracking=True,
-    )
-
     @api.model
     def _ike_sync_helpdesk_dashboard_stages(self):
         """Display operational helpdesk stages on both dashboard sections."""

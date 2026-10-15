@@ -218,7 +218,7 @@
               </th>
               <th>SubTotal</th>
               <th>Invoiced subtotal</th>
-              <th>Billing Status</th>
+              <th>Purchase Order State</th>
               <!-- Conditional table headers restricted by supplier permission -->
               <t t-if="state.hasAdvancedPortal">
               <th>Invoice Status</th>

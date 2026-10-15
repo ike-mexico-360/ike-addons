@@ -551,6 +551,42 @@ msgstr "Estado ruta"
 #. module: ike_event_portal
 #. odoo-javascript
 #: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Operator Notified"
+msgstr "Operador notificado"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Show Details of Service"
+msgstr "Ver detalles del Servicio"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Hide Details"
+msgstr "Ocultar detalles"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Change Vehicle"
+msgstr "Cambiar vehículo"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "Yes"
+msgstr "Sí"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
+msgid "No"
+msgstr "No"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/servicios/service_main_component.xml:0
 msgid "Supplier Status"
 msgstr "Estado Proveedor"
 

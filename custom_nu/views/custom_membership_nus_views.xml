@@ -83,8 +83,18 @@
                                 invisible="disabled == True"
                                 readonly="0"
                                 groups="base.group_no_one"/>
-                            <field name="clause" invisible="not check_clause" readonly="disabled or 1" groups="!base.group_no_one"/>
-                            <field name="clause" invisible="not check_clause" readonly="0" groups="base.group_no_one"/>
+                            <field name="clause"
+                                invisible="not check_clause"
+                                readonly="disabled or 1"
+                                required="x_clause_required"
+                                groups="!base.group_no_one"/>
+                            <field name="clause"
+                                widget="regex_validator_field"
+                                pattern_field="x_validation_clause_patter"
+                                invisible="not check_clause"
+                                readonly="0"
+                                required="x_clause_required"
+                                groups="base.group_no_one"/>
 
                             <field
                                 name="second_key_identification"
@@ -108,8 +118,18 @@
                                 readonly="0"
                                 groups="base.group_no_one"
                             />
-                            <field name="second_clause" invisible="not second_check_clause" readonly="disabled or 1" groups="!base.group_no_one"/>
-                            <field name="second_clause" invisible="not second_check_clause" readonly="0" groups="base.group_no_one"/>
+                            <field name="second_clause"
+                                invisible="not second_check_clause"
+                                readonly="disabled or 1"
+                                required="x_second_clause_required"
+                                groups="!base.group_no_one"/>
+                            <field name="second_clause"
+                                widget="regex_validator_field"
+                                pattern_field="x_validation_second_clause_patter"
+                                invisible="not second_check_clause"
+                                readonly="0"
+                                required="x_second_clause_required"
+                                groups="base.group_no_one"/>
 
                             <field
                                 name="subscription_validity"
@@ -143,6 +163,8 @@
                             <field name="x_display_mask" invisible="1"/>
                             <field name="x_validation_pattern_second" invisible="1"/>
                             <field name="x_display_mask_second" invisible="1"/>
+                            <field name="x_validation_clause_patter" invisible="0"/>
+                            <field name="x_validation_second_clause_patter" invisible="0"/>
                             <field name="disabled" invisible="1"/>
                             <field name="active" invisible="1"/>
                             <field name="create_date" invisible="1"/>

@@ -41,7 +41,7 @@ class ProductProduct(models.Model):
     def get_accessories_view_action(self):
         action = self.env['ir.actions.act_window']._for_xml_id('custom_master_catalog.custom_ike_accessories_action')
         all_categ_id = self.env.ref('product.product_category_all')
-        service_uom_id = self.env.ref('l10n_mx.product_uom_service_unit')
+        service_uom_id = self.env['uom.uom']._x_get_ike_service_uom_id()
         ctx = eval(action['context'])
         ctx.update({
             'default_categ_id': all_categ_id.id,
@@ -57,7 +57,7 @@ class ProductProduct(models.Model):
     @api.model
     def get_accessories_domain(self, hide_disabled=True):
         all_categ_id = self.env.ref('product.product_category_all')
-        service_uom_id = self.env.ref('l10n_mx.product_uom_service_unit')
+        service_uom_id = self.env['uom.uom']._x_get_ike_service_uom_id()
         domain = [
             ('sale_ok', '=', False),
             ('sh_product_subscribe', '=', False),
@@ -76,7 +76,7 @@ class ProductProduct(models.Model):
     @api.model
     def repair_missing_values_accessories(self):
         all_categ_id = self.env.ref('product.product_category_all')
-        service_uom_id = self.env.ref('l10n_mx.product_uom_service_unit')
+        service_uom_id = self.env['uom.uom']._x_get_ike_service_uom_id()
         product_ids = self.env['product.product'].search([
             ('product_tmpl_id.sale_ok', '=', False),
             ('product_tmpl_id.sh_product_subscribe', '=', False),

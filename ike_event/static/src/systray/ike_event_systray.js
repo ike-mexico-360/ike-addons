@@ -267,7 +267,11 @@ export class IkeEventSystray extends Component {
     }
 
     async testBusBus() {
-        this.orm.call("ike.event", "action_test_notification_1", []);
+        if (this.state.type == "form") {
+            this.orm.call("ike.event", "action_test_notification_2", [this.state.resId]);
+        } else {
+            this.orm.call("ike.event", "action_test_notification_1", []);
+        }
         this.state.busState = "text-warning";
         setTimeout(() => {
             if (this.state.busState == "text-warning") {

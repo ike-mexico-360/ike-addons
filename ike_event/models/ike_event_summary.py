@@ -22,6 +22,33 @@ class IkeEventSummary(models.Model):
     user_sub_service_data = fields.Json()
     event_data = fields.Json()
 
+    def _get_origin_record(self):
+        self.ensure_one()
+        if not self.event_id.service_res_model or not self.event_id.service_res_id:
+            return None
+        return self.event_id.get_service_model()
+
+    def _get_destination_record(self):
+        self.ensure_one()
+        if not self.event_id.sub_service_res_model or not self.event_id.sub_service_res_id:
+            return None
+        record = self.event_id.get_sub_service_model()
+        # Only sub-services with destination (e.g. town truck)
+        if 'destination_label' not in record._fields:
+            return None
+        return record
+
+    def _get_address_label_html(self, label, record):
+        """Append between streets and references (captured manually, Google does not return them) to the address."""
+        value = Markup(label or '')
+        if not record or 'street2' not in record._fields or 'street_ref' not in record._fields:
+            return str(value)
+        if record.street2:
+            value += Markup('<br/>%s: %s') % (_('Between streets'), record.street2)
+        if record.street_ref:
+            value += Markup('<br/>%s: %s') % (_('References'), record.street_ref)
+        return str(value)
+
     def set_user_data(self):
         for rec in self:
             rec.service_data = {
@@ -92,7 +119,7 @@ class IkeEventSummary(models.Model):
                         'name': 'location_label',
                         'string': rec.event_id.fields_get(['location_label'])['location_label']['string'],
                         'type': 'html',
-                        'value': rec.event_id.location_label,
+                        'value': rec._get_address_label_html(rec.event_id.location_label, rec._get_origin_record()),
                     },
                 ]
             }
@@ -110,7 +137,7 @@ class IkeEventSummary(models.Model):
                     'name': 'destination_label',
                     'string': rec.event_id.fields_get(['destination_label'])['destination_label']['string'],
                     'type': 'html',
-                    'value': rec.event_id.destination_label,
+                    'value': rec._get_address_label_html(rec.event_id.destination_label, rec._get_destination_record()),
                 },
                 {
                     'name': 'destination_distance',
@@ -241,14 +268,14 @@ class IkeEventSummary(models.Model):
                     'name': 'location_label',
                     'string': rec.event_id.fields_get(['location_label'])['location_label']['string'],
                     'type': 'html',
-                    'value': rec.event_id.location_label,
+                    'value': rec._get_address_label_html(rec.event_id.location_label, rec._get_origin_record()),
                 })
             if rec.event_id.destination_label:
                 event_data['fields'].append({
                     'name': 'destination_label',
                     'string': rec.event_id.fields_get(['destination_label'])['destination_label']['string'],
                     'type': 'html',
-                    'value': rec.event_id.destination_label,
+                    'value': rec._get_address_label_html(rec.event_id.destination_label, rec._get_destination_record()),
                 })
                 distance += rec.event_id.destination_distance
                 duration += rec.event_id.destination_duration

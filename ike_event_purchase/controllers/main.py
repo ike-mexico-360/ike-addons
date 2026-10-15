@@ -217,7 +217,7 @@ class IkePurchaseController(http.Controller):
                 "x_sap_code_outgoing": real_outgoing_sap_code,
                 "x_parent_expedient": event_name,
                 "x_external_api_record": True,  # Flag para diferenciar las órdenes de compra externas
-                "x_discount_price": copago,  # Se guarda el copago en la linea
+                # "x_discount_price": copago,  # Se guarda el copago en la linea
                 "x_id_event": id_event,
                 "x_validator": validador,
             }))
@@ -510,10 +510,10 @@ class IkePurchaseController(http.Controller):
 
     def _get_uom_id(self, uom_name):
         if uom_name == "SER":
-            return request.env.ref('l10n_mx.product_uom_service_unit').id
+            return request.env['uom.uom']._x_get_ike_service_uom_id().id
 
         # Default service
-        return request.env.ref('l10n_mx.product_uom_service_unit').id
+        return request.env['uom.uom']._x_get_ike_service_uom_id().id
 
     # ------------------------- #
     #     Auxiliar methods      #

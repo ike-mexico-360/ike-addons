@@ -47,6 +47,7 @@
                     invisible="x_event_id == False or state not in ('done', 'purchase') or x_ref_sap != False"/>
                 <button name="x_action_consolidate" type="object" string="Consolidate" groups="base.group_system" invisible="not x_event_id or state != 'to_consolidate'"/>
                 <button name="x_action_reactivate_cost_review" type="object" string="Reactivate cost review" groups="base.group_system,custom_master_catalog.custom_group_ccc_boss" invisible="state != 'draft_cancel'"/>
+                <button name="action_send_email_new_order" type="object" string="Test sending a purchase order email" groups="base.group_system"/>
             </xpath>
             <xpath expr="//button[@name='action_create_invoice']" position="attributes">
                 <attribute name="groups">base.group_system</attribute>

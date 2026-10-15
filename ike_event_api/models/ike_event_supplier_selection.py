@@ -84,7 +84,7 @@ class IkeEventSupplierSelection(models.Model):
 
     def action_notify_operator(self) -> list[int]:
         """OVERRIDE: send operator notification"""
-        self_filtered = self.filtered(lambda x: x.state == 'accepted')
+        self_filtered = self.filtered(lambda x: x.state == 'assigned')
         if not self_filtered:
             return []
         # SUPER

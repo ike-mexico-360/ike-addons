@@ -108,7 +108,7 @@
                 <field name="tax_ids" column_invisible="1" widget="many2many_tags"
                     options="{'no_create': 1, 'no_open': 1}" />
                 <field name="subtotal" readonly="1" />
-                <field name="authorization_pending" optional="hide" />
+                <field name="authorization_pending" readonly="1" optional="hide" />
                 <field name="authorizer_name" optional="hide" />
                 <field name="type_authorization_id" options="{'no_create': 1, 'no_open': 1}" optional="hide" />
                 <field name="is_manual" column_invisible="1"/>
@@ -183,13 +183,13 @@
                             </group>
                         </page>
                         <page string="Concepts" name="products">
-                            <field name="supplier_link_id" readonly="1"/>
+                            <!-- <field name="supplier_link_id" readonly="1"/> -->
                             <field name="supplier_product_ids"
                                 nolabel="1"
                                 colspan="2"
                                 widget="ike_section_and_note_field_o2m"
                                 options="{'field_columns': ['product_id'], 'delete_condition_field': 'mandatory'}"
-                                readonly="1"
+                                readonly="not context.get('from_add_concept', False)"
                                 context="{
                                     'list_view_ref': 'ike_event.ike_event_supplier_product_detail_list_view',
                                     'default_event_supplier_link_id': supplier_link_id,
@@ -443,7 +443,7 @@
                         invisible="(assignation_type == 'electronic' or display_type) or state != 'accepted'"/>
                     -->
                     <button string="Confirm" class="btn-primary"
-                        name="action_confirm_vehicle" type="object"
+                        name="action_assign" type="object"
                         invisible="(assignation_type == 'electronic' or display_type) or state != 'accepted'"/>
                     <button string="Accept" class="btn-primary"
                         name="action_accept" type="object"

@@ -188,12 +188,9 @@ class IkeEventSupplierSelection(models.Model):
         for rec in self:
             rec.stage_id = supplier_on_route_stage.id
             rec.on_route_to_user_start_date_widget = fields.Datetime.now()
-            # Si el evento aún está en etapa asignado, se puede pasar a la etapa en ruta
-            if rec.event_id.stage_ref == event_stage_assigned.ref and rec.event_id.step_number == 1:
-                rec.event_id.with_context(dict(
-                    current_stage_id=rec.event_id.stage_id.id,
-                    current_step_number=rec.event_id.step_number,
-                )).action_forward()
+            if rec.event_id.stage_ref == event_stage_assigned.ref:
+                # IN PROGRESS HARDCODED
+                rec.event_id.stage_id = self.env.ref("ike_event.ike_event_stage_in_progress").id
                 rec.broadcastReload(event_reload=True, reload_type='on_route')
 
     def action_arrive(self):

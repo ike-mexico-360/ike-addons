@@ -62,6 +62,7 @@ export class ServicesMainComponent extends Component {
             modal: {
                 show: false,
                 summaryData: null,
+                showSummaryDetails: true,
                 travelTrackingUrl: null,
                 costsData: null,
                 isLoadingCosts: false,
@@ -73,7 +74,7 @@ export class ServicesMainComponent extends Component {
                 supplierId: null,
                 eventSupplierId: null,
                 stage: null,
-                stageRef: null,
+                supplier_stage: null,
                 scheduled: null,
                 confirmed: null,
                 relojes: null,
@@ -90,7 +91,6 @@ export class ServicesMainComponent extends Component {
                 await this.loadServices();
                 await this.subscribeToEventSupplierNotification();
                 await this.subscribeToScheduledReloadNotification();
-                await this.subscribeToScheduledChangedNotification();
             }
         });
         onMounted(() => {
@@ -107,6 +107,10 @@ export class ServicesMainComponent extends Component {
             },
             () => [this.state.modal.show, this.state.modal.summaryData]
         );
+    }
+
+    toggleSummaryDetails() {
+        this.state.modal.showSummaryDetails = !this.state.modal.showSummaryDetails;
     }
 
     bindSummaryQuickAddLinks() {
@@ -220,35 +224,6 @@ export class ServicesMainComponent extends Component {
         });
     }
 
-    subscribeToScheduledChangedNotification() {
-        this.busService.subscribe('action_notify_changed_to_scheduled', async (payload) => {
-            console.log("Received scheduled changed notification:", payload);
-            // for (const item of payload.data) {
-            //     await this._handleScheduledReloadNotification(item);
-            // }
-        });
-    }
-
-    subscribeToDebugNotifications() {
-        this.busService.subscribe('ike_event_supplier_reload', async (payload) => {
-            console.log('ike_event_supplier_reload received:', payload);
-            for (const item of payload.data) {
-                await this._handleScheduledReloadNotification(item);
-            }
-        });
-        this.busService.subscribe('ike_supplier_lines_reload_2', async (payload) => {
-            console.log('ike_supplier_lines_reload_2 received:', payload);
-            for (const item of payload.data) {
-                await this._handleScheduledReloadNotification(item);
-            }
-        });
-    }
-
-    async _handleScheduledReloadNotification(item) {
-        await this._handleSupplierNotificationItem(item);
-        this.showNotificationWithSound({ title: _t("Upcoming Service"), message: _t('You have a service scheduled to start soon.'), type: 'warning' });
-    }
-
     async _handleSupplierNotificationItem(item) {
         const ACTIVE_STATES = ['notified', 'assigned', 'accepted'];
         const REMOVED_STATES = ['timeout', 'rejected'];
@@ -260,7 +235,7 @@ export class ServicesMainComponent extends Component {
         if (!event_supplier) return;
         if (ACTIVE_STATES.includes(item.state)) {
             if (item.state === 'notified') {  // Nuevos servicios
-                let result = await this._handleActiveService(event_supplier);
+                let result = await this._handleNewService(event_supplier);
                 if (result)
                     this.showNotificationWithSound({ title: _t("New Service Available"), message: _t('You have a new service available.'), type: 'info' });
             }
@@ -275,18 +250,8 @@ export class ServicesMainComponent extends Component {
         }
     }
 
-    _isSameVisibleService(service, event_supplier) {
-        return service.supplier_id === event_supplier.supplier_id
-            && service.event_id === event_supplier.event_id
-            && service.truck_id === event_supplier.truck_id;
-    }
-
-    async _handleActiveService(event_supplier) {
-        const isDuplicate = this.state.services.some(service => this._isSameVisibleService(service, event_supplier));
-        if (isDuplicate) return;
-
-        await this.fetchAndAppendService(event_supplier.event_supplier_id);
-        return true;
+    async _handleNewService(event_supplier) {
+        return await this.includeNewService(event_supplier.event_supplier_id);
     }
 
     async _handleCurrentAssignedService(event_supplier) {
@@ -301,7 +266,7 @@ export class ServicesMainComponent extends Component {
         await this.refreshSingleService(event_supplier.event_supplier_id);
         if (this.state.modal.show && this.state.modal.eventSupplierId === event_supplier.event_supplier_id) {
             this.state.modal.stage = event_supplier.stage_id ?? this.state.modal.stage;
-            this.state.modal.stageRef = event_supplier.stage_ref ?? this.state.modal.stageRef;
+            this.state.modal.supplier_stage_original = event_supplier.supplier_stage_original ?? this.state.modal.supplier_stage_original;
             await this.loadRelojes(event_supplier.event_supplier_id);
         }
     }
@@ -322,49 +287,58 @@ export class ServicesMainComponent extends Component {
         });
     }
 
-    async fetchAndAppendService(eventSupplierId) {
-        try {
-            const existingService = this.state.services.find(service => service.event_supplier_id === eventSupplierId);
-            if (existingService) return;
+    mapSupplierEventToService(event_supplier) {
+        const eventDate = event_supplier.event_date
+            ? deserializeDateTime(event_supplier.event_date)
+            : null;
+        return {
+            name: event_supplier.event_name,
+            event_date: eventDate
+                ? formatDateTime(eventDate, { format: "dd/MM/yyyy HH:mm:ss" })
+                : "",
+            event_date_ts: eventDate ? eventDate.toMillis() : null,
+            opening_date: event_supplier.opening_date
+                ? formatDateTime(deserializeDateTime(event_supplier.opening_date), { format: "dd/MM/yyyy HH:mm:ss" })
+                : "",
+            location_label: this.sanitizeHtml(event_supplier.location_label),
+            service_id: event_supplier.service_id_label,
+            sub_service_id: event_supplier.sub_service_id_label,
+            stage_id: event_supplier.stage_id,
+            stage_id_label: event_supplier.stage_id_label,
+            stage_ref: event_supplier.stage_ref,
+            event_id: event_supplier.event_id,
+            supplier_id: event_supplier.supplier_id,
+            event_supplier_id: event_supplier.event_supplier_id,
+            truck_id: event_supplier.truck_id,
+            driver_name: event_supplier.driver_name,
+            truck_name: event_supplier.truck_name,
+            event_supplier_state: event_supplier.event_supplier_state,
+            event_supplier_state_label: event_supplier.event_supplier_state_label,
+            supplier_stage: event_supplier.supplier_stage,
+            supplier_stage_original: event_supplier.supplier_stage_original,
+            supplier_link_id: event_supplier.supplier_link_id,
+            scheduled: event_supplier.scheduled,
+            background_color: this.obtainServiceLineBackgroundColor(event_supplier),
+            is_upcoming: event_supplier.is_upcoming,
+            confirmed: event_supplier.confirmed,
+            assigned: event_supplier.assigned,
+            operator_notified: event_supplier.operator_notified,
+        };
+    }
 
+    async includeNewService(eventSupplierId) {
+        try {
             const event_supplier = await this.getEventSupplierById(eventSupplierId);
             if (!event_supplier) return;
-            if (this.state.services.some(service => this._isSameVisibleService(service, event_supplier))) return;
-            this.state.services.unshift({
-                name: event_supplier.event_name,
-                event_date: event_supplier.event_date
-                    ? formatDateTime(deserializeDateTime(event_supplier.event_date), { format: "dd/MM/yyyy HH:mm:ss" })
-                    : "",
-                event_date_ts: event_supplier.event_date
-                    ? deserializeDateTime(event_supplier.event_date).toMillis()
-                    : null,
-                opening_date: event_supplier.opening_date
-                    ? formatDateTime(deserializeDateTime(event_supplier.opening_date), { format: "dd/MM/yyyy HH:mm:ss" })
-                    : "",
-                location_label: this.sanitizeHtml(event_supplier.location_label),
-                service_id: event_supplier.service_id_label,
-                sub_service_id: event_supplier.sub_service_id_label,
-                stage_id: event_supplier.stage_id,
-                stage_id_label: event_supplier.stage_id_label,
-                stage_ref: event_supplier.stage_ref,
-                event_id: event_supplier.event_id,
-                supplier_id: event_supplier.supplier_id,
-                event_supplier_id: event_supplier.event_supplier_id,
-                truck_id: event_supplier.truck_id,
-                driver_name: event_supplier.driver_name,
-                truck_name: event_supplier.truck_name,
-                event_supplier_state: event_supplier.event_supplier_state,
-                event_supplier_state_label: event_supplier.event_supplier_state_label,
-                stage: event_supplier.stage,
-                supplier_link_id: event_supplier.supplier_link_id,
-                scheduled: event_supplier.scheduled,
-                background_color: this.obtainServiceLineBackgroundColor(event_supplier),
-                is_upcoming: event_supplier.is_upcoming,
-                confirmed: event_supplier.confirmed,
-                assigned: event_supplier.assigned,
-            });
+            if (this.state.services.some(
+                service => service.event_supplier_id === event_supplier.event_supplier_id
+            )) return false;
+
+            this.state.services.unshift(this.mapSupplierEventToService(event_supplier));
+            return true;
         } catch (err) {
             this.showNotification({ title: _t("Error adding service"), message: _t(err?.data?.message || err.message || "An error occurred while adding the service to the list."), type: 'danger' });
+            return false;
         }
     }
 
@@ -373,11 +347,6 @@ export class ServicesMainComponent extends Component {
             const event_supplier = await this._requireNotifiedEvent(event_supplier_id, _t('This service is no longer available for acceptance.'));
             if (!event_supplier) return;
 
-            if (event_supplier.scheduled && !event_supplier.confirmed) {
-                await this.launchSelectVehicleDialog(event_supplier_id, event_supplier.truck_id);
-                return;
-            }
-
             await this._sendServiceNotification(event_supplier_id);
         } catch (err) {
             this.showNotification({ title: _t("Error notifying service"), message: _t(err?.data?.message || err.message || "An error occurred while notifying the service."), type: 'danger' });
@@ -385,12 +354,18 @@ export class ServicesMainComponent extends Component {
     }
 
     async launchSelectVehicleDialog(event_supplier_id, currentTruckId) {
-        this.dialog.add(SelectVehicleDialog, {
+        const closeDialog = this.dialog.add(SelectVehicleDialog, {
             eventSupplierId: event_supplier_id,
             currentTruckId: currentTruckId,
             onConfirm: async (truckId) => {
-                await this.changeServiceVehicleForScheduledEvent(event_supplier_id, truckId);
-                setTimeout(() => this.openNotificationConfirmation(event_supplier_id, true), 0);
+                try {
+                    await this.changeServiceVehicleForScheduledEvent(event_supplier_id, truckId);
+                    await this.orm.call('ike.event.supplier.public', 'action_assign', [event_supplier_id]);
+                    await this.notifyService(event_supplier_id);
+                } catch (err) {
+                    closeDialog();
+                    this.showNotification({ title: _t("Error notifying service"), message: _t(err?.data?.message || err.message || "An error occurred while notifying the service."), type: 'danger' });
+                }
             },
         });
         return;
@@ -424,7 +399,7 @@ export class ServicesMainComponent extends Component {
 
             await this.orm.call('ike.event.supplier.public', 'action_change_service_vehicle', [event_supplier_id, truck_id]);
             await this.orm.call('ike.event.supplier.public', 'action_accept', [event_supplier_id]);
-            await this.orm.call('ike.event.supplier.public', 'action_confirm_vehicle', [event_supplier_id]);
+            await this.orm.call('ike.event.supplier.public', 'action_assign', [event_supplier_id]);
 
             await this.loadServices(false);
         } catch (err) {
@@ -457,6 +432,38 @@ export class ServicesMainComponent extends Component {
         }
     }
 
+    async assignAndNotifyServiceForPastEvents(event_supplier_id) {
+        try {
+            const event_supplier = await this._requireNotifiedEvent(event_supplier_id, _t('This service is no longer available for acceptance.'));
+            if (!event_supplier) return;
+            await this.orm.call('ike.event.supplier.public', 'action_assign', [event_supplier_id]);
+            await this.notifyService(event_supplier_id);
+            await this.loadServices(false);
+        } catch (err) {
+            this.showNotification({ title: _t("Error notifying service"), message: _t(err?.data?.message || err.message || "An error occurred while notifying the service."), type: 'danger' });
+        }
+    }
+
+    // When the currently assigned vehicle is busy (in service on another event),
+    // action_assign keeps failing for it. This lets the user swap to a different,
+    // available vehicle and confirm/assign it directly, without retrying the busy one.
+    async changeVehicleAndConfirmForPastEvents(event_supplier_id, currentTruckId) {
+        const closeDialog = this.dialog.add(SelectVehicleDialog, {
+            eventSupplierId: event_supplier_id,
+            currentTruckId: currentTruckId,
+            onConfirm: async (truckId) => {
+                try {
+                    await this.orm.call('ike.event.supplier.public', 'action_change_service_vehicle', [event_supplier_id, truckId]);
+                    await this.orm.call('ike.event.supplier.public', 'action_confirm_vehicle_portal', [event_supplier_id]);
+                    await this.loadServices(false);
+                } catch (err) {
+                    closeDialog();
+                    this.showNotification({ title: _t("Error changing service vehicle"), message: _t(err?.data?.message || err.message || "An error occurred while changing the service vehicle."), type: 'danger' });
+                }
+            },
+        });
+    }
+
     async refreshSingleService(event_supplier_id) {
         try {
             const updated = await this.getEventSupplierById(event_supplier_id);
@@ -472,7 +479,8 @@ export class ServicesMainComponent extends Component {
                     event_supplier_state_label: updated.event_supplier_state_label,
                     truck_name: updated.truck_name,
                     driver_name: updated.driver_name,
-                    stage: updated.stage,
+                    supplier_stage: updated.supplier_stage,
+                    supplier_stage_original: updated.supplier_stage_original,
                     stage_id_label: updated.stage_id_label,
                     stage_ref: updated.stage_ref,
                     highlighted: false,
@@ -481,6 +489,7 @@ export class ServicesMainComponent extends Component {
                     scheduled: updated.scheduled,
                     confirmed: updated.confirmed,
                     assigned: updated.assigned,
+                    operator_notified: updated.operator_notified,
                     opening_date: updated.opening_date
                         ? formatDateTime(deserializeDateTime(updated.opening_date), { format: "dd/MM/yyyy HH:mm:ss" })
                         : "",
@@ -548,7 +557,7 @@ export class ServicesMainComponent extends Component {
                 return;
             }
 
-            this.openNotificationConfirmation(event_supplier_id);
+            await this.notifyService(event_supplier_id)
         }
         catch (err) {
             console.log("Error in onAcceptNotify:", err);
@@ -634,42 +643,16 @@ export class ServicesMainComponent extends Component {
                 this.showNotification({ title: _t("Error loading notified events"), message: _t(result.error || "An error occurred while loading the notified events."), type: 'danger' });
                 return [];
             }
-            const services = result.suppliers_events.map(supplier_event => ({
-                name: supplier_event.event_name,
-                event_date: supplier_event.event_date
-                    ? formatDateTime(deserializeDateTime(supplier_event.event_date), { format: "dd/MM/yyyy HH:mm:ss" })
-                    : "",
-                event_date_ts: supplier_event.event_date
-                    ? deserializeDateTime(supplier_event.event_date).toMillis()
-                    : null,
-                opening_date: supplier_event.opening_date
-                    ? formatDateTime(deserializeDateTime(supplier_event.opening_date), { format: "dd/MM/yyyy HH:mm:ss" })
-                    : "",
-                location_label: this.sanitizeHtml(supplier_event.location_label),
-                service_id: supplier_event.service_id_label,
-                sub_service_id: supplier_event.sub_service_id_label,
-                stage_id: supplier_event.stage_id,
-                stage_id_label: supplier_event.stage_id_label,
-                stage_ref: supplier_event.stage_ref,
-                event_id: supplier_event.event_id,
-                supplier_id: supplier_event.supplier_id,
-                event_supplier_id: supplier_event.event_supplier_id,
-                truck_id: supplier_event.truck_id,
-                driver_name: supplier_event.driver_name,
-                truck_name: supplier_event.truck_name,
-                event_supplier_state: supplier_event.event_supplier_state,
-                event_supplier_state_label: supplier_event.event_supplier_state_label,
-                stage: supplier_event.stage,
-                supplier_link_id: supplier_event.supplier_link_id,
-                scheduled: supplier_event.scheduled,
-                background_color: this.obtainServiceLineBackgroundColor(supplier_event),
-                is_upcoming: supplier_event.is_upcoming,
-                confirmed: supplier_event.confirmed,
-                assigned: supplier_event.assigned,
-            }));
-            return services.filter((service, index) => services.findIndex(
-                candidate => this._isSameVisibleService(candidate, service)
-            ) === index);
+            const services = result.suppliers_events.map(
+                supplier_event => this.mapSupplierEventToService(supplier_event)
+            );
+            const seenEventSupplierIds = new Set();
+            return services.filter(service => {
+                if (service.event_supplier_id == null) return true;
+                if (seenEventSupplierIds.has(service.event_supplier_id)) return false;
+                seenEventSupplierIds.add(service.event_supplier_id);
+                return true;
+            });
         } catch (err) {
             this.showNotification({ title: _t("Error processing notified events"), message: _t(err?.data?.message || err.message || "An error occurred while processing the notified events."), type: 'danger' });
             return [];
@@ -679,7 +662,6 @@ export class ServicesMainComponent extends Component {
     async getEventSupplierById(supplierLineId) {
         const result = await rpc('/provider/portal/services/supplier_notified_single', { event_supplier_id: supplierLineId });
         if (result.success && result.supplier_event) {
-            console.log("Fetched supplier event:", result.supplier_event);
             return result.supplier_event;
         }
         this.showNotification({ title: _t("Error loading supplier event"), message: _t(result.error || "An error occurred while loading the supplier event."), type: 'danger' });
@@ -690,6 +672,7 @@ export class ServicesMainComponent extends Component {
         return {
             show: false,
             summaryData: null,
+            showSummaryDetails: true,
             travelTrackingUrl: null,
             costsData: null,
             isLoadingCosts: false,
@@ -701,7 +684,7 @@ export class ServicesMainComponent extends Component {
             supplierId: null,
             eventSupplierId: null,
             stage: null,
-            stageRef: null,
+            supplier_stage_original: null,
             scheduled: null,
             confirmed: null,
             relojes: null,
@@ -718,13 +701,14 @@ export class ServicesMainComponent extends Component {
         try {
             const event_supplier = await this.getEventSupplierById(event_supplier_id);
             if (!event_supplier) return;
+            console.log("Opening service summary modal for event_supplier:", event_supplier);
             const { supplier_link_id, event_id, supplier_id } = event_supplier;
-            this.state.modal.summaryData = event_supplier.event_supplier_summary_data;
+            this.state.modal.summaryData = event_supplier.event_supplier_summary_data_portal;
             this.state.modal.travelTrackingUrl = event_supplier.travel_tracking_url;
             this.state.modal.eventSupplierId = event_supplier_id;
             this.state.modal.linkSupplierId = supplier_link_id;
             this.state.modal.stage = event_supplier.stage_id ?? null;
-            this.state.modal.stageRef = event_supplier.stage_ref ?? null;
+            this.state.modal.supplier_stage_original = event_supplier.supplier_stage_original ?? null;
             this.state.modal.scheduled = event_supplier.scheduled ?? false;
             this.state.modal.confirmed = event_supplier.confirmed ?? false;
 
@@ -821,8 +805,12 @@ export class ServicesMainComponent extends Component {
 
     sanitizeHtml(htmlString) {
         if (!htmlString) return '';
+        // Preserve <br/> line breaks as actual newlines before stripping tags,
+        // so addresses like "Street<br/>City, State, Zip" keep their two lines
+        // (rendered with white-space: pre-line in the template).
+        const withLineBreaks = htmlString.replace(/<br\s*\/?>/gi, '\n');
         const temp = document.createElement('div');
-        temp.innerHTML = htmlString;
+        temp.innerHTML = withLineBreaks;
         return temp.textContent || temp.innerText || '';
     }
 
@@ -837,7 +825,7 @@ export class ServicesMainComponent extends Component {
     }
 
     get isEventFinalized() {
-        return this.state.modal.stage === 'Concluded' || this.state.modal.stage === 'Verifying' || this.state.modal.stageRef === 'closed';
+        return this.state.modal.stage === 'Concluded' || this.state.modal.stage === 'Verifying' || this.state.modal.supplier_stage_original === 'Finalized';
     }
 
     get canShowRelojes() {
@@ -1057,10 +1045,11 @@ export class ServicesMainComponent extends Component {
     }
 
     obtainServiceLineBackgroundColor(supplier_event) {
-        if (supplier_event.scheduled && supplier_event.is_upcoming && supplier_event.event_supplier_state !== 'completed') {
+        const isNotFinalized = !['Concluded', 'Verifying'].includes(supplier_event.stage_id);
+        if (supplier_event.scheduled && supplier_event.is_upcoming && isNotFinalized) {
             return 'bg-upcoming';
         }
-        if (supplier_event.scheduled && supplier_event.stage_id_label !== 'completed') {
+        if (supplier_event.scheduled && isNotFinalized) {
             return 'bg-scheduled';
         }
         if (supplier_event.event_supplier_state === 'notified') {

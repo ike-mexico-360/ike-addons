@@ -76,6 +76,7 @@ class IkeEventProduct(models.Model):
     # === COMPUTES === #
     @api.depends('product_id')
     def _compute_product_domain(self):
+        service_uom = self.env['uom.uom']._x_get_ike_service_uom_id()
         for rec in self:
 
             domain = [
@@ -92,7 +93,7 @@ class IkeEventProduct(models.Model):
                     self.env.ref('uom.product_uom_km').id,
                     self.env.ref('uom.product_uom_day').id,
                     self.env.ref('uom.product_uom_hour').id,
-                    self.env.ref('l10n_mx.product_uom_service_unit').id,
+                    service_uom.id,
                     self.env.ref('uom.product_uom_unit').id,
                     self.env.ref('uom.product_uom_litre').id
                 ]),

@@ -12,6 +12,15 @@ class ResConfigSettings(models.TransientModel):
         compute='_compute_events_allow_send_whatsapp',
         inverse='_inverse_events_allow_send_whatsapp',
     )
+    x_default_purchase_project_id = fields.Many2one(
+        comodel_name='project.project',
+        required=True,
+        related='company_id.x_default_purchase_project_id',
+        string='Default Purchase Project',
+        help="Technical: Default purchase project linked to the company at consolidate and send SAP data.",
+        ondelete='restrict',
+        readonly=False,
+    )
 
     def _compute_events_allow_send_whatsapp(self):
         for setting in self:

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-24 20:04+0000\n"
-"PO-Revision-Date: 2026-09-24 20:04+0000\n"
+"POT-Creation-Date: 2026-10-01 17:32+0000\n"
+"PO-Revision-Date: 2026-10-01 17:32+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -4101,6 +4101,11 @@ msgstr "<t>Capturando datos</t>"
 #: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_1_2
 msgid "<t>Opening of the service</t>"
 msgstr "<t>Apertura del servicio</t>"
+
+#. module: ike_event_binnacle
+#: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_received_assistview
+msgid "<t>The information was received correctly from AssistView</t>"
+msgstr "<t>La información se recibió correctamente de AssistView.</t>"
 
 #. module: ike_event_binnacle
 #: model:mail.template,body_html:ike_event_binnacle.ike_binnacle_stage_mail_template_3_2

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0-20260504\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-21 17:28+0000\n"
-"PO-Revision-Date: 2026-09-21 17:28+0000\n"
+"POT-Creation-Date: 2026-10-08 23:32+0000\n"
+"PO-Revision-Date: 2026-10-08 23:32+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -690,6 +690,13 @@ msgid "Cantidad periodo"
 msgstr ""
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__supplier_center_id
+msgid "Care Center"
+msgstr "Centro de atención"
+
+#. module: custom_master_catalog
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_menu_supplier_centers
 msgid "Care centers"
 msgstr "Centros de atención"
@@ -759,6 +766,12 @@ msgid "Center of attention users"
 msgstr "Usuarios del centro de atención"
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Change priority"
+msgstr "Cambiar prioridad"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality_code__city
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__city
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_coverage_configuration_view_form
@@ -780,6 +793,24 @@ msgstr "Clasificación de teléfonos"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__clause
 msgid "Clause"
 msgstr "Inciso"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_clause_required
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_clause_required
+msgid "Clause required"
+msgstr "Inciso requerido"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_validation_clause_patter
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_validation_clause_patter
+msgid "Clause validation pattern."
+msgstr "Patrón de validación del inciso."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Clear"
+msgstr "Limpiar"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_product_product__sh_product_subscribe
@@ -884,9 +915,10 @@ msgid "Commercial authorization"
 msgstr "Autorización comercial"
 
 #. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_res_company
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_company_tree
 msgid "Companies"
-msgstr "Compañías"
+msgstr "Empresas"
 
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.res_partner_company_ike_action
@@ -895,6 +927,11 @@ msgstr "Compañías"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_company_ike_view_list
 msgid "Companies IKE"
 msgstr "Empresas IKE"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__company_id
+msgid "Company"
+msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_concept_ok
@@ -974,6 +1011,11 @@ msgstr "Configuración de servicios y subservicios"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
 msgid "Configuration service and subservice"
 msgstr "Configuración de servicio y subservicios"
+
+#. module: custom_master_catalog
+#: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_manual_assignment_order_action
+msgid "Configure the manual assignment order"
+msgstr "Configure el orden para asignación manual"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_allowed_product_ids
@@ -1170,6 +1212,7 @@ msgstr "¡Crea tu primera clasificación de teléfono!"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__create_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__create_uid
@@ -1210,6 +1253,7 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__create_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__create_date
@@ -1300,6 +1344,16 @@ msgid "Custom model confirm wizard"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_customerinfo_form
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_customerinfo_form
+msgid "Customer Material Codes"
+msgstr "Código Material por cliente"
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_client_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_client_view_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_client_view_search
@@ -1383,6 +1437,13 @@ msgid "Decimal"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_company__x_default_purchase_project_id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_config_settings__x_default_purchase_project_id
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form_purchase_inherit_cm_catalog
+msgid "Default Purchase Project"
+msgstr "Proyecto de compras predeterminado"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_product_product__uom_id
 #: model:ir.model.fields,help:custom_master_catalog.field_product_template__uom_id
 msgid "Default unit of measure used for all stock operations."
@@ -1447,6 +1508,7 @@ msgstr "Deshabilitar"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__disabled
@@ -1544,6 +1606,12 @@ msgid "Disabled Reason"
 msgstr "Razón de desactivación"
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Discard"
+msgstr "Descartar"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_type__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__display_name
@@ -1557,6 +1625,7 @@ msgstr "Razón de desactivación"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__display_name
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__display_name
@@ -1668,14 +1737,6 @@ msgstr ""
 #. odoo-python
 #: code:addons/custom_master_catalog/wizard/custom_import_postal_codes.py:0
 msgid "El archivo resultante está vacío después del procesamiento."
-msgstr ""
-
-#. module: custom_master_catalog
-#. odoo-python
-#: code:addons/custom_master_catalog/models/res_partner.py:0
-msgid ""
-"El nombre no puede contener caracteres especiales. Solo se permiten letras, "
-"números, espacios, comas, puntos, guión medio y paréntesis."
 msgstr ""
 
 #. module: custom_master_catalog
@@ -1946,6 +2007,7 @@ msgstr "Modelos de vehículos"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_follower_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__message_follower_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__message_follower_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__message_follower_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__message_follower_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__message_follower_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_follower_ids
@@ -2009,6 +2071,18 @@ msgid "Full"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__partner_latitude
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__partner_latitude
+msgid "Geo Latitude"
+msgstr "Geo latitud"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__partner_longitude
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__partner_longitude
+msgid "Geo Longitude"
+msgstr "Geo longitud"
+
+#. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_custom_geographical_area_product_rel
 msgid "Geographical Area Sub-Service"
 msgstr "Subservicios de la zona geográfica"
@@ -2028,6 +2102,14 @@ msgid "Geographical Coverage Areas"
 msgstr "Zonas de cobertura geográficas"
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__municipality_id
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_manual_assignment_order_view_search
+msgid "Geographical Zone"
+msgstr "Zona geográfica"
+
+#. module: custom_master_catalog
 #: model:ir.ui.menu,name:custom_master_catalog.custom_state_municipality_menu
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_menu_geographical_zones
 msgid "Geographical Zones"
@@ -2044,6 +2126,8 @@ msgstr "Zonas de cobertura geográficas"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_model_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_country_state_search
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_manual_assignment_order_view_search
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_metropolitan_zone_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_subservice_specification_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_types_statuses_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_vehicle_type_view_search
@@ -2142,6 +2226,7 @@ msgstr "Homologación"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__id
@@ -2477,6 +2562,7 @@ msgstr "Última actualización"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__write_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__write_uid
@@ -2517,6 +2603,7 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__write_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__write_date
@@ -2606,6 +2693,27 @@ msgstr "Maniobras"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_coverage_configuration_view_search
 msgid "Manual"
 msgstr ""
+
+#. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_custom_manual_assignment_order
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__sequence
+msgid "Manual Assignment Order"
+msgstr "Orden para asignación manual"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+#: model:ir.actions.act_window,name:custom_master_catalog.custom_manual_assignment_order_action
+#: model:ir.actions.client,name:custom_master_catalog.custom_manual_assignment_order_client_action
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_manual_assignment_order_view_list
+msgid "Manual Assignment Order Configuration"
+msgstr "Configuración de Orden para asignación manual"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.js:0
+msgid "Manual assignment order saved."
+msgstr "Orden para asignación manual guardado."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_mapping_ids
@@ -2920,6 +3028,12 @@ msgid "No file has been loaded."
 msgstr "No se ha cargado ningún archivo."
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "No manual assignment suppliers found."
+msgstr "No se encontraron proveedores de asignación manual."
+
+#. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_data_source__quote__none
 msgid "No quote"
 msgstr "Sin comillas"
@@ -2939,8 +3053,25 @@ msgstr ""
 #. module: custom_master_catalog
 #. odoo-python
 #: code:addons/custom_master_catalog/wizard/custom_import_postal_codes.py:0
-#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
 msgid "No se ha cargado ningún archivo."
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "No se indicó estado del vehículo."
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "No se indicó referencia del vehículo."
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
+msgid "No se pudo crear vehículo con referencia '%s': %s"
 msgstr ""
 
 #. module: custom_master_catalog
@@ -2962,19 +3093,14 @@ msgid "Nombre"
 msgstr ""
 
 #. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__error_file_name
-msgid "Nombre archivo errores"
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_customerinfo_form
+msgid "Nombre Producto Cliente"
 msgstr ""
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_list
 msgid "Nombre comercial"
-msgstr ""
-
-#. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_vehicle_import_wizard__file_name
-msgid "Nombre de archivo"
 msgstr ""
 
 #. module: custom_master_catalog
@@ -3111,6 +3237,25 @@ msgstr "Numero de configuración de servicios y subservicios"
 
 #. module: custom_master_catalog
 #. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid ""
+"One or more care centers do not belong to suppliers configured for manual "
+"assignment."
+msgstr ""
+"Uno o más centros de atención no pertenecen a proveedores configurados para "
+"asignación manual."
+
+#. module: custom_master_catalog
+#: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_manual_assignment_order_action
+msgid ""
+"Only care centers belonging to suppliers configured for manual assignment "
+"are allowed."
+msgstr ""
+"Solo se permiten centros de atención de proveedores configurados para "
+"asignación manual."
+
+#. module: custom_master_catalog
+#. odoo-python
 #: code:addons/custom_master_catalog/models/other/custom_data_source/custom_data_source.py:0
 msgid ""
 "Only one field can be marked as Clue per Data Source. The field \"%s\" is "
@@ -3118,6 +3263,13 @@ msgid ""
 msgstr ""
 "Solo un campo puede ser marcado como clave por Fuente de datos. El campo "
 "\"%s\" está marcado como clave"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "Only suppliers configured for manual assignment can be added."
+msgstr ""
+"Solo se pueden agregar proveedores configurados para asignación manual."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_category__operation_area_id
@@ -3128,6 +3280,18 @@ msgstr "Área operativa"
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner_supplier_users_rel__user_type__operator
 msgid "Operator"
 msgstr "Operador"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__manual_assignment_order
+msgid "Order"
+msgstr "Orden"
+
+#. module: custom_master_catalog
+#: model:ir.ui.menu,name:custom_master_catalog.custom_manual_assignment_order_menu
+msgid "Order Configuration"
+msgstr "Configuración de orden"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__origin_destination
@@ -3288,14 +3452,25 @@ msgid "Precision"
 msgstr ""
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__priority
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__priority
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__priority
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__priority
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 msgid "Priority"
 msgstr "Prioridad"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "Priority must be between zero and three."
+msgstr "La prioridad debe estar entre cero y tres."
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_custom_vehicle_import_wizard_form
+msgid "Procesar"
+msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_product_template
@@ -3320,6 +3495,11 @@ msgstr "Color del producto"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.product_template_form_view
 msgid "Product Mappings"
 msgstr "Mapeo de productos"
+
+#. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_uom_uom
+msgid "Product Unit of Measure"
+msgstr "Unidad de medida del producto"
 
 #. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_product_product
@@ -3367,6 +3547,7 @@ msgstr "Comillas"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__rating_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__rating_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__rating_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__rating_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__rating_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__rating_ids
@@ -3464,6 +3645,12 @@ msgstr "Relación entre Proveedores y Conductores"
 #: model:ir.model,name:custom_master_catalog.model_res_partner_supplier_users_rel
 msgid "Relation between Suppliers and Users"
 msgstr "Relación entre Proveedores y Usuarios"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Remove"
+msgstr "Quitar"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source_field__field_required
@@ -3570,9 +3757,27 @@ msgid "Sampling"
 msgstr ""
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Save"
+msgstr "Guardar"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source_field__scale
 msgid "Scale"
 msgstr ""
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_second_clause_required
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_second_clause_required
+msgid "Second clause required"
+msgstr "Segundo inciso requerido"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_validation_second_clause_patter
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_validation_second_clause_patter
+msgid "Second clause validation pattern"
+msgstr "Segundo patrón de validación de inciso."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_display_mask_second
@@ -3597,6 +3802,32 @@ msgstr "Segundo patrón de validación"
 #: code:addons/custom_master_catalog/static/src/widgets/custom_municipality_selection.xml:0
 msgid "Select Municipalities"
 msgstr "Elegir zonas geográficas"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Select a geographical zone and subservice to display suppliers."
+msgstr ""
+"Seleccione una zona geográfica y un subservicio para mostrar los "
+"proveedores."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Select a geographical zone..."
+msgstr "Seleccione una zona geográfica..."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Select a state..."
+msgstr "Seleccione un estado..."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Select a subservice..."
+msgstr "Seleccione un subservicio..."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__product_product__x_unit_period__week
@@ -3711,8 +3942,10 @@ msgstr "Cuentas especiales"
 
 #. module: custom_master_catalog
 #. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 #: code:addons/custom_master_catalog/static/src/widgets/custom_municipality_selection.js:0
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__state_id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__state_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__state_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__state_id
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_country_state_form
@@ -3738,11 +3971,18 @@ msgid "State Name"
 msgstr "Nombre de estado"
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "State, geographical zone and subservice are required."
+msgstr "El estado, la zona geográfica y el subservicio son obligatorios."
+
+#. module: custom_master_catalog
 #: model:ir.ui.menu,name:custom_master_catalog.res_menu_country_state
 msgid "States"
 msgstr "Estados"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_custom_metropolitan_zone__activity_state
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_state
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner_supplier_users_rel__activity_state
 msgid ""
@@ -3817,6 +4057,9 @@ msgid "Subbrand"
 msgstr "Submarca"
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__product_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__subservice_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__subservice_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__product_id
@@ -3826,13 +4069,12 @@ msgstr "Submarca"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_template__x_product_id
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_list
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_manual_assignment_order_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_subservice_specification_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_vehicle_type_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.product_template_form_view
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_template_filter
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_template_list
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 msgid "Subservice"
 msgstr "Subservicio"
 
@@ -3898,7 +4140,10 @@ msgid "Supervisor CDS"
 msgstr ""
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 #: model:ir.actions.act_window,name:custom_master_catalog.res_partner_supplier_action_window
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__supplier_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__supplier_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__supplier_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__partner_id
@@ -3915,8 +4160,6 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_directory_center_view_list
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_drivers_rel_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_users_rel_view_search
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 msgid "Supplier"
 msgstr "Proveedor"
 
@@ -4109,6 +4352,17 @@ msgid "Technical configuration"
 msgstr "Configuración técnica"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_res_company__x_default_purchase_project_id
+#: model:ir.model.fields,help:custom_master_catalog.field_res_config_settings__x_default_purchase_project_id
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form_purchase_inherit_cm_catalog
+msgid ""
+"Technical: Default purchase project linked to the company at consolidate and"
+" send SAP data."
+msgstr ""
+"Técnico: Proyecto de compras predeterminado vinculado a la compañía al "
+"consolidar y enviar datos a SAP."
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_product_product__x_sap_code_income
 msgid "Technical: SAP income code"
 msgstr ""
@@ -4178,6 +4432,13 @@ msgid "The account is equal to the client"
 msgstr "La cuenta es igual al cliente"
 
 #. module: custom_master_catalog
+#: model:ir.model.constraint,message:custom_master_catalog.constraint_custom_manual_assignment_order_manual_assignment_order_unique
+msgid ""
+"The care center can only have one manual assignment order per geographical "
+"zone and subservice."
+msgstr ""
+
+#. module: custom_master_catalog
 #. odoo-python
 #: code:addons/custom_master_catalog/models/res_partner.py:0
 msgid ""
@@ -4205,6 +4466,11 @@ msgid "The file must be type: %s"
 msgstr "El archivo debe ser del tipo: %s"
 
 #. module: custom_master_catalog
+#: model:ir.model.constraint,message:custom_master_catalog.constraint_custom_manual_assignment_order_manual_assignment_order_positive
+msgid "The manual assignment order must be greater than zero."
+msgstr ""
+
+#. module: custom_master_catalog
 #. odoo-python
 #: code:addons/custom_master_catalog/models/other/custom_metropolitan_zone.py:0
 msgid "The name '%s' already exists. It must be unique."
@@ -4219,8 +4485,8 @@ msgid ""
 "allowed."
 msgstr ""
 "El nombre no puede contener caracteres especiales. Solo se permiten letras, "
-"números, espacios, comas, puntos, guiones, barras diagonales, paréntesis y el "
-"símbolo '&'."
+"números, espacios, comas, puntos, guiones, barras diagonales, paréntesis y "
+"el símbolo '&'."
 
 #. module: custom_master_catalog
 #. odoo-python
@@ -4637,6 +4903,18 @@ msgid "Weight Category vehicles"
 msgstr "Categorías de pesos"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_is_policy_account
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_is_policy_account
+msgid "X Is Policy Account"
+msgstr ""
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_is_policy_second_account_second
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_is_policy_second_account_second
+msgid "X Is Policy Second Account Second"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_phone_p1_classification_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_phone_p1_classification_id
 msgid "X Phone P1 Classification"
@@ -4761,6 +5039,11 @@ msgid "e.g. Tesla"
 msgstr "Ej. Tesla"
 
 #. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_custom_product_homologation
+msgid "help to find product"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_armor_level
 msgid "level armor"
 msgstr "Nivel de blindaje"
@@ -4815,191 +5098,3 @@ msgstr "desconocido"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_account_view_form
 msgid "validation and visualization"
 msgstr "validación y visualización"
-#. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__supplier_center_id
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Care Center"
-msgstr "Centro de atención"
-
-#. module: custom_master_catalog
-#: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_manual_assignment_order_action
-msgid "Configure the manual assignment order"
-msgstr "Configure el orden para asignación manual"
-
-#. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__state_id
-#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_manual_assignment_order_view_search
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Geographical Zone"
-msgstr "Zona geográfica"
-
-#. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__sequence
-msgid "Manual Assignment Order"
-msgstr "Orden para asignación manual"
-
-#. module: custom_master_catalog
-#: model:ir.actions.act_window,name:custom_master_catalog.custom_manual_assignment_order_action
-#: model:ir.actions.client,name:custom_master_catalog.custom_manual_assignment_order_client_action
-#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_manual_assignment_order_view_list
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Manual Assignment Order Configuration"
-msgstr "Configuración de Orden para asignación manual"
-
-#. module: custom_master_catalog
-#: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_manual_assignment_order_action
-msgid "Only care centers belonging to suppliers configured for manual assignment are allowed."
-msgstr "Solo se permiten centros de atención de proveedores configurados para asignación manual."
-
-#. module: custom_master_catalog
-#. odoo-python
-#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
-msgid "Only suppliers configured for manual assignment can be added."
-msgstr "Solo se pueden agregar proveedores configurados para asignación manual."
-
-#. module: custom_master_catalog
-#: model:ir.ui.menu,name:custom_master_catalog.custom_manual_assignment_order_menu
-msgid "Order Configuration"
-msgstr "Configuración de orden"
-
-#. module: custom_master_catalog
-#. odoo-python
-#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
-msgid "The care center can only have one manual assignment order per geographical zone and subservice."
-msgstr "El centro de atención solo puede tener un orden de asignación manual por zona geográfica y subservicio."
-
-#. module: custom_master_catalog
-#. odoo-python
-#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
-msgid "The care center must have active coverage for the selected geographical zone and subservice."
-msgstr "El centro de atención debe tener cobertura activa para la zona geográfica y el subservicio seleccionados."
-
-#. module: custom_master_catalog
-#. odoo-python
-#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
-msgid "The manual assignment order must be greater than zero."
-msgstr "El orden para asignación manual debe ser mayor que cero."
-
-#. module: custom_master_catalog
-#. odoo-python
-#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
-msgid "Geographical zone and subservice are required."
-msgstr "La zona geográfica y el subservicio son obligatorios."
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.js:0
-msgid "Manual assignment order saved."
-msgstr "Orden para asignación manual guardado."
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "No manual assignment suppliers found."
-msgstr "No se encontraron proveedores de asignación manual."
-
-#. module: custom_master_catalog
-#. odoo-python
-#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
-msgid "One or more care centers do not belong to suppliers configured for manual assignment."
-msgstr "Uno o más centros de atención no pertenecen a proveedores configurados para asignación manual."
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Select a geographical zone and subservice to display suppliers."
-msgstr "Seleccione una zona geográfica y un subservicio para mostrar los proveedores."
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Select a geographical zone..."
-msgstr "Seleccione una zona geográfica..."
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Select a subservice..."
-msgstr "Seleccione un subservicio..."
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Apply"
-msgstr "Aplicar"
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Clear"
-msgstr "Limpiar"
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Discard"
-msgstr "Descartar"
-
-#. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__manual_assignment_order
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Order"
-msgstr "Orden"
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Remove"
-msgstr "Quitar"
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Save"
-msgstr "Guardar"
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Search..."
-msgstr "Buscar..."
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Care Center State"
-msgstr "Estado del centro de atención"
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "All states"
-msgstr "Todos los estados"
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Select a state..."
-msgstr "Seleccione un estado..."
-
-#. module: custom_master_catalog
-#. odoo-python
-#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
-msgid "State, geographical zone and subservice are required."
-msgstr "El estado, la zona geográfica y el subservicio son obligatorios."
-
-#. module: custom_master_catalog
-#. odoo-javascript
-#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
-msgid "Change priority"
-msgstr "Cambiar prioridad"
-
-#. module: custom_master_catalog
-#. odoo-python
-#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
-msgid "Priority must be between zero and three."
-msgstr "La prioridad debe estar entre cero y tres."

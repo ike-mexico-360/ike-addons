@@ -212,11 +212,19 @@
                             </div>
                         </group>
                         <group>
-                            <field name="event_date"/>
+                            <label for="event_date"/>
+                            <div class="o_row">
+                                <field name="event_date"/>
+                                <field name="scheduled"/>
+                                <button name="action_notify_changed_to_scheduled" string="NOTIFY SCHEDULED" type="object" class="btn-secondary"/>
+                            </div>
                             <field name="service_type_id"/>
                             <field name="event_type_id"/>
-                            <field name="stage_ref"/>
-                            <field name="step_number"/>
+                            <label for="stage_id"/>
+                            <div class="o_row">
+                                <field name="stage_id" options="{'no_create': 1, 'no_open': 1}"/>
+                                <field name="step_number"/>
+                            </div>
                             <field name="sections" invisible="1"/>
                         </group>
                     </group>
@@ -227,7 +235,7 @@
                                    readonly="not (stage_ref == 'capturing' and step_number == 1)"
                                    required="stage_ref != 'draft'"/>
                             <field name="service_domain" invisible="1"/>
-                            <field name="service_res_model" invisible="0"/>
+                            <field name="service_res_model" invisible="1"/>
                             <field name="service_res_id" readonly="1"/>
                             <field name="service_survey_input_id"
                                    context="{'form_view_ref': 'ike_event.ike_survey_user_input_view_form'}"
@@ -243,7 +251,7 @@
                                         'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list',
                                     }"
                                    options="{'no_open': 1, 'no_create': 1}"/>
-                            <field name="sub_service_res_model" invisible="0"/>
+                            <field name="sub_service_res_model" invisible="1"/>
                             <field name="sub_service_res_id" readonly="1"/>
                             <field name="sub_service_survey_input_id"
                                    context="{'form_view_ref': 'ike_event.ike_survey_user_input_view_form'}"
@@ -375,7 +383,10 @@
                                         <button name="action_open_change_vehicle" string="Change Vehicle" type="object" class="btn-link"
                                             context="{'from_view_detail': True}"
                                             invisible="assignation_type == 'electronic' or state == 'assigned'"/>
-                                        <!-- <button name="action_finalize" string="Finalize" type="object" class="btn-link"/> -->
+                                        <!--
+                                        <button name="action_on_route" string="ON ROUTE" type="object" class="btn-link"/>
+                                        <button name="action_finalize" string="FINALIZE" type="object" class="btn-link"/>
+                                        -->
                                     </list>
                                 </field>
                                 <field name="evaluated_pending_suppliers" invisible="1"/>
@@ -590,6 +601,7 @@
     <!-- Action ike.event -->
     <record id="action_ike_event" model="ir.actions.act_window">
         <field name="name">Event</field>
+        <field name="path">ike-event</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">ike.event</field>
         <field name="view_mode">list,form</field>

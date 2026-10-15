@@ -41,8 +41,8 @@ class EventAPIController(http.Controller):
             card = openai_data.get("circulation_card", {}).get("data", {})
             vehicle_data = openai_data.get("vehicle_photos", {}).get("data", {})
 
-            brand = vehicle_data.get("brand", "")
-            model = vehicle_data.get("model", "")
+            brand = (vehicle_data.get("brand") or "").strip()
+            model = (vehicle_data.get("model") or "").strip()
             year = card.get("model_year", "")
             plates = vehicle_data.get("license_plate", False)
             if not plates:
@@ -141,22 +141,68 @@ class EventAPIController(http.Controller):
         Supplier = env['ike.event.supplier'].sudo()
 
         try:
-            supplier = self._resolve_supplier_for_acceptance(
+            supplier_info = self._resolve_supplier_for_acceptance(
                 env=env,
                 supplier_model=Supplier,
                 event_id=event_id,
                 vehicle_ref=vehicle_id,
             )
 
-            accepted_supplier_ids = supplier.action_accept()
-            if accepted_supplier_ids and supplier.id in accepted_supplier_ids:
-                # supplier.write({'acceptance_date': accepted_datetime})  # Se guarda lo recibido, se asume UTC-0
-                supplier.action_assign()
+            supplier = supplier_info['supplier_id']
+            truck = supplier_info['truck_id']
+            reassigned = supplier_info['reassigned']
+            event_id = supplier.event_id
 
-                return {
-                    'status': 'success',
-                    'user_code': supplier.event_id.user_code,
-                }
+            if not event_id.scheduled:  # No es cita
+                if supplier.assignation_type in ['electronic', 'publication', 'manual', 'manual_manual']:  # Tipos de asignación
+                    if not reassigned:  # No es una reasignación
+                        accepted_supplier_ids = supplier.action_accept()  # Se acepta el evento
+                        if len(accepted_supplier_ids) > 0 and supplier.id in accepted_supplier_ids:
+                            return {
+                                'status': 'success',
+                                'user_code': supplier.event_id.user_code,
+                                'vehicle_ref': truck.x_vehicle_ref,
+                            }
+                        raise BadRequest(_('No se puede aceptar el evento para el proveedor especificado, es probable que el evento se aceptara previamente.'))
+                    else:  # Es reasignación
+                        supplier.action_change_service_vehicle(truck.id)  # Cambio de vehículo
+                        supplier.action_assign()  # Se confirma el vehículo
+                        return {
+                            'status': 'success',
+                            'user_code': supplier.event_id.user_code,
+                            'vehicle_ref': truck.x_vehicle_ref,
+                        }
+                raise BadRequest(_('No se puede aceptar el evento para el proveedor especificado debido a un tipo de asignación desconocido.'))
+            else:
+                if not reassigned:
+                    accepted_supplier_ids = supplier.action_accept()
+                    if len(accepted_supplier_ids) > 0 and supplier.id in accepted_supplier_ids:
+                        return {
+                            'status': 'success',
+                            'user_code': supplier.event_id.user_code,
+                            'vehicle_ref': truck.x_vehicle_ref,
+                        }
+                else:
+                    supplier.action_change_service_vehicle(truck.id)
+                    supplier.action_assign()
+                    return {
+                        'status': 'success',
+                        'user_code': supplier.event_id.user_code,
+                        'vehicle_ref': truck.x_vehicle_ref,
+                    }
+
+            # if not supplier:
+            #     raise NotFound(_('No se encontró el registro del proveedor para aceptar o ya expiró'))
+
+            # accepted_supplier_ids = supplier.action_accept()
+            # if len(accepted_supplier_ids) > 0 and supplier.id in accepted_supplier_ids:
+            #     # supplier.write({'acceptance_date': accepted_datetime})  # Se guarda lo recibido, se asume UTC-0
+            #     supplier.action_assign()
+
+            #     return {
+            #         'status': 'success',
+            #         'user_code': supplier.event_id.user_code,
+            #     }
 
             raise BadRequest('No se pudo aceptar el evento para el proveedor especificado')
 
@@ -177,7 +223,12 @@ class EventAPIController(http.Controller):
         direct_suppliers = supplier_model.search(direct_domain, limit=2)
 
         if len(direct_suppliers) == 1:
-            return direct_suppliers
+            return {
+                'supplier_id': direct_suppliers,
+                'truck_id': direct_suppliers.truck_id,
+                'reassigned': False,
+            }
+            # return direct_suppliers, False
 
         if len(direct_suppliers) > 1:
             raise NotFound(
@@ -234,7 +285,7 @@ class EventAPIController(http.Controller):
         # Limitar a esas lineas
         reassignment_domain = [
             ('selected', '=', True),
-            ('state', '=', 'notified'),
+            ('state', '=', 'accepted'),
             ('event_id', '=', event_id),
             ('supplier_id', '=', partner_id),
             ('stage_id', 'in', (preparing_stage.id, assigned_stage.id)),
@@ -280,12 +331,17 @@ class EventAPIController(http.Controller):
         #         )
         #     )
 
-        supplier.action_change_service_vehicle(truck.id)
+        # supplier.action_change_service_vehicle(truck.id)
 
         # Releer el registro por seguridad después del cambio
-        supplier.invalidate_recordset(["truck_id", "state"])
+        # supplier.invalidate_recordset(["truck_id", "state"])
 
-        return supplier
+        return {
+            'supplier_id': supplier,
+            'truck_id': truck,
+            'reassigned': True,
+        }
+        # return supplier, True
 
     # Terminación de recogida
     @http.route('/ike/event/send_end_format', type='http', auth='user', methods=['POST'], csrf=False)

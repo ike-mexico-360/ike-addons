@@ -65,6 +65,7 @@ export class IkeEventFormController extends FormController {
                 continue;
             }
             const line_id = this.model.root.data.service_supplier_ids.records.find(record => record.resId == item.id);
+            const selected_line_id = this.model.root.data.selected_supplier_ids?.records.find(record => record.resId == item.id);
 
             const states_to_notify = ['accepted', 'rejected', 'cancel', 'cancel_supplier'];
             if (states_to_notify.includes(item.state)) {
@@ -104,9 +105,13 @@ export class IkeEventFormController extends FormController {
                 this.notification.add(message, message_options);
             }
 
+            if (selected_line_id) {
+                await selected_line_id.load();
+            }
             if (line_id) {
                 await line_id.load();
-            } else {
+            }
+            if (!selected_line_id && !line_id) {
                 await this.model.root.load();
             }
         }

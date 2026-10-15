@@ -1159,11 +1159,13 @@ class PurchaseOrderController(http.Controller):
 
         try:
             # directly into the write values dictionary without manual parsing.
-            order.with_context(x_skip_dispute_amount_check=True).write({
+            order_ctx = order.with_context(x_skip_dispute_amount_check=True)
+            order_ctx.write({
                 'x_dispute_iteration_count': dispute_count,
                 'x_change_comments': change_comments,
                 'order_line': order_lines,
             })
+            order_ctx.env.flush_all()
             return {'success': True}
         except Exception as e:
             _logger.error(f"Error saving purchase order dispute via RPC: {str(e)}")

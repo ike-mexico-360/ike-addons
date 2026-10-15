@@ -24,13 +24,3 @@ class ResConfigSettings(models.TransientModel):
         help="Technical: Max lines per purchase order at consolidation. If the number of lines is greater than this value, the purchase order will be splitted.",
         readonly=False,
     )
-
-    x_default_purchase_project_id = fields.Many2one(
-        comodel_name='project.project',
-        required=True,
-        related='company_id.x_default_purchase_project_id',
-        string='Default Purchase Project',
-        help="Technical: Default purchase project linked to the company at consolidate and send SAP data.",
-        ondelete='restrict',
-        readonly=False,
-    )

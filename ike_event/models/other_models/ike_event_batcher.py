@@ -44,6 +44,8 @@ class IkeEventBatcher:
             if data_id:
                 for i, item in enumerate(self.event_batches[channel]):
                     if item['id'] == data_id:
+                        if self.event_batches[channel][i].get('event_reload'):
+                            data['event_reload'] = True
                         self.event_batches[channel][i] = data
                         exist = True
                         break

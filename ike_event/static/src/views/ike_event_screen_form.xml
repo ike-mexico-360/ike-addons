@@ -6,13 +6,17 @@
             <div>
                 <!-- SERVICE -->
                 <t t-if="state.sections['user_service_data'] || state.sections['location_data']">
-                    <View t-props="state.serviceInputViewProps" t-if="state.serviceInputAux"/>
-                    <View t-props="state.serviceInputViewProps" t-else=""/>
+                    <t t-if="state.serviceInputViewProps">
+                        <View t-props="state.serviceInputViewProps" t-if="state.serviceInputAux"/>
+                        <View t-props="state.serviceInputViewProps" t-else=""/>
+                    </t>
                 </t>
                 <!-- SURVEY -->
                 <t t-if="state.sections['survey_data']">
-                    <View t-props="state.subServiceSurveyInputViewProps" t-if="state.subServiceSurveyInputAux"/>
-                    <View t-props="state.subServiceSurveyInputViewProps" t-else=""/>
+                    <t t-if="state.subServiceSurveyInputViewProps">
+                        <View t-props="state.subServiceSurveyInputViewProps" t-if="state.subServiceSurveyInputAux"/>
+                        <View t-props="state.subServiceSurveyInputViewProps" t-else=""/>
+                    </t>
                 </t>
                 <!--
                 <div t-if="state.sections['survey_data']" class="o_form_sheet_bg ike-sheet d-none2">
@@ -40,8 +44,10 @@
                 -->
                 <!-- SUBSERVICE -->
                 <t t-if="state.sections['destination_data'] || state.sections['user_sub_service_data']">
-                    <View t-props="state.subServiceInputViewProps" t-if="state.subServiceInputAux"/>
-                    <View t-props="state.subServiceInputViewProps" t-else=""/>
+                    <t t-if="state.subServiceInputViewProps">
+                        <View t-props="state.subServiceInputViewProps" t-if="state.subServiceInputAux"/>
+                        <View t-props="state.subServiceInputViewProps" t-else=""/>
+                    </t>
                 </t>
 
                 <!-- SERVICE SUPPLIER-->

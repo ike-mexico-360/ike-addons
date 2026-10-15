@@ -529,6 +529,15 @@ class IkeEvent(models.Model):
                 'now': fields.Datetime.now(),
             }, batch_timeout=5)
 
+    def action_test_notification_2(self):
+        event_batcher.add_event_notification(
+            self.env.cr.dbname,
+            'ike_channel_event_' + str(self.id),
+            'IKE_TEST',
+            data={
+                'now': fields.Datetime.now(),
+            }, batch_timeout=5)
+
     def action_test_notification_push(self):
         event_batcher.add_event_notification(
             self.env.cr.dbname,
@@ -942,9 +951,17 @@ class IkeEvent(models.Model):
 
     def action_set_user_sub_service_data(self):
         for rec in self:
-            if not self.service_product_ids.filtered(lambda x: x.product_id and not x.display_type):
+            if rec.sub_service_ref in ['town_truck', 'tire_change', 'fuel_supply', 'other_fluid', 'battery_jump']:
+                sub_res_id = self.env[rec.sub_service_res_model].browse(rec.sub_service_res_id)
+                service_vehicle_type_ids = sub_res_id.service_vehicle_type_ids.ids  # type: ignore
+                if not service_vehicle_type_ids:
+                    raise UserError(_('Please add at least one vehicle type.'))
+            if not rec.service_product_ids.filtered(lambda x: x.product_id and not x.display_type):
+                rec.action_set_products_covered()
+            # Double validation
+            if not rec.service_product_ids.filtered(lambda x: x.product_id and not x.display_type):
                 raise UserError(_('Please add products.'))
-            res_id = self.env[rec.sub_service_res_model].search([('event_id', '=', rec.id)], limit=1, order='id desc')
+            res_id = rec.env[rec.sub_service_res_model].search([('event_id', '=', rec.id)], limit=1, order='id desc')
             res_id.set_event_summary_user_subservice_data()  # type: ignore
             rec.event_summary_id.set_user_sub_service_data()
 
@@ -1170,7 +1187,7 @@ class IkeEvent(models.Model):
                 continue
 
             destination_distance_m, destination_duration_s, destination_route = (
-                rec.get_google_route(
+                rec.get_route(
                     rec.location_latitude, rec.location_longitude,
                     rec.destination_latitude, rec.destination_longitude,
                 )
@@ -1564,13 +1581,18 @@ class IkeEvent(models.Model):
 
     def action_notify_changed_to_scheduled(self):
         groups_data = {}
+        supplier_stage_preparing = self.env.ref('ike_event.ike_service_stage_preparing')
         for rec in self:
             self.event_summary_id.set_service_data()
             if not rec.scheduled:
                 continue
             rec.selected_supplier_ids.confirmed = False
-            rec.selected_supplier_ids.truck_id.x_vehicle_service_state = 'available'
             for event_supplier_id in rec.selected_supplier_ids:
+                if event_supplier_id.stage_ref == 'assigned':
+                    event_supplier_id.state = 'accepted'
+                    event_supplier_id.stage_id = supplier_stage_preparing.id
+                if event_supplier_id.truck_id.x_vehicle_service_state == 'in_service':
+                    event_supplier_id.truck_id.x_vehicle_service_state = 'available'
                 supplier_id: str = str(event_supplier_id.supplier_id.id)
                 if supplier_id not in groups_data:
                     groups_data[supplier_id] = [event_supplier_id.id]
@@ -1676,7 +1698,7 @@ class IkeEvent(models.Model):
         ])
 
         if not municipality:
-            return []
+            raise UserError(_('No municipality was found for ZIP code %s.', zip))
 
         return {
             'name': _('Directories center attention'),
@@ -1691,6 +1713,7 @@ class IkeEvent(models.Model):
                 ('disabled', '=', False),
                 ('is_company', '=', True),
                 ('type', '=', 'center'),
+                ('parent_id', '!=', False),
                 ('x_geographical_area_ids', 'any', [
                     ('municipality_id', '=', municipality.id),
                     ('area_product_ids', 'any', [
@@ -1745,6 +1768,31 @@ class IkeEvent(models.Model):
     def get_sub_service_model(self):
         self.ensure_one()
         return self.env[self.sub_service_res_model].browse(self.sub_service_res_id)
+
+    def get_route(self, latitude1, longitude1, latitude2, longitude2):
+        distance_km: float = 0.0
+        duration_m: float = 0.0
+        route = None
+        google_distance_m, google_duration_s, google_route = (
+            self.get_google_route(
+                latitude1, longitude1,
+                latitude2, longitude2,
+            )
+        )
+        if google_route:
+            distance_km = google_distance_m / 1000
+            duration_m = google_duration_s / 60
+            route = google_route
+        else:
+            # Wrong lat/lng?
+            osrm_distance = self.get_osrm_distance(
+                latitude1, longitude1,
+                latitude2, longitude2,
+            )
+            distance_km = osrm_distance['estimated_distance']
+            duration_m = osrm_distance['estimated_duration']
+
+        return distance_km, duration_m, route
 
     def get_google_route(
         self,

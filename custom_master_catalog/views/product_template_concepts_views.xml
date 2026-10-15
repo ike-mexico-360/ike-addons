@@ -100,7 +100,7 @@
             ('type', '=', 'service'),
             ('list_price', '=', 0),
             ('categ_id', '=', ref('product.product_category_all')),
-            ('uom_id', 'in', [ref('uom.product_uom_km'), ref('uom.product_uom_day'), ref('uom.product_uom_hour'), ref('l10n_mx.product_uom_service_unit'), ref('uom.product_uom_unit'), ref('uom.product_uom_litre')]),
+            ('uom_id', 'in', [ref('uom.product_uom_km'), ref('uom.product_uom_day'), ref('uom.product_uom_hour'), ref('uom.product_uom_unit'), ref('uom.product_uom_litre')]),
         ]"/> <!-- To be set in action.server -->
         <field name="context" eval="{
             'default_sale_ok': False,
@@ -110,7 +110,7 @@
             'default_list_price': 0,
             'default_standard_price': 0,
             'default_categ_id': ref('product.product_category_all'),
-            'default_uom_id': ref('l10n_mx.product_uom_service_unit'),
+            'default_uom_id': ref('uom.product_uom_unit'),
             'search_default_filter_enabled': 1,
             'x_concepts_view': True
         }"/>

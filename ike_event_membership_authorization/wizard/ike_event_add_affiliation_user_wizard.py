@@ -20,27 +20,27 @@ class IkeEventAffiliationUser(models.TransientModel):
     account_identification_id = fields.Many2one(
         'custom.account.identification',
         related='account_id.account_id.x_account_identification_id',
-        readonly=True
-    )
+        readonly=True)
     account_identification_second_id = fields.Many2one(
         'custom.account.identification',
         related='account_id.account_id.x_second_key_identification_id',
-        readonly=True
-    )
+        readonly=True)
     key_primary = fields.Char(required=False)
     key_second = fields.Char()
     label_identification_primary = fields.Char(related="account_identification_id.label", string="label")
     label_identification_second = fields.Char(related="account_identification_second_id.label")
     clause_primary = fields.Char(string="Clause")
     clause_second = fields.Char(string="Second clause")
+    x_clause_required = fields.Boolean(related="account_id.x_clause_required")
+    x_second_clause_required = fields.Boolean(related="account_id.x_second_clause_required")
+    x_validation_clause_patter = fields.Char(related="account_id.x_validation_clause_patter")
+    x_validation_second_clause_patter = fields.Char(related="account_id.x_validation_second_clause_patter")
     check_second_key = fields.Boolean(related="account_id.account_id.x_check_second_key")
     check_clause = fields.Boolean(related="account_identification_id.clause", string="Clause ")
     check_clause_second = fields.Boolean(related="account_identification_second_id.clause", string="Second Clause")
 
     check_is_fleet = fields.Boolean(string="Is fleet", readonly=False)
     check_is_special = fields.Boolean(string="Is special", readonly=False)
-    display_key_primary_clause = fields.Char(compute="_onchange_key_clause")
-    display_key_second_clause_second = fields.Char(compute="_onchange_key_second_clause_second")
 
     # USER
     name = fields.Char()
@@ -141,6 +141,20 @@ class IkeEventAffiliationUser(models.TransientModel):
             membership = self._get_membership(key_primary=self.key_primary)
             self._update_view_fields(membership=membership, key_primary=self.key_primary)
 
+    @api.onchange('clause_primary')
+    def _onchange_clause_primary(self):
+        membership = None
+        if self.key_primary:
+            membership = self._get_membership(key_primary=self.key_primary)
+            self._update_view_fields(membership=membership, key_primary=self.key_primary)
+
+    @api.onchange('clause_second')
+    def _onchange_clause_second(self):
+        membership = None
+        if self.key_second and self.check_second_key:
+            membership = self._get_membership(key_second=self.key_second)
+            self._update_view_fields(membership=membership, key_second=self.key_second)
+
     def _update_view_fields(self, membership=None, key_primary=None, key_second=None):
         if membership:
             # Desencriptar y mostrar TODAS las claves de esta membresía
@@ -177,33 +191,17 @@ class IkeEventAffiliationUser(models.TransientModel):
         elif self._context.get('created_from_bp'):
             pass
         else:
+            was_autofilled = self.fields_readonly
             self.name = False
             self.phone = False
-            self.clause_primary = False
-            self.clause_second = False
             self.check_is_fleet = False
             self.check_is_special = False
             self.fields_readonly = False
-            if key_primary:
-                self.key_second = False
-            if key_second:
-                self.key_primary = False
-
-    @api.onchange('key_primary', 'clause_primary')
-    def _onchange_key_clause(self):
-        for rec in self:
-            if rec.key_primary and rec.clause_primary:
-                rec.display_key_primary_clause = f"{rec.key_primary}-{rec.clause_primary}"
-            else:
-                rec.display_key_primary_clause = rec.key_primary or rec.clause_primary or False
-
-    @api.onchange('key_second', 'clause_second')
-    def _onchange_key_second_clause_second(self):
-        for rec in self:
-            if rec.key_second and rec.clause_second:
-                rec.display_key_primary_clause = f"{rec.key_second}-{rec.clause_second}"
-            else:
-                rec.display_key_second_clause_second = rec.key_second or rec.clause_second or False
+            if was_autofilled:
+                if key_primary:
+                    self.key_second = False
+                if key_second:
+                    self.key_primary = False
 
     # COMPUTE
     @api.depends('user_authorization_affiliation_id')
@@ -303,17 +301,32 @@ class IkeEventAffiliationUser(models.TransientModel):
             decrypted_key_second = encryption.x_decrypt_aes256(
                 membership.second_key_identification
             ) if membership.second_key_identification else None
-
-            # Comparar con la clave primaria proporcionada
             if key_primary:
-                if decrypted_key_primary and str(decrypted_key_primary).strip() == str(key_primary).strip():
-                    return membership
-
-            # Comparar con la clave secundaria proporcionada
+                if not membership.x_clause_required:
+                    if decrypted_key_primary and str(decrypted_key_primary).strip() == str(key_primary).strip():
+                        return membership
+                    if decrypted_key_second and str(decrypted_key_second).strip() == str(key_primary).strip():
+                        return membership
+                else:
+                    # mixed key_primary with clause_primary
+                    if (
+                        decrypted_key_primary and str(decrypted_key_primary).strip() == str(key_primary).strip()
+                        and (membership.clause or '').strip() == (self.clause_primary or '').strip()
+                    ):
+                        return membership
             if key_second:
-                if decrypted_key_second and str(decrypted_key_second).strip() == str(key_second).strip():
-                    return membership
-
+                if not membership.x_second_clause_required:
+                    if decrypted_key_second and str(decrypted_key_second).strip() == str(key_second).strip():
+                        return membership
+                    if decrypted_key_primary and str(decrypted_key_primary).strip() == str(key_second).strip():
+                        return membership
+                else:
+                    # mixed key_second with clause_second
+                    if (
+                        decrypted_key_second and str(decrypted_key_second).strip() == str(key_second).strip()
+                        and (membership.second_clause or '').strip() == (self.clause_second or '').strip()
+                    ):
+                        return membership
         return False
 
     def _get_name(self, name):
@@ -399,8 +412,6 @@ class IkeEventAffiliationUser(models.TransientModel):
             'clause': self.clause_primary,
             'second_clause': self.clause_second,
             'date': fields.Date.today(),
-            'display_key_primary_clause': self.display_key_primary_clause,
-            'display_key_second_clause_second': self.display_key_second_clause_second
         }
         if not self.account_id.account_id.authorizer:
             today = fields.Date.context_today(self)

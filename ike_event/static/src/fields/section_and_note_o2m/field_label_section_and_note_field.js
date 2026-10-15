@@ -100,10 +100,15 @@ export class IkeLabelSectionAndNoteField extends ProductLabelSectionAndNoteField
         const parent = record._parentRecord;
         if (!parent) return null;
 
+        const isSibling = item =>
+            item != record
+            && item.data[this.props.name]
+            && (!("supplier_number" in record.data) || item.data.supplier_number === record.data.supplier_number);
+
         if (this.props.parentFieldName) {
             const list = parent.data[this.props.parentFieldName];
             if (list?.records?.includes(record)) {
-                return list.records.filter(item => item != record && item.data[this.props.name]);
+                return list.records.filter(isSibling);
             }
         } else {
             for (const fieldName in parent.activeFields) {
@@ -115,7 +120,7 @@ export class IkeLabelSectionAndNoteField extends ProductLabelSectionAndNoteField
                 ) {
                     const list = parent.data[fieldName];
                     if (list?.records?.includes(record)) {
-                        return list.records.filter(item => item != record && item.data[this.props.name]);
+                        return list.records.filter(isSibling);
                     }
                 }
             }

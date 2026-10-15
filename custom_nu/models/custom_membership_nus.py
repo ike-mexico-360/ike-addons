@@ -46,6 +46,10 @@ class CustomMembershipNus(models.Model):
         related="membership_plan_id.x_display_mask_second")
     check_second_key = fields.Boolean(related="membership_plan_id.account_id.x_check_second_key")
     check_clause = fields.Boolean(related="membership_plan_id.account_identification_id.clause", string="Check clause")
+    x_validation_clause_patter = fields.Char(related="membership_plan_id.x_validation_clause_patter")
+    x_validation_second_clause_patter = fields.Char(related="membership_plan_id.x_validation_second_clause_patter")
+    x_clause_required = fields.Boolean(related="membership_plan_id.x_clause_required")
+    x_second_clause_required = fields.Boolean(related="membership_plan_id.x_second_clause_required")
     second_check_clause = fields.Boolean(
         related="membership_plan_id.second_account_identification_id.clause",
         string="Second check clause")

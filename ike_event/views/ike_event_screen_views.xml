@@ -456,13 +456,13 @@
                                         string="Change Vehicle"
                                         icon="fa-clock-o"
                                         class="btn-link"
-                                        invisible="state == 'assigned' or confirmed"/>
+                                        invisible="confirmed or stage_ref in ['cancel']"/>
                                     <button name="open_change_state_supplier_wizard"
                                         type="object"
                                         string="Watches"
                                         icon="fa-clock-o"
                                         class="btn-link"
-                                        invisible="stage_ref in ['cancel', 'preparing'] or
+                                        invisible="stage_ref in ['cancel', 'preparing', 'finalized'] or
                                         event_stage_ref in ['draft', 'capturing', 'searching', 'verifying', 'closed', 'cancel_verifying', 'cancel', 'cancel_subsequently', 'cancel_closed'] or
                                         state in ['cancel', 'cancel_event', 'cancel_supplier'] or not confirmed"
                                         groups="base.group_system,custom_master_catalog.custom_group_manager_cds,custom_master_catalog.custom_group_supervisor_cds,custom_master_catalog.custom_group_event_coordinator"/>

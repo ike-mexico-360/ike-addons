@@ -213,7 +213,12 @@ class CatalogsAPIController(http.Controller):
         request.env.cr.execute(query, {'user_tz': user_tz, 'vehicle_id': vehicle_id, 'user_lang': user_lang})
         events = request.env.cr.dictfetchall()
         for event in events:
-            event['destination'] = html2plaintext(event['destination'] or '')  # Quitar salto HTML
+            destination = event['destination'] or _(
+                'Sin datos de viaje<br/>Lat: %(latitude)s, Long: %(longitude)s',
+                latitude=event['latitude'] if event['latitude'] is not None else '-',
+                longitude=event['longitude'] if event['longitude'] is not None else '-',
+            )
+            event['destination'] = html2plaintext(destination)  # Quitar salto HTML
         return events
 
     @http.route('/ike/catalog/events/get/olds', type='json', auth='user', methods=['POST'])
@@ -277,7 +282,12 @@ class CatalogsAPIController(http.Controller):
         request.env.cr.execute(query, {'user_tz': user_tz, 'vehicle_id': vehicle_id, 'user_lang': user_lang})
         events = request.env.cr.dictfetchall()
         for event in events:
-            event['destination'] = html2plaintext(event['destination'] or '')  # Quitar salto HTML
+            destination = event['destination'] or _(
+                'Sin datos de viaje<br/>Lat: %(latitude)s, Long: %(longitude)s',
+                latitude=event['latitude'] if event['latitude'] is not None else '-',
+                longitude=event['longitude'] if event['longitude'] is not None else '-',
+            )
+            event['destination'] = html2plaintext(destination)  # Quitar salto HTML
         return events
 
     @http.route('/ike/catalog/events/get/last', type='json', auth='user', methods=['POST'])
@@ -336,7 +346,12 @@ class CatalogsAPIController(http.Controller):
         request.env.cr.execute(query, {'user_tz': user_tz, 'vehicle_id': vehicle_id, 'user_lang': user_lang})
         events = request.env.cr.dictfetchall()
         for event in events:
-            event['destination'] = html2plaintext(event['destination'] or '')  # Quitar salto HTML
+            destination = event['destination'] or _(
+                'Sin datos de viaje<br/>Lat: %(latitude)s, Long: %(longitude)s',
+                latitude=event['latitude'] if event['latitude'] is not None else '-',
+                longitude=event['longitude'] if event['longitude'] is not None else '-',
+            )
+            event['destination'] = html2plaintext(destination)  # Quitar salto HTML
             # Array de los tiempos en que se cambió de etapa hasta el momento
             elapsed_times = self._ike_get_ike_event_supplier_elapsed_times(event['id'], vehicle_id)
             event['elapsed_times'] = elapsed_times if elapsed_times else []

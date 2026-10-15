@@ -2,6 +2,7 @@
 
 from . import custom_product_homologation
 from . import custom_incident_type
+from . import res_company
 from . import res_config_settings
 from . import res_country
 from . import res_country_state
@@ -26,5 +27,6 @@ from . import custom_data_source
 from . import custom_subservice_specification
 from . import custom_vehicle_weight_category
 from . import custom_holidays
+from . import uom_uom
 from . import custom_metropolitan_zone
 from . import custom_manual_assignment_order

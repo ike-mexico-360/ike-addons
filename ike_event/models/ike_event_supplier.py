@@ -71,6 +71,7 @@ class IkeEventSupplier(models.Model):
     # === SERVICE FIELDS === #
     subservice_id = fields.Many2one('product.product', related='event_id.sub_service_id')
     event_supplier_summary_data = fields.Html(compute='_compute_event_supplier_summary_data')
+    event_supplier_summary_data_portal = fields.Html(compute='_compute_event_supplier_summary_data_portal')
     travel_tracking_url = fields.Char(compute='_compute_travel_tracking_url')
 
     # === EVALUATION FIELDS === #
@@ -122,6 +123,9 @@ class IkeEventSupplier(models.Model):
                 ('driver_id', '!=', False),
             ]
 
+            # if rec.assignation_type not in ['manual', 'manual_manual']:
+            #     domain.append(('x_vehicle_service_state', '=', 'available'))
+
             if rec.event_id.requires_federal_plates:
                 domain.append(
                     ('x_federal_license_plates', '=', True),
@@ -137,6 +141,29 @@ class IkeEventSupplier(models.Model):
                 travel_tracking_url_base or 'https://www.example.com', rec.truck_id.x_vehicle_ref, rec.event_id.id, self.env.cr.dbname
             )
             rec.travel_tracking_url = travel_tracking_url
+
+    @api.model
+    def _summary_row_html(self, label, value, extra=''):
+        extra_html = f' {extra}' if extra else ''
+        return f"""
+            <div><span style='font-weight: bold;'>{label}: </span>
+            <span>{value}</span>{extra_html}</div>
+        """
+
+    @api.model
+    def _summary_two_columns_html(self, rows):
+        """Lay out a list of row-html snippets in two side-by-side columns."""
+        if not rows:
+            return ''
+        midpoint = (len(rows) + 1) // 2
+        left = ''.join(rows[:midpoint])
+        right = ''.join(rows[midpoint:])
+        return f"""
+            <div class="row">
+                <div class="col-md-6">{left}</div>
+                <div class="col-md-6">{right}</div>
+            </div>
+        """
 
     @api.depends('event_id.service_res_id')
     def _compute_event_supplier_summary_data(self):
@@ -187,7 +214,22 @@ class IkeEventSupplier(models.Model):
                 location_fields = ['location_label', 'destination_label', 'destination_distance', 'destination_duration']
                 location_record_fields = rec.event_id.fields_get(location_fields)
                 location_record_data = rec.event_id.read(location_fields)[0]
+                # Between streets / References are captured on the service (origin) and
+                # sub-service (destination) records, show them under their address.
+                summary_model = self.env['ike.event.summary']
+                origin_record = vial_record or None
+                destination_record = None
+                if rec.event_id.sub_service_res_model and rec.event_id.sub_service_res_id:
+                    sub_service_record = rec.event_id.get_sub_service_model()
+                    if 'destination_label' in sub_service_record._fields:
+                        destination_record = sub_service_record
                 for field in location_fields:  # Location details
+                    if field == 'location_label':
+                        location_record_data[field] = summary_model._get_address_label_html(
+                            location_record_data[field], origin_record)
+                    if field == 'destination_label':
+                        location_record_data[field] = summary_model._get_address_label_html(
+                            location_record_data[field], destination_record)
                     if field == 'destination_distance':  # Formatear distancia
                         location_record_data[field] = f"{round(location_record_data[field], 3)} km"
                     if field == 'destination_duration':
@@ -331,6 +373,247 @@ class IkeEventSupplier(models.Model):
 
             rec.event_supplier_summary_data = event_summary_supplier_data
 
+    @api.depends('event_id.service_res_id')
+    def _compute_event_supplier_summary_data_portal(self):
+        for rec in self:
+            event_summary_supplier_data_portal = ""
+            # FixMe: wrong validation
+            states = (
+                'searching',
+                'assigned',
+                'in_progress',
+                'completed',
+                'verifying',
+                'closed',
+                'cancel',
+                'cancel_subsequently',
+                'cancel_verifying',
+                'cancel_closed',
+            )
+            if rec.event_id.service_ref == 'vial' and rec.event_id.stage_ref in states:
+                # Modelo de detalles del vehículo al que se le dará el servicio
+                vial_res_model = rec.event_id.service_res_model
+                vial_res_id = rec.event_id.service_res_id
+                vial_record = self.env[vial_res_model].browse(vial_res_id)
+
+                confirmed_service_rows = []
+
+                user_service_fields = [
+                    'vehicle_brand',
+                    'vehicle_model',
+                    'vehicle_year',
+                    'vehicle_category_id',
+                    'vehicle_plate',
+                    'vehicle_color',
+                ]
+                vial_record_fields = vial_record.fields_get(user_service_fields)
+                vial_record_data = vial_record.read(user_service_fields)[0]
+                if vial_record:  # Omitir si no hay registro
+                    for field in user_service_fields:  # Vehicle details
+                        value = vial_record_data[field] or ''
+                        if vial_record_fields[field]['type'] == 'many2one' and value:
+                            value = value[1]
+                        confirmed_service_rows.append(
+                            self._summary_row_html(vial_record_fields[field]['string'], value)
+                        )
+
+                # Location section
+                location_fields = ['location_label', 'destination_label', 'destination_distance', 'destination_duration']
+                location_record_fields = rec.event_id.fields_get(location_fields)
+                location_record_data = rec.event_id.read(location_fields)[0]
+                # Between streets / References are captured on the service (origin) and
+                # sub-service (destination) records, show them under their address.
+                summary_model = self.env['ike.event.summary']
+                origin_record = vial_record or None
+                destination_record = None
+                if rec.event_id.sub_service_res_model and rec.event_id.sub_service_res_id:
+                    sub_service_record = rec.event_id.get_sub_service_model()
+                    if 'destination_label' in sub_service_record._fields:
+                        destination_record = sub_service_record
+                for field in location_fields:  # Location details
+                    if field == 'location_label':
+                        location_record_data[field] = summary_model._get_address_label_html(
+                            location_record_data[field], origin_record)
+                    if field == 'destination_label':
+                        location_record_data[field] = summary_model._get_address_label_html(
+                            location_record_data[field], destination_record)
+                    if field == 'destination_distance':  # Formatear distancia
+                        location_record_data[field] = f"{round(location_record_data[field], 3)} km"
+                    if field == 'destination_duration':
+                        destination_duration_minutes, destination_duration_seconds =\
+                            self.decimal_minutes_to_time(location_record_data[field])
+                        location_record_fields[field] = {'string': _('Estimated Duration Destination')}
+
+                        location_record_data[field] = (
+                            _("%s minutes %s seconds") % (destination_duration_minutes, destination_duration_seconds))
+                    confirmed_service_rows.append(
+                        self._summary_row_html(location_record_fields[field]['string'], location_record_data[field] or '')
+                    )
+
+                # Account / NU Name / Coordinates: show the value when set, otherwise a
+                # quick-add link (visual only for now, no persistence wired up yet).
+                account_value = rec.event_id.account_id.name if rec.event_id.account_id else ''
+                nu_name_value = rec.event_id.nu_name or ''
+                has_coordinates = (
+                    rec.event_id.location_latitude and rec.event_id.location_longitude
+                    and rec.event_id.destination_latitude and rec.event_id.destination_longitude
+                )
+
+                def _format_coordinate(value):
+                    try:
+                        return f"{float(value):.6f}"
+                    except (TypeError, ValueError):
+                        return value
+
+                coordinates_value = (
+                    f"{_format_coordinate(rec.event_id.location_latitude)}, "
+                    f"{_format_coordinate(rec.event_id.location_longitude)} → "
+                    f"{_format_coordinate(rec.event_id.destination_latitude)}, "
+                    f"{_format_coordinate(rec.event_id.destination_longitude)}"
+                ) if has_coordinates else ''
+
+                add_account_link = '' if account_value else (
+                    f'<a href="#" class="ike-summary-add-account" style="color:#0d6efd;">{_("Add")}</a>'
+                )
+                add_nu_name_link = '' if nu_name_value else (
+                    f'<a href="#" class="ike-summary-add-nu-name" style="color:#0d6efd;">{_("Add")}</a>'
+                )
+                add_coordinates_link = '' if has_coordinates else (
+                    f'<a href="#" class="ike-summary-add-coordinates" style="color:#0d6efd;">{_("Add")}</a>'
+                )
+
+                confirmed_service_rows.append(self._summary_row_html(_('Account'), account_value, add_account_link))
+                confirmed_service_rows.append(self._summary_row_html(_('NU Name'), nu_name_value, add_nu_name_link))
+                confirmed_service_rows.append(
+                    self._summary_row_html(_('Origin and Destination Coordinates'), coordinates_value, add_coordinates_link)
+                )
+
+                event_summary_supplier_data_portal = (
+                    "<h3>%s</h3>" % _('Confirmed service')
+                    + self._summary_two_columns_html(confirmed_service_rows)
+                )
+
+                # Supplier section
+                supplier_rows = []
+
+                supplier_fields = [
+                    'supplier_id',
+                    'assigned',
+                    'estimated_distance',
+                    'estimated_duration',
+                    'assignation_type',
+                    'truck_id',
+                    'truck_plate'
+                ]
+                supplier_record_fields = rec.fields_get(supplier_fields)
+                supplier_record_data = rec.read(supplier_fields)[0]
+
+                if rec.acceptance_date and rec.event_id.supplier_search_date:
+                    # Assignation Duration
+                    # Insertar clave 'assignation_duration' después de 'assignation_type' y calcular
+                    f_index = supplier_fields.index('assignation_type') + 1
+                    supplier_fields.insert(f_index, 'assignation_duration')
+                    supplier_record_fields['assignation_duration'] = {'string': _('Assignation Duration')}
+
+                    # Assignation Duration (Bloque que tiene Nefta en ike_event_summary)
+                    # ToDo FIX rec.event_id.supplier_search_date
+                    # -------------------------
+                    if not rec.event_id.supplier_search_date:  # Remove
+                        rec.event_id.supplier_search_date = fields.Datetime.now()  # Remove
+                    # -------------------------
+                    delta = rec.acceptance_date - rec.event_id.supplier_search_date
+                    # -------------------------
+                    duration = int(delta.total_seconds())
+                    # Convert seconds to 'X minutes X seconds'
+                    # assignation_duration = str(duration) + "s"
+                    assignation_minutes = duration // 60
+                    assignation_seconds = duration % 60
+                    assignation_duration = _("%s minutes %s seconds") % (assignation_minutes, assignation_seconds)
+
+                    supplier_record_data['assignation_duration'] = assignation_duration
+
+                for field in supplier_fields:
+                    # Obtener display_name de los many2one
+                    if field in ['supplier_id', 'truck_id']:
+                        field_data = supplier_record_data.get(field, False)
+                        if field_data:
+                            supplier_record_data[field] = supplier_record_data[field][1]
+                        else:
+                            supplier_record_data[field] = ''
+                    if field == 'assigned':  # Hack, cambiar etiqueta para que tome la traducción anterior
+                        supplier_record_fields[field]['string'] = _('Operator')
+                    if field == 'estimated_distance':
+                        supplier_record_data[field] = f"{round(supplier_record_data[field], 3)} km"
+                    if field == 'estimated_duration':
+                        estimated_duration_minutes, estimated_duration_seconds =\
+                            self.decimal_minutes_to_time(supplier_record_data[field])
+                        supplier_record_data[field] = (
+                            "%s minutes %s seconds" % (estimated_duration_minutes, estimated_duration_seconds))
+                    if field == 'assignation_type':
+                        assignation_types = dict(rec._fields['assignation_type'].get_description(self.env)['selection'])
+                        supplier_record_data[field] = assignation_types.get(supplier_record_data[field])
+                    if field == 'vehicle_plate':  # Hack, cambiar etiqueta para que tome la traducción anterior
+                        supplier_record_fields[field]['string'] = _('Plate')
+                    supplier_rows.append(
+                        self._summary_row_html(supplier_record_fields[field]['string'], supplier_record_data[field] or '')
+                    )
+                    if field == 'supplier_id':
+                        # Maneuvers: concepts already added for this supplier that carry the
+                        # "Maneuvers" product tag. Falls back to a quick-add link (which reveals
+                        # the existing add-concept form in the modal) when there are none yet.
+                        maneuver_tag = self.env.ref('ike_event.ike_product_tag_maneuvers', raise_if_not_found=False)
+                        maneuver_lines = rec.supplier_product_ids.filtered(
+                            lambda line: line.product_id and maneuver_tag.id in line.product_id.product_tag_ids.ids
+                        ) if maneuver_tag else rec.supplier_product_ids.browse()
+                        maneuvers_value = ', '.join(maneuver_lines.mapped('product_id.display_name'))
+                        if maneuvers_value:
+                            add_maneuvers_link = ''
+                        else:
+                            truck_has_maneuvers = bool(rec.truck_id.x_maneuvers) if rec.truck_id else False
+                            add_maneuvers_link = f'<span>{_("Yes") if truck_has_maneuvers else _("No")}</span>'
+                        supplier_rows.append(
+                            self._summary_row_html(_('Maneuvers'), maneuvers_value, add_maneuvers_link)
+                        )
+
+                # Invoicing company: derived from the event's account, same as the
+                # purchase order portal (ike_event_purchase/controllers/portal.py).
+                invoice_companies = rec.event_id.account_id.x_invoice_company_id
+                if invoice_companies:
+                    invoice_company_names = ', '.join(invoice_companies.mapped('name'))
+                    invoice_addresses = []
+                    for company in invoice_companies:
+                        address_parts = [
+                            company.street,
+                            company.street2,
+                            company.city,
+                            company.state_id.name if company.state_id else False,
+                            company.zip,
+                            company.country_id.name if company.country_id else False,
+                        ]
+                        address = ', '.join(part for part in address_parts if part)
+                        if address:
+                            invoice_addresses.append(address)
+                    invoice_company_address = ', '.join(invoice_addresses)
+                    invoice_company_vat = ', '.join(filter(None, invoice_companies.mapped('vat')))
+                    invoice_company_phone = ', '.join(filter(None, invoice_companies.mapped('phone')))
+                else:
+                    invoice_company_names = ''
+                    invoice_company_address = ''
+                    invoice_company_vat = ''
+                    invoice_company_phone = ''
+
+                supplier_rows.append(self._summary_row_html(_('Invoicing Company'), invoice_company_names))
+                supplier_rows.append(self._summary_row_html(_('Invoicing Address'), invoice_company_address))
+                supplier_rows.append(self._summary_row_html(_('RFC'), invoice_company_vat))
+                supplier_rows.append(self._summary_row_html(_('Invoicing Phone'), invoice_company_phone))
+
+                event_summary_supplier_data_portal += (
+                    "<h3 class='mt-3'>%s</h3>" % _('Assigned Supplier')
+                    + self._summary_two_columns_html(supplier_rows)
+                )
+
+            rec.event_supplier_summary_data_portal = event_summary_supplier_data_portal
+
     def _compute_evaluation_locked(self):
         for rec in self:
             if rec.assignation_type not in ['manual', 'manual_manual']:
@@ -409,7 +692,7 @@ class IkeEventSupplier(models.Model):
                 **self.env.context,
                 'create': False,
                 'edit': True,
-                'from_add_concept': True,
+                'from_add_concept': self.selected is True or self.is_manual and self.state == 'available',
                 'from_internal': True,
             },
             'target': 'new',

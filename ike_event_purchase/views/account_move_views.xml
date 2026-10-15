@@ -18,6 +18,10 @@
         <field name="model">account.move</field>
         <field name="inherit_id" ref="account.view_move_form"/>
         <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='button_request_cancel']" position="after">
+                <button name="action_rejected" type="object" string="Test send status invoice email" groups="base.group_system"/>
+                <button name="action_send_email_status_payment" type="object" string="Test send status payment email" groups="base.group_system"/>
+            </xpath>
             <xpath expr="//field[@name='amount_residual']" position="after">
                 <field name="x_gross_sale" widget="monetary" options="{'currency_field': 'currency_id'}"/>
             </xpath>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!-- Change uom_id of sub services to l10n_mx Service uom -->
+    <record id="custom_master_catalog.ike_product_product_vial_truck" model="product.product">
+        <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+    </record>
+
+    <record id="custom_master_catalog.ike_product_product_vial_tire" model="product.product">
+        <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+    </record>
+
+    <record id="custom_master_catalog.ike_product_product_vial_fuel" model="product.product">
+        <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+    </record>
+
+    <record id="custom_master_catalog.ike_product_product_vial_fluid" model="product.product">
+        <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+    </record>
+
+    <record id="custom_master_catalog.ike_product_product_vial_battery" model="product.product">
+        <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+    </record>
+
+    <record id="custom_master_catalog.ike_product_product_medical_consultation" model="product.product">
+        <field name="uom_id" ref="l10n_mx.product_uom_service_unit"/>
+    </record>
+
+</odoo>

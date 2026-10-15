@@ -14,6 +14,7 @@
         'ike_event',
         'ike_event_membership_authorization',
         'ike_event_purchase',
+        'ike_event_api',
         'wk_appointment'
     ],
     "data": [

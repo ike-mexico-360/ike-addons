@@ -289,9 +289,6 @@ export class GoogleMapWidget extends Component {
                     [this.props.longitude]: lng,
                 };
 
-                if (this.props.location_label) {
-                    dataToUpdate[this.props.location_label] = `${locationData.street} <br/> ${locationData.city}, ${locationData.state}, ${locationData.postalCode}`;
-                }
                 if (this.props.street) dataToUpdate[this.props.street] = locationData.street || '';
                 if (this.props.street_number) dataToUpdate[this.props.street_number] = locationData.streetNumber || '';
                 if (this.props.city) dataToUpdate[this.props.city] = locationData.city || '';
@@ -327,11 +324,26 @@ export class GoogleMapWidget extends Component {
                 //     }
                 // }
                   // Municipality
+                let municipalityName = '';
                 if (this.props.municipality && locationData.municipality) {
                     const muni = await this.getRecordByZipCode('custom.state.municipality.code', locationData.postalCode);
                     if (muni.id) {
                         dataToUpdate[this.props.municipality] = [muni.id, muni.name];
-                    } 
+                        municipalityName = muni.name;
+                    }
+                }
+
+                // Label: Street Number, City, Colony <br/> Municipality, State, Country, Zip code
+                if (this.props.location_label) {
+                    const street = [locationData.street, locationData.streetNumber].filter(Boolean).join(' ');
+                    const firstLine = [street, locationData.city, locationData.colony].filter(Boolean).join(', ');
+                    const secondLine = [
+                        municipalityName || locationData.municipality,
+                        locationData.state,
+                        locationData.country,
+                        locationData.postalCode,
+                    ].filter(Boolean).join(', ');
+                    dataToUpdate[this.props.location_label] = [firstLine, secondLine].filter(Boolean).join(' <br/> ');
                 }
 
                 //console.log("data", dataToUpdate);

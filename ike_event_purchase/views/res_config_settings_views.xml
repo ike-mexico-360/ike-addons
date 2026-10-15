@@ -10,11 +10,6 @@
                 <setting id="x_time_for_automatic_purchase_generation" title="Time for automatic purchase generation" help="Waiting time to automatically approve the quote">
                     <field name="x_time_for_automatic_purchase_generation" class="oe_inline"/><span> hours</span>
                 </setting>
-                <setting id="x_default_purchase_project_id"
-                            string="Default Purchase Project"
-                            help="Technical: Default purchase project linked to the company at consolidate and send SAP data.">
-                    <field name="x_default_purchase_project_id" options="{'no_open': True}"/>
-                </setting>
             </xpath>
             <xpath expr="//block[@name='purchase_setting_container']" position="after">
                 <block title="Purchase Portal" name="x_purchase_portal_section">

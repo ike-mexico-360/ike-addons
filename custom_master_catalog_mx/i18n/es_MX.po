@@ -1,0 +1,54 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* custom_master_catalog_mx
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 18.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-20 02:04+0000\n"
+"PO-Revision-Date: 2026-07-20 02:04+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: custom_master_catalog_mx
+#. odoo-python
+#: code:addons/custom_master_catalog_mx/models/res_partner.py:0
+msgid "A record with this Identification Number / VAT (%s) already exists."
+msgstr "Ya existe un registro con este número de identificación / RFC (%s)."
+
+#. module: custom_master_catalog_mx
+#: model:ir.model,name:custom_master_catalog_mx.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: custom_master_catalog_mx
+#: model:ir.model,name:custom_master_catalog_mx.model_uom_uom
+msgid "Product Unit of Measure"
+msgstr "Unidad de medida del producto"
+
+#. module: custom_master_catalog_mx
+#. odoo-python
+#: code:addons/custom_master_catalog_mx/models/res_partner.py:0
+msgid ""
+"The RFC must have 12 (legal entity) or 13 (natural person) characters, 3 or "
+"4 letters forming the entity code, 6 digits for the incorporation/birth date"
+" (YY MM DD), and 3 alphanumeric homoclave characters."
+msgstr ""
+"El RFC debe tener 12 (persona moral) o 13 (persona física) caracteres, "
+"3 o 4 letras que forman la clave de la entidad, 6 dígitos de la fecha de constitución/nacimiento"
+" (AA MM DD) y 3 caracteres de homoclave alfanuméricos."
+
+#. module: custom_master_catalog_mx
+#. odoo-python
+#: code:addons/custom_master_catalog_mx/models/res_partner.py:0
+msgid ""
+"The name cannot contain special characters. Only letters, numbers, spaces, "
+"commas, periods, hyphens, and parentheses are allowed."
+msgstr ""
+"El nombre no puede contener caracteres especiales. Solo se permiten letras, "
+"números, espacios, comas, puntos, guiones medios y paréntesis."

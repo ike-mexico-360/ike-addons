@@ -46,8 +46,10 @@
 
                             <field name="x_validation_pattern" readonly="1" groups="base.group_no_one"/>
                             <field name="x_display_mask" readonly="1" groups="base.group_no_one"/>
+                            <field name="x_validation_clause_patter" readonly="1" groups="base.group_no_one"/>
                             <field name="x_validation_pattern_second" readonly="1" groups="base.group_no_one" invisible="not check_second_key"/>
                             <field name="x_display_mask_second" readonly="1" groups="base.group_no_one" invisible="not check_second_key"/>
+                            <field name="x_validation_second_clause_patter" readonly="1" groups="base.group_no_one" invisible="not check_second_key"/>
                             <field name="disabled" invisible="1"/>
                             <field name="active" invisible="1"/>
                             <field name="create_date" invisible="1"/>

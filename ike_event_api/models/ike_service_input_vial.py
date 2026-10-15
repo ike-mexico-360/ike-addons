@@ -241,7 +241,7 @@ class IkeServiceInputVial(models.Model):
             "type": "template",
             "template": {
                 "name": "asistencia_ike_inicio",
-                "language": {"code": "es_MX"},
+                "language": {"code": self.env.company.x_get_ike_company_language()},
                 "components": [
                     {"type": "body", "parameters": [{"type": "text", "text": user_name}]}
                 ],

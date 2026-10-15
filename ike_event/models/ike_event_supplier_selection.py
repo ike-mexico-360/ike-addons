@@ -90,13 +90,14 @@ class IkeEventSupplierSelection(models.Model):
         })
 
         for rec in self_filtered:
-            # if not rec.latitude or not rec.longitude:
-            #     raise ValidationError(_('No latitude or longitude was assigned to the vehicle.'))
             # Folio
             rec.folio = self_filtered.env['ir.sequence'].next_by_code('ike.event.supplier')
             # Acceptance Duration
             difference = rec.acceptance_date - (rec.event_id.supplier_search_date or rec.acceptance_date)
             rec.acceptance_duration = int(difference.total_seconds())
+            # Auto Assignation
+            if rec.assignation_type == 'electronic':
+                rec.with_context(no_lock=True).action_assign()
 
         self_filtered._notify_expiration()
         # self_filtered.broadcastReload()
@@ -182,36 +183,39 @@ class IkeEventSupplierSelection(models.Model):
 
         return available_ids
 
-    def action_confirm_vehicle(self):
-        """You can only confirm the vehicle if the service is assigned and event is scheduled."""
+    def action_confirm_vehicle_portal(self):
         accepted_ids = self._lock_records_by_state('accepted')
         assigned_ids = self._lock_records_by_state('assigned')
         self_filtered = self.filtered(
             lambda x: x.id in (accepted_ids + assigned_ids)
         )
-        if self_filtered.truck_id.x_vehicle_service_state == 'in_service':
-            raise UserError(_("This vehicle is currently in service. Please select another vehicle."))
-        self_filtered.truck_id.x_vehicle_service_state = 'in_service'
         self_filtered.confirmed = True
-        self_filtered.action_assign()
+        self_filtered.with_context(no_lock=True).action_assign()
         self_filtered.broadcastReload(reload_type='vehicle_confirmed')
 
     def action_notify_operator(self) -> list[int]:
         """App notification and Assign operation"""
-        available_ids = self._lock_records_by_state('accepted')
+        available_ids = self._lock_records_by_state('assigned')
         self_filtered = self.filtered(lambda x: x.id in available_ids)
         if not self_filtered:
             return []
-        self_filtered.action_assign()
+        self_filtered.operator_notified = True
         # Hook: Mobile App Notification
         return available_ids
 
     def action_assign(self):
-        accepted_ids = self._lock_records_by_state('accepted')
-        assigned_ids = self._lock_records_by_state('assigned')
-        self_filtered = self.filtered(
-            lambda x: x.id in (accepted_ids + assigned_ids)
-        )
+        if self.env.context.get('no_lock'):
+            self_filtered = self
+        else:
+            accepted_ids = self._lock_records_by_state('accepted')
+            assigned_ids = self._lock_records_by_state('assigned')
+            self_filtered = self.filtered(
+                lambda x: x.id in (accepted_ids + assigned_ids)
+            )
+        for rec in self_filtered:
+            if rec.truck_id.x_vehicle_service_state == 'in_service':
+                raise UserError(_("This vehicle is currently in service. Please select another vehicle."))
+        self_filtered.truck_id.x_vehicle_service_state = 'in_service'
         assigned_stage = self.env.ref('ike_event.ike_service_stage_assigned')
         self_filtered.write({
             'state': 'assigned',
@@ -219,7 +223,6 @@ class IkeEventSupplierSelection(models.Model):
             'assignation_date': fields.Datetime.now(),
             'confirmed': True,
         })
-        self_filtered.truck_id.x_vehicle_service_state = 'in_service'
         self_filtered._set_google_route_data()
         self_filtered.broadcastReload(reload_type='assign')
 
@@ -289,31 +292,6 @@ class IkeEventSupplierSelection(models.Model):
             self.estimated_distance = self.estimated_duration = self.cost_distance = 0.0
             self.bypass = True
 
-    def _get_google_route(self, latitude1, longitude1, latitude2, longitude2):
-        distance_km: float = 0.0
-        duration_m: float = 0.0
-        route = None
-        google_distance_m, google_duration_s, google_route = (
-            self.event_id.get_google_route(
-                latitude1, longitude1,
-                latitude2, longitude2,
-            )
-        )
-        if google_route:
-            distance_km = google_distance_m / 1000
-            duration_m = google_duration_s / 60
-            route = google_route
-        else:
-            # Wrong lat/lng?
-            osrm_distance = self.event_id.get_osrm_distance(
-                latitude1, longitude1,
-                latitude2, longitude2,
-            )
-            distance_km = osrm_distance['estimated_distance']
-            duration_m = osrm_distance['estimated_duration']
-
-        return distance_km, duration_m, route
-
     def _set_google_route_data(self):
         for rec in self:
             if rec.negotiation_type != 'origin_destination':
@@ -340,7 +318,7 @@ class IkeEventSupplierSelection(models.Model):
                         self.supplier_center_distance_id = center_distance_id.id if center_distance_id else None
 
                     if not center_distance_id.center_origin_route:
-                        distance_km, duration_m, route = rec._get_google_route(
+                        distance_km, duration_m, route = rec.event_id.get_route(
                             rec.latitude,
                             rec.longitude,
                             rec.event_id.location_latitude,
@@ -362,7 +340,7 @@ class IkeEventSupplierSelection(models.Model):
                     distance_km = center_distance_id.center_origin_duration_m
                     route = center_distance_id.center_origin_route
                 else:
-                    distance_km, duration_m, route = rec._get_google_route(
+                    distance_km, duration_m, route = rec.event_id.get_route(
                         rec.latitude,
                         rec.longitude,
                         rec.event_id.location_latitude,

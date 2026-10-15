@@ -227,18 +227,18 @@ class IkeEvent_Search(models.Model):
             # Set Google Route
             if assignation_type == 'electronic':
                 for supplier in service_suppliers:
-                    google_distance_m, google_duration_s, google_route = (
-                        self.get_google_route(
+                    distance_m, duration_s, route = (
+                        self.get_route(
                             supplier['latitude'],
                             supplier['longitude'],
                             self.location_latitude,
                             self.location_longitude,
                         )
                     )
-                    if google_route:
-                        distance_km = (google_distance_m or supplier['estimated_distance']) / 1000.00
-                        duration_m = (google_duration_s or supplier['estimated_duration']) / 60.00
-                        supplier['route'] = google_route
+                    if route:
+                        distance_km = (distance_m or supplier['estimated_distance']) / 1000.00
+                        duration_m = (duration_s or supplier['estimated_duration']) / 60.00
+                        supplier['route'] = route
                         supplier['real_distance'] = distance_km
                         supplier['real_duration'] = duration_m
                         if not supplier['estimated_distance'] or not supplier.get('osrm'):
@@ -986,11 +986,12 @@ class IkeEvent_Search(models.Model):
         event_type_id: int = self.event_type_id.id
         state_id: int = municipality.state_id.id
         municipality_id: int = municipality.id
+        high_risk_area: bool = municipality.red_zone
         account_id: int = self.user_membership_id.membership_plan_id.account_id.id
         event_date = self.event_date + timedelta(hours=6)  # ToDo: use time zone from geographical area (new one)
         event_time = event_date.hour + event_date.minute / 60 + event_date.second / 3600
         event_date = event_date.date()
-        is_holiday = self.env['custom.holidays'].search_count([('date', '=', event_date)], limit=1)
+        is_holiday: bool = True if self.env['custom.holidays'].search_count([('date', '=', event_date)], limit=1) else False
         incident_type_id = self.incident_type_id.id or None
 
         params = {
@@ -1007,6 +1008,7 @@ class IkeEvent_Search(models.Model):
             "event_date": event_date,
             "product_ids": product_ids,
             "incident_type_id": incident_type_id,
+            "high_risk_area": high_risk_area,
         }
 
         query = """
@@ -1022,11 +1024,11 @@ class IkeEvent_Search(models.Model):
                     ,COALESCE(sc.start_time, 0) AS start_time
                     ,COALESCE(sc.end_time, 24) AS end_time
                     ,CASE WHEN %(event_time)s BETWEEN start_time AND end_time THEN 1 ELSE 0 END AS in_time
-                    ,m.holiday_date_applies::int = %(is_holiday)s as holiday_applies
                     ,m.holiday_date_applies
                     ,st.ref AS supplier_status_ref
                     ,svc.vehicle_category_id
                     ,m.incident_type_id
+                    ,m.high_risk_area
                 FROM custom_supplier_cost_matrix_line m
                 INNER JOIN custom_supplier_types_statuses st ON st.id = m.supplier_status_id
                 INNER JOIN custom_subservice_specification_vehicle_category_rel svc ON
@@ -1056,13 +1058,16 @@ class IkeEvent_Search(models.Model):
                     AND mm.date_init <= %(event_date)s
                     AND (mm.date_end IS NULL OR mm.date_end > %(event_date)s)
                 ORDER BY
-                    mm.state_id
+                    CASE WHEN %(high_risk_area)s THEN mm.high_risk_area END DESC
+                    ,CASE WHEN NOT %(high_risk_area)s THEN mm.high_risk_area END ASC
+                    ,CASE WHEN %(is_holiday)s THEN mm.holiday_date_applies END DESC
+                    ,CASE WHEN NOT %(is_holiday)s THEN mm.holiday_date_applies END ASC
+                    ,mm.state_id
                     ,mm.municipality_id
                     ,mm.account_id
                     ,date_init DESC
                     ,date_end
                     ,mm.in_time DESC
-                    ,mm.holiday_applies DESC
                     ,mm.incident_type_id IS NOT NULL
                     ,mm.id DESC
                 LIMIT 1

@@ -14,6 +14,12 @@ class CustomMembershipPlan(models.Model):
     commercial_name = fields.Char(string='Commercial Name')
     x_validation_pattern = fields.Char(string='Validation pattern', related="account_id.x_validation_pattern")
     x_validation_pattern_second = fields.Char(string='Second validation pattern', related="account_id.x_validation_pattern_second")
+    x_validation_clause_patter = fields.Char(
+        string="Clause validation pattern",
+        related="account_id.x_validation_clause_patter")
+    x_validation_second_clause_patter = fields.Char(
+        string="second clause validation pattern",
+        related="account_id.x_validation_second_clause_patter")
     x_display_mask = fields.Char(string='Display mask', related="account_id.x_display_mask")
     x_display_mask_second = fields.Char(string='Second display mask', related="account_id.x_display_mask_second")
 
@@ -21,7 +27,6 @@ class CustomMembershipPlan(models.Model):
         related='account_id.x_account_type_id',
         string='Account Type',
         tracking=True)
-
     account_identification_id = fields.Many2one(
         related='account_id.x_account_identification_id',
         string='Account Identification',
@@ -33,6 +38,8 @@ class CustomMembershipPlan(models.Model):
     check_second_key = fields.Boolean(
         related='account_id.x_check_second_key',
         string='Check second key')
+    x_clause_required = fields.Boolean(related="account_id.x_clause_required")
+    x_second_clause_required = fields.Boolean(related="account_id.x_second_clause_required")
     vat_rfc = fields.Char(
         string='RFC',
         related="account_id.x_parent_vat",
@@ -414,7 +421,7 @@ class CustomMembershipPlanLineProduct(models.Model):
                     self.env.ref('uom.product_uom_km').id,
                     self.env.ref('uom.product_uom_day').id,
                     self.env.ref('uom.product_uom_hour').id,
-                    self.env.ref('l10n_mx.product_uom_service_unit').id,
+                    self.env['uom.uom']._x_get_ike_service_uom_id().id,
                     self.env.ref('uom.product_uom_unit').id,
                     self.env.ref('uom.product_uom_litre').id,
                 ]),

@@ -73,6 +73,7 @@ class AccountMove(models.Model):
         for move in self:
             if move.is_invoice(include_receipts=True):
                 move.x_status_invoice = 'accepted'
+                move.action_send_email_status_invoice()
         self._sync_data_to_po_lines()
         return res
 
@@ -88,12 +89,14 @@ class AccountMove(models.Model):
         for move in self:
             if move.is_invoice(include_receipts=True):
                 move.x_status_invoice = 'paid'
+                move.action_send_email_status_payment
         self._sync_data_to_po_lines()
 
     def action_rejected(self):
         for move in self:
             if move.is_invoice(include_receipts=True):
                 move.x_status_invoice = 'rejected'
+                move.action_send_email_status_invoice()
         self._sync_data_to_po_lines()
 
     def button_cancel(self):
@@ -107,7 +110,7 @@ class AccountMove(models.Model):
     def action_send_email_status_invoice(self):
         self.ensure_one()
 
-        if self.state in ['draft']:
+        if self.x_status_invoice not in ['accepted', 'rejected']:
             return
 
         template = self.env.ref('ike_event_purchase.account_email_status_invoice_template', raise_if_not_found=False)

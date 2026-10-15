@@ -59,6 +59,7 @@ class PurchaseOrder(models.Model):
         'res.partner', string='Customer', domain=[('x_is_client', '=', True), ('disabled', '=', False)])
     x_invoice_company_id = fields.Many2one(
         'res.partner', string='Client Company', domain=[('x_is_ike', '=', True), ('disabled', '=', False)])
+    x_sent_to_sap = fields.Boolean(string='PO sent to SAP', default=False, copy=False)
     x_sap_reference_received = fields.Boolean(string='SAP Reference Received', default=False, copy=False)
     x_sap_connection_error_message = fields.Char(string='SAP Connection Error Message', copy=False)
     x_dispute_iteration_count = fields.Integer(
@@ -163,6 +164,9 @@ class PurchaseOrder(models.Model):
         string='ID Event', help="Technical: ID Event received from External source needed to send at SAP. Only external")
     x_validator = fields.Char(
         string='Validador', help="Technical: Validador received from External source needed to send at SAP. Only external")
+
+    x_send_mail = fields.Boolean(string='Mail sent', default=False, copy=False)
+    x_mail_count = fields.Integer(string='Mail attempts', default=0, copy=False)
 
     # ================= #
     #     DEPENDS       #
@@ -463,37 +467,39 @@ class PurchaseOrder(models.Model):
     def x_portal_action_accept_prices(self):
         """El acepta los pecios tal cual están portal."""
         self.ensure_one()
+        order = self.with_context(x_skip_dispute_amount_check=True)
 
-        if self.x_dispute_state not in ('none', 'resolved'):
+        if order.x_dispute_state not in ('none', 'resolved'):
             raise UserError(_('There is a dispute on this order.'))
 
-        if sum(self.order_line.mapped('price_subtotal')) == 0:
-            self.sudo().message_post(
+        if sum(order.order_line.mapped('price_subtotal')) == 0:
+            order.sudo().message_post(
                 body=_("This review was not sent to a Purchase Order because it contains a line with a cost of 0."),
                 message_type="comment",
                 subtype_xmlid="mail.mt_note",
             )
-            return self.write({"state": "draft_cancel"})
+            return order.write({"state": "draft_cancel"})
 
         # Ejecutar asignación solo cuando la iteración sea la primera
-        if self.x_dispute_iteration_count == 0:
-            for line in self.order_line:
+        if order.x_dispute_iteration_count == 0:
+            for line in order.order_line:
                 line.write({
                     'x_price_unit_approved': line.price_unit,
                     'x_product_qty_approved': line.product_qty,
                 })
         else:
-            for line in self.order_line:
+            for line in order.order_line:
                 line.write({
                     'price_unit': line.x_price_unit_approved,
                     'product_qty': line.x_product_qty_approved,
                 })
+        order.flush_recordset(['amount_untaxed_approved'])
 
         # Cerrar tickets
-        for ticket in self.sh_purchase_ticket_ids:
+        for ticket in order.sh_purchase_ticket_ids:
             ticket.sudo().with_context(is_portal=True).action_done()
 
-        self.x_action_start_consolidation()
+        order.x_action_start_consolidation()
 
     def x_action_submit_dispute(self):
         """El proveedor confirma su propuesta de disputa desde el portal."""
@@ -764,6 +770,10 @@ class PurchaseOrder(models.Model):
         concept_line_cache = {}
 
         for rfq in rfqs:
+            # Si el monto es 0, se omite en la consolidación
+            if not rfq.amount_untaxed > 0:
+                continue
+
             if not rfq.x_external_api_record:
                 membership_plan_id = rfq.x_membership_plan_id.id
                 sub_service_id = rfq.x_sub_service_id.id
@@ -801,10 +811,12 @@ class PurchaseOrder(models.Model):
 
             sap_key = (sap_id_outgoing, product_description_po)  # ToDo: Es la forma correcta?
 
+            copago_value = rfq.x_discount_price if rfq.x_discount_price else sum(rfq.order_line.mapped('x_discount_price'))
+
             concept_data = {
                 'rfq': rfq,
                 'subtotal': sum(rfq.order_line.mapped('price_subtotal')),
-                'copago': sum(rfq.order_line.mapped('x_discount_price')),
+                'copago': copago_value,
                 'sap_product_id': sap_product_id,
                 'sap_product_description': product_description_po,
                 'sap_code_outgoing': sap_id_outgoing,
@@ -1106,16 +1118,27 @@ class PurchaseOrder(models.Model):
 
             _logger.info(f"order_data: {purchases_response}")
 
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': 'SAP',
-                'message': 'Token obtenido correctamente.',
-                'type': 'success',
-                'sticky': False,
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'SAP',
+                    'message': 'Token obtenido correctamente.',
+                    'type': 'success',
+                    'sticky': False,
+                }
             }
-        }
+        else:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'SAP',
+                    'message': 'Token inválido.',
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
 
     def x_create_sap_order(self, access_token):
         # def parse_code_name(text: str) -> dict:
@@ -1235,6 +1258,7 @@ class PurchaseOrder(models.Model):
             _logger.info(f"Sending order to SAP: {body}")
             empty_response = {'order_id': purchase.id, 'response': False}
             try:
+                purchase.x_sent_to_sap = True
                 order_response = requests.post(create_po_url, headers=headers, json=body)
                 if order_response.status_code == 200:
                     order_data = order_response.json()
@@ -1344,6 +1368,7 @@ class PurchaseOrder(models.Model):
             ('x_sap_reference_received', '=', False),
             ('x_ref_sap', '=', False),
             ('amount_untaxed', '>', 0),
+            ('x_sent_to_sap', '=', False),
         ]
 
         if max_records > 0:
@@ -1362,3 +1387,45 @@ class PurchaseOrder(models.Model):
                     str(e),
                     exc_info=True,
                 )
+
+    # Cron para enviar correo de nueva órdenes con referencia SAP
+    @api.model
+    def _x_cron_send_new_order_email(self):
+        config_params = self.env['ir.config_parameter'].sudo()
+        start_date = config_params.get_param('ike_event_purchase.mail_new_order_start_date')
+
+        if not start_date:
+            config_params.set_param(
+                'ike_event_purchase.mail_new_order_start_date',
+                fields.Datetime.to_string(fields.Datetime.now()),
+            )
+            _logger.info("NEW ORDER EMAIL: Start date set at the first execution.")
+            return
+
+        orders = self.search([
+            ('state', '=', 'done'),
+            ('x_ref_sap', '!=', False),
+            ('x_send_mail', '=', False),
+            ('x_mail_count', '<', 3),
+            ('create_date', '>=', start_date),
+        ], order='id')
+
+        for order in orders:
+            order.x_mail_count += 1
+            self.env.cr.commit()
+
+            try:
+                order.action_send_email_new_order()
+                order.x_send_mail = True
+                self.env.cr.commit()
+            except Exception as e:
+                self.env.cr.rollback()
+                _logger.warning(
+                    "NEW ORDER EMAIL: Error sending email for order %s (attempt %s/3): %s",
+                    order.name, order.x_mail_count, str(e), exc_info=True,
+                )
+                if order.x_mail_count >= 3:
+                    order.message_post(
+                        body=_("The order email could not be sent after 3 attempts.")
+                    )
+                    self.env.cr.commit()

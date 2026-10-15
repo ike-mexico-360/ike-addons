@@ -16,5 +16,20 @@
             </field>
         </record>
 
+        <record id="res_config_settings_view_form_purchase_inherit_cm_catalog" model="ir.ui.view">
+        <field name="name">res_config_settings_view_form_purchase.inherit.cm_catalog</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="purchase.res_config_settings_view_form_purchase"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@name='purchase_setting_container']/setting[@id='auto_receipt_reminder']" position="after">
+                <setting id="x_default_purchase_project_id"
+                            string="Default Purchase Project"
+                            help="Technical: Default purchase project linked to the company at consolidate and send SAP data.">
+                    <field name="x_default_purchase_project_id" options="{'no_open': True}"/>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+
     </data>
 </odoo>

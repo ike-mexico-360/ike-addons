@@ -30,8 +30,8 @@
                     </group>
 
                     <group>
-                        <field name="clause_primary" invisible="not check_clause" readonly="0" />
-                        <field name="clause_second" invisible="not check_clause_second" readonly="0"/>
+                        <field name="clause_primary" invisible="not check_clause" readonly="0" required="x_clause_required"/>
+                        <field name="clause_second" invisible="not check_clause_second" readonly="0" required="x_second_clause_required"/>
                     </group>
                 </group>
 

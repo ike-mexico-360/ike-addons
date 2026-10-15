@@ -368,7 +368,6 @@ class IkeEvent(models.Model):
         result = super(IkeEvent, self).action_set_location_data()
         for rec in self:
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_6"])
-            # rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_7"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_8"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_9"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_10"])
@@ -385,7 +384,6 @@ class IkeEvent(models.Model):
         result = super(IkeEvent, self).action_set_destination_data()
         for rec in self:
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_15"])
-            # rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_16"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_4_1"])
 
         return result
@@ -451,7 +449,6 @@ class IkeEvent(models.Model):
         result = super().action_confirm_costs()
         for rec in self:
             rec._create_message_binnacle([
-                # 'ike_event_binnacle.ike_binnacle_stage_10_4',
                 "ike_event_binnacle.ike_binnacle_stage_10_5",
                 "ike_event_binnacle.ike_binnacle_stage_10_2"])
         return result
@@ -483,18 +480,6 @@ class IkeEvent(models.Model):
 
 class IkeEventSupplier(models.Model):
     _inherit = 'ike.event.supplier'
-
-    def action_assign(self):
-        result = super(IkeEventSupplier, self).action_assign()
-        for rec in self:
-            # rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_2"])
-            rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_3"])
-            # rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_4"])
-            rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_5_5"])
-            # rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_6_1"])
-            rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_1"])
-            # rec.event_id.with_context(**ctx)._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_2"])
-        return result
 
     def action_on_route(self):
         result = super().action_on_route()
@@ -579,8 +564,8 @@ class IkeEventSupplier(models.Model):
                 ])
         return result
 
-    def action_confirm_vehicle(self):
-        result = super().action_confirm_vehicle()
+    def action_confirm_vehicle_portal(self):
+        result = super().action_confirm_vehicle_portal()
 
         for rec in self:
             rec.event_id.with_context(
@@ -679,7 +664,12 @@ class IkeEventSupplier(models.Model):
             rec.event_id.with_context(
                 supplier=rec.supplier_id.name,
                 truck_id=rec.truck_id.id
-            )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_2"])
+            )._create_message_binnacle([
+                "ike_event_binnacle.ike_binnacle_stage_5_3",
+                "ike_event_binnacle.ike_binnacle_stage_5_5",
+                "ike_event_binnacle.ike_binnacle_stage_7_1",
+                "ike_event_binnacle.ike_binnacle_stage_7_2",
+            ])
         return updated_ids
 
     def action_reject(self) -> list[int]:
@@ -776,8 +766,6 @@ class IkeEventSupplierLink(models.Model):
             )._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_5"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_9"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_10"])
-            # rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_12"])
-
         return result
 
 
@@ -818,7 +806,6 @@ class IkeEventMembershipAuthorization(models.Model):
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_2_2"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_2_3"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_25"])
-            # rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_26"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_27"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_32"])
             rec.event_id._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_7_29"])

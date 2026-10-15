@@ -122,7 +122,7 @@ class ProductProduct(models.Model):
 
     def get_subservices_view_action(self):
         action = self.env['ir.actions.act_window']._for_xml_id('custom_master_catalog.action_x_subservice_product_template_view')
-        service_uom_id = self.env.ref('l10n_mx.product_uom_service_unit')
+        service_uom_id = self.env['uom.uom']._x_get_ike_service_uom_id()
         ctx = eval(action['context'])
         ctx.update({
             'default_uom_id': service_uom_id.id,
@@ -138,7 +138,7 @@ class ProductProduct(models.Model):
     @api.model
     def get_subservices_domain(self, categ_id=None):
         all_categ_id = self.env.ref('product.product_category_all')
-        service_uom_id = self.env.ref('l10n_mx.product_uom_service_unit')
+        service_uom_id = self.env['uom.uom']._x_get_ike_service_uom_id()
         domain = [
             ('sale_ok', '=', True),
             ('sh_product_subscribe', '=', True),

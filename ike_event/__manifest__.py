@@ -13,10 +13,10 @@
         'custom_nu', 'custom_supplier_cost_matrix',
     ],
     'data': [
-        'security/ir_module_security.xml',
         'data/survey_data.xml',
-        'data/survey_satisfaction_data.xml',
         'data/ike_event_data.xml',
+        'security/ir_module_security.xml',
+        'data/survey_satisfaction_data.xml',
         'data/ike_event_flow_data.xml',
         'data/ir_sequence_data.xml',
         'data/ike_event_service_type_data.xml',

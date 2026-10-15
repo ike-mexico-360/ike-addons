@@ -106,6 +106,10 @@ class IkeEvent(models.Model):
             'views': [(view.id, 'form')],
             'view_mode': 'form',
             'target': 'new',
+            'context': {
+                **self.env.context,
+                'appointment_was_scheduled': self.scheduled,
+            },
         }
 
     def action_change_to_appointment(self):
@@ -127,6 +131,18 @@ class IkeEvent(models.Model):
                 )
             )
 
+        # Already schedule.
+        if self.env.context.get('appointment_was_scheduled'):
+            self.write({
+                'event_date': self.event_date,
+                'appointment_show_event_date': (
+                    self.event_date
+                    - timedelta(minutes=self.events_display_wait_time or 0)
+                ),
+            })
+            self.event_summary_id.set_service_data()
+            return {'type': 'ir.actions.act_window_close'}
+
         self.write({
             'scheduled': True,  # type: ignore
             'event_date': self.event_date,
@@ -138,8 +154,6 @@ class IkeEvent(models.Model):
                 - timedelta(minutes=display_wait_time)
             ),
         })
-        # CHANGE STATE VEHICLE
-        self.selected_supplier_ids.truck_id.x_vehicle_service_state = 'available'
 
         self.action_notify_changed_to_scheduled()
         return {'type': 'ir.actions.act_window_close'}

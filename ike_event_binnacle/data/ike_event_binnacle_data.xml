@@ -895,7 +895,7 @@
                     <t t-if="suppliers">
                         <ul>
                             <t t-foreach="suppliers.filtered(lambda s: s.supplier_number == last_supplier)" t-as="supplier">
-                                <t t-if="supplier.state == 'accepted' and supplier.selected">
+                                <t t-if="supplier.state in ('accepted', 'assigned') and supplier.selected">
                                     <li t-out="supplier.supplier_id.name"/>
                                 </t>
                             </t>
@@ -3213,6 +3213,18 @@
             <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_supplier_summary"/>
             <field name="sequence">101</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_assign_event"/>
+        </record>
+        <record id="ike_binnacle_stage_mail_template_received_assistview" model="mail.template">
+            <field name="name">Binnacle stage mail template received assistview</field>
+            <field name="model_id" ref="ike_event.model_ike_event"/>
+            <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+            <field name="body_html" type="html"><t>The information was received correctly from AssistView</t></field>
+        </record>
+        <record id="ike_binnacle_received_assistview" model="ike.event.binnacle">
+            <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+            <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_capturanding_data_summary"/>
+            <field name="sequence">102</field>
+            <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_received_assistview"/>
         </record>
     </data>
 </odoo>

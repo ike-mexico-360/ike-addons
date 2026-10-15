@@ -164,6 +164,9 @@ class CustomSupplierUploadCostMatrix(models.Model):
             'Zona Geográfica': {
                 'name': 'geographical_area_id', 'required': False, 'domain': [('disabled', '=', False)]
             },
+            'Zona de alto riesgo': {
+                'name': 'high_risk_area', 'required': False, 'domain': False
+            },
             'Activo convenio': {
                 'name': 'active_agreement', 'required': False, 'domain': False
             },
@@ -654,6 +657,7 @@ class CustomSupplierUploadCostMatrix(models.Model):
             "subservice_id": line.subservice_id.id,
             "state_id": line.state_id.id if line.state_id else False,
             "geographical_area_id": line.geographical_area_id.id if line.geographical_area_id else False,  # FIX
+            "high_risk_area": line.high_risk_area,
             "type_event_id": line.type_event_id.id,
             "concept_id": line.concept_id.id,
             "subservice_specification_id": line.subservice_specification_id.id if line.subservice_specification_id else False,
@@ -708,7 +712,7 @@ class CustomSupplierCostProduct(models.Model):
 
     cost = fields.Float(string='Cost', sub_tracking=True)
     holiday_date_applies = fields.Boolean(string="Holiday date applies", sub_tracking=True)
-    high_risk_area = fields.Boolean(related="geographical_area_id.red_zone", string="High risk area", sub_tracking=True)
+    high_risk_area = fields.Boolean(string="High risk area", sub_tracking=True)
     active_agreement = fields.Boolean(string="Active agreement", sub_tracking=True)
     supplier_status_id = fields.Many2one(
         'custom.supplier.types.statuses', string='Supplier status', sub_tracking=True, ondelete='restrict')
@@ -795,7 +799,7 @@ class CustomSupplierCostMatrixLine(models.Model):
         tracking=True, index=True)
     cost = fields.Float(string='Cost', required=True, tracking=True)
     holiday_date_applies = fields.Boolean(string="Holiday date applies", tracking=True)
-    high_risk_area = fields.Boolean(related="geographical_area_id.red_zone", string="High risk area", tracking=True)
+    high_risk_area = fields.Boolean(string="High risk area", tracking=True)
     active_agreement = fields.Boolean(string="Active agreement", tracking=True)
     supplier_status_id = fields.Many2one(
         'custom.supplier.types.statuses', string='Supplier status', required=True, tracking=True, index=True)

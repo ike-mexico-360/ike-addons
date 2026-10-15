@@ -96,11 +96,17 @@ class PortalUserAccount(CustomerPortal):
             "stage_id": event.stage_id.with_context(lang=False).name if event.stage_id else "",
             "stage_id_label": stage_name,
             "stage_ref": event.stage_id.ref if event.stage_id else "",
-            "stage": supplier_line.stage_id.name if supplier_line.stage_id else "",
+            "supplier_stage": supplier_line.stage_id.name if supplier_line.stage_id else "",
+            "supplier_stage_original": (
+                supplier_line.stage_id.with_context(lang=False).name
+                if supplier_line.stage_id
+                else ""
+            ),
             "scheduled": event.scheduled,
             "is_upcoming": event.is_upcoming,
             "confirmed": supplier_line.confirmed,
             "assigned": supplier_line.assigned,
+            "operator_notified": supplier_line.operator_notified,
             "opening_date": (
                 fields.Datetime.to_string(event.create_date)
                 if event.create_date
@@ -133,7 +139,7 @@ class PortalUserAccount(CustomerPortal):
 
             if supplier_lines:
                 results = []
-                user_lang = request.env.user.lang or "es_MX"
+                user_lang = request.env.user.lang or request.env.company.x_get_ike_company_language()
                 Model = request.env["ike.event.supplier.public"].with_context(
                     lang=user_lang
                 )
@@ -172,7 +178,7 @@ class PortalUserAccount(CustomerPortal):
             supplier_line = request.env["ike.event.supplier.public"].sudo().search(
                 [
                     ("id", "=", event_supplier_id),
-                    ("state", "in", ["notified", "accepted", "assigned"]),
+                    # ("state", "in", ["notified", "accepted", "assigned"]),
                     ("event_id.stage_ref", "not in", [
                         "cancel",
                         "cancel_subsequently",
@@ -190,7 +196,7 @@ class PortalUserAccount(CustomerPortal):
                     "supplier_event": None,
                 }
 
-            user_lang = request.env.user.lang or "es_MX"
+            user_lang = request.env.user.lang or request.env.company.x_get_ike_company_language()
             state_field = supplier_line._fields["state"]
             state_translations = dict(
                 state_field._description_selection(supplier_line.with_context(lang=user_lang).env)
@@ -198,7 +204,7 @@ class PortalUserAccount(CustomerPortal):
 
             result = self._prepare_supplier_event_values(supplier_line, state_translations, user_lang)
             result.update({
-                "event_supplier_summary_data": supplier_line.get_event_supplier_summary_data(),
+                "event_supplier_summary_data_portal": supplier_line.get_event_supplier_summary_data_portal(),
                 "travel_tracking_url": supplier_line.get_travel_tracking_url(),
             })
 
@@ -580,7 +586,7 @@ class PortalUserAccount(CustomerPortal):
                     "arrived": {
                         "date": fmt(arrived),
                         "is_set": bool(arrived),
-                        "can_stamp": not bool(arrived),
+                        "can_stamp": bool(supplier.confirmed) and not bool(arrived),
                     },
                     "contacted": {
                         "date": fmt(contacted),
@@ -621,6 +627,9 @@ class PortalUserAccount(CustomerPortal):
             now = fields.Datetime.now()
 
             if stage == "arrived":
+                if not supplier.confirmed:
+                    return {"success": False, "error": _("The service must be confirmed before registering arrival")}
+
                 if supplier.on_route_to_user_end_date:
                     return {"success": False, "error": _("Arrived timestamp is already registered")}
 
@@ -750,7 +759,7 @@ class PortalUserAccount(CustomerPortal):
                     "arrived": {
                         "date": fmt(arrived),
                         "is_set": bool(arrived),
-                        "can_stamp": not bool(arrived),
+                        "can_stamp": bool(supplier.confirmed) and not bool(arrived),
                     },
                     "contacted": {
                         "date": fmt(contacted),

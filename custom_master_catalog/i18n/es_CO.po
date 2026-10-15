@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0-20260504\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-09 18:10+0000\n"
-"PO-Revision-Date: 2026-09-09 18:10+0000\n"
+"POT-Creation-Date: 2026-10-08 23:57+0000\n"
+"PO-Revision-Date: 2026-10-08 23:57+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -218,6 +218,16 @@ msgid "Account Number"
 msgstr "Número de cuenta"
 
 #. module: custom_master_catalog
+#: model:res.groups,name:custom_master_catalog.custom_group_account_event_admin
+msgid "Account Per Event (Admin)"
+msgstr "Cuenta por evento (Administrador)"
+
+#. module: custom_master_catalog
+#: model:res.groups,name:custom_master_catalog.custom_group_account_event_supervisor
+msgid "Account Per Event (Supervisor)"
+msgstr "Cuenta por evento (Supervisor)"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_account_responsible_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_account_responsible_id
 msgid "Account Responsible"
@@ -278,6 +288,7 @@ msgstr "Acción"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_needaction
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__message_needaction
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__message_needaction
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__message_needaction
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__message_needaction
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__message_needaction
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_needaction
@@ -304,6 +315,7 @@ msgstr "Se requiere una acción"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__active
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__active
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_pre_work_entry_type__active
@@ -331,24 +343,28 @@ msgid "Active"
 msgstr "Activo"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__activity_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_ids
 msgid "Activities"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__activity_exception_decoration
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_exception_decoration
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_exception_decoration
 msgid "Activity Exception Decoration"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__activity_state
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_state
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_state
 msgid "Activity State"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__activity_type_icon
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_type_icon
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_type_icon
 msgid "Activity Type Icon"
@@ -364,7 +380,7 @@ msgstr "Actividad por"
 #: model:ir.ui.menu,name:custom_master_catalog.custom_import_postal_codes_sepomex_menu
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_import_postal_codes_view_form
 msgid "Actualización CP"
-msgstr ""
+msgstr "Actualización SEPOMEX"
 
 #. module: custom_master_catalog
 #. odoo-javascript
@@ -431,6 +447,31 @@ msgid "All subservices"
 msgstr "Todos los subservicios"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_company__x_allow_email_sending
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_config_settings__x_allow_email_sending
+msgid "Allow Email Sending"
+msgstr "Permitir envío de correos"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_mail_template__x_allow_email_sending
+msgid "Allow Sending"
+msgstr "Permitir envío"
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form
+msgid "Allow email sending"
+msgstr "Permitir envío de correos"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_mail_template__x_allow_email_sending
+msgid ""
+"Allow emails generated from this template when company email sending is "
+"enabled."
+msgstr ""
+"Permite los correos generados desde esta plantilla cuando el envío de la "
+"empresa está habilitado."
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form
 msgid "Allow users to send whatsapp notifications"
 msgstr ""
@@ -449,6 +490,12 @@ msgstr "Cantidad"
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_data_source__behavior__append
 msgid "Append"
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Apply"
 msgstr ""
 
 #. module: custom_master_catalog
@@ -512,6 +559,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_attachment_count
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__message_attachment_count
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__message_attachment_count
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__message_attachment_count
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__message_attachment_count
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__message_attachment_count
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_attachment_count
@@ -581,11 +629,6 @@ msgstr ""
 "Base - Destination: Ubicación grúa a punto destino o base a punto destino.\n"
 "Origin - Destination: Origin point to destination point.\n"
 "Base - Concepts: Proveedores con costo convenio por conceptos base, sin calcular distancias calculation."
-
-#. module: custom_master_catalog
-#: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__base_concepts
-msgid "Base - Concepts"
-msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__base_destination
@@ -664,6 +707,11 @@ msgid "CSV"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:res.groups,name:custom_master_catalog.custom_group_cx
+msgid "CX"
+msgstr ""
+
+#. module: custom_master_catalog
 #: model:res.groups,name:custom_master_catalog.custom_group_event_cabin_supervisor
 msgid "Cabin Supervisor"
 msgstr "Supervisor de cabina"
@@ -683,6 +731,13 @@ msgstr "Cancelar"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_qty_period
 msgid "Cantidad periodo"
 msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__supplier_center_id
+msgid "Care Center"
+msgstr "Centro de atención"
 
 #. module: custom_master_catalog
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_menu_supplier_centers
@@ -754,6 +809,12 @@ msgid "Center of attention users"
 msgstr "Usuarios del centro de atención"
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Change priority"
+msgstr "Cambiar prioridad"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality_code__city
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__city
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_coverage_configuration_view_form
@@ -775,6 +836,24 @@ msgstr "Clasificación de teléfonos"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__clause
 msgid "Clause"
 msgstr "Inciso"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_clause_required
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_clause_required
+msgid "Clause required"
+msgstr "Inciso requerido"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_validation_clause_patter
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_validation_clause_patter
+msgid "Clause validation pattern."
+msgstr "Patrón de validación del inciso."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Clear"
+msgstr "Limpiar"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_product_product__sh_product_subscribe
@@ -803,6 +882,11 @@ msgstr "Dirección del cliente"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_account_view_form
 msgid "Client Name..."
 msgstr "Nombre del cliente..."
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_account_view_form
+msgid "Client VAT"
+msgstr "RFC del cliente"
 
 #. module: custom_master_catalog
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_client_menu_clients
@@ -874,9 +958,10 @@ msgid "Commercial authorization"
 msgstr "Autorización comercial"
 
 #. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_res_company
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_company_tree
 msgid "Companies"
-msgstr "Compañías"
+msgstr "Empresas"
 
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.res_partner_company_ike_action
@@ -969,6 +1054,21 @@ msgstr "Configuración de servicios y subservicios"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
 msgid "Configuration service and subservice"
 msgstr "Configuración de servicio y subservicios"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid ""
+"Configure a country on the active company before setting the manual "
+"assignment order."
+msgstr ""
+"Configure el país de la empresa activa antes de definir el orden de "
+"asignación manual."
+
+#. module: custom_master_catalog
+#: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_manual_assignment_order_action
+msgid "Configure the manual assignment order"
+msgstr "Configure el orden para asignación manual"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_allowed_product_ids
@@ -1166,6 +1266,8 @@ msgstr "¡Crea tu primera clasificación de teléfono!"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__create_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__create_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__create_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__create_uid
@@ -1205,6 +1307,8 @@ msgstr "Creado por"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__create_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__create_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__create_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__create_date
@@ -1261,6 +1365,11 @@ msgstr "Logs de actualización SEPOMEX"
 #: model:ir.model,name:custom_master_catalog.model_custom_incident_type
 msgid "Custom Incident Type"
 msgstr "Tipos de incidente"
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_metropolitan_zone_view_form
+msgid "Custom Metropolitan Zone"
+msgstr "Zona Metropolitana"
 
 #. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_custom_phone_classification
@@ -1381,6 +1490,13 @@ msgid "Decimal"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_company__x_default_purchase_project_id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_config_settings__x_default_purchase_project_id
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form_purchase_inherit_cm_catalog
+msgid "Default Purchase Project"
+msgstr "Proyecto de compras predeterminado"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_product_product__uom_id
 #: model:ir.model.fields,help:custom_master_catalog.field_product_template__uom_id
 msgid "Default unit of measure used for all stock operations."
@@ -1445,6 +1561,7 @@ msgstr "Deshabilitar"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__disabled
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__disabled
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__disabled
@@ -1495,6 +1612,7 @@ msgstr "Deshabilitar"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_country_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_country_state_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_country_state_search
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_metropolitan_zone_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_payment_type_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_payment_type_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_reason_authorizing_additional_costs_view_form
@@ -1541,6 +1659,12 @@ msgid "Disabled Reason"
 msgstr "Razón de desactivación"
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Discard"
+msgstr "Descartar"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_type__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__display_name
@@ -1554,6 +1678,8 @@ msgstr "Razón de desactivación"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__display_name
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__display_name
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__display_name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__display_name
@@ -1672,6 +1798,29 @@ msgid "Email"
 msgstr "Correo electrónico"
 
 #. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_mail_template
+#: model:ir.ui.menu,name:custom_master_catalog.mail_template_configuration_menu
+msgid "Email Templates"
+msgstr "Plantillas de correo electrónico"
+
+#. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_mail_compose_message
+msgid "Email composition wizard"
+msgstr "Asistente de redacción de correo electrónico"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/mail_sending_control.py:0
+msgid "Email sending is disabled for company %(company)s."
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/mail_sending_control.py:0
+msgid "Email sending is disabled for template %(template)s."
+msgstr ""
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_employee_tree
 msgid "Employees"
 msgstr "Empleados"
@@ -1694,6 +1843,7 @@ msgstr "Habilitar"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_phone_classification_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_res_country_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_country_state_search
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_metropolitan_zone_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_payment_type_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_reason_authorizing_additional_costs_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_subservice_specification_view_search
@@ -1923,6 +2073,7 @@ msgstr "Modelos de vehículos"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_follower_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__message_follower_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__message_follower_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__message_follower_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__message_follower_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__message_follower_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_follower_ids
@@ -1948,6 +2099,7 @@ msgstr "Seguidores"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_partner_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__message_partner_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__message_partner_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__message_partner_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__message_partner_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__message_partner_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_partner_ids
@@ -1968,6 +2120,7 @@ msgid "Followers (Partners)"
 msgstr "Seguidores"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_custom_metropolitan_zone__activity_type_icon
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_type_icon
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner_supplier_users_rel__activity_type_icon
 msgid "Font awesome icon e.g. fa-tasks"
@@ -2015,6 +2168,14 @@ msgid "Geographical Coverage Areas"
 msgstr "Zonas de cobertura geográficas"
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__municipality_id
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_manual_assignment_order_view_search
+msgid "Geographical Zone"
+msgstr "Zona geográfica"
+
+#. module: custom_master_catalog
 #: model:ir.ui.menu,name:custom_master_catalog.custom_state_municipality_menu
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_menu_geographical_zones
 msgid "Geographical Zones"
@@ -2031,6 +2192,8 @@ msgstr "Zonas de cobertura geográficas"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_model_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_country_state_search
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_manual_assignment_order_view_search
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_metropolitan_zone_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_subservice_specification_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_supplier_types_statuses_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_vehicle_type_view_search
@@ -2051,6 +2214,7 @@ msgstr "Agrupar por"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__has_message
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__has_message
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__has_message
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__has_message
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__has_message
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__has_message
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__has_message
@@ -2112,7 +2276,7 @@ msgstr "Días festivos..."
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_template_form_homolog
 msgid "Homologation"
-msgstr ""
+msgstr "Homologación"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__id
@@ -2128,6 +2292,8 @@ msgstr ""
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__id
@@ -2159,12 +2325,14 @@ msgid "IKE"
 msgstr "Contactos IKE"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__activity_exception_icon
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_exception_icon
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_exception_icon
 msgid "Icon"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_custom_metropolitan_zone__activity_exception_icon
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_exception_icon
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner_supplier_users_rel__activity_exception_icon
 msgid "Icon to indicate an exception activity."
@@ -2191,6 +2359,7 @@ msgstr ""
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_needaction
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_data_source__message_needaction
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_holidays__message_needaction
+#: model:ir.model.fields,help:custom_master_catalog.field_custom_metropolitan_zone__message_needaction
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_payment_type__message_needaction
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_phone_classification__message_needaction
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_needaction
@@ -2221,6 +2390,8 @@ msgstr "Si está marcado, los mensajes nuevos requieren su atención."
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_data_source__message_has_sms_error
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_holidays__message_has_error
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_holidays__message_has_sms_error
+#: model:ir.model.fields,help:custom_master_catalog.field_custom_metropolitan_zone__message_has_error
+#: model:ir.model.fields,help:custom_master_catalog.field_custom_metropolitan_zone__message_has_sms_error
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_payment_type__message_has_error
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_payment_type__message_has_sms_error
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_phone_classification__message_has_error
@@ -2363,6 +2534,7 @@ msgstr "Compañía que factura"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_is_follower
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__message_is_follower
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__message_is_follower
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__message_is_follower
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__message_is_follower
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__message_is_follower
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_is_follower
@@ -2461,6 +2633,8 @@ msgstr "Última actualización"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__write_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__write_uid
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__write_uid
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__write_uid
@@ -2500,6 +2674,8 @@ msgstr "Última actualización por"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_line__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_import_postal_codes_log__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__write_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__write_date
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__write_date
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__write_date
@@ -2590,10 +2766,45 @@ msgid "Manual"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_custom_manual_assignment_order
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__sequence
+msgid "Manual Assignment Order"
+msgstr "Orden para asignación manual"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+#: model:ir.actions.act_window,name:custom_master_catalog.custom_manual_assignment_order_action
+#: model:ir.actions.client,name:custom_master_catalog.custom_manual_assignment_order_client_action
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_manual_assignment_order_view_list
+msgid "Manual Assignment Order Configuration"
+msgstr "Configuración de Orden para asignación manual"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.js:0
+msgid "Manual assignment order saved."
+msgstr "Orden para asignación manual guardado."
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_mapping_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_template__x_mapping_ids
 msgid "Mappings"
 msgstr "Mapeos"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_res_company__x_allow_email_sending
+#: model:ir.model.fields,help:custom_master_catalog.field_res_config_settings__x_allow_email_sending
+msgid "Master switch for all outgoing emails of this company."
+msgstr "Control general para todos los correos salientes de esta empresa."
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form
+msgid ""
+"Master switch for outgoing emails of this company. Disabled by default."
+msgstr ""
+"Control general para los correos salientes de esta empresa. Está desactivado"
+" de forma predeterminada."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_geographical_area__priority__2
@@ -2614,6 +2825,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_has_error
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__message_has_error
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__message_has_error
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__message_has_error
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__message_has_error
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__message_has_error
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_has_error
@@ -2639,6 +2851,7 @@ msgstr "Error de entrega del mensaje"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__message_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__message_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__message_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__message_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__message_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_ids
@@ -2657,6 +2870,22 @@ msgstr "Error de entrega del mensaje"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__message_ids
 msgid "Messages"
 msgstr "Mensajes"
+
+#. module: custom_master_catalog
+#: model:ir.actions.act_window,name:custom_master_catalog.action_custom_metropolitan_zone
+msgid "Metropolitan Zone"
+msgstr "Zona metropolitana"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__metropolitan_zone_ids
+#: model:ir.ui.menu,name:custom_master_catalog.custom_metropolitan_zone_menu
+msgid "Metropolitan Zones"
+msgstr "Zonas metropolitanas"
+
+#. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_custom_metropolitan_zone
+msgid "Metropolitan zone"
+msgstr "Zona metropolitana"
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_custom_state_municipality_view_search
@@ -2729,6 +2958,8 @@ msgstr "Múltiple"
 #. odoo-javascript
 #: code:addons/custom_master_catalog/static/src/widgets/custom_municipality_selection.js:0
 #: model:ir.actions.act_window,name:custom_master_catalog.custom_state_municipality_action
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__municipality_ids
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_metropolitan_zone_view_form
 msgid "Municipalities"
 msgstr "Zonas geográficas"
 
@@ -2751,6 +2982,7 @@ msgid "Municipality must be unique per partner."
 msgstr "La zona debe ser única por contacto."
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__my_activity_date_deadline
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__my_activity_date_deadline
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__my_activity_date_deadline
 msgid "My Activity Deadline"
@@ -2775,6 +3007,7 @@ msgstr ""
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_incident_type__name
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__name
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_pre_work_entry_type__name
@@ -2795,6 +3028,7 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_currency_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_currency_tree
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_partner_tree
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_metropolitan_zone_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_vehicle_weight_category_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_company_ike_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_company_ike_view_search
@@ -2813,6 +3047,7 @@ msgstr "Nombre en mayúsculas"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_account_type_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_additional_concept_authorizer_type_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_data_source_view_form
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_metropolitan_zone_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_payment_type_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_reason_authorizing_additional_costs_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_state_municipality_view_form
@@ -2822,24 +3057,28 @@ msgid "Name..."
 msgstr "Nombre..."
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__activity_calendar_event_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_calendar_event_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_calendar_event_id
 msgid "Next Activity Calendar Event"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__activity_date_deadline
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_date_deadline
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_date_deadline
 msgid "Next Activity Deadline"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__activity_summary
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_summary
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_summary
 msgid "Next Activity Summary"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__activity_type_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_type_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_type_id
 msgid "Next Activity Type"
@@ -2872,6 +3111,12 @@ msgstr "No se indicó el nombre del centro."
 #: code:addons/custom_master_catalog/wizard/custom_vehicle_import_wizard.py:0
 msgid "No file has been loaded."
 msgstr "No se ha cargado ningún archivo."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "No manual assignment suppliers found."
+msgstr "No se encontraron proveedores de asignación manual."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_data_source__quote__none
@@ -2977,6 +3222,7 @@ msgstr "No disponible"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_needaction_counter
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__message_needaction_counter
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__message_needaction_counter
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__message_needaction_counter
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__message_needaction_counter
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__message_needaction_counter
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_needaction_counter
@@ -3002,6 +3248,7 @@ msgstr "Número de acciones"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_has_error_counter
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__message_has_error_counter
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__message_has_error_counter
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__message_has_error_counter
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__message_has_error_counter
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__message_has_error_counter
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_has_error_counter
@@ -3027,6 +3274,7 @@ msgstr "Número de errores"
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_needaction_counter
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_data_source__message_needaction_counter
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_holidays__message_needaction_counter
+#: model:ir.model.fields,help:custom_master_catalog.field_custom_metropolitan_zone__message_needaction_counter
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_payment_type__message_needaction_counter
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_phone_classification__message_needaction_counter
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_needaction_counter
@@ -3052,6 +3300,7 @@ msgstr "Número de mensajes que requieren acción"
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_has_error_counter
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_data_source__message_has_error_counter
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_holidays__message_has_error_counter
+#: model:ir.model.fields,help:custom_master_catalog.field_custom_metropolitan_zone__message_has_error_counter
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_payment_type__message_has_error_counter
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_phone_classification__message_has_error_counter
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_has_error_counter
@@ -3079,6 +3328,25 @@ msgstr "Numero de configuración de servicios y subservicios"
 
 #. module: custom_master_catalog
 #. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid ""
+"One or more care centers do not belong to suppliers configured for manual "
+"assignment."
+msgstr ""
+"Uno o más centros de atención no pertenecen a proveedores configurados para "
+"asignación manual."
+
+#. module: custom_master_catalog
+#: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_manual_assignment_order_action
+msgid ""
+"Only care centers belonging to suppliers configured for manual assignment "
+"are allowed."
+msgstr ""
+"Solo se permiten centros de atención de proveedores configurados para "
+"asignación manual."
+
+#. module: custom_master_catalog
+#. odoo-python
 #: code:addons/custom_master_catalog/models/other/custom_data_source/custom_data_source.py:0
 msgid ""
 "Only one field can be marked as Clue per Data Source. The field \"%s\" is "
@@ -3086,6 +3354,13 @@ msgid ""
 msgstr ""
 "Solo un campo puede ser marcado como clave por Fuente de datos. El campo "
 "\"%s\" está marcado como clave"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "Only suppliers configured for manual assignment can be added."
+msgstr ""
+"Solo se pueden agregar proveedores configurados para asignación manual."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_category__operation_area_id
@@ -3096,6 +3371,18 @@ msgstr "Área operativa"
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner_supplier_users_rel__user_type__operator
 msgid "Operator"
 msgstr "Operador"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__manual_assignment_order
+msgid "Order"
+msgstr "Orden"
+
+#. module: custom_master_catalog
+#: model:ir.ui.menu,name:custom_master_catalog.custom_manual_assignment_order_menu
+msgid "Order Configuration"
+msgstr "Configuración de orden"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__origin_destination
@@ -3117,6 +3404,11 @@ msgstr "Otros teléfonos"
 #: model:product.template,name:custom_master_catalog.ike_product_product_vial_fluid_product_template
 msgid "Otros líquidos"
 msgstr ""
+
+#. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_mail_mail
+msgid "Outgoing Mails"
+msgstr "Correos salientes"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__parent_id
@@ -3166,6 +3458,12 @@ msgstr "Calle del padre"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_parent_street2
 msgid "Parent Street2"
 msgstr "Calle2 del padre"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_parent_vat
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_parent_vat
+msgid "Parent VAT"
+msgstr "RFC del padre"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_parent_zip
@@ -3260,12 +3558,20 @@ msgid "Precision"
 msgstr ""
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__priority
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__priority
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__priority
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__priority
 msgid "Priority"
 msgstr "Prioridad"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "Priority must be between zero and three."
+msgstr "La prioridad debe estar entre cero y tres."
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_custom_vehicle_import_wizard_form
@@ -3347,6 +3653,7 @@ msgstr "Comillas"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__rating_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__rating_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__rating_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__rating_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__rating_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__rating_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__rating_ids
@@ -3446,6 +3753,12 @@ msgid "Relation between Suppliers and Users"
 msgstr "Relación entre Proveedores y Usuarios"
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Remove"
+msgstr "Quitar"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source_field__field_required
 msgid "Required"
 msgstr "Requerido"
@@ -3467,6 +3780,7 @@ msgid "Responsible Name"
 msgstr "Nombre del responsable"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__activity_user_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_user_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner_supplier_users_rel__activity_user_id
 msgid "Responsible User"
@@ -3523,6 +3837,7 @@ msgstr "Ruta SFTP"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_has_sms_error
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__message_has_sms_error
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__message_has_sms_error
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__message_has_sms_error
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__message_has_sms_error
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__message_has_sms_error
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__message_has_sms_error
@@ -3548,9 +3863,27 @@ msgid "Sampling"
 msgstr ""
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Save"
+msgstr "Guardar"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source_field__scale
 msgid "Scale"
 msgstr ""
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_second_clause_required
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_second_clause_required
+msgid "Second clause required"
+msgstr "Segundo inciso requerido"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_validation_second_clause_patter
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_validation_second_clause_patter
+msgid "Second clause validation pattern"
+msgstr "Segundo patrón de validación de inciso."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_display_mask_second
@@ -3575,6 +3908,32 @@ msgstr "Segundo patrón de validación"
 #: code:addons/custom_master_catalog/static/src/widgets/custom_municipality_selection.xml:0
 msgid "Select Municipalities"
 msgstr "Elegir zonas geográficas"
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Select a geographical zone and subservice to display suppliers."
+msgstr ""
+"Seleccione una zona geográfica y un subservicio para mostrar los "
+"proveedores."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Select a geographical zone..."
+msgstr "Seleccione una zona geográfica..."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Select a state..."
+msgstr "Seleccione un estado..."
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Select a subservice..."
+msgstr "Seleccione un subservicio..."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__product_product__x_unit_period__week
@@ -3677,6 +4036,11 @@ msgid "Services and subservices"
 msgstr "Servicios y subservicios"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_mail_mail__x_source_mail_template_id
+msgid "Source Email Template"
+msgstr "Plantilla de correo de origen"
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_data_source_view_form
 msgid "Source file configuration"
 msgstr "Configuración de archivo origen"
@@ -3689,8 +4053,10 @@ msgstr "Cuentas especiales"
 
 #. module: custom_master_catalog
 #. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 #: code:addons/custom_master_catalog/static/src/widgets/custom_municipality_selection.js:0
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__state_id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__state_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__state_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__state_id
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_country_state_form
@@ -3716,11 +4082,18 @@ msgid "State Name"
 msgstr "Nombre de estado"
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "State, geographical zone and subservice are required."
+msgstr "El estado, la zona geográfica y el subservicio son obligatorios."
+
+#. module: custom_master_catalog
 #: model:ir.ui.menu,name:custom_master_catalog.res_menu_country_state
 msgid "States"
 msgstr "Estados"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_custom_metropolitan_zone__activity_state
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_state
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner_supplier_users_rel__activity_state
 msgid ""
@@ -3795,6 +4168,9 @@ msgid "Subbrand"
 msgstr "Submarca"
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__product_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__subservice_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_specification__subservice_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__product_id
@@ -3804,6 +4180,7 @@ msgstr "Submarca"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_template__x_product_id
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_concepts_product_template_list
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_manual_assignment_order_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_subservice_specification_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_vehicle_type_view_search
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.product_template_form_view
@@ -3879,7 +4256,11 @@ msgid "Supervisor CDS"
 msgstr ""
 
 #. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 #: model:ir.actions.act_window,name:custom_master_catalog.res_partner_supplier_action_window
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__supplier_id
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__supplier_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__supplier_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration_line__partner_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_partner_id
@@ -4087,6 +4468,17 @@ msgid "Technical configuration"
 msgstr "Configuración técnica"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_res_company__x_default_purchase_project_id
+#: model:ir.model.fields,help:custom_master_catalog.field_res_config_settings__x_default_purchase_project_id
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form_purchase_inherit_cm_catalog
+msgid ""
+"Technical: Default purchase project linked to the company at consolidate and"
+" send SAP data."
+msgstr ""
+"Técnico: Proyecto de compras predeterminado vinculado a la compañía al "
+"consolidar y enviar datos a SAP."
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_product_product__x_sap_code_income
 msgid "Technical: SAP income code"
 msgstr ""
@@ -4127,10 +4519,27 @@ msgstr ""
 "Puede utilizar este campo para realizar una búsqueda rápida."
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/res_partner_supplier.py:0
+msgid ""
+"The Mexican postal code must contain exactly 5 numeric digits.. Example: "
+"03100"
+msgstr ""
+"El código postal mexicano debe contener exactamente 5 dígitos numéricos. "
+"Ejemplo: 03100"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_use_parent_invoice_info
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_use_parent_invoice_info
 msgid "The account is equal to the client"
 msgstr "La cuenta es igual al cliente"
+
+#. module: custom_master_catalog
+#: model:ir.model.constraint,message:custom_master_catalog.constraint_custom_manual_assignment_order_manual_assignment_order_unique
+msgid ""
+"The care center can only have one manual assignment order per geographical "
+"zone and subservice."
+msgstr ""
 
 #. module: custom_master_catalog
 #. odoo-python
@@ -4160,6 +4569,17 @@ msgid "The file must be type: %s"
 msgstr "El archivo debe ser del tipo: %s"
 
 #. module: custom_master_catalog
+#: model:ir.model.constraint,message:custom_master_catalog.constraint_custom_manual_assignment_order_manual_assignment_order_positive
+msgid "The manual assignment order must be greater than zero."
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_metropolitan_zone.py:0
+msgid "The name '%s' already exists. It must be unique."
+msgstr "El nombre '%s' ya existe. Debe ser unico."
+
+#. module: custom_master_catalog
 #. odoo-python
 #: code:addons/custom_master_catalog/models/res_partner.py:0
 msgid "The postal code \"%s\" does not exist in the geographic Zones catalog."
@@ -4170,6 +4590,19 @@ msgstr "El código postal \"%s\" no existe en el catálogo de zonas geográficas
 #: code:addons/custom_master_catalog/models/res_partner_supplier.py:0
 msgid "The postal code must be between 01000 and 99999"
 msgstr "El código postal debe estar entre 01000 y 99999"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
+msgid "The selected state does not belong to the active company country (%s)."
+msgstr ""
+"El estado seleccionado no pertenece al país de la empresa activa (%s)."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/mail_sending_control.py:0
+msgid "The source email template is archived."
+msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_res_country_state__code
@@ -4248,6 +4681,7 @@ msgid "Type of negotiation"
 msgstr "Tipo de negociación"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_custom_metropolitan_zone__activity_exception_decoration
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner_supplier_drivers_rel__activity_exception_decoration
 #: model:ir.model.fields,help:custom_master_catalog.field_res_partner_supplier_users_rel__activity_exception_decoration
 msgid "Type of the exception activity on record."
@@ -4396,6 +4830,11 @@ msgid "Value Type"
 msgstr "Tipo de valor"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__vat
+msgid "Vat"
+msgstr "RFC"
+
+#. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_fleet_vehicle
 msgid "Vehicle"
 msgstr "Vehículo"
@@ -4504,6 +4943,7 @@ msgstr "API web"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__website_message_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__website_message_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_holidays__website_message_ids
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_metropolitan_zone__website_message_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_payment_type__website_message_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_phone_classification__website_message_ids
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_reason_authorizing_additional_costs__website_message_ids
@@ -4529,6 +4969,7 @@ msgstr "Mensajes del sitio web"
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_additional_concept_authorizer_type__website_message_ids
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_data_source__website_message_ids
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_holidays__website_message_ids
+#: model:ir.model.fields,help:custom_master_catalog.field_custom_metropolitan_zone__website_message_ids
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_payment_type__website_message_ids
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_phone_classification__website_message_ids
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_reason_authorizing_additional_costs__website_message_ids
@@ -4564,6 +5005,18 @@ msgstr "Categorías de pesos"
 #: model:ir.actions.act_window,name:custom_master_catalog.custom_vehicle_weight_category_action
 msgid "Weight Category vehicles"
 msgstr "Categorías de pesos"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_is_policy_account
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_is_policy_account
+msgid "X Is Policy Account"
+msgstr ""
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_is_policy_second_account_second
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_is_policy_second_account_second
+msgid "X Is Policy Second Account Second"
+msgstr ""
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_phone_p1_classification_id

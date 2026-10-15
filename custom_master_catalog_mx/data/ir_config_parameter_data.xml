@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <record id="bp_system_tenant" model="ir.config_parameter">
+        <field name="key">BP.system.tenant</field>
+        <field name="value">adff7f6a-e97d-11eb-9a03-0242ac130003</field>
+    </record>
+
+</odoo>

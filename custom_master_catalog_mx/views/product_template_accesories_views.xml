@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Replace domain and context with l10n_mx Service UoM on accessories action -->
+    <record id="custom_master_catalog.custom_ike_accessories_action" model="ir.actions.act_window">
+        <field name="domain" eval="[
+            ('sale_ok', '=', False),
+            ('sh_product_subscribe', '=', False),
+            ('purchase_ok', '=', True),
+            ('x_accessory_ok', '=', True),
+            ('type', '=', 'service'),
+            ('list_price', '=', 0),
+            ('standard_price', '=', 0),
+            ('categ_id', '=', ref('product.product_category_all')),
+            ('uom_id', '=', ref('l10n_mx.product_uom_service_unit')),
+        ]"/>
+        <field name="context" eval="{
+            'default_sale_ok': False,
+            'default_purchase_ok': True,
+            'default_x_accessory_ok': True,
+            'default_type': 'service',
+            'default_list_price': 0,
+            'default_standard_price': 0,
+            'default_categ_id': ref('product.product_category_all'),
+            'default_uom_id': ref('l10n_mx.product_uom_service_unit'),
+            'search_default_filter_enabled': 1,
+            'x_accessories_view': True,
+        }"/>
+    </record>
+
+</odoo>

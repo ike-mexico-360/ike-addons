@@ -107,9 +107,10 @@
                                 domain="[('disabled', '=', False)]"
                                 options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
                                 required="1" readonly="disabled"/>
-                                              
+                            <field name="x_clause_required" invisible="not x_is_policy_account"/>
                             <field name="x_check_second_key"/>
                             <field name="x_second_key_identification_id" invisible="not x_check_second_key"/>
+                            <field name="x_second_clause_required" invisible="not x_is_policy_second_account_second"/>
                             <field name="authorizer"/>
                             <field name="x_use_parent_invoice_info" readonly="disabled"/>
                             <field name="vat" placeholder="e.g. BE0477472701" required="not x_use_parent_invoice_info" invisible="x_use_parent_invoice_info" readonly="disabled"/>
@@ -161,6 +162,8 @@
                                 <group>
                                     <field name="x_validation_pattern" readonly="disabled"/>
                                     <field name="x_validation_pattern_second" readonly="disabled" invisible="not x_check_second_key"/>
+                                    <field name="x_validation_clause_patter" readonly="disabled"/>
+                                    <field name="x_validation_second_clause_patter" readonly="disabled" invisible="not x_check_second_key"/>
                                 </group>
                                 <group>
                                     <field name="x_display_mask" readonly="disabled"/>

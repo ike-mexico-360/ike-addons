@@ -127,7 +127,7 @@
             ('type', '=', 'service'),
             ('list_price', '=', 1),
             ('standard_price', '=', 0),
-            ('uom_id', '=', ref('l10n_mx.product_uom_service_unit')),
+            ('uom_id', '=', ref('uom.product_uom_unit')),
         ]"/> <!-- To be set in action.server -->
         <field name="context" eval="{
             'default_sale_ok': True,
@@ -138,7 +138,7 @@
             'default_list_price': 1,
             'default_standard_price': 0,
             'default_categ_id': False,
-            'default_uom_id': ref('l10n_mx.product_uom_service_unit'),
+            'default_uom_id': ref('uom.product_uom_unit'),
             'x_subservice_view': True,
             'search_default_filter_enabled': 1,
         }"/>

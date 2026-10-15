@@ -27,14 +27,20 @@ class IkeEventSupplierPublic(models.Model):
     def action_accept(self):
         self.env['ike.event.supplier'].sudo().browse(self.id).action_accept()
 
-    def action_confirm_vehicle(self):
-        self.env['ike.event.supplier'].sudo().browse(self.id).action_confirm_vehicle()
+    def action_confirm_vehicle_portal(self):
+        self.env['ike.event.supplier'].sudo().browse(self.id).action_confirm_vehicle_portal()
 
     def action_notify_operator(self):
         self.env['ike.event.supplier'].sudo().browse(self.id).action_notify_operator()
 
+    def action_assign(self):
+        self.env['ike.event.supplier'].sudo().browse(self.id).action_assign()
+
     def get_event_supplier_summary_data(self):
         return self.env['ike.event.supplier'].sudo().browse(self.id).event_supplier_summary_data
+
+    def get_event_supplier_summary_data_portal(self):
+        return self.env['ike.event.supplier'].sudo().browse(self.id).event_supplier_summary_data_portal
 
     def get_travel_tracking_url(self):
         return self.env['ike.event.supplier'].sudo().browse(self.id).travel_tracking_url
