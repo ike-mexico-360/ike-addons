@@ -235,15 +235,15 @@ class IkeEvent_Search(models.Model):
                             self.location_longitude,
                         )
                     )
+                    distance_km = (distance_m or supplier['estimated_distance'])
+                    duration_m = (duration_s or supplier['estimated_duration'])
+                    if not supplier['estimated_distance'] or not supplier.get('osrm'):
+                        supplier['estimated_distance'] = distance_km
+                        supplier['estimated_duration'] = duration_m
                     if route:
-                        distance_km = (distance_m or supplier['estimated_distance']) / 1000.00
-                        duration_m = (duration_s or supplier['estimated_duration']) / 60.00
                         supplier['route'] = route
                         supplier['real_distance'] = distance_km
                         supplier['real_duration'] = duration_m
-                        if not supplier['estimated_distance'] or not supplier.get('osrm'):
-                            supplier['estimated_distance'] = distance_km
-                            supplier['estimated_duration'] = duration_m
 
         # Search Number
         search_number = 0

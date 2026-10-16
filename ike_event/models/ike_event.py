@@ -1192,10 +1192,9 @@ class IkeEvent(models.Model):
                     rec.destination_latitude, rec.destination_longitude,
                 )
             )
-            if destination_route:
-                rec.destination_distance = (destination_distance_m or rec.destination_distance) / 1000
-                rec.destination_duration = (destination_duration_s or rec.destination_duration) / 60
-                rec.destination_route = destination_route
+            rec.destination_distance = (destination_distance_m or rec.destination_distance)
+            rec.destination_duration = (destination_duration_s or rec.destination_duration)
+            rec.destination_route = destination_route
 
     def _set_is_highway(self):
         highway_event_type_id = self.env['custom.type.event'].search([

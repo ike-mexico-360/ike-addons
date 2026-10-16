@@ -456,7 +456,7 @@
                                         string="Change Vehicle"
                                         icon="fa-clock-o"
                                         class="btn-link"
-                                        invisible="confirmed or stage_ref in ['cancel']"/>
+                                        invisible="confirmed or stage_ref in ['cancel'] or event_stage_ref in ['closed']"/>
                                     <button name="open_change_state_supplier_wizard"
                                         type="object"
                                         string="Watches"
