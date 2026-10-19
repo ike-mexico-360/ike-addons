@@ -684,6 +684,7 @@ class IkeEventSupplierSelection(models.Model):
 
         body = {
             "id": str(self.event_id.id),
+            "event_name": self.event_id.name,
             "user": nu_name,
             "placeEvent": self.event_id.event_type_id.name or '',
             "car": {
