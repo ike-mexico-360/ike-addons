@@ -7,6 +7,7 @@ from odoo.http import request
 from collections import defaultdict, deque
 from werkzeug.exceptions import (Forbidden, NotFound, BadRequest, InternalServerError)  # type: ignore
 import logging
+from .LocationBatcher import _to_coordinate
 
 _logger = logging.getLogger(__name__)
 
@@ -101,21 +102,25 @@ class LocationBatcher:
                 db_registry = odoo.modules.registry.Registry(self.db_name)
                 with db_registry.cursor() as cr:
                     # UPSERT
-                    values = [
-                        (
-                            d['vehicle_id'],
-                            d['state'],
-                            str(d['latitude']),
-                            str(d['longitude']),
-                        )
-                        for d in locations
-                    ]
+                    values = []
+                    for d in locations:
+                        latitude = _to_coordinate(d['latitude'])
+                        longitude = _to_coordinate(d['longitude'])
+                        if latitude is None or longitude is None:
+                            _logger.warning(
+                                'Invalid location discarded: %s/%s/%s', d['vehicle_id'], d['latitude'], d['longitude']
+                            )
+                            continue
+                        values.append((d['vehicle_id'], d['state'], latitude, longitude))
+
+                    if not values:
+                        return
 
                     query = """
                         UPDATE fleet_vehicle
                         SET x_vehicle_service_state = data.state,
-                            x_latitude = data.latitude,
-                            x_longitude = data.longitude
+                            x_latitude = data.latitude::double precision,
+                            x_longitude = data.longitude::double precision
                         FROM (VALUES %s) AS data(id, state, latitude, longitude)
                         WHERE fleet_vehicle.id = data.id
                     """

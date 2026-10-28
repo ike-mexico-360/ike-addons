@@ -46,17 +46,32 @@
         <record id="custom_master_catalog.ike_product_product_vial_fuel" model="product.product">
             <field name="x_input_res_model">ike.service.input.vial.generic</field>
             <field name="x_icon">fa fa-car</field>
-            <field name="x_survey_id" ref="survey_vial_tire"/>
+            <field name="x_survey_id" ref="survey_vial_generic"/>
         </record>
         <record id="custom_master_catalog.ike_product_product_vial_fluid" model="product.product">
             <field name="x_input_res_model">ike.service.input.vial.generic</field>
             <field name="x_icon">fa fa-car</field>
-            <field name="x_survey_id" ref="survey_vial_tire"/>
+            <field name="x_survey_id" ref="survey_vial_generic"/>
         </record>
         <record id="custom_master_catalog.ike_product_product_vial_battery" model="product.product">
             <field name="x_input_res_model">ike.service.input.vial.generic</field>
             <field name="x_icon">fa fa-car</field>
-            <field name="x_survey_id" ref="survey_vial_tire"/>
+            <field name="x_survey_id" ref="survey_vial_generic"/>
+        </record>
+        <record id="custom_master_catalog.ike_product_product_vial_locksmith" model="product.product">
+            <field name="x_input_res_model">ike.service.input.vial.generic</field>
+            <field name="x_icon">fa fa-car</field>
+            <field name="x_survey_id" ref="survey_vial_generic"/>
+        </record>
+        <record id="custom_master_catalog.ike_product_product_vial_recovery" model="product.product">
+            <field name="x_input_res_model">ike.service.input.vial.generic</field>
+            <field name="x_icon">fa fa-car</field>
+            <field name="x_survey_id" ref="survey_vial_generic"/>
+        </record>
+        <record id="custom_master_catalog.ike_product_product_vial_storage" model="product.product">
+            <field name="x_input_res_model">ike.service.input.vial.generic</field>
+            <field name="x_icon">fa fa-car</field>
+            <field name="x_survey_id" ref="survey_vial_generic"/>
         </record>
         <record id="custom_master_catalog.ike_product_product_medical_consultation" model="product.product">
             <field name="x_input_res_model">ike.service.input.medical.consultation</field>
@@ -239,6 +254,7 @@
             <field name="name">Electronic</field>
             <field name="sequence">1</field>
             <field name="wait_time">40</field>
+            <field name="can_exceed">False</field>
             <field name="geofence_radius_meters">3500</field>
             <field name="geofence_radius">3.5</field>
             <field name="arrival_duration">35</field>
@@ -250,6 +266,7 @@
             <field name="name">Publication</field>
             <field name="sequence">2</field>
             <field name="wait_time">80</field>
+            <field name="can_exceed">True</field>
             <field name="geofence_radius_meters">5000</field>
             <field name="geofence_radius">5</field>
             <field name="arrival_duration">40</field>
@@ -261,6 +278,7 @@
             <field name="name">Manual</field>
             <field name="sequence">3</field>
             <field name="wait_time">0</field>
+            <field name="can_exceed">True</field>
             <field name="geofence_radius_meters">8000</field>
             <field name="geofence_radius">8</field>
             <field name="arrival_duration">50</field>

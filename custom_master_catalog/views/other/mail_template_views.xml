@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="mail_template_form_email_sending_control" model="ir.ui.view">
+        <field name="name">mail.template.form.email.sending.control</field>
+        <field name="model">mail.template</field>
+        <field name="inherit_id" ref="mail.email_template_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='email_settings']//field[@name='auto_delete']" position="after">
+                <field name="active"/>
+                <field name="x_allow_email_sending"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="mail_template_list_email_sending_control" model="ir.ui.view">
+        <field name="name">mail.template.list.email.sending.control</field>
+        <field name="model">mail.template</field>
+        <field name="inherit_id" ref="mail.email_template_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="x_allow_email_sending" optional="show"/>
+            </field>
+        </field>
+    </record>
+</odoo>

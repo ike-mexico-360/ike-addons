@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_ike_support_root" name="Support" sequence="60"
+              web_icon="ike_support,static/description/icon.svg" groups="group_support_user"/>
+    <menuitem id="menu_ike_support_reports" name="Reports" parent="menu_ike_support_root"
+              action="action_ike_support_reports" sequence="10"/>
+    <menuitem id="menu_ike_support_config" name="Configuration" parent="menu_ike_support_root"
+              sequence="90" groups="group_support_manager"/>
+    <menuitem id="menu_ike_support_platforms" name="Platforms" parent="menu_ike_support_config"
+              action="action_ike_support_platforms" sequence="10"/>
+    <menuitem id="menu_ike_support_failures" name="Failures" parent="menu_ike_support_config"
+              action="action_ike_support_failures" sequence="20"/>
+</odoo>

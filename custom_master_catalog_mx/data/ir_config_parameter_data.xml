@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo noupdate="1">
 
+    <!-- Tenant por default para comparar las peticiones recibidas de BrightPattern -->
     <record id="bp_system_tenant" model="ir.config_parameter">
         <field name="key">BP.system.tenant</field>
         <field name="value">adff7f6a-e97d-11eb-9a03-0242ac130003</field>
+    </record>
+
+    <!-- alloc_nmbr default para envío de factura a SAP -->
+    <record id="sap_invoice_alloc_nmbr_system" model="ir.config_parameter">
+        <field name="key">ike_event_portal.invoice.alloc_nmbr</field>
+        <field name="value">MD_IKE_360MX</field>
     </record>
 
 </odoo>

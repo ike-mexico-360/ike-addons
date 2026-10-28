@@ -392,6 +392,7 @@
                                 <field name="evaluated_pending_suppliers" invisible="1"/>
                                 <button string="Add Manual Supplier" name="action_open_add_manual_supplier_wizard" type="object" class="btn-link"
                                     invisible="supplier_search_type not in ['manual', 'manual_manual'] or evaluated_pending_suppliers > 0"/>
+                                <!-- <button string="Add Manual Supplier" name="action_open_add_manual_supplier_wizard" type="object" class="btn-link"/> -->
                             </group>
                         </page>
                         <page name="product_data" string="Concepts">

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="custom_type_event_highway" model="custom.type.event" forcecreate="0">
+            <field name="name">Carretero</field>
+            <field name="ref">highway</field>
+        </record>
+        <record id="custom_type_event_no_highway" model="custom.type.event" forcecreate="0">
+            <field name="name">No carretero</field>
+            <field name="ref">no_highway</field>
+        </record>
+    </data>
+</odoo>

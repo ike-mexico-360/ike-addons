@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="custom_ike_concepts_product_template_form_inherit_supplier_cost_matrix" model="ir.ui.view">
+        <field name="name">custom_ike_concepts_product_template_form.inherit.supplier_cost_matrix</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="custom_master_catalog.custom_ike_concepts_product_template_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='x_additional_ok']" position="after">
+                <field name="x_matrix_workflow" readonly="disabled" invisible="x_additional_ok"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -53,6 +53,12 @@
                 <field name="date_init" readonly="1"/>
                 <field name="date_end" readonly="1"/>
                 <field name="vacation_schedule_ids" widget="many2many_tags" readonly="1"/>
+                <field name="initial_kilometer"/>
+                <field name="final_kilometer"/>
+                <field name="origin_municipality_id" options='{"no_open": True, "no_create": True}'/>
+                <field name="origin_entity" options='{"no_open": True, "no_create": True}'/>
+                <field name="destination_municipality_id" options='{"no_open": True, "no_create": True}'/>
+                <field name="destination_entity" options='{"no_open": True, "no_create": True}'/>
                 <field name="active" column_invisible="1"/>
                 <field name="active" groups="custom_master_catalog.custom_group_supplier_contralory,custom_master_catalog.custom_group_supplier_admin_system" widget="boolean_toggle"/>
                 <field name="disabled" column_invisible="1"/>

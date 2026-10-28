@@ -19,6 +19,7 @@ class CustomAccountIdentification(models.Model):
     regex = fields.Char(tracking=True)
     label = fields.Char(required=True, tracking=True)
     clause = fields.Boolean(string="Clause")
+    is_plate = fields.Boolean('Is plate', default=False, tracking=True)
 
     active = fields.Boolean('Active', default=True, tracking=True)
     disabled = fields.Boolean('Disabled', default=False, tracking=True)

@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_support_platform_user,support platform user,model_ike_support_platform,group_support_user,1,0,0,0
+access_support_platform_manager,support platform manager,model_ike_support_platform,group_support_manager,1,1,1,1
+access_support_failure_user,support failure user,model_ike_support_failure,group_support_user,1,0,0,0
+access_support_failure_manager,support failure manager,model_ike_support_failure,group_support_manager,1,1,1,1
+access_support_report_user,support report user,model_ike_support_report,group_support_user,1,1,1,0
+access_support_report_manager,support report manager,model_ike_support_report,group_support_manager,1,1,1,1

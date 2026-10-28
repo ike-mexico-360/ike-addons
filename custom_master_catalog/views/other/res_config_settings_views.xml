@@ -12,6 +12,12 @@
                     <setting id="events_allow_send_whatsapp" string="Send whatsapp notifications" help="Allow users to send whatsapp notifications" groups="base.group_no_one">
                         <field name="events_allow_send_whatsapp"/>
                     </setting>
+                    <setting id="x_allow_email_sending"
+                             string="Allow email sending"
+                             help="Master switch for outgoing emails of this company. Disabled by default."
+                             groups="base.group_system">
+                        <field name="x_allow_email_sending"/>
+                    </setting>
                 </xpath>
             </field>
         </record>

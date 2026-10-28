@@ -4,6 +4,7 @@ import random
 
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError, ValidationError
+from markupsafe import Markup
 
 
 class IkeEvent(models.Model):
@@ -49,6 +50,7 @@ class IkeEvent(models.Model):
         'service_supplier_ids.cancelled',
         'service_supplier_ids.amount_concept_total',
         'service_supplier_ids.evaluation_id',
+        'service_supplier_ids.evaluation_reevaluation',
     )
     def _compute_supplier_amount(self):
         for event_id in self:
@@ -151,11 +153,11 @@ class IkeEvent(models.Model):
         suppliers = self.service_supplier_ids.filtered(
             lambda x:
                 x.search_number == self.supplier_search_number and not x.display_type
-                and (not x.assignation_type.startswith('manual') or not x.evaluation_locked)
+                and (not x.assignation_type.startswith('manual') or not x.evaluation_locked and x.evaluation_reevaluation)
         )
 
         if not suppliers:
-            raise UserError(_('No suppliers were found'))
+            raise UserError(_('It is necessary to qualify the provider before requesting authorization.'))
 
         supplier_with_max_amount = max(suppliers, key=lambda x: x.amount_concept_total)
         return supplier_with_max_amount
@@ -242,12 +244,46 @@ class IkeEventSupplierLink(models.Model):
 
     def action_request_authorization(self):
         self.ensure_one()
+        # notify = not self.env.context.get('from_view_detail', False)
 
         if self.authorization_by_nu and not self.user_payment_line_ids:
             raise UserError(
                 _("The authorization type requires a payment line.")
             )
-        # ToDo: Send notification?
+
+        # if notify:
+        #     self._action_notify_authorizer()
+
+    def _action_notify_authorizer(self):
+        self.ensure_one()
+        partner = self.authorizer_id
+        event = self.event_id
+        view = self.env.ref('ike_event.view_ike_event_screen_form')
+
+        mention = Markup(
+            '<a href="#" data-oe-model="res.partner" data-oe-id="%s">@%s</a>'
+        ) % (partner.id, partner.name)
+
+        event_link = Markup(
+            '<a href="/web#id=%s&amp;model=ike.event'
+            '&amp;view_type=form&amp;view_id=%s'
+            '&amp;context=%%7B%%22x_authorization_notification%%22%%3Atrue%%7D">%s</a>'
+        ) % (
+            event.id,
+            view.id,
+            event.display_name,
+        )
+
+        event.message_post(
+            body=Markup('<span class="o-ike-authorization-notification"></span>%s %s %s') % (
+                mention,
+                _("Your authorization is requested for event"),
+                event_link,
+            ),
+            message_type='comment',
+            subtype_xmlid='mail.mt_comment',
+            partner_ids=partner.ids,
+        )
 
     def action_accept_authorization(self):
         self.ensure_one()
@@ -283,8 +319,8 @@ class IkeEventSupplierLink(models.Model):
         })
         event_id.accept_authorization(event_authorization_id.id)
 
-        if event_id.supplier_search_type in ['manual_manual', 'manual']:
-            event_id.broadcastEventReload(1)
+        # if event_id.supplier_search_type in ['manual_manual', 'manual']:
+        event_id.broadcastEventReload(1)
 
         # Start automatic notifications
         event_id.action_start_notifications()

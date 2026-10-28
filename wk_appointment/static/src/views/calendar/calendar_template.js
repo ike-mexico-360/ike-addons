@@ -10,7 +10,7 @@ patch(CalendarModel.prototype, {
         if (!this.state) {
             this.state = {};
         }
-        
+
         if (!this.state.scale) {
             this.state.scale = 'week';
         }
@@ -20,12 +20,14 @@ patch(CalendarModel.prototype, {
     },
 
     async load(params = {}) {
-        const appointee_id = params.appointee_id || this.state.appointee_id;
-        this.state.appointee_id = appointee_id;  // Update appointee_id in the state
-        this.meta.AppointeeData = await this.fetchAppointeeData(appointee_id);
+        if (this.meta.resModel === 'appointment') {
+            const appointee_id = params.appointee_id || this.state.appointee_id;
+            this.state.appointee_id = appointee_id;  // Update appointee_id in the state
+            this.meta.AppointeeData = await this.fetchAppointeeData(appointee_id);
+        }
         return super.load(...arguments);
     },
-    
+
     //here overriding core method to display only those records which belong to the selected appointee
     async fetchRecords(data){
         if (this.meta.resModel != 'appointment'){
@@ -95,7 +97,7 @@ patch(CalendarController.prototype, {
         if (this.selectedAppointeeId !== -1 && this.selectedAppointeeId !== undefined && this.selectedAppointeeId !== null) {
             domain.push(['appoint_person_id', '=', this.selectedAppointeeId]);
         }
-       
+
         if (ev.target.classList.contains('new_appointment')) {
             let newAppointmentDomain = [
                 ['appoint_state', '=', 'new']
@@ -125,7 +127,7 @@ patch(CalendarController.prototype, {
             var approvedAppointmentDomain = [
                 ['appoint_state', '=', 'approved']
             ];
-            
+
             this.actionService.doAction({
                 type: "ir.actions.act_window",
                 res_model: 'appointment',

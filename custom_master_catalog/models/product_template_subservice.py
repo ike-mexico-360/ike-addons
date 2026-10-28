@@ -179,14 +179,20 @@ class CustomSubserviceConceptLine(models.Model):
         'Event type',
         domain="[('disabled', '=', False)]"
     )
+    base_concept_id = fields.Many2one('product.product', string='Base Concept')
+    concepts_domain = fields.Binary(string="Concepts domain", compute="_compute_concepts_domain")
     concepts_ids = fields.Many2many(
         'product.product',
         'subservice_concept_line_concept_rel',
         'subservice_concept_line_id',
         'concept_id',
         string='Concepts')
-    base_concept_id = fields.Many2one('product.product', string='Base Concept')
-    concepts_domain = fields.Binary(string="Concept domain", compute="_compute_concepts_domain")
+    first_concepts_ids = fields.Many2many(
+        'product.product',
+        'subservice_concept_line_first_concept_rel',
+        'subservice_concept_line_id',
+        'concept_id',
+        string='First Concepts')
     supplier_id = fields.Many2one('res.partner', domain=[('x_is_supplier', '=', True)])
     active = fields.Boolean(default=True)
     disabled = fields.Boolean(default=False)

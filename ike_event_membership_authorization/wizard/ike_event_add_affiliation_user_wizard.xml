@@ -63,9 +63,6 @@
                             required="not authorization"/>
                     </group>
                 </group>
-                <!-- <field name="display_key_primary_clause" invisible="not check_clause" readonly="1"/>
-                <field name="display_key_second_clause_second" invisible="not check_clause_second" readonly="1"/> -->
-
                 <!-- User -->
                 <group>
                     <group string="User" class="o_group_border">

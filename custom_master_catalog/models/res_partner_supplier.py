@@ -1,13 +1,25 @@
 # -*- coding: utf-8 -*-
 
+import uuid
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 
 class ResPartner(models.Model):
     _inherit = 'res.partner'
 
+    @api.model
+    def generate_supplier_uuid(self):
+        """Generate the deterministic UUIDv5 used to identify a supplier."""
+        self.ensure_one()
+        seed = '|'.join((
+            str(fields.Datetime.to_string(self.create_date) or '').strip(),
+            str(self.vat or '').strip().upper(),
+        ))
+        return str(uuid.uuid5(uuid.NAMESPACE_DNS, seed))
+
     # === SUPPLIER FIELDS === #
+    x_supplier_ref = fields.Char(string='Supplier ref', tracking=True)
     x_coverage_count = fields.Integer(
         string='Number of service and subservice configurations',
         compute='_compute_x_coverage_count',
@@ -266,3 +278,40 @@ class ResPartner(models.Model):
     def _onchange_x_is_exclusive_accounts(self):
         if not self.x_is_exclusive_accounts and self.x_exclusive_account_ids:
             self.x_exclusive_account_ids = False
+
+    def action_disable(self, reason=None):
+        """Disable the supplier children (e.g. supplier centers) along with the supplier."""
+        attention_centers = self.filtered('x_is_supplier').x_supplier_center_ids
+        res = super().action_disable(reason)
+        if attention_centers:
+            attention_centers.action_disable(reason)
+        return res
+
+    def action_enable(self, reason=None):
+        blocked_centers = self.filtered(
+            lambda p: p.type == 'center' and p.parent_id.disabled and p.parent_id not in self
+        )
+        if blocked_centers:
+            raise UserError(_(
+                "It cannot be enabled, the supplier is not enabled: %s",
+                ', '.join(blocked_centers.mapped('name')),
+            ))
+
+        suppliers = self.filtered('x_is_supplier')
+        attention_centers = self.env['res.partner'].search([
+            ('parent_id', 'in', suppliers.ids),
+            ('type', '=', 'center'),
+            ('disabled', '=', True),
+        ]) if suppliers else self.env['res.partner']
+        res = super().action_enable(reason)
+        if attention_centers:
+            attention_centers.action_enable(reason)
+        return res
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        suppliers = super().create(vals_list)
+        for supplier in suppliers.filtered(lambda s: s.vat):
+            if not supplier.x_supplier_ref:
+                supplier.x_supplier_ref = supplier.generate_supplier_uuid()
+        return suppliers

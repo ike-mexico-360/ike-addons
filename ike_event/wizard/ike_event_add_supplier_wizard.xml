@@ -9,7 +9,8 @@
                 <sheet>
                     <group>
                         <field name="event_id" options="{'no_create': 1, 'no_open': 1}"/>
-                        <field name="supplier_id" options="{'no_create': 1, 'no_open': 1}"/>
+                        <field name="supplier_id" domain="supplier_domain" options="{'no_create': 1, 'no_open': 1}"/>
+                        <field name="supplier_domain" invisible="1"/>
                         <field name="supplier_number" invisible="1"/>
                         <field name="aux_truck_id" domain="aux_truck_domain" options="{'no_create': 1, 'no_open': 1}"/>
                         <field name="aux_truck_domain" invisible="1"/>

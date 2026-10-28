@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, Command, _
+from odoo.exceptions import ValidationError
 from odoo.osv import expression
 
 
@@ -9,10 +10,16 @@ class IkeEvenPhoneWizard(models.Model):
     _description = 'Event Add Supplier Wizard'
 
     event_id = fields.Many2one('ike.event', required=True, readonly=True)
-    supplier_id = fields.Many2one('res.partner', required=True, domain="[('x_is_supplier', '=', True)]")
+    supplier_id = fields.Many2one('res.partner', required=True)
+    supplier_domain = fields.Binary(compute='_compute_supplier_domain')
     supplier_number = fields.Integer(readonly=True)
     aux_truck_id = fields.Many2one('fleet.vehicle', 'Service Vehicle', required=True)
     aux_truck_domain = fields.Binary(compute='_compute_aux_truck_domain')
+
+    @api.depends('event_id', 'event_id.sub_service_id')
+    def _compute_supplier_domain(self):
+        for rec in self:
+            rec.supplier_domain = rec._get_supplier_domain()
 
     @api.depends('event_id', 'supplier_id')
     def _compute_aux_truck_domain(self):
@@ -69,3 +76,22 @@ class IkeEvenPhoneWizard(models.Model):
         event_supplier_id = self.event_id.add_manual_supplier(self.supplier_id, self.aux_truck_id, supplier_link_id)
 
         return event_supplier_id.action_view_products()
+
+    def _get_supplier_domain(self):
+        """ Suppliers with at least one enabled attention center offering the event sub-service. """
+        self.ensure_one()
+        return [
+            ('x_is_supplier', '=', True),
+            ('disabled', '=', False),
+            ('child_ids', 'any', [
+                ('type', '=', 'center'),
+                ('disabled', '=', False),
+                ('x_geographical_area_ids', 'any', [
+                    ('disabled', '=', False),
+                    ('area_product_ids', 'any', [
+                        ('product_id', '=', self.event_id.sub_service_id.id),
+                        ('disabled', '=', False),
+                    ]),
+                ]),
+            ]),
+        ]

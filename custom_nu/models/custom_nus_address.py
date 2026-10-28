@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 class CustomNusAddress(models.Model):
     _name = 'custom.nus.address'
     _description = 'Custom NUS Address'
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'custom.model.encryption']
 
     _rec_name = 'street_nus'
 
@@ -18,18 +18,22 @@ class CustomNusAddress(models.Model):
     active = fields.Boolean(string='Active', default=True, tracking=True)
     disabled = fields.Boolean(string='Disabled', default=False, tracking=True)
 
-    street_nus = fields.Char(string='Street', tracking=True)
-    street2_nus = fields.Char(string='Street2', tracking=True)
-    l10n_mx_edi_colony_nus = fields.Char(string='Colony', tracking=True)
-    city_nus = fields.Char(string='City', tracking=True)
+    street_nus = fields.Char(string='Street', tracking=True, encrypt=True)
+    street2_nus = fields.Char(string='Street2', tracking=True, encrypt=True)
+    l10n_mx_edi_colony_nus = fields.Char(string='Colony', tracking=True, encrypt=True)
+    city_nus = fields.Char(string='City', tracking=True, encrypt=True)
     state_nus_id = fields.Many2one('res.country.state', string='State', tracking=True, ondelete='restrict')
-    zip_nus = fields.Char(string='Zip code', tracking=True)
+    zip_nus = fields.Char(string='Zip code', tracking=True, encrypt=True)
     country_nus_id = fields.Many2one('res.country', string='Country', tracking=True, ondelete='restrict')
     display_name = fields.Char(
         string='Display Name',
         compute='_compute_decrypted_fields',
         store=False
     )
+    # # === ENCRYPT SEARCH HELPER FIELDS === #
+    x_name_search_ids = fields.One2many(
+        'custom.nus.address.search.helper.rel', 'encrypt_model_id',
+        domain=[('field_name', '=', 'name')])
 
     # === COMPUTE === #
     @api.depends('street_nus', 'street2_nus', 'l10n_mx_edi_colony_nus', 'city_nus', 'zip_nus')
@@ -37,11 +41,10 @@ class CustomNusAddress(models.Model):
         """
         Compute decrypted values to display in the interface
         """
-        encryption_util = self.env['custom.encryption.utility']
         for record in self:
             # Decrypt street
             if record.street_nus:
-                record.display_name = encryption_util.decrypt_aes256(record.street_nus)
+                record.display_name = self.x_decrypt_aes256(record.street_nus)
             else:
                 record.display_name = ''
 
@@ -79,133 +82,19 @@ class CustomNusAddress(models.Model):
             if rec.country_nus_id and rec.state_nus_id and rec.state_nus_id.country_id != rec.country_nus_id:
                 rec.state_nus_id = False
 
-    # === CRUD METHODS === #
-    @api.model_create_multi
-    def create(self, vals_list):
-        encryption_util = self.env['custom.encryption.utility']
 
-        for vals in vals_list:
+class CustomNusAddressSearchHelperRel(models.Model):
+    _name = 'custom.nus.address.search.helper.rel'
+    _inherit = ['custom.model.encryption.search.helper.rel']
+    _description = 'Custom membership nus search helper rel'
 
-            # Encriptar campos
-            if 'street_nus' in vals and vals['street_nus']:
-                vals['street_nus'] = encryption_util.encrypt_aes256(vals['street_nus'])
-            if 'street2_nus' in vals and vals['street2_nus']:
-                vals['street2_nus'] = encryption_util.encrypt_aes256(vals['street2_nus'])
-            if 'l10n_mx_edi_colony_nus' in vals and vals['l10n_mx_edi_colony_nus']:
-                vals['l10n_mx_edi_colony_nus'] = encryption_util.encrypt_aes256(vals['l10n_mx_edi_colony_nus'])
-            if 'city_nus' in vals and vals['city_nus']:
-                vals['city_nus'] = encryption_util.encrypt_aes256(vals['city_nus'])
-            if 'zip_nus' in vals and vals['zip_nus']:
-                vals['zip_nus'] = encryption_util.encrypt_aes256(vals['zip_nus'])
+    encrypt_model_id = fields.Many2one('custom.nus.address', ondelete='cascade', index=True, required=True)
+    encrypt_helper_id = fields.Many2one('custom.nus.address.search.helper', ondelete='cascade', index=True, required=True)
 
-        return super(CustomNusAddress, self).create(vals_list)
 
-    def write(self, vals):
-        if not vals:
-            return True
+class CustomNusAddressSearchHelper(models.Model):
+    _name = 'custom.nus.address.search.helper'
+    _inherit = ['custom.model.encryption.search.helper']
+    _description = 'Custom membership nus search helper'
 
-        encryption_util = self.env['custom.encryption.utility']
-
-        # Encrypt fields
-        if 'street_nus' in vals and vals['street_nus']:
-            vals['street_nus'] = encryption_util.encrypt_aes256(vals['street_nus'])
-        if 'street2_nus' in vals and vals['street2_nus']:
-            vals['street2_nus'] = encryption_util.encrypt_aes256(vals['street2_nus'])
-        if 'l10n_mx_edi_colony_nus' in vals and vals['l10n_mx_edi_colony_nus']:
-            vals['l10n_mx_edi_colony_nus'] = encryption_util.encrypt_aes256(vals['l10n_mx_edi_colony_nus'])
-        if 'city_nus' in vals and vals['city_nus']:
-            vals['city_nus'] = encryption_util.encrypt_aes256(vals['city_nus'])
-        if 'zip_nus' in vals and vals['zip_nus']:
-            vals['zip_nus'] = encryption_util.encrypt_aes256(vals['zip_nus'])
-
-        return super(CustomNusAddress, self).write(vals)
-
-    def read(self, fields=None, load='_classic_read'):
-        """
-        Override read to return decrypted values when necessary
-        """
-        result = super(CustomNusAddress, self).read(fields=fields, load=load)
-
-        # Only decrypt if encrypted fields are specifically requested
-        if not fields or any(f in fields for f in ['street_nus', 'street2_nus', 'l10n_mx_edi_colony_nus', 'city_nus', 'zip_nus']):
-            encryption_util = self.env['custom.encryption.utility']
-
-            for record in result:
-                if 'street_nus' in record and record['street_nus']:
-                    try:
-                        record['street_nus'] = encryption_util.decrypt_aes256(record['street_nus'])
-                    except Exception as e:
-                        _logger.warning(f"Error decrypting Street: {str(e)}")
-
-                if 'street2_nus' in record and record['street2_nus']:
-                    try:
-                        record['street2_nus'] = encryption_util.decrypt_aes256(record['street2_nus'])
-                    except Exception as e:
-                        _logger.warning(f"Error decrypting Street2: {str(e)}")
-
-                if 'l10n_mx_edi_colony_nus' in record and record['l10n_mx_edi_colony_nus']:
-                    try:
-                        record['l10n_mx_edi_colony_nus'] = encryption_util.decrypt_aes256(record['l10n_mx_edi_colony_nus'])
-                    except Exception as e:
-                        _logger.warning(f"Error decrypting Colony: {str(e)}")
-
-                if 'city_nus' in record and record['city_nus']:
-                    try:
-                        record['city_nus'] = encryption_util.decrypt_aes256(record['city_nus'])
-                    except Exception as e:
-                        _logger.warning(f"Error decrypting City: {str(e)}")
-                if 'zip_nus' in record and record['zip_nus']:
-                    try:
-                        record['zip_nus'] = encryption_util.decrypt_aes256(record['zip_nus'])
-                    except Exception as e:
-                        _logger.warning(f"Error decrypting Zip code: {str(e)}")
-
-        return result
-
-    def name_get(self):
-        """
-        Override name_get to display the decrypted name
-        This is what makes the _rec_name appear decrypted throughout the application
-        """
-        result = []
-        encryption_util = self.env['custom.encryption.utility']
-        for record in self:
-            if record.street_nus:
-                decrypted_name = encryption_util.decrypt_aes256(record.street_nus)
-                result.append((record.id, decrypted_name))
-            else:
-                result.append((record.id, 'No name'))
-        return result
-
-    @api.model
-    def name_search(self, name='', args=None, operator='ilike', limit=100):
-        """
-        Override name_search to search in decrypted names
-        This allows searching records by their decrypted name
-        """
-        if not name:
-            return super(CustomNusAddress, self).name_search(name, args, operator, limit)
-
-        # Search in all records and filter by decrypted name
-        records = self.search(args or [])
-        encryption_util = self.env['custom.encryption.utility']
-        matching_ids = []
-
-        for record in records:
-            if record.street_nus:
-                try:
-                    decrypted_name = encryption_util.decrypt_aes256(record.street_nus)
-                    if operator == 'ilike' and name.lower() in decrypted_name.lower():
-                        matching_ids.append(record.id)
-                    elif operator == '=' and name == decrypted_name:
-                        matching_ids.append(record.id)
-                    elif operator == 'like' and name in decrypted_name:
-                        matching_ids.append(record.id)
-                except Exception as e:
-                    _logger.warning(f"Error decrypting name for search: {str(e)}")
-                    continue
-
-            if len(matching_ids) >= limit:
-                break
-
-        return self.browse(matching_ids).name_get()
+    encrypt_rel_ids = fields.One2many('custom.nus.address.search.helper.rel', 'encrypt_helper_id')

@@ -222,9 +222,7 @@ class CustomNus(models.Model):
                 "- whatsapp.template_url"
             ))
 
-        encryption_util = self.env['custom.encryption.utility']
-
-        phone_number = encryption_util.decrypt_aes256(self.phone) if self.phone else False
+        phone_number = self.x_decrypt_aes256(self.phone) if self.phone else False
 
         if not phone_number:
             raise UserError(_("No phone number available for WhatsApp"))
@@ -277,9 +275,7 @@ class CustomNus(models.Model):
                 "- sms.send_message_template_url"
             ))
 
-        encryption_util = self.env['custom.encryption.utility']
-
-        phone_number = encryption_util.decrypt_aes256(self.phone) if self.phone else False
+        phone_number = self.x_decrypt_aes256(self.phone) if self.phone else False
 
         if not phone_number:
             raise UserError(_("No phone number available for SMS"))
@@ -332,9 +328,7 @@ class CustomNus(models.Model):
                 "- sms.send_message_list_template_url"
             ))
 
-        encryption_util = self.env['custom.encryption.utility']
-
-        phone_number = encryption_util.decrypt_aes256(self.phone) if self.phone else False
+        phone_number = self.x_decrypt_aes256(self.phone) if self.phone else False
         phone_number_list = [phone_number] if phone_number else []
 
         # print(phone_number_list)

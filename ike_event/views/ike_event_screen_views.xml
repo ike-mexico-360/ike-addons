@@ -125,6 +125,7 @@
                             <field name="service_res_model" invisible="1"/>
                             <field name="service_res_id" readonly="1" invisible="1"/>
                             <field name="service_survey_input_id" readonly="1" invisible="1"/>
+                            <field name="resource_type" invisible="1"/>
                         </group>
                         <group string="Sub-Service" name="sub_service" class="ike-group">
                             <field name="sub_service_id" nolabel="1"
@@ -565,6 +566,7 @@
             'service_input_vial_fuel_form_id': ref('ike_event.view_ike_service_input_vial_generic_screen_form'),
             'service_input_vial_fluid_form_id': ref('ike_event.view_ike_service_input_vial_generic_screen_form'),
             'service_input_vial_battery_form_id': ref('ike_event.view_ike_service_input_vial_generic_screen_form'),
+            'service_input_medical_consultation_form_id': ref('ike_event.view_ike_service_input_medical_consultation_screen_form'),
             'service_input_medical_form_id': ref('ike_event.view_ike_service_input_medical_screen_form'),
             'survey_user_input_form_id': ref('ike_event.ike_survey_user_input_view_screen_form'),
             'service_supplier_screen_form_id': ref('ike_event.view_ike_event_supplier_screen_form'),

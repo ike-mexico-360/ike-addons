@@ -76,11 +76,11 @@ class PurchaseOrderLine(models.Model):
 
     # Additional fields (reports)
     x_event_type_id = fields.Many2one(
-        'custom.type.event', 'Event Type', tracking=True, ondelete='restrict')
+        'custom.type.event', 'Event Type', sub_tracking=True, ondelete='restrict')
     x_incident_type_id = fields.Many2one(
-        'custom.incident.type', 'Incident Type', tracking=True, ondelete='restrict')
+        'custom.incident.type', 'Incident Type', sub_tracking=True, ondelete='restrict')
     x_vehicle_weight_category_id = fields.Many2one(
-        'custom.vehicle.weight.category', 'Weight Category', tracking=True, ondelete='restrict')
+        'custom.vehicle.weight.category', 'Weight Category', sub_tracking=True, ondelete='restrict')
     x_id_event = fields.Char(
         string='ID Event', help="Technical: ID Event received from External source needed to send at SAP. Only external")
     x_validator = fields.Char(

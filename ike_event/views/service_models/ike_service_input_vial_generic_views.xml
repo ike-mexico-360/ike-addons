@@ -93,7 +93,7 @@
                             <field name="is_highway" invisible="1"/>
                         </group>
                     </group>
-                     <group>
+                    <group>
                         <group string="Concepts" colspan="2" invisible="not sections.get('product_data')">
                             <field name="event_supplier_number" invisible="0"/>
                             <field name="service_product_ids" widget="ike_section_and_note_field_o2m" nolabel="1" colspan="2"

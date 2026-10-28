@@ -1,3 +1,4 @@
+import math
 import threading
 import time
 import odoo
@@ -5,6 +6,17 @@ from collections import defaultdict, deque
 from odoo import api, SUPERUSER_ID
 import logging
 _logger = logging.getLogger(__name__)
+
+
+def _to_coordinate(value):
+    """ Convert a coordinate to float (accepts comma or dot). None if invalid. """
+    if value is None or isinstance(value, bool):
+        return None
+    try:
+        coordinate = float(str(value).strip().replace(',', '.'))
+    except ValueError:
+        return None
+    return coordinate if math.isfinite(coordinate) else None
 
 
 class VehicleLocationBatcher:
@@ -91,19 +103,24 @@ class VehicleLocationBatcher:
                 db_registry = odoo.modules.registry.Registry(self.db_name)
                 with db_registry.cursor() as cr:
                     # UPSERT
-                    values = [
-                        (
-                            d['vehicle_id'],
-                            str(d['latitude']),
-                            str(d['longitude']),
-                        )
-                        for d in locations
-                    ]
+                    values = []
+                    for d in locations:
+                        latitude = _to_coordinate(d['latitude'])
+                        longitude = _to_coordinate(d['longitude'])
+                        if latitude is None or longitude is None:
+                            _logger.warning(
+                                'Invalid location discarded: %s/%s/%s', d['vehicle_id'], d['latitude'], d['longitude']
+                            )
+                            continue
+                        values.append((d['vehicle_id'], latitude, longitude))
+
+                    if not values:
+                        return
 
                     query = """
                         UPDATE fleet_vehicle
-                        SET x_latitude = data.latitude,
-                            x_longitude = data.longitude
+                        SET x_latitude = data.latitude::double precision,
+                            x_longitude = data.longitude::double precision
                         FROM (VALUES %s) AS data(id, latitude, longitude)
                         WHERE fleet_vehicle.x_vehicle_ref = data.id
                     """

@@ -40,19 +40,18 @@ class IkeEvent(models.Model):
         if self.membership_authorization_id:
             return self.membership_authorization_id.with_context(self.env.context).action_authororizer_wizard()
         else:
-            decrypt_util = self.env['custom.encryption.utility']
             print("")
             membership_authorization_id = self.env['ike.event.membership.authorization'].create({
                 'event_id': self.id,
                 'nus_membership_id': self.user_membership_id.id,
                 'nus_id': self.user_membership_id.nus_id.id,
-                'phone_nu': decrypt_util.decrypt_aes256(self.user_phone) if self.user_phone else False,
+                'phone_nu': self.user_id.x_decrypt_aes256(self.user_phone) if self.user_phone else False,
                 'nu_alternative': self.user_additional_phone,
                 'preference_contact': self.preference_contact,
-                'key_identification': decrypt_util.decrypt_aes256(
+                'key_identification': self.user_membership_id.x_decrypt_aes256(
                     self.user_membership_id.key_identification
                 ) if self.user_membership_id.key_identification else False,
-                'second_key_identification': decrypt_util.decrypt_aes256(
+                'second_key_identification': self.user_membership_id.x_decrypt_aes256(
                     self.user_membership_id.second_key_identification
                 ) if self.user_membership_id.second_key_identification else False,
                 'clause_primary': self.user_membership_id.clause,
@@ -81,18 +80,17 @@ class IkeEvent(models.Model):
     def action_open_register_user_wizard(self):
         self.ensure_one()
         # phone = super()._get_phone(self.user_phone)  # type: ignore
-        decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility']
         ctx = {
             'default_account_id': self.user_membership_id.membership_plan_id.id,
             'default_event_id': self.id,
-            'default_phone': decrypt_encrypt_utility_sudo.decrypt_aes256(self.user_phone)
+            'default_phone': self.user_id.x_decrypt_aes256(self.user_phone)
         }
         # Implementando flujo de BP, cuenta no existente
         if bool(self.created_from_bp and self.temporary_phone):
             ctx.update({
                 'created_from_bp': self.created_from_bp,
                 'default_account_id': self.temporary_membership_plan_id.id,
-                'default_key_primary': self.temporary_key_identification,
+                'default_key_primary': self.user_membership_id.x_decrypt_aes256(self.temporary_key_identification),
                 'default_phone': self.temporary_phone,
             })
         else:
@@ -102,7 +100,7 @@ class IkeEvent(models.Model):
                     ('membership_plan_id', '=', self.user_membership_id.membership_plan_id.id),
                 ])
                 if len(membership_ids) == 1:
-                    key_primary = decrypt_encrypt_utility_sudo.decrypt_aes256(membership_ids[0].key_identification)
+                    key_primary = self.user_membership_id.x_decrypt_aes256(membership_ids[0].key_identification)
                     ctx.update({
                         'default_key_primary': key_primary,
                     })

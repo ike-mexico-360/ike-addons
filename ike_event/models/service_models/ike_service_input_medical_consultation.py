@@ -6,7 +6,7 @@ from odoo.exceptions import UserError
 
 class IkeServiceMedicalConsultation(models.Model):
     _name = 'ike.service.input.medical.consultation'
-    _inherit = ['ike.service.input']
+    _inherit = ['ike.service.input.medical']
     _description = 'Service Input Medical Consultation'
 
     consultation_type = fields.Selection([

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- SEARCH -->
+    <record id="view_ike_service_input_generic_sub_search" model="ir.ui.view">
+        <field name="name">view.ike.service.input.generic.sub.search</field>
+        <field name="model">ike.service.input.generic.sub</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="event_id"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- LIST -->
+    <record id="view_ike_service_input_generic_sub_list" model="ir.ui.view">
+        <field name="name">view.ike.service.input.generic.sub.list</field>
+        <field name="model">ike.service.input.generic.sub</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="event_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- REGULAR FORM -->
+    <record id="view_ike_service_input_generic_sub_form" model="ir.ui.view">
+        <field name="name">view.ike.service.input.generic.sub.form</field>
+        <field name="model">ike.service.input.generic.sub</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form string="Service Input Vial">
+                <header>
+                </header>
+                <sheet class="ike_sheet">
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1>
+                            <field name="name" placeholder="Name..." readonly="1"/>
+                        </h1>
+                    </div>
+                    <group invisible="0">
+                        <field name="name"/>
+                        <field name="step_number"/>
+                    </group>
+                    <group>
+                        <group string="Concepts" colspan="2" invisible="not sections.get('product_data')">
+                            <field name="event_supplier_number" invisible="0"/>
+                            <field name="service_product_ids" widget="ike_section_and_note_field_o2m" nolabel="1" colspan="2"
+                                    context="{
+                                        'list_view_ref': 'ike_event.ike_event_product_list_view',
+                                        'default_supplier_number': event_supplier_number,
+                                        'default_event_id': event_id,
+                                        'from_internal': True,
+                                    }"
+                                    options="{
+                                        'field_columns': ['product_id'],
+                                        'delete_condition_field': 'mandatory',
+                                    }"/>
+                        </group>
+                    </group>
+                    <group invisible="not sections.get('user_sub_service_data')">
+                        <group>
+                            <field name="products_count" invisible="1"/>
+                        </group>
+                        <div class="d-flex justify-content-end gap-1">
+                            <button string="Return" class="btn-secondary o_discard"
+                                    special="cancel" data-hotkey="x" />
+                            <!--
+                            <button string="Continue" class="btn-primary o_save"
+                                    special="save" data-hotkey="s"
+                                    invisible="products_count == 0" />
+                            -->
+                            <widget name="ike_button_checkbox"
+                                className="btn btn-primary"
+                                special="save"
+                                string="Continue"
+                                confirm="Are you sure you added all the concepts?"
+                                readonly="products_count == 0"
+                                data-hotkey="s"/>
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- SCREEN FORM -->
+    <record id="view_ike_service_input_generic_sub_screen_form" model="ir.ui.view">
+        <field name="name">view.ike.service.input.generic.sub.screen.form</field>
+        <field name="model">ike.service.input.generic.sub</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <form js_class="ike_service_input_screen_form">
+                <sheet class="ike-sheet">
+                    <group invisible="1">
+                        <field name="name"/>
+                        <field name="stage_ref"/>
+                        <field name="step_number"/>
+                    </group>
+                    <group string="Type event" name="user_sub_service_data" invisible="not sections.get('user_sub_service_data')">
+                    </group>
+                    <group>
+                    </group>
+                     <group>
+                        <group string="Concepts" colspan="2" invisible="not sections.get('product_data')">
+                            <field name="event_supplier_number" invisible="0"/>
+                            <field name="service_product_ids" widget="ike_section_and_note_field_o2m" nolabel="1" colspan="2"
+                                    context="{
+                                        'list_view_ref': 'ike_event.ike_event_product_list_view',
+                                        'default_supplier_number': event_supplier_number,
+                                        'default_event_id': event_id,
+                                        'from_internal': True,
+                                    }"
+                                    options="{
+                                        'field_columns': ['product_id'],
+                                        'delete_condition_field': 'mandatory',
+                                    }"/>
+                        </group>
+                    </group>
+                    <group invisible="not sections.get('user_sub_service_data')">
+                        <group>
+                            <field name="products_count" invisible="1"/>
+                        </group>
+                        <div class="d-flex justify-content-end gap-1">
+                            <button string="Return" class="btn-secondary o_discard"
+                                    special="cancel" data-hotkey="x" />
+                            <!--
+                            <button string="Continue" class="btn-primary o_save"
+                                    special="save" data-hotkey="s"
+                                    invisible="products_count == 0" />
+                            -->
+                            <widget name="ike_button_checkbox"
+                                className="btn btn-primary"
+                                special="save"
+                                string="Continue"
+                                confirm="Are you sure you added all the concepts?"
+                                readonly="products_count == 0"
+                                data-hotkey="s"/>
+                        </div>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ACTION -->
+    <record id="action_ike_service_input_generic_sub" model="ir.actions.act_window">
+        <field name="name">Service Input Generic Subservice</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">ike.service.input.generic.sub</field>
+        <field name="view_mode">list,form</field>
+        <field name="view_ids" eval="[(5, 0, 0),
+                    (0, 0, {'view_mode': 'list', 'view_id': ref('view_ike_service_input_generic_sub_list')}),
+                    (0, 0, {'view_mode': 'form', 'view_id': ref('view_ike_service_input_generic_sub_form')})]" />
+        <field name="domain">[]</field>
+        <field name="context">{}</field>
+    </record>
+
+</odoo>

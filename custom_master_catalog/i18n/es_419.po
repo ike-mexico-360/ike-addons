@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0-20260504\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 23:32+0000\n"
-"PO-Revision-Date: 2026-10-08 23:32+0000\n"
+"POT-Creation-Date: 2026-10-27 00:02+0000\n"
+"PO-Revision-Date: 2026-10-27 00:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -28,6 +28,12 @@ msgstr ""
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_config_settings__events_allow_send_whatsapp
 msgid "(Custom) Send whatsapp notifications"
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "(MX)"
 msgstr ""
 
 #. module: custom_master_catalog
@@ -440,6 +446,31 @@ msgid "All subservices"
 msgstr "Todos los subservicios"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_company__x_allow_email_sending
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_config_settings__x_allow_email_sending
+msgid "Allow Email Sending"
+msgstr "Permitir envío de correos"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_mail_template__x_allow_email_sending
+msgid "Allow Sending"
+msgstr "Permitir envío"
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form
+msgid "Allow email sending"
+msgstr "Permitir envío de correos"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_mail_template__x_allow_email_sending
+msgid ""
+"Allow emails generated from this template when company email sending is "
+"enabled."
+msgstr ""
+"Permite los correos generados desde esta plantilla cuando el envío de la "
+"empresa está habilitado."
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form
 msgid "Allow users to send whatsapp notifications"
 msgstr ""
@@ -458,6 +489,12 @@ msgstr "Cantidad"
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_data_source__behavior__append
 msgid "Append"
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-javascript
+#: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
+msgid "Apply"
 msgstr ""
 
 #. module: custom_master_catalog
@@ -586,11 +623,6 @@ msgstr ""
 "Base - Destination: Ubicación grúa a punto destino o base a punto destino.\n"
 "Origin - Destination: Origin point to destination point.\n"
 "Base - Concepts: Proveedores con costo convenio por conceptos base, sin calcular distancias calculation."
-
-#. module: custom_master_catalog
-#: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__base_concepts
-msgid "Base - Concepts"
-msgstr "Base - Conceptos"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner__x_negotiation_type__base_destination
@@ -957,7 +989,6 @@ msgid "Concept description"
 msgstr "Descripción"
 
 #. module: custom_master_catalog
-#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__concepts_domain
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_product_concept_domain
 msgid "Concept domain"
 msgstr "Dominio de concepto"
@@ -981,6 +1012,11 @@ msgstr "Line conceptos"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_x_subservice_product_template_form
 msgid "Concepts"
 msgstr "Conceptos"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__concepts_domain
+msgid "Concepts domain"
+msgstr "Dominio de concepto"
 
 #. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_res_config_settings
@@ -1708,6 +1744,16 @@ msgid "Economic Number"
 msgstr "Número económico"
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/fleet_vehicle.py:0
+msgid ""
+"Economic number and license plate are required for supplier service "
+"vehicles."
+msgstr ""
+"El número económico y la matrícula son obligatorios para los vehículos de "
+"servicio del proveedor."
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_form
 msgid "Edit Sub-Services"
 msgstr "Editar subservicio"
@@ -1753,6 +1799,29 @@ msgstr "Electrónica"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__email
 msgid "Email"
 msgstr "Correo electrónico"
+
+#. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_mail_template
+#: model:ir.ui.menu,name:custom_master_catalog.mail_template_configuration_menu
+msgid "Email Templates"
+msgstr "Plantillas de correo electrónico"
+
+#. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_mail_compose_message
+msgid "Email composition wizard"
+msgstr "Asistente de redacción de correo electrónico"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/mail_sending_control.py:0
+msgid "Email sending is disabled for company %(company)s."
+msgstr ""
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/mail_sending_control.py:0
+msgid "Email sending is disabled for template %(template)s."
+msgstr ""
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_ike_view_employee_tree
@@ -1990,6 +2059,11 @@ msgstr "Patrón"
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__res_partner_supplier_users_rel__user_type__financial
 msgid "Financial"
 msgstr ""
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_subservice_concept_line__first_concepts_ids
+msgid "First Concepts"
+msgstr "Conceptos Nivel 1"
 
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.custom_fleet_vehicle_model_action
@@ -2513,6 +2587,12 @@ msgid "Is generic supplier"
 msgstr "Es proveedor genérico"
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/res_partner_supplier.py:0
+msgid "It cannot be enabled, the supplier is not enabled: %s"
+msgstr "No se puede habilitar, el proveedor no está habilitado: %s"
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_data_source_view_form
 msgid "Job"
 msgstr ""
@@ -2720,6 +2800,20 @@ msgstr "Orden para asignación manual guardado."
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_template__x_mapping_ids
 msgid "Mappings"
 msgstr "Mapeos"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_res_company__x_allow_email_sending
+#: model:ir.model.fields,help:custom_master_catalog.field_res_config_settings__x_allow_email_sending
+msgid "Master switch for all outgoing emails of this company."
+msgstr "Control general para todos los correos salientes de esta empresa."
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form
+msgid ""
+"Master switch for outgoing emails of this company. Disabled by default."
+msgstr ""
+"Control general para los correos salientes de esta empresa. Está desactivado"
+" de forma predeterminada."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_geographical_area__priority__2
@@ -3308,6 +3402,11 @@ msgstr "Tipo de origen"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
 msgid "Other phones"
 msgstr "Otros teléfonos"
+
+#. module: custom_master_catalog
+#: model:ir.model,name:custom_master_catalog.model_mail_mail
+msgid "Outgoing Mails"
+msgstr "Correos salientes"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__parent_id
@@ -3930,6 +4029,11 @@ msgid "Services and subservices"
 msgstr "Servicios y subservicios"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_mail_mail__x_source_mail_template_id
+msgid "Source Email Template"
+msgstr "Plantilla de correo de origen"
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_data_source_view_form
 msgid "Source file configuration"
 msgstr "Configuración de archivo origen"
@@ -4272,6 +4376,12 @@ msgid "Supplier number"
 msgstr "Número de proveedor"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_supplier_ref
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_supplier_ref
+msgid "Supplier ref"
+msgstr "Referencia de proveedor"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_ref_supplier
 msgid "Supplier reference"
 msgstr "Referencia del proveedor"
@@ -4501,9 +4611,29 @@ msgid "The postal code must be between 01000 and 99999"
 msgstr "El código postal debe estar entre 01000 y 99999"
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/other/mail_sending_control.py:0
+msgid "The source email template is archived."
+msgstr "La plantilla de correo electrónico fue archivada."
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_res_country_state__code
 msgid "The state code."
 msgstr "El código del estado."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/fleet_vehicle.py:0
+msgid "The supplier RFC is required to generate the service vehicle UUID."
+msgstr ""
+"El RFC del proveedor es obligatorio para generar el UUID del vehículo de "
+"servicio."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/res_partner_supplier.py:0
+msgid "The supplier RFC is required to generate the supplier UUID."
+msgstr "El RFC del proveedor es obligatorio para generar el UUID del proveedor."
 
 #. module: custom_master_catalog
 #. odoo-python

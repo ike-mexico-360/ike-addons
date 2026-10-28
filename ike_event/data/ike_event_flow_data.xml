@@ -385,6 +385,36 @@
             <field name="detail_type">action</field>
             <field name="event_flow_id" ref="ike_event_flow_assigned_2"/>
         </record>
+        <record id="ike_event_flow_assigned_2_detail_summary_top_1" model="ike.event.flow.detail">
+            <field name="name">event_summary_service_data</field>
+            <field name="sequence">4</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_2"/>
+        </record>
+        <record id="ike_event_flow_assigned_2_detail_summary_top_2" model="ike.event.flow.detail">
+            <field name="name">event_summary_user_service_data</field>
+            <field name="sequence">5</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_2"/>
+        </record>
+        <record id="ike_event_flow_assigned_2_detail_summary_top_3" model="ike.event.flow.detail">
+            <field name="name">event_summary_location_data</field>
+            <field name="sequence">6</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_2"/>
+        </record>
+        <record id="ike_event_flow_assigned_2_detail_summary_top_4" model="ike.event.flow.detail">
+            <field name="name">event_summary_survey_data</field>
+            <field name="sequence">7</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_2"/>
+        </record>
+        <record id="ike_event_flow_assigned_2_detail_summary_top_5" model="ike.event.flow.detail">
+            <field name="name">event_summary_supplier_data</field>
+            <field name="sequence">8</field>
+            <field name="detail_type">summary_top</field>
+            <field name="event_flow_id" ref="ike_event_flow_assigned_2"/>
+        </record>
 
         <!-- Assigned 3 Multi-Supplier: Searching -->
         <record id="ike_event_flow_assigned_3" model="ike.event.flow">

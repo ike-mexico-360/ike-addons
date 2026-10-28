@@ -121,6 +121,18 @@ class IkeEventSummary(models.Model):
                         'type': 'html',
                         'value': rec._get_address_label_html(rec.event_id.location_label, rec._get_origin_record()),
                     },
+                    {
+                        'name': 'location_latitude',
+                        'string': rec.event_id.fields_get(['location_latitude'])['location_latitude']['string'],
+                        'type': 'char',
+                        'value': rec.event_id.location_latitude,
+                    },
+                    {
+                        'name': 'location_longitude',
+                        'string': rec.event_id.fields_get(['location_longitude'])['location_longitude']['string'],
+                        'type': 'char',
+                        'value': rec.event_id.location_longitude,
+                    },
                 ]
             }
 
@@ -138,6 +150,18 @@ class IkeEventSummary(models.Model):
                     'string': rec.event_id.fields_get(['destination_label'])['destination_label']['string'],
                     'type': 'html',
                     'value': rec._get_address_label_html(rec.event_id.destination_label, rec._get_destination_record()),
+                },
+                {
+                    'name': 'destination_latitude',
+                    'string': rec.event_id.fields_get(['destination_latitude'])['destination_latitude']['string'],
+                    'type': 'char',
+                    'value': rec.event_id.destination_latitude,
+                },
+                {
+                    'name': 'destination_longitude',
+                    'string': rec.event_id.fields_get(['destination_longitude'])['destination_longitude']['string'],
+                    'type': 'char',
+                    'value': rec.event_id.destination_longitude,
                 },
                 {
                     'name': 'destination_distance',

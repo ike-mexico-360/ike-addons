@@ -108,7 +108,7 @@ class IkeEventSupplierSelection(models.Model):
         stage_in_progress = self.env.ref('ike_event.ike_event_stage_in_progress')
         event_ids = []
         for rec in self_filtered:
-            use_action_forward = False
+            use_action_forward: bool = False
             if rec.event_id.id not in event_ids:
                 event_ids.append(rec.event_id.id)
                 if rec.event_id.stage_ref == stage_searching.ref and rec.event_id.step_number == 1:
@@ -124,7 +124,7 @@ class IkeEventSupplierSelection(models.Model):
                         current_step_number=rec.event_id.step_number,
                     )).action_forward()
             # Broadcast
-            rec.broadcastReload(event_reload=use_action_forward, reload_type='forward')
+            rec.broadcastReload(event_reload=use_action_forward, reload_type='accept')
 
         return self_filtered.ids
 

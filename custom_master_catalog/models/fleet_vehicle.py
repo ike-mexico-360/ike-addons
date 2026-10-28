@@ -1,3 +1,4 @@
+import uuid
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from markupsafe import Markup
@@ -5,6 +6,37 @@ from markupsafe import Markup
 
 class FleetVehicle(models.Model):
     _inherit = 'fleet.vehicle'
+
+    @api.model
+    def generate_service_vehicle_uuid(self, timestamp, rfc, economic_number, license_plate):
+        """Generate the deterministic UUIDv5 used to identify a service vehicle."""
+        seed = '|'.join((
+            str(timestamp or '').strip(),
+            str(rfc or '').strip().upper(),
+            str(economic_number or '').strip().upper(),
+            str(license_plate or '').strip().upper(),
+        ))
+        return str(uuid.uuid5(uuid.NAMESPACE_DNS, seed))
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            if not vals.get('x_partner_id'):
+                continue
+            if not vals.get('x_economic_number') or not vals.get('license_plate'):
+                raise UserError(_('Economic number and license plate are required for supplier service vehicles.'))
+
+        vehicles = super().create(vals_list)
+        for vehicle in vehicles.filtered('x_partner_id'):
+            if not vehicle.x_partner_id.vat:
+                raise UserError(_('The supplier RFC is required to generate the service vehicle UUID.'))
+            vehicle.x_vehicle_ref = self.generate_service_vehicle_uuid(
+                fields.Datetime.to_string(vehicle.create_date),
+                vehicle.x_partner_id.vat,
+                vehicle.x_economic_number,
+                vehicle.license_plate,
+            )
+        return vehicles
 
     active = fields.Boolean('Active', default=True, tracking=True)
     disabled = fields.Boolean('Disabled', default=False, tracking=True)
@@ -42,8 +74,8 @@ class FleetVehicle(models.Model):
         domain=lambda self: self.env['product.product'].get_accessories_domain())
     x_vehicles_axes = fields.Integer(string="Ejes", tracking=True)
     x_manages_tire_conditioning = fields.Boolean('Manages Tire Conditioning', tracking=True)
-    x_longitude = fields.Char(string='Longitude', tracking=True)
-    x_latitude = fields.Char(string='Latitude', tracking=True)
+    x_longitude = fields.Float(string='Longitude', tracking=True, digits=(10, 7))
+    x_latitude = fields.Float(string='Latitude', tracking=True, digits=(10, 7))
     x_vehicle_service_state = fields.Selection([
         ('available', 'Available'),
         ('not_available', 'Not Available'),

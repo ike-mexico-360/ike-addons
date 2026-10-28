@@ -242,44 +242,25 @@ class PortalAccount(CustomerPortal):
                     'error': _('The truck does not belong to your supplier.'),
                 }
 
-            transitions = {
-                'not_available': {'available', 'in_service', 'disabled'},
-                'available': {'not_available', 'in_service', 'disabled'},
-                'in_service': {'not_available', 'available', 'disabled'},
-                'disabled': {'not_available', 'available', 'in_service'},
-            }
             current_state = truck.x_vehicle_service_state
             if new_state == current_state:
                 return {'success': True}
-            if new_state not in transitions.get(current_state, set()):
+            allowed_transitions = {
+                ('not_available', 'available'),
+                ('available', 'not_available'),
+            }
+            if (current_state, new_state) not in allowed_transitions:
                 return {
                     'success': False,
                     'error': _('This unit status transition is not allowed.'),
                 }
 
-            transitions_requiring_no_active_event = {
-                ('not_available', 'available'),
-                ('in_service', 'not_available'),
-                ('in_service', 'available'),
-                ('in_service', 'disabled'),
-                ('disabled', 'available'),
-            }
-            if (current_state, new_state) in transitions_requiring_no_active_event:
-                request.env.cr.execute("""
-                    SELECT supplier_stage.ref
-                    FROM ike_event_supplier AS supplier_line
-                    JOIN ike_event AS event ON event.id = supplier_line.event_id
-                    LEFT JOIN ike_service_stage AS supplier_stage
-                        ON supplier_stage.id = supplier_line.stage_id
-                    WHERE supplier_line.truck_id = %s
-                    ORDER BY event.event_date DESC NULLS LAST, supplier_line.id DESC
-                    LIMIT 1
-                """, (truck.id,))
-                latest_supplier_stage = request.env.cr.fetchone()
-                active_event = bool(
-                    latest_supplier_stage
-                    and latest_supplier_stage[0] not in ('finalized', 'cancel')
-                )
+            if current_state == 'not_available' and new_state == 'available':
+                active_event = bool(request.env['ike.event.supplier'].sudo().search_count([
+                    ('truck_id', '=', truck.id),
+                    ('event_id.stage_ref', '=', 'in_progress'),
+                    ('stage_ref', 'not in', ['finalized', 'cancel']),
+                ], limit=1))
                 if active_event:
                     return {
                         'success': False,

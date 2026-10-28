@@ -3749,8 +3749,13 @@ msgstr "Reasignar al usuario"
 #. module: ike_event_purchase
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_price_info_card.xml:0
-msgid "Receipt Date"
-msgstr "Fecha de recepción"
+msgid "Purchase Order Date"
+msgstr "Fecha de la orden de compra"
+
+#. module: ike_event_purchase
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_price_info_card.xml:0
+msgid "Origin Expedient"
+msgstr "Expediente origen"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_purchase_purchase_order_portal_content

@@ -21,6 +21,11 @@ class ResConfigSettings(models.TransientModel):
         ondelete='restrict',
         readonly=False,
     )
+    x_allow_email_sending = fields.Boolean(
+        related='company_id.x_allow_email_sending',
+        readonly=False,
+        string='Allow Email Sending',
+    )
 
     def _compute_events_allow_send_whatsapp(self):
         for setting in self:

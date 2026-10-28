@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="module_category_ike_support" model="ir.module.category">
+        <field name="name">Support</field>
+        <field name="sequence">60</field>
+    </record>
+
+    <!-- Sin user_ids: el módulo queda aislado hasta que se asigne el rol a mano -->
+    <record id="group_support_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="category_id" ref="module_category_ike_support"/>
+        <field name="implied_ids" eval="[Command.link(ref('base.group_user'))]"/>
+    </record>
+    <record id="group_support_manager" model="res.groups">
+        <field name="name">Administrator</field>
+        <field name="category_id" ref="module_category_ike_support"/>
+        <field name="implied_ids" eval="[Command.link(ref('group_support_user'))]"/>
+    </record>
+</odoo>

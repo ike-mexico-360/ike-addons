@@ -55,6 +55,7 @@
                         </group>
                         <group>
                             <field name="max_suppliers" readonly="disabled" />
+                            <field name="can_exceed" readonly="disabled"/>
                             <field name="by_priority" readonly="disabled" />
                             <field name="total_assignment_time" options="{'postfix': 'min'}" readonly="1"
                                 style="max-width: 5rem;" />

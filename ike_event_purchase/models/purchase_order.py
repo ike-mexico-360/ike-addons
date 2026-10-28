@@ -384,6 +384,18 @@ class PurchaseOrder(models.Model):
     # =============== #
     #    AUXILIARS    #
     # =============== #
+
+    def action_unsubscribe_cds_user(self, user):
+        """ Remove the user from followers if belongs to Coordinator or Supervisor CDS """
+        is_cds_user = (
+            user.has_group('custom_master_catalog.custom_group_event_coordinator')
+            or user.has_group('custom_master_catalog.custom_group_supervisor_cds')
+        )
+        if not is_cds_user:
+            return
+
+        self.sudo().message_unsubscribe(partner_ids=user.partner_id.ids)
+
     def _check_can_request_authorized_amount_increase(self):
         self.ensure_one()
         allowed_groups = (

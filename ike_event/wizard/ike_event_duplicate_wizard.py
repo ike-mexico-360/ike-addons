@@ -103,21 +103,15 @@ class IkeEventDuplicateWizard(models.TransientModel):
         "event_id.user_membership_id.second_key_identification"
     )
     def _compute_decrypted_keys(self):
-        encryption = self.env['custom.model.encryption']
-
         for rec in self:
             rec.decrypted_key_identification = False
             rec.decrypted_second_key_identification = False
 
             if rec.key_identification:
-                rec.decrypted_key_identification = encryption.x_decrypt_aes256(
-                    rec.key_identification
-                )
+                rec.decrypted_key_identification = self.user_membership_id.x_decrypt_aes256(rec.key_identification)
 
             if rec.second_key_identification:
-                rec.decrypted_second_key_identification = encryption.x_decrypt_aes256(
-                    rec.second_key_identification
-                )
+                rec.decrypted_second_key_identification = self.user_membership_id.x_decrypt_aes256(rec.second_key_identification)
 
     @api.depends('duplicate_service', 'service_id', 'event_id.service_id')
     def _compute_service_domain_id(self):

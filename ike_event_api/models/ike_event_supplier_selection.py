@@ -540,8 +540,7 @@ class IkeEventSupplierSelection(models.Model):
             if wp_access_token:
                 # FixMe: self[0]?
                 supplier = self[0]
-                decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
-                phone_number = decrypt_encrypt_utility_sudo.decrypt_aes256(supplier.event_id.user_id.phone or '')
+                phone_number = self.nu_user_id.x_decrypt_aes256(supplier.event_id.user_id.phone or '')
                 if phone_number:
                     phone_number = phone_number.replace(' ', '')
 
@@ -678,8 +677,7 @@ class IkeEventSupplierSelection(models.Model):
             range_high = bool(service_model_id.vehicle_category_id.name.strip().lower().replace(' ', '') == 'altagama')
 
         survey_input_data = self.event_id.get_survey_input_data()
-        decrypt_utility = self.env['custom.encryption.utility'].sudo()
-        nu_name = decrypt_utility.decrypt_aes256(self.event_id.user_id.name or '')
+        nu_name = self.nu_user_id.x_decrypt_aes256(self.event_id.user_id.name or '')
         account_id = self.event_id.account_id
 
         body = {

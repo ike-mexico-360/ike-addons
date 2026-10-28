@@ -282,7 +282,7 @@ class EventsAPIController(http.Controller):
         _logger.info(f"/event/historyService/{account_ref}/{phone}")
 
         # Buscar NU: affiliate validation
-        decrypt_encrypt_utility_sudo = request.env['custom.encryption.utility'].sudo()
+        decrypt_encrypt_utility_sudo = request.env['custom.model.encryption'].sudo()
 
         nu_data = False
         affiliation_data = False
@@ -338,13 +338,13 @@ class EventsAPIController(http.Controller):
             affiliation = record['affiliation']
             plan = plan_data
             nu = record['nu']
-            phone_dec = decrypt_encrypt_utility_sudo.decrypt_aes256(str(nu['phone']) if nu['phone'] else '')
-            complete_phone_dec = decrypt_encrypt_utility_sudo.decrypt_aes256(str(nu['complete_phone']) if nu['complete_phone'] else '')
+            phone_dec = decrypt_encrypt_utility_sudo.x_decrypt_aes256(str(nu['phone']) if nu['phone'] else '')
+            complete_phone_dec = decrypt_encrypt_utility_sudo.x_decrypt_aes256(str(nu['complete_phone']) if nu['complete_phone'] else '')
             if complete_phone_dec:
                 complete_phone_dec = complete_phone_dec.replace(' ', '')  # Eliminar espacios en números formateados
             if phone_dec:
                 phone_dec = phone_dec.replace(' ', '')  # Eliminar espacios en números formateados
-            key_identification_dec = decrypt_encrypt_utility_sudo.decrypt_aes256(str(affiliation['key_identification']) if affiliation['key_identification'] else '')
+            key_identification_dec = decrypt_encrypt_utility_sudo.x_decrypt_aes256(str(affiliation['key_identification']) if affiliation['key_identification'] else '')
             if key_identification_dec:
                 key_identification_dec = key_identification_dec.replace(' ', '')  # Eliminar espacios en números formateados
 
@@ -392,7 +392,7 @@ class EventsAPIController(http.Controller):
         user_tz = request.env.user.tz or 'UTC'
         user_lang = request.env.user.lang or 'en_US'
         user_id = nu_data['id']
-        nu_name = decrypt_encrypt_utility_sudo.decrypt_aes256(nu_data['name'] if nu_data else '')
+        nu_name = decrypt_encrypt_utility_sudo.x_decrypt_aes256(nu_data['name'] if nu_data else '')
         history_query = """
             SELECT
                 ie.id::TEXT AS "id",
@@ -510,7 +510,7 @@ class EventsAPIController(http.Controller):
             return request.make_json_response({'error': 'Not found: No matching account (Plan)'}, status=400)
 
         # Buscar NU: affiliate validation
-        decrypt_encrypt_utility_sudo = request.env['custom.encryption.utility'].sudo()
+        decrypt_encrypt_utility_sudo = request.env['custom.model.encryption'].sudo()
 
         nu_data = False
         affiliation_data = False
@@ -566,13 +566,13 @@ class EventsAPIController(http.Controller):
             affiliation = record['affiliation']
             plan = plan_data
             nu = record['nu']
-            phone_dec = decrypt_encrypt_utility_sudo.decrypt_aes256(str(nu['phone']) if nu['phone'] else '')
-            complete_phone_dec = decrypt_encrypt_utility_sudo.decrypt_aes256(str(nu['complete_phone']) if nu['complete_phone'] else '')
+            phone_dec = decrypt_encrypt_utility_sudo.x_decrypt_aes256(str(nu['phone']) if nu['phone'] else '')
+            complete_phone_dec = decrypt_encrypt_utility_sudo.x_decrypt_aes256(str(nu['complete_phone']) if nu['complete_phone'] else '')
             if complete_phone_dec:
                 complete_phone_dec = complete_phone_dec.replace(' ', '')  # Eliminar espacios en números formateados
             if phone_dec:
                 phone_dec = phone_dec.replace(' ', '')  # Eliminar espacios en números formateados
-            key_identification_dec = decrypt_encrypt_utility_sudo.decrypt_aes256(str(affiliation['key_identification']) if affiliation['key_identification'] else '')
+            key_identification_dec = decrypt_encrypt_utility_sudo.x_decrypt_aes256(str(affiliation['key_identification']) if affiliation['key_identification'] else '')
             if key_identification_dec:
                 key_identification_dec = key_identification_dec.replace(' ', '')  # Eliminar espacios en números formateados
 
@@ -619,7 +619,7 @@ class EventsAPIController(http.Controller):
 
         # Crear evento
         try:
-            nu_name = decrypt_encrypt_utility_sudo.decrypt_aes256(nu_data['name'] if nu_data else '')
+            nu_name = decrypt_encrypt_utility_sudo.x_decrypt_aes256(nu_data['name'] if nu_data else '')
             new_event_id = request.env['ike.event'].sudo().create({
                 'created_from_bp': True,
                 'user_id': nu_data['id'] if nu_data else False,
@@ -627,7 +627,7 @@ class EventsAPIController(http.Controller):
                 'user_membership_id': affiliation_data['id'] if affiliation_data else False,
                 # ToDo: Se encriptarán estos valores?
                 'temporary_phone': phone if not nu_data else '',
-                'temporary_key_identification': key if not affiliation_data else '',
+                'temporary_key_identification': decrypt_encrypt_utility_sudo.x_encrypt_aes256(key) if not affiliation_data and key else '',
                 'temporary_membership_plan_id': plan_data['id'] if not affiliation_data else False,
             })
 

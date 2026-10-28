@@ -6,12 +6,13 @@
     'author': "AlsibaMx",
     'license': 'LGPL-3',
     'category': 'Uncategorized',
-    'version': '18.0.1.0.3',
+    'version': '18.0.1.0.4',
     'depends': [
         'base',
         'base_geolocalize',
         'web',
         'portal',
+        'mail',
         'custom_disable_records',
         'custom_o2m_track',
         'contacts',
@@ -28,6 +29,7 @@
         "security/ir.model.access.csv",
         "data/res_partner_account_data.xml",
         "data/custom_incident_type_data.xml",
+        "data/catalogs_data.xml",
         "data/data.xml",
         "data/ir_sequence_data.xml",
         "data/mail_layout_templates.xml",
@@ -86,6 +88,7 @@
         "wizard/custom_vehicle_import_wizard_views.xml",
         "views/res_partner_menus.xml",
         "views/other/res_config_settings_views.xml",
+        "views/other/mail_template_views.xml",
         'security/cleanup_menus.xml',  # TODO Delete in sprint18 or after the client has updated their database with this code
     ],
     'assets': {

@@ -25,6 +25,10 @@
         <field name="model">custom.nus.pet</field>
         <field name="arch" type="xml">
             <list string="NUs Pets" edit="false" duplicate="false" delete="false">
+                <header>
+                    <button name="action_reprocess_search_helpers" string="Reprocess Search Helper"
+                        type="object" class="btn-warning" groups="base.group_erp_manager"/>
+                </header>
                 <field name="nus_id"/>
                 <field name="name"/>
                 <field name="pet_type_id"/>

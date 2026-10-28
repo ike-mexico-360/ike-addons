@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 20:40+0000\n"
-"PO-Revision-Date: 2026-10-09 20:40+0000\n"
+"POT-Creation-Date: 2026-10-21 19:41+0000\n"
+"PO-Revision-Date: 2026-10-21 19:41+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -50,6 +50,11 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_service_count_detail_form
 msgid "<span class=\"text-muted\"> events</span>"
 msgstr "<span class=\"text-muted\"> eventos</span>"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_evaluation_form_view
+msgid "<span>min</span>"
+msgstr ""
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
@@ -863,12 +868,12 @@ msgstr "Número de proveedor base"
 
 #. module: ike_event
 #. odoo-python
+#: code:addons/ike_event/models/ike_event_summary.py:0
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic__street2
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical__street2
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__street2
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__street2
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__street2
-#: code:addons/ike_event/models/ike_event_summary.py:0
 msgid "Between streets"
 msgstr "Entre calles"
 
@@ -907,6 +912,11 @@ msgstr "Asistente de asignación de eventos CDS"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__can_continue
 msgid "Can Continue"
 msgstr "Puede continuar"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_assignment_type__can_exceed
+msgid "Can Exceed Covered Amount"
+msgstr "Puede exceder el monto cubierto"
 
 #. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event_product__mandatory
@@ -2074,6 +2084,11 @@ msgid "Estimated distance to reach the user, in kilometers."
 msgstr "Distancia estimada para llegar al usuario, en kilómetros."
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_evaluation_form_view
+msgid "Estimated duration"
+msgstr "Duración estimada"
+
+#. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event_stage_comment__event_line_estimated_duration
 #: model:ir.model.fields,help:ike_event.field_ike_event_supplier__estimated_duration
 msgid "Estimated duration to arrive to the user, in minutes."
@@ -2399,6 +2414,11 @@ msgstr "Autorización del concepto del proveedor del evento"
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__event_supplier_summary_data
 msgid "Event Supplier Summary Data"
+msgstr ""
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__event_supplier_summary_data_portal
+msgid "Event Supplier Summary Data Portal"
 msgstr ""
 
 #. module: ike_event
@@ -3164,6 +3184,24 @@ msgid "Internal Reference"
 msgstr "Referencia interna"
 
 #. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier.py:0
+msgid "Invoicing Address"
+msgstr "Dirección de facturación"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier.py:0
+msgid "Invoicing Company"
+msgstr "Empresa facturadora"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier.py:0
+msgid "Invoicing Phone"
+msgstr "Teléfono de facturación"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__authorization_by_nu
 msgid "Is Authorized By Nu"
 msgstr "Es autorizado por usuario NU"
@@ -3205,6 +3243,12 @@ msgstr "Es manual"
 #: model:ir.model.fields,field_description:ike_event.field_product_product__x_is_origin_destination
 msgid "Is Origin - Destination"
 msgstr "Es de Origen - Destino"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_product__is_unlimited
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__is_unlimited
+msgid "Is Unlimited"
+msgstr "Ilimitado"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__is_upcoming
@@ -3260,6 +3304,12 @@ msgstr "¿Tu ícono está perdido? Agrégalo."
 #: code:addons/ike_event/models/ike_event.py:0
 msgid "It could not be cancelled"
 msgstr "No pudo ser cancelado"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier_authorization.py:0
+msgid "It is necessary to qualify the provider before requesting authorization."
+msgstr "Es necesario calificar al proveedor antes de solicitar la autorización."
 
 #. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event__duration_tracking
@@ -3530,30 +3580,6 @@ msgid "Maneuvers"
 msgstr "Maniobras"
 
 #. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/models/ike_event_supplier.py:0
-msgid "Invoicing Company"
-msgstr "Empresa facturadora"
-
-#. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/models/ike_event_supplier.py:0
-msgid "Invoicing Address"
-msgstr "Dirección de facturación"
-
-#. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/models/ike_event_supplier.py:0
-msgid "RFC"
-msgstr "RFC"
-
-#. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/models/ike_event_supplier.py:0
-msgid "Invoicing Phone"
-msgstr "Teléfono de facturación"
-
-#. module: ike_event
 #: model:ike.event.supplier.assignment.type,name:ike_event.ike_supplier_assignment_manual
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event__supplier_search_type__manual
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__assignation_type__manual
@@ -3801,6 +3827,11 @@ msgid "My schedule events"
 msgstr "Mis eventos programados"
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
+msgid "NOTIFY SCHEDULED"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__authorization_by_nu
 msgid "NU"
 msgstr ""
@@ -3963,12 +3994,6 @@ msgstr "No se le ha asignado latitud/longitud a la ubicación."
 #: code:addons/ike_event/models/ike_event.py:0
 msgid "No municipality was found for ZIP code %s."
 msgstr "No se encontró ningún municipio para el código postal %s."
-
-#. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/models/ike_event_supplier_authorization.py:0
-msgid "No suppliers were found"
-msgstr "No se encontraron proveedores"
 
 #. module: ike_event
 #: model:ike.event.supplier.evaluation,name:ike_event.ike_event_supplier_evaluation_3
@@ -4262,6 +4287,12 @@ msgstr "Fecha de apertura"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__assigned
 msgid "Operator"
 msgstr "Operador"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__operator_notified
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_base__operator_notified
+msgid "Operator Notified"
+msgstr "Operador notificado"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.survey_question_form
@@ -4601,6 +4632,12 @@ msgid "Question 01?"
 msgstr ""
 
 #. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier.py:0
+msgid "RFC"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__ranking
 msgid "Ranking"
 msgstr ""
@@ -4664,13 +4701,13 @@ msgstr "Referencia"
 
 #. module: ike_event
 #. odoo-python
+#: code:addons/ike_event/models/ike_event_summary.py:0
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_confirm_wizard__res_ids
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_generic__street_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_medical__street_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_model__street_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__street_ref
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__street_ref
-#: code:addons/ike_event/models/ike_event_summary.py:0
 msgid "References"
 msgstr "Referencias"
 
@@ -5036,6 +5073,12 @@ msgstr "Elige un ícono..."
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
 msgid "Select option"
 msgstr "Seleccione una opción"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier_authorization.py:0
+msgid "Select the responsible authorizer."
+msgstr "Elige el autorizador responsable."
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__selected
@@ -5456,7 +5499,6 @@ msgstr ""
 #. module: ike_event
 #. odoo-python
 #: code:addons/ike_event/models/ike_event_supplier.py:0
-#: code:addons/ike_event/models/ike_event_supplier_authorization.py:0
 msgid "Some products have a zero cost."
 msgstr "Algunos productos tienen costo en cero."
 
@@ -5944,6 +5986,12 @@ msgstr "Encuesta vial grúa Pruebas"
 #: model:ir.ui.menu,name:ike_event.ike_menu_survey
 msgid "Surveys"
 msgstr "Encuestas"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid "System - %(supplier)s - %(plate)s - %(datetime)s"
+msgstr "Sistema - %(supplier)s - %(plate)s - %(datetime)s"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__tax_ids
@@ -6489,6 +6537,12 @@ msgid "User data"
 msgstr "Datos de usuario"
 
 #. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid "User: %(user)s - Datetime: %(datetime)s"
+msgstr "Usuario: %(user)s - Fecha y hora: %(datetime)s"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__amount_concept_vat
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_link__amount_concept_vat
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__vat
@@ -6715,6 +6769,11 @@ msgid "Wrong answer"
 msgstr "Respuesta incorrecta"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_fleet_vehicle__x_current_event_info
+msgid "X Current Event Info"
+msgstr ""
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_phone_wizard__x_phone_p1_classification_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__supplier_phone_p1_classification_id
 msgid "X Phone P1 Classification"
@@ -6803,6 +6862,12 @@ msgstr ""
 #: code:addons/ike_event/models/ike_event_supplier_search.py:0
 msgid "You must have a supplier selected."
 msgstr "Debes tener un proveedor elegido."
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier_authorization.py:0
+msgid "Your authorization is requested for event"
+msgstr ""
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_truck_form

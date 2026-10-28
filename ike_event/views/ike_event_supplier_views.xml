@@ -129,6 +129,10 @@
                         <field name="event_id" invisible="1"/>
                         <field name="supplier_id" readonly="1" options="{'no_create': 1, 'no_open': 1}"/>
                         <field name="supplier_center_id" readonly="1" options="{'no_create': 1, 'no_open': 1}"/>
+                        <label for="estimated_duration" string="Estimated duration"/>
+                        <div class="d-flex align-items-baseline gap-1">
+                            <field name="estimated_duration" readonly="1" class="oe_inline"/><span>min</span>
+                        </div>
 
                         <field name="truck_id"
                             domain="truck_domain"
@@ -145,7 +149,7 @@
                         <label for="evaluation_id"/>
                         <div class="o_row">
                             <field name="evaluation_id" options="{'no_create': 1, 'no_open': 1}" required="1" readonly="evaluated"/>
-                            <field name="evaluation_reevaluation"/>
+                            <field name="evaluation_reevaluation" invisible="1"/>
                         </div>
                         <field name="evaluated" invisible="1"/>
                         <field name="evaluation_2_id" options="{'no_create': 1, 'no_open': 1}" invisible="not evaluated"/>
@@ -153,6 +157,28 @@
                         <field name="evaluation_informer"/>
                     </group>
                     <notebook>
+                        <page string="Concepts" name="products">
+                            <!-- <field name="supplier_link_id" readonly="1"/> -->
+                            <field name="supplier_product_ids"
+                                nolabel="1"
+                                colspan="2"
+                                widget="ike_section_and_note_field_o2m"
+                                options="{'field_columns': ['product_id'], 'delete_condition_field': 'mandatory'}"
+                                readonly="not context.get('from_add_concept', False)"
+                                context="{
+                                    'list_view_ref': 'ike_event.ike_event_supplier_product_detail_list_view',
+                                    'default_event_supplier_link_id': supplier_link_id,
+                                    'default_authorization_pending': True,
+                                    'default_is_manual': True,
+                                    'default_supplier_number': supplier_number,
+                                    'from_internal': True,
+                                }"/>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="amount_concept_subtotal"/>
+                                <field name="amount_concept_vat"/>
+                                <field name="amount_concept_total" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </page>
                         <page string="Supplier Data" name="supplier_data">
                             <group>
                                 <label for="supplier_phone_1"/>
@@ -180,28 +206,6 @@
                                     <field name="supplier_phone_5"/>
                                     <field name="supplier_phone_p5_classification_id" options="{'no_create': True, 'no_open': True}"/>
                                 </div>
-                            </group>
-                        </page>
-                        <page string="Concepts" name="products">
-                            <!-- <field name="supplier_link_id" readonly="1"/> -->
-                            <field name="supplier_product_ids"
-                                nolabel="1"
-                                colspan="2"
-                                widget="ike_section_and_note_field_o2m"
-                                options="{'field_columns': ['product_id'], 'delete_condition_field': 'mandatory'}"
-                                readonly="not context.get('from_add_concept', False)"
-                                context="{
-                                    'list_view_ref': 'ike_event.ike_event_supplier_product_detail_list_view',
-                                    'default_event_supplier_link_id': supplier_link_id,
-                                    'default_authorization_pending': True,
-                                    'default_is_manual': True,
-                                    'default_supplier_number': supplier_number,
-                                    'from_internal': True,
-                                }"/>
-                            <group class="oe_subtotal_footer oe_right">
-                                <field name="amount_concept_subtotal"/>
-                                <field name="amount_concept_vat"/>
-                                <field name="amount_concept_total" class="oe_subtotal_footer_separator"/>
                             </group>
                         </page>
                     </notebook>

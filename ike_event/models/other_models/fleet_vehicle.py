@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from odoo import models, fields
 
 
@@ -5,13 +6,12 @@ class FleetVehicle(models.Model):
     _inherit = 'fleet.vehicle'
 
     def move_location_vehicle(self):
-
         message = {
             'vehicles': [
                 {
                     'id': rec.id,
-                    'x_latitude': float(rec.x_latitude),
-                    'x_longitude': float(rec.x_longitude),
+                    'x_latitude': rec.x_latitude,
+                    'x_longitude': rec.x_longitude,
                     'x_vehicle_service_state': rec.x_vehicle_service_state,
                 }
                 for rec in self

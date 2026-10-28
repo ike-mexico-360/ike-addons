@@ -370,12 +370,19 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                         )
                     )
                 else:
+                    on_route_date = self.on_route_to_user_end_date - timedelta(seconds=1)
+                    aux_tz_on_route_date = self._format_datetime_tz(on_route_date)
                     self._action_on_route(
                         event_supplier,
                         vals,
-                        self.on_route_to_user_end_date - timedelta(seconds=1),
+                        on_route_date,
                         self.on_route_to_end_user_id.id,
-                        f'{event_supplier.display_name} - {self.on_route_to_user_end_date - timedelta(seconds=1)}',
+                        _(
+                            'System - %(supplier)s - %(plate)s - %(datetime)s',
+                            supplier=event_supplier.supplier_id.display_name,
+                            plate=event_supplier.truck_plate or '',
+                            datetime=aux_tz_on_route_date,
+                        ),
                     )
 
                     time.sleep(
@@ -443,20 +450,36 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                         self._format_datetime_tz(self.event_supplier_id.contacted_date))
                     )
                 else:
+                    on_route_2_date = self.finalized_date - timedelta(seconds=2)
+                    aux_tz_on_route_2_date = self._format_datetime_tz(on_route_2_date)
+
                     self._action_on_route_2(
                         event_supplier,
                         vals,
-                        self.finalized_date - timedelta(seconds=2),
+                        on_route_2_date,
                         self.finalized_user_id.id,
-                        f'{event_supplier.display_name} - {self.finalized_date - timedelta(seconds=2)}'
+                        _(
+                            'System - %(supplier)s - %(plate)s - %(datetime)s',
+                            supplier=event_supplier.supplier_id.display_name,
+                            plate=event_supplier.truck_plate or '',
+                            datetime=aux_tz_on_route_2_date,
+                        )
                     )
+
+                    arrived_2_date = self.finalized_date - timedelta(seconds=1)
+                    aux_tz_arrived_2_date = self._format_datetime_tz(arrived_2_date)
 
                     self._action_arrived_2(
                         event_supplier,
                         vals,
-                        self.finalized_date - timedelta(seconds=1),
+                        arrived_2_date,
                         self.finalized_user_id.id,
-                        f'{event_supplier.display_name} - {self.finalized_date - timedelta(seconds=1)}'
+                        _(
+                            'System - %(supplier)s - %(plate)s - %(datetime)s',
+                            supplier=event_supplier.supplier_id.display_name,
+                            plate=event_supplier.truck_plate or '',
+                            datetime=aux_tz_arrived_2_date,
+                        )
                     )
 
                     self._action_finalized(
@@ -468,12 +491,14 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                     )
 
         if not event_supplier.first_state_date:
+            first_state_date = fields.Datetime.now()
             vals.update({
-                'first_state_date': fields.Datetime.now(),
+                'first_state_date': first_state_date,
                 'first_state_user_id': self.env.user.id,
                 'first_comment': _(
-                    f'User: {self.env.user.display_name}'
-                    f' - Datetime: {fields.Datetime.now()}'
+                    'User: %(user)s - Datetime: %(datetime)s',
+                    user=self.env.user.display_name,
+                    datetime=self._format_datetime_tz(first_state_date),
                 ),
             })
 
@@ -485,7 +510,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         if not dt:
             return ''
         local_dt = fields.Datetime.context_timestamp(self, dt)
-        return local_dt.strftime('%Y-%m-%d %H:%M:%S')
+        return local_dt.strftime('%d/%m/%Y %H:%M:%S')
 
     def _action_assign(self, supplier, vals, datetime, user, comment):
         already_assigned = bool(supplier.first_assignation_date or supplier.assignation_date)

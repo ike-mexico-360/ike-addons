@@ -18,8 +18,7 @@ class IkeMembershipAuthorization(models.Model):
             to_process_details = affiliation_detail_ids.filtered(lambda x: not x.x_saved_external_totals)
             url = plan_id.x_event_totalizer_endpoint_url
             connect_to_external = affiliation_id.x_service_counter_validation
-            decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
-            _logger.warning(f"{rec.key_identification} {rec.account_id.name} {rec.affiliation_date_start.isoformat()} {rec.affiliation_date_end.isoformat()} {url} {connect_to_external} {decrypt_encrypt_utility_sudo.decrypt_aes256(affiliation_id.name)}")
+            _logger.warning(f"{rec.key_identification} {rec.account_id.name} {rec.affiliation_date_start.isoformat()} {rec.affiliation_date_end.isoformat()} {url} {connect_to_external} {affiliation_id.x_decrypt_aes256(affiliation_id.name)}")
             if (rec.key_identification and rec.account_id and rec.affiliation_date_start and rec.affiliation_date_end
                     and url and connect_to_external and len(affiliation_detail_ids) > 0):
                 policy = f"{rec.key_identification.strip()}-{rec.clause_primary.strip() if rec.clause_primary else '0'}"

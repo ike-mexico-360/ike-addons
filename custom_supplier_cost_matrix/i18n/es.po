@@ -100,6 +100,11 @@ msgid "Concept"
 msgstr "Concepto"
 
 #. module: custom_supplier_cost_matrix
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__concept_workflow
+msgid "Concept workflow"
+msgstr "Flujo de concepto"
+
+#. module: custom_supplier_cost_matrix
 #: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_upload_cost_matrix_view_form
 msgid "Confirm"
 msgstr "Confirmar"
@@ -212,6 +217,18 @@ msgid "Decline"
 msgstr "Rechazar"
 
 #. module: custom_supplier_cost_matrix
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__destination_entity
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__destination_entity
+msgid "Destination entity"
+msgstr "Entidad destino"
+
+#. module: custom_supplier_cost_matrix
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__destination_municipality
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__destination_municipality
+msgid "Destination municipality"
+msgstr "Municipio destino"
+
+#. module: custom_supplier_cost_matrix
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__disabled
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product_schedule__disabled
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__disabled
@@ -267,6 +284,12 @@ msgstr "Nombre de archivo"
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__file_type
 msgid "File Type"
 msgstr "Tipo de archivo"
+
+#. module: custom_supplier_cost_matrix
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__final_kilometer
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__final_kilometer
+msgid "Final kilometer"
+msgstr "Kilometro final"
 
 #. module: custom_supplier_cost_matrix
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__message_follower_ids
@@ -366,6 +389,12 @@ msgid "Inactive"
 msgstr "inactivo"
 
 #. module: custom_supplier_cost_matrix
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__initial_kilometer
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__initial_kilometer
+msgid "Initial kilometer"
+msgstr "Kilometro inicial"
+
+#. module: custom_supplier_cost_matrix
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__incident_type_id
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__incident_type_id
 msgid "Incident Type"
@@ -403,6 +432,11 @@ msgstr "Mapeo de productos"
 #: model:ir.ui.menu,name:custom_supplier_cost_matrix.custom_supplier_cost_matrix_line_action_menu
 msgid "Matrix Cost Confirmed"
 msgstr "Matriz de costo confirmada"
+
+#. module: custom_supplier_cost_matrix
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_product_product__x_matrix_workflow
+msgid "Matrix workflow"
+msgstr "Flujo de matriz de costos"
 
 #. module: custom_supplier_cost_matrix
 #. odoo-python
@@ -516,6 +550,23 @@ msgid "Opening Hours"
 msgstr "Horarios de atención"
 
 #. module: custom_supplier_cost_matrix
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__origin_entity
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__origin_entity
+msgid "Origin entity"
+msgstr "Entidad origen"
+
+#. module: custom_supplier_cost_matrix
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__origin_municipality
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__origin_municipality
+msgid "Origin municipality"
+msgstr "Municipio origen"
+
+#. module: custom_supplier_cost_matrix
+#: model:ir.model.fields.selection,name:custom_supplier_cost_matrix.selection__product_product__x_matrix_workflow__plan
+msgid "Plan"
+msgstr "Plano"
+
+#. module: custom_supplier_cost_matrix
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__product_ids_count
 msgid "Product Ids Count"
 msgstr "Número de productos"
@@ -572,6 +623,11 @@ msgstr "Rechazado"
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__message_has_sms_error
 msgid "SMS Delivery error"
 msgstr "Error de entrega de SMS"
+
+#. module: custom_supplier_cost_matrix
+#: model:ir.model.fields.selection,name:custom_supplier_cost_matrix.selection__product_product__x_matrix_workflow__section_in_agreement
+msgid "Section in agreement"
+msgstr "Tramo en convenio"
 
 #. module: custom_supplier_cost_matrix
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__service_id
@@ -683,6 +739,18 @@ msgstr "Mensajes del sitio web"
 #: model:ir.model.fields,help:custom_supplier_cost_matrix.field_custom_supplier_upload_cost_matrix__website_message_ids
 msgid "Website communication history"
 msgstr "Historial de comunicaciones del sitio web"
+
+#. module: custom_supplier_cost_matrix
+#: model:ir.model.fields,help:custom_supplier_cost_matrix.field_custom_supplier_cost_product__concept_workflow
+#: model:ir.model.fields,help:custom_supplier_cost_matrix.field_product_product__x_matrix_workflow
+msgid ""
+"empty: default workflow\n"
+"Section in agreement: Required origin an destination entity, municiplaity\n"
+"Plan: Required initial and final kilometers"
+msgstr ""
+"vacío: flujo de trabajo por defecto\n"
+"Tramo en convenio: Se requiere entidad origen y destino, municipio\n"
+"Plano: Se requieren kilómetros iniciales y finales"
 
 #. module: custom_supplier_cost_matrix
 #: model_terms:ir.ui.view,arch_db:custom_supplier_cost_matrix.custom_supplier_upload_cost_matrix_view_form

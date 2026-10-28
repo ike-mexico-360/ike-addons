@@ -63,6 +63,8 @@ class AccountMove(models.Model):
             move._x_validate_supplier_invoice_ready_to_send()
 
             config = move._x_get_supplier_invoice_service_config()
+            # alloc_nmbr = config["alloc_nmbr"]
+            # payload = move._x_build_supplier_invoice_payload(alloc_nmbr)
             payload = move._x_build_supplier_invoice_payload()
             timeout = config["timeout"]
 
@@ -176,6 +178,7 @@ class AccountMove(models.Model):
         username = (icp.get_param("ike_event_portal.invoice.username") or "").strip()
         password = (icp.get_param("ike_event_portal.invoice.password") or "").strip()
         timeout_raw = (icp.get_param("ike_event_portal.invoice.timeout") or "30").strip()
+        # alloc_nmbr = (icp.get_param("ike_event_portal.invoice.alloc_nmbr") or "").strip()
 
         missing_params = []
         if not endpoint_url:
@@ -184,6 +187,8 @@ class AccountMove(models.Model):
             missing_params.append("ike_event_portal.invoice.username")
         if not password:
             missing_params.append("ike_event_portal.invoice.password")
+        # if not alloc_nmbr:
+        #     missing_params.append("ike_event_portal.invoice.alloc_nmbr")
 
         if missing_params:
             raise ValidationError(_(
@@ -204,6 +209,7 @@ class AccountMove(models.Model):
             "username": username,
             "password": password,
             "timeout": timeout,
+            # "alloc_nmbr": alloc_nmbr,
         }
 
     def _x_validate_supplier_invoice_ready_to_send(self):
@@ -281,6 +287,7 @@ class AccountMove(models.Model):
                 "No se encontró el XML de la factura. El servicio lo requiere."
             ))
 
+    # def _x_build_supplier_invoice_payload(self, alloc_nmbr):
     def _x_build_supplier_invoice_payload(self):
         """
         Construye el payload JSON conforme al contrato del servicio.
@@ -296,6 +303,7 @@ class AccountMove(models.Model):
             "company_code": self._x_get_company_code(),
             "supplier": self._x_get_supplier_number(),
             "reference": self.ref.strip() or "",
+            # "alloc_nmbr": alloc_nmbr,
             "mx_uuid": self._x_get_mx_uuid() or "",
             "gross_amount": amount,
             "currency": (self.currency_id.name or "").strip(),

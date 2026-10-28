@@ -134,8 +134,7 @@ class IkeEvent(models.Model):
 
         _logger.warning(f"Sending whatsapp notifications for event at change stage_id {stage_ref}")
 
-        encryption_util = self.env['custom.encryption.utility']
-        phone_number = encryption_util.decrypt_aes256(self.user_id.phone or '')
+        phone_number = self.user_id.x_decrypt_aes256(self.user_id.phone or '')
         if phone_number:
             phone_number = phone_number.replace(' ', '')
 

@@ -44,14 +44,13 @@ class IkeServiceInputVial(models.Model):
                 "Content-Type": "application/json",
                 "User-Agent": "Python-IoT-Test/1.0",
             }
-            encryption_util = self.env['custom.encryption.utility']
             body = {
                 "phone": phone_number,
                 "reference": event_id,
                 "assistview_id": str(assistview_id.id),
                 "template_id": template,
                 "type_id": 1,
-                "nombre": encryption_util.decrypt_aes256(self.event_id.user_id.name),
+                "nombre": self.event_id.user_id.x_decrypt_aes256(self.event_id.user_id.name),
                 "min_required_photos": min_required_photos,
             }
 
@@ -108,8 +107,7 @@ class IkeServiceInputVial(models.Model):
             _logger.info("Assistview: Deshabilitado assistview.enable = False")
         if enable_assistview:
             try:
-                decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
-                phone_number = decrypt_encrypt_utility_sudo.decrypt_aes256(self.event_id.user_id.phone or '')
+                phone_number = self.event_id.user_id.x_decrypt_aes256(self.event_id.user_id.phone or '')
                 if phone_number:
                     phone_number = phone_number.replace(' ', '')
                 assistview_data = self._x_ike_create_assistview()
@@ -204,8 +202,7 @@ class IkeServiceInputVial(models.Model):
             _logger.warning("No se ha configurado el numero de telefono para obtener la metadata del lambda deprocesamiento para el Assistview")
             return False
 
-        decrypt_encrypt_utility_sudo = self.env['custom.encryption.utility'].sudo()
-        user_name = decrypt_encrypt_utility_sudo.decrypt_aes256(self.event_id.user_id.name or '')
+        user_name = self.event_id.user_id.x_decrypt_aes256(self.event_id.user_id.name or '')
         assistview_data = self._x_ike_create_assistview()
 
         lambda_headers = {

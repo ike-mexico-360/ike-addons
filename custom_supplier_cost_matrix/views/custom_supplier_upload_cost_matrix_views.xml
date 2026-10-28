@@ -110,6 +110,7 @@
                                             domain="[('disabled', '=', False)]"/>
                                         <field name="concept_id" options='{"no_open": True, "no_create": True}' required="1"
                                             domain="[('id', 'in', mapping_product_ids),('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_ike_concepts_product_template_list'}"/>
+                                        <field name="concept_workflow" column_invisible="1"/>
                                         <field name="subservice_specification_id" options='{"no_open": True, "no_create": True}' required="1"
                                             domain="[('disabled', '=', False)]" context="{'list_view_ref': 'custom_master_catalog.custom_subservice_specification_view_list'}"/>
                                         <field name="incident_type_id"/>
@@ -125,6 +126,12 @@
                                         <field name="date_init" required="1"/>
                                         <field name="date_end"/>
                                         <field name="vacation_schedule_ids" widget="many2many_tags" options="{'no_open': True, 'no_create': True}"/>
+                                        <field name="initial_kilometer" required="concept_workflow == 'plan'"/>
+                                        <field name="final_kilometer" required="concept_workflow == 'plan'"/>
+                                        <field name="origin_municipality_id" options='{"no_open": True, "no_create": True}' required="concept_workflow == 'section_in_agreement'"/>
+                                        <field name="origin_entity" options='{"no_open": True, "no_create": True}' required="concept_workflow == 'section_in_agreement'"/>
+                                        <field name="destination_municipality_id" options='{"no_open": True, "no_create": True}' required="concept_workflow == 'section_in_agreement'"/>
+                                        <field name="destination_entity" options='{"no_open": True, "no_create": True}' required="concept_workflow == 'section_in_agreement'"/>
                                         <field name="missing_value" column_invisible="1"/>
                                         <field name="missing_values" optional="hide"/>
                                         <field name="not_confirm" column_invisible="1"/>

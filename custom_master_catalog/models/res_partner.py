@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import uuid
 # from markupsafe import Markup
 
 from odoo import models, fields, api, _
@@ -160,9 +161,9 @@ class ResPartner(models.Model):
             # allow hyphen and parentheses in all res.partner records
             if not re.match(PARTNER_NAME_PATTER, rec.name):
                 raise ValidationError(_(
-                        "The name cannot contain special characters. "
-                        "Only letters, numbers, spaces, commas, periods, hyphens, slashes, parentheses, and the '&' symbol are allowed."
-                    ))
+                    "The name cannot contain special characters. "
+                    "Only letters, numbers, spaces, commas, periods, hyphens, slashes, parentheses, and the '&' symbol are allowed."
+                ))
 
     @api.constrains('name', 'x_is_client', 'company_type', 'is_company')
     def _constrains_check_unique_client_record(self):
@@ -356,8 +357,10 @@ class ResPartner(models.Model):
                 # Compare the codes (formatting may need to be adjusted)
 
                 if country_id.phone_code and str(phone_code) != str(country_id.phone_code):
-                    raise ValidationError(_("The country code in the phone number (+%s) does not match the country (%s).",
-                                    phone_code, country_id.name))
+                    raise ValidationError(
+                        _("The country code in the phone number (+%s) does not match the country (%s).",
+                            phone_code, country_id.name)
+                    )
 
         # Format phone number to international format
         formatted_phone = self._phone_format(fname=phone_number_field, force_format='INTERNATIONAL')

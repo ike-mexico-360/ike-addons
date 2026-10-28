@@ -985,10 +985,9 @@ class IkeEventSupplierLink(models.Model):
 
     @api.depends('type_authorization_id', 'authorization_by_nu', 'nu_user_id.name', 'authorizer_id.name')
     def _compute_authorizer_name(self):
-        encryption_util = self.env['custom.encryption.utility']
         for rec in self:
             if rec.type_authorization_id and rec.authorization_by_nu:
-                rec.authorizer = encryption_util.decrypt_aes256(rec.nu_user_id.name) or ''
+                rec.authorizer = self.nu_user_id.x_decrypt_aes256(rec.nu_user_id.name) or ''
             else:
                 rec.authorizer = rec.authorizer_id.name or ''
 
@@ -1052,7 +1051,7 @@ class IkeEventSupplierLink(models.Model):
 
             # Add
             self.aux_cost_distance_km = total_distance_km
-            self.aux_estimated_distance_km = center_distance_id.center_origin_duration_m
+            self.aux_estimated_distance_km = center_distance_id.center_origin_distance_km
             self.aux_estimated_duration_m = center_distance_id.center_origin_duration_m
             products_data = self.event_id.get_supplier_products_data(
                 supplier_center_id.id,

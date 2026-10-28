@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Opciones iniciales; el administrador de soporte puede editarlas, archivarlas o agregar más -->
+    <data noupdate="1">
+        <!-- Plataforma: dónde ocurrió la falla -->
+        <record id="support_platform_ike360" model="ike.support.platform">
+            <field name="name">Ike360</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="support_platform_supplier_portal" model="ike.support.platform">
+            <field name="name">Portal proveedores</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="support_platform_supplier_app" model="ike.support.platform">
+            <field name="name">Aplicación móvil proveedores</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <!-- Falla: qué salió mal (el síntoma que ve el usuario) -->
+        <record id="support_failure_01" model="ike.support.failure">
+            <field name="name">Error al iniciar sesión</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="support_failure_02" model="ike.support.failure">
+            <field name="name">Pantalla en blanco o no carga</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="support_failure_03" model="ike.support.failure">
+            <field name="name">Mensaje de error del sistema</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="support_failure_04" model="ike.support.failure">
+            <field name="name">No se guardan los cambios</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="support_failure_05" model="ike.support.failure">
+            <field name="name">Lentitud del sistema</field>
+            <field name="sequence">50</field>
+        </record>
+        <record id="support_failure_06" model="ike.support.failure">
+            <field name="name">Permisos insuficientes</field>
+            <field name="sequence">60</field>
+        </record>
+        <record id="support_failure_07" model="ike.support.failure">
+            <field name="name">Datos incorrectos o faltantes</field>
+            <field name="sequence">70</field>
+        </record>
+        <record id="support_failure_08" model="ike.support.failure">
+            <field name="name">Documento no se lee correctamente</field>
+            <field name="sequence">80</field>
+        </record>
+        <record id="support_failure_09" model="ike.support.failure">
+            <field name="name">Correo o notificación no recibido</field>
+            <field name="sequence">90</field>
+        </record>
+        <record id="support_failure_10" model="ike.support.failure">
+            <field name="name">Otra falla</field>
+            <field name="sequence">100</field>
+        </record>
+    </data>
+</odoo>

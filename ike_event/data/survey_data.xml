@@ -214,6 +214,25 @@
             <field name="question_id" ref="survey_vial_tire_question_2"/>
         </record>
 
+        <record id="survey_vial_generic" model="survey.survey">
+            <field name="title">Survey Vial Generic Test</field>
+            <field name="active">0</field>
+        </record>
+        <record id="survey_vial_generic_question_1" model="survey.question">
+            <field name="title">Question 1?</field>
+            <field name="description">Do you have?</field>
+            <field name="question_type">simple_choice</field>
+            <field name="survey_id" ref="survey_vial_generic"/>
+        </record>
+        <record id="survey_vial_generic_question_answer_1_1" model="survey.question.answer">
+            <field name="value">Yes</field>
+            <field name="question_id" ref="survey_vial_generic_question_1"/>
+        </record>
+        <record id="survey_vial_generic_question_answer_1_1" model="survey.question.answer">
+            <field name="value">No</field>
+            <field name="question_id" ref="survey_vial_generic_question_1"/>
+        </record>
+
         <record id="survey_medical_consultation" model="survey.survey">
             <field name="title">Survey Medical Consultation Test</field>
             <field name="active">0</field>

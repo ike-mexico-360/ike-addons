@@ -180,6 +180,8 @@ class IkeEvent(models.Model):
                         purchase.action_draft_cancel()
 
                     purchase.action_rfq_send_one_step()
+                    # Remove CDS users (Coordinator / Supervisor CDS) from the PO followers
+                    purchase.action_unsubscribe_cds_user(self.env.user)
 
     def x_get_values_for_purchase_line(self, supplier_product_id):
         return {
@@ -249,4 +251,5 @@ class IkeEvent(models.Model):
             "x_event_type_id": event_type_id.id,
             "x_incident_type_id": incident_type_id,
             "x_vehicle_weight_category_id": vehicle_weight_category_id.id,
+            "x_origin_events": self.name,
         }

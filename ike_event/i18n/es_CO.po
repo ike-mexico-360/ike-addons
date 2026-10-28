@@ -1161,12 +1161,12 @@ msgstr "Clave"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__colony
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__colony
 msgid "Colony"
-msgstr "Colonia"
+msgstr "Barrio"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_truck_form
 msgid "Colony..."
-msgstr "Colonia..."
+msgstr "Barrio..."
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_stage__color
@@ -2072,6 +2072,11 @@ msgstr "Distancia estimada para llegar al destino, en minutos."
 #: model:ir.model.fields,help:ike_event.field_ike_event_supplier__estimated_distance
 msgid "Estimated distance to reach the user, in kilometers."
 msgstr "Distancia estimada para llegar al usuario, en kilómetros."
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.ike_event_supplier_evaluation_form_view
+msgid "Estimated duration"
+msgstr "Duración estimada"
 
 #. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event_stage_comment__event_line_estimated_duration
@@ -3262,6 +3267,12 @@ msgid "It could not be cancelled"
 msgstr "No pudo ser cancelado"
 
 #. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier_authorization.py:0
+msgid "It is necessary to qualify the provider before requesting authorization."
+msgstr "Es necesario calificar al proveedor antes de solicitar la autorización."
+
+#. module: ike_event
 #: model:ir.model.fields,help:ike_event.field_ike_event__duration_tracking
 #: model:ir.model.fields,help:ike_event.field_ike_event_supplier__duration_tracking
 #: model:ir.model.fields,help:ike_event.field_ike_service_input_generic__duration_tracking
@@ -3681,7 +3692,7 @@ msgstr "Mover al siguiente %s"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__municipality_id
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_truck_form
 msgid "Municipality"
-msgstr "Municipio"
+msgstr "Zona geografica"
 
 #. module: ike_event
 #. odoo-javascript
@@ -3939,12 +3950,6 @@ msgstr "No se le ha asignado latitud/longitud a la ubicación."
 #: code:addons/ike_event/models/ike_event.py:0
 msgid "No municipality was found for ZIP code %s."
 msgstr "No se encontró ningún municipio para el código postal %s."
-
-#. module: ike_event
-#. odoo-python
-#: code:addons/ike_event/models/ike_event_supplier_authorization.py:0
-msgid "No suppliers were found"
-msgstr "No se encontraron proveedores"
 
 #. module: ike_event
 #: model:ike.event.supplier.evaluation,name:ike_event.ike_event_supplier_evaluation_3
@@ -5522,7 +5527,7 @@ msgstr "Secuencia de la etapa"
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial_truck__state_id
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_truck_form
 msgid "State"
-msgstr "Estado"
+msgstr "Departamento"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__status
@@ -5920,6 +5925,12 @@ msgstr "Encuesta vial grúa Pruebas"
 #: model:ir.ui.menu,name:ike_event.ike_menu_survey
 msgid "Surveys"
 msgstr "Encuestas"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid "System - %(supplier)s - %(plate)s - %(datetime)s"
+msgstr "Sistema - %(supplier)s - %(plate)s - %(datetime)s"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__tax_ids
@@ -6463,6 +6474,12 @@ msgstr "Datos del subservicio a usuario"
 #: model_terms:ir.ui.view,arch_db:ike_event.ike_event_duplicate_wizard_view_form
 msgid "User data"
 msgstr "Datos de usuario"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/wizard/ike_event_change_state_supplier_wizard.py:0
+msgid "User: %(user)s - Datetime: %(datetime)s"
+msgstr "Usuario: %(user)s - Fecha y hora: %(datetime)s"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__amount_concept_vat

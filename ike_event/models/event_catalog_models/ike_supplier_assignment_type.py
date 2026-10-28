@@ -17,6 +17,7 @@ class IkeEventSupplierAssignment(models.Model):
         tracking=True,
     )
     wait_time = fields.Integer(help='Maximum waiting time to accept the service, in seconds.', default=40, tracking=True)
+    can_exceed = fields.Boolean(string='Can Exceed Covered Amount', default=True)
     geofence_radius_meters = fields.Integer(tracking=True)
     geofence_radius = fields.Float(compute="_compute_geofence_radius", store=True)
     arrival_duration = fields.Integer(help='Average time to accept the service, in minutes.', tracking=True)

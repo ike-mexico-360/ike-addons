@@ -158,13 +158,11 @@ class IkeEventAffiliationUser(models.TransientModel):
     def _update_view_fields(self, membership=None, key_primary=None, key_second=None):
         if membership:
             # Desencriptar y mostrar TODAS las claves de esta membresía
-            encryption = self.env['custom.model.encryption']
-
-            decrypted_name = encryption.x_decrypt_aes256(
+            decrypted_name = membership.x_decrypt_aes256(
                 membership.nus_id.name
             ) if membership.nus_id and membership.nus_id.name else None
 
-            decrypted_phone = encryption.x_decrypt_aes256(
+            decrypted_phone = membership.x_decrypt_aes256(
                 membership.nus_id.phone
             ) if membership.nus_id and membership.nus_id.phone else None
 
@@ -177,13 +175,13 @@ class IkeEventAffiliationUser(models.TransientModel):
             self.fields_readonly = True
 
             if key_primary:
-                decrypted_second = encryption.x_decrypt_aes256(
+                decrypted_second = membership.x_decrypt_aes256(
                     membership.second_key_identification
                 ) if membership.second_key_identification else None
                 self.key_second = decrypted_second
 
             if key_second:
-                decrypted_primary = encryption.x_decrypt_aes256(
+                decrypted_primary = membership.x_decrypt_aes256(
                     membership.key_identification
                 ) if membership.key_identification else None
                 self.key_primary = decrypted_primary
@@ -249,13 +247,12 @@ class IkeEventAffiliationUser(models.TransientModel):
             nus_affiliation_id = membership
 
             # Actualizar claves si están vacías
-            encryption = self.env['custom.model.encryption']
             if self.key_primary and not membership.key_identification:
-                membership.key_identification = encryption.x_encrypt_aes256(self.key_primary)
+                membership.key_identification = membership.x_encrypt_aes256(self.key_primary)
             # ToDo: Se comentó porque comentó Mario que la segunda clave no se usará para la búsqueda.
             # Ejemplo de un vehículo, el VIN no cambia, pero puedo vender el auto, y el dueño es otro.
             if self.key_second and not membership.second_key_identification:
-                membership.second_key_identification = encryption.x_encrypt_aes256(self.key_second)
+                membership.second_key_identification = membership.x_encrypt_aes256(self.key_second)
         else:
             nus_user = self._find_existing_user()
             if not nus_user:
@@ -285,7 +282,6 @@ class IkeEventAffiliationUser(models.TransientModel):
     # FUNCTION
     def _get_membership(self, key_primary=None, key_second=None):
         """Busca membresía por clave primaria y/o secundaria"""
-        encryption = self.env['custom.model.encryption']
         membership_ids = self.env['custom.membership.nus'].search([
             ('membership_plan_id', '=', self.account_id.id),
             ('disabled', '=', False),
@@ -294,11 +290,11 @@ class IkeEventAffiliationUser(models.TransientModel):
         if not membership_ids:
             return False
         for membership in membership_ids:
-            decrypted_key_primary = encryption.x_decrypt_aes256(
+            decrypted_key_primary = membership.x_decrypt_aes256(
                 membership.key_identification
             ) if membership.key_identification else None
 
-            decrypted_key_second = encryption.x_decrypt_aes256(
+            decrypted_key_second = membership.x_decrypt_aes256(
                 membership.second_key_identification
             ) if membership.second_key_identification else None
             if key_primary:

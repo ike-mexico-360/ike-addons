@@ -9,9 +9,8 @@ from odoo.exceptions import UserError
 
 class IkeServiceVial(models.Model):
     _name = 'ike.service.input.vial'
-    _inherit = ['ike.service.input.model', 'mail.thread', 'mail.tracking.duration.mixin']
+    _inherit = ['ike.service.input.model', 'mail.thread']
     _description = 'Service Input Vial'
-    _track_duration_field = 'stage_id'
 
     WATCHED_FIELDS = [
         'identification_type',

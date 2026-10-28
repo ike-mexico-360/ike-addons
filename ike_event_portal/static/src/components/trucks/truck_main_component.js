@@ -10,6 +10,7 @@ import { rpc } from "@web/core/network/rpc";
 import { usePagination } from "../pagination/pagination_service";
 import { PaginationComponent } from "../pagination/pagination_component";
 import { _t } from "@web/core/l10n/translation";
+import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 
 export class TrucksComponent extends Component {
     static template = "ike_event_portal.TrucksComponent";
@@ -21,6 +22,7 @@ export class TrucksComponent extends Component {
     setup() {
         this.orm = useService("orm");
         this.notification = useService("notification");
+        this.dialog = useService("dialog");
         this.supplier_id = 0;
         this.user = user;
         this.state = useState({
@@ -28,12 +30,17 @@ export class TrucksComponent extends Component {
             isLoading: true,
             selectedTruckId: null,
             canAddDriver: false,
+            canEditUnitStatus: false,
+            updatingTruckId: null,
             view: 'list', // 'list', 'detail', or 'create',
             filters: {
                 license_plate: "",
                 model: "",
                 driver: "",
+                vehicle_type: "",
+                vehicle_state: "",
             },
+            vehicleStateOptions: [],
         });
         this.pagination = usePagination({
             pageSize: 10,
@@ -84,6 +91,7 @@ export class TrucksComponent extends Component {
                 fieldsData.x_vehicle_service_state.selection.forEach(([key, label]) => {
                     selectionMapping[key] = label;
                 });
+                this.state.vehicleStateOptions = fieldsData.x_vehicle_service_state.selection;
             }
             const trucksData = await this.orm.searchRead(
                 'fleet.vehicle',
@@ -113,6 +121,8 @@ export class TrucksComponent extends Component {
         const searchLicense = filters.license_plate.toLowerCase().trim();
         const searchModel = filters.model.toLowerCase().trim();
         const searchDriver = filters.driver.toLowerCase().trim();
+        const searchVehicleType = filters.vehicle_type.toLowerCase().trim();
+        const searchVehicleState = filters.vehicle_state;
 
         return trucks.filter(truck => {
             // 1. Check License Plate
@@ -132,13 +142,72 @@ export class TrucksComponent extends Component {
             const matchDriver = !searchDriver ||
                 driverName.toLowerCase().includes(searchDriver);
 
+            // 4. Check Vehicle Type
+            const vehicleTypeName = Array.isArray(truck.x_vehicle_type) ? truck.x_vehicle_type[1] : (truck.x_vehicle_type || "");
+            const matchVehicleType = !searchVehicleType ||
+                vehicleTypeName.toLowerCase().includes(searchVehicleType);
+
+            // 5. Check Vehicle State
+            const matchVehicleState = !searchVehicleState ||
+                truck.x_vehicle_service_state === searchVehicleState;
+
             // Return true only if ALL conditions match
-            return matchLicense && matchModel && matchDriver;
+            return matchLicense && matchModel && matchDriver && matchVehicleType && matchVehicleState;
         });
+    }
+
+    translate(value) {
+        return _t(value);
     }
 
     showNotification({ message, type = 'info', sticky = true, title }) {
         this.notification.add(message, { type, sticky, title });
+    }
+
+    canEditVehicleStatus(truck) {
+        return this.state.canEditUnitStatus && ['available', 'not_available'].includes(truck.x_vehicle_service_state);
+    }
+
+    vehicleStatusLabel(state) {
+        const truck = this.state.trucks.find(item => item.x_vehicle_service_state === state);
+        if (truck) {
+            return truck.x_vehicle_service_state_label;
+        }
+        return state === 'available' ? _t('Available') : _t('Not Available');
+    }
+
+    openVehicleStatusConfirmation(truck) {
+        if (!this.canEditVehicleStatus(truck)) {
+            return;
+        }
+        const newState = truck.x_vehicle_service_state === 'available' ? 'not_available' : 'available';
+        const targetLabel = this.vehicleStatusLabel(newState);
+        this.dialog.add(ConfirmationDialog, {
+            title: _t('Change Unit Status'),
+            body: _t('Do you want to change the unit status to %s?', targetLabel),
+            confirm: () => this.updateVehicleStatus(truck.id, newState),
+            cancel: () => {},
+        });
+    }
+
+    async updateVehicleStatus(truckId, newState) {
+        this.state.updatingTruckId = truckId;
+        try {
+            const result = await rpc('/provider/portal/trucks/update_status', {
+                truck_id: truckId,
+                new_state: newState,
+            });
+            if (!result.success) {
+                this.showNotification({ title: _t('Error'), message: _t(result.error), type: 'danger' });
+                return;
+            }
+            this.showNotification({ title: _t('Updated'), message: _t('Unit status updated.'), type: 'success' });
+            await this.loadTrucks();
+        } catch (err) {
+            this.showNotification({ title: _t('Error'), message: _t(err?.data?.message || err.message), type: 'danger' });
+        } finally {
+            this.state.updatingTruckId = null;
+        }
     }
 
     async getSupplierId() {
@@ -165,11 +234,16 @@ export class TrucksComponent extends Component {
 
     async checkUserPermissions() {
         try {
-            const result = await rpc('/provider/portal/trucks/can_add_driver');
-            this.state.canAddDriver = result.can_edit;
+            const [driverResult, statusResult] = await Promise.all([
+                rpc('/provider/portal/trucks/can_add_driver'),
+                rpc('/provider/portal/trucks/can_edit_driver'),
+            ]);
+            this.state.canAddDriver = driverResult.can_edit;
+            this.state.canEditUnitStatus = statusResult.can_edit;
         } catch (err) {
             this.showNotification({ title: _t("Error checking permissions"), message: _t(err?.data?.message || err.message || "An error occurred while checking user permissions."), type: 'danger' });
             this.state.canAddDriver = false;
+            this.state.canEditUnitStatus = false;
         }
     }
 }

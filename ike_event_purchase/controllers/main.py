@@ -65,18 +65,18 @@ class IkePurchaseController(http.Controller):
         sap_object = kw.get('sap', {})
 
         # identifier data
-        tenant = identifier_object.get('tenants', '').strip()
-        app_code = identifier_object.get('app', '').strip()
+        tenant = (identifier_object.get('tenants') or '').strip()
+        app_code = (identifier_object.get('app') or '').strip()
 
         # SAP data
-        company_code = sap_object.get('companyCode', '').strip()
-        supplier_code = sap_object.get('supplier', '').strip()
-        currency = sap_object.get('documentCurrency', '').strip()
-        customer_code = sap_object.get('incotermsLocation1', '').strip()
-        copago = sap_object.get('copago', '').strip()
-        event_type = sap_object.get('event_type', '').strip()
-        incident_type = sap_object.get('incident_type', '').strip()
-        vehicle_weight = sap_object.get('vehicle_weight', '').strip()
+        company_code = (sap_object.get('companyCode') or '').strip()
+        supplier_code = (sap_object.get('supplier') or '').strip()
+        currency = (sap_object.get('documentCurrency') or '').strip()
+        customer_code = (sap_object.get('incotermsLocation1') or '').strip()
+        copago = (sap_object.get('copago') or '').strip()
+        event_type = (sap_object.get('event_type') or '').strip()
+        incident_type = (sap_object.get('incident_type') or '').strip()
+        vehicle_weight = (sap_object.get('vehicle_weight') or '').strip()
         line_results = sap_object.get('toPurchaseOrderItem', {}).get('results', [])
 
         # Buscar projecto por codigo de APP
@@ -146,15 +146,15 @@ class IkePurchaseController(http.Controller):
         order_line = []
         event_names = []
         for index, line in enumerate(line_results):
-            incoming_sap_code = line.get('supplierMaterialNumber', '').strip()
-            outgoing_sap_code = line.get('material', '').strip()
-            order_quantity_raw = line.get('orderQuantity', '').strip()
+            incoming_sap_code = (line.get('supplierMaterialNumber') or '').strip()
+            outgoing_sap_code = (line.get('material') or '').strip()
+            order_quantity_raw = (line.get('orderQuantity') or '').strip()
             real_outgoing_sap_code = outgoing_sap_code  # Almacenara el valor real del registro en odoo
-            net_price_raw = line.get('netPriceAmount', '').strip()
-            uom = line.get('purchaseOrderQuantityUnit', '').strip()
-            event_name = line.get('expediente', '').strip()
-            id_event = line.get('id_evento', '').strip()
-            validador = line.get('validador', '').strip()
+            net_price_raw = (line.get('netPriceAmount') or '').strip()
+            uom = (line.get('purchaseOrderQuantityUnit') or '').strip()
+            event_name = (line.get('expediente') or '').strip()
+            id_event = (line.get('id_evento') or '').strip()
+            validador = (line.get('validador') or '').strip()
 
             order_quantity = self._parse_decimal_string(
                 order_quantity_raw,
@@ -348,7 +348,6 @@ class IkePurchaseController(http.Controller):
             'companyCode',
             'supplier',
             'documentCurrency',
-            'copago',
             'incotermsLocation1',
             'incotermsLocation2',
             'toPurchaseOrderItem',

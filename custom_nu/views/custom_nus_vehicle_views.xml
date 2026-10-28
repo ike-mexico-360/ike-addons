@@ -54,6 +54,10 @@
         <field name="model">custom.nus.vehicle</field>
         <field name="arch" type="xml">
             <list string="NUs Vehicles" delete="0" edit="0" duplicate="0">
+                <header>
+                    <button name="action_reprocess_search_helpers" string="Reprocess Search Helper"
+                        type="object" class="btn-warning" groups="base.group_erp_manager"/>
+                </header>
                 <field name="model_nus_id" string="Subbrand"/>
                 <field name="license_plate_nus"/>
                 <field name="vin_sn_nus"/>

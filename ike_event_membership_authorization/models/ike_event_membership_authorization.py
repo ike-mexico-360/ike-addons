@@ -238,13 +238,10 @@ class IkeEventMembershipAuthorization(models.Model):
 
     @api.depends('nus_membership_id.name')
     def _compute_name(self):
-        encryption = self.env['custom.model.encryption']
         for rec in self:
             if rec.nus_membership_id and rec.nus_membership_id.name:
-                decrypted = encryption.x_decrypt_aes256(
-                    rec.nus_membership_id.name
-                )
-                rec.name = decrypted or False
+                descrypted_name = rec.nus_membership_id.x_decrypt_aes256(rec.nus_membership_id.name)
+                rec.name = descrypted_name or False
             else:
                 rec.name = False
 
@@ -282,24 +279,18 @@ class IkeEventMembershipAuthorization(models.Model):
 
     @api.depends('nus_id', 'nus_id.name')
     def _compute_user_name(self):
-        encryption = self.env['custom.model.encryption']
         for rec in self:
             if rec.nus_id and rec.nus_id.name:
-                decrypted = encryption.x_decrypt_aes256(
-                    rec.nus_id.name
-                )
+                decrypted = self.nus_id.x_decrypt_aes256(rec.nus_id.name)
                 rec.nus_name = decrypted or False
             else:
                 rec.nus_name = False
 
     @api.depends('nus_membership_id.membership_plan_id.account_id.name')
     def _compute_account_name(self):
-        encryption = self.env['custom.model.encryption']
         for rec in self:
             if rec.nus_membership_id and rec.nus_membership_id.membership_plan_id.account_id.name:
-                decrypted = encryption.x_decrypt_aes256(
-                    rec.nus_membership_id.membership_plan_id.account_id.name
-                )
+                decrypted = rec.nus_membership_id.x_decrypt_aes256(rec.nus_membership_id.membership_plan_id.account_id.name)
                 rec.name = decrypted or False
             else:
                 rec.name = False

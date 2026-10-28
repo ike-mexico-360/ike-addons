@@ -15,9 +15,10 @@
 # If not, see <https://store.webkul.com/license.html/>
 #################################################################################
 
-from odoo import models,fields,api,_
+from odoo import models, fields, api, _
 from odoo.exceptions import UserError
-import logging, math
+import math
+import logging
 _logger = logging.getLogger(__name__)
 
 
@@ -27,7 +28,7 @@ class AppointTimeslot(models.Model):
     _order = "start_time"
 
     desc = fields.Text(string="Description")
-    start_time = fields.Float(string="Start Time", required =True)
+    start_time = fields.Float(string="Start Time", required=True)
     end_time = fields.Float(string="End Time", required=True)
     name = fields.Char(string="Slot", required=True, compute="compute_rec_name")
     timerange = fields.Char()
@@ -36,11 +37,11 @@ class AppointTimeslot(models.Model):
         default=True,
         help="If unchecked, it will allow you to hide this record without removing it."
     )
-    company_id = fields.Many2one('res.company', 'Company', default=lambda self:self.env.user.company_id)
+    company_id = fields.Many2one('res.company', 'Company', default=lambda self: self.env.user.company_id)
 
     # SQL Constraints
     _sql_constraints = [
-        ('timeslot_day_starttime_endtime_unique', 'unique(start_time, end_time)', _('This slot already exist.'))
+        ('timeslot_day_starttime_endtime_unique', 'unique(start_time, end_time)', 'This slot already exist.')
     ]
 
     @api.depends("start_time", "end_time")

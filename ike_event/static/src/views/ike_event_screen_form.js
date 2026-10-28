@@ -13,6 +13,7 @@ const VIEW_IDS = {
     'ike.service.input.vial.truck': 'service_input_vial_truck_form_id',
     'ike.service.input.vial.generic': 'service_input_vial_generic_form_id',
     'ike.service.input.medical': 'service_input_medical_form_id',
+    'ike.service.input.medical.consultation': 'service_input_medical_consultation_form_id',
     'survey.user_input': 'survey_user_input_form_id',
     'ike.event.supplier': 'service_supplier_screen_form_id',
 };
@@ -25,7 +26,7 @@ export class IkeEventScreenFormController extends IkeEventFormController {
         View,
     };
     setup() {
-        // console.log("IkeEventScreenForm", this);
+        console.log("IkeEventScreenForm", this);
         super.setup();
         this.state = useState({
             serviceInputId: null,
@@ -82,6 +83,19 @@ export class IkeEventScreenFormController extends IkeEventFormController {
             if (model.root.data.service_res_id.resId != this.state.serviceInputId) {
                 let serviceResModel = model.root.data.service_res_model;
                 let serviceResId = model.root.data.service_res_id.resId;
+                if (!serviceResModel) {
+                    let resource_type = model.root.data.resource_type;
+                    switch (resource_type) {
+                        case 'vehicle':
+                            serviceResId = 'ike.service.input.vial.generic';
+                            break;
+                        case 'person':
+                            serviceResId = 'ike.service.input.generic.sub';
+                            break;
+                        default:
+                            serviceResId = 'ike.service.input.generic.sub';
+                    }
+                }
                 let serviceViewId = this.props.context[VIEW_IDS[serviceResModel]];
                 let context = {
                     'ike_event_screen': true,

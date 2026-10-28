@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ike_support_report_list" model="ir.ui.view">
+        <field name="name">ike.support.report.list</field>
+        <field name="model">ike.support.report</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="platform_id"/>
+                <field name="failure_id"/>
+                <field name="event"/>
+                <field name="create_uid" string="Reported by" optional="show"/>
+                <field name="create_date" string="Date" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-muted="state == 'open'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-success="state == 'resolved'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- El folio de la secuencia es el encabezado del formulario -->
+    <record id="view_ike_support_report_form" model="ir.ui.view">
+        <field name="name">ike.support.report.form</field>
+        <field name="model">ike.support.report</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <field name="can_change_state" invisible="1"/>
+                    <field name="state" widget="statusbar" statusbar_visible="open,in_progress,resolved"
+                           options="{'clickable': 1}" readonly="not can_change_state"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="platform_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="failure_id" options="{'no_create': True, 'no_open': True}"/>
+                            <field name="event"/>
+                        </group>
+                        <group>
+                            <field name="create_uid" string="Reported by"
+                                   invisible="not id"/>
+                            <field name="create_date" string="Date" invisible="not id"/>
+                        </group>
+                    </group>
+                    <separator string="Description"/>
+                    <field name="description" nolabel="1"
+                           placeholder="What happened, steps to reproduce it, and who is affected."/>
+                    <separator string="Image"/>
+                    <field name="image" widget="image" nolabel="1" options="{'size': [0, 400]}"/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ike_support_report_search" model="ir.ui.view">
+        <field name="name">ike.support.report.search</field>
+        <field name="model">ike.support.report</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="platform_id"/>
+                <field name="failure_id"/>
+                <field name="event"/>
+                <field name="description"/>
+                <filter name="my_reports" string="My reports" domain="[('create_uid', '=', uid)]"/>
+                <group>
+                    <filter name="group_platform" string="Platform" context="{'group_by': 'platform_id'}"/>
+                    <filter name="group_failure" string="Failure" context="{'group_by': 'failure_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ike_support_reports" model="ir.actions.act_window">
+        <field name="name">Reports</field>
+        <field name="res_model">ike.support.report</field>
+        <field name="path">support-report</field>
+        <field name="view_mode">list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Register the first support report</p>
+        </field>
+    </record>
+</odoo>

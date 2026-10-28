@@ -288,6 +288,13 @@
         groups="base.group_system"
         sequence="21"/>
 
+    <menuitem id="mail_template_configuration_menu"
+        name="Email Templates"
+        action="mail.action_email_template_tree_all"
+        parent="configuration_menu_root"
+        groups="base.group_system"
+        sequence="22"/>
+
     <!-- Menu Service-->
     <menuitem id="product_category_services_menu_root"
         name="Services"

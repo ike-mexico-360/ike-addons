@@ -40,6 +40,7 @@ class IkeEventBatcher:
         channel = f'{db_name}.{channel}.{notification_type}'
         with self.batch_locks[channel]:
             exist = False
+            # Mutex
             data_id = data.get('id')
             if data_id:
                 for i, item in enumerate(self.event_batches[channel]):

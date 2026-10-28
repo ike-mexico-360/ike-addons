@@ -151,7 +151,7 @@ class ClientEventsPortal(CustomerPortal):
 
     def _prepare_event_rows(self, events):
         rows = []
-        encryption_utility = request.env['custom.encryption.utility'].sudo()
+        encryption_utility = request.env['custom.model.encryption'].sudo()
         for event in events:
             suppliers = event.selected_supplier_ids
             supplier = suppliers.sorted(
@@ -164,12 +164,12 @@ class ClientEventsPortal(CustomerPortal):
             encrypted_client_name = event.user_id.name if event.user_id else ''
             encrypted_account_code = event.user_membership_id.key_identification or ''
             client_name = (
-                encryption_utility.decrypt_aes256(encrypted_client_name)
+                encryption_utility.x_decrypt_aes256(encrypted_client_name)
                 if encrypted_client_name
                 else event.nu_name
             )
             account_code = (
-                encryption_utility.decrypt_aes256(encrypted_account_code)
+                encryption_utility.x_decrypt_aes256(encrypted_account_code)
                 if encrypted_account_code
                 else ''
             )

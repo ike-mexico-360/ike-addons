@@ -252,11 +252,7 @@ class IkeEvent(models.Model):
         if not self.user_membership_id.key_identification:
             return ''
 
-        encryption = self.env['custom.model.encryption']
-
-        value = encryption.x_decrypt_aes256(
-            self.user_membership_id.key_identification
-        )
+        value = self.user_membership_id.x_decrypt_aes256(self.user_membership_id.key_identification)
 
         mask = self.membership_display_mask
 
@@ -271,11 +267,7 @@ class IkeEvent(models.Model):
         if not self.user_membership_id.second_key_identification:
             return ''
 
-        encryption = self.env['custom.model.encryption']
-
-        value = encryption.x_decrypt_aes256(
-            self.user_membership_id.second_key_identification
-        )
+        value = self.user_membership_id.x_decrypt_aes256(self.user_membership_id.second_key_identification)
 
         mask = self.user_membership_id.x_display_mask_second
 
@@ -290,10 +282,7 @@ class IkeEvent(models.Model):
         if not self.user_id.phone:
             return ''
 
-        encryption = self.env['custom.model.encryption']
-        return encryption.x_decrypt_aes256(
-            self.user_id.phone
-        )
+        return self.user_id.x_decrypt_aes256(self.user_id.phone)
 
     def _apply_mask(self, value, mask):
         if not value or not mask:
@@ -391,6 +380,7 @@ class IkeEvent(models.Model):
     def action_set_user_sub_service_data(self):
         result = super(IkeEvent, self).action_set_user_sub_service_data()
         for rec in self:
+            rec._create_message_binnacle(['ike_event_binnacle.ike_binnacle_stage_ia_suggestion'])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_12"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_3_13"])
             rec._create_message_binnacle(["ike_event_binnacle.ike_binnacle_stage_4_2"])

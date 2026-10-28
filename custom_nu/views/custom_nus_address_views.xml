@@ -60,6 +60,10 @@
         <field name="model">custom.nus.address</field>
         <field name="arch" type="xml">
             <list string="NUs Addresses" edit="false" duplicate="false" delete="false">
+                <header>
+                    <button name="action_reprocess_search_helpers" string="Reprocess Search Helper"
+                        type="object" class="btn-warning" groups="base.group_erp_manager"/>
+                </header>
                 <field name="nus_id"/>
                 <field name="street_nus"/>
                 <field name="city_nus"/>

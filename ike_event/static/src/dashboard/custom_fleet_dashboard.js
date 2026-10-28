@@ -51,8 +51,8 @@ class CustomFleetDashboard extends Component {
 
                         // New position
                         const newPosition = {
-                            lat: parseFloat(updatedVehicle.x_latitude),
-                            lng: parseFloat(updatedVehicle.x_longitude)
+                            lat: updatedVehicle.x_latitude,
+                            lng: updatedVehicle.x_longitude
                         };
 
                         if (!visibleVehicle) {
@@ -171,8 +171,8 @@ class CustomFleetDashboard extends Component {
                     img.style.height = "32px";
 
                     img.onload = () => {
-                        const lat = parseFloat(vehicle.x_latitude);
-                        const lng = parseFloat(vehicle.x_longitude);
+                        const lat = vehicle.x_latitude;
+                        const lng = vehicle.x_longitude;
 
                         if (!isNaN(lat) && !isNaN(lng)) {
                             vehicle.marker = new google.maps.marker.AdvancedMarkerElement({

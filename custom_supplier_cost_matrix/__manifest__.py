@@ -17,6 +17,7 @@
         "views/custom_supplier_cost_matrix_line_views.xml",
         "views/res_partner_suppler_center_views.xml",
         "views/res_partner_supplier_views.xml",
+        "views/product_template_concept_views.xml",
         "views/other/custom_supplier_cost_product_schedule_views.xml",
         "views/res_partner_menus.xml",
     ],

@@ -30,3 +30,4 @@ from . import custom_holidays
 from . import uom_uom
 from . import custom_metropolitan_zone
 from . import custom_manual_assignment_order
+from . import mail_sending_control

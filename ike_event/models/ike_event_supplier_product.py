@@ -29,6 +29,7 @@ class IkeEventProduct(models.Model):
     estimated_quantity = fields.Integer(default=1)
     base = fields.Boolean(default=False)
     covered = fields.Boolean(default=False)
+    is_unlimited = fields.Boolean(default=False)
     mandatory = fields.Boolean(help='Can not be removed', default=False)
     is_manual = fields.Boolean(default=False)
     display_type = fields.Selection(
@@ -373,7 +374,7 @@ class IkeEventSupplierProduct(models.Model):
 
             if not total_base_unit_price:
                 # BoM
-                bom_product_ids = rec.event_id._get_boom_product(rec.product_id, rec.supplier_id.id)
+                bom_product_ids, first_boom_product_ids = rec.event_id._get_boom_product(rec.product_id, rec.supplier_id.id)
                 boom_matrix_cost_line_ids = rec.event_id.get_supplier_product_matrix_lines_by_supplier(
                     rec.supplier_id.id,
                     bom_product_ids.ids,

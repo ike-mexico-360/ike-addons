@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Catálogos editables en línea; sólo el administrador de soporte llega a estos menús -->
+    <record id="view_ike_support_platform_list" model="ir.ui.view">
+        <field name="name">ike.support.platform.list</field>
+        <field name="model">ike.support.platform</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ike_support_platform_search" model="ir.ui.view">
+        <field name="name">ike.support.platform.search</field>
+        <field name="model">ike.support.platform</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ike_support_platforms" model="ir.actions.act_window">
+        <field name="name">Platforms</field>
+        <field name="path">support-platform</field>
+        <field name="res_model">ike.support.platform</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <record id="view_ike_support_failure_list" model="ir.ui.view">
+        <field name="name">ike.support.failure.list</field>
+        <field name="model">ike.support.failure</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ike_support_failure_search" model="ir.ui.view">
+        <field name="name">ike.support.failure.search</field>
+        <field name="model">ike.support.failure</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_ike_support_failures" model="ir.actions.act_window">
+        <field name="name">Failures</field>
+        <field name="path">support-failure</field>
+        <field name="res_model">ike.support.failure</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

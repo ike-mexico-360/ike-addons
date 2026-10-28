@@ -39,6 +39,10 @@ class IkeEventBase(models.AbstractModel):
     # Service fields
     service_id = fields.Many2one('product.category')
     sub_service_id = fields.Many2one('product.product', 'Sub-Service')
+    resource_type = fields.Selection([
+        ('vehicle', 'Vehicle'),
+        ('person', 'Person'),
+    ], default='vehicle', required=True, readonly=True)
 
     # Locations fields
     location_label = fields.Char()

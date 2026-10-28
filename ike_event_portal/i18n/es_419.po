@@ -3017,3 +3017,52 @@ msgstr "No hay comentarios registrados"
 #: code:addons/ike_event_portal/static/src/components/dialogs/service_comment_dialog.xml:0
 msgid "comments"
 msgstr "comentarios"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.js:0
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Change Unit Status"
+msgstr "Cambiar estado de la unidad"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.js:0
+msgid "Do you want to change the unit status to %s?"
+msgstr "¿Desea cambiar el estado de la unidad a %s?"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.js:0
+msgid "Available"
+msgstr "Disponible"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.js:0
+msgid "Not Available"
+msgstr "No disponible"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Vehicle Status"
+msgstr "Estatus del Vehiculo"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Vehicle State"
+msgstr "Estado del Vehiculo"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Vehicle Model"
+msgstr "Modelo del Vehículo"
+
+#. module: ike_event_portal
+#. odoo-javascript
+#: code:addons/ike_event_portal/static/src/components/trucks/truck_main_component.xml:0
+msgid "Model"
+msgstr "Modelo del Vehículo"

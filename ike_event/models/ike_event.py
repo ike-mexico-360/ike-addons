@@ -252,16 +252,15 @@ class IkeEvent(models.Model):
         result = super(IkeEvent, self.sudo()).read(fields=fields, load=load)
         # Only decrypt if encrypted fields are specifically requested
         if not fields or any(f in fields for f in ['user_phone', 'key_identification']):
-            encryption_util = self.env['custom.encryption.utility']
             for record in result:
                 if 'user_phone' in record and record['user_phone']:
                     try:
-                        record['user_phone'] = encryption_util.decrypt_aes256(record['user_phone'])
+                        record['user_phone'] = self.user_id.x_decrypt_aes256(record['user_phone'])
                     except Exception as e:
                         _logger.warning(f"Error decrypting user_phone: {str(e)}")
                 if 'key_identification' in record and record['key_identification']:
                     try:
-                        record['key_identification'] = encryption_util.decrypt_aes256(record['key_identification'])
+                        record['key_identification'] = self.user_membership_id.x_decrypt_aes256(record['key_identification'])
                     except Exception as e:
                         _logger.warning(f"Error decrypting key_identification: {str(e)}")
         return result
@@ -951,7 +950,7 @@ class IkeEvent(models.Model):
 
     def action_set_user_sub_service_data(self):
         for rec in self:
-            if rec.sub_service_ref in ['town_truck', 'tire_change', 'fuel_supply', 'other_fluid', 'battery_jump']:
+            if rec.resource_type == 'vehicle':
                 sub_res_id = self.env[rec.sub_service_res_model].browse(rec.sub_service_res_id)
                 service_vehicle_type_ids = sub_res_id.service_vehicle_type_ids.ids  # type: ignore
                 if not service_vehicle_type_ids:
@@ -1753,10 +1752,9 @@ class IkeEvent(models.Model):
         return action
 
     def get_user_phone(self):
-        encryption_util = self.env['custom.encryption.utility']
         if self.user_additional_phone:
             try:
-                return encryption_util.decrypt_aes256(self.user_additional_phone)
+                return self.user_id.x_decrypt_aes256(self.user_additional_phone)
             except Exception as e:
                 _logger.warning(f"Error decrypting complete_phone: {str(e)}")
 

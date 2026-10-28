@@ -1477,6 +1477,7 @@
                     <p>
                         <strong>Authorization approved</strong>
                     </p>
+                    <br/>
                     <p>
                         <strong>Authorization type:</strong>
                         <t t-out="ctx.get('authorization_type')"/>
@@ -1489,6 +1490,101 @@
                         <strong>Reason:</strong>
                         <t t-out="ctx.get('authorization_reason')"/>
                     </p>
+
+                    <t t-set="link" t-value="object.service_supplier_link_ids.filtered(lambda l: l.id == ctx.get('supplier_link_id'))[:1]"/>
+
+                    <t t-if="link">
+                        <!-- CONCEPTS -->
+                        <t t-set="concept_lines" t-value="link.supplier_product_ids.filtered(lambda l: not l.display_type)"/>
+
+                        <br/>
+                        <p style="margin-top:16px;">
+                            <strong>Concepts additionals:</strong>
+                        </p>
+                        <t t-set="subtotal" t-value="0.0"/>
+                        <table style="width:100%; border:1px solid black; border-collapse:collapse; font-size:13px;">
+                            <thead style="background-color:#4a90e2; color:white;">
+                                <tr>
+                                    <th style="border:1px solid #000; padding:6px;">Concept</th>
+                                    <th style="border:1px solid #000; padding:6px;">Quantity</th>
+                                    <th style="border:1px solid #000; padding:6px;">Unit Price</th>
+                                    <th style="border:1px solid #000; padding:6px;">Cost</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <t t-foreach="concept_lines" t-as="line">
+                                    <t t-set="quantity" t-value="line.quantity or 0.0"/>
+                                    <t t-set="unit_price" t-value="line.unit_price or 0.0"/>
+                                    <t t-set="amount" t-value="unit_price * quantity"/>
+                                    <t t-set="subtotal" t-value="subtotal + amount"/>
+
+                                    <tr>
+                                        <td style="border:1px solid #000; padding:6px;">
+                                            <t t-out="line.product_id.display_name if line.product_id else line.name or ''"/>
+                                        </td>
+
+                                        <td style="border:1px solid #000; padding:6px;" align="right">
+                                            <t t-out="quantity"/>
+                                        </td>
+
+                                        <td style="border:1px solid #000; padding:6px;" align="right">
+                                            <t t-out="'${:,.2f}'.format(unit_price)"/>
+                                        </td>
+
+                                        <td style="border:1px solid #000; padding:6px;" align="right">
+                                            <t t-out="'${:,.2f}'.format(amount)"/>
+                                        </td>
+                                    </tr>
+                                </t>
+
+                                <tr style="font-weight:bold; background-color:#f5f5f5;">
+                                    <td colspan="3" style="border:1px solid #000; padding:6px; text-align:right;">
+                                        Subtotal
+                                    </td>
+
+                                    <td style="border:1px solid #000; padding:6px; text-align:right;">
+                                        <t t-out="'${:,.2f}'.format(subtotal)"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <br/>
+
+                        <!-- PAYMENT INFORMATION FOR NU -->
+                        <t t-if="link.authorization_by_nu and link.user_payment_line_ids">
+                            <strong>Payment details:</strong>
+
+                            <table border="1" cellpadding="5" cellspacing="0" width="100%" style="border-collapse: collapse;">
+                                <thead style="background-color:#4a90e2; color:white;">
+                                    <tr>
+                                        <th style="border:1px solid #000; padding:6px;">Payment type</th>
+                                        <th style="border:1px solid #000; padding:6px;">Date</th>
+                                        <th style="border:1px solid #000; padding:6px;">Amount</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <t t-foreach="link.user_payment_line_ids" t-as="payment">
+                                        <tr>
+                                            <td style="border:1px solid #000; padding:6px;">
+                                                <t t-out="dict(payment._fields['payment_type'].get_description(payment.env)['selection']).get(payment.payment_type, '')"/>
+                                            </td>
+
+                                            <td style="border:1px solid #000; padding:6px;">
+                                                <t t-out="payment.payment_datetime"/>
+                                            </td>
+
+                                            <td style="border:1px solid #000; padding:6px;" align="right">
+                                                <t t-out="'${:,.2f}'.format(payment.amount)"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                            <br/>
+                        </t>
+                    </t>
                 </t>
             </field>
         </record>
@@ -1547,6 +1643,7 @@
                     <t t-set="current_date" t-value="ctx.get('current_date')"/>
                     <t t-set="comment" t-value="ctx.get('comment')"/>
                     <t t-set="plate" t-value="ctx.get('plate')"/>
+                    <t t-set="tz" t-value="ctx.get('tz') or user.tz or 'UTC'"/>
 
                     <div t-if="supplier">
                         <strong>Supplier:</strong>
@@ -1564,12 +1661,12 @@
 
                     <div t-if="first_date">
                         <strong>Previous date:</strong>
-                        <t t-out="format_datetime(first_date)"/>
+                        <t t-out="format_datetime(first_date, tz=tz)"/>
                     </div>
 
                     <div t-if="current_date">
                         <strong>Current date:</strong>
-                        <t t-out="format_datetime(current_date)"/>
+                        <t t-out="format_datetime(current_date, tz=tz)"/>
                     </div>
 
                     <div t-if="comment">
@@ -1597,6 +1694,7 @@
                     <t t-set="current_date" t-value="ctx.get('current_date')"/>
                     <t t-set="comment" t-value="ctx.get('comment')"/>
                     <t t-set="plate" t-value="ctx.get('plate')"/>
+                    <t t-set="tz" t-value="ctx.get('tz') or user.tz or 'UTC'"/>
 
                     <div t-if="supplier">
                         <strong>Supplier:</strong>
@@ -1614,12 +1712,12 @@
 
                     <div t-if="first_date">
                         <strong>Previous date:</strong>
-                        <t t-out="format_datetime(first_date)"/>
+                        <t t-out="format_datetime(first_date, tz=tz)"/>
                     </div>
 
                     <div t-if="current_date">
                         <strong>Current date:</strong>
-                        <t t-out="format_datetime(current_date)"/>
+                        <t t-out="format_datetime(current_date, tz=tz)"/>
                     </div>
 
                     <div t-if="comment">
@@ -1647,6 +1745,7 @@
                     <t t-set="current_date" t-value="ctx.get('current_date')"/>
                     <t t-set="comment" t-value="ctx.get('comment')"/>
                     <t t-set="plate" t-value="ctx.get('plate')"/>
+                    <t t-set="tz" t-value="ctx.get('tz') or user.tz or 'UTC'"/>
 
                     <div t-if="supplier">
                         <strong>Supplier:</strong>
@@ -1664,12 +1763,12 @@
 
                     <div t-if="first_date">
                         <strong>Previous date:</strong>
-                        <t t-out="format_datetime(first_date)"/>
+                        <t t-out="format_datetime(first_date,tz=tz)"/>
                     </div>
 
                     <div t-if="current_date">
                         <strong>Current date:</strong>
-                        <t t-out="format_datetime(current_date)"/>
+                        <t t-out="format_datetime(current_date, tz=tz)"/>
                     </div>
 
                     <div t-if="comment">
@@ -1697,6 +1796,7 @@
                     <t t-set="current_date" t-value="ctx.get('current_date')"/>
                     <t t-set="comment" t-value="ctx.get('comment')"/>
                     <t t-set="plate" t-value="ctx.get('plate')"/>
+                    <t t-set="tz" t-value="ctx.get('tz') or user.tz or 'UTC'"/>
 
                     <div t-if="supplier">
                         <strong>Supplier:</strong>
@@ -1714,12 +1814,12 @@
 
                     <div t-if="first_date">
                         <strong>Previous date:</strong>
-                        <t t-out="format_datetime(first_date)"/>
+                        <t t-out="format_datetime(first_date, tz=tz)"/>
                     </div>
 
                     <div t-if="current_date">
                         <strong>Current date:</strong>
-                        <t t-out="format_datetime(current_date)"/>
+                        <t t-out="format_datetime(current_date, tz=tz)"/>
                     </div>
 
                     <div t-if="comment">
@@ -1747,6 +1847,7 @@
                     <t t-set="current_date" t-value="ctx.get('current_date')"/>
                     <t t-set="comment" t-value="ctx.get('comment')"/>
                     <t t-set="plate" t-value="ctx.get('plate')"/>
+                    <t t-set="tz" t-value="ctx.get('tz') or user.tz or 'UTC'"/>
 
                     <div t-if="supplier">
                         <strong>Supplier:</strong>
@@ -1764,12 +1865,12 @@
 
                     <div t-if="first_date">
                         <strong>Previous date:</strong>
-                        <t t-out="format_datetime(first_date)"/>
+                        <t t-out="format_datetime(first_date, tz=tz)"/>
                     </div>
 
                     <div t-if="current_date">
                         <strong>Current date:</strong>
-                        <t t-out="format_datetime(current_date)"/>
+                        <t t-out="format_datetime(current_date, tz=tz)"/>
                     </div>
 
                     <div t-if="comment">
@@ -1797,6 +1898,7 @@
                     <t t-set="current_date" t-value="ctx.get('current_date')"/>
                     <t t-set="comment" t-value="ctx.get('comment')"/>
                     <t t-set="plate" t-value="ctx.get('plate')"/>
+                    <t t-set="tz" t-value="ctx.get('tz') or user.tz or 'UTC'"/>
 
                     <div t-if="supplier">
                         <strong>Supplier:</strong>
@@ -1814,12 +1916,12 @@
 
                     <div t-if="first_date">
                         <strong>Previous date:</strong>
-                        <t t-out="format_datetime(first_date)"/>
+                        <t t-out="format_datetime(first_date, tz=tz)"/>
                     </div>
 
                     <div t-if="current_date">
                         <strong>Current date:</strong>
-                        <t t-out="format_datetime(current_date)"/>
+                        <t t-out="format_datetime(current_date, tz=tz)"/>
                     </div>
 
                     <div t-if="comment">
@@ -3226,5 +3328,67 @@
             <field name="sequence">102</field>
             <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_received_assistview"/>
         </record>
+        <record id="ike_binnacle_stage_mail_template_ia_suggestion" model="mail.template">
+        <field name="name">Binnacle stage mail template IA suggestion</field>
+        <field name="model_id" ref="ike_event.model_ike_event"/>
+        <field name="subject">Reference {{ object.name or 'n/a' }}</field>
+        <field name="body_html" type="html">
+            <div>
+                <strong>AI suggestion</strong><br/>
+
+                <t t-set="ia_products"
+                t-value="object.env['product.product'].browse(object.ia_suggestion_product_ids or []).exists()"/>
+                <t t-set="vehicle_types" t-value="[]"/>
+                <t t-set="accessories" t-value="object.env['product.product']"/>
+
+                <t t-if="object.sub_service_res_model and object.sub_service_res_id">
+                    <t t-set="sub_service"
+                    t-value="object.env[object.sub_service_res_model].browse(object.sub_service_res_id)"/>
+                    <t t-if="sub_service.exists() and 'suggested_vehicle_types' in sub_service._fields">
+                        <t t-set="all_vehicle_types"
+                        t-value="set(object.env['custom.vehicle.type'].search([]).mapped('name_capitalization'))"/>
+                        <t t-set="vehicle_types" t-value="sub_service.suggested_vehicle_types or []"/>
+                        <t t-if="not (all_vehicle_types - set(vehicle_types))">
+                            <t t-set="vehicle_types" t-value="[]"/>
+                        </t>
+
+                        <t t-set="product_model" t-value="object.env['product.product']"/>
+                        <t t-set="all_accessories" t-value="product_model.search(product_model.get_accessories_domain())"/>
+                        <t t-set="accessories" t-value="product_model.browse(sub_service.suggested_accessories or []).exists()"/>
+                        <t t-if="all_accessories and not (all_accessories - accessories)">
+                            <t t-set="accessories" t-value="product_model"/>
+                        </t>
+                    </t>
+                </t>
+
+                <strong>Suggested concepts: </strong>
+                <t t-if="ia_products">
+                    <ul><t t-foreach="ia_products" t-as="product"><li><t t-out="product.display_name"/></li></t></ul>
+                </t>
+                <t t-else=""><em>No suggested concepts</em><br/></t>
+
+                <strong>Suggested vehicle types: </strong>
+                <t t-if="vehicle_types">
+                    <ul><t t-foreach="vehicle_types" t-as="vehicle_name"><li><t t-out="vehicle_name"/></li></t></ul>
+                </t>
+                <t t-else=""><em>No suggested vehicle types</em><br/></t>
+
+                <strong>Suggested accessories: </strong>
+                <t t-if="accessories">
+                    <ul><t t-foreach="accessories" t-as="accessory"><li><t t-out="accessory.display_name"/></li></t></ul>
+                </t>
+                <t t-else=""><em>No suggested accessories</em></t>
+            </div>
+        </field>
+    </record>
+
+    <record id="ike_binnacle_stage_ia_suggestion" model="ike.event.binnacle">
+        <field name="event_stage_id" ref="ike_event.ike_event_stage_draft"/>
+        <field name="binnacle_category_id" ref="ike_event_binnacle.ike_binnacle_category_searching_summary"/>
+        <field name="step_number">10</field>
+        <field name="sequence">10</field>
+        <field name="binnacle_template_id" ref="ike_event_binnacle.ike_binnacle_stage_mail_template_ia_suggestion"/>
+    </record>
+
     </data>
 </odoo>

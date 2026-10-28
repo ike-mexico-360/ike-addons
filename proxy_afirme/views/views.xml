@@ -1,0 +1,25 @@
+<odoo>
+  <data>
+    <!-- <record model="ir.ui.view" id="pokedex.pokemon_list">
+      <field name="name">Pokedex List</field>
+      <field name="model">pokedex.pokemon</field>
+      <field name="arch" type="xml">
+        <list>
+          <field name="pokemon_id"/>
+          <field name="name"/>
+        </list>
+      </field>
+    </record> -->
+
+    <!-- actions opening views on models -->
+    <!-- <record model="ir.actions.act_window" id="pokedex.pokemon_action_window">
+      <field name="name">Pokedex de Kanto</field>
+      <field name="res_model">pokedex.pokemon</field>
+      <field name="view_mode">list</field>
+    </record> -->
+
+    <!-- Top menu item -->
+    <!-- <menuitem name="Pokedex" id="pokedex.menu_root" action="pokedex.pokemon_action_window"/> -->
+
+  </data>
+</odoo>

@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0-20260504\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-08 23:57+0000\n"
-"PO-Revision-Date: 2026-10-08 23:57+0000\n"
+"POT-Creation-Date: 2026-10-27 00:02+0000\n"
+"PO-Revision-Date: 2026-10-27 00:02+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -924,7 +924,7 @@ msgstr "Código"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__l10n_mx_edi_colony
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__l10n_mx_edi_colony
 msgid "Colony Name"
-msgstr "Colonia"
+msgstr "Barrio"
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_account_view_form
@@ -933,7 +933,7 @@ msgstr "Colonia"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_center_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
 msgid "Colony..."
-msgstr "Colonia..."
+msgstr "Barrio..."
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area_product_rel__color
@@ -1225,7 +1225,7 @@ msgstr "Grupo del país"
 #. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_res_country_state
 msgid "Country state"
-msgstr "Estado"
+msgstr "Departamento"
 
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.custom_geographic_subservice_wizard_action
@@ -1240,7 +1240,7 @@ msgstr ""
 #. module: custom_master_catalog
 #: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_ike_action_country_state
 msgid "Create a State"
-msgstr "Crear un estado"
+msgstr "Crear un departamento"
 
 #. module: custom_master_catalog
 #: model_terms:ir.actions.act_window,help:custom_master_catalog.custom_ike_accessories_action
@@ -1947,7 +1947,7 @@ msgstr ""
 #. module: custom_master_catalog
 #: model:ir.actions.act_window,name:custom_master_catalog.custom_ike_action_country_state
 msgid "Fed. States"
-msgstr "Estados"
+msgstr "Departamentos"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_federal_license_plates
@@ -1959,7 +1959,7 @@ msgstr "Placas federales"
 msgid ""
 "Federal States belong to countries and are part of your contacts' addresses."
 msgstr ""
-"Estados federales pertenecen a países y son parte de las direcciones de tus "
+"Departamentos federales pertenecen a países y son parte de las direcciones de tus "
 "contactos."
 
 #. module: custom_master_catalog
@@ -2582,6 +2582,12 @@ msgstr "¿Es cancelación?"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_is_generic_supplier
 msgid "Is generic supplier"
 msgstr "Es proveedor genérico"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/res_partner_supplier.py:0
+msgid "It cannot be enabled, the supplier is not enabled: %s"
+msgstr "No se puede habilitar, el proveedor no está habilitado: %s"
 
 #. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_data_source_view_form
@@ -3445,7 +3451,7 @@ msgstr "País del padre"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_parent_state_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_parent_state_id
 msgid "Parent State"
-msgstr "Estado del padre"
+msgstr "Departamento del padre"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_parent_street
@@ -3927,7 +3933,7 @@ msgstr "Seleccione una zona geográfica..."
 #. odoo-javascript
 #: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 msgid "Select a state..."
-msgstr "Seleccione un estado..."
+msgstr "Seleccione un departamento..."
 
 #. module: custom_master_catalog
 #. odoo-javascript
@@ -3959,7 +3965,7 @@ msgstr "Separador"
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__c_estado
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_country_state__c_estado
-msgid "Sepomex estado"
+msgid "Sepomex departamento"
 msgstr ""
 
 #. module: custom_master_catalog
@@ -4041,6 +4047,18 @@ msgid "Source Email Template"
 msgstr "Plantilla de correo de origen"
 
 #. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/fleet_vehicle.py:0
+msgid "Economic number and license plate are required for supplier service vehicles."
+msgstr "El número económico y la matrícula son obligatorios para los vehículos de servicio del proveedor."
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/fleet_vehicle.py:0
+msgid "The supplier RFC is required to generate the service vehicle UUID."
+msgstr "El RFC del proveedor es obligatorio para generar el UUID del vehículo de servicio."
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_data_source_view_form
 msgid "Source file configuration"
 msgstr "Configuración de archivo origen"
@@ -4055,6 +4073,8 @@ msgstr "Cuentas especiales"
 #. odoo-javascript
 #: code:addons/custom_master_catalog/static/src/components/manual_assignment_order/manual_assignment_order.xml:0
 #: code:addons/custom_master_catalog/static/src/widgets/custom_municipality_selection.js:0
+#: model:ir.model.fields,field_description:base.field_res_partner__state_id
+#: model:ir.model.fields,field_description:base.field_res_users__state_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_geographical_area__state_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_manual_assignment_order__state_id
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_state_municipality__state_id
@@ -4069,28 +4089,28 @@ msgstr "Cuentas especiales"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_supplier_view_form
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.view_custom_state_municipality_view_search
 msgid "State"
-msgstr "Estado"
+msgstr "Departamento"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_country_state__code
 msgid "State Code"
-msgstr "Código de estado"
+msgstr "Código de departamento"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_country_state__name
 msgid "State Name"
-msgstr "Nombre de estado"
+msgstr "Nombre de departamento"
 
 #. module: custom_master_catalog
 #. odoo-python
 #: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
 msgid "State, geographical zone and subservice are required."
-msgstr "El estado, la zona geográfica y el subservicio son obligatorios."
+msgstr "El departamento, la zona geográfica y el subservicio son obligatorios."
 
 #. module: custom_master_catalog
 #: model:ir.ui.menu,name:custom_master_catalog.res_menu_country_state
 msgid "States"
-msgstr "Estados"
+msgstr "Departamentos"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_custom_metropolitan_zone__activity_state
@@ -4596,7 +4616,7 @@ msgstr "El código postal debe estar entre 01000 y 99999"
 #: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
 msgid "The selected state does not belong to the active company country (%s)."
 msgstr ""
-"El estado seleccionado no pertenece al país de la empresa activa (%s)."
+"El departamento seleccionado no pertenece al país de la empresa activa (%s)."
 
 #. module: custom_master_catalog
 #. odoo-python
@@ -4607,7 +4627,7 @@ msgstr ""
 #. module: custom_master_catalog
 #: model:ir.model.fields,help:custom_master_catalog.field_res_country_state__code
 msgid "The state code."
-msgstr "El código del estado."
+msgstr "El código del departamento."
 
 #. module: custom_master_catalog
 #. odoo-python

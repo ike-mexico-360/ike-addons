@@ -15,7 +15,7 @@
                             required="stage_ref != 'draft'"/>
                     </group>
                     <group invisible="not scheduled">
-                        <field name="event_date" String="Event date" required="scheduled" widget="datetime_widget"/>
+                        <field name="event_date" string="Event date" required="scheduled" widget="datetime_widget"/>
                         <field name="appointment_min_date" invisible="1"/>
                     </group>
                 </group>

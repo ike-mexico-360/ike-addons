@@ -28,6 +28,25 @@ REQUIRED_LINE_FIELDS = [
     'date_init'
 ]
 
+WORKFLOW_REQUIRED_FIELDS = {
+    'section_in_agreement': [
+        'origin_entity',
+        'origin_municipality_id',
+        'destination_entity',
+        'destination_municipality_id',
+    ],
+    'plan': [
+        'initial_kilometer',
+        'final_kilometer',
+    ],
+}
+
+WORKFLOW_TRIGGER_FIELDS = sorted({
+    field
+    for fields_list in WORKFLOW_REQUIRED_FIELDS.values()
+    for field in fields_list
+})
+
 
 class CustomSupplierUploadCostMatrix(models.Model):
     _name = 'custom.supplier.upload.cost.matrix'
@@ -181,7 +200,27 @@ class CustomSupplierUploadCostMatrix(models.Model):
             },
             'Horario/Vacaciones': {
                 'name': 'vacation_schedule_ids', 'required': False, 'domain': [('disabled', '=', False)]
-            }
+            },
+            # New, non-required fields; the required situation will be resolved until concept_id has a value, to apply
+            # the new rules
+            'Kilometro inicial': {  # Required when concept_id.x_matrix_workflow == 'plan'
+                'name': 'initial_kilometer', 'required': False, 'domain': False
+            },
+            'Kilometro final': {  # Required when concept_id.x_matrix_workflow == 'plan'
+                'name': 'final_kilometer', 'required': False, 'domain': False
+            },
+            'Entidad origen': {  # Required when concept_id.x_matrix_workflow == 'section_in_agreement'
+                'name': 'origin_entity', 'required': False, 'domain': [('disabled', '=', False)]
+            },
+            'Municipio origen': {  # Required when concept_id.x_matrix_workflow == 'section_in_agreement'
+                'name': 'origin_municipality_id', 'required': False, 'domain': [('disabled', '=', False)]
+            },
+            'Entidad destino': {  # Required when concept_id.x_matrix_workflow == 'section_in_agreement'
+                'name': 'destination_entity', 'required': False, 'domain': [('disabled', '=', False)]
+            },
+            'Municipio destino': {  # Required when concept_id.x_matrix_workflow == 'section_in_agreement'
+                'name': 'destination_municipality_id', 'required': False, 'domain': [('disabled', '=', False)]
+            },
         }
 
         # Read File
@@ -189,6 +228,9 @@ class CustomSupplierUploadCostMatrix(models.Model):
         # Validate File Data
         all_columns = MATCH_FIELDS.keys()
         required_columns = [col for col, cfg in MATCH_FIELDS.items() if cfg['required']]
+        # Añadir como requeridas, las columnas nuevas de flujo opcional
+        temporal_match_fields = {v['name']: k for k, v in MATCH_FIELDS.items()}
+        required_columns.extend([temporal_match_fields[f] for f in WORKFLOW_TRIGGER_FIELDS])
         self._validate_columns(header=rows[0], required_columns=required_columns)
         # Get File Records
         records_data: list[dict] = self._convert_import_data_to_json(rows, all_columns)
@@ -319,6 +361,10 @@ class CustomSupplierUploadCostMatrix(models.Model):
         ]
         return records
 
+    # Helper para determinar los campos requeridos de forma dinámica en base al flujo del concepto
+    def _get_dynamic_required_fields_by_workflow(self, workflow):
+        return WORKFLOW_REQUIRED_FIELDS.get(workflow, [])
+
     # Normalizar la información a datos compatibles con Odoo, como los campos m2o
     def _normalize_data(self, records_data, match_fields):
         """ Normalizar datos, convertir nombres del excel a su correspondiente en Odoo, obtener valores de campos m2o. """
@@ -376,7 +422,6 @@ class CustomSupplierUploadCostMatrix(models.Model):
                     search_domain = domain[:]
                     if field_name == 'geographical_area_id' and rec_data and rec_data.get('state_id'):
                         search_domain += [('state_id', '=', rec_data['state_id'])]
-
                     record_domain = search_domain + [('name', '=', aux_value)]
                     record = self.env[field_data['relation']].search_read(record_domain, ['id'])
                     if record:
@@ -469,6 +514,9 @@ class CustomSupplierUploadCostMatrix(models.Model):
             return value, missing_value
 
         def _normalize_value_for_log(field_data, value):
+            if value in (None, False, ''):
+                return value
+
             if field_data['ttype'] == 'float':
                 value = float(value)
             elif field_data['ttype'] == 'integer':
@@ -500,9 +548,11 @@ class CustomSupplierUploadCostMatrix(models.Model):
                 continue
 
             missing_values_json = {}
+            concept_workflow = False  # Almacenaremos por linea a que flujo pertenece en base al concepto
 
             # FIX: Procesar state_id PRIMERO
-            priority_fields = ['Entidad Federativa']  # state_id debe ir primero
+            # UPD: Se añade concept_id como prioridad, para resolver antes de los nuevos campos de plano y convenio
+            priority_fields = ['Entidad Federativa', 'Concepto']  # state_id debe ir primero, luego concept_id
             ordered_fields = [f for f in priority_fields if f in rec] + [f for f in rec if f not in priority_fields]
 
             # data = {'supplier_upload_cost_matrix_id': self.id}
@@ -524,8 +574,25 @@ class CustomSupplierUploadCostMatrix(models.Model):
                 # data[odoo_field] = normalized_value
                 rec_data[odoo_field] = normalized_value  # Acumular para siguientes campos
 
+                # Obtener concepto para acceder a concept_id.x_matrix_workflow
+                if odoo_field == 'concept_id' and normalized_value:
+                    concept = self.env['product.product'].browse(normalized_value).exists()
+                    concept_workflow = concept.x_matrix_workflow or False
+
                 if missing_value:
                     missing_values_json[odoo_field] = _normalize_value_for_log(field_data, value)
+
+            # Validar nuevos campos requeridos de forma dinámica en base al flujo
+            dynamic_required_fields = self._get_dynamic_required_fields_by_workflow(concept_workflow)
+            for field_name in dynamic_required_fields:
+                if not rec_data.get(field_name):
+                    field_data = fields_hashmap[field_name]
+                    original_column = next(
+                        (col for col, cfg in match_fields.items() if cfg['name'] == field_name),
+                        field_name
+                    )
+                    raw_value = rec.get(original_column)
+                    missing_values_json[field_name] = _normalize_value_for_log(field_data, raw_value)
 
             # Manejador de campos faltantes
             if missing_values_json:
@@ -549,11 +616,10 @@ class CustomSupplierUploadCostMatrix(models.Model):
     # === CONFIRM PRIVATE METH0DS === #
     def _create_supplier_cost_matrix_lines(self):
         # Validar campos requeridos antes de guardar
-        required_fields = REQUIRED_LINE_FIELDS
-        consider_duplicate_fields = required_fields + [
+        consider_duplicate_fields = list(dict.fromkeys(REQUIRED_LINE_FIELDS + [
             'account_id', 'geographical_area_id', 'holiday_date_applies', 'active_agreement', 'date_end',
             'vacation_schedule_ids', 'subservice_specification_id', 'incident_type_id'
-        ]
+        ] + WORKFLOW_TRIGGER_FIELDS))
         lines_to_import = defaultdict(list)
 
         # Función helper para normalizar valores
@@ -568,16 +634,15 @@ class CustomSupplierUploadCostMatrix(models.Model):
         key_fields = [f for f in consider_duplicate_fields if f != 'cost']
 
         for line in self.cost_product_ids:
-            to_check_duplicate_data = line.read(consider_duplicate_fields)
-            if to_check_duplicate_data:
-                to_check_duplicate_data = to_check_duplicate_data[0]
-                line_data = {k: v for k, v in to_check_duplicate_data.items() if k in required_fields}
-                if not all(list(line_data.values())):
-                    raise UserError(_("Missing required fields, please review the lines marked in red."))
-                aux_line_data = to_check_duplicate_data.copy()
-                # Normalizar valores antes de crear la clave
-                record_key = tuple(normalize_value(aux_line_data[f]) for f in key_fields if f in aux_line_data)
-                lines_to_import[record_key].append(to_check_duplicate_data)
+            required_fields = line._get_required_fields_for_line()
+            to_check_duplicate_data = line.read(consider_duplicate_fields)[0]
+            line_data = {field: to_check_duplicate_data.get(field) for field in required_fields}
+            if not all(list(line_data.values())):
+                raise UserError(_("Missing required fields, please review the lines marked in red."))
+            aux_line_data = to_check_duplicate_data.copy()
+            # Normalizar valores antes de crear la clave
+            record_key = tuple(normalize_value(aux_line_data[f]) for f in key_fields if f in aux_line_data)
+            lines_to_import[record_key].append(to_check_duplicate_data)
 
         # Validar por duplicados, si hay, desactivar el existente y crear el nuevo
         exist_records = self.env['custom.supplier.cost.matrix.line'].search_read([
@@ -671,6 +736,12 @@ class CustomSupplierUploadCostMatrix(models.Model):
             "date_init": line.date_init,
             "date_end": line.date_end,
             "vacation_schedule_ids": [(6, 0, line.vacation_schedule_ids.ids)],
+            "initial_kilometer": line.initial_kilometer,
+            "final_kilometer": line.final_kilometer,
+            "origin_entity": line.origin_entity.id or False,
+            "origin_municipality_id": line.origin_municipality_id.id or False,
+            "destination_entity": line.destination_entity.id or False,
+            "destination_municipality_id": line.destination_municipality_id.id or False,
         }
         return vals
 
@@ -698,12 +769,13 @@ class CustomSupplierCostProduct(models.Model):
         compute='_compute_mapping_product_ids')
     concept_id = fields.Many2one(
         comodel_name='product.product', string='Concept', sub_tracking=True, ondelete='restrict')
+    concept_workflow = fields.Selection(string='Concept workflow', related='concept_id.x_matrix_workflow')
     subservice_specification_id = fields.Many2one(
         'custom.subservice.specification', string='Subservice Specification', index=True)
     # ToDo: Remove vehicle_category_id
     vehicle_category_id = fields.Many2one(
         'fleet.vehicle.model.category', string='Category', sub_tracking=True, ondelete='restrict')
-    incident_type_id = fields.Many2one('custom.incident.type', string='Incident Type', tracking=True)
+    incident_type_id = fields.Many2one('custom.incident.type', string='Incident Type', sub_tracking=True)
     account_id = fields.Many2one(
         comodel_name='res.partner',
         string='Account',
@@ -721,6 +793,14 @@ class CustomSupplierCostProduct(models.Model):
     vacation_schedule_ids = fields.Many2many(
         comodel_name='custom.supplier.cost.product.schedule', string='Vacation schedules',
         domain=[('disabled', '=', False)], relation='vacation_schedule_cost_product_rel_id', ondelete='restrict')
+    initial_kilometer = fields.Float(string='Initial kilometer', sub_tracking=True)
+    final_kilometer = fields.Float(string='Final kilometer', sub_tracking=True)
+    origin_municipality_id = fields.Many2one('custom.state.municipality', string='Origin municipality', sub_tracking=True)
+    origin_entity = fields.Many2one(
+        'res.country.state', string='Origin entity', sub_tracking=True, related='origin_municipality_id.state_id')
+    destination_municipality_id = fields.Many2one('custom.state.municipality', string='Destination municipality', sub_tracking=True)
+    destination_entity = fields.Many2one(
+        'res.country.state', string='Destination entity', sub_tracking=True, related='destination_municipality_id.state_id')
     missing_value = fields.Boolean(string='Missing value', default=False)
     missing_values = fields.Text(string='Missing values')
     not_confirm = fields.Boolean(string='Not confirm', default=False, help="This field is used to avoid duplicated records")
@@ -737,13 +817,16 @@ class CustomSupplierCostProduct(models.Model):
                 parent_ids = matching_records.mapped('parent_id').ids
                 rec.mapping_product_ids = [(6, 0, parent_ids)]
 
-    @api.onchange(*REQUIRED_LINE_FIELDS)
+    def _get_required_fields_for_line(self):
+        self.ensure_one()
+        return REQUIRED_LINE_FIELDS + WORKFLOW_REQUIRED_FIELDS.get(self.concept_workflow or False, [])
+
+    @api.onchange(*REQUIRED_LINE_FIELDS, *WORKFLOW_TRIGGER_FIELDS)
     def _onchange_required_fields(self):
         """ Validar en batch si los campos requeridos están completos """
-        required_fields = REQUIRED_LINE_FIELDS
-        all_data = self.read(required_fields)
-        for line, line_data in zip(self, all_data):
-            missing = any(not line_data[f] for f in required_fields)
+        for line in self:
+            required_fields = line._get_required_fields_for_line()
+            missing = any(not line[field] for field in required_fields)
             line.missing_value = missing
 
     def action_open_missing_values(self):
@@ -808,6 +891,14 @@ class CustomSupplierCostMatrixLine(models.Model):
     vacation_schedule_ids = fields.Many2many(
         comodel_name='custom.supplier.cost.product.schedule', string='Vacation schedules',
         domain=[('disabled', '=', False)], relation='vacation_schedule_matrix_line_rel_id')
+    initial_kilometer = fields.Float(string='Initial kilometer', tracking=True)
+    final_kilometer = fields.Float(string='Final kilometer', tracking=True)
+    origin_municipality_id = fields.Many2one('custom.state.municipality', string='Origin municipality', sub_tracking=True)
+    origin_entity = fields.Many2one(
+        'res.country.state', string='Origin entity', sub_tracking=True, related='origin_municipality_id.state_id')
+    destination_municipality_id = fields.Many2one('custom.state.municipality', string='Destination municipality', sub_tracking=True)
+    destination_entity = fields.Many2one(
+        'res.country.state', string='Destination entity', sub_tracking=True, related='destination_municipality_id.state_id')
     state = fields.Selection(
         [("active", "Active"), ("inactive", "Inactive")],
         default='active', string="State", tracking=True)

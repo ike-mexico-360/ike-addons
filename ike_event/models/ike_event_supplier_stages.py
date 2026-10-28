@@ -252,15 +252,13 @@ class IkeEventSupplierSelection(models.Model):
             # On Route
             on_route_to_user_start_date = fields.Datetime.now()
             on_route_to_user_id = self.env.user
-            on_route_to_start_comment = f'{self.supplier_id.display_name} - {on_route_to_user_start_date}'
+            on_route_to_start_comment = self._get_app_stage_comment(on_route_to_user_start_date)
 
             if not self.first_on_route_to_user_start_date:
                 self.write({
                     'first_on_route_to_user_start_date': on_route_to_user_start_date,
                     'first_on_route_to_start_user_id': on_route_to_user_id.id,
-                    'first_on_route_to_start_comment': _(
-                        f'On Route - Datetime: {on_route_to_user_start_date}'
-                    ),
+                    'first_on_route_to_start_comment': on_route_to_start_comment,
                 })
 
             self.write({
@@ -273,7 +271,7 @@ class IkeEventSupplierSelection(models.Model):
             # Arrived
             arrive_date = fields.Datetime.now()
             arrive_user_id = self.env.user
-            arrive_comment = f'{self.supplier_id.display_name} - {arrive_date}'
+            arrive_comment = self._get_app_stage_comment(arrive_date)
 
             if not self.first_on_route_to_user_end_date:
                 self.write({
@@ -292,7 +290,7 @@ class IkeEventSupplierSelection(models.Model):
             # Contacted
             contacted_date = fields.Datetime.now()
             contacted_user_id = self.env.user
-            contacted_comment = f'{self.supplier_id.display_name} - {contacted_date}'
+            contacted_comment = self._get_app_stage_comment(contacted_date)
 
             if not self.first_contacted_date:
                 self.write({
@@ -311,7 +309,7 @@ class IkeEventSupplierSelection(models.Model):
             # On Route to Destiny
             on_route_to_destination_start_date = fields.Datetime.now()
             on_route_to_destination_start_user_id = self.env.user
-            on_route_to_destination_start_comment = f'{self.supplier_id.display_name} - {on_route_to_destination_start_date}'
+            on_route_to_destination_start_comment = self._get_app_stage_comment(on_route_to_destination_start_date)
 
             if not self.first_on_route_to_destination_start_date:
                 self.write({
@@ -330,7 +328,7 @@ class IkeEventSupplierSelection(models.Model):
             # Arrived to destination
             on_route_to_destination_end_date = fields.Datetime.now()
             on_route_to_destination_end_user_id = self.env.user
-            on_route_to_destination_end_comment = f'{self.supplier_id.display_name} - {on_route_to_destination_end_date}'
+            on_route_to_destination_end_comment = self._get_app_stage_comment(on_route_to_destination_end_date)
 
             if not self.first_on_route_to_destination_end_date:
                 self.write({
@@ -349,7 +347,7 @@ class IkeEventSupplierSelection(models.Model):
             # Finalized
             finalized_date = fields.Datetime.now()
             finalized_user_id = self.env.user
-            finalized_comment = f'{self.supplier_id.display_name} - {finalized_date}'
+            finalized_comment = self._get_app_stage_comment(finalized_date)
 
             if not self.first_finalized_date:
                 self.write({
@@ -367,6 +365,15 @@ class IkeEventSupplierSelection(models.Model):
         action = actions.get(str(progress_state))
         if action:
             action()
+
+    def _format_datetime_tz(self, dt):
+        if not dt:
+            return ''
+        local_dt = fields.Datetime.context_timestamp(self, dt)
+        return local_dt.strftime('%d/%m/%Y %H:%M:%S')
+
+    def _get_app_stage_comment(self, dt):
+        return f'App - {self.supplier_id.display_name} - {self.truck_plate or ""} - {self._format_datetime_tz(dt)}'
 
     def action_open_manual_finalize_wizard(self):
         # action_from = self.env.context.get('action_from', 'internal')  # internal/portal/app

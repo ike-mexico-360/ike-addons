@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_afirme_template" name="AFIRME Dashboard">
+        <t t-call="portal.portal_layout">
+            <main class="o_afirme_dashboard" data-api-url="/api/proxy/expedientes">
+                <!--
+                    JavaScript reads these server-translated texts at startup.
+                    Keeping them in QWeb makes their translations independent
+                    from the browser asset cache.
+                -->
+                <div class="d-none js-afirme-translations" aria-hidden="true">
+                    <span data-key="provider_completed" t-esc="afirme_texts['provider_completed']"/>
+                    <span data-key="within_first_third" t-esc="afirme_texts['within_first_third']"/>
+                    <span data-key="within_second_third" t-esc="afirme_texts['within_second_third']"/>
+                    <span data-key="within_third_third" t-esc="afirme_texts['within_third_third']"/>
+                    <span data-key="estimated_time_overdue" t-esc="afirme_texts['estimated_time_overdue']"/>
+                    <span data-key="calculation_unavailable" t-esc="afirme_texts['calculation_unavailable']"/>
+                    <span data-key="provider_made_contact" t-esc="afirme_texts['provider_made_contact']"/>
+                    <span data-key="loading_open_cases" t-esc="afirme_texts['loading_open_cases']"/>
+                    <span data-key="unable_retrieve_cases" t-esc="afirme_texts['unable_retrieve_cases']"/>
+                    <span data-key="unable_load_cases" t-esc="afirme_texts['unable_load_cases']"/>
+                    <span data-key="showing_results" t-esc="afirme_texts['showing_results']"/>
+                    <span data-key="showing_open_cases" t-esc="afirme_texts['showing_open_cases']"/>
+                    <span data-key="page" t-esc="afirme_texts['page']"/>
+                    <span data-key="no_open_cases" t-esc="afirme_texts['no_open_cases']"/>
+                    <span data-key="loading" t-esc="afirme_texts['loading']"/>
+                </div>
+                <header class="o_afirme_dashboard__header">
+                    <h1>Roadside Assistance Cases</h1>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/5/5a/Afirme_logo.svg"
+                         alt="AFIRME logo" loading="lazy"/>
+                </header>
+                <section class="o_afirme_dashboard__filters" aria-label="Case filters">
+                    <div class="o_afirme_dashboard__filter-group">
+                        <div class="o_afirme_dashboard__field o_afirme_dashboard__field--account">
+                            <label for="afirme-account">Account</label>
+                            <select id="afirme-account" class="js-afirme-account">
+                                <option value="2595">ASISTENCIA AFIRME UNIDADES LIGERAS</option>
+                                <option value="2596">ASISTENCIA AFIRME UNIDADES PESADAS</option>
+                                <option value="2675">ASISTENCIA AFIRME - TUPPERWARE</option>
+                                <option value="2824">ASISTENCIA AFIRME AUTO SUSTITUTO</option>
+                                <option value="2825">ASISTENCIA AFIRME ABOGADO AJUSTADOR</option>
+                                <option value="2979">AFIRME CONTIGO</option>
+                                <option value="2981">AFIRME GRUAS POR COLISIÓN</option>
+                            </select>
+                        </div>
+                        <div class="o_afirme_dashboard__field">
+                            <label for="afirme-month">Month</label>
+                            <select id="afirme-month" class="js-afirme-month" disabled="disabled">
+                                <t t-foreach="afirme_months" t-as="month">
+                                    <option t-att-value="month[0]">
+                                        <t t-esc="month[1]"/>
+                                    </option>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="o_afirme_dashboard__field">
+                            <label for="afirme-year">Year</label>
+                            <select id="afirme-year" class="js-afirme-year" disabled="disabled"/>
+                        </div>
+                        <button type="button" class="btn btn-primary js-afirme-refresh">Refresh</button>
+                    </div>
+                    <div class="o_afirme_dashboard__search">
+                        <label class="visually-hidden" for="afirme-search">Search by case number</label>
+                        <span aria-hidden="true">⌕</span>
+                        <input id="afirme-search" class="js-afirme-search" type="search" placeholder="Search by case number..."/>
+                    </div>
+                </section>
+                <section class="o_afirme_dashboard__toolbar" aria-live="polite">
+                    <p class="o_afirme_dashboard__results js-afirme-results">Loading...</p>
+                    <nav class="o_afirme_dashboard__pagination" aria-label="Pagination">
+                        <button type="button" class="btn btn-outline-secondary js-afirme-prev" disabled="disabled">← Previous</button>
+                        <span class="js-afirme-page">Page 1 of 1</span>
+                        <button type="button" class="btn btn-outline-secondary js-afirme-next" disabled="disabled">Next →</button>
+                    </nav>
+                </section>
+                <div class="o_afirme_dashboard__table-wrapper">
+                    <table class="o_afirme_dashboard__table">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <button type="button" class="js-afirme-sort">Case
+                                        <span class="js-afirme-sort-icon">▲ Asc</span>
+                                    </button>
+                                </th>
+                                <th>VIN</th>
+                                <th class="text-center">Assignment Date</th>
+                                <th class="text-center">Contact Date</th>
+                                <th>Customer</th>
+                                <th>Service</th>
+                                <th>Vehicle</th>
+                                <th>Origin</th>
+                                <th>Destination</th>
+                                <th class="text-center" title="Green: first third · Yellow: second third · Orange: third third · Red: overdue · Blue: contact made · White: completed · Gray: not calculated">ETA ⓘ</th>
+                            </tr>
+                        </thead>
+                        <tbody class="js-afirme-body"/>
+                    </table>
+                </div>
+            </main>
+        </t>
+    </template>
+</odoo>
