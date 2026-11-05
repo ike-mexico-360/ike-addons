@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0-20260504\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-07 21:44+0000\n"
-"PO-Revision-Date: 2026-09-07 21:44+0000\n"
+"POT-Creation-Date: 2026-10-29 17:21+0000\n"
+"PO-Revision-Date: 2026-10-29 17:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -223,8 +223,8 @@ msgid "Destination entity"
 msgstr "Entidad destino"
 
 #. module: custom_supplier_cost_matrix
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__destination_municipality
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__destination_municipality
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__destination_municipality_id
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__destination_municipality_id
 msgid "Destination municipality"
 msgstr "Municipio destino"
 
@@ -389,16 +389,16 @@ msgid "Inactive"
 msgstr "inactivo"
 
 #. module: custom_supplier_cost_matrix
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__initial_kilometer
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__initial_kilometer
-msgid "Initial kilometer"
-msgstr "Kilometro inicial"
-
-#. module: custom_supplier_cost_matrix
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__incident_type_id
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__incident_type_id
 msgid "Incident Type"
 msgstr "Tipo de incidente"
+
+#. module: custom_supplier_cost_matrix
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__initial_kilometer
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__initial_kilometer
+msgid "Initial kilometer"
+msgstr "Kilometro inicial"
 
 #. module: custom_supplier_cost_matrix
 #: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__message_is_follower
@@ -556,8 +556,8 @@ msgid "Origin entity"
 msgstr "Entidad origen"
 
 #. module: custom_supplier_cost_matrix
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__origin_municipality
-#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__origin_municipality
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_matrix_line__origin_municipality_id
+#: model:ir.model.fields,field_description:custom_supplier_cost_matrix.field_custom_supplier_cost_product__origin_municipality_id
 msgid "Origin municipality"
 msgstr "Municipio origen"
 

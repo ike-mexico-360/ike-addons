@@ -18,6 +18,9 @@ class IkeEvent(models.Model):
 
     authorization_ids = fields.One2many('ike.event.authorization', 'event_id', copy=False)
 
+    # [UNLIMITED] The membership plan line of the event's sub-service has unlimited_amount enabled.
+    membership_unlimited_amount = fields.Boolean(string='Unlimited Amount Event', copy=False)
+
     # === COMPUTES === #
     @api.depends(
         'service_supplier_link_ids',
@@ -49,10 +52,13 @@ class IkeEvent(models.Model):
         'service_supplier_ids.selected',
         'service_supplier_ids.cancelled',
         'service_supplier_ids.amount_concept_total',
+        'service_supplier_ids.amount_concept_limited_total',
         'service_supplier_ids.evaluation_id',
         'service_supplier_ids.evaluation_reevaluation',
     )
     def _compute_supplier_amount(self):
+        # [UNLIMITED] amount_concept_limited_total (total without unlimited concepts) is used
+        # instead of amount_concept_total: unlimited concepts are not added to the amount to authorize.
         for event_id in self:
             # Previous
             previous_amount = 0
@@ -61,7 +67,7 @@ class IkeEvent(models.Model):
                     supplier_id.search_number < event_id.supplier_search_number
                     and supplier_id.selected
                     and not str(supplier_id.state).startswith('cancel_')
-            ).mapped('amount_concept_total')
+            ).mapped('amount_concept_limited_total')
             if previous_selected:
                 previous_amount = sum(previous_selected)
 
@@ -72,7 +78,7 @@ class IkeEvent(models.Model):
                     supplier_id.search_number == event_id.supplier_search_number
                     and supplier_id.selected
                     and not str(supplier_id.state).startswith('cancel_')
-            ).mapped('amount_concept_total')
+            ).mapped('amount_concept_limited_total')
             if current_selected:
                 # Current Selected
                 current_amount = sum(current_selected)
@@ -88,7 +94,7 @@ class IkeEvent(models.Model):
                             or supplier_id.evaluation_id
                             and supplier_id.evaluation_reevaluation
                         )
-                ).mapped('amount_concept_total')
+                ).mapped('amount_concept_limited_total')
 
                 current_amount = max(current_amounts, default=0)
 
@@ -159,7 +165,8 @@ class IkeEvent(models.Model):
         if not suppliers:
             raise UserError(_('It is necessary to qualify the provider before requesting authorization.'))
 
-        supplier_with_max_amount = max(suppliers, key=lambda x: x.amount_concept_total)
+        # [UNLIMITED] The amount to authorize excludes unlimited concepts
+        supplier_with_max_amount = max(suppliers, key=lambda x: x.amount_concept_limited_total)
         return supplier_with_max_amount
 
     def action_view_ike_event_service_cost(self):
@@ -179,6 +186,11 @@ class IkeEventSupplier(models.Model):
     authorizer_id = fields.Many2one(related='supplier_link_id.authorizer_id', readonly=False)
     authorizer_domain = fields.Binary(compute="_compute_authorizer_domain")
     nu_user_id = fields.Many2one(related='event_id.user_id')
+
+    # [UNLIMITED] Totals without unlimited concepts
+    amount_concept_limited_total = fields.Float(related='supplier_link_id.amount_concept_limited_total', string='Total to Authorize')
+    base_amount_limited_subtotal = fields.Float(related='supplier_link_id.base_amount_limited_subtotal')
+    base_amount_limited_total = fields.Float(related='supplier_link_id.base_amount_limited_total')
 
     # === ONCHANGE === #
     @api.onchange('type_authorization_id')
@@ -222,12 +234,42 @@ class IkeEventSupplierLink(models.Model):
     # === FIELDS === #
     uncovered_authorization_required = fields.Boolean(compute='_compute_uncovered_authorization_required', store=True, copy=False)
 
+    # [UNLIMITED] Same calculations as amount_concept_total / base_amount_concept_*,
+    # but excluding unlimited concepts
+    amount_concept_limited_total = fields.Float(
+        string='Total to Authorize', compute='_compute_amount_limited', store=True)
+    base_amount_limited_subtotal = fields.Float(
+        string='Agreement Subtotal to Authorize', compute='_compute_amount_limited', store=True)
+    base_amount_limited_total = fields.Float(
+        string='Agreement Total to Authorize', compute='_compute_amount_limited', store=True)
+
     # === COMPUTES === #
+    @api.depends(
+        'supplier_product_ids.cost_price',
+        'supplier_product_ids.vat',
+        'supplier_product_ids.base_cost_price',
+        'supplier_product_ids.base_vat',
+        'supplier_product_ids.is_unlimited',
+    )
+    def _compute_amount_limited(self):
+        for rec in self:
+            limited_ids = rec.supplier_product_ids.filtered(
+                lambda x: not x.display_type and not x.is_unlimited
+            )
+            # Same as amount_concept_total: negative NU payments are excluded
+            paid_ids = limited_ids.filtered(lambda x: x.cost_price >= 0)
+            rec.amount_concept_limited_total = sum(paid_ids.mapped('cost_price')) + sum(paid_ids.mapped('vat'))
+
+            # Same as base_amount_concept_*
+            base_subtotal = sum(limited_ids.mapped('base_cost_price'))
+            rec.base_amount_limited_subtotal = base_subtotal
+            rec.base_amount_limited_total = base_subtotal + sum(limited_ids.mapped('base_vat'))
+
     @api.depends('supplier_product_ids', 'supplier_product_ids.covered', 'supplier_product_ids.authorization_id')
     def _compute_uncovered_authorization_required(self):
         for rec in self:
             rec.uncovered_authorization_required = bool(
-                self.supplier_product_ids.filtered(lambda x: not x.covered and not x.authorization_id)
+                rec.supplier_product_ids.filtered(lambda x: not x.covered and not x.authorization_id)
             )
 
     # === ACTION === #
@@ -244,15 +286,15 @@ class IkeEventSupplierLink(models.Model):
 
     def action_request_authorization(self):
         self.ensure_one()
-        # notify = not self.env.context.get('from_view_detail', False)
+        notify = not self.env.context.get('from_view_detail', False)
 
         if self.authorization_by_nu and not self.user_payment_line_ids:
             raise UserError(
                 _("The authorization type requires a payment line.")
             )
 
-        # if notify:
-        #     self._action_notify_authorizer()
+        if notify:
+            self._action_notify_authorizer()
 
     def _action_notify_authorizer(self):
         self.ensure_one()

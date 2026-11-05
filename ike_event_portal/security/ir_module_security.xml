@@ -112,12 +112,19 @@
                 .search([('user_id', '=', user.id)])
                 .mapped('supplier_id.id')
             )
-        ]</field>
+        ] + (user.x_ike_portal_center_ids() and [('supplier_center_id', 'in', user.x_ike_portal_center_ids())] or [])</field>
         <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_supervisor'))]"/>
         <field name="perm_read" eval="True"/>
         <field name="perm_write" eval="True"/>
         <field name="perm_create" eval="True"/>
         <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_fleet_vehicle_portal_supervisor_center" model="ir.rule">
+        <field name="name">Portal Supervisor: See only service vehicles of their attention center</field>
+        <field name="model_id" ref="fleet.model_fleet_vehicle"/>
+        <field name="domain_force">user.x_ike_portal_center_ids() and [('x_center_id', 'in', user.x_ike_portal_center_ids())] or []</field>
+        <field name="groups" eval="[(4, ref('ike_event_portal.custom_group_portal_supervisor'))]"/>
     </record>
 
     <!-- Rules System Group -->

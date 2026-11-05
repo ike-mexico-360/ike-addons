@@ -57,6 +57,12 @@ class IkeEventBase(models.AbstractModel):
     scheduled = fields.Boolean('Scheduled', default=False)
     is_upcoming = fields.Boolean(compute='_compute_is_upcoming')
 
+    creation_source = fields.Selection([
+        ('manual', 'Manual'),
+        ('api', 'API'),
+        ('call', 'Call'),
+    ], string="Service receipt type", required=True, default='manual', copy=False)
+
     @api.depends('scheduled', 'event_date')
     def _compute_is_upcoming(self):
         now = fields.Datetime.now()

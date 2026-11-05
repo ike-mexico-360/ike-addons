@@ -17,9 +17,4 @@
             <attribute name="class" add="d-none" separator=" "/>
         </xpath>
     </t>
-    <t t-name="ike_event.IkeSupplierSectionListRenderer.RecordRow" t-inherit="web.ListRenderer.RecordRow">>
-        <xpath expr="//tr[contains(@class, 'o_data_row')]" position="attributes">
-            <attribute name="t-if">!isHiddenRecord(record)</attribute>
-        </xpath>
-    </t>
 </templates>

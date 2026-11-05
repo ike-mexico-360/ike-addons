@@ -1494,7 +1494,7 @@ msgstr "Código de cliente"
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_invoice_company_id
 msgid "Client Company"
-msgstr "Empresa Facturadora"
+msgstr "Empresa facturadora"
 
 #. module: ike_event_purchase
 #. odoo-javascript
@@ -1687,6 +1687,8 @@ msgstr "Matriz de costos - proveedor"
 #: model:ir.model.fields,field_description:ike_event_purchase.field_ike_event_authorized_amount_request__purchase_order_id
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_order__state__draft
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__purchase_report__state__draft
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.ike_event_purchase_cost_review_title
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.portal_my_home_menu_cost_review
 msgid "Cost Review"
 msgstr "Revisión de costos"
 
@@ -2331,7 +2333,7 @@ msgstr "Monto excedente"
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_po_inherited_view_form_inherit_ike_event_purchase
 msgid "Expedient"
-msgstr "Expendiete"
+msgstr "Expediente"
 
 #. module: ike_event_purchase
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.view_authorized_amount_request_form
@@ -2629,13 +2631,13 @@ msgstr "Booleano de etapa en progreso"
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_incident_type_id
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_incident_type_id
 msgid "Incident Type"
-msgstr ""
+msgstr "Tipo de incidente"
 
 #. module: ike_event_purchase
 #. odoo-python
 #: code:addons/ike_event_purchase/controllers/main.py:0
 msgid "Incident type"
-msgstr ""
+msgstr "Tipo de incidente"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_tier_review__increase_currency_id
@@ -2794,7 +2796,7 @@ msgstr "Sistema de facturación anterior"
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_price_info_card.xml:0
 msgid "Invoicing Company"
-msgstr "Empresa Facturadora"
+msgstr "Empresa facturadora"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_sh_helpdesk_ticket__is_done_stage
@@ -3307,6 +3309,12 @@ msgstr "Origen"
 #: model:ir.model.fields,field_description:ike_event_purchase.field_custom_purchase_report_finance__x_origin_events
 msgid "Origin Events"
 msgstr "Eventos origen"
+
+#. module: ike_event_purchase
+#. odoo-javascript
+#: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_price_info_card.xml:0
+msgid "Origin Expedient"
+msgstr "Expediente origen"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_origin_events
@@ -4246,6 +4254,7 @@ msgstr "Domingo"
 #. odoo-javascript
 #: code:addons/ike_event_purchase/static/src/js/components/purchase_order_details/purchase_order_price_info_card.xml:0
 #: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_form_view_inherit_ike_event_purchase
+#: model_terms:ir.ui.view,arch_db:ike_event_purchase.sh_helpdesk_ticket_search_view_inherit_ike_event_purchase
 msgid "Supplier"
 msgstr "Proveedor"
 
@@ -5104,7 +5113,7 @@ msgstr "Semanal"
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order__x_vehicle_weight_category_id
 #: model:ir.model.fields,field_description:ike_event_purchase.field_purchase_order_line__x_vehicle_weight_category_id
 msgid "Weight Category"
-msgstr ""
+msgstr "Categoría de peso"
 
 #. module: ike_event_purchase
 #: model:ir.model.fields.selection,name:ike_event_purchase.selection__ike_event_authorized_amount_request__validation_status__no

@@ -12,11 +12,23 @@
                     <setting id="events_allow_send_whatsapp" string="Send whatsapp notifications" help="Allow users to send whatsapp notifications" groups="base.group_no_one">
                         <field name="events_allow_send_whatsapp"/>
                     </setting>
+                </xpath>
+                <xpath expr="//setting[@id='cf-turnstile']" position="after">
                     <setting id="x_allow_email_sending"
                              string="Allow email sending"
                              help="Master switch for outgoing emails of this company. Disabled by default."
                              groups="base.group_system">
                         <field name="x_allow_email_sending"/>
+                    </setting>
+                    <setting id="x_contact_proximity_alert"
+                             string="Contact point proximity alert"
+                             help="Distance at which the operator is alerted in the App before arriving at the contact point with the user.">
+                        <field name="x_contact_proximity_alert"/>
+                        <div class="mt16" invisible="not x_contact_proximity_alert">
+                            <label for="x_contact_proximity_distance" string="Distance:" class="o_light_label me-2"/>
+                            <field name="x_contact_proximity_distance" class="oe_inline"/>
+                            <span class="ms-1">km</span>
+                        </div>
                     </setting>
                 </xpath>
             </field>

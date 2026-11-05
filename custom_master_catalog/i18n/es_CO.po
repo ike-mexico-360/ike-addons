@@ -4,10 +4,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 18.0-20260504\n"
+"Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-27 00:02+0000\n"
-"PO-Revision-Date: 2026-10-27 00:02+0000\n"
+"POT-Creation-Date: 2026-10-15 16:29+0000\n"
+"PO-Revision-Date: 2026-10-15 16:29+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -1097,9 +1097,19 @@ msgid "Contact"
 msgstr "Contacto"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_config_settings__x_contact_proximity_alert
+msgid "Contact Point Proximity Alert"
+msgstr "Alerta de cercanía al punto de contacto"
+
+#. module: custom_master_catalog
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_res_partner_view_kanban
 msgid "Contact image"
 msgstr "Imagen de contacto"
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form
+msgid "Contact point proximity alert"
+msgstr "Alerta de cercanía al punto de contacto"
 
 #. module: custom_master_catalog
 #: model:ir.ui.menu,name:custom_master_catalog.res_partner_menu_contacts_contacts
@@ -1710,6 +1720,20 @@ msgstr "Nombre a mostrar"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_display_mask
 msgid "Display mask"
 msgstr "Máscara de visualización"
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form
+msgid ""
+"Distance at which the operator is alerted in the App before arriving at the "
+"contact point with the user."
+msgstr ""
+"Distancia a la que se alerta al operador en la App antes de llegar al punto "
+"de contacto con el usuario."
+
+#. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form
+msgid "Distance:"
+msgstr "Distancia:"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__x_check_second_key
@@ -2584,6 +2608,11 @@ msgid "Is generic supplier"
 msgstr "Es proveedor genérico"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__is_plate
+msgid "Is plate"
+msgstr "Es placa"
+
+#. module: custom_master_catalog
 #. odoo-python
 #: code:addons/custom_master_catalog/models/res_partner_supplier.py:0
 msgid "It cannot be enabled, the supplier is not enabled: %s"
@@ -3223,6 +3252,11 @@ msgid "Not Available"
 msgstr "No disponible"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_reason_not_available
+msgid "Not Available Reason"
+msgstr "Motivo de no disponible"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_identification__message_needaction_counter
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_account_type__message_needaction_counter
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_additional_concept_authorizer_type__message_needaction_counter
@@ -3530,6 +3564,16 @@ msgid "Periodicidad reseteo contador"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_reason_permanent_deregistration
+msgid "Permanent Deregistration Reason"
+msgstr "Motivo de baja definitiva"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__fleet_vehicle__x_vehicle_service_state__deregistration
+msgid "Permanently Deregistered"
+msgstr "Baja definitiva"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_supplier_coverage_configuration__phone
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_partner__phone
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__phone
@@ -3644,6 +3688,11 @@ msgid "Provider State"
 msgstr "Estado proveedor"
 
 #. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_res_config_settings__x_contact_proximity_distance
+msgid "Proximity Distance (km)"
+msgstr "Distancia de cercanía (km)"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields.selection,name:custom_master_catalog.selection__custom_pre_work_entry_type__value_type__qty
 msgid "Quantity"
 msgstr "Cantidad"
@@ -3688,6 +3737,24 @@ msgstr "¿Listo para gestionar su flota de forma más eficiente?"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_model_confirm_wizard__reason
 msgid "Reason"
 msgstr "Razón"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__fleet_vehicle__x_reason_not_available__not_available_reason_1
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__fleet_vehicle__x_reason_permanent_deregistration__deregistration_reason_1
+msgid "Reason 1"
+msgstr "Motivo 1"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__fleet_vehicle__x_reason_not_available__not_available_reason_2
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__fleet_vehicle__x_reason_permanent_deregistration__deregistration_reason_2
+msgid "Reason 2"
+msgstr "Motivo 2"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__fleet_vehicle__x_reason_not_available__not_available_reason_3
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__fleet_vehicle__x_reason_permanent_deregistration__deregistration_reason_3
+msgid "Reason 3"
+msgstr "Motivo 3"
 
 #. module: custom_master_catalog
 #: model:ir.model,name:custom_master_catalog.model_custom_reason_authorizing_additional_costs
@@ -3831,6 +3898,27 @@ msgstr "Referencia SAP"
 #: model:ir.model.fields,field_description:custom_master_catalog.field_res_users__x_society_sap
 msgid "SAP Society"
 msgstr "Sociedad SAP"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,field_description:custom_master_catalog.field_fleet_vehicle__x_sct_permit
+msgid "SCT Permit"
+msgstr "Permiso SCT"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/fleet_vehicle.py:0
+msgid ""
+"SCT Permit must contain between 15 and 30 uppercase alphanumeric characters "
+"(A-Z, 0-9)."
+msgstr ""
+"El Permiso SCT debe contener entre 15 y 30 caracteres alfanuméricos en "
+"mayúsculas (A-Z, 0-9)."
+
+#. module: custom_master_catalog
+#: model:ir.model.fields,help:custom_master_catalog.field_fleet_vehicle__x_sct_permit
+msgid "SCT permit number (15 to 30 uppercase alphanumeric characters)"
+msgstr ""
+"Número de permiso SCT (de 15 a 30 caracteres alfanuméricos en mayúsculas)"
 
 #. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_custom_data_source__sftp_route
@@ -4613,6 +4701,12 @@ msgstr "El código postal debe estar entre 01000 y 99999"
 
 #. module: custom_master_catalog
 #. odoo-python
+#: code:addons/custom_master_catalog/models/other/res_config_settings.py:0
+msgid "The proximity distance must be greater than 0 km."
+msgstr "La distancia de cercanía debe ser mayor a 0 km."
+
+#. module: custom_master_catalog
+#. odoo-python
 #: code:addons/custom_master_catalog/models/other/custom_manual_assignment_order.py:0
 msgid "The selected state does not belong to the active company country (%s)."
 msgstr ""
@@ -4884,6 +4978,18 @@ msgstr "Estado de la unidad"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.custom_fleet_vehicle_view_search
 msgid "Vehicle Type"
 msgstr "Tipo de vehículo"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/fleet_vehicle.py:0
+msgid "Vehicle already exists with this SCT Permit and is disabled: %s"
+msgstr "Ya existe un vehículo con este Permiso SCT y está deshabilitado: %s"
+
+#. module: custom_master_catalog
+#. odoo-python
+#: code:addons/custom_master_catalog/models/fleet_vehicle.py:0
+msgid "Vehicle already exists with this SCT Permit: %s"
+msgstr "Ya existe un vehículo con este Permiso SCT: %s"
 
 #. module: custom_master_catalog
 #. odoo-python
@@ -5168,6 +5274,11 @@ msgid "help to find product"
 msgstr ""
 
 #. module: custom_master_catalog
+#: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_config_settings_view_form
+msgid "km"
+msgstr "km"
+
+#. module: custom_master_catalog
 #: model:ir.model.fields,field_description:custom_master_catalog.field_product_product__x_armor_level
 msgid "level armor"
 msgstr "Nivel de blindaje"
@@ -5222,3 +5333,28 @@ msgstr "desconocido"
 #: model_terms:ir.ui.view,arch_db:custom_master_catalog.res_partner_account_view_form
 msgid "validation and visualization"
 msgstr "validación y visualización"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__fleet_vehicle__x_reason_permanent_deregistration__sale
+msgid "Sale"
+msgstr "Venta"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__fleet_vehicle__x_reason_permanent_deregistration__total_loss
+msgid "Total loss"
+msgstr "Pérdida total"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__fleet_vehicle__x_reason_permanent_deregistration__theft
+msgid "Theft"
+msgstr "Robo"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__fleet_vehicle__x_reason_permanent_deregistration__end_of_operation
+msgid "End of operation"
+msgstr "Fin de operación"
+
+#. module: custom_master_catalog
+#: model:ir.model.fields.selection,name:custom_master_catalog.selection__fleet_vehicle__x_reason_permanent_deregistration__other
+msgid "Other"
+msgstr "Otro"

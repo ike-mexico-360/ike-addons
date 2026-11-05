@@ -174,14 +174,21 @@ class IkeEvent(models.Model):
 
     def action_completed(self):
         """ Overrride action_completed to add 1 event to the event_count_detail_ids """
-        res = super().action_completed()
-        sub_service_id = self.sub_service_id
-        matching_detail_ids = self.user_membership_id.event_count_detail_ids.filtered(lambda x: sub_service_id.id in x.sub_service_ids.ids)
-        for detail in matching_detail_ids:
-            detail.write({
-                'events_of_period': detail.events_of_period + 1,
-            })
-        return res
+        changed_ids = super().action_completed()
+        # Only count events that were actually completed
+        for rec in self.browse(changed_ids):
+            sub_service_id = rec.sub_service_id
+            matching_detail_ids = rec.user_membership_id.event_count_detail_ids.filtered(
+                lambda x: sub_service_id.id in x.sub_service_ids.ids)
+            # If the subservice handles incidents, the deduction applies only to the line with the same incident type
+            if rec.has_incidents:
+                matching_detail_ids = matching_detail_ids.filtered(
+                    lambda x: rec.incident_type_id and x.incident_type_id == rec.incident_type_id)
+            for detail in matching_detail_ids:
+                detail.write({
+                    'events_of_period': detail.events_of_period + 1,
+                })
+        return changed_ids
 
     # === GET METHODS === #
     def get_survey_input_data(self):

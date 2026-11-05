@@ -75,11 +75,43 @@ class IkeEventSupplierSelection(models.Model):
                     def send_notifications_with_new_cursor():
                         threading.Thread(
                             target=self._async_send_notification,
-                            args=(dbname, record_ids, 'send_external_notification'),
+                            args=(dbname, record_ids, 'send_external_notification', False),
                             daemon=True,
                         ).start()
                 except Exception as e:
                     _logger.error(f"Error sending external notification: {str(e)}")
+        return result
+
+    def action_second_notify(self) -> list[int]:
+        # SUPER
+        result = super().action_second_notify()
+        # Async Notification
+        if not self._is_db_neutralized():
+            self_filtered = self.filtered(
+                lambda x: x.state == 'notified'
+                and x.notification_date
+                and x.second_notification
+                and x.event_id.service_id.x_ref == 'vial'
+                and x.event_id.sub_service_id.default_code in self.SUB_SERVICE_REF_MAP.keys()
+                and x.supplier_id.x_has_external_notification
+                and x.truck_id.x_vehicle_ref
+            )
+            if self_filtered:
+
+                # Frozen variables to prevent bug at post commit
+                dbname = self.env.cr.dbname
+                record_ids = self_filtered.ids
+
+                try:
+                    @self.env.cr.postcommit.add
+                    def send_notifications_with_new_cursor():
+                        threading.Thread(
+                            target=self._async_send_notification,
+                            args=(dbname, record_ids, 'send_external_notification', True),
+                            daemon=True,
+                        ).start()
+                except Exception as e:
+                    _logger.error(f"Error sending external second notification: {str(e)}")
         return result
 
     def action_notify_operator(self) -> list[int]:
@@ -337,7 +369,7 @@ class IkeEventSupplierSelection(models.Model):
         print("ASYNC TEST DONE", real_action_name)
 
     # === SEND EXTERNAL NOTIFICATIONS === #
-    def send_external_notification(self):
+    def send_external_notification(self, second_notification):
         url = self.env['ir.config_parameter'].sudo().get_param('ike_event.url.send_external_supplier')
         if not url:
             _logger.warning("No se ha configurado la URL de notificación a proveedores externos")
@@ -348,7 +380,7 @@ class IkeEventSupplierSelection(models.Model):
         notification_responses = []
         for rec in self:
             try:
-                body = rec._prepare_body_for_external_notification()
+                body = rec._prepare_body_for_external_notification(second_notification)
                 # _logger.warning(f"Sending external notification: {body}")
                 external_response = requests.post(
                     str(url),
@@ -462,7 +494,26 @@ class IkeEventSupplierSelection(models.Model):
                 "User-Agent": "Python-IoT-Test/1.0",
             }
             for rec in self:
-                if not rec.route:
+                # Ruta 1: de la base/vehículo al origen
+                route_to_user = self._route_json_to_list(rec.route)
+                if not route_to_user and rec.negotiation_type in ('base_base', 'base_destination'):
+                    # Fallback solo válido cuando el negocio ya asume que el vehículo sale de la base
+                    # (ver ike_event_supplier_selection._set_new_service_vehicle_distance, que fija
+                    # latitude/longitude = coordenadas de la base para estos dos tipos). Para
+                    # 'vehicle_destination'/'origin_destination' el vehículo puede estar en cualquier
+                    # otro punto, así que usar la ruta base->origen mostraría una ruta incorrecta en el mapa.
+                    route_to_user = self._route_json_to_list(rec.supplier_center_distance_id.center_origin_route)
+                # Ruta 2: del origen al destino
+                route_to_destination = self._route_json_to_list(rec.event_id.destination_route)
+                routes = [route_to_user, route_to_destination]
+
+                # Ruta 3 (solo base_base): del destino de vuelta a la base,
+                # calculada y guardada en supplier_center_distance_id
+                if rec.negotiation_type == 'base_base':
+                    route_to_base = self._route_json_to_list(rec.to_base_route)
+                    routes.append(route_to_base)
+
+                if not any(routes):
                     continue
 
                 origin = {
@@ -476,28 +527,7 @@ class IkeEventSupplierSelection(models.Model):
                     "label": rec.event_id.destination_label,
                 }
 
-                # Si route_to_user es string
-                if rec.route:
-                    if isinstance(rec.route, str):
-                        route_to_user = json.loads(rec.route)
-                    else:
-                        route_to_user = rec.route  # Ya es lista
-                else:
-                    route_to_user = []
-                # Si route_to_destination es string
-                if rec.event_id.destination_route:
-                    if isinstance(rec.event_id.destination_route, str):
-                        route_to_destination = json.loads(rec.event_id.destination_route)
-                    else:
-                        route_to_destination = rec.event_id.destination_route  # Ya es lista
-                else:
-                    route_to_destination = []
-
                 try:
-                    if route_to_user is None:
-                        route_to_user = []
-                    if route_to_destination is None:
-                        route_to_destination = []
                     dest_lat = destination.get('lat', False)
                     dest_lng = destination.get('lng', False)
                     if not dest_lat and not dest_lng:
@@ -507,7 +537,6 @@ class IkeEventSupplierSelection(models.Model):
                             "lng": False,
                             "label": False,
                         }
-                    routes = [route_to_user, route_to_destination]
                     json_data = {
                         "serviceId": str(rec.event_id.id),
                         # "vehicleId": str(rec.event_id.id),
@@ -639,7 +668,16 @@ class IkeEventSupplierSelection(models.Model):
     def _is_db_neutralized(self):
         return self.env['ir.config_parameter'].sudo().get_param('database.is_neutralized')
 
-    def _prepare_body_for_external_notification(self):
+    @staticmethod
+    def _route_json_to_list(route_value):
+        """Normaliza un campo Json de ruta (string, lista o falsy) a una lista."""
+        if not route_value:
+            return []
+        if isinstance(route_value, str):
+            return json.loads(route_value)
+        return route_value  # Ya es lista
+
+    def _prepare_body_for_external_notification(self, second_notification):
         self.ensure_one()
 
         # Mapeo de estados Odoo -> iké
@@ -742,8 +780,9 @@ class IkeEventSupplierSelection(models.Model):
                 "user": "null",
                 "firstName": nu_name,
                 "account": account_id.name,
-                "holdingCompany": account_id.x_invoice_company_id[0].name if account_id.x_invoice_company_id else ""
+                "holdingCompany": account_id.x_invoice_company_id[0].name if account_id.x_invoice_company_id else "",
             },
+            "second_notification": second_notification
         }
 
         # handle status

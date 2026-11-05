@@ -45,7 +45,8 @@ class IkeEvent(models.Model):
         "res.partner",
         string="Account",
         related='user_membership_id.membership_plan_id.account_id',
-        domain="['x_is_account', '=', True]")
+        domain="['x_is_account', '=', True]",
+        store=True)
     user_phone = fields.Char(related='user_id.phone', string='Main Phone')
     membership_display_mask = fields.Char(related='user_membership_id.x_display_mask', string='Display Mask')
     key_identification = fields.Char(related='user_membership_id.key_identification', string='Key Identification')
@@ -365,7 +366,7 @@ class IkeEvent(models.Model):
         for rec in self:
             rec.count_json = rec._build_sub_service_counter_json()
 
-    @api.depends('sub_service_id', 'count_json')
+    @api.depends('sub_service_id', 'count_json', 'has_incidents', 'incident_type_id')
     def _compute_selected_sub_service_counters(self):
         for rec in self:
             rec.services_allowed = 0
@@ -384,6 +385,10 @@ class IkeEvent(models.Model):
                 (
                     item for item in data
                     if item['sub_service_id'] == rec.sub_service_id.id
+                    and (
+                        not rec.has_incidents
+                        or item.get('incident_type_id') == rec.incident_type_id.id
+                    )
                 ),
                 None
             )
@@ -905,6 +910,9 @@ class IkeEvent(models.Model):
         for rec in self:
             rec._set_service_res_id()
             rec._set_sub_service_res_id()
+            # Set Resource Type
+            if rec.sub_service_ref in ['medical_consultation']:
+                rec.resource_type = 'person'
             rec.event_summary_id.set_service_data()
 
     def action_set_user_service_data(self):
@@ -917,6 +925,8 @@ class IkeEvent(models.Model):
             covered_amount = 0.0
             membership_service_line_id = rec.user_membership_id.membership_plan_id.product_line_ids.filtered(
                 lambda x: rec.sub_service_id in x.sub_service_ids)
+            # [UNLIMITED] Same plan lines used for covered_amount (no extra search)
+            membership_unlimited_amount = bool(membership_service_line_id.filtered('unlimited_amount'))
             if membership_service_line_id:
                 membership_service_line_id = membership_service_line_id[0]
                 if membership_service_line_id.limit_ids:
@@ -928,6 +938,7 @@ class IkeEvent(models.Model):
             rec.sudo().write({
                 'covered_amount': covered_amount,
                 'authorized_amount': covered_amount,
+                'membership_unlimited_amount': membership_unlimited_amount,
             })
 
     def action_set_location_data(self):
@@ -1281,6 +1292,8 @@ class IkeEvent(models.Model):
                     'service_id': detail.service_id.id,
                     'sub_service_id': sub_service.id,
                     'sub_service_ref': sub_service.name,
+                    'incident_type_id': detail.incident_type_id.id or False,
+                    'incident_type_name': detail.incident_type_id.name or False,
                     'coverage_events': detail.coverage_events,
                     'events_of_period': detail.events_of_period,
                     'available': available,
@@ -1455,19 +1468,27 @@ class IkeEvent(models.Model):
         }
 
     # === STAGE ACTIONS === #
-    def action_completed(self):
+    def action_completed(self) -> list[int]:
         event_stage_in_progress_ref = self.env.ref('ike_event.ike_event_stage_in_progress').ref
         event_stage_completed_id = self.env.ref('ike_event.ike_event_stage_completed').id
+        changed_ids: list[int] = []
         for rec in self:
             pending_suppliers = rec.selected_supplier_ids.filtered(
                 lambda x:
                     x.stage_ref not in ['finalized', 'cancel']
                     and x.state not in ['cancel', 'cancel_event', 'cancel_supplier']
             )
+            # No Base Supplier
+            if rec.base_supplier_number > rec.supplier_number:
+                continue
+            # Pending Supplier(s)
             if pending_suppliers:
                 continue
+            # Do Complete
             if rec.stage_ref == event_stage_in_progress_ref and rec.step_number == 1:
                 rec.stage_id = event_stage_completed_id
+                changed_ids.append(rec.id)
+        return changed_ids
 
     def action_verify(self):
         # Purchase suppliers validation
@@ -1530,7 +1551,8 @@ class IkeEvent(models.Model):
 
             rec._create_nu_payment_concept(supplier_product_ids)
 
-            total_amount = sum(rec.selected_supplier_ids.mapped('base_amount_concept_subtotal'))
+            # [UNLIMITED] Unlimited concepts do not count against the covered/authorized amount
+            total_amount = sum(rec.selected_supplier_ids.mapped('base_amount_limited_subtotal'))
             payment_nu = rec.selected_supplier_ids.supplier_link_id.supplier_product_ids.filtered(
                 lambda x: not x.display_type and x.unit_price < 0)
 

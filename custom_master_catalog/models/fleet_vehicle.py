@@ -1,7 +1,11 @@
+import re
 import uuid
 from odoo import models, fields, api, _
 from odoo.exceptions import UserError
 from markupsafe import Markup
+
+
+SCT_PERMIT_REGEX = re.compile(r'^[A-Z0-9]{15,30}$')
 
 
 class FleetVehicle(models.Model):
@@ -18,9 +22,17 @@ class FleetVehicle(models.Model):
         ))
         return str(uuid.uuid5(uuid.NAMESPACE_DNS, seed))
 
+    @api.model
+    def _normalize_sct_permit_vals(self, vals):
+        if 'x_sct_permit' in vals:
+            permit = vals['x_sct_permit']
+            vals['x_sct_permit'] = str(permit).strip().upper() or False if permit else False
+        return vals
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
+            self._normalize_sct_permit_vals(vals)
             if not vals.get('x_partner_id'):
                 continue
             if not vals.get('x_economic_number') or not vals.get('license_plate'):
@@ -36,7 +48,14 @@ class FleetVehicle(models.Model):
                 vehicle.x_economic_number,
                 vehicle.license_plate,
             )
+        vehicles._disable_deregistered()
         return vehicles
+
+    def write(self, vals):
+        res = super().write(self._normalize_sct_permit_vals(vals))
+        if {'x_vehicle_service_state', 'x_reason_permanent_deregistration'} & vals.keys():
+            self._disable_deregistered()
+        return res
 
     active = fields.Boolean('Active', default=True, tracking=True)
     disabled = fields.Boolean('Disabled', default=False, tracking=True)
@@ -81,10 +100,26 @@ class FleetVehicle(models.Model):
         ('not_available', 'Not Available'),
         ('in_service', 'In Service'),
         ('disabled', 'Disabled'),
+        ('deregistration', 'Permanently Deregistered'),
     ], string="Vehicle Service State", tracking=True, default="not_available")
+    x_reason_not_available = fields.Selection([
+        ('not_available_reason_1', 'Reason 1'),
+        ('not_available_reason_2', 'Reason 2'),
+        ('not_available_reason_3', 'Reason 3'),
+    ], string="Not Available Reason", tracking=True)
+    x_reason_permanent_deregistration = fields.Selection([
+        ('sale', 'Sale'),
+        ('total_loss', 'Total loss'),
+        ('theft', 'Theft'),
+        ('end_of_operation', 'End of operation'),
+        ('other', 'Other'),
+    ], string="Permanent Deregistration Reason", tracking=True)
     x_driver_domain = fields.Binary(string='Driver Domain', compute='_compute_x_driver_domain')
     x_economic_number = fields.Char(
         string='Economic Number', tracking=True, help="Unit identifier in the supplier's system (internal value)")
+    x_sct_permit = fields.Char(
+        string='SCT Permit', tracking=True,
+        help="SCT permit number (15 to 30 uppercase alphanumeric characters)")
 
     @api.onchange('x_partner_id')
     def _onchange_x_partner_id(self):
@@ -149,6 +184,23 @@ class FleetVehicle(models.Model):
                 if len(rec.model_year) != 4:
                     raise UserError(_("Year must be 4 digits."))
 
+    @api.constrains('x_sct_permit')
+    def _check_x_sct_permit(self):
+        for rec in self:
+            if rec.x_sct_permit and not SCT_PERMIT_REGEX.fullmatch(rec.x_sct_permit):
+                raise UserError(_('SCT Permit must contain between 15 and 30 uppercase alphanumeric characters (A-Z, 0-9).'))
+
+    @api.constrains('x_sct_permit')
+    def _check_unique_x_sct_permit(self):
+        for rec in self.filtered('x_sct_permit'):
+            domain = [('id', '!=', rec.id), ('x_sct_permit', '=', rec.x_sct_permit)]
+            duplicate = self.with_context(active_test=False).search(domain, limit=1)
+            if not duplicate:
+                continue
+            if duplicate.disabled:
+                raise UserError(_('Vehicle already exists with this SCT Permit and is disabled: %s', duplicate.display_name))
+            raise UserError(_('Vehicle already exists with this SCT Permit: %s', duplicate.display_name))
+
     @api.depends('x_vehicle_type')
     def _compute_subservice_specification_ids(self):
         for vehicle in self:
@@ -179,6 +231,15 @@ class FleetVehicle(models.Model):
         if not has_permission:
             return False
         return res
+
+    def _disable_deregistered(self):
+        to_disable = self.filtered(
+            lambda x: x.x_vehicle_service_state == 'deregistration'
+            and x.x_reason_permanent_deregistration
+            and not x.disabled
+        )
+        if to_disable:
+            to_disable.write({'disabled': True})
 
     def action_disable(self, reason=None):
         for rec in self:

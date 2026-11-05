@@ -1,5 +1,5 @@
-import { registry } from "@web/core/registry";
 import { _t } from "@web/core/l10n/translation";
+import { registry } from "@web/core/registry";
 import { FieldLabelSectionAndNoteOne2Many, fieldLabelSectionAndNoteOne2Many } from "./field_label_section_and_note_field";
 import { IkeSectionAndNoteListRender } from "./ike_section_and_note_field";
 
@@ -46,10 +46,22 @@ export class IkeSupplierSectionAndNoteListRender extends IkeSectionAndNoteListRe
         }
         return classes;
     }
+    /**
+     * Suppliers Filter
+     */
+    getFilteredRecords(list) {
+        const root = this.env.model.root;
+        let event_search_number = root.data.supplier_search_number;
+        let event_supplier_number = root.data.supplier_number;
+        if (!event_search_number || !event_supplier_number) {
+            return list.records;
+        }
+        return list.records.filter(record =>
+            (!record.data.event_search_number || record.data.search_number == event_search_number)
+            && (!record.data.event_supplier_number || record.data.event_supplier_number == event_supplier_number)
+        );
+    }
 }
-
-IkeSupplierSectionAndNoteListRender.recordRowTemplate = "ike_event.IkeSupplierSectionListRenderer.RecordRow";
-
 
 export class IkeSupplierSectionAndNoteOne2Many extends FieldLabelSectionAndNoteOne2Many {
     static components = {

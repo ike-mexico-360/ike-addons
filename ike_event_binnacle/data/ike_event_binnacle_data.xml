@@ -331,7 +331,10 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <t>
-                     <strong>Subservice selected: </strong> <t t-out="object.service_id.name or 'No provided'"/> / <t t-out="object.sub_service_id.name or 'No provided'"/>
+                    <strong>Subservice selected: </strong> <t t-out="object.service_id.name or 'No provided'"/> / <t t-out="object.sub_service_id.name or 'No provided'"/><br/>
+                    <t t-if="object.has_incidents and object.incident_type_id">
+                        <strong>Incident: </strong><t t-out="object.incident_type_id.name"/>
+                    </t>
                 </t>
             </field>
         </record>
@@ -848,8 +851,9 @@
 
 
                     <strong>Type assignation:</strong>
-                    <t t-set="supplier" t-value="object.service_supplier_ids[:1]"/>
-                    <t t-if="supplier and supplier.assignation_type">
+                    <t t-set="supplier" t-value="object.env['ike.event.supplier'].browse(ctx.get('event_supplier_id')) if ctx.get('event_supplier_id') else object.service_supplier_ids[:1]"/>
+                    <t t-if="supplier.second_notification">Publication (Pending services)<br/></t>
+                    <t t-elif="supplier and supplier.assignation_type">
                         <t t-out="dict(supplier._fields['assignation_type']._description_selection(object.env)).get(supplier.assignation_type, '')"/>
                         <br/>
                     </t>
@@ -966,11 +970,11 @@
                                         </td>
 
                                         <td style="border:1px solid #000; padding:6px;">
-                                            <t t-out="'${:,.2f}'.format(unit_price)"/>
+                                            <t t-out="format_amount(unit_price, object.company_id.currency_id)"/>
                                         </td>
 
                                         <td style="border:1px solid #000; padding:6px;">
-                                            <t t-out="'${:,.2f}'.format(amount)"/>
+                                            <t t-out="format_amount(amount, object.company_id.currency_id)"/>
                                         </td>
                                     </tr>
                                 </t>
@@ -982,7 +986,7 @@
                                     </td>
 
                                     <td style="border:1px solid #000; padding:6px;">
-                                        <t t-out="'${:,.2f}'.format(subtotal)"/>
+                                        <t t-out="format_amount(subtotal, object.company_id.currency_id)"/>
                                     </td>
                                 </tr>
                             </tbody>
@@ -1041,7 +1045,8 @@
             <field name="subject">Reference {{ object.name or 'n/a' }}</field>
             <field name="body_html" type="html">
                 <strong>Search type:</strong>
-                <t t-out="object._fields['supplier_search_type'].convert_to_export(object.supplier_search_type, object) "/>
+                <t t-if="ctx.get('second_notification_ids')">Pending services</t>
+                <t t-else="" t-out="object._fields['supplier_search_type'].convert_to_export(object.supplier_search_type, object) "/>
 
                 <t t-if="ctx.get('search_priority')">
                     <strong>Priority:</strong>
@@ -1072,6 +1077,11 @@
                 ).sorted(
                     key=lambda l: l.sequence
                 )"/>
+
+                <!-- Segunda notificacion: proveedores reenviados -->
+                <t t-if="ctx.get('second_notification_ids')">
+                    <t t-set="suppliers" t-value="object.service_supplier_ids.filtered(lambda l: l.id in ctx.get('second_notification_ids')).sorted(key=lambda l: l.sequence)"/>
+                </t>
 
                 <!-- Si hay proveedores -->
                <t t-if="suppliers">
@@ -1243,11 +1253,11 @@
                                         </td>
 
                                         <td style="border:1px solid #000; padding:6px;" align="right">
-                                            <t t-out="'${:,.2f}'.format(unit_price)"/>
+                                            <t t-out="format_amount(unit_price, object.company_id.currency_id)"/>
                                         </td>
 
                                         <td style="border:1px solid #000; padding:6px;" align="right">
-                                            <t t-out="'${:,.2f}'.format(amount)"/>
+                                            <t t-out="format_amount(amount, object.company_id.currency_id)"/>
                                         </td>
                                     </tr>
                                 </t>
@@ -1259,7 +1269,7 @@
                                     </td>
 
                                     <td style="border:1px solid #000; padding:6px; text-align:right;">
-                                        <t t-out="'${:,.2f}'.format(subtotal)"/>
+                                        <t t-out="format_amount(subtotal, object.company_id.currency_id)"/>
                                     </td>
                                 </tr>
                             </tbody>
@@ -1365,7 +1375,7 @@
 
 
                                         <td style="border:1px solid #000; padding:6px;" align="right">
-                                            <t t-out="'${:,.2f}'.format(payment.amount)"/>
+                                            <t t-out="format_amount(payment.amount, object.company_id.currency_id)"/>
                                         </td>
 
                                     </tr>
@@ -1529,11 +1539,11 @@
                                         </td>
 
                                         <td style="border:1px solid #000; padding:6px;" align="right">
-                                            <t t-out="'${:,.2f}'.format(unit_price)"/>
+                                            <t t-out="format_amount(unit_price, object.company_id.currency_id)"/>
                                         </td>
 
                                         <td style="border:1px solid #000; padding:6px;" align="right">
-                                            <t t-out="'${:,.2f}'.format(amount)"/>
+                                            <t t-out="format_amount(amount, object.company_id.currency_id)"/>
                                         </td>
                                     </tr>
                                 </t>
@@ -1544,7 +1554,7 @@
                                     </td>
 
                                     <td style="border:1px solid #000; padding:6px; text-align:right;">
-                                        <t t-out="'${:,.2f}'.format(subtotal)"/>
+                                        <t t-out="format_amount(subtotal, object.company_id.currency_id)"/>
                                     </td>
                                 </tr>
                             </tbody>
@@ -1576,7 +1586,7 @@
                                             </td>
 
                                             <td style="border:1px solid #000; padding:6px;" align="right">
-                                                <t t-out="'${:,.2f}'.format(payment.amount)"/>
+                                                <t t-out="format_amount(payment.amount, object.company_id.currency_id)"/>
                                             </td>
                                         </tr>
                                     </t>
@@ -2669,10 +2679,10 @@
                                         <t t-out="sl.quantity"/>
                                     </td>
                                     <td style="border:1px solid #000; padding:6px;">
-                                        <t t-out="'${:,.2f}'.format(sl.unit_price)"/>
+                                        <t t-out="format_amount(sl.unit_price, object.company_id.currency_id)"/>
                                     </td>
                                     <td style="border:1px solid #000; padding:6px;">
-                                        <t t-out="'${:,.2f}'.format(sl.cost_price)"/>
+                                        <t t-out="format_amount(sl.cost_price, object.company_id.currency_id)"/>
                                     </td>
                                 </tr>
                             </t>
@@ -2683,7 +2693,7 @@
                                     Subtotal - <t t-out="supp.name"/>
                                 </td>
                                 <td style="border:1px solid #000; padding:6px;">
-                                    <t t-out="'${:,.2f}'.format(sum(supplier_lines.mapped('cost_price')))"/>
+                                    <t t-out="format_amount(sum(supplier_lines.mapped('cost_price')), object.company_id.currency_id)"/>
                                 </td>
                             </tr>
 
@@ -2694,7 +2704,7 @@
                                 TOTAL
                             </td>
                             <td style="border:1px solid #000; padding:6px;">
-                                <t t-out="'${:,.2f}'.format(sum(all_lines.mapped('cost_price')))"/>
+                                <t t-out="format_amount(sum(all_lines.mapped('cost_price')), object.company_id.currency_id)"/>
                             </td>
                         </tr>
 
@@ -2808,10 +2818,10 @@
                                         <t t-out="sl.base_quantity"/>
                                     </td>
                                     <td style="border:1px solid #000; padding:6px;">
-                                        <t t-out="'${:,.2f}'.format(sl.base_unit_price)"/>
+                                        <t t-out="format_amount(sl.base_unit_price, object.company_id.currency_id)"/>
                                     </td>
                                     <td style="border:1px solid #000; padding:6px;">
-                                        <t t-out="'${:,.2f}'.format(sl.base_cost_price)"/>
+                                        <t t-out="format_amount(sl.base_cost_price, object.company_id.currency_id)"/>
                                     </td>
                                 </tr>
                             </t>
@@ -2822,7 +2832,7 @@
                                     Subtotal - <t t-out="link.supplier_id.name"/>
                                 </td>
                                 <td style="border:1px solid #000; padding:6px;">
-                                    <t t-out="'${:,.2f}'.format(sum(supplier_lines.mapped('base_cost_price')))"/>
+                                    <t t-out="format_amount(sum(supplier_lines.mapped('base_cost_price')), object.company_id.currency_id)"/>
                                 </td>
                             </tr>
 
@@ -2834,7 +2844,7 @@
                                 Total
                             </td>
                             <td style="border:1px solid #000; padding:6px;">
-                                <t t-out="'${:,.2f}'.format(sum(all_lines.mapped('base_cost_price')))"/>
+                                <t t-out="format_amount(sum(all_lines.mapped('base_cost_price')), object.company_id.currency_id)"/>
                             </td>
                         </tr>
 
@@ -2861,7 +2871,7 @@
                     <t t-set="truck" t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
 
                     <p>
-                        <strong>Notification sent to supplier: </strong><br/>
+                        <strong>Notification sent to supplier: </strong><t t-if="ctx.get('second_notification')">(Pending service)</t><br/>
                         <strong>Supplier: </strong><t t-out="supplier"></t><br/>
                         <strong>Plate: </strong><t t-out="truck.license_plate or truck.name"/>
 
@@ -2941,7 +2951,7 @@
                     t-value="object.env['fleet.vehicle'].browse(ctx.get('truck_id'))"/>
 
                     <p>
-                        <strong>Notification accepted: </strong>
+                        <strong>Notification accepted: </strong><t t-if="ctx.get('second_notification')">(Pending service)</t>
                         <br/>
 
                         <strong>Supplier: </strong>

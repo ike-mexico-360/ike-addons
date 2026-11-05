@@ -22,6 +22,24 @@ PROGRESS_STATES_MAP_STAGE = {
 PROGRESS_STATES_MAP_REVERSE = {v: k for k, v in PROGRESS_STATES_MAP_STAGE.items()}
 
 
+def check_progress_state_transition(current_state, new_state):
+    """Raise BadRequest if the requested progress_state transition is invalid.
+
+    current_state is -1 when the supplier hasn't started the progress flow
+    yet (its stage isn't mapped in PROGRESS_STATES_MAP_REVERSE).
+
+    Only the assigned(0) -> on_route(1) hop is strictly sequential: action_on_route()
+    is the only place that moves the parent event out of 'assigned', so it can
+    never be skipped. From on_route(1) onward, forward jumps are legitimate
+    (not every service has a vehicle en route to a second destination), so
+    they're left unrestricted.
+    """
+    if new_state < current_state:
+        raise BadRequest(_('Cannot set a lower progress_state than current'))
+    if current_state < 1 and new_state > current_state + 1:
+        raise BadRequest(_('Cannot skip progress_state: must go through "on_route" (1) first'))
+
+
 # TODO: Cambiar al modelo público
 class CatalogsAPIController(http.Controller):
 
@@ -85,28 +103,27 @@ class CatalogsAPIController(http.Controller):
                 ies.event_id = %(event_id)s
                 AND fv.x_vehicle_ref = %(vehicle_id)s
                 AND ies.state = 'assigned'
+            ORDER BY ies.id DESC
             LIMIT 1;
         """, {'event_id': event_id, 'vehicle_id': vehicle_id})
         return request.env.cr.dictfetchone()
 
     def _ike_get_auxiliary_query_for_progress_state(self):
-        """ Auxiliar para mapear el res_id con el progress_state """
-        select_clause = """
+        """ Auxiliar para mapear el res_id con el progress_state.
+
+        El CASE/WHEN se arma a partir de PROGRESS_STATES_MAP_STAGE (única
+        fuente de verdad del mapeo progress_state <-> stage), en vez de
+        duplicarlo a mano en SQL.
+        """
+        when_clauses = '\n                '.join(
+            "WHEN imd.name = '{name}' THEN '{state}'".format(
+                name=xmlid.split('.', 1)[1], state=state,
+            )
+            for state, xmlid in PROGRESS_STATES_MAP_STAGE.items()
+        )
+        select_clause = f"""
             CASE
-                WHEN imd.name = 'ike_service_stage_assigned' THEN
-                    '0'
-                WHEN imd.name = 'ike_service_stage_on_route' THEN
-                    '1'
-                WHEN imd.name = 'ike_service_stage_arrived' THEN
-                    '2'
-                WHEN imd.name = 'ike_service_stage_contacted' THEN
-                    '3'
-                WHEN imd.name = 'ike_service_stage_on_route_2' THEN
-                    '4'
-                WHEN imd.name = 'ike_service_stage_arrived_2' THEN
-                    '5'
-                WHEN imd.name = 'ike_service_stage_finalized' THEN
-                    '6'
+                {when_clauses}
                 ELSE '-1'
             END as progress_state
         """
@@ -547,13 +564,18 @@ class CatalogsAPIController(http.Controller):
                 current_xmlid = result['supplier_stage_xmlid']
                 event_stage_ref = result['event_stage_ref']
 
-                # Validación 1: No permitir retroceder el progress_state
-                if current_xmlid and current_xmlid in PROGRESS_STATES_MAP_REVERSE:
-                    current_state = int(PROGRESS_STATES_MAP_REVERSE[current_xmlid])
-                    new_state = int(progress_state)
+                # Validación 1: no retroceder, y el paso 0 -> 1 (assigned -> on_route) es el
+                # único tramo secuencial obligatorio (ver check_progress_state_transition).
+                # Si el stage actual del supplier no está mapeado (aún no inició el flujo),
+                # se trata como "antes de 0", así que solo se permite arrancar en 0.
+                current_state = (
+                    int(PROGRESS_STATES_MAP_REVERSE[current_xmlid])
+                    if current_xmlid and current_xmlid in PROGRESS_STATES_MAP_REVERSE
+                    else -1
+                )
+                new_state = int(progress_state)
 
-                    if new_state < current_state:
-                        raise BadRequest(_('Cannot set a lower progress_state than current'))
+                check_progress_state_transition(current_state, new_state)
 
                 # Validación 2: Si ref no es 'searching' o 'in_progress',
                 # no permitir progress_state 0

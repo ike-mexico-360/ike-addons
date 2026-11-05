@@ -16,6 +16,7 @@ const VIEW_IDS = {
     'ike.service.input.medical.consultation': 'service_input_medical_consultation_form_id',
     'survey.user_input': 'survey_user_input_form_id',
     'ike.event.supplier': 'service_supplier_screen_form_id',
+    'survey.user_input': 'survey_user_input_form_id',
 };
 
 

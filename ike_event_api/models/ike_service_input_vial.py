@@ -158,7 +158,10 @@ class IkeServiceInputVial(models.Model):
                 'service_res_id': self.id,
                 'service_res_model': 'ike.service.input.vial',
                 'received_assistview': False,
+                'plate': self.vehicle_plate,
             })
+        elif not assistview_id.received_assistview:
+            assistview_id.plate = self.vehicle_plate
 
         # Ya existe sesión?
         request_lambda_session = not assistview_id.created_lambda_session

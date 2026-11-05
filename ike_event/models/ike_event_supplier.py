@@ -2,6 +2,8 @@
 
 import json
 
+from markupsafe import escape
+
 from odoo import models, fields, api, Command, _
 from odoo.exceptions import UserError, ValidationError
 from odoo.osv import expression
@@ -353,23 +355,18 @@ class IkeEventSupplier(models.Model):
                         <span>{supplier_record_data[field] or ''}</span></div>
                     """
                     if field == 'supplier_id':
-                        # Maneuvers: concepts already added for this supplier that carry the
-                        # "Maneuvers" product tag. Falls back to a quick-add link (which reveals
-                        # the existing add-concept form in the modal) when there are none yet.
                         maneuver_tag = self.env.ref('ike_event.ike_product_tag_maneuvers', raise_if_not_found=False)
                         maneuver_lines = rec.supplier_product_ids.filtered(
-                            lambda line: line.product_id and maneuver_tag.id in line.product_id.product_tag_ids.ids
+                            lambda line: maneuver_tag in line.product_id.product_tag_ids
                         ) if maneuver_tag else rec.supplier_product_ids.browse()
                         maneuvers_value = ', '.join(maneuver_lines.mapped('product_id.display_name'))
+                        truck_has_maneuvers = bool(rec.truck_id.x_maneuvers)  # False si no hay grúa
+                        event_summary_supplier_data += self._summary_row_html(
+                            _('Need event maneuvers'), _('Yes') if maneuvers_value else _('No'))
                         if maneuvers_value:
-                            add_maneuvers_link = ''
-                        else:
-                            truck_has_maneuvers = bool(rec.truck_id.x_maneuvers) if rec.truck_id else False
-                            add_maneuvers_link = f'<span>{_("Yes") if truck_has_maneuvers else _("No")}</span>'
-                        event_summary_supplier_data += f"""
-                            <div><span style='font-weight: bold;'>{_('Maneuvers')}: </span>
-                            <span>{maneuvers_value}</span> {add_maneuvers_link}</div>
-                        """
+                            event_summary_supplier_data += self._summary_row_html(_('Maneuvers'), maneuvers_value)
+                        event_summary_supplier_data += self._summary_row_html(
+                            _('Vehicle performs maneuvers'), _('Yes') if truck_has_maneuvers else _('No'))
 
             rec.event_supplier_summary_data = event_summary_supplier_data
 
@@ -397,6 +394,12 @@ class IkeEventSupplier(models.Model):
                 vial_record = self.env[vial_res_model].browse(vial_res_id)
 
                 confirmed_service_rows = []
+
+                # Event type
+                event_type_string = rec.event_id.fields_get(['event_type_id'])['event_type_id']['string']
+                confirmed_service_rows.append(
+                    self._summary_row_html(event_type_string, rec.event_id.event_type_id.display_name or '')
+                )
 
                 user_service_fields = [
                     'vehicle_brand',
@@ -496,8 +499,22 @@ class IkeEventSupplier(models.Model):
                 # Supplier section
                 supplier_rows = []
 
+                # Maneuvers: concepts already added for this supplier that carry the
+                # "Maneuvers" product tag. Falls back to whether the truck does maneuvers
+                # when there are none yet.
+                maneuver_tag = self.env.ref('ike_event.ike_product_tag_maneuvers', raise_if_not_found=False)
+                maneuver_lines = rec.supplier_product_ids.filtered(
+                    lambda line: line.product_id and maneuver_tag.id in line.product_id.product_tag_ids.ids
+                ) if maneuver_tag else rec.supplier_product_ids.browse()
+                maneuvers_value = ', '.join(maneuver_lines.mapped('product_id.display_name'))
+                if maneuvers_value:
+                    add_maneuvers_link = ''
+                else:
+                    truck_has_maneuvers = bool(rec.truck_id.x_maneuvers) if rec.truck_id else False
+                    add_maneuvers_link = f'<span>{_("Yes") if truck_has_maneuvers else _("No")}</span>'
+                supplier_rows.append(self._summary_row_html(_('Maneuvers'), maneuvers_value, add_maneuvers_link))
+
                 supplier_fields = [
-                    'supplier_id',
                     'assigned',
                     'estimated_distance',
                     'estimated_duration',
@@ -508,33 +525,9 @@ class IkeEventSupplier(models.Model):
                 supplier_record_fields = rec.fields_get(supplier_fields)
                 supplier_record_data = rec.read(supplier_fields)[0]
 
-                if rec.acceptance_date and rec.event_id.supplier_search_date:
-                    # Assignation Duration
-                    # Insertar clave 'assignation_duration' después de 'assignation_type' y calcular
-                    f_index = supplier_fields.index('assignation_type') + 1
-                    supplier_fields.insert(f_index, 'assignation_duration')
-                    supplier_record_fields['assignation_duration'] = {'string': _('Assignation Duration')}
-
-                    # Assignation Duration (Bloque que tiene Nefta en ike_event_summary)
-                    # ToDo FIX rec.event_id.supplier_search_date
-                    # -------------------------
-                    if not rec.event_id.supplier_search_date:  # Remove
-                        rec.event_id.supplier_search_date = fields.Datetime.now()  # Remove
-                    # -------------------------
-                    delta = rec.acceptance_date - rec.event_id.supplier_search_date
-                    # -------------------------
-                    duration = int(delta.total_seconds())
-                    # Convert seconds to 'X minutes X seconds'
-                    # assignation_duration = str(duration) + "s"
-                    assignation_minutes = duration // 60
-                    assignation_seconds = duration % 60
-                    assignation_duration = _("%s minutes %s seconds") % (assignation_minutes, assignation_seconds)
-
-                    supplier_record_data['assignation_duration'] = assignation_duration
-
                 for field in supplier_fields:
                     # Obtener display_name de los many2one
-                    if field in ['supplier_id', 'truck_id']:
+                    if field == 'truck_id':
                         field_data = supplier_record_data.get(field, False)
                         if field_data:
                             supplier_record_data[field] = supplier_record_data[field][1]
@@ -557,60 +550,34 @@ class IkeEventSupplier(models.Model):
                     supplier_rows.append(
                         self._summary_row_html(supplier_record_fields[field]['string'], supplier_record_data[field] or '')
                     )
-                    if field == 'supplier_id':
-                        # Maneuvers: concepts already added for this supplier that carry the
-                        # "Maneuvers" product tag. Falls back to a quick-add link (which reveals
-                        # the existing add-concept form in the modal) when there are none yet.
-                        maneuver_tag = self.env.ref('ike_event.ike_product_tag_maneuvers', raise_if_not_found=False)
-                        maneuver_lines = rec.supplier_product_ids.filtered(
-                            lambda line: line.product_id and maneuver_tag.id in line.product_id.product_tag_ids.ids
-                        ) if maneuver_tag else rec.supplier_product_ids.browse()
-                        maneuvers_value = ', '.join(maneuver_lines.mapped('product_id.display_name'))
-                        if maneuvers_value:
-                            add_maneuvers_link = ''
-                        else:
-                            truck_has_maneuvers = bool(rec.truck_id.x_maneuvers) if rec.truck_id else False
-                            add_maneuvers_link = f'<span>{_("Yes") if truck_has_maneuvers else _("No")}</span>'
-                        supplier_rows.append(
-                            self._summary_row_html(_('Maneuvers'), maneuvers_value, add_maneuvers_link)
-                        )
 
                 # Invoicing company: derived from the event's account, same as the
                 # purchase order portal (ike_event_purchase/controllers/portal.py).
                 invoice_companies = rec.event_id.account_id.x_invoice_company_id
-                if invoice_companies:
-                    invoice_company_names = ', '.join(invoice_companies.mapped('name'))
-                    invoice_addresses = []
-                    for company in invoice_companies:
-                        address_parts = [
-                            company.street,
-                            company.street2,
-                            company.city,
-                            company.state_id.name if company.state_id else False,
-                            company.zip,
-                            company.country_id.name if company.country_id else False,
-                        ]
-                        address = ', '.join(part for part in address_parts if part)
-                        if address:
-                            invoice_addresses.append(address)
-                    invoice_company_address = ', '.join(invoice_addresses)
-                    invoice_company_vat = ', '.join(filter(None, invoice_companies.mapped('vat')))
-                    invoice_company_phone = ', '.join(filter(None, invoice_companies.mapped('phone')))
-                else:
-                    invoice_company_names = ''
-                    invoice_company_address = ''
-                    invoice_company_vat = ''
-                    invoice_company_phone = ''
-
+                invoice_company_names = ', '.join(invoice_companies.mapped('name'))
                 supplier_rows.append(self._summary_row_html(_('Invoicing Company'), invoice_company_names))
-                supplier_rows.append(self._summary_row_html(_('Invoicing Address'), invoice_company_address))
-                supplier_rows.append(self._summary_row_html(_('RFC'), invoice_company_vat))
-                supplier_rows.append(self._summary_row_html(_('Invoicing Phone'), invoice_company_phone))
 
                 event_summary_supplier_data_portal += (
                     "<h3 class='mt-3'>%s</h3>" % _('Assigned Supplier')
                     + self._summary_two_columns_html(supplier_rows)
                 )
+
+                # Details section: the survey answers shown in the event screen's "Details" block.
+                # Answers are free text typed by the operator, so they are escaped.
+                survey_data = rec.event_id.event_summary_id.survey_data or {}
+                details_rows = [
+                    self._summary_row_html(
+                        escape(field.get('string') or ''),
+                        # Keep numeric 0 answers (e.g. how many people), drop only empty ones.
+                        escape('' if field.get('value') in (None, False) else field['value']),
+                    )
+                    for field in survey_data.get('fields', [])
+                ]
+                if details_rows:
+                    event_summary_supplier_data_portal += (
+                        "<h3 class='mt-3'>%s</h3>" % _('Details')
+                        + self._summary_two_columns_html(details_rows)
+                    )
 
             rec.event_supplier_summary_data_portal = event_summary_supplier_data_portal
 
@@ -645,7 +612,12 @@ class IkeEventSupplier(models.Model):
                 if rec.truck_id.id != vals['truck_id']:
                     vals['confirmed'] = False
                     previous_trucks[rec.id] = rec.truck_id
-
+        previous_persons = {}
+        if 'person_id' in vals:
+            for rec in self:
+                if rec.person_id.id != vals['person_id']:
+                    vals['confirmed'] = False
+                    previous_persons[rec.id] = rec.person_id
         # Evaluated
         if vals.get('evaluation_id'):
             vals['evaluated'] = True
@@ -662,12 +634,21 @@ class IkeEventSupplier(models.Model):
                 old_truck = previous_trucks.get(rec.id)
                 new_truck = rec.truck_id
                 if old_truck and old_truck != new_truck:
-                    # Previous Vehicle State
+                    # Previous State
                     rec._change_previous_vehicle_state(old_truck)
                     rec.assigned = new_truck.driver_id.name
                     rec.name = f"{_('License Plate')}: {new_truck.license_plate}"
                     # Set New Distance
                     rec._set_new_service_vehicle_distance()
+        if 'person_id' in vals:
+            for rec in self:
+                old_person = previous_persons.get(rec.id)
+                new_person = rec.person_id
+                if old_person and old_person != new_person:
+                    # Previous State
+                    rec._change_previous_person_state(old_truck)
+                    rec.assigned = new_person.name
+                    rec.name = f"{_('Reference')}: {new_person.ref}"
 
         return res
 
@@ -993,7 +974,8 @@ class IkeEventSupplierLink(models.Model):
 
     @api.depends(
         'event_id.user_membership_id.membership_plan_id',
-        'base_amount_concept_total'
+        'base_amount_concept_total',
+        'base_amount_limited_total',
     )
     def _compute_exceeds_coverage(self):
         user = self.env.user
@@ -1005,9 +987,11 @@ class IkeEventSupplierLink(models.Model):
             coverage_plan_line = coverage_plan.product_line_ids.filtered(
                 lambda x: rec.event_id.service_id.id == x.service_id.id
                 and rec.event_id.sub_service_id.id in x.sub_service_ids.ids
+                and rec.event_id.incident_type_id.id == x.incident_type_id.id
             )
             limit_amount_per_event = coverage_plan_line.limit_amount_per_event if coverage_plan_line else 0
-            exceeds = rec.base_amount_concept_total > limit_amount_per_event
+            # [UNLIMITED] Only limited concepts can exceed the coverage
+            exceeds = rec.base_amount_limited_total > limit_amount_per_event
 
             rec.exceeds_coverage = exceeds and has_group
 

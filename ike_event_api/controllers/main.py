@@ -430,7 +430,7 @@ class EventsAPIController(http.Controller):
             _logger.warning('No tenant found, ensure you have configured the tenant in ike_event_purchase.tenant parameter.')
             return request.make_json_response({'error': 'No tenant found, ensure you have configured the tenant in ike_event_purchase.tenant parameter.'}, status=400)
 
-        bp_system_app_code = request.env.company.x_default_purchase_project_id.x_ref_app
+        bp_system_app_code = request.env.company.x_default_purchase_project_id.sudo().x_ref_app
         if not bp_system_app_code:
             _logger.warning('No reference app code found for this project.')
             return request.make_json_response({'error': 'No reference app code found for this project.'}, status=400)
@@ -449,7 +449,7 @@ class EventsAPIController(http.Controller):
 
         if not identifier or not petition:
             _logger.warning('Bad request')
-            return request.make_json_response({'error': 'Bad request'}, status=400)
+            return request.make_json_response({'error': 'Bad request (identifier, petition)'}, status=400)
         if identifier.get('tenants', '') != bp_system_tenant:
             _logger.warning('Bad request')
             return request.make_json_response({'error': 'Bad request (tenants)'}, status=400)
@@ -472,7 +472,7 @@ class EventsAPIController(http.Controller):
 
         if not phone or not account or not user_bp:
             _logger.warning('Bad request')
-            return request.make_json_response({'error': 'Bad request'}, status=400)
+            return request.make_json_response({'error': 'Bad request (phone, account, user_bp)'}, status=400)
         # Se forma la clave de la referencia, ejemplo:
         #   PRSE-001 -> PRIMERO SEGUROS
         #   PRSE-002 -> PRIMERO SEGUROS PESADOS
@@ -515,6 +515,7 @@ class EventsAPIController(http.Controller):
         nu_data = False
         affiliation_data = False
         plan_data = False
+        account_data = False
 
         plan_query = """
             SELECT
@@ -548,11 +549,20 @@ class EventsAPIController(http.Controller):
                     'phone', nu.phone,
                     'complete_phone', nu.complete_phone,
                     'vip_user', nu.vip_user
-                ) AS nu
+                ) AS nu,
+                -- ACCOUNT fields (res.partner)
+                jsonb_build_object(
+                    'id', account.id,
+                    'name', account.name
+                ) AS account
             FROM
                 custom_membership_nus affiliation
             INNER JOIN
                 custom_nus nu ON nu.id = affiliation.nus_id
+            INNER JOIN
+                custom_membership_plan plan ON plan.id = affiliation.membership_plan_id
+            INNER JOIN
+                res_partner account ON account.id = plan.account_id
             WHERE
                 affiliation.membership_plan_id = %s
                 AND affiliation.disabled = false
@@ -566,6 +576,7 @@ class EventsAPIController(http.Controller):
             affiliation = record['affiliation']
             plan = plan_data
             nu = record['nu']
+            account_data = record['account']
             phone_dec = decrypt_encrypt_utility_sudo.x_decrypt_aes256(str(nu['phone']) if nu['phone'] else '')
             complete_phone_dec = decrypt_encrypt_utility_sudo.x_decrypt_aes256(str(nu['complete_phone']) if nu['complete_phone'] else '')
             if complete_phone_dec:
@@ -620,16 +631,23 @@ class EventsAPIController(http.Controller):
         # Crear evento
         try:
             nu_name = decrypt_encrypt_utility_sudo.x_decrypt_aes256(nu_data['name'] if nu_data else '')
-            new_event_id = request.env['ike.event'].sudo().create({
+            new_event_data = {
                 'created_from_bp': True,
                 'user_id': nu_data['id'] if nu_data else False,
                 'nu_name': nu_name if nu_name else '',
-                'user_membership_id': affiliation_data['id'] if affiliation_data else False,
-                # ToDo: Se encriptarán estos valores?
                 'temporary_phone': phone if not nu_data else '',
                 'temporary_key_identification': decrypt_encrypt_utility_sudo.x_encrypt_aes256(key) if not affiliation_data and key else '',
                 'temporary_membership_plan_id': plan_data['id'] if not affiliation_data else False,
-            })
+                'creation_source': 'call',
+            }
+            new_event_id = request.env['ike.event'].sudo().create(new_event_data)
+
+            # Actualizar datos de membersía, si existe, guardar, si no, asignar cuenta en caso de existir
+            if affiliation_data:
+                update_event_data = {'user_membership_id': affiliation_data['id']}
+            else:
+                update_event_data = {'account_id': account_data['id'] if account_data else False}
+            new_event_id.write(update_event_data)
 
             # channel = request.env['discuss.channel'].sudo().search([
             #     ('channel_type', '=', 'channel'),

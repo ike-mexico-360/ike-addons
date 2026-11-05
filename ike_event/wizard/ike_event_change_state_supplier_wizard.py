@@ -27,9 +27,9 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     event_id = fields.Many2one(related='event_supplier_id.event_id')
     stage_id = fields.Many2one(related='event_supplier_id.stage_id', string='Current state')
 
-    first_state_date = fields.Datetime(related='event_supplier_id.first_state_date')
-    first_state_user_id = fields.Many2one(related='event_supplier_id.first_state_user_id')
-    first_comment = fields.Text(related='event_supplier_id.first_comment')
+    first_state_date = fields.Datetime(string='First state datetime', readonly=True)
+    first_state_user_id = fields.Many2one('res.users', string='First state user', readonly=True)
+    first_comment = fields.Text(string='First comment', readonly=True)
 
     stage_selected = fields.Selection([
         ('arrived', 'Arrived'),
@@ -38,22 +38,25 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     ], string='Stage')
 
     supplier_assignation_date = fields.Datetime(
-        related='event_supplier_id.assignation_date',
+        readonly=True,
         string='Assigned')
     supplier_on_route_to_user_end_date = fields.Datetime(
-        related='event_supplier_id.on_route_to_user_end_date',
+        readonly=True,
         string='Arrived')
     supplier_contacted_date = fields.Datetime(
-        related='event_supplier_id.contacted_date',
+        readonly=True,
         string='Contacted')
     supplier_finalized_date = fields.Datetime(
-        related='event_supplier_id.finalized_date',
+        readonly=True,
         string='Finalized')
 
     # === ARRIVED ===
-    first_on_route_to_user_end_date = fields.Datetime(related='event_supplier_id.first_on_route_to_user_end_date')
-    first_on_route_to_end_user_id = fields.Many2one(related='event_supplier_id.first_on_route_to_end_user_id')
-    first_on_route_to_end_comment = fields.Text(related='event_supplier_id.first_on_route_to_end_comment')
+    first_on_route_to_user_end_date = fields.Datetime(
+        string='Arrived (first datetime)', readonly=True)
+    first_on_route_to_end_user_id = fields.Many2one(
+        'res.users', string='Arrived (first user)', readonly=True)
+    first_on_route_to_end_comment = fields.Text(
+        string='Arrived (first comment)', readonly=True)
 
     on_route_to_user_end_date = fields.Datetime(string='Arrived (datetime)')
     on_route_to_end_user_id = fields.Many2one(
@@ -63,9 +66,12 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     on_route_to_end_comment = fields.Text(string='Arrived (comment)')
 
     # === CONTACTED ===
-    first_contacted_date = fields.Datetime(related='event_supplier_id.first_contacted_date')
-    first_contacted_user_id = fields.Many2one(related='event_supplier_id.first_contacted_user_id')
-    first_contacted_comment = fields.Text(related='event_supplier_id.first_contacted_comment')
+    first_contacted_date = fields.Datetime(
+        string='Contacted (first datetime)', readonly=True)
+    first_contacted_user_id = fields.Many2one(
+        'res.users', string='Contacted (first user)', readonly=True)
+    first_contacted_comment = fields.Text(
+        string='Contacted (first comment)', readonly=True)
 
     contacted_date = fields.Datetime(string='Contacted (datetime)')
     contacted_user_id = fields.Many2one(
@@ -75,9 +81,12 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     contacted_comment = fields.Text(string='Contacted (comment)')
 
     # === FINALIZED ===
-    first_finalized_date = fields.Datetime(related='event_supplier_id.first_finalized_date')
-    first_finalized_user_id = fields.Many2one(related='event_supplier_id.first_finalized_user_id')
-    first_finalized_comment = fields.Text(related='event_supplier_id.first_finalized_comment')
+    first_finalized_date = fields.Datetime(
+        string='Finalized (first datetime)', readonly=True)
+    first_finalized_user_id = fields.Many2one(
+        'res.users', string='Finalized (first user)', readonly=True)
+    first_finalized_comment = fields.Text(
+        string='Finalized (first comment)', readonly=True)
 
     finalized_date = fields.Datetime(string='Finalized (datetime)')
     finalized_user_id = fields.Many2one(
@@ -90,25 +99,92 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
     is_contacted_editable = fields.Boolean(compute='_compute_editable_fields')
     is_finalized_editable = fields.Boolean(compute='_compute_editable_fields')
 
+    # === [MIGRACIÓN] TIME LOG HELPERS === #
+    def _get_supplier_logs(self, supplier=None):
+        """ time_log_ids del supplier (vacío si no hay supplier). """
+        supplier = supplier if supplier is not None else self.event_supplier_id
+        return supplier._origin.time_log_ids  # en onchange el registro puede venir como NewId
+
+    def _get_stage_log(self, stage_key, is_first=False, supplier=None):
+        """
+        Devuelve el log (ike.event.supplier.time.log) de la etapa, o un recordset vacío.
+        Con recordset vacío, log.date / log.user_id / log.comment devuelven False / vacío,
+        igual que los campos viejos cuando no tenían valor.
+          is_first=False -> equivale a <etapa>_date / _user_id / _comment
+          is_first=True  -> equivale a first_<etapa>_date / _user_id / _comment
+        time_log_ids viene ordenado por 'date desc, id desc', así que [:1] es el más reciente
+        (el mismo resultado que el search(..., limit=1) anterior).
+        """
+        return self._get_supplier_logs(supplier).filtered(
+            lambda log: log.stage_key == stage_key and log.is_first == is_first
+        )[:1]
+
+    def _has_stage_log(self, stage_key, supplier):
+        """ Equivale a: bool(supplier.first_<etapa>_date or supplier.<etapa>_date) """
+        return bool(self._get_supplier_logs(supplier).filtered(
+            lambda log: log.stage_key == stage_key
+        ))
+
+    # [MIGRACIÓN] Campos informativos llenados al abrir el wizard (antes related al supplier)
+    # campo_wizard: (stage_key, is_first, campo_del_log)
+    _TIME_LOG_DEFAULTS = {
+        'first_state_date': ('first_state', True, 'date'),
+        'first_state_user_id': ('first_state', True, 'user_id'),
+        'first_comment': ('first_state', True, 'comment'),
+
+        'supplier_on_route_to_user_end_date': ('arrived', False, 'date'),
+        'supplier_contacted_date': ('contacted', False, 'date'),
+        'supplier_finalized_date': ('finalized', False, 'date'),
+
+        'first_on_route_to_user_end_date': ('arrived', True, 'date'),
+        'first_on_route_to_end_user_id': ('arrived', True, 'user_id'),
+        'first_on_route_to_end_comment': ('arrived', True, 'comment'),
+
+        'first_contacted_date': ('contacted', True, 'date'),
+        'first_contacted_user_id': ('contacted', True, 'user_id'),
+        'first_contacted_comment': ('contacted', True, 'comment'),
+
+        'first_finalized_date': ('finalized', True, 'date'),
+        'first_finalized_user_id': ('finalized', True, 'user_id'),
+        'first_finalized_comment': ('finalized', True, 'comment'),
+    }
+
+    @api.model
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+        supplier = self.env['ike.event.supplier'].browse(res.get('event_supplier_id'))
+        if not supplier:
+            return res
+
+        for fname, (stage_key, is_first, log_field) in self._TIME_LOG_DEFAULTS.items():
+            if fname not in fields_list:
+                continue
+            log = self._get_stage_log(stage_key, is_first=is_first, supplier=supplier)
+            value = log[log_field]
+            res[fname] = value.id if log_field == 'user_id' else value
+
+        if 'supplier_assignation_date' in fields_list:
+            res['supplier_assignation_date'] = supplier._get_assignation_date()
+        return res
+
     # === DEFAULT === #
     @api.depends('contacted_date', 'finalized_date')
     def _compute_editable_fields(self):
         for rec in self:
-            supplier = rec.event_supplier_id
-
-            rec.is_contacted_editable = supplier.on_route_to_user_end_date
-            rec.is_finalized_editable = supplier.contacted_date
+            rec.is_contacted_editable = bool(rec._get_stage_log('arrived').date)
+            rec.is_finalized_editable = bool(rec._get_stage_log('contacted').date)
 
     # === METHODS ONCHANGE === #
     @api.onchange('stage_selected')
     def _onchange_stage(self):
         if self.stage_selected == 'arrived':
-            self.on_route_to_user_end_date = self.event_supplier_id.on_route_to_user_end_date
-            self.on_route_to_end_user_id = self.event_supplier_id.on_route_to_end_user_id
-            self.on_route_to_end_comment = self.event_supplier_id.on_route_to_end_comment
+            log = self._get_stage_log('arrived')
+            self.on_route_to_user_end_date = log.date
+            self.on_route_to_end_user_id = log.user_id
+            self.on_route_to_end_comment = log.comment
 
         elif self.stage_selected == 'contacted':
-            if not self.event_supplier_id.on_route_to_user_end_date:
+            if not self._get_stage_log('arrived').date:
                 return {
                     'warning': {
                         'title': _('Contacted: Invalid datetime'),
@@ -118,12 +194,13 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                     }
                 }
 
-            self.contacted_date = self.event_supplier_id.contacted_date
-            self.contacted_user_id = self.event_supplier_id.contacted_user_id
-            self.contacted_comment = self.event_supplier_id.contacted_comment
+            log = self._get_stage_log('contacted')
+            self.contacted_date = log.date
+            self.contacted_user_id = log.user_id
+            self.contacted_comment = log.comment
 
         elif self.stage_selected == 'finalized':
-            if not self.event_supplier_id.contacted_date:
+            if not self._get_stage_log('contacted').date:
                 return {
                     'warning': {
                         'title': _('Finalized: Invalid datetime'),
@@ -133,9 +210,10 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                     }
                 }
 
-            self.finalized_date = self.event_supplier_id.finalized_date
-            self.finalized_user_id = self.event_supplier_id.finalized_user_id
-            self.finalized_comment = self.event_supplier_id.finalized_comment
+            log = self._get_stage_log('finalized')
+            self.finalized_date = log.date
+            self.finalized_user_id = log.user_id
+            self.finalized_comment = log.comment
 
     # Arrived
     @api.onchange('on_route_to_user_end_date')
@@ -144,7 +222,12 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         if not self.on_route_to_user_end_date:
             return
 
-        if (self.on_route_to_user_end_date != self.event_supplier_id.on_route_to_user_end_date):
+        # [MIGRACIÓN] fechas actuales desde el log
+        assignation_date = self.event_supplier_id._get_assignation_date()
+        arrived_date = self._get_stage_log('arrived').date
+        contacted_date = self._get_stage_log('contacted').date
+
+        if (self.on_route_to_user_end_date != arrived_date):
             self.on_route_to_end_user_id = self.env.user.id
             self.on_route_to_end_comment = False
 
@@ -175,7 +258,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 }
             }
 
-        if (self.event_supplier_id.assignation_date and self.on_route_to_user_end_date <= self.event_supplier_id.assignation_date):
+        if (assignation_date and self.on_route_to_user_end_date <= assignation_date):
             return {
                 'warning': {
                     'title': _('Arrived: Invalid datetime'),
@@ -184,11 +267,11 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                         'the date and time of the Assigned (%s)'
                     ) % (
                         self._format_datetime_tz(self.on_route_to_user_end_date),
-                        self._format_datetime_tz(self.event_supplier_id.assignation_date)
+                        self._format_datetime_tz(assignation_date)
                     )
                 }
             }
-        elif self.event_supplier_id.contacted_date and self.on_route_to_user_end_date >= self.event_supplier_id.contacted_date:
+        elif contacted_date and self.on_route_to_user_end_date >= contacted_date:
             return {
                 'warning': {
                     'title': _('Arrived: Invalid datetime'),
@@ -197,7 +280,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                         'the date and time of the Contacted (%s)',
                     ) % (
                         self._format_datetime_tz(self.on_route_to_user_end_date),
-                        self._format_datetime_tz(self.event_supplier_id.contacted_date)
+                        self._format_datetime_tz(contacted_date)
                     )
                 }
             }
@@ -209,7 +292,12 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         if not self.contacted_date:
             return
 
-        if (self.contacted_date != self.event_supplier_id.contacted_date):
+        # [MIGRACIÓN] fechas actuales desde el log
+        arrived_date = self._get_stage_log('arrived').date
+        contacted_date = self._get_stage_log('contacted').date
+        finalized_date = self._get_stage_log('finalized').date
+
+        if (self.contacted_date != contacted_date):
             self.contacted_user_id = self.env.user.id
             self.contacted_comment = False
 
@@ -241,8 +329,8 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             }
 
         if (
-            self.event_supplier_id.on_route_to_user_end_date
-            and self.contacted_date <= self.event_supplier_id.on_route_to_user_end_date
+            arrived_date
+            and self.contacted_date <= arrived_date
         ):
             return {
                 'warning': {
@@ -254,12 +342,12 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                     % (
                         self._format_datetime_tz(self.contacted_date),
                         self._format_datetime_tz(
-                            self.event_supplier_id.on_route_to_user_end_date
+                            arrived_date
                         ),
                     ),
                 }
             }
-        elif self.event_supplier_id.finalized_date and self.contacted_date >= self.event_supplier_id.finalized_date:
+        elif finalized_date and self.contacted_date >= finalized_date:
             return {
                 'warning': {
                     'title': _('Contacted: Invalid datetime'),
@@ -268,7 +356,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                         'the date and time of the Finalized (%s)',
                     ) % (
                         self._format_datetime_tz(self.contacted_date),
-                        self._format_datetime_tz(self.event_supplier_id.finalized_date)
+                        self._format_datetime_tz(finalized_date)
                     )
                 }
             }
@@ -279,7 +367,11 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         if not self.finalized_date:
             return
 
-        if (self.finalized_date != self.event_supplier_id.finalized_date):
+        # [MIGRACIÓN] fechas actuales desde el log
+        contacted_date = self._get_stage_log('contacted').date
+        finalized_date = self._get_stage_log('finalized').date
+
+        if (self.finalized_date != finalized_date):
             self.finalized_user_id = self.env.user.id
             self.finalized_comment = False
 
@@ -310,7 +402,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 }
             }
 
-        if (self.event_supplier_id.contacted_date and self.finalized_date <= self.event_supplier_id.contacted_date):
+        if (contacted_date and self.finalized_date <= contacted_date):
             return {
                 'warning': {
                     'title': _('Finalized: Invalid datetime'),
@@ -319,7 +411,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                         'the date and time of the Contacted (%s)'
                     ) % (
                         self._format_datetime_tz(self.finalized_date),
-                        self._format_datetime_tz(self.event_supplier_id.contacted_date))
+                        self._format_datetime_tz(contacted_date))
                 }
             }
 
@@ -332,6 +424,12 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         event_supplier = self.event_supplier_id
         vals = {}
 
+        # [MIGRACIÓN] fechas actuales desde el log
+        assignation_date = self.event_supplier_id._get_assignation_date()
+        arrived_date = self._get_stage_log('arrived').date
+        contacted_date = self._get_stage_log('contacted').date
+        finalized_date = self._get_stage_log('finalized').date
+
         if self.stage_selected == 'arrived':
             self._validate_not_future(self.on_route_to_user_end_date, _('Arrived'))
 
@@ -340,9 +438,9 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 raise ValidationError(_('Arrived date cannot be earlier than or equal to event date (%s)', event_date))
             else:
                 if (
-                    self.event_supplier_id.assignation_date
+                    assignation_date
                     and self.on_route_to_user_end_date
-                    <= self.event_supplier_id.assignation_date
+                    <= assignation_date
                 ):
                     raise ValidationError(
                         _(
@@ -350,14 +448,14 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                             'the date and time of the Assigned (%s)',
                             self._format_datetime_tz(self.on_route_to_user_end_date),
                             self._format_datetime_tz(
-                                self.event_supplier_id.assignation_date
+                                assignation_date
                             ),
                         )
                     )
                 elif (
-                    self.event_supplier_id.contacted_date
+                    contacted_date
                     and self.on_route_to_user_end_date
-                    >= self.event_supplier_id.contacted_date
+                    >= contacted_date
                 ):
                     raise ValidationError(
                         _(
@@ -365,7 +463,7 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                             'the date and time of the Contacted (%s)',
                             self._format_datetime_tz(self.on_route_to_user_end_date),
                             self._format_datetime_tz(
-                                self.event_supplier_id.contacted_date
+                                contacted_date
                             ),
                         )
                     )
@@ -405,9 +503,9 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 raise ValidationError(_('Contacted date cannot be earlier than or equal to event date (%s)', event_date))
             else:
                 if (
-                    self.event_supplier_id.on_route_to_user_end_date
+                    arrived_date
                     and self.contacted_date
-                    <= self.event_supplier_id.on_route_to_user_end_date
+                    <= arrived_date
                 ):
                     raise ValidationError(
                         _(
@@ -415,16 +513,16 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                             'the date and time of the Arrived (%s)',
                             self._format_datetime_tz(self.contacted_date),
                             self._format_datetime_tz(
-                                self.event_supplier_id.on_route_to_user_end_date
+                                arrived_date
                             ),
                         )
                     )
-                elif self.event_supplier_id.finalized_date and self.contacted_date >= self.event_supplier_id.finalized_date:
+                elif finalized_date and self.contacted_date >= finalized_date:
                     raise ValidationError(_(
                         'The date and time of Contacted (%s) is greater than or equal to '
                         'the date and time of the Finalized (%s)',
                         self._format_datetime_tz(self.contacted_date),
-                        self._format_datetime_tz(self.event_supplier_id.finalized_date))
+                        self._format_datetime_tz(finalized_date))
                     )
                 else:
                     self._action_contacted(
@@ -442,12 +540,12 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                 event_date = fields.Datetime.context_timestamp(self, self.event_id.event_date).strftime('%d-%m-%Y %H:%M:%S')
                 raise ValidationError(_('Finalized date cannot be earlier than or equal to event date (%s)', event_date))
             else:
-                if self.event_supplier_id.contacted_date and self.finalized_date <= self.event_supplier_id.contacted_date:
+                if contacted_date and self.finalized_date <= contacted_date:
                     raise ValidationError(_(
                         'The date and time of Finalized (%s) is less than or equal to '
                         'the date and time of the Contacted (%s)',
                         self._format_datetime_tz(self.finalized_date),
-                        self._format_datetime_tz(self.event_supplier_id.contacted_date))
+                        self._format_datetime_tz(contacted_date))
                     )
                 else:
                     on_route_2_date = self.finalized_date - timedelta(seconds=2)
@@ -490,17 +588,17 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
                         self.finalized_comment
                     )
 
-        if not event_supplier.first_state_date:
-            first_state_date = fields.Datetime.now()
-            vals.update({
-                'first_state_date': first_state_date,
-                'first_state_user_id': self.env.user.id,
-                'first_comment': _(
-                    'User: %(user)s - Datetime: %(datetime)s',
-                    user=self.env.user.display_name,
-                    datetime=self._format_datetime_tz(first_state_date),
+        # [MIGRACIÓN] Antes: first_state_date / first_state_user_id / first_comment en vals
+        if not self._get_stage_log('first_state', is_first=True, supplier=event_supplier):
+            event_supplier._register_stage_time(
+                stage_key='first_state',
+                date_val=fields.Datetime.now(),
+                user_id=self.env.user.id,
+                comment=_(
+                    f'User: {self.env.user.display_name}'
+                    f' - Datetime: {self._format_datetime_tz(fields.Datetime.now())}'
                 ),
-            })
+            )
 
         event_supplier.write(vals)
 
@@ -512,63 +610,21 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
         local_dt = fields.Datetime.context_timestamp(self, dt)
         return local_dt.strftime('%d/%m/%Y %H:%M:%S')
 
-    def _action_assign(self, supplier, vals, datetime, user, comment):
-        already_assigned = bool(supplier.first_assignation_date or supplier.assignation_date)
-
-        if already_assigned:
-            supplier.write({
-                'assignation_date': datetime,
-                'assignation_user_id': user,
-                'assignation_comment': comment,
-            })
-            return
-
-        vals.update({
-            'assignation_date': datetime,
-            'assignation_user_id': user,
-            'assignation_comment': comment,
-        })
-
-        first_date = supplier.first_assignation_date or datetime
-        if not supplier.first_assignation_date:
-            vals.update({
-                'first_assignation_date': datetime or fields.Datetime.now(),
-                'first_assignation_user_id': user,
-                'first_assignation_comment': comment,
-            })
-            first_date = datetime
-
-        supplier.with_context(
-            binnacle_first_date=first_date,
-            binnacle_current_date=datetime,
-            binnacle_comment=comment,
-        ).action_assign()
-
+    # [MIGRACIÓN] En todos los _action_*:
+    #   - already_X: antes bool(first_X_date or X_date) -> existe log de la etapa
+    #   - rama "ya existía": antes supplier.write({...}) -> _register_stage_time (actualiza el log actual)
+    #   - rama "primera vez": antes vals.update({...}) -> _register_stage_time después de la acción
+    #     (antes esos vals se escribían al final de action_confirm, también después de la acción)
+    #   - Asignado no se registra desde este wizard (solo es informativo):
+    #     la fecha la registra action_assign de ike.event.supplier.
     def _action_on_route(self, supplier, vals, datetime, user, comment):
-        already_on_route = bool(supplier.first_on_route_to_user_start_date or supplier.on_route_to_user_start_date)
+        already_on_route = self._has_stage_log('on_route', supplier)
 
         if already_on_route:
-            supplier.write({
-                'on_route_to_user_start_date': datetime,
-                'on_route_to_start_user_id': user,
-                'on_route_to_start_comment': comment,
-            })
+            supplier._register_stage_time('on_route', datetime, user, comment)
             return
 
-        vals.update({
-            'on_route_to_user_start_date': datetime,
-            'on_route_to_start_user_id': user,
-            'on_route_to_start_comment': comment,
-        })
-
-        first_date = supplier.first_on_route_to_user_start_date or datetime
-        if not supplier.first_on_route_to_user_start_date:
-            vals.update({
-                'first_on_route_to_user_start_date': datetime or fields.Datetime.now(),
-                'first_on_route_to_start_user_id': user,
-                'first_on_route_to_start_comment': comment,
-            })
-            first_date = datetime
+        first_date = self._get_stage_log('on_route', is_first=True, supplier=supplier).date or datetime
 
         supplier.with_context(
             binnacle_first_date=first_date,
@@ -576,31 +632,16 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             binnacle_comment=comment,
         ).action_on_route()
 
+        supplier._register_stage_time('on_route', datetime, user, comment)
+
     def _action_arrived(self, supplier, vals, datetime, user, comment):
-        already_arrived = bool(supplier.first_on_route_to_user_end_date or supplier.on_route_to_user_end_date)
+        already_arrived = self._has_stage_log('arrived', supplier)
 
         if already_arrived:
-            supplier.write({
-                'on_route_to_user_end_date': datetime,
-                'on_route_to_end_user_id': user,
-                'on_route_to_end_comment': comment,
-            })
+            supplier._register_stage_time('arrived', datetime, user, comment)
             return
 
-        vals.update({
-            'on_route_to_user_end_date': datetime,
-            'on_route_to_end_user_id': user,
-            'on_route_to_end_comment': comment,
-        })
-
-        first_date = supplier.first_on_route_to_user_end_date or datetime
-        if not supplier.first_on_route_to_user_end_date:
-            vals.update({
-                'first_on_route_to_user_end_date': datetime or fields.Datetime.now(),
-                'first_on_route_to_end_user_id': user,
-                'first_on_route_to_end_comment': comment,
-            })
-            first_date = datetime
+        first_date = self._get_stage_log('arrived', is_first=True, supplier=supplier).date or datetime
 
         supplier.with_context(
             binnacle_first_date=first_date,
@@ -608,34 +649,19 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             binnacle_comment=comment,
         ).action_arrive()
 
+        supplier._register_stage_time('arrived', datetime, user, comment)
+
         # Use here to ensure execute only on 'arrived' stage at first time
         self._notify_stage_change_to_external_supplier(supplier, datetime, 'llego', user, comment)
 
     def _action_contacted(self, supplier, vals, datetime, user, comment):
-        already_contacted = bool(supplier.first_contacted_date or supplier.contacted_date)
+        already_contacted = self._has_stage_log('contacted', supplier)
 
         if already_contacted:
-            supplier.write({
-                'contacted_date': datetime,
-                'contacted_user_id': user,
-                'contacted_comment': comment,
-            })
+            supplier._register_stage_time('contacted', datetime, user, comment)
             return
 
-        vals.update({
-            'contacted_date': datetime,
-            'contacted_user_id': user,
-            'contacted_comment': comment,
-        })
-
-        first_date = supplier.first_contacted_date or datetime
-        if not supplier.first_contacted_date:
-            vals.update({
-                'first_contacted_date': datetime or fields.Datetime.now(),
-                'first_contacted_user_id': user,
-                'first_contacted_comment': comment,
-            })
-            first_date = datetime
+        first_date = self._get_stage_log('contacted', is_first=True, supplier=supplier).date or datetime
 
         supplier.with_context(
             binnacle_first_date=first_date,
@@ -643,34 +669,19 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             binnacle_comment=comment,
         ).action_contact()
 
+        supplier._register_stage_time('contacted', datetime, user, comment)
+
         # Use here to ensure execute only on 'contacted' stage at first time
         self._notify_stage_change_to_external_supplier(supplier, datetime, 'contactado', user, comment)
 
     def _action_on_route_2(self, supplier, vals, datetime, user, comment):
-        already_on_route = bool(supplier.first_on_route_to_destination_start_date or supplier.on_route_to_destination_start_date)
+        already_on_route = self._has_stage_log('on_route_destination', supplier)
 
         if already_on_route:
-            supplier.write({
-                'on_route_to_destination_start_date': datetime,
-                'on_route_to_destination_start_user_id': user,
-                'on_route_to_destination_start_comment': comment,
-            })
+            supplier._register_stage_time('on_route_destination', datetime, user, comment)
             return
 
-        vals.update({
-            'on_route_to_destination_start_date': datetime,
-            'on_route_to_destination_start_user_id': user,
-            'on_route_to_destination_start_comment': comment,
-        })
-
-        first_date = supplier.first_on_route_to_destination_start_date or datetime
-        if not supplier.first_on_route_to_destination_start_date:
-            vals.update({
-                'first_on_route_to_destination_start_date': datetime or fields.Datetime.now(),
-                'first_on_route_to_destination_start_user_id': user,
-                'first_on_route_to_destination_start_comment': comment,
-            })
-            first_date = datetime
+        first_date = self._get_stage_log('on_route_destination', is_first=True, supplier=supplier).date or datetime
 
         supplier.with_context(
             binnacle_first_date=first_date,
@@ -678,31 +689,16 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             binnacle_comment=comment,
         ).action_on_route_to_the_destination()
 
+        supplier._register_stage_time('on_route_destination', datetime, user, comment)
+
     def _action_arrived_2(self, supplier, vals, datetime, user, comment):
-        already_arrived = bool(supplier.first_on_route_to_destination_end_date or supplier.on_route_to_destination_end_date)
+        already_arrived = self._has_stage_log('arrived_destination', supplier)
 
         if already_arrived:
-            supplier.write({
-                'on_route_to_destination_end_date': datetime,
-                'on_route_to_destination_end_user_id': user,
-                'on_route_to_destination_end_comment': comment,
-            })
+            supplier._register_stage_time('arrived_destination', datetime, user, comment)
             return
 
-        vals.update({
-            'on_route_to_destination_end_date': datetime,
-            'on_route_to_destination_end_user_id': user,
-            'on_route_to_destination_end_comment': comment,
-        })
-
-        first_date = supplier.first_on_route_to_destination_end_date or datetime
-        if not supplier.first_on_route_to_destination_end_date:
-            vals.update({
-                'first_on_route_to_destination_end_date': datetime or fields.Datetime.now(),
-                'first_on_route_to_destination_end_user_id': user,
-                'first_on_route_to_destination_end_comment': comment,
-            })
-            first_date = datetime
+        first_date = self._get_stage_log('arrived_destination', is_first=True, supplier=supplier).date or datetime
 
         supplier.with_context(
             binnacle_first_date=first_date,
@@ -710,37 +706,24 @@ class IkeEventChangeStateSupplierWizard(models.TransientModel):
             binnacle_comment=comment,
         ).action_arrive_to_the_destination()
 
+        supplier._register_stage_time('arrived_destination', datetime, user, comment)
+
     def _action_finalized(self, supplier, vals, datetime, user, comment):
-        already_finalized = bool(supplier.first_finalized_date or supplier.finalized_date)
+        already_finalized = self._has_stage_log('finalized', supplier)
 
         if already_finalized:
-            supplier.write({
-                'finalized_date': datetime,
-                'finalized_user_id': user,
-                'finalized_comment': comment,
-            })
+            supplier._register_stage_time('finalized', datetime, user, comment)
             return
 
-        vals.update({
-            'finalized_date': datetime,
-            'finalized_user_id': user,
-            'finalized_comment': comment,
-        })
-
-        first_date = supplier.first_finalized_date or datetime
-        if not supplier.first_finalized_date:
-            vals.update({
-                'first_finalized_date': datetime or fields.Datetime.now(),
-                'first_finalized_user_id': user,
-                'first_finalized_comment': comment,
-            })
-            first_date = datetime
+        first_date = self._get_stage_log('finalized', is_first=True, supplier=supplier).date or datetime
 
         supplier.with_context(
             binnacle_first_date=first_date,
             binnacle_current_date=datetime,
             binnacle_comment=comment,
         ).action_finalize()
+
+        supplier._register_stage_time('finalized', datetime, user, comment)
 
         # Use here to ensure execute only on 'finalized' stage at first time
         self._notify_stage_change_to_external_supplier(supplier, datetime, 'finalizado', user, comment)

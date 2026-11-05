@@ -12,7 +12,7 @@ class ResPartner(models.Model):
 
     def _compute_cost_matrix_supplier_count(self):
         for rec in self:
-            count = self.x_supplier_center_ids.x_cost_matrix_line_ids
+            count = rec.x_supplier_center_ids.x_cost_matrix_line_ids
             rec.x_cost_matrix_supplier_count = count and len(count) or 0
 
     def action_cost_matrix_supplier_from_supplier_center_view(self):

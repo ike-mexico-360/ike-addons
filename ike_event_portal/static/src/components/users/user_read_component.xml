@@ -5,7 +5,7 @@
                 <!-- Loading State -->
                 <div t-if="state.isLoading" class="text-center py-5">
                     <i class="fa fa-spinner fa-spin fa-2x text-primary"/>
-                    <p class="mt-2 text-muted">Cargando detalles del usuario...</p>
+                    <p class="mt-2 text-muted">Loading user details...</p>
                 </div>
 
                 <!-- Error State -->
@@ -14,126 +14,231 @@
                     <t t-esc="state.error"/>
                 </div>
 
-                <!-- Data Display -->
+                <!-- Data Display / Edit -->
                 <div t-elif="state.user">
-                    <!-- Header with Close Button -->
+                    <!-- Header: Edit / Close (read mode) or Save / Cancel (edit mode) -->
                     <div class="d-flex justify-content-between align-items-center mb-4 border-bottom pb-2">
                         <h3 class="card-title m-0 text-primary">
                             <i class="fa fa-user-circle me-2"/>
                             <t t-esc="state.user.name"/>
+                            <span t-if="state.user.active" class="badge bg-success ms-2 fs-6">Active</span>
+                            <span t-else="" class="badge bg-secondary ms-2 fs-6">Inactive</span>
                         </h3>
-                        <button t-if="props.onClose"
-                                class="btn btn-outline-secondary btn-sm"
-                                t-on-click="props.onClose">
-                            <i class="fa fa-times"/> Cerrar
-                        </button>
+                        <div class="d-flex gap-2">
+                            <t t-if="!state.isEditing">
+                                <button class="btn btn-primary btn-sm" t-on-click="startEdit">
+                                    <i class="fa fa-pencil"/> Edit
+                                </button>
+                                <button class="btn btn-outline-primary btn-sm" t-on-click="openPasswordDialog">
+                                    <i class="fa fa-key"/> Change Password
+                                </button>
+                                <button t-if="props.onClose" class="btn btn-outline-secondary btn-sm" t-on-click="props.onClose">
+                                    <i class="fa fa-times"/> Close
+                                </button>
+                            </t>
+                            <t t-else="">
+                                <button class="btn btn-primary btn-sm" t-on-click="saveEdit" t-att-disabled="state.isSaving">
+                                    <i class="fa fa-check"/>
+                                    <t t-if="state.isSaving"> Saving...</t>
+                                    <t t-else=""> Save</t>
+                                </button>
+                                <button class="btn btn-outline-secondary btn-sm" t-on-click="cancelEdit" t-att-disabled="state.isSaving">
+                                    Cancel
+                                </button>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Server error on save -->
+                    <div class="alert alert-danger" role="alert" t-if="state.saveError">
+                        <t t-esc="state.saveError"/>
                     </div>
 
                     <div class="row g-5">
-                        <!-- Left: Datos del Usuario (Partner fields usually on user) -->
+                        <!-- Left: Contact information -->
                         <div class="col-md-6">
-                            <h5 class="text-primary border-bottom pb-2 mb-4">Información del Contacto</h5>
+                            <h5 class="text-primary border-bottom pb-2 mb-4">Contact Information</h5>
+
+                            <!-- Name -->
                             <div class="mb-3">
-                                <label class="fw-bold text-muted small text-uppercase">Nombre</label>
-                                <div class="fs-5"><t t-esc="state.user.name"/></div>
+                                <label class="fw-bold text-muted small text-uppercase">Name</label>
+                                <t t-if="state.isEditing">
+                                    <input type="text" class="form-control" t-att-class="{'is-invalid': state.formErrors.name}" t-model="state.form.name"/>
+                                    <div class="invalid-feedback" t-if="state.formErrors.name"><t t-esc="state.formErrors.name"/></div>
+                                </t>
+                                <div t-else="" class="fs-5"><t t-esc="state.user.name"/></div>
                             </div>
+
+                            <!-- Birthdate -->
+                            <div class="mb-3">
+                                <label class="fw-bold text-muted small text-uppercase">Birthdate</label>
+                                <input t-if="state.isEditing" type="date" class="form-control" t-model="state.form.birthdate"/>
+                                <div t-else="" class="fs-5">
+                                    <t t-if="state.partner_birthdate" t-esc="state.partner_birthdate"/>
+                                    <span t-else="" class="text-muted fst-italic">Not registered</span>
+                                </div>
+                            </div>
+
+                            <!-- Email: always read-only -->
                             <div class="mb-3">
                                 <label class="fw-bold text-muted small text-uppercase">Email</label>
-                                <div class="fs-5"><t t-esc="state.user.email"/></div>
+                                <div class="fs-5"><t t-esc="state.user.email || '-'"/></div>
                             </div>
+
+                            <!-- Phone -->
                             <div class="mb-3">
-                                <label class="fw-bold text-muted small text-uppercase">Teléfono</label>
-                                <div class="fs-5">
+                                <label class="fw-bold text-muted small text-uppercase">
+                                    Phone <span t-if="state.isEditing and isOperator" class="text-danger">*</span>
+                                </label>
+                                <t t-if="state.isEditing">
+                                    <input type="tel" class="form-control" t-att-class="{'is-invalid': state.formErrors.phone}" t-model="state.form.phone"/>
+                                    <div class="invalid-feedback" t-if="state.formErrors.phone"><t t-esc="state.formErrors.phone"/></div>
+                                </t>
+                                <div t-else="" class="fs-5">
                                     <t t-if="state.user.phone" t-esc="state.user.phone"/>
-                                    <span t-else="" class="text-muted fst-italic">No registrado</span>
+                                    <span t-else="" class="text-muted fst-italic">Not registered</span>
                                 </div>
                             </div>
+
+                            <!-- Attention center -->
                             <div class="mb-3">
-                                <label class="fw-bold text-muted small text-uppercase">Centro de Atención</label>
-                                <div class="fs-5">
+                                <label class="fw-bold text-muted small text-uppercase">
+                                    Attention Center <span t-if="state.isEditing" class="text-danger">*</span>
+                                </label>
+                                <t t-if="state.isEditing">
+                                    <select class="form-select" t-att-class="{'is-invalid': state.formErrors.center_of_attention_id}" t-model="state.form.center_of_attention_id">
+                                        <option value="">Select...</option>
+                                        <t t-foreach="state.supplierCenters" t-as="center" t-key="center.id">
+                                            <option t-att-value="center.id" t-att-selected="state.form.center_of_attention_id == center.id">
+                                                <t t-esc="center.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                    <div class="invalid-feedback" t-if="state.formErrors.center_of_attention_id"><t t-esc="state.formErrors.center_of_attention_id"/></div>
+                                </t>
+                                <div t-else="" class="fs-5">
                                     <t t-if="state.user.center_of_attention_name" t-esc="state.user.center_of_attention_name"/>
-                                    <span t-else="" class="text-muted fst-italic">No registrado</span>
+                                    <span t-else="" class="text-muted fst-italic">Not registered</span>
                                 </div>
                             </div>
-                            <!-- Assuming 'vat' is fetched or mapped. If it's on partner, we might need to fetch partner data separately or rely on related fields if available on user -->
+
+                            <!-- License number (stored on vat) -->
                             <div class="mb-3">
-                                <label class="fw-bold text-muted small text-uppercase">Número de Licencia</label>
-                                <div class="fs-5">
-                                    <!-- Note: 'vat' is not on res.users by default, check your read() call -->
-                                    <t t-if="state.user.partner_id" t-esc="state.partner_vat || 'No disponible'"/>
-                                    <span t-else="" class="text-muted">No disponible</span>
+                                <label class="fw-bold text-muted small text-uppercase">
+                                    License Number <span t-if="state.isEditing and isOperator" class="text-danger">*</span>
+                                </label>
+                                <t t-if="state.isEditing">
+                                    <input type="text" class="form-control" t-att-class="{'is-invalid': state.formErrors.vat}" t-model="state.form.vat"/>
+                                    <div class="invalid-feedback" t-if="state.formErrors.vat"><t t-esc="state.formErrors.vat"/></div>
+                                </t>
+                                <div t-else="" class="fs-5">
+                                    <t t-if="state.partner_vat" t-esc="state.partner_vat"/>
+                                    <span t-else="" class="text-muted fst-italic">Not registered</span>
+                                </div>
+                            </div>
+
+                            <!-- License expiration date -->
+                            <div class="mb-3">
+                                <label class="fw-bold text-muted small text-uppercase">
+                                    License Expiration Date <span t-if="state.isEditing and isOperator" class="text-danger">*</span>
+                                </label>
+                                <t t-if="state.isEditing">
+                                    <input type="date" class="form-control" t-att-class="{'is-invalid': state.formErrors.license_validity}" t-model="state.form.license_validity"/>
+                                    <div class="invalid-feedback" t-if="state.formErrors.license_validity"><t t-esc="state.formErrors.license_validity"/></div>
+                                </t>
+                                <div t-else="" class="fs-5">
+                                    <t t-if="state.partner_license_expiration" t-esc="state.partner_license_expiration"/>
+                                    <span t-else="" class="text-muted fst-italic">Not registered</span>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Right: Dirección -->
+                        <!-- Right: Address -->
                         <div class="col-md-6">
-                            <h5 class="text-primary border-bottom pb-2 mb-4">Dirección</h5>
+                            <h5 class="text-primary border-bottom pb-2 mb-4">Address</h5>
                             <div class="mb-2">
-                                <label class="fw-bold text-muted small text-uppercase">Calle</label>
-                                <div><t t-esc="state.user.street || '-'"/></div>
+                                <label class="fw-bold text-muted small text-uppercase">Street</label>
+                                <input t-if="state.isEditing" type="text" class="form-control" t-model="state.form.street"/>
+                                <div t-else=""><t t-esc="state.user.street || '-'"/></div>
                             </div>
                             <div class="mb-2">
-                                <label class="fw-bold text-muted small text-uppercase">Calle 2</label>
-                                <div><t t-esc="state.user.street2 || '-'"/></div>
+                                <label class="fw-bold text-muted small text-uppercase">Street 2</label>
+                                <input t-if="state.isEditing" type="text" class="form-control" t-model="state.form.street2"/>
+                                <div t-else=""><t t-esc="state.user.street2 || '-'"/></div>
+                            </div>
+                            <div class="mb-2">
+                                <label class="fw-bold text-muted small text-uppercase">Colony</label>
+                                <input t-if="state.isEditing" type="text" class="form-control" t-model="state.form.colony"/>
+                                <div t-else=""><t t-esc="state.partner_colony || '-'"/></div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4 mb-2">
-                                    <label class="fw-bold text-muted small text-uppercase">CP</label>
-                                    <div><t t-esc="state.user.zip || '-'"/></div>
+                                    <label class="fw-bold text-muted small text-uppercase">ZIP</label>
+                                    <input t-if="state.isEditing" type="text" class="form-control" t-model="state.form.zip"/>
+                                    <div t-else=""><t t-esc="state.user.zip || '-'"/></div>
                                 </div>
                                 <div class="col-md-4 mb-2">
-                                    <label class="fw-bold text-muted small text-uppercase">Ciudad</label>
-                                    <div><t t-esc="state.user.city || '-'"/></div>
+                                    <label class="fw-bold text-muted small text-uppercase">City</label>
+                                    <input t-if="state.isEditing" type="text" class="form-control" t-model="state.form.city"/>
+                                    <div t-else=""><t t-esc="state.user.city || '-'"/></div>
                                 </div>
                                 <div class="col-md-4 mb-2">
-                                    <label class="fw-bold text-muted small text-uppercase">País</label>
-                                    <div>
-                                        <!-- Relational field: [id, name] -->
-                                        <t t-esc="state.user.country_id ? state.user.country_id[1] : '-'"/>
-                                    </div>
+                                    <label class="fw-bold text-muted small text-uppercase">Country</label>
+                                    <select t-if="state.isEditing" class="form-select" t-on-change="onCountryChange">
+                                        <option value="">Select...</option>
+                                        <t t-foreach="state.countries" t-as="country" t-key="country.id">
+                                            <option t-att-value="country.id" t-att-selected="state.form.country_id == country.id">
+                                                <t t-esc="country.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                    <div t-else=""><t t-esc="state.user.country_id ? state.user.country_id[1] : '-'"/></div>
                                 </div>
                                 <div class="col-md-4 mb-2">
-                                    <label class="fw-bold text-muted small text-uppercase">Estado</label>
-                                    <div>
-                                        <!-- Relational field: [id, name] -->
-                                        <t t-esc="state.user.state_id ? state.user.state_id[1] : '-'"/>
-                                    </div>
+                                    <label class="fw-bold text-muted small text-uppercase">State</label>
+                                    <select t-if="state.isEditing" class="form-select" t-model="state.form.state_id">
+                                        <option value="">Select...</option>
+                                        <t t-foreach="state.states" t-as="st" t-key="st.id">
+                                            <option t-att-value="st.id" t-att-selected="state.form.state_id == st.id">
+                                                <t t-esc="st.name"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                    <div t-else=""><t t-esc="state.user.state_id ? state.user.state_id[1] : '-'"/></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- System Access Info -->
+                    <!-- System access: login is always read-only -->
                     <div class="row mt-4">
                         <div class="col-12">
-                            <h5 class="text-primary border-bottom pb-2 mb-3">Acceso al Sistema</h5>
+                            <h5 class="text-primary border-bottom pb-2 mb-3">System Access</h5>
                             <div class="mb-2">
                                 <label class="fw-bold text-muted small text-uppercase">Login</label>
-                                <div>
-                                    <t t-esc="state.user.login"/>
-                                </div>
+                                <div><t t-esc="state.user.login"/></div>
                             </div>
-                            <div class="mb-2">
-                                <label class="fw-bold text-muted small text-uppercase">Grupos</label>
-                                <div>
-                                    <t t-if="state.user.groups_id and state.user.groups_id.length">
-                                        <span class="badge bg-secondary">
-                                            <t t-esc="state.user.groups_id.length"/> Grupos Asignados
-                                        </span>
-                                        <!-- Note: To show names, you'd need to fetch them separately like in the main component -->
-                                    </t>
-                                    <span t-else="" class="text-muted">Sin grupos</span>
+                           <!-- User status: inactive users cannot log in -->
+                            <div class="mb-2" t-if="state.isEditing">
+                                <label class="fw-bold text-muted small text-uppercase d-block">Status</label>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="userActiveSwitch"
+                                        t-model="state.form.active" t-att-disabled="isCurrentUser"/>
+                                    <label class="form-check-label" for="userActiveSwitch">
+                                        <t t-if="state.form.active">Active: can log in to the portal</t>
+                                        <t t-else="">Inactive: cannot log in to the portal</t>
+                                    </label>
                                 </div>
+                                <div class="form-text" t-if="isCurrentUser">You cannot deactivate your own user.</div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Empty State -->
                 <div t-else="" class="text-center py-5 text-muted">
-                    <p>Seleccione un usuario para ver los detalles.</p>
+                    <p>Select a user to see the details.</p>
                 </div>
-
             </div>
         </div>
     </t>

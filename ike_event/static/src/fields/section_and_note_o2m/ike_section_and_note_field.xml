@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates xml:space="preserve">
-
     <t t-name="ike_event.IkeSectionAndNoteListRenderer" t-inherit="account.sectionAndNoteListRenderer" t-inherit-mode="primary">
         <xpath expr="//table" position="attributes">
             <attribute name="class" add="ike_section_and_note_list_view" separator=" "/>
@@ -17,9 +16,9 @@
             <attribute name="class" add="d-none" separator=" "/>
         </xpath>
     </t>
-    <t t-name="ike_event.IkeSectionListRenderer.RecordRow" t-inherit="web.ListRenderer.RecordRow">>
-        <xpath expr="//tr[contains(@class, 'o_data_row')]" position="attributes">
-            <attribute name="t-if">!isHiddenRecord(record)</attribute>
+    <t t-name="ike_event.IkeSectionListRenderer.Rows" t-inherit="web.ListRenderer.Rows" t-inherit-mode="primary">
+        <xpath expr="//t[@t-foreach='list.records']" position="attributes">
+            <attribute name="t-foreach">getFilteredRecords(list)</attribute>
         </xpath>
     </t>
 </templates>

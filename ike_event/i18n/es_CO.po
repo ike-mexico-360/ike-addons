@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 20:40+0000\n"
-"PO-Revision-Date: 2026-10-09 20:40+0000\n"
+"POT-Creation-Date: 2026-11-03 17:55+0000\n"
+"PO-Revision-Date: 2026-11-03 17:55+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -47,6 +47,24 @@ msgstr ""
 "                                            <span>No tienes disponibles servicios</span>"
 
 #. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_form
+msgid ""
+"<i title=\"Event with an unlimited amount\"/>\n"
+"                                        <span>Event with an unlimited amount</span>"
+msgstr ""
+"<i title=\"Evento con monto ilimitado\"/>\n"
+"                                        <span>Evento con monto ilimitado</span>"
+
+#. module: ike_event
+#: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_screen_form
+msgid ""
+"<i title=\"Event with an unlimited amount\"/>\n"
+"                                <span>Event with an unlimited amount</span>"
+msgstr ""
+"<i title=\"Evento con monto ilimitado\"/>\n"
+"                                <span>Evento con monto ilimitado</span>"
+
+#. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_event_service_count_detail_form
 msgid "<span class=\"text-muted\"> events</span>"
 msgstr "<span class=\"text-muted\"> eventos</span>"
@@ -74,6 +92,13 @@ msgstr ""
 #: model:ir.model.fields,field_description:ike_event.field_ike_event__ia_suggestion_product_ids
 msgid "AI Suggested Concepts"
 msgstr "Conceptos sugeridos por IA"
+
+#. module: ike_event
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event__creation_source__api
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_base__creation_source__api
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_public__creation_source__api
+msgid "API"
+msgstr ""
 
 #. module: ike_event
 #. odoo-python
@@ -902,6 +927,13 @@ msgstr "Eventos asignación CDS"
 #: model:ir.model,name:ike_event.model_custom_event_assignment_cds_wizard
 msgid "CDS Event Assignment Wizard"
 msgstr "Asistente de asignación de eventos CDS"
+
+#. module: ike_event
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event__creation_source__call
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_base__creation_source__call
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_public__creation_source__call
+msgid "Call"
+msgstr "Llamada"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_service_input_vial__can_continue
@@ -3542,7 +3574,10 @@ msgstr "Maniobras"
 
 #. module: ike_event
 #: model:ike.event.supplier.assignment.type,name:ike_event.ike_supplier_assignment_manual
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event__creation_source__manual
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event__supplier_search_type__manual
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_base__creation_source__manual
+#: model:ir.model.fields.selection,name:ike_event.selection__ike_event_public__creation_source__manual
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier__assignation_type__manual
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_supplier_base__assignation_type__manual
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_service_input_vial__identification_type__manual
@@ -3839,6 +3874,12 @@ msgid "Name..."
 msgstr "Nombre..."
 
 #. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier.py:0
+msgid "Need event maneuvers"
+msgstr "Evento necesita maniobras"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier__negotiation_type
 msgid "Negotiation Type"
 msgstr "Tipo de negociación"
@@ -3948,8 +3989,10 @@ msgstr "No se le ha asignado latitud/longitud a la ubicación."
 #. module: ike_event
 #. odoo-python
 #: code:addons/ike_event/models/ike_event.py:0
+#: code:addons/ike_event/models/service_models/ike_service_input.py:0
+#: code:addons/ike_event/models/service_models/ike_service_input_vial_truck.py:0
 msgid "No municipality was found for ZIP code %s."
-msgstr "No se encontró ningún municipio para el código postal %s."
+msgstr "No se encontró ningúna zona geografica para el código postal %s"
 
 #. module: ike_event
 #: model:ike.event.supplier.evaluation,name:ike_event.ike_event_supplier_evaluation_3
@@ -4357,6 +4400,30 @@ msgstr "Tipo de pago"
 #: model:ir.model.fields.selection,name:ike_event.selection__ike_event_membership_authorization__state__pending
 msgid "Pending"
 msgstr "Pendiente"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/fields/section_and_note_o2m/ike_supplier_section_and_note_field.js:0
+msgid "Pending services · Electronic"
+msgstr "Servicios pendientes · Electrónica"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/fields/section_and_note_o2m/ike_supplier_section_and_note_field.js:0
+msgid "Pending services · Publication – High priority"
+msgstr "Servicios pendientes · Publicación – Alta prioridad"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/fields/section_and_note_o2m/ike_supplier_section_and_note_field.js:0
+msgid "Pending services · Publication – Low priority"
+msgstr "Servicios pendientes · Publicación – Baja prioridad"
+
+#. module: ike_event
+#. odoo-javascript
+#: code:addons/ike_event/static/src/fields/section_and_note_o2m/ike_supplier_section_and_note_field.js:0
+msgid "Pending services · Publication – Medium priority"
+msgstr "Servicios pendientes · Publicación – Media prioridad"
 
 #. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_service_count_detail__period
@@ -5336,6 +5403,12 @@ msgstr "Dominio del servicio"
 #: code:addons/ike_event/models/ike_event.py:0
 msgid "Service history"
 msgstr "Historial de servicios"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event__creation_source
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_base__creation_source
+msgid "Service receipt type"
+msgstr "Tipo de recepción de servicio"
 
 #. module: ike_event
 #. odoo-javascript
@@ -6335,6 +6408,17 @@ msgid "Unit Cost"
 msgstr "Costo unitario"
 
 #. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_product__is_unlimit
+#: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__is_unlimit
+msgid "Unlimited"
+msgstr "Sin limite"
+
+#. module: ike_event
+#: model:ir.model.fields,field_description:ike_event.field_ike_event__membership_unlimited_amount
+msgid "Unlimited Amount Event"
+msgstr "Evento con monto ilimitado"
+
+#. module: ike_event
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_product__uom_id
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_supplier_product__uom_id
 msgid "UoM"
@@ -6560,6 +6644,12 @@ msgstr "Referencia del vehículo"
 #: model:ir.model.fields,field_description:ike_event.field_ike_event_vehicle_detail_wizard__vehicle_type_id
 msgid "Vehicle Type"
 msgstr "Tipo de vehículo"
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier.py:0
+msgid "Vehicle performs maneuvers"
+msgstr "El vehículo realiza maniobras."
 
 #. module: ike_event
 #. odoo-javascript
@@ -6796,6 +6886,12 @@ msgstr ""
 #: code:addons/ike_event/models/ike_event_supplier_search.py:0
 msgid "You must have a supplier selected."
 msgstr "Debes tener un proveedor elegido."
+
+#. module: ike_event
+#. odoo-python
+#: code:addons/ike_event/models/ike_event_supplier_authorization.py:0
+msgid "Your authorization is requested for event"
+msgstr "Su autorización es requerida para el evento"
 
 #. module: ike_event
 #: model_terms:ir.ui.view,arch_db:ike_event.view_ike_service_input_vial_truck_form

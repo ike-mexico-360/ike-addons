@@ -181,6 +181,12 @@ class IkeEventSupplierSelection(models.Model):
     cancelled = fields.Boolean(default=False, copy=False)
     cause_rate = fields.Boolean(default=True, index=True, readonly=True, copy=False)
 
+    time_log_ids = fields.One2many(
+        'ike.event.supplier.time.log',
+        'event_supplier_id',
+        string='Time Logs'
+    )
+
     # == STAGE ACTIONS == #
     def action_on_route(self):
         supplier_on_route_stage = self.env.ref('ike_event.ike_service_stage_on_route')
@@ -248,119 +254,23 @@ class IkeEventSupplierSelection(models.Model):
             '6': self.action_finalize,
         }
 
-        if progress_state == '1':
-            # On Route
-            on_route_to_user_start_date = fields.Datetime.now()
-            on_route_to_user_id = self.env.user
-            on_route_to_start_comment = self._get_app_stage_comment(on_route_to_user_start_date)
+        # [MIGRACIÓN] Antes cada rama escribía first_* (si no existía) y los campos actuales
+        # en ike.event.supplier. _register_stage_time hace lo mismo en el time log:
+        # crea el registro inicial solo la primera vez y siempre actualiza el actual.
+        progress_stage_keys = {
+            '1': 'on_route',              # On Route
+            '2': 'arrived',               # Arrived
+            '3': 'contacted',             # Contacted
+            '4': 'on_route_destination',  # On Route to Destiny
+            '5': 'arrived_destination',   # Arrived to destination
+            '6': 'finalized',             # Finalized
+        }
 
-            if not self.first_on_route_to_user_start_date:
-                self.write({
-                    'first_on_route_to_user_start_date': on_route_to_user_start_date,
-                    'first_on_route_to_start_user_id': on_route_to_user_id.id,
-                    'first_on_route_to_start_comment': on_route_to_start_comment,
-                })
-
-            self.write({
-                'on_route_to_user_start_date': on_route_to_user_start_date,
-                'on_route_to_start_user_id': on_route_to_user_id.id,
-                'on_route_to_start_comment': on_route_to_start_comment,
-            })
-
-        elif progress_state == '2':
-            # Arrived
-            arrive_date = fields.Datetime.now()
-            arrive_user_id = self.env.user
-            arrive_comment = self._get_app_stage_comment(arrive_date)
-
-            if not self.first_on_route_to_user_end_date:
-                self.write({
-                    'first_on_route_to_user_end_date': arrive_date,
-                    'first_on_route_to_end_user_id': arrive_user_id.id,
-                    'first_on_route_to_end_comment': arrive_comment,
-                })
-
-            self.write({
-                'on_route_to_user_end_date': arrive_date,
-                'on_route_to_end_user_id': arrive_user_id.id,
-                'on_route_to_end_comment': arrive_comment,
-            })
-
-        elif progress_state == '3':
-            # Contacted
-            contacted_date = fields.Datetime.now()
-            contacted_user_id = self.env.user
-            contacted_comment = self._get_app_stage_comment(contacted_date)
-
-            if not self.first_contacted_date:
-                self.write({
-                    'first_contacted_date': contacted_date,
-                    'first_contacted_user_id': contacted_user_id.id,
-                    'first_contacted_comment': contacted_comment,
-                })
-
-            self.write({
-                'contacted_date': contacted_date,
-                'contacted_user_id': contacted_user_id.id,
-                'contacted_comment': contacted_comment,
-            })
-
-        elif progress_state == '4':
-            # On Route to Destiny
-            on_route_to_destination_start_date = fields.Datetime.now()
-            on_route_to_destination_start_user_id = self.env.user
-            on_route_to_destination_start_comment = self._get_app_stage_comment(on_route_to_destination_start_date)
-
-            if not self.first_on_route_to_destination_start_date:
-                self.write({
-                    'first_on_route_to_destination_start_date': on_route_to_destination_start_date,
-                    'first_on_route_to_destination_start_user_id': on_route_to_destination_start_user_id.id,
-                    'first_on_route_to_destination_start_comment': on_route_to_destination_start_comment,
-                })
-
-            self.write({
-                'on_route_to_destination_start_date': on_route_to_destination_start_date,
-                'on_route_to_destination_start_user_id': on_route_to_destination_start_user_id.id,
-                'on_route_to_destination_start_comment': on_route_to_destination_start_comment,
-            })
-
-        elif progress_state == '5':
-            # Arrived to destination
-            on_route_to_destination_end_date = fields.Datetime.now()
-            on_route_to_destination_end_user_id = self.env.user
-            on_route_to_destination_end_comment = self._get_app_stage_comment(on_route_to_destination_end_date)
-
-            if not self.first_on_route_to_destination_end_date:
-                self.write({
-                    'first_on_route_to_destination_end_date': on_route_to_destination_end_date,
-                    'first_on_route_to_destination_end_user_id': on_route_to_destination_end_user_id.id,
-                    'first_on_route_to_destination_end_comment': on_route_to_destination_end_comment,
-                })
-
-            self.write({
-                'on_route_to_destination_end_date': on_route_to_destination_end_date,
-                'on_route_to_destination_end_user_id': on_route_to_destination_end_user_id.id,
-                'on_route_to_destination_end_comment': on_route_to_destination_end_comment,
-            })
-
-        elif progress_state == '6':
-            # Finalized
-            finalized_date = fields.Datetime.now()
-            finalized_user_id = self.env.user
-            finalized_comment = self._get_app_stage_comment(finalized_date)
-
-            if not self.first_finalized_date:
-                self.write({
-                    'first_finalized_date': finalized_date,
-                    'first_finalized_user_id': finalized_user_id.id,
-                    'first_finalized_comment': finalized_comment,
-                })
-
-            self.write({
-                'finalized_date': finalized_date,
-                'finalized_user_id': finalized_user_id.id,
-                'finalized_comment': finalized_comment,
-            })
+        stage_key = progress_stage_keys.get(progress_state)
+        if stage_key:
+            now_dt = fields.Datetime.now()
+            comment = self._get_app_stage_comment(now_dt)
+            self._register_stage_time(stage_key, now_dt, self.env.user.id, comment)
 
         action = actions.get(str(progress_state))
         if action:
@@ -539,3 +449,70 @@ class IkeEventSupplierSelection(models.Model):
                     'is_cancel': True,
                 }
             }
+
+    def _get_assignation_date(self):
+        """
+        Fecha actual de asignación: log 'assigned' (is_first=False) o, si no existe
+        (servicios asignados sin log), el campo assignation_date que escribe action_assign.
+        """
+        self.ensure_one()
+        supplier = self._origin  # en onchange el registro puede venir como NewId
+        log = supplier.time_log_ids.filtered(
+            lambda l: l.stage_key == 'assigned' and not l.is_first
+        )[:1]
+        return log.date or supplier.assignation_date
+
+    def _register_stage_time(self, stage_key, date_val, user_id, comment, stage_id=None):
+        """
+        Helper to manage stage time logs in ike.event.supplier.time.log.
+        First time: Creates BOTH initial (is_first=True) and current (is_first=False) records.
+        Subsequent changes: Updates ONLY the existing current record (is_first=False).
+        """
+        self.ensure_one()
+        LogEnv = self.env['ike.event.supplier.time.log']
+
+        # 1. Initial stage log record (is_first = True)
+        first_line = LogEnv.search([
+            ('event_supplier_id', '=', self.id),
+            ('stage_key', '=', stage_key),
+            ('is_first', '=', True)
+        ], limit=1)
+
+        if not first_line:
+            # Created ONLY the first time this stage is processed for this event
+            LogEnv.create({
+                'event_supplier_id': self.id,
+                'stage_key': stage_key,
+                'stage_id': stage_id.id if stage_id else False,
+                'is_first': True,
+                'date': date_val,
+                'user_id': user_id,
+                'comment': comment,
+            })
+
+        # 2. Latest stage log record (is_first = False)
+        latest_line = LogEnv.search([
+            ('event_supplier_id', '=', self.id),
+            ('stage_key', '=', stage_key),
+            ('is_first', '=', False)
+        ], limit=1)
+
+        vals = {
+            'date': date_val,
+            'user_id': user_id,
+            'comment': comment,
+        }
+        if stage_id:
+            vals['stage_id'] = stage_id.id
+
+        if latest_line:
+            # Update existing record if a previous modification exists
+            latest_line.write(vals)
+        else:
+            # Create current stage log record for the first time (is_first = False)
+            vals.update({
+                'event_supplier_id': self.id,
+                'stage_key': stage_key,
+                'is_first': False,
+            })
+            LogEnv.create(vals)

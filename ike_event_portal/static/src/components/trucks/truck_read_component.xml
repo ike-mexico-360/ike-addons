@@ -5,18 +5,18 @@
             <!-- Loading State -->
             <div t-if="state.isLoading" class="text-center my-5">
                 <i class="fa fa-spinner fa-spin fa-3x text-primary"/>
-                <p class="mt-2 text-muted"><t t-out="translate('Loading details...')"/></p>
+                <p class="mt-2 text-muted"><t>Loading details...</t></p>
             </div>
 
             <!-- Header -->
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div class="d-flex align-items-center gap-3">
-                    <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="icono grúa" style="width:32px;"/>
-                    <h1 class="fw-bold mb-0" style="font-size:1.6rem;"><t t-out="translate('Truck Details')"/></h1>
+                    <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="Truck icon" style="width:32px;"/>
+                    <h1 class="fw-bold mb-0" style="font-size:1.6rem;"><t>Truck Details</t></h1>
                 </div>
                 <a t-on-click="props.onCancel" class="btn btn-outline-secondary btn-sm px-3">
                     <i class="fa fa-arrow-left me-1"/>
-                    <t t-out="translate('Back to list')"/>
+                    <t>Back to list</t>
                 </a>
             </div>
 
@@ -39,42 +39,42 @@
                             <div class="card-header bg-white border-bottom px-4 pt-3 pb-2">
                                 <span class="fw-bold text-primary" style="font-size:0.95rem;">
                                     <i class="fa fa-car me-2"/>
-                                    <t t-out="translate('Vehicle Information')"/>
+                                    <t>Vehicle Information</t>
                                 </span>
                             </div>
                             <div class="card-body px-4 py-3">
 
                                 <div class="mb-3">
-                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Model')"/></div>
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t>Model</t></div>
                                     <div class="fw-semibold" style="font-size:0.95rem;"><t t-out="state.truck.name"/></div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Provider')"/></div>
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t>Provider</t></div>
                                     <div class="fw-semibold" style="font-size:0.95rem;">
                                         <t t-out="state.truck.x_partner_id ? state.truck.x_partner_id[1] : 'N/A'"/>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Vehicle Type')"/></div>
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t>Vehicle Type</t></div>
                                     <div class="d-flex align-items-center gap-2">
                                         <span class="fw-semibold" style="font-size:0.95rem;">
                                             <t t-out="state.truck.x_vehicle_type ? state.truck.x_vehicle_type[1] : 'N/A'"/>
                                         </span>
-                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditVehicleTypeModal" t-att-title="translate('Edit')">
+                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditVehicleTypeModal" title="Edit">
                                             <i class="fa fa-pencil" style="font-size:0.8rem;"/>
                                         </button>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Service Center')"/></div>
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t>Service Center</t></div>
                                     <div class="d-flex align-items-center gap-2">
                                         <span class="fw-semibold" style="font-size:0.95rem;">
                                             <t t-out="state.truck.x_center_id ? state.truck.x_center_id[1] : 'N/A'"/>
                                         </span>
-                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditCenterModal" t-att-title="translate('Edit')">
+                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditCenterModal" title="Edit">
                                             <i class="fa fa-pencil" style="font-size:0.8rem;"/>
                                         </button>
                                     </div>
@@ -82,21 +82,21 @@
 
                                 <div class="row">
                                     <div class="col-6">
-                                        <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('License Plate')"/></div>
+                                        <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t>License Plate</t></div>
                                         <div class="d-flex align-items-center gap-2">
                                             <span class="badge rounded-pill px-3 py-1 fw-semibold" style="background:#e8edf8; color:#2c4a9e; font-size:0.85rem; letter-spacing:0.06em;">
                                                 <t t-out="state.truck.license_plate || '—'"/>
                                             </span>
-                                            <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditPlateModal" t-att-title="translate('Edit')">
+                                            <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditPlateModal" title="Edit">
                                                 <i class="fa fa-pencil" style="font-size:0.8rem;"/>
                                             </button>
                                         </div>
                                     </div>
                                     <div class="col-6">
-                                        <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Axes')"/></div>
+                                        <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t>Axes</t></div>
                                         <div class="d-flex align-items-center gap-2">
                                             <span class="fw-semibold" style="font-size:0.95rem;"><t t-out="state.truck.x_vehicles_axes"/></span>
-                                            <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditAxesModal" t-att-title="translate('Edit')">
+                                            <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditAxesModal" title="Edit">
                                                 <i class="fa fa-pencil" style="font-size:0.8rem;"/>
                                             </button>
                                         </div>
@@ -105,10 +105,10 @@
 
                                 <!-- Temporarily disabled: Unit Status will be enabled later.
                                 <div class="mt-3">
-                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Unit Status')"/></div>
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t>Unit Status</t></div>
                                     <div class="d-flex align-items-center gap-2">
                                         <span class="fw-semibold" style="font-size:0.95rem;"><t t-out="state.truck.x_vehicle_service_state ? vehicleStateLabel(state.truck.x_vehicle_service_state) : '—'"/></span>
-                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditVehicleServiceStateModal" t-att-title="translate('Edit')">
+                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditVehicleServiceStateModal" title="Edit">
                                             <i class="fa fa-pencil" style="font-size:0.8rem;"/>
                                         </button>
                                     </div>
@@ -125,33 +125,33 @@
                             <div class="card-header bg-white border-bottom px-4 pt-3 pb-2">
                                 <span class="fw-bold text-primary" style="font-size:0.95rem;">
                                     <i class="fa fa-cogs me-2"/>
-                                    <t t-out="translate('Service and Operation')"/>
+                                    <t>Service and Operation</t>
                                 </span>
                             </div>
                             <div class="card-body px-4 py-3">
 
                                 <div class="mb-3">
-                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Assigned Driver')"/></div>
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t>Assigned Driver</t></div>
                                     <div class="d-flex align-items-center gap-2">
                                         <i class="fa fa-user-circle text-secondary"/>
                                         <span class="fw-semibold" style="font-size:0.95rem;">
-                                            <t t-out="state.truck.driver_id ? state.truck.driver_id[1] : translate('Unassigned')"/>
+                                            <t t-out="driverName"/>
                                         </span>
-                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditDriverModal" t-att-title="translate('Edit')">
+                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditDriverModal" title="Edit">
                                             <i class="fa fa-pencil" style="font-size:0.8rem;"/>
                                         </button>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Service')"/></div>
+                                    <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t>Service</t></div>
                                     <div class="fw-semibold" style="font-size:0.95rem;">
                                         <t t-out="state.truck.x_product_category_id ? state.truck.x_product_category_id[1] : 'N/A'"/>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <div class="text-muted mb-1" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Associated Subservices')"/></div>
+                                    <div class="text-muted mb-1" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t>Associated Subservices</t></div>
                                     <div class="d-flex flex-wrap gap-1">
                                         <t t-if="state.truck.x_subservice_ids and state.truck.x_subservice_ids.length">
                                             <t t-foreach="state.truck.x_subservice_ids" t-as="subservice" t-key="subservice[0]">
@@ -160,12 +160,12 @@
                                                 </span>
                                             </t>
                                         </t>
-                                        <span t-else="" class="text-muted fst-italic" style="font-size:0.85rem;"><t t-out="translate('No subservices')"/></span>
+                                        <span t-else="" class="text-muted fst-italic" style="font-size:0.85rem;"><t>No subservices</t></span>
                                     </div>
                                 </div>
 
                                 <div class="mb-3">
-                                    <div class="text-muted mb-1" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Service Status')"/></div>
+                                    <div class="text-muted mb-1" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t>Service Status</t></div>
                                     <span class="badge rounded-pill px-3 py-1" style="background:#d4edda; color:#155724; font-size:0.82rem;">
                                         <i class="fa fa-circle me-1" style="font-size:0.55rem;"/>
                                         <t t-out="vehicleStateLabel(state.truck.x_vehicle_service_state)"/>
@@ -174,8 +174,8 @@
 
                                 <div class="mb-1">
                                     <div class="d-flex align-items-center gap-2 mb-2">
-                                        <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t t-out="translate('Accessories')"/></div>
-                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditAccessoriesModal" t-att-title="translate('Edit accessories')">
+                                        <div class="text-muted" style="font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;"><t>Accessories</t></div>
+                                        <button t-if="state.canEditDriver" class="btn btn-link p-0 text-primary" t-on-click="openEditAccessoriesModal" title="Edit accessories">
                                             <i class="fa fa-pencil" style="font-size:0.8rem;"/>
                                         </button>
                                     </div>
@@ -183,17 +183,17 @@
                                         <div class="d-flex align-items-center gap-2">
                                             <span t-if="state.truck.x_maneuvers" class="badge rounded-circle p-1 bg-success" style="width:18px;height:18px;"><i class="fa fa-check" style="font-size:0.6rem;"/></span>
                                             <span t-else="" class="badge rounded-circle p-1 bg-light border" style="width:18px;height:18px;"><i class="fa fa-times text-muted" style="font-size:0.6rem;"/></span>
-                                            <span style="font-size:0.88rem;"><t t-out="translate('Maneuvers')"/></span>
+                                            <span style="font-size:0.88rem;"><t>Maneuvers</t></span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
                                             <span t-if="state.truck.x_federal_license_plates" class="badge rounded-circle p-1 bg-success" style="width:18px;height:18px;"><i class="fa fa-check" style="font-size:0.6rem;"/></span>
                                             <span t-else="" class="badge rounded-circle p-1 bg-light border" style="width:18px;height:18px;"><i class="fa fa-times text-muted" style="font-size:0.6rem;"/></span>
-                                            <span style="font-size:0.88rem;"><t t-out="translate('Federal Plates')"/></span>
+                                            <span style="font-size:0.88rem;"><t>Federal Plates</t></span>
                                         </div>
                                         <div class="d-flex align-items-center gap-2">
                                             <span t-if="state.truck.x_manages_tire_conditioning" class="badge rounded-circle p-1 bg-success" style="width:18px;height:18px;"><i class="fa fa-check" style="font-size:0.6rem;"/></span>
                                             <span t-else="" class="badge rounded-circle p-1 bg-light border" style="width:18px;height:18px;"><i class="fa fa-times text-muted" style="font-size:0.6rem;"/></span>
-                                            <span style="font-size:0.88rem;"><t t-out="translate('Manages Tire Conditioning')"/></span>
+                                            <span style="font-size:0.88rem;"><t>Manages Tire Conditioning</t></span>
                                         </div>
                                     </div>
                                 </div>
@@ -209,24 +209,24 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0 shadow">
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold"><t t-out="translate('Vehicle Type')"/></h5>
+                            <h5 class="modal-title fw-bold"><t>Vehicle Type</t></h5>
                             <button type="button" class="btn-close" t-on-click="closeEditVehicleTypeModal" aria-label="Close"/>
                         </div>
                         <div class="modal-body pt-2">
-                            <label class="form-label text-muted small"><t t-out="translate('Select type')"/></label>
+                            <label class="form-label text-muted small"><t>Select type</t></label>
                             <select class="form-select" t-model="state.selectedVehicleTypeId">
-                                <option value=""><t t-out="translate('-- No type --')"/></option>
+                                <option value=""><t>-- No type --</t></option>
                                 <t t-foreach="state.availableVehicleTypes" t-as="vt" t-key="vt.id">
                                     <option t-att-value="vt.id"><t t-out="vt.name"/></option>
                                 </t>
                             </select>
                         </div>
                         <div class="modal-footer border-0 pt-0">
-                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditVehicleTypeModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditVehicleTypeModal"><t>Cancel</t></button>
                             <button type="button" class="btn btn-primary px-4" t-on-click="saveVehicleType" t-att-disabled="state.isSaving">
                                 <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
-                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
-                                <t t-else="" t-out="translate('Save')"/>
+                                <t t-if="state.isSaving">Saving...</t>
+                                <t t-else="">Save</t>
                             </button>
                         </div>
                     </div>
@@ -238,24 +238,24 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0 shadow">
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold"><t t-out="translate('Service Center')"/></h5>
+                            <h5 class="modal-title fw-bold"><t>Service Center</t></h5>
                             <button type="button" class="btn-close" t-on-click="closeEditCenterModal" aria-label="Close"/>
                         </div>
                         <div class="modal-body pt-2">
-                            <label class="form-label text-muted small"><t t-out="translate('Select center')"/></label>
+                            <label class="form-label text-muted small"><t>Select center</t></label>
                             <select class="form-select" t-model="state.selectedCenterId">
-                                <option value=""><t t-out="translate('-- No center --')"/></option>
+                                <option value=""><t>-- No center --</t></option>
                                 <t t-foreach="state.availableCenters" t-as="center" t-key="center.id">
                                     <option t-att-value="center.id"><t t-out="center.name"/></option>
                                 </t>
                             </select>
                         </div>
                         <div class="modal-footer border-0 pt-0">
-                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditCenterModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditCenterModal"><t>Cancel</t></button>
                             <button type="button" class="btn btn-primary px-4" t-on-click="saveCenter" t-att-disabled="state.isSaving">
                                 <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
-                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
-                                <t t-else="" t-out="translate('Save')"/>
+                                <t t-if="state.isSaving">Saving...</t>
+                                <t t-else="">Save</t>
                             </button>
                         </div>
                     </div>
@@ -267,19 +267,19 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0 shadow">
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold"><t t-out="translate('License Plate')"/></h5>
+                            <h5 class="modal-title fw-bold"><t>License Plate</t></h5>
                             <button type="button" class="btn-close" t-on-click="closeEditPlateModal" aria-label="Close"/>
                         </div>
                         <div class="modal-body pt-2">
-                            <label class="form-label text-muted small"><t t-out="translate('License plate number')"/></label>
-                            <input type="text" class="form-control" t-att-value="state.editedPlate" t-on-input="onPlateInput" t-att-placeholder="translate('e.g. ABC-1234')"/>
+                            <label class="form-label text-muted small"><t>License plate number</t></label>
+                            <input type="text" class="form-control" t-att-value="state.editedPlate" t-on-input="onPlateInput" placeholder="e.g. ABC-1234"/>
                         </div>
                         <div class="modal-footer border-0 pt-0">
-                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditPlateModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditPlateModal"><t>Cancel</t></button>
                             <button type="button" class="btn btn-primary px-4" t-on-click="savePlate" t-att-disabled="state.isSaving">
                                 <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
-                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
-                                <t t-else="" t-out="translate('Save')"/>
+                                <t t-if="state.isSaving">Saving...</t>
+                                <t t-else="">Save</t>
                             </button>
                         </div>
                     </div>
@@ -291,16 +291,16 @@
                 <div class="modal-dialog modal-dialog-centered modal-lg">
                     <div class="modal-content border-0 shadow">
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold"><t t-out="translate('Unit Status')"/></h5>
+                            <h5 class="modal-title fw-bold"><t>Unit Status</t></h5>
                             <button type="button" class="btn-close" t-on-click="closeEditVehicleServiceStateModal" aria-label="Close"/>
                         </div>
                         <div class="modal-body pt-2">
                             <div t-if="state.truck.has_event_in_progress &amp;&amp; !(state.truck.allowed_vehicle_service_states || []).length"
                                  class="alert alert-warning" role="alert">
                                 <i class="fa fa-exclamation-triangle me-2"/>
-                                <t t-out="translate('The unit status cannot be changed while the truck has an event in progress.')"/>
+                                <t>The unit status cannot be changed while the truck has an event in progress.</t>
                             </div>
-                            <label class="form-label text-muted small"><t t-out="translate('Unit Status')"/></label>
+                            <label class="form-label text-muted small"><t>Unit Status</t></label>
                             <select class="form-select" t-model="state.selectedVehicleServiceState"
                                     t-att-disabled="!(state.truck.allowed_vehicle_service_states || []).length">
                                 <t t-foreach="state.truck.allowed_vehicle_service_states || []" t-as="vehicleState" t-key="vehicleState">
@@ -309,12 +309,12 @@
                             </select>
                         </div>
                         <div class="modal-footer border-0 pt-0">
-                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditVehicleServiceStateModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditVehicleServiceStateModal"><t>Cancel</t></button>
                             <button type="button" class="btn btn-primary px-4" t-on-click="saveVehicleServiceState"
                                     t-att-disabled="state.isSaving || !state.selectedVehicleServiceState">
                                 <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
-                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
-                                <t t-else="" t-out="translate('Save')"/>
+                                <t t-if="state.isSaving">Saving...</t>
+                                <t t-else="">Save</t>
                             </button>
                         </div>
                     </div>
@@ -327,21 +327,21 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0 shadow">
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold"><t t-out="translate('Axes')"/></h5>
+                            <h5 class="modal-title fw-bold"><t>Axes</t></h5>
                             <button type="button" class="btn-close" t-on-click="closeEditAxesModal" aria-label="Close"/>
                         </div>
                         <div class="modal-body pt-2">
-                            <label class="form-label text-muted small"><t t-out="translate('Number of axes')"/></label>
+                            <label class="form-label text-muted small"><t>Number of axes</t></label>
                             <input type="number" class="form-control" min="0"
                                 t-att-value="state.editedAxes"
                                 t-on-input="onAxesInput"/>
                         </div>
                         <div class="modal-footer border-0 pt-0">
-                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditAxesModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditAxesModal"><t>Cancel</t></button>
                             <button type="button" class="btn btn-primary px-4" t-on-click="saveAxes" t-att-disabled="state.isSaving">
                                 <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
-                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
-                                <t t-else="" t-out="translate('Save')"/>
+                                <t t-if="state.isSaving">Saving...</t>
+                                <t t-else="">Save</t>
                             </button>
                         </div>
                     </div>
@@ -353,7 +353,7 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0 shadow">
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold"><t t-out="translate('Accessories')"/></h5>
+                            <h5 class="modal-title fw-bold"><t>Accessories</t></h5>
                             <button type="button" class="btn-close" t-on-click="closeEditAccessoriesModal" aria-label="Close"/>
                         </div>
                         <div class="modal-body pt-2">
@@ -361,27 +361,27 @@
                                 <input class="form-check-input" type="checkbox" role="switch" id="acc_maneuvers"
                                     t-att-checked="state.editedManeuvers"
                                     t-on-change="(ev) => { state.editedManeuvers = ev.target.checked; }"/>
-                                <label class="form-check-label" for="acc_maneuvers"><t t-out="translate('Maneuvers')"/></label>
+                                <label class="form-check-label" for="acc_maneuvers"><t>Maneuvers</t></label>
                             </div>
                             <div class="form-check form-switch mb-3">
                                 <input class="form-check-input" type="checkbox" role="switch" id="acc_federal_plates"
                                     t-att-checked="state.editedFederalPlates"
                                     t-on-change="(ev) => { state.editedFederalPlates = ev.target.checked; }"/>
-                                <label class="form-check-label" for="acc_federal_plates"><t t-out="translate('Federal Plates')"/></label>
+                                <label class="form-check-label" for="acc_federal_plates"><t>Federal Plates</t></label>
                             </div>
                             <div class="form-check form-switch mb-1">
                                 <input class="form-check-input" type="checkbox" role="switch" id="acc_tire_conditioning"
                                     t-att-checked="state.editedTireConditioning"
                                     t-on-change="(ev) => { state.editedTireConditioning = ev.target.checked; }"/>
-                                <label class="form-check-label" for="acc_tire_conditioning"><t t-out="translate('Manages Tire Conditioning')"/></label>
+                                <label class="form-check-label" for="acc_tire_conditioning"><t>Manages Tire Conditioning</t></label>
                             </div>
                         </div>
                         <div class="modal-footer border-0 pt-0">
-                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditAccessoriesModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditAccessoriesModal"><t>Cancel</t></button>
                             <button type="button" class="btn btn-primary px-4" t-on-click="saveAccessories" t-att-disabled="state.isSaving">
                                 <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
-                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
-                                <t t-else="" t-out="translate('Save')"/>
+                                <t t-if="state.isSaving">Saving...</t>
+                                <t t-else="">Save</t>
                             </button>
                         </div>
                     </div>
@@ -393,18 +393,18 @@
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content border-0 shadow">
                         <div class="modal-header border-0 pb-0">
-                            <h5 class="modal-title fw-bold"><t t-out="translate('Assigned Driver')"/></h5>
+                            <h5 class="modal-title fw-bold"><t>Assigned Driver</t></h5>
                             <button type="button" class="btn-close" t-on-click="closeEditDriverModal" aria-label="Close"/>
                         </div>
                         <div class="modal-body pt-2">
                             <div t-if="state.isLoadingDrivers" class="text-center py-3">
                                 <i class="fa fa-spinner fa-spin fa-2x text-primary"/>
-                                <p class="mt-2 text-muted small"><t t-out="translate('Loading available drivers...')"/></p>
+                                <p class="mt-2 text-muted small"><t>Loading available drivers...</t></p>
                             </div>
                             <div t-else="">
-                                <label class="form-label text-muted small"><t t-out="translate('Select driver')"/></label>
+                                <label class="form-label text-muted small"><t>Select driver</t></label>
                                 <select class="form-select" t-model="state.selectedDriverId">
-                                    <option value=""><t t-out="translate('-- Unassigned --')"/></option>
+                                    <option value=""><t>-- Unassigned --</t></option>
                                     <t t-foreach="state.availableDrivers" t-as="driver" t-key="driver.id">
                                         <option t-att-value="driver.id"><t t-out="driver.name"/></option>
                                     </t>
@@ -415,11 +415,11 @@
                             </div>
                         </div>
                         <div class="modal-footer border-0 pt-0">
-                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditDriverModal"><t t-out="translate('Cancel')"/></button>
+                            <button type="button" class="btn btn-light px-4" t-on-click="closeEditDriverModal"><t>Cancel</t></button>
                             <button type="button" class="btn btn-primary px-4" t-on-click="saveDriver" t-att-disabled="state.isSaving">
                                 <i t-if="state.isSaving" class="fa fa-spinner fa-spin me-1"/>
-                                <t t-if="state.isSaving" t-out="translate('Saving...')"/>
-                                <t t-else="" t-out="translate('Save')"/>
+                                <t t-if="state.isSaving">Saving...</t>
+                                <t t-else="">Save</t>
                             </button>
                         </div>
                     </div>

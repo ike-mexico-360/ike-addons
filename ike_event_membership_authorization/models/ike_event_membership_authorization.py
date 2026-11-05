@@ -15,7 +15,11 @@ class IkeEventMembershipAuthorization(models.Model):
     # === KEY FIELDS === #
     event_id = fields.Many2one('ike.event', ondelete='cascade', required=True)
     event_name = fields.Char(related='event_id.name')
-    user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user,)
+    user_id = fields.Many2one(
+        'res.users',
+        string='User',
+        default=lambda self: self.env.user,
+    )
     nus_id = fields.Many2one('custom.nus', string="NUs", required=True)
     authorizer_id = fields.Many2one('res.partner', required=True, string="Supervisor authorizer")
     nus_membership_id = fields.Many2one('custom.membership.nus', required=True)

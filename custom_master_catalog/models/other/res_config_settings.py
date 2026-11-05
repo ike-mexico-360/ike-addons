@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 
 
 class ResConfigSettings(models.TransientModel):
@@ -26,6 +27,21 @@ class ResConfigSettings(models.TransientModel):
         readonly=False,
         string='Allow Email Sending',
     )
+    x_contact_proximity_alert = fields.Boolean(
+        string='Contact Point Proximity Alert',
+        config_parameter='custom_master_catalog.contact_proximity_alert',
+    )
+    x_contact_proximity_distance = fields.Float(
+        string='Proximity Distance (km)',
+        config_parameter='custom_master_catalog.contact_proximity_distance',
+        default=0.0,
+    )
+
+    @api.constrains('x_contact_proximity_alert', 'x_contact_proximity_distance')
+    def _check_contact_proximity_distance(self):
+        for setting in self:
+            if setting.x_contact_proximity_alert and setting.x_contact_proximity_distance <= 0:
+                raise ValidationError(_('The proximity distance must be greater than 0 km.'))
 
     def _compute_events_allow_send_whatsapp(self):
         for setting in self:

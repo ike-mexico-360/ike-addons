@@ -54,13 +54,13 @@
                     type="object" 
                     groups="base.group_system,custom_master_catalog.custom_group_event_coordinator"
                     context="{'from_event_button_service': True}"
-                    invisible="services_available != 0 or membership_authorization_status in ['rejected','pending_cabine','pending_commercial'] or ( required_commercial_authorizer and event_coverage_authorizer) or ( required_commercial_authorizer and not event_coverage_authorizer) or  (not required_commercial_authorizer and event_coverage_authorizer)">
+                    invisible="services_available != 0 or (has_incidents and not incident_type_id) or membership_authorization_status in ['rejected','pending_cabine','pending_commercial'] or ( required_commercial_authorizer and event_coverage_authorizer) or ( required_commercial_authorizer and not event_coverage_authorizer) or  (not required_commercial_authorizer and event_coverage_authorizer)">
                 </button>
                 <button 
                     string="Authorization"
                     name="action_view_authorization"
                     type="object"
-                    invisible="services_available != 0 or membership_authorization_status in ['authorized', False]"
+                    invisible="services_available != 0 or (has_incidents and not incident_type_id) or membership_authorization_status in ['authorized', False]"
                     groups="base.group_system,custom_master_catalog.custom_group_event_cabin_supervisor,custom_master_catalog.custom_group_commercial_supervisor">
                 </button>
                 <div invisible="not event_coverage_authorizer or membership_authorization_id.state == 'rejected'" class="d-flex justify-content-center">

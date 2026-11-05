@@ -99,6 +99,12 @@ class IkeEventSummary(models.Model):
                         'value': rec.event_id.sub_service_id.name,
                     },
                     {
+                        'name': 'incident_type_id',
+                        'string': rec.event_id.fields_get(['incident_type_id'])['incident_type_id']['string'],
+                        'type': 'char',
+                        'value': rec.event_id.incident_type_id.name,
+                    },
+                    {
                         'name': 'event_cost',
                         'string': rec.event_id.fields_get(['event_cost'])['event_cost']['string'],
                         'type': rec.event_id.fields_get(['event_cost'])['event_cost']['type'],

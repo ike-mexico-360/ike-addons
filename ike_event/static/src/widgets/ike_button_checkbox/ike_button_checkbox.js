@@ -35,7 +35,7 @@ export class IkeButtonCheckbox extends Component {
         className: "btn btn-secondary",
     };
     setup() {
-        console.log("IkeButtonCheckbox", this);
+        // console.log("IkeButtonCheckbox", this);
         this.state = useState({ checked: false });
         this.popover = usePopover(IkeButtonCheckboxPopover, {
             position: "top",

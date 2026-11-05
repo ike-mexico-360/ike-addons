@@ -18,7 +18,6 @@ export class ServiceCommentDialog extends Component {
         title: _t("Add Comment"),
     };
 
-    translate(str) { return _t(str); }
 
     setup() {
         this.state = useState({

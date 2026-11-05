@@ -29,14 +29,14 @@
         <div class="d-flex justify-content-center align-items-center gap-1">
             <t t-if="!showManualAccept">
                 <!-- Accept/Reject -->
-                <t t-if="state.current_state == 'notified' and !state.blocked">
+                <t t-if="state.current_state == 'notified' and !state.blocked and !state.second_notification">
                     <i class="fa fa-check cursor-pointer fa-lg"
                         t-on-click="onAccept" title="Accept" />
                     <i class="fa fa-times cursor-pointer fa-lg"
                         t-on-click="onReject" title="Reject" />
                 </t>
             </t>
-            <t t-if="showManualAccept and !state.blocked">
+            <t t-if="showManualAccept and !state.blocked and !state.second_notification">
                 <i class="fa fa-check cursor-pointer"
                     t-on-click="onAccept" title="Accept" />
                 Accept

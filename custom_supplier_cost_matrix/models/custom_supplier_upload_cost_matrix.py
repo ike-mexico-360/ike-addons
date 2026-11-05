@@ -110,7 +110,7 @@ class CustomSupplierUploadCostMatrix(models.Model):
     @api.onchange('file')
     def _onchange_file(self):
         if self.file and self.file_name:
-            mimetype, _ = mimetypes.guess_type(self.file_name)
+            mimetype, _encoding = mimetypes.guess_type(self.file_name)
             self.file_type = mimetype or 'application/octet-stream'
 
     # === COMPUTE === #
@@ -618,7 +618,7 @@ class CustomSupplierUploadCostMatrix(models.Model):
         # Validar campos requeridos antes de guardar
         consider_duplicate_fields = list(dict.fromkeys(REQUIRED_LINE_FIELDS + [
             'account_id', 'geographical_area_id', 'holiday_date_applies', 'active_agreement', 'date_end',
-            'vacation_schedule_ids', 'subservice_specification_id', 'incident_type_id'
+            'vacation_schedule_ids', 'subservice_specification_id', 'incident_type_id', 'high_risk_area'
         ] + WORKFLOW_TRIGGER_FIELDS))
         lines_to_import = defaultdict(list)
 
@@ -645,10 +645,11 @@ class CustomSupplierUploadCostMatrix(models.Model):
             lines_to_import[record_key].append(to_check_duplicate_data)
 
         # Validar por duplicados, si hay, desactivar el existente y crear el nuevo
-        exist_records = self.env['custom.supplier.cost.matrix.line'].search_read([
+        # Se incluyen registros inactivos para poder reactivarlos cuando el archivo trae
+        # exactamente la misma información, en vez de crear un duplicado (DEV-3838)
+        exist_records = self.env['custom.supplier.cost.matrix.line'].with_context(active_test=False).search_read([
             ('supplier_center_id', '=', self.supplier_center_id.id),
-            ('active', '=', True),
-        ], consider_duplicate_fields)
+        ], consider_duplicate_fields + ['active'])
 
         odoo_data = defaultdict(list)
         for rec in exist_records:
@@ -672,14 +673,16 @@ class CustomSupplierUploadCostMatrix(models.Model):
                 line = import_lines[0]
 
             # Buscar si existe un registro con el mismo contexto
-            if import_key in odoo_data:
-                existing_records = odoo_data[import_key]
+            existing_records = odoo_data.get(import_key, [])
+            if existing_records:
+                active_records = [rec for rec in existing_records if rec['active']]
+                inactive_records = [rec for rec in existing_records if not rec['active']]
                 importing_cost = normalize_value(line['cost'])
 
                 is_identical = False
                 to_archive = []
 
-                for existing_rec in existing_records:
+                for existing_rec in active_records:
                     existing_cost = normalize_value(existing_rec['cost'])
 
                     if importing_cost == existing_cost:
@@ -697,12 +700,39 @@ class CustomSupplierUploadCostMatrix(models.Model):
                             "[UPDATE] Marcando para archivar ID %s (cost: %s -> %s)",
                             existing_rec['id'], existing_cost, importing_cost)
 
-                # Archivar todos los registros con costo diferente
+                # Archivar todos los registros activos con costo diferente
                 if not is_identical and len(to_archive) > 0:
                     self.env['custom.supplier.cost.matrix.line'].sudo().browse(to_archive).write({
                         'active': False
                     })
                     _logger.info("[UPDATE] %d registro(s) archivado(s)", len(to_archive))
+
+                # Si no hubo ningún match activo (ni idéntico ni para archivar), revisar los
+                # registros inactivos: si el archivo trae la misma información exacta,
+                # reactivar en vez de duplicar (DEV-3838)
+                if not is_identical and not to_archive:
+                    to_reactivate = []
+                    for existing_rec in inactive_records:
+                        existing_cost = normalize_value(existing_rec['cost'])
+
+                        if importing_cost == existing_cost:
+                            is_identical = True
+                            to_reactivate.append(existing_rec['id'])
+                            _logger.info(
+                                "[REACTIVATE] Registro inactivo idéntico (cost=%s, ID %s), reactivando "
+                                "y descartando importado ID %s",
+                                existing_cost, existing_rec['id'], line['id'])
+                            self.env['custom.supplier.cost.product'].sudo().browse([line['id']]).write({'not_confirm': True})
+                            break
+
+                    if to_reactivate:
+                        self.env['custom.supplier.cost.matrix.line'].sudo().browse(to_reactivate).write({
+                            'active': True
+                        })
+                        _logger.info("[REACTIVATE] %d registro(s) reactivado(s)", len(to_reactivate))
+                    # Si el costo difiere del registro inactivo (información distinta o
+                    # adicional), este se deja como está y la línea importada se carga como
+                    # un registro nuevo más abajo
 
         # Guardar solo las líneas confirmadas
         to_confirm = self.cost_product_ids.filtered(lambda x: not x.not_confirm)

@@ -36,7 +36,7 @@
         <field name="name">custom_fleet_vehicle.view.tree</field>
         <field name="model">fleet.vehicle</field>
         <field name="arch" type="xml">
-            <list string="" delete="0" edit="0">
+            <list string="" delete="0" edit="0" default_order="x_vehicle_service_state asc">
                 <field name="license_plate"/>
                 <field name="model_id" string="Subbrand"/>
                 <field name="x_partner_id"/>
@@ -84,6 +84,7 @@
                             <!-- ToDo: Probablemente este campo deba ser readonly ya que es el equivalente a crane uuid, se habilita para pruebas -->
                             <field name="x_vehicle_ref" readonly="1"/>
                             <field name="x_economic_number" readonly="disabled" required="1"/>
+                            <field name="x_sct_permit" readonly="disabled"/>
                             <field name="x_center_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}" invisible="x_partner_id == False"
                                 domain="[('disabled', '=', False), ('parent_id', '=', x_partner_id)]" string="Center of attention"  context="{'edit': False}" required="1"/>
                             <field name="x_vehicle_type" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
@@ -124,6 +125,14 @@
                             <field name="driver_id" options="{'no_create': True, 'no_create_edit': True, 'no_open': True}" domain="x_driver_domain" readonly="disabled" context="{'edit': False}"/>
                             <field name="x_driver_domain" invisible="1"/>
                             <field name="x_vehicle_service_state" readonly="disabled"/>
+                            <field name="x_reason_not_available"
+                                readonly="disabled"
+                                invisible="x_vehicle_service_state != 'not_available'"
+                                required="x_vehicle_service_state == 'not_available'"/>
+                            <field name="x_reason_permanent_deregistration"
+                                readonly="disabled"
+                                invisible="x_vehicle_service_state != 'deregistration'"
+                                required="x_vehicle_service_state == 'deregistration'"/>
                             <!-- ToDo: Estos campos deben ser readonly="1", para pruebas se dejan editables. -->
                             <field name="x_latitude" readonly="disabled" />
                             <field name="x_longitude" readonly="disabled"/>

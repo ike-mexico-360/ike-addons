@@ -17,9 +17,12 @@ class IkeEventCenterDistance(models.Model):
     center_origin_distance_km = fields.Float(default=0.0)
     center_origin_duration_m = fields.Float(default=0.0)
     center_origin_route = fields.Json()
-    origin_center_distance_km = fields.Float(default=0.0)
-    origin_center_duration_m = fields.Float(default=0.0)
-    origin_center_route = fields.Json()
+
+    # origin_center_distance_km = fields.Float(default=0.0)
+    # origin_center_duration_m = fields.Float(default=0.0)
+    # origin_center_route = fields.Json()
+
+    # Destination can be destination if exist or origin if not.
     destination_center_distance_km = fields.Float(default=0.0)
     destination_center_duration_m = fields.Float(default=0.0)
     destination_center_route = fields.Json()

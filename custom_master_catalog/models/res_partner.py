@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import uuid
 # from markupsafe import Markup
 
 from odoo import models, fields, api, _
@@ -82,6 +81,11 @@ class ResPartner(models.Model):
     # === FIELDS: LOCATION === #
     partner_latitude = fields.Float(tracking=True)
     partner_longitude = fields.Float(tracking=True)
+
+    # === FIELDS: DRIVER LICENSE === #
+    x_license_type = fields.Char(string='License Type', tracking=True)
+    x_license_expiration_date = fields.Date(string='License Expiration Date', tracking=True)
+    x_birthdate = fields.Date(string='Birthdate', tracking=True)
 
     # === ONCHANGE === #
     @api.onchange('is_company')

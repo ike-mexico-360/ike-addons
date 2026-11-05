@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 23:25+0000\n"
-"PO-Revision-Date: 2026-10-05 23:25+0000\n"
+"POT-Creation-Date: 2026-10-16 20:21+0000\n"
+"PO-Revision-Date: 2026-10-16 20:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -62,6 +62,15 @@ msgid ""
 msgstr ""
 "<small class=\"text-muted d-block mb-1\" style=\"font-size: "
 "0.65rem;\">Cobertura:</small>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid ""
+"<small class=\"text-muted d-block\" style=\"font-size: "
+"0.65rem;\">Incident type:</small>"
+msgstr ""
+"<small class=\"text-muted d-block\" style=\"font-size: "
+"0.65rem;\">Tipo de incidencia:</small>"
 
 #. module: custom_nu
 #: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban

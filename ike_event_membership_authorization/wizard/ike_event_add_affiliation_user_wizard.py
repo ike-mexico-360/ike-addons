@@ -2,6 +2,7 @@ from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from datetime import datetime
 import re
+from markupsafe import Markup
 
 
 class IkeEventAffiliationUser(models.TransientModel):
@@ -265,6 +266,7 @@ class IkeEventAffiliationUser(models.TransientModel):
                 nus_membership=nus_affiliation_id,
                 nus_user=nus_user
             )
+            self._action_notify_authorizer()
 
         self.event_id.with_context(skip_phone_binnacle=True).write({
             'user_id': nus_user.id,
@@ -423,3 +425,34 @@ class IkeEventAffiliationUser(models.TransientModel):
             'phone': self.phone,
             'preference_contact': self.contact_preference
         })
+
+    def _action_notify_authorizer(self):
+        self.ensure_one()
+        partner = self.user_authorization_affiliation_id
+        event = self.event_id
+        view = self.env.ref('ike_event.view_ike_event_screen_form')
+
+        mention = Markup(
+            '<a href="#" data-oe-model="res.partner" data-oe-id="%s">@%s</a>'
+        ) % (partner.id, partner.name)
+
+        event_link = Markup(
+            '<a href="/web#id=%s&amp;model=ike.event'
+            '&amp;view_type=form&amp;view_id=%s'
+            '&amp;context=%%7B%%22x_authorization_notification%%22%%3Atrue%%7D">%s</a>'
+        ) % (
+            event.id,
+            view.id,
+            event.display_name,
+        )
+
+        event.message_post(
+            body=Markup('<span class="o-ike-authorization-notification"></span>%s %s %s') % (
+                mention,
+                _("Your authorization is requested for event"),
+                event_link,
+            ),
+            message_type='comment',
+            subtype_xmlid='mail.mt_comment',
+            partner_ids=partner.ids,
+        )

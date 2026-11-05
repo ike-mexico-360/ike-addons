@@ -54,6 +54,7 @@ class IkeEventProduct(models.Model):
             self._set_fields_onchange_product_id()
         else:
             self.covered = False
+            self.is_unlimited = False
             self.mandatory = False
             self.base = False
 
@@ -133,15 +134,20 @@ class IkeEventProduct(models.Model):
             if rec.event_id.base_supplier_number != rec.supplier_number:
                 continue
 
-            plan_product_ids = (
+            plan_line_ids = (
                 rec.event_id.user_membership_id.membership_plan_id
                 .product_line_ids.filtered(
                     lambda x:
                         x.service_id.id == rec.event_id.service_id.id
                         and rec.event_id.sub_service_id.id in x.sub_service_ids.ids
-                ).mapped('detail_ids.product_id.id')
+                )
             )
+            plan_product_ids = plan_line_ids.mapped('detail_ids.product_id.id')
             rec.covered = rec.product_id.id in plan_product_ids
+
+            # [UNLIMITED] Covered concepts of plan lines with unlimited_amount enabled
+            unlimited_product_ids = plan_line_ids.filtered('unlimited_amount').mapped('detail_ids.product_id.id')
+            rec.is_unlimited = rec.covered and rec.product_id.id in unlimited_product_ids
 
     def set_is_base(self, no_update=False):
         for rec in self:
@@ -233,6 +239,7 @@ class IkeEventSupplierProduct(models.Model):
             self._set_fields_onchange_product_id()
         else:
             self.covered = False
+            self.is_unlimited = False
             self.mandatory = False
             self.base = False
             self.tax_ids = False

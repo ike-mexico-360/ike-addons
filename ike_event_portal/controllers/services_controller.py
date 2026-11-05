@@ -17,17 +17,23 @@ class PortalUserAccount(CustomerPortal):
     def _get_ike_event_services_domain(self):
         return []
 
-    def _get_portal_supplier_event(self, event_supplier_id):
-        """Return the service only when it belongs to the logged-in supplier."""
+    def _x_ike_portal_line_domain(self):
+        """Services of the logged-in supplier and, for a Supervisor linked to an
+        Attention Center, only of that center."""
         supplier_ids = request.env["res.partner.supplier_users.rel"].sudo().search([
             ("user_id", "=", request.env.user.id),
         ]).mapped("supplier_id").ids
-        if not supplier_ids:
-            return request.env["ike.event.supplier"].browse()
-        return request.env["ike.event.supplier"].sudo().search([
-            ("id", "=", event_supplier_id),
-            ("supplier_id", "in", supplier_ids),
-        ], limit=1)
+        domain = [("supplier_id", "in", supplier_ids)]
+        center_ids = request.env.user.x_ike_portal_center_ids()
+        if center_ids:
+            domain.append(("supplier_center_id", "in", center_ids))
+        return domain
+
+    def _get_portal_supplier_event(self, event_supplier_id):
+        """Return the service only when it belongs to the logged-in supplier / attention center."""
+        return request.env["ike.event.supplier"].sudo().search(
+            [("id", "=", event_supplier_id)] + self._x_ike_portal_line_domain(), limit=1,
+        )
 
     def _prepare_home_portal_values(self, counters):
         values = super()._prepare_home_portal_values(counters)
@@ -107,6 +113,7 @@ class PortalUserAccount(CustomerPortal):
             "confirmed": supplier_line.confirmed,
             "assigned": supplier_line.assigned,
             "operator_notified": supplier_line.operator_notified,
+            "second_notification": supplier_line.second_notification,
             "opening_date": (
                 fields.Datetime.to_string(event.create_date)
                 if event.create_date
@@ -121,10 +128,16 @@ class PortalUserAccount(CustomerPortal):
         methods=["POST"],
         csrf=False,
     )
-    def get_supplier_current_notified(self, supplier_id, **kw):
+    def get_supplier_current_notified(self, supplier_id, second_notification=False, **kw):
+        """second_notification=True returns only re-notified services nobody has taken yet (pending),
+        otherwise the rest, including re-notified services once taken."""
+        if second_notification:
+            pending_domain = [("second_notification", "=", True), ("state", "=", "notified")]
+        else:
+            pending_domain = ["|", ("second_notification", "=", False), ("state", "!=", "notified")]
         try:
             supplier_lines = request.env["ike.event.supplier.public"].sudo().search(
-                [
+                pending_domain + self._x_ike_portal_line_domain() + [
                     ("supplier_id", "=", supplier_id),
                     ("state", "in", ["notified", "accepted", "assigned"]),
                     ("event_id.stage_ref", "not in", [
@@ -176,7 +189,7 @@ class PortalUserAccount(CustomerPortal):
                 return {"success": False, "error": "event_supplier_id field is required"}
 
             supplier_line = request.env["ike.event.supplier.public"].sudo().search(
-                [
+                self._x_ike_portal_line_domain() + [
                     ("id", "=", event_supplier_id),
                     # ("state", "in", ["notified", "accepted", "assigned"]),
                     ("event_id.stage_ref", "not in", [
@@ -420,7 +433,9 @@ class PortalUserAccount(CustomerPortal):
     )
     def request_authorization(self, event_supplier_id):
         try:
-            supplier = request.env["ike.event.supplier"].sudo().browse(event_supplier_id)
+            supplier = self._get_portal_supplier_event(event_supplier_id)
+            if not supplier:
+                return {"success": False, "error": _("Service not found")}
             supplier.action_request_authorization()
             return {"success": True}
         except Exception as e:
@@ -557,6 +572,21 @@ class PortalUserAccount(CustomerPortal):
             _logger.exception("Error loading supplier portal comments")
             return {"success": False, "error": str(e), "comments": []}
 
+    # [MIGRACIÓN] Helper: {stage_key: date} con los logs actuales (is_first=False) del supplier.
+    # Equivale a leer supplier.<etapa>_date en el modelo anterior.
+    # Usa time_log_ids (1 sola consulta, después todo en memoria). El supplier llega con sudo(),
+    # así que la lectura también es sudo (el usuario portal no necesita ACL sobre el log).
+    def _get_stage_dates(self, supplier):
+        dates = {}
+        # time_log_ids viene ordenado por 'date desc, id desc': setdefault conserva el más reciente
+        for log in supplier.time_log_ids:
+            if not log.is_first:
+                dates.setdefault(log.stage_key, log.date)
+        # Servicios asignados sin log 'assigned': usar assignation_date del supplier
+        if not dates.get('assigned') and supplier.assignation_date:
+            dates['assigned'] = supplier.assignation_date
+        return dates
+
     @http.route(
         ["/provider/portal/services/get_relojes"],
         type="json",
@@ -569,16 +599,18 @@ class PortalUserAccount(CustomerPortal):
         Get clock timestamps (arrived, contacted, finalized) for a supplier event.
         """
         try:
-            supplier = request.env["ike.event.supplier"].sudo().browse(event_supplier_id)
-            if not supplier.exists():
+            supplier = self._get_portal_supplier_event(event_supplier_id)
+            if not supplier:
                 return {"success": False, "error": _("Service not found")}
 
             def fmt(dt):
                 return fields.Datetime.to_string(dt) if dt else None
 
-            arrived = supplier.on_route_to_user_end_date
-            contacted = supplier.contacted_date
-            finalized = supplier.finalized_date
+            # [MIGRACIÓN] Antes: supplier.on_route_to_user_end_date / contacted_date / finalized_date
+            stage_dates = self._get_stage_dates(supplier)
+            arrived = stage_dates.get("arrived")
+            contacted = stage_dates.get("contacted")
+            finalized = stage_dates.get("finalized")
 
             return {
                 "success": True,
@@ -620,11 +652,20 @@ class PortalUserAccount(CustomerPortal):
             if stage not in ("arrived", "contacted", "finalized"):
                 return {"success": False, "error": _("Invalid stage")}
 
-            supplier = request.env["ike.event.supplier"].sudo().browse(event_supplier_id)
-            if not supplier.exists():
+            supplier = self._get_portal_supplier_event(event_supplier_id)
+            if not supplier:
                 return {"success": False, "error": _("Service not found")}
 
             now = fields.Datetime.now()
+            user_id = request.env.user.id
+
+            # [MIGRACIÓN] Fechas actuales desde el log (antes: supplier.<campo>_date).
+            # Se leen una vez al inicio: cada etapa se consulta antes de registrarla.
+            stage_dates = self._get_stage_dates(supplier)
+            assignation_date = stage_dates.get("assigned")
+            arrived_date = stage_dates.get("arrived")
+            contacted_date = stage_dates.get("contacted")
+            finalized_date = stage_dates.get("finalized")
 
             if stage == "arrived":
                 if not supplier.confirmed:
@@ -633,125 +674,72 @@ class PortalUserAccount(CustomerPortal):
                 if supplier.on_route_to_user_end_date:
                     return {"success": False, "error": _("Arrived timestamp is already registered")}
 
-                if supplier.assignation_date and now <= supplier.assignation_date:
+                if assignation_date and now <= assignation_date:
                     return {"success": False, "error": _("Arrived time must be after the assignment date")}
 
                 # Ensure on_route is set before arrived
-                if not supplier.on_route_to_user_start_date:
-                    on_route_vals = {
-                        "on_route_to_user_start_date": now - timedelta(seconds=1),
-                        "on_route_to_start_user_id": request.env.user.id,
-                        "on_route_to_start_comment": _("Portal - On route"),
-                    }
-                    if not supplier.first_on_route_to_user_start_date:
-                        on_route_vals.update({
-                            "first_on_route_to_user_start_date": now - timedelta(seconds=1),
-                            "first_on_route_to_start_user_id": request.env.user.id,
-                            "first_on_route_to_start_comment": _("Portal - On route"),
-                        })
-                    supplier.write(on_route_vals)
+                if not stage_dates.get("on_route"):
+                    # [MIGRACIÓN] Antes: write de on_route_* y first_on_route_* (si no existía)
+                    supplier._register_stage_time(
+                        "on_route", now - timedelta(seconds=1), user_id, _("Portal - On route"))
                     supplier.action_on_route()
 
-                arrived_vals = {
-                    "on_route_to_user_end_date": now,
-                    "on_route_to_end_user_id": request.env.user.id,
-                    "on_route_to_end_comment": _("Portal - Arrived"),
-                }
-                if not supplier.first_on_route_to_user_end_date:
-                    arrived_vals.update({
-                        "first_on_route_to_user_end_date": now,
-                        "first_on_route_to_end_user_id": request.env.user.id,
-                        "first_on_route_to_end_comment": _("Portal - Arrived"),
-                    })
-                supplier.write(arrived_vals)
+                # [MIGRACIÓN] Antes: write de on_route_to_user_end_* y first_* (si no existía)
+                supplier._register_stage_time("arrived", now, user_id, _("Portal - Arrived"))
                 supplier.action_arrive()
 
             elif stage == "contacted":
-                if not supplier.on_route_to_user_end_date:
+                if not arrived_date:
                     return {"success": False, "error": _("The Arrived time must be registered first")}
-                if supplier.contacted_date:
+                if contacted_date:
                     return {"success": False, "error": _("Contacted timestamp is already registered")}
 
-                if now <= supplier.on_route_to_user_end_date:
+                if now <= arrived_date:
                     return {"success": False, "error": _("Contacted time must be after the arrived date")}
 
-                contacted_vals = {
-                    "contacted_date": now,
-                    "contacted_user_id": request.env.user.id,
-                    "contacted_comment": _("Portal - Contacted"),
-                }
-                if not supplier.first_contacted_date:
-                    contacted_vals.update({
-                        "first_contacted_date": now,
-                        "first_contacted_user_id": request.env.user.id,
-                        "first_contacted_comment": _("Portal - Contacted"),
-                    })
-                supplier.write(contacted_vals)
+                # [MIGRACIÓN] Antes: write de contacted_* y first_contacted_* (si no existía)
+                supplier._register_stage_time("contacted", now, user_id, _("Portal - Contacted"))
                 supplier.action_contact()
 
             elif stage == "finalized":
-                if not supplier.contacted_date:
+                if not contacted_date:
                     return {"success": False, "error": _("The Contacted time must be registered first")}
-                if supplier.finalized_date:
+                if finalized_date:
                     return {"success": False, "error": _("Finalized timestamp is already registered")}
 
-                if now <= supplier.contacted_date:
+                if now <= contacted_date:
                     return {"success": False, "error": _("Finalized time must be after the contacted date")}
 
                 # Set on_route_to_destination if not already set
-                if not supplier.on_route_to_destination_start_date:
-                    route2_vals = {
-                        "on_route_to_destination_start_date": now - timedelta(seconds=2),
-                        "on_route_to_destination_start_user_id": request.env.user.id,
-                        "on_route_to_destination_start_comment": _("Portal - On route to destination"),
-                    }
-                    if not supplier.first_on_route_to_destination_start_date:
-                        route2_vals.update({
-                            "first_on_route_to_destination_start_date": now - timedelta(seconds=2),
-                            "first_on_route_to_destination_start_user_id": request.env.user.id,
-                            "first_on_route_to_destination_start_comment": _("Portal - On route to destination"),
-                        })
-                    supplier.write(route2_vals)
+                if not stage_dates.get("on_route_destination"):
+                    supplier._register_stage_time(
+                        "on_route_destination", now - timedelta(seconds=2), user_id,
+                        _("Portal - On route to destination"))
                     supplier.action_on_route_to_the_destination()
 
                 # Set arrived_to_destination if not already set
-                if not supplier.on_route_to_destination_end_date:
-                    arrived2_vals = {
-                        "on_route_to_destination_end_date": now - timedelta(seconds=1),
-                        "on_route_to_destination_end_user_id": request.env.user.id,
-                        "on_route_to_destination_end_comment": _("Portal - Arrived to destination"),
-                    }
-                    if not supplier.first_on_route_to_destination_end_date:
-                        arrived2_vals.update({
-                            "first_on_route_to_destination_end_date": now - timedelta(seconds=1),
-                            "first_on_route_to_destination_end_user_id": request.env.user.id,
-                            "first_on_route_to_destination_end_comment": _("Portal - Arrived to destination"),
-                        })
-                    supplier.write(arrived2_vals)
+                if not stage_dates.get("arrived_destination"):
+                    supplier._register_stage_time(
+                        "arrived_destination", now - timedelta(seconds=1), user_id,
+                        _("Portal - Arrived to destination"))
                     supplier.action_arrive_to_the_destination()
 
                 # Set finalized timestamp
-                finalized_vals = {
-                    "finalized_date": now,
-                    "finalized_user_id": request.env.user.id,
-                    "finalized_comment": _("Portal - Finalized"),
-                }
-                if not supplier.first_finalized_date:
-                    finalized_vals.update({
-                        "first_finalized_date": now,
-                        "first_finalized_user_id": request.env.user.id,
-                        "first_finalized_comment": _("Portal - Finalized"),
-                    })
-                supplier.write(finalized_vals)
+                supplier._register_stage_time("finalized", now, user_id, _("Portal - Finalized"))
                 supplier.action_finalize()
 
             # Return updated relojes
             def fmt(dt):
                 return fields.Datetime.to_string(dt) if dt else None
 
-            arrived = supplier.on_route_to_user_end_date
-            contacted = supplier.contacted_date
-            finalized = supplier.finalized_date
+            # [MIGRACIÓN] Se vuelven a leer porque pudieron registrarse arriba. El ORM ya agregó
+            # los logs nuevos al One2many en caché; invalidar asegura leer el estado final
+            # (las acciones action_* podrían haber tocado logs) a costa de 1 consulta más.
+            supplier.invalidate_recordset(["time_log_ids"])
+            stage_dates = self._get_stage_dates(supplier)
+            arrived = stage_dates.get("arrived")
+            contacted = stage_dates.get("contacted")
+            finalized = stage_dates.get("finalized")
 
             return {
                 "success": True,

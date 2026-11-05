@@ -83,7 +83,7 @@
                         </div>
                     </t>
                 </div>
-                <div class="row" t-if="props.record.data.sub_service_id">
+                <div class="row" t-if="props.record.data.sub_service_id and (!props.record.data.has_incidents or props.record.data.incident_type_id)">
                     <t t-if="props.record.data.services_available > 0">
                         <div class="col-12">
                             <div class="alert alert-success d-flex flex-wrap gap-1 align-items-center"

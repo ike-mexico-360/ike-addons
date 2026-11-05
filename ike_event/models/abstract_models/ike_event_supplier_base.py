@@ -43,10 +43,13 @@ class IkeEventSupplierBase(models.AbstractModel):
     stage_ref = fields.Char(related='stage_id.ref', string='Stage Ref')
     confirmed = fields.Boolean(default=False)
     operator_notified = fields.Boolean(default=False)
+    second_notification = fields.Boolean(default=False, copy=False)
 
     # Assignation supplier fields
     truck_id = fields.Many2one('fleet.vehicle', string='Service Vehicle')
     truck_plate = fields.Char(related='truck_id.license_plate')
+    person_id = fields.Many2one('res.partner')
+    person_ref = fields.Char(related='person_id.ref')
     assigned = fields.Char(string='Assigned')
     assignation_type = fields.Selection([
         ('electronic', 'Electronic'),

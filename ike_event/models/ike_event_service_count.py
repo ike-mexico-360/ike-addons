@@ -37,6 +37,7 @@ class IkeEventServiceCountDetail(models.Model):
         'custom.vehicle.weight.category',
         'Weight Category',
         domain="[('disabled', '=', False)]")
+    incident_type_id = fields.Many2one('custom.incident.type', 'Incident type')
 
 
 class IkeEventServiceCount(models.Model):
@@ -257,6 +258,7 @@ class CustomMembershipNus(models.Model):
                         'user_membership_id': record,
                         'vehicle_weight_category_id':
                             service.vehicle_weight_category_id.id if service.vehicle_weight_category_id else False,
+                        'incident_type_id': service.incident_type_id.id if service.incident_type_id else False,
                         'date_start': record.membership_plan_id.contract_start_date,
                         'date_end': record.membership_plan_id.contract_end_date,
                         'coverage_events': service.period_per_event,
@@ -281,6 +283,7 @@ class CustomMembershipNus(models.Model):
                         'sub_service_ids': [(6, 0, service.sub_service_ids.ids)] if service.sub_service_ids else [],
                         'user_membership_id': record,
                         'vehicle_weight_category_id': service.vehicle_weight_category_id.id if service.vehicle_weight_category_id else False,
+                        'incident_type_id': service.incident_type_id.id if service.incident_type_id else False,
                         'date_start': record.membership_plan_id.contract_start_date,
                         'date_end': record.membership_plan_id.contract_end_date,
                         'coverage_events': service.period_per_event,

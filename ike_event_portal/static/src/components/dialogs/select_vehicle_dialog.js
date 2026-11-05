@@ -20,7 +20,6 @@ export class SelectVehicleDialog extends Component {
         currentTruckId: null,
     };
 
-    translate(str) { return _t(str); }
 
     setup() {
         this.orm = useService("orm");

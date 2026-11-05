@@ -38,7 +38,6 @@ const IKE_SUPPLIER_CHANNEL = "ike_channel_supplier_";
 export class ServicesMainComponent extends Component {
     static template = "ike_event_portal.ServicesMainComponent";
     static components = { PaginationComponent, CancelServiceDialog, SelectVehicleDialog, ServiceCommentDialog };
-    translate(str) { return _t(str); }
 
     setup() {
         this.orm = useService("orm");
@@ -49,7 +48,9 @@ export class ServicesMainComponent extends Component {
         this.summaryRef = useRef("summaryContainer");
         this.notification = useService("notification");
         this.state = useState({
+            // Both tabs' rows; each row's second_notification flag decides its tab.
             services: [],
+            activeTab: 'services', // 'services' or 'second_notification'
             isLoading: false,
             error: null,
             filters: {
@@ -160,7 +161,11 @@ export class ServicesMainComponent extends Component {
     async loadServices(isLoading = true) {
         this.state.isLoading = isLoading;
         try {
-            this.state.services = await this.getSupplierNotifiedEvents();
+            const [services, secondNotificationServices] = await Promise.all([
+                this.getSupplierNotifiedEvents(),
+                this.getSupplierNotifiedEvents(true),
+            ]);
+            this.state.services = [...services, ...secondNotificationServices];
             console.log("Loaded services:", this.state.services);
         }
         finally {
@@ -215,7 +220,11 @@ export class ServicesMainComponent extends Component {
 
     subscribeToScheduledReloadNotification() {
         this.busService.subscribe('ike_supplier_lines_reload_scheduled', async (payload) => {
-            const eventSupplierIds = payload.data[0].event_supplier_ids || [];
+            // Only services of this user's list (a Supervisor only has those of its attention center).
+            const eventSupplierIds = (payload.data[0].event_supplier_ids || []).filter(
+                id => this.state.services.some(service => service.event_supplier_id === id)
+            );
+            if (!eventSupplierIds.length) return;
             for (const eventSupplierId of eventSupplierIds) {
                 await this.refreshSingleService(eventSupplierId);
             }
@@ -231,7 +240,12 @@ export class ServicesMainComponent extends Component {
             this._handleCancelledService(item);
             return;
         }
-        const event_supplier = await this.getEventSupplierById(item.id);
+        if (item.state === 'expired') {
+            this._handleExpiredService(item);
+            return;
+        }
+        // Services of another attention center are not returned by the server: ignore them silently.
+        const event_supplier = await this.getEventSupplierById(item.id, true);
         if (!event_supplier) return;
         if (ACTIVE_STATES.includes(item.state)) {
             if (item.state === 'notified') {  // Nuevos servicios
@@ -273,6 +287,13 @@ export class ServicesMainComponent extends Component {
 
     _handleRemovedService(event_supplier) {
         this.removeServiceById(event_supplier.event_supplier_id);
+        this.showNotification({ title: _t("Service Updated"), message: _t('The service has been updated and removed from the list'), type: 'info' });
+    }
+
+    // Only the id is needed, so the line is not fetched again (it may no longer be readable).
+    _handleExpiredService(item) {
+        if (!this.state.services.some(service => service.event_supplier_id === item.id)) return;
+        this.removeServiceById(item.id);
         this.showNotification({ title: _t("Service Updated"), message: _t('The service has been updated and removed from the list'), type: 'info' });
     }
 
@@ -323,6 +344,7 @@ export class ServicesMainComponent extends Component {
             confirmed: event_supplier.confirmed,
             assigned: event_supplier.assigned,
             operator_notified: event_supplier.operator_notified,
+            second_notification: event_supplier.second_notification || false,
         };
     }
 
@@ -636,9 +658,12 @@ export class ServicesMainComponent extends Component {
         }
     }
 
-    async getSupplierNotifiedEvents() {
+    async getSupplierNotifiedEvents(secondNotification = false) {
         try {
-            const result = await rpc('/provider/portal/services/supplier_current_notified', { supplier_id: this.supplier_id });
+            const result = await rpc('/provider/portal/services/supplier_current_notified', {
+                supplier_id: this.supplier_id,
+                second_notification: secondNotification,
+            });
             if (!result.success) {
                 this.showNotification({ title: _t("Error loading notified events"), message: _t(result.error || "An error occurred while loading the notified events."), type: 'danger' });
                 return [];
@@ -659,11 +684,12 @@ export class ServicesMainComponent extends Component {
         }
     }
 
-    async getEventSupplierById(supplierLineId) {
+    async getEventSupplierById(supplierLineId, silent = false) {
         const result = await rpc('/provider/portal/services/supplier_notified_single', { event_supplier_id: supplierLineId });
         if (result.success && result.supplier_event) {
             return result.supplier_event;
         }
+        if (silent) return null;
         this.showNotification({ title: _t("Error loading supplier event"), message: _t(result.error || "An error occurred while loading the supplier event."), type: 'danger' });
         return null;
     }
@@ -824,6 +850,19 @@ export class ServicesMainComponent extends Component {
         return dateTimeStr.split(' ')[1] || '';
     }
 
+    // Literal _t() calls so Odoo's translation export picks the strings up.
+    acceptServiceTitle(service) {
+        return service.second_notification ? _t("Take Service") : _t("Accept Service");
+    }
+
+    get summaryDetailsLabel() {
+        return this.state.modal.showSummaryDetails ? _t("Hide Details") : _t("Show Details of Service");
+    }
+
+    get servicesTitle() {
+        return this.state.activeTab === 'second_notification' ? _t("Pending services") : _t("Services");
+    }
+
     get isEventFinalized() {
         return this.state.modal.stage === 'Concluded' || this.state.modal.stage === 'Verifying' || this.state.modal.supplier_stage_original === 'Finalized';
     }
@@ -931,9 +970,30 @@ export class ServicesMainComponent extends Component {
         }
     }
 
+    // Rows of the active tab, before filters. A pending service moves to the services tab as soon
+    // as it is taken (its state leaves 'notified'), e.g. when a refresh brings the new state.
+    get tabServices() {
+        const pendingTab = this.state.activeTab === 'second_notification';
+        return this.state.services.filter(svc => this.isPendingUntaken(svc) === pendingTab);
+    }
+
+    get secondNotificationCount() {
+        return this.state.services.filter(svc => this.isPendingUntaken(svc)).length;
+    }
+
+    // Pending (re-notified) service nobody has taken yet: its truck is only a recommendation.
+    isPendingUntaken(service) {
+        return Boolean(service.second_notification) && service.event_supplier_state === 'notified';
+    }
+
+    setActiveTab(tab) {
+        this.state.activeTab = tab;
+        this.pagination.reset();
+    }
+
     get filteredServices() {
         const { record, from, to, service, subservice } = this.state.filters;
-        return this.state.services.filter(svc => {
+        return this.tabServices.filter(svc => {
             if (record && !(svc.name || '').toLowerCase().includes(record.toLowerCase())) return false;
             if (from && svc.event_date) {
                 const serviceDate = this.parseServiceDate(svc.event_date);
@@ -952,11 +1012,11 @@ export class ServicesMainComponent extends Component {
     }
 
     get serviceOptions() {
-        return [...new Set(this.state.services.map(s => (s.service_id || '').toString().trim()).filter(v => v))].sort();
+        return [...new Set(this.tabServices.map(s => (s.service_id || '').toString().trim()).filter(v => v))].sort();
     }
 
     get subserviceOptions() {
-        return [...new Set(this.state.services.map(s => (s.sub_service_id || '').toString().trim()).filter(v => v))].sort();
+        return [...new Set(this.tabServices.map(s => (s.sub_service_id || '').toString().trim()).filter(v => v))].sort();
     }
 
     parseServiceDate(dateStr) {
@@ -987,7 +1047,7 @@ export class ServicesMainComponent extends Component {
 
     transformCostsData(rawItems) {
         if (!rawItems || rawItems.length === 0) return null;
-        const supplierName = rawItems[0].supplier_id?.name ?? _t("Sin proveedor");
+        const supplierName = rawItems[0].supplier_id?.name ?? _t("No supplier");
         const items = rawItems.filter(item => item.product_id?.name).map((item, index) => ({
             id: item.id,
             row_number: index + 1,

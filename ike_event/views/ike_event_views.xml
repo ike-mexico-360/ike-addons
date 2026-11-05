@@ -263,6 +263,12 @@
                         <page name="supplier_data" string="Supplier">
                             <group>
                                 <group>
+                                    <field name="membership_unlimited_amount" invisible="1"/>
+                                    <div class="alert alert-info mb-0 py-1" role="status" colspan="2"
+                                         invisible="not membership_unlimited_amount">
+                                        <i title="Event with an unlimited amount"/>
+                                        <span>Event with an unlimited amount</span>
+                                    </div>
                                     <field name="covered_amount" readonly="0"/>
                                     <label for="authorized_amount"/>
                                     <div class="o_row">
@@ -323,7 +329,7 @@
                                         'default_search_number': supplier_search_number,
                                     }"
                                     readonly="1">
-                                    <list create="0" delete="0">
+                                    <list create="0" delete="0" limit="500">
                                         <field name="display_type" column_invisible="1" />
                                         <field name="sequence" column_invisible="1"/>
 
@@ -362,6 +368,8 @@
                                         <field name="timer_duration" column_invisible="1"/>
                                         <field name="elapsed_time" column_invisible="1"/>
                                         <field name="manual_notification" column_invisible="1"/>
+                                        <field name="second_notification" column_invisible="1"/>
+                                        <field name="supplier_number" column_invisible="1"/>
                                         <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
 
                                         <field name="evaluation_locked" column_invisible="1"/>
@@ -392,7 +400,71 @@
                                 <field name="evaluated_pending_suppliers" invisible="1"/>
                                 <button string="Add Manual Supplier" name="action_open_add_manual_supplier_wizard" type="object" class="btn-link"
                                     invisible="supplier_search_type not in ['manual', 'manual_manual'] or evaluated_pending_suppliers > 0"/>
-                                <!-- <button string="Add Manual Supplier" name="action_open_add_manual_supplier_wizard" type="object" class="btn-link"/> -->
+                                <!-- PENDING SUPPLIERS -->
+                                <field name="service_supplier_ids" nolabel="1" colspan="2"
+                                    widget="ike_supplier_pending_o2m"
+                                    options="{'field_columns': ['supplier_id']}"
+                                    context="{
+                                        'default_search_number': supplier_search_number,
+                                    }"
+                                    readonly="1" invisible="supplier_search_type not in ['manual', 'manual_manual']">
+                                    <list create="0" delete="0" limit="500">
+                                        <field name="display_type" column_invisible="1" />
+                                        <field name="sequence" column_invisible="1"/>
+
+                                        <field name="event_search_number" column_invisible="1"/>
+
+                                        <field name="search_number" column_invisible="1"/>
+                                        <field name="ranking" string="#" width="25px" readonly="1"
+                                            column_invisible="parent.supplier_search_type in ['manual', 'manual_manual']"/>
+                                        <field name="supplier_id"
+                                            widget="ike_label_section_and_note_field"
+                                            options="{'no_create': 1, 'no_open': 1}"
+                                            readonly="1"
+                                            width="200px"/>
+                                        <field name="name" optional="show" readonly="1"/>
+                                        <field name="state" width="100px" readonly="1"/>
+                                        <field name="priority" widget="priority" readonly="1" width="75px"/>
+                                        <field name="estimated_duration" widget="float_time" optional="show" readonly="1" />
+                                        <field name="estimated_cost" optional="show" readonly="1"/>
+
+                                        <field name="assignation_type" optional="hide" readonly="1"/>
+                                        <field name="is_manual" column_invisible="1"/>
+                                        <field name="notification_date" optional="hide" readonly="1"/>
+                                        <field name="acceptance_date" optional="hide" readonly="1"/>
+                                        <field name="rejection_date" optional="hide" readonly="1"/>
+                                        <field name="timer_duration" column_invisible="1"/>
+                                        <field name="elapsed_time" column_invisible="1"/>
+                                        <field name="manual_notification" column_invisible="1"/>
+                                        <field name="second_notification" column_invisible="1"/>
+                                        <field name="supplier_number" column_invisible="1"/>
+                                        <widget name="ike_timer_widget" string="Elapsed Time" class="text-center"/>
+
+                                        <field name="evaluation_locked" column_invisible="1"/>
+                                        <field name="evaluation_id" column_invisible="1"/>
+                                        <field name="evaluation_reevaluation" column_invisible="1"/>
+                                        <field name="evaluated" column_invisible="1"/>
+                                        <field name="cost_invalid" column_invisible="1"/>
+
+                                        <button name="action_view_products" string="Concepts" type="object" class="btn-link"
+                                            context="{'from_view_detail': True}"
+                                            invisible="state == 'notified' or evaluation_locked"/>
+                                        <button name="action_view_evaluation" string="Evaluation" type="object" class="btn-link"
+                                            context="{'from_view_detail': True}"
+                                            invisible="not evaluation_id or state == 'notified' or evaluation_locked or evaluated and not evaluation_reevaluation"/>
+                                        <button name="action_view_evaluation" string="Evaluation" type="object" class="btn-link text-warning"
+                                            context="{'from_view_detail': True}"
+                                            invisible="evaluation_id or state == 'notified' or evaluation_locked or evaluated and not evaluation_reevaluation"/>
+
+                                        <button name="action_open_change_vehicle" string="Change Vehicle" type="object" class="btn-link"
+                                            context="{'from_view_detail': True}"
+                                            invisible="assignation_type == 'electronic' or state == 'assigned'"/>
+                                        <!--
+                                        <button name="action_on_route" string="ON ROUTE" type="object" class="btn-link"/>
+                                        <button name="action_finalize" string="FINALIZE" type="object" class="btn-link"/>
+                                        -->
+                                    </list>
+                                </field>
                             </group>
                         </page>
                         <page name="product_data" string="Concepts">

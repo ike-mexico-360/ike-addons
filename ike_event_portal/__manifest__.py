@@ -13,10 +13,12 @@
     'data': [
         'security/ir_module_security.xml',
         'security/ir.model.access.csv',
+        'data/deregistration_cron.xml',
         'views/ike_event_portal_menuitems.xml',
         'views/ike_event_portal_client_events.xml',
         'views/ike_event_portal_suppliers_views.xml',
         'views/ike_event_portal_truck_views.xml',
+        'views/fleet_vehicle_deregistration_views.xml',
         'views/ike_event_portal_user_views.xml',
         'views/ike_event_portal_services.xml',
         'views/ike_event_public_views.xml',

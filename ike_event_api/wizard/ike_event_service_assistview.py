@@ -64,14 +64,17 @@ class IkeEventServiceAssistView(models.TransientModel):
         self.ensure_one()
         service_id = self.env[self.service_res_model].browse(self.service_res_id)
         if self.service_res_model == 'ike.service.input.vial':
-            service_id.write({
+            service_vals = {
                 'vehicle_brand': (self.brand or self.brand_id.name or '').strip(),
                 'vehicle_model': self.model,
-                'vehicle_plate': self.plate,
                 'vehicle_color': self.color,
                 'vehicle_plate_image': self.plate_image,
                 'vehicle_year': self.year,
-            })
+            }
+            # AssistView tiene prioridad; si no trae placa se conserva la del registro de usuario
+            if self.plate:
+                service_vals['vehicle_plate'] = self.plate
+            service_id.write(service_vals)
             event_data = {}
             change_latitude_or_longitude = False
             if self.latitude:

@@ -18,7 +18,6 @@ export class TruckReadComponent extends Component {
         this.orm = useService("orm");
         this.notification = useService("notification");
         this.user = user;
-        this.translate = _t;
         this.state = useState({
             truck: null,
             isLoading: true,
@@ -216,7 +215,7 @@ export class TruckReadComponent extends Component {
                 this.showNotification({ title: _t("Error"), message: _t(result.error), type: 'danger' });
                 return;
             }
-            this.showNotification({ title: _t("Updated"), message: _t("Centro de atención updated."), type: 'success' });
+            this.showNotification({ title: _t("Updated"), message: _t("Center updated."), type: 'success' });
             await this.loadTruckDetail();
             this.closeEditCenterModal();
         } catch (err) {
@@ -252,7 +251,7 @@ export class TruckReadComponent extends Component {
                 this.showNotification({ title: _t("Error"), message: _t(result.error), type: 'danger' });
                 return;
             }
-            this.showNotification({ title: _t("Updated"), message: _t("Matrícula updated."), type: 'success' });
+            this.showNotification({ title: _t("Updated"), message: _t("License plate updated."), type: 'success' });
             await this.loadTruckDetail();
             this.closeEditPlateModal();
         } catch (err) {
@@ -274,14 +273,19 @@ export class TruckReadComponent extends Component {
         this.state.selectedVehicleServiceState = '';
     }
 
+    // Literal _t() calls so Odoo's translation export picks the strings up.
     vehicleStateLabel(state) {
         const labels = {
-            available: 'Available',
-            not_available: 'Not Available',
-            in_service: 'In Service',
-            disabled: 'Disabled',
+            available: _t("Available"),
+            not_available: _t("Not Available"),
+            in_service: _t("In Service"),
+            disabled: _t("Disabled"),
         };
-        return this.translate(labels[state] || state);
+        return labels[state] || state;
+    }
+
+    get driverName() {
+        return this.state.truck.driver_id ? this.state.truck.driver_id[1] : _t("Unassigned");
     }
 
     async saveVehicleServiceState() {
@@ -339,7 +343,7 @@ export class TruckReadComponent extends Component {
                 this.showNotification({ title: _t("Error"), message: _t(result.error), type: 'danger' });
                 return;
             }
-            this.showNotification({ title: _t("Guardado"), message: _t("Ejes actualizados."), type: 'success' });
+            this.showNotification({ title: _t("Saved"), message: _t("Axes updated."), type: 'success' });
             await this.loadTruckDetail();
             this.closeEditAxesModal();
         } catch (err) {
@@ -376,7 +380,7 @@ export class TruckReadComponent extends Component {
                 this.showNotification({ title: _t("Error"), message: _t(result.error), type: 'danger' });
                 return;
             }
-            this.showNotification({ title: _t("Guardado"), message: _t("Accesorios actualizados."), type: 'success' });
+            this.showNotification({ title: _t("Saved"), message: _t("Accessories updated."), type: 'success' });
             await this.loadTruckDetail();
             this.closeEditAccessoriesModal();
         } catch (err) {

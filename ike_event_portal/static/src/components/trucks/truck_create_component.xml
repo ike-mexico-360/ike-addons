@@ -14,11 +14,11 @@
             <div class="container py-4">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <div class="d-flex align-items-center">
-                        <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="icono grúa" class="me-3" style="width:30px;" />
-                        <h1 class="fw-bold mb-0">Detalles de la grúa</h1>
+                        <img src="/ike_event_portal/static/src/assets/GruaAzul.png" alt="Truck icon" class="me-3" style="width:30px;" />
+                        <h1 class="fw-bold mb-0">Truck Details</h1>
                     </div>
                     <a href="/provider/portal/trucks" class="btn btn-secondary">
-                        <i class="fa fa-arrow-left me-1"/> Volver a la lista
+                        <i class="fa fa-arrow-left me-1"/> Back to List
                     </a>
                 </div>
                 <div class="card shadow-sm">
@@ -27,7 +27,7 @@
                             <div class="row g-3">
                                 <!-- 2. License Plate -->
                                 <div class="col-md-6">
-                                    <label for="licensePlate" class="form-label fw-bold">Matrícula (Placa)</label>
+                                    <label for="licensePlate" class="form-label fw-bold">License Plate</label>
                                     <input type="text"
                                class="form-control"
                                id="licensePlate"
@@ -37,9 +37,9 @@
                                 </div>
                                 <!-- 3. Model (Many2one) -->
                                 <div class="col-md-6">
-                                    <label for="modelSelect" class="form-label fw-bold">Modelo del vehículo</label>
+                                    <label for="modelSelect" class="form-label fw-bold">Vehicle Model</label>
                                     <select class="form-select" id="modelSelect" t-model="state.formData.model_id" required="required">
-                                        <option value="">Seleccionar modelo...</option>
+                                        <option value="">Select model...</option>
                                         <t t-foreach="state.models" t-as="model" t-key="model.id">
                                             <option t-att-value="model.id">
                                                 <t t-esc="model.display_name"/>
@@ -48,7 +48,7 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold">Proveedor</label>
+                                    <label class="form-label fw-bold">Supplier</label>
                                     <input type="text"
                                         class="form-control"
                                         t-att-value="supplier_name"
@@ -56,9 +56,9 @@
                                         style="background-color: #e9ecef;"/>
                                 </div>
                                 <div class="col-md-6">
-                                    <label class="form-label fw-bold">Centro de atención</label>
+                                    <label class="form-label fw-bold">Center of Attention</label>
                                     <select t-on-change="onCenterOfAttentionChange" class="form-select" t-model="state.formData.center_of_attention_id">
-                                        <option value="">Seleccionar...</option>
+                                        <option value="">Select...</option>
                                         <t t-foreach="state.supplierCenters" t-as="center" t-key="center.id">
                                             <option t-att-value="center.id" t-att-selected="state.formData.center_of_attention_id == center.id">
                                                 <t t-esc="center.name"/>
@@ -68,9 +68,9 @@
                                 </div>
                                 <!-- 6. Vehicle Type (Selection/Many2one) -->
                                 <div class="col-md-6">
-                                    <label for="typeSelect" class="form-label fw-bold">Tipo de vehículo</label>
+                                    <label for="typeSelect" class="form-label fw-bold">Vehicle Type</label>
                                     <select class="form-select" id="typeSelect" t-model="state.formData.x_vehicle_type">
-                                        <option value="">Seleccionar tipo...</option>
+                                        <option value="">Select type...</option>
                                         <t t-foreach="state.vehicle_types" t-as="vtype" t-key="vtype.id">
                                             <option t-att-value="vtype.id">
                                                 <t t-esc="vtype.name"/>
@@ -79,9 +79,9 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="driverSelect" class="form-label fw-bold">Chofer asignado</label>
+                                    <label for="driverSelect" class="form-label fw-bold">Assigned Driver</label>
                                     <select class="form-select" id="driverSelect" t-model="state.formData.driver_id">
-                                        <option value="">Sin chofer asignado</option>
+                                        <option value="">No driver assigned</option>
                                         <t t-foreach="state.drivers" t-as="driver" t-key="driver.id">
                                             <option t-att-value="driver.id">
                                                 <t t-esc="driver.name"/>
@@ -91,9 +91,9 @@
                                 </div>
                                 <!-- 7. Service State (Selection) -->
                                 <div class="col-md-6">
-                                    <label for="stateSelect" class="form-label fw-bold">Estado del servicio</label>
+                                    <label for="stateSelect" class="form-label fw-bold">Service State</label>
                                     <select class="form-select" id="stateSelect" t-model="state.formData.x_vehicle_service_state">
-                                        <option value="">Seleccionar estado...</option>
+                                        <option value="">Select state...</option>
                                         <!-- Assuming service_states is a list of [key, label] pairs -->
                                         <t t-foreach="state.service_states" t-as="sstate" t-key="sstate[0]">
                                             <option t-att-value="sstate[0]">
@@ -103,32 +103,32 @@
                                     </select>
                                 </div>
                                 <div class="col-md-6">
-                                    <label for="vehicleAxes" class="form-label fw-bold">Ejes</label>
+                                    <label for="vehicleAxes" class="form-label fw-bold">Axes</label>
                                     <input type="number"
                                         class="form-control"
                                         id="vehicleAxes"
                                         t-model="state.formData.x_vehicles_axes"
                                         min="0"
-                                        placeholder="Número de ejes"
+                                        placeholder="Number of Axes"
                                     />
                                 </div>
                                 <!-- 8. Checkboxes -->
                                 <div class="col-12 mt-3">
                                 <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="checkbox" id="tireConditioning" t-model="state.formData.x_manages_tire_conditioning"/>
-                                        <label class="form-check-label" for="tireConditioning">Gestiona acondicionamiento de llantas</label>
+                                        <label class="form-check-label" for="tireConditioning">Manages Tire Conditioning</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="checkbox" id="federalPlates" t-model="state.formData.x_federal_license_plates"/>
-                                        <label class="form-check-label" for="federalPlates">Placas federales</label>
+                                        <label class="form-check-label" for="federalPlates">Federal License Plates</label>
                                     </div>
                                     <div class="form-check form-check-inline">
                                         <input class="form-check-input" type="checkbox" id="maneuvers" t-model="state.formData.x_maneuvers"/>
-                                        <label class="form-check-label" for="maneuvers">Maniobras</label>
+                                        <label class="form-check-label" for="maneuvers">Maneuvers</label>
                                     </div>
                                 </div>
                                 <div class="col-12" id="accessoriesSection" t-if="state.formData.x_maneuvers">
-                                    <label class="form-label fw-bold">Accesorios</label>
+                                    <label class="form-label fw-bold">Accessories</label>
                                     <div class="row">
                                         <t t-foreach="state.accessories" t-as="acc" t-key="acc.id">
                                             <div class="col-md-4">
@@ -155,17 +155,17 @@
                             class="btn btn-outline-secondary"
                             t-on-click="props.onCancel"
                             t-att-disabled="state.isSubmitting">
-                        Cancelar
+                        Cancel
                     </button>
                                 <button type="submit"
                             class="btn btn-primary px-4"
                             t-att-disabled="state.isSubmitting">
                                     <t t-if="state.isSubmitting">
                                         <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                            Guardando...
+                            Saving...
                                     </t>
                                     <t t-else="">
-                                        <i class="fa fa-save me-2"/> Guardar Grúa
+                                        <i class="fa fa-save me-2"/> Save Truck
                                     </t>
                                 </button>
                             </div>

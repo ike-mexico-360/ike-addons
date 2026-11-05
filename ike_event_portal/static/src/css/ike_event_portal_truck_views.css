@@ -399,3 +399,38 @@ input::placeholder {
     text-align: center;
     margin-top: 2rem;
 }
+
+/* Permanent deregistration audit: evidence is intentionally rendered as a
+ * vertical list so long filenames never overflow the history modal. */
+.deregistration-history-modal .modal-body {
+    padding: 1.5rem;
+}
+
+.deregistration-history-data dt {
+    color: #343a40;
+    font-weight: 600;
+}
+
+.deregistration-history-data dd {
+    margin-bottom: .65rem;
+}
+
+.deregistration-evidence-section {
+    border-top: 1px solid #dee2e6;
+    padding-top: 1rem;
+}
+
+.deregistration-evidence-section h6 {
+    color: #1f145c;
+    font-weight: 600;
+    margin-bottom: .75rem;
+}
+
+.deregistration-evidence-section .list-group-item {
+    min-width: 0;
+    padding: .7rem .75rem;
+}
+
+.deregistration-evidence-section .text-truncate {
+    min-width: 0;
+}

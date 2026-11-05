@@ -24,4 +24,16 @@
             <field name="active">True</field>
         </record>
     </data>
+    <!-- Manual migration of stage fields to ike.event.supplier.time.log.
+        Inactive: run from Settings > Technical > Scheduled Actions > "Run Manually". -->
+    <record id="ir_cron_migrate_supplier_time_log" model="ir.cron">
+        <field name="name">IKE: Migrate stage fields to Time Log</field>
+        <field name="model_id" ref="model_ike_event_supplier_time_log"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_migrate_legacy_stage_fields()</field>
+        <field name="user_id" ref="base.user_root"/>
+        <field name="interval_number">1</field>
+        <field name="interval_type">days</field>
+        <field name="active" eval="False"/>
+    </record>
 </odoo>

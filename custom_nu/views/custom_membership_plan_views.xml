@@ -73,7 +73,7 @@
                                                 'display_default_code': 0,
                                                 'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list'
                                             }"/>
-                                        <!-- <field name="incident_type_id" /> -->
+                                        <field name="incident_type_id" />
                                         <field name="vehicle_weight_category_id"/>
                                         <field name="sap_id_income"/>
                                         <field name="commercial_name"/>
@@ -83,6 +83,7 @@
                                         <field name="period_per_event"/>
                                         <field name="period"/>
                                         <field name="limit_amount_per_event" widget="monetary" options="{'currency_field': 'currency_id'}"/>
+                                        <field name="unlimited_amount"/>
                                         <field name="limit_distance" widget="postfix_field" options="{'postfix':'km'}" column_invisible="1"/>
                                         <field name="product_description_po"/>
                                         <field name="sap_id_outgoing"/>
@@ -134,6 +135,7 @@
                 <field name="period_per_event"/>
                 <field name="period"/>
                 <field name="limit_distance"/>
+                <field name="incident_type_id"/>
 
                 <templates>
                     <t t-name="card">
@@ -153,6 +155,14 @@
                                             <field name="sub_service_ids" widget="many2many_tags" context="{'display_default_code': 0}"/>
                                         </div>
                                     </div>
+                                </div>
+
+                                <!-- Incident type -->
+                                <div class="mb-0" t-if="record.incident_type_id.raw_value">
+                                    <small class="text-muted d-block" style="font-size: 0.65rem;">Incident type:</small>
+                                    <span class="badge text-bg-secondary" style="font-size: 0.6rem; padding: 0.2rem 0.4rem;">
+                                        <i class="fa fa-exclamation-circle"/> <field name="incident_type_id"/>
+                                    </span>
                                 </div>
 
                                 <!-- Coverage -->

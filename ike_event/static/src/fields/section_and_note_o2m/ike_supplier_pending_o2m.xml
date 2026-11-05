@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ike_event.IkeSupplierPendingField">
+        <div>
+            <t t-call="web.X2ManyField" t-if="showTable"/>
+        </div>
+    </t>
+    <t t-name="ike_event.IkeSupplierPendingListRenderer.RecordRow" t-inherit="web.ListRenderer.RecordRow" t-inherit-mode="primary">
+        <xpath expr="//tr[contains(@class, 'o_data_row')]" position="before">
+            <t t-set="pending_section_label" t-value="getPendingSectionLabel(record)"/>
+            <tr t-if="pending_section_label" class="o_ike_pending_section">
+                <td t-att-colspan="nbCols" class="fst-italic ps-3 py-2" t-esc="pending_section_label"/>
+            </tr>
+        </xpath>
+    </t>
+
+</templates>

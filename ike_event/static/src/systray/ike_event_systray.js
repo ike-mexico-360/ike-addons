@@ -246,6 +246,17 @@ export class IkeEventSystray extends Component {
     async _executeTimeoutLine(line_id) {
         const resModel = "ike.event.supplier";
         const method = "action_timeout";
+        // The timeout was scheduled when the timer widget was unmounted. If meanwhile the line
+        // became a pending service (second notification, no time limit) it must not time out.
+        try {
+            const [line] = await this.orm.read(resModel, [line_id], ["second_notification"]);
+            if (!line || line.second_notification) {
+                return;
+            }
+        } catch (err) {
+            console.error("IkeGlobalTimer - onTimeoutLine check", err);
+            return;
+        }
         const context = {
             not_notify_next: true,
         };

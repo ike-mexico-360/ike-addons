@@ -8,7 +8,6 @@ export class IkeSectionAndNoteListRender extends FieldLabelSectionAndNoteListRen
     setup() {
         // console.log("IkeSectionAndNoteListRender", this);
         super.setup();
-
     }
     onClickSortColumn(column) {
         return;
@@ -16,25 +15,20 @@ export class IkeSectionAndNoteListRender extends FieldLabelSectionAndNoteListRen
     uIsStorable(column) {
         return false;
     }
-    isHiddenRecord(record = null) {
-        if (!record || (record.isNew && record.isInEdition)) {
-            return false;
+    /**
+     * Products Filter
+     */
+    getFilteredRecords(list) {
+        const root = this.env.model.root;
+        let event_supplier_number = root.data.supplier_number || root.data.event_supplier_number;
+        if (!event_supplier_number) {
+            return list.records;
         }
-        let event_search_number = 1;
-        if (this.env.model.root.resModel == "ike.event") {
-            event_search_number = this.env.model.root.data.supplier_search_number;
-        } else {
-            event_search_number = record.data.event_search_number;
-        }
-        return (
-            record.data.event_search_number && record.data.search_number != event_search_number
-            || record.data.event_supplier_number && record.data.event_supplier_number != record.data.supplier_number
+        return list.records.filter(record =>
+            (!record.data.supplier_number || record.data.supplier_number == event_supplier_number)
         );
     }
 }
-
-IkeSectionAndNoteListRender.recordRowTemplate = "ike_event.IkeSectionListRenderer.RecordRow";
-
 
 export class IkeSectionAndNoteOne2Many extends FieldLabelSectionAndNoteOne2Many {
     static components = {
@@ -46,6 +40,9 @@ export class IkeSectionAndNoteOne2Many extends FieldLabelSectionAndNoteOne2Many 
         super.setup();
     }
 }
+
+IkeSectionAndNoteListRender.rowsTemplate = "ike_event.IkeSectionListRenderer.Rows";
+// IkeSectionAndNoteListRender.recordRowTemplate = "ike_event.IkeSectionListRenderer.RecordRow";
 
 export const ikeSectionAndNoteOne2Many = {
     ...fieldLabelSectionAndNoteOne2Many,

@@ -160,6 +160,9 @@
             <field name="name" position="after">
                 <field name="x_event_id" />
             </field>
+            <xpath expr="//search/field[@name='partner_id']" position="attributes">
+                <attribute name="string">Supplier</attribute>
+            </xpath>
         </field>
     </record>
 

@@ -202,7 +202,7 @@
                 <filter string="Disabled" name="filter_disabled" domain="[('disabled', '=', True)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 <filter string="Enabled" name="filter_enabled" domain="[('disabled', '=', False)]" invisible="context.get('hide_disabled_enabled_filters', 0) == 1"/>
                 <group expand="1" string="Group By">
-                    <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/>
+                    <!-- <filter string="Name" name="name" domain="[]" context="{'group_by':'name'}"/> -->
                 </group>
             </search>
         </field>

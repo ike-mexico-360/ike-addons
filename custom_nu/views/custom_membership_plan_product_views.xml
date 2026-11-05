@@ -27,11 +27,10 @@
                                     'display_default_code': 0,
                                     'list_view_ref': 'custom_master_catalog.view_x_subservice_product_template_list'
                                 }"/>
-                            <!-- <field name="incident_type_id"
-                                required="1"
+                            <field name="incident_type_id"
                                 options='{"no_open": True, "no_create": True}'
                                 context="{'edit': False}"
-                            /> -->
+                            />
                             <field name="vehicle_weight_category_id"/>
                             <field name="sap_id_income"/>
 
@@ -55,6 +54,7 @@
                             <separator string="Limits"/>
                             <field name="limit_distance" invisible="1"/>
                             <field name="limit_amount_per_event"/>
+                            <field name="unlimited_amount"/>
                             <div class="o_row gap-1">
                                 <label for="period_per_event" class="o_form_label"></label>
                                 <field name="period_per_event"/>
@@ -80,7 +80,7 @@
                             <field name="mandatory" column_invisible="1"/>
                             <field name="x_concept_domain" column_invisible="1"/>
                             <field name="currency_id" column_invisible="1"/>
-                            <field name="product_id" 
+                            <field name="product_id"
                             domain="x_concept_domain"
                                 options="{'no_create': True, 'no_create_edit': True, 'no_open': True}"
                                 context="{'display_default_code': 0,
@@ -142,5 +142,5 @@
             </form>
         </field>
     </record>
-    
+
 </odoo>

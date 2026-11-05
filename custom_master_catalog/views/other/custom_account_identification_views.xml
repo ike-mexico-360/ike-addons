@@ -26,6 +26,7 @@
                 <field name="regex"/>
                 <field name="label"/>
                 <field name="clause" />
+                <field name="is_plate"/>
                 <field name="active" column_invisible="1"/>
                 <field name="disabled" column_invisible="1"/>
             </list>
@@ -56,7 +57,8 @@
                         <group>
                             <field name="regex" readonly="disabled"/>
                             <field name="label" readonly="disabled"/>
-                            <field name="clause" />
+                            <field name="clause" readonly="disabled"/>
+                            <field name="is_plate" readonly="disabled"/>
                         </group>
                     </group>
                     <group invisible="1">

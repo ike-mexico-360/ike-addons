@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="fleet_vehicle_deregistration_form" model="ir.ui.view">
+        <field name="name">fleet.vehicle.deregistration.form</field>
+        <field name="model">fleet.vehicle</field>
+        <field name="inherit_id" ref="custom_master_catalog.custom_fleet_vehicle_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='synchronization_information']" position="after">
+                <group string="Temporary unavailability" invisible="x_vehicle_service_state != 'not_available'">
+                    <!-- Same catalog used by the portal status-change modal. -->
+                    <field name="x_reason_not_available" readonly="1"/>
+                    <field name="x_not_available_return_date" readonly="1"/>
+                </group>
+                <!-- Audit trail only: the reason is the same select displayed
+                     in Synchronization information and is never editable here. -->
+                <group string="Permanent deregistration record" invisible="x_vehicle_service_state != 'deregistration'">
+                    <field name="x_reason_permanent_deregistration" readonly="1"/>
+                    <field name="x_deregistration_date" readonly="1"/>
+                    <field name="x_deregistration_user_id" readonly="1"/>
+                    <field name="x_deregistration_economic_number" readonly="1"/>
+                    <field name="x_deregistration_license_plate" readonly="1"/>
+                    <field name="x_deregistration_evidence_ids" widget="many2many_binary" readonly="1"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>

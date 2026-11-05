@@ -28,6 +28,7 @@ class IkeEventSupplierSelection(models.Model):
 
     # === EXTRA FIELDS === #
     selected = fields.Boolean(default=False, copy=False)
+    second_notification = fields.Boolean(default=False, copy=False)
     timer_duration = fields.Integer(help='Maximum timer duration, in seconds.', default=600, copy=False)
     is_manual = fields.Boolean(default=True)
     manual_notification = fields.Boolean(related='supplier_link_id.manual_notification')
@@ -70,7 +71,23 @@ class IkeEventSupplierSelection(models.Model):
         })
         self_filtered.broadcastReload(reload_type='notify')
 
-        return available_ids
+        return self_filtered.ids
+
+    def action_second_notify(self) -> list[int]:
+        timeout_ids = self._lock_records_by_state('timeout')
+        rejected_ids = self._lock_records_by_state('rejected')
+        self_filtered = self.filtered(lambda x: x.id in (timeout_ids + rejected_ids))
+        if not self_filtered:
+            return []
+        self_filtered.write({
+            'state': 'notified',
+            'notification_date': fields.Datetime.now(),
+            'second_notification': True,
+            'timer_duration': 0,  # Infinite
+        })
+        self_filtered.broadcastReload(reload_type='second_notify')
+
+        return self_filtered.ids
 
     def action_accept(self) -> list[int]:
         notified_ids = self._lock_records_by_state('notified')
@@ -144,7 +161,7 @@ class IkeEventSupplierSelection(models.Model):
             if not self.env.context.get('not_notify_next'):
                 with self.env.registry.cursor() as new_cr:
                     new_env = self.env(cr=new_cr)
-                    records = self_filtered.with_env(new_env)
+                    records = self_filtered.filtered(lambda x: not x.second_notification).with_env(new_env)
                     records._notify_next()
 
         return available_ids
@@ -165,7 +182,7 @@ class IkeEventSupplierSelection(models.Model):
             if not self.env.context.get('not_notify_next'):
                 with self.env.registry.cursor() as new_cr:
                     new_env = self.env(cr=new_cr)
-                    records = self_filtered.with_env(new_env)
+                    records = self_filtered.filtered(lambda x: not x.second_notification).with_env(new_env)
                     records._notify_next()
 
         return available_ids
@@ -212,19 +229,36 @@ class IkeEventSupplierSelection(models.Model):
             self_filtered = self.filtered(
                 lambda x: x.id in (accepted_ids + assigned_ids)
             )
-        for rec in self_filtered:
-            if rec.truck_id.x_vehicle_service_state == 'in_service':
-                raise UserError(_("This vehicle is currently in service. Please select another vehicle."))
-        self_filtered.truck_id.x_vehicle_service_state = 'in_service'
+
         assigned_stage = self.env.ref('ike_event.ike_service_stage_assigned')
+        now_dt = fields.Datetime.now()
         self_filtered.write({
             'state': 'assigned',
             'stage_id': assigned_stage.id,
-            'assignation_date': fields.Datetime.now(),
             'confirmed': True,
         })
-        self_filtered._set_google_route_data()
+
+        first_assign = self_filtered.filtered(lambda x: not x.assignation_date)
+        first_assign.write({'assignation_date': now_dt})
+        for rec in first_assign:
+            rec._register_stage_time(
+                'assigned',
+                now_dt,
+                self.env.user.id,
+                f'User: {self.env.user.display_name} - Datetime: {rec._format_datetime_tz(now_dt)}',
+            )
+        # Resource Types Hooks
+        self_filtered.filtered(lambda x: x.event_id.resource_type == 'vehicle')._action_assign_vehicle()
+        self_filtered.filtered(lambda x: x.event_id.resource_type == 'person')._action_assign_person()
+        # Broadcast
         self_filtered.broadcastReload(reload_type='assign')
+
+    def _action_assign_vehicle(self):
+        for rec in self:
+            if rec.truck_id.x_vehicle_service_state == 'in_service':
+                raise UserError(_("This vehicle is currently in service. Please select another vehicle."))
+        self.truck_id.x_vehicle_service_state = 'in_service'
+        self._set_google_route_data()
 
     # === PUBLIC METHODS === #
     # ToDo: Change Name?
@@ -333,8 +367,8 @@ class IkeEventSupplierSelection(models.Model):
                                 'center_origin_route': route,
                             })
                         else:
-                            center_distance_id.origin_center_distance_km = distance_km
-                            center_distance_id.origin_center_duration_m = duration_m
+                            center_distance_id.center_origin_distance_km = distance_km
+                            center_distance_id.center_origin_duration_m = duration_m
                             center_distance_id.center_origin_route = route
                     distance_km = center_distance_id.center_origin_distance_km
                     distance_km = center_distance_id.center_origin_duration_m
@@ -369,6 +403,8 @@ class IkeEventSupplierSelection(models.Model):
 
     def _notify_next(self):
         for rec in self:
+            if rec.second_notification:
+                continue
             if rec.assignation_type == 'electronic':
                 current = rec._get_current_notified_siblings()
                 if not current:
@@ -385,7 +421,7 @@ class IkeEventSupplierSelection(models.Model):
                         if next_priority >= 1:
                             rec.event_id._search_suppliers('publication', str(next_priority))
                         else:
-                            rec.event_id._search_suppliers('manual')
+                            rec.event_id.action_search_manual_suppliers()
                         rec.event_id.broadcastEventReload(3)
                 elif rec.state == 'timeout':
                     available_siblings = rec._count_available_siblings()
@@ -398,7 +434,7 @@ class IkeEventSupplierSelection(models.Model):
                         if next_priority >= 1:
                             rec.event_id._search_suppliers('publication', str(next_priority))
                         else:
-                            rec.event_id._search_suppliers('manual')
+                            rec.event_id.action_search_manual_suppliers()
                         rec.event_id.broadcastEventReload(3)
 
     def _count_available_siblings(self):
@@ -486,6 +522,7 @@ class IkeEventSupplierSelection(models.Model):
                 'supplier_id': [rec.supplier_id.id, rec.supplier_id.name],
                 'action_from': action_from,
                 'reload_type': reload_type,
+                'second_notification': rec.second_notification,
                 'event_reload': event_reload,
             }
             event_batcher.add_event_notification(
@@ -510,6 +547,7 @@ class IkeEventSupplierSelection(models.Model):
                     'event_id': [rec.event_id.id, rec.event_id.name],
                     'supplier_id': [rec.supplier_id.id, rec.supplier_id.name],
                     'action_from': action_from,
+                    'second_notification': rec.second_notification,
                     'cancel_reason': rec.cancel_reason_id.name,
                     'cancel_user': rec.cancel_user_id.name,
                     'event_reload': event_reload,
@@ -524,13 +562,14 @@ class IkeEventSupplierSelection(models.Model):
                 self.env.cr.dbname,
                 channel_name,
                 'ike_supplier_lines_reload_2', {
-                    'action_from': action_from,
-                    'reload_type': reload_type,
                     'id': rec.id,
                     'state': rec.state,
                     'stage_ref': rec.stage_ref,
                     'event_id': [rec.event_id.id, rec.event_id.name],
                     'supplier_id': [rec.supplier_id.id, rec.supplier_id.name],
+                    'action_from': action_from,
+                    'reload_type': reload_type,
+                    'second_notification': rec.second_notification,
                 }, batch_timeout=2)
 
     def broadcastCancelForSupplier(self, action_from='internal'):
@@ -542,12 +581,13 @@ class IkeEventSupplierSelection(models.Model):
                 self.env.cr.dbname,
                 channel_name,
                 'ike_supplier_lines_reload_2', {
-                    'action_from': action_from,
                     'id': rec.id,
                     'state': rec.state,
                     'stage_ref': rec.stage_ref,
                     'event_id': [rec.event_id.id, rec.event_id.name],
                     'supplier_id': [rec.supplier_id.id, rec.supplier_id.name],
+                    'action_from': action_from,
+                    'second_notification': rec.second_notification,
                     'cancel_reason': rec.cancel_reason_id.name,
                     'cancel_user': rec.cancel_user_id.name,
                 }, batch_timeout=2)
@@ -556,16 +596,6 @@ class IkeEventSupplierSelection(models.Model):
         """ Broadcast form view reload by uuid. """
         for rec in self:
             channel_name = f'ike_channel_event_{str(rec.event_id.id)}'
-            # event_batcher.add_event_notification(
-            #     self.env.cr.dbname,
-            #     channel_name,
-            #     'ike_event_next_search', {
-            #         'id': rec.event_id.id,
-            #         'params': {
-            #             'function_name': function_name,
-            #             'next_uuid': next_uuid,
-            #         },
-            #     }, batch_timeout=4)
             self.env['bus.bus']._sendone(
                 target=channel_name,
                 notification_type='ike_event_next_search',

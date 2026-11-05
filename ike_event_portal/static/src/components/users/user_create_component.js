@@ -5,6 +5,9 @@ import { useService } from "@web/core/utils/hooks";
 import { registry } from "@web/core/registry";
 import { rpc } from "@web/core/network/rpc";
 import { user } from "@web/core/user";
+import { unaccent } from "@web/core/utils/strings";
+import { AlertDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
+import { _t } from "@web/core/l10n/translation";
 
 export class UserCreateComponent extends Component {
     static template = "ike_event_portal.UserCreateComponent";
@@ -15,6 +18,7 @@ export class UserCreateComponent extends Component {
 
     setup() {
         this.orm = useService("orm");
+        this.dialog = useService("dialog");
         this.user = user;
         this.state = useState({
             formData: {
@@ -22,9 +26,11 @@ export class UserCreateComponent extends Component {
                 lastname: "",
                 birthdate: "",
                 email: "",
+                password: "",
                 phone: "",
                 license_type: "",
                 license_number: "",
+                license_validity: "",
                 user_type: "operator", // Default
                 street: "",
                 street2: "",
@@ -47,13 +53,13 @@ export class UserCreateComponent extends Component {
         onWillStart(async () => {
             // 1. Fetch Countries
             const countriesPromise = this.orm.searchRead(
-                'res.country', [], ['id', 'name'], { order: 'name asc' }
+                'res.country', [], ['id', 'name', 'code'], { order: 'name asc' }
             );
 
             const [countries] = await Promise.all([countriesPromise]);
 
             this.state.countries = countries;
-            const mexico = this.state.countries.find(c => c.name === 'Mexico' || c.name === 'México');
+            const mexico = this.state.countries.find(c => c.code === 'MX');
             if (mexico) {
                 this.state.formData.country_id = mexico.id;
                 const states = await this.orm.searchRead(
@@ -67,6 +73,21 @@ export class UserCreateComponent extends Component {
             await this.getSupplierId();
             await this.loadSupplierCenters();
         });
+    }
+
+    get isOperator() {
+        return this.state.formData.user_type === "operator";
+    }
+
+    get operatorLogin() {
+        const clean = (text) => unaccent((text || "").trim()).replace(/[^a-z0-9]/g, "");
+        const firstLastname = this.state.formData.lastname.trim().split(/\s+/)[0] || "";
+        return clean(this.state.formData.firstname).slice(0, 2) + clean(firstLastname);
+    }
+
+    onUserTypeChange() {
+        this.state.errors = {};
+        this.state.error = null;
     }
 
     async onCountryChange(ev) {
@@ -103,7 +124,7 @@ export class UserCreateComponent extends Component {
         }
 
         if(this.supplier_id === 0){
-            this.state.error = "No se pudo determinar el proveedor. Por favor, contacte al administrador.";
+            this.state.error = "Could not determine the supplier. Please contact the administrator.";
             this.state.isSubmitting = false;
             return;
         }
@@ -124,9 +145,10 @@ export class UserCreateComponent extends Component {
 
             const userPayload = {
                 name: fullName,
-                login: data.email,
-                email: data.email,
-                password: 'P@ssw0rd123', // Default password from your python code
+                // Operador: login generado y sin email. Otros tipos: el email es el login
+                login: this.isOperator ? this.operatorLogin : data.email,
+                email: this.isOperator ? "" : data.email,
+                password: data.password || 'P@ssw0rd123',
 
                 // Address fields (Standard Odoo fields on res.users/res.partner)
 
@@ -140,6 +162,9 @@ export class UserCreateComponent extends Component {
                 state_id: data.state_id ? parseInt(data.state_id) : false,
                 supplier_id: this.supplier_id,
                 center_of_attention_id: data.center_of_attention_id ? parseInt(data.center_of_attention_id) : false,
+                birthdate: data.birthdate,
+                licence_type: data.license_type,
+                license_validity: data.license_validity,
                 vat: data.license_number, // Mapping license number to VAT as per your python code
                 user: this.user.userId,
             };
@@ -149,6 +174,17 @@ export class UserCreateComponent extends Component {
             // 4. Create User
             const result = await rpc('/provider/portal/user/create/json', userPayload);
             console.log("result:", result);
+
+                        if (!result || !result.success) {
+                this.state.error = (result && result.error) || "The user could not be created.";
+                return;
+            }
+
+            // Mostrar el login con el que quedó el usuario (Operador puede traer consecutivo)
+            this.dialog.add(AlertDialog, {
+                title: _t("User created"),
+                body: _t("The user was created with the login: %s", result.login),
+            });
 
             this.props.onUserCreated();
 
@@ -161,16 +197,43 @@ export class UserCreateComponent extends Component {
     }
 
     validateForm() {
+        const data = this.state.formData;
         const errors = {};
-        let isValid = true;
 
-        if (!this.state.formData.firstname.trim()) {
-            errors.firstname = "El nombre es requerido";
-            isValid = false;
+        // Obligatorio para todos
+        const required = {
+            firstname: _t("The name is required"),
+            password: _t("The password is required"),
+            center_of_attention_id: _t("The attention center is requierd"),
+        };
+        // Política de contraseña
+        const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (data.password && !errors.password && !passwordPolicy.test(data.password)) {
+            errors.password = _t("The password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.");
+        }
+
+        if (this.isOperator) {
+            // Operador: el login se genera, el email no se pide
+            Object.assign(required, {
+                lastname: _t("The lastname is required"),
+                phone: _t("The phone is required"),
+                license_type: _t("Type of license is required"),
+                license_number: _t("The license number is required"),
+                license_validity: _t("The license validity date is required"),
+            });
+        } else {
+            // Financieros / Supervisor: el email es el login
+            required.email = _t("The email is required");
+        }
+
+        for (const [field, message] of Object.entries(required)) {
+            if (!String(data[field] || "").trim()) {
+                errors[field] = message;
+            }
         }
 
         this.state.errors = errors; // Update state to show errors in UI
-        return isValid;
+        return Object.keys(errors).length === 0;
     }
 
     async getSupplierId() {

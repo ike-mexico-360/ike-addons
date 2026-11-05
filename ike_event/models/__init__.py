@@ -17,3 +17,5 @@ from . import survey_models
 from . import ike_event_service_summary
 from . import ike_event_service_count
 from . import ike_event_membership_authorization
+from . import ike_event_supplier_time_log
+from . import supplier_person

@@ -19,38 +19,47 @@ class IkeEvenPhoneWizard(models.Model):
     @api.depends('event_id', 'event_id.sub_service_id')
     def _compute_supplier_domain(self):
         for rec in self:
-            rec.supplier_domain = rec._get_supplier_domain()
+            service_input = self.env[rec.event_id.service_res_model].browse(rec.event_id.service_res_id)
+            state = service_input.state_id or service_input.municipality_id.state_id  # type: ignore
+
+            domain = [
+                ('x_is_supplier', '=', True),
+                ('disabled', '=', False),
+                ('child_ids', 'any', [
+                    ('type', '=', 'center'),
+                    ('disabled', '=', False),
+                    ('x_geographical_area_ids', 'any', [
+                        ('state_id', '=', state.id),
+                        ('active', '=', True),
+                        ('disabled', '=', False),
+                        ('area_product_ids', 'any', [
+                            ('product_id', '=', rec.event_id.sub_service_id.id),
+                            ('disabled', '=', False),
+                        ]),
+                    ]),
+                ]),
+            ]
+            rec.supplier_domain = domain
 
     @api.depends('event_id', 'supplier_id')
     def _compute_aux_truck_domain(self):
         for rec in self:
-            sub_res_id = self.env[rec.event_id.sub_service_res_model].browse(rec.event_id.sub_service_res_id)
-            service_vehicle_type_ids = []
-            service_vehicle_type_ids = sub_res_id.service_vehicle_type_ids.ids  # type: ignore
-
-            domain = [
-                ('disabled', '=', False),
-                ('x_vehicle_service_state', '=', 'available'),
-                ('x_vehicle_type', 'in', service_vehicle_type_ids),
-                ('x_partner_id', '=', rec.supplier_id.id),
-                ('x_subservice_ids', 'in', [rec.event_id.sub_service_id.id]),
-                ('driver_id', '!=', False),
-            ]
-
-            if rec.event_id.requires_federal_plates:
-                domain.append(
-                    ('x_federal_license_plates', '=', True),
-                )
-
-            # if rec.event_id:
-            #     trucks_used = rec.event_id.service_supplier_ids.mapped('truck_id').ids
-            #     if trucks_used:
-            #         domain.append(('id', 'not in', trucks_used))
+            domain = rec._get_aux_truck_base_domain()
 
             if rec.aux_truck_id:
                 domain = expression.OR([domain, [('id', '=', rec.aux_truck_id.id)]])
 
             rec.aux_truck_domain = domain
+
+    @api.onchange('supplier_id')
+    def _onchange_supplier_id_aux_truck(self):
+        # Default: first vehicle by state priority (available > in_service > not_available)
+        for rec in self:
+            if not rec.supplier_id:
+                rec.aux_truck_id = False
+                continue
+            rec.aux_truck_id = self.env['fleet.vehicle'].search(
+                rec._get_aux_truck_base_domain(), order=self.env['fleet.vehicle']._aux_truck_order, limit=1)
 
     def action_create_event_supplier_link(self):
         self.ensure_one()
@@ -77,21 +86,29 @@ class IkeEvenPhoneWizard(models.Model):
 
         return event_supplier_id.action_view_products()
 
-    def _get_supplier_domain(self):
-        """ Suppliers with at least one enabled attention center offering the event sub-service. """
+    def _get_aux_truck_base_domain(self):
         self.ensure_one()
-        return [
-            ('x_is_supplier', '=', True),
+        sub_res_id = self.env[self.event_id.sub_service_res_model].browse(self.event_id.sub_service_res_id)
+        service_vehicle_type_ids = []
+        service_vehicle_type_ids = sub_res_id.service_vehicle_type_ids.ids  # type: ignore
+
+        domain = [
             ('disabled', '=', False),
-            ('child_ids', 'any', [
-                ('type', '=', 'center'),
-                ('disabled', '=', False),
-                ('x_geographical_area_ids', 'any', [
-                    ('disabled', '=', False),
-                    ('area_product_ids', 'any', [
-                        ('product_id', '=', self.event_id.sub_service_id.id),
-                        ('disabled', '=', False),
-                    ]),
-                ]),
-            ]),
+            ('x_vehicle_service_state', 'in', ['available', 'in_service', 'not_available']),
+            ('x_vehicle_type', 'in', service_vehicle_type_ids),
+            ('x_partner_id', '=', self.supplier_id.id),
+            ('x_subservice_ids', 'in', [self.event_id.sub_service_id.id]),
+            ('driver_id', '!=', False),
         ]
+
+        if self.event_id.requires_federal_plates:
+            domain.append(
+                ('x_federal_license_plates', '=', True),
+            )
+
+        # if self.event_id:
+        #     trucks_used = self.event_id.service_supplier_ids.mapped('truck_id').ids
+        #     if trucks_used:
+        #         domain.append(('id', 'not in', trucks_used))
+
+        return domain

@@ -9,10 +9,12 @@
                 <sheet>
                     <group>
                         <field name="event_id" options="{'no_create': 1, 'no_open': 1}"/>
-                        <field name="supplier_id" domain="supplier_domain" options="{'no_create': 1, 'no_open': 1}"/>
+                        <field name="supplier_id" domain="supplier_domain" options="{'no_create': 1, 'no_open': 1}"
+                            context="{'list_view_ref': 'custom_master_catalog.res_partner_supplier_view_list'}"/>
                         <field name="supplier_domain" invisible="1"/>
                         <field name="supplier_number" invisible="1"/>
-                        <field name="aux_truck_id" domain="aux_truck_domain" options="{'no_create': 1, 'no_open': 1}"/>
+                        <field name="aux_truck_id" domain="aux_truck_domain" options="{'no_create': 1, 'no_open': 1}"
+                            context="{'aux_truck_order_by_state': True, 'list_view_ref': 'custom_master_catalog.custom_fleet_vehicle_view_tree'}"/>
                         <field name="aux_truck_domain" invisible="1"/>
                     </group>
                     <footer>

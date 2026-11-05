@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 18.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-05 23:25+0000\n"
-"PO-Revision-Date: 2026-10-05 23:25+0000\n"
+"POT-Creation-Date: 2026-10-16 20:21+0000\n"
+"PO-Revision-Date: 2026-10-16 20:21+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -62,6 +62,15 @@ msgid ""
 msgstr ""
 "<small class=\"text-muted d-block mb-1\" style=\"font-size: "
 "0.65rem;\">Cobertura:</small>"
+
+#. module: custom_nu
+#: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
+msgid ""
+"<small class=\"text-muted d-block\" style=\"font-size: "
+"0.65rem;\">Incident type:</small>"
+msgstr ""
+"<small class=\"text-muted d-block\" style=\"font-size: "
+"0.65rem;\">Tipo de incidencia:</small>"
 
 #. module: custom_nu
 #: model_terms:ir.ui.view,arch_db:custom_nu.view_membership_plan_product_line_kanban
@@ -1777,6 +1786,11 @@ msgstr ""
 #: model:ir.model.fields.selection,name:custom_nu.selection__custom_membership_plan_line_product__coverage_type__unlimited
 msgid "Unlimited"
 msgstr "Ilimitada"
+
+#. module: custom_nu
+#: model:ir.model.fields,field_description:custom_nu.field_custom_membership_plan_product_line__unlimited_amount
+msgid "Unlimited Amount"
+msgstr "Monto sin límite"
 
 #. module: custom_nu
 #: model:res.groups,name:custom_nu.group_custom_nus_user

@@ -124,6 +124,7 @@ class CustomMembershipPlanProductLine(models.Model):
     service_id = fields.Many2one('product.category', string='Service', sub_tracking=True)
     sub_service_ids = fields.Many2many('product.product', string='Subservice')
     limit_amount_per_event = fields.Integer(default=0)
+    unlimited_amount = fields.Boolean(default=0)
     period_per_event = fields.Integer(default=0)
     period = fields.Selection([
         ('monthly', 'Monthly'),
@@ -216,13 +217,13 @@ class CustomMembershipPlanProductLine(models.Model):
             # We use your proven method to maintain existing lines and add new ones
             self.detail_ids = [(4, line.id) for line in self.detail_ids] + new_lines
 
-    @api.constrains('membership_plan_id', 'service_id', 'sub_service_ids', 'vehicle_weight_category_id')
+    @api.constrains('membership_plan_id', 'service_id', 'sub_service_ids', 'vehicle_weight_category_id', 'incident_type_id')
     def _check_unique_combination(self):
         for record in self:
             # 1. Prepare current sub-service IDs in a sorted list for exact set comparison
             current_sub_services = sorted(record.sub_service_ids.ids)
             current_weight = record.vehicle_weight_category_id.id or False
-
+            current_incident = record.incident_type_id.id or False
             # 2. Define search domain for matching base fields (Plan and Service)
             domain = [
                 ('id', '!=', record.id),
@@ -231,7 +232,7 @@ class CustomMembershipPlanProductLine(models.Model):
             ]
 
             # Fetch existing records using search_read for better performance
-            existing_records = self.search_read(domain, ['sub_service_ids', 'vehicle_weight_category_id'])
+            existing_records = self.search_read(domain, ['sub_service_ids', 'vehicle_weight_category_id', 'incident_type_id'])
 
             for data in existing_records:
                 # Sort existing sub-services to compare with current ones
@@ -241,9 +242,9 @@ class CustomMembershipPlanProductLine(models.Model):
                 if existing_sub_services == current_sub_services:
                     # Extract the ID from the Many2one tuple returned by search_read
                     existing_weight = data['vehicle_weight_category_id'][0] if data['vehicle_weight_category_id'] else False
-
+                    existing_incident = data['incident_type_id'][0] if data['incident_type_id'] else False
                     # RULE 1: Prevent exact duplicates
-                    if existing_weight == current_weight:
+                    if existing_weight == current_weight and existing_incident == current_incident:
                         raise ValidationError(_(
                             'Duplicate found: An identical record already exists for this combination.'
                         ))

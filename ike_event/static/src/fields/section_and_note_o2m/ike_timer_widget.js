@@ -47,6 +47,7 @@ export class IkeTimerWidget extends Component {
             this.state.evaluation_reevaluation = record.data.evaluation_reevaluation;
             this.state.evaluation_locked = record.data.evaluation_locked;
             this.state.cost_invalid = record.data.cost_invalid;
+            this.state.second_notification = record.data.second_notification;
             this.authorization_required = (
                 this.env.model.root.data.authorization_required
                 || this.env.model.root.data.uncovered_authorization_required
@@ -86,14 +87,16 @@ export class IkeTimerWidget extends Component {
 
         onWillUnmount(() => {
             if (this.interval) {
-                // console.log("onWillUnmount");
-                this.env.bus.trigger("IKE_EVENT_SYSTRAY:SUPPLIER_TIMEOUT", {
-                    payload: {
-                        line_id: this.resId,
-                        timer_duration: this.timer_duration - this.state.seconds,
-                    },
-                    sender: this,
-                });
+                // console.log("onWillUnmount", this);
+                if (this.timer_duration > 0) {
+                    this.env.bus.trigger("IKE_EVENT_SYSTRAY:SUPPLIER_TIMEOUT", {
+                        payload: {
+                            line_id: this.resId,
+                            timer_duration: this.timer_duration - this.state.seconds,
+                        },
+                        sender: this,
+                    });
+                }
             }
             this.stopTimer();
         });
@@ -114,7 +117,7 @@ export class IkeTimerWidget extends Component {
             this.interval = setInterval(() => {
                 try {
                     this.state.seconds += 1;
-                    if (this.state.seconds >= this.timer_duration) {
+                    if (this.timer_duration > 0 && this.state.seconds >= this.timer_duration) {
                         this.onTimeout();
                     }
                 } catch (err) {
@@ -258,12 +261,13 @@ export class IkeTimerWidget extends Component {
         );
     }
     get showManualAccept() {
-        return (
+        const manual_accept = (
             this.state.current_state == 'available'
             && !this.authorization_required
             && (this.state.is_manual && !this.manual_notification)
             && this.state.evaluation_id && this.state.evaluation_reevaluation
         );
+        return manual_accept;
     }
 };
 

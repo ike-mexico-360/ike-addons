@@ -551,7 +551,7 @@
                                     column_invisible="not parent.x_event_id"
                                     invisible="display_type"/>
                                 <field name="x_price_subtotal_approved"
-                                    readonly="x_price_unit_event &lt; 0"
+                                    readonly="1"
                                     optional="show"
                                     column_invisible="not parent.x_event_id"
                                     invisible="display_type"/>

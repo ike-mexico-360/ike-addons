@@ -2,6 +2,7 @@
 
 import { Component, useState, onWillStart } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 
 export class CancelServiceDialog extends Component {
     static template = "ike_event_portal.CancelServiceDialog";
@@ -13,7 +14,7 @@ export class CancelServiceDialog extends Component {
     };
 
     static defaultProps = {
-        title: "Cancelar Servicio",
+        title: _t("Cancel Service"),
     };
 
     setup() {

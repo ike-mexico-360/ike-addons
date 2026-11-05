@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api, _
+from odoo.osv import expression
 from odoo.exceptions import UserError
 
 
@@ -133,6 +134,36 @@ class IkeServiceInputModel(models.AbstractModel):
     def _onchange_event_type_id(self):
         if self.event_type_id:
             self.requires_federal_plates = self.event_type_id.requires_federal_plates
+
+    @api.onchange('location_zip_code')
+    def _onchange_location_zip_code(self):
+        if not self.location_zip_code:
+            return
+
+        zip_code = self.location_zip_code.strip()
+        # Variants: as typed (050670) and without leading zeros (50670)
+        candidates = list(dict.fromkeys(filter(None, [zip_code, zip_code.lstrip('0')])))
+
+        zip_domain = expression.OR([[('code_ids', '=', code)] for code in candidates])
+        municipality_id = self.env['custom.state.municipality'].search(
+            expression.AND([
+                [('active', '=', True), ('disabled', '=', False)],
+                zip_domain,
+            ]),
+            limit=1,
+        )
+
+        if not municipality_id:
+            return {
+                'warning': {
+                    'title': _('Maps'),
+                    'message': _('No municipality was found for ZIP code %s.', zip_code),
+                    'type': 'notification',
+                }
+            }
+
+        self.municipality_id = municipality_id.id
+        self.state_id = municipality_id.state_id.id
 
     def set_event_summary_user_service_data(self):
         pass

@@ -125,6 +125,7 @@
                         <group string="Service Information">
                             <field name="service_id" options="{'no_open': True}"/>
                             <field name="sub_service_ids" widget="many2many_tags" context="{'display_default_code': 0}"/>
+                            <field name="incident_type_id" options="{'no_open': True}"/>
                         </group>
                     </group>
 
@@ -175,6 +176,7 @@
                         <field name="vehicle_weight_category_id" column_invisible="1"/>
                         <field name="sub_service_ids" widget="many2many_tags"
                             context="{'display_default_code': 0}"/>
+                        <field name="incident_type_id" options='{"no_open": True, "no_create": True}'/>
                         <field name="coverage_events" readonly="0"/>
                         <field name="period" readonly="0"/>
                         <field name="events_of_period" readonly="0"/>
